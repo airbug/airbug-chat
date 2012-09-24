@@ -2,8 +2,7 @@
   "name": "prolifictransportation",
   "version": "0.0.1",
   "dependencies": {
-    "connect":"2.x",
-    "flask-router":"0.0.x",
+    "express": "3.x",
     "socket.io":"0.x"
   },
   "engines": {
