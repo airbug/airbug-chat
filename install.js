@@ -4,7 +4,8 @@ afterNpmModuleInstalled(function() {
     var npm = require('npm');
 
     var requiredPackages = [
-        {name: 'express', install: 'express'}
+        {name: 'express', install: 'express'},
+        {name: 'buildbug', install: '../buildbug/buildbug-0.0.1.tgz'}
     ];
 
     npm.load({}, function (err) {
