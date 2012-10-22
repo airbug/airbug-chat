@@ -34,6 +34,10 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/Collection.js"></script>
         <script src="/List.js"></script>
         <script src="/Set.js"></script>
+        <script src="/IEventDispatcher.js"></script>
+        <script src="/Event.js"></script>
+        <script src="/EventListener.js"></script>
+        <script src="/EventDispatcher.js"></script>
 
         <script src="/Annotation.js"></script>
         <script src="/AnnotationProcessor.js"></script>

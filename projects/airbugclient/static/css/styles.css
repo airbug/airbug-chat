@@ -15,12 +15,16 @@ html, body {
     margin-right: auto;
     padding: 20px;
     background-color: rgb(255, 255, 255);
-    max-width: 100%;
-    width: 544px;
+    max-width: 544px;
     border-width: 1px;
     border-color: rgb(196, 196, 196);
     border-style: solid;
     border-radius: 5px;
+}
+
+.nav-wrapper {
+    padding-top: 10px;
+    padding-right: 15px;
 }
 
 #header {
@@ -76,9 +80,3 @@ html, body {
         margin-top: 0px;
     }
 }
-
-#signuppagenav-wrapper {
-    padding-top: 10px;
-    padding-right: 15px;
-}
-

@@ -6,7 +6,7 @@ var signuppageTemplate =
                     '<input class="input-xxlarge" type="text" id="inputFirstName" placeholder="First Name">' +
                 '</div>' +
                 '<div class="control-group">' +
-                    '<input class="input-xxlarge" type="password" id="inputLastName" placeholder="Last Name">' +
+                    '<input class="input-xxlarge" type="text" id="inputLastName" placeholder="Last Name">' +
                 '</div>' +
                 '<div class="control-group">' +
                     '<input class="input-xxlarge" type="text" id="inputEmail" placeholder="Email">' +

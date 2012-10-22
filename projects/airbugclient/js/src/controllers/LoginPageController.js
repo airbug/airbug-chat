@@ -33,9 +33,9 @@ var LoginPageController = Class.extend(Controller, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(router) {
 
-        this._super();
+        this._super(router);
 
 
         //-------------------------------------------------------------------------------
@@ -62,6 +62,8 @@ var LoginPageController = Class.extend(Controller, {
         headerView.addViewChild('#header-right', loginPageNavView);
         applicationView.addViewChild("#application", loginPageView);
 
+        loginPageNavView.addEventListener(LoginPageNavView.EventTypes.NAVIGATE_TO_SIGNUP, this.hearNavigateToLoginEvent, this);
+
         this.addView(headerView);
         this.addView(applicationView);
     },
@@ -74,12 +76,25 @@ var LoginPageController = Class.extend(Controller, {
     /**
      *
      */
-    routeHome: function() {
+    routeLoginPage: function() {
         // Is there anything we need to do here?
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearNavigateToLoginEvent: function(event) {
+        this.navigate("", {trigger: true});
     }
 });
-annotate(HomeController).with(
+annotate(LoginPageController).with(
     annotation("Controller").params(
-        route("/login").to(LoginPageController.prototype.routeHome)
+        route("login").to(LoginPageController.prototype.routeLoginPage)
     )
 );

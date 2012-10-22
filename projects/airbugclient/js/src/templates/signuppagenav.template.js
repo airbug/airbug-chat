@@ -1,4 +1,4 @@
 var signuppagenavTemplate =
-    '<div id="signuppagenav-wrapper" class="pull-right">' +
+    '<div class="nav-wrapper pull-right">' +
         '<button id="login-button" class="btn btn-primary">Login</button>' +
     '</div>';

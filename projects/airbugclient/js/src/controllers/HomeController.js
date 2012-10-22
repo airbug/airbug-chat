@@ -33,9 +33,9 @@ var HomeController = Class.extend(Controller, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(router) {
 
-        this._super();
+        this._super(router);
 
 
         //-------------------------------------------------------------------------------
@@ -62,6 +62,8 @@ var HomeController = Class.extend(Controller, {
         headerView.addViewChild('#header-right', signupPageNavView);
         applicationView.addViewChild("#application", signupPageView);
 
+        signupPageNavView.addEventListener(SignupPageNavView.EventTypes.NAVIGATE_TO_LOGIN, this.hearNavigateToLoginEvent, this);
+
         this.addView(headerView);
         this.addView(applicationView);
     },
@@ -76,6 +78,19 @@ var HomeController = Class.extend(Controller, {
      */
     routeHome: function() {
         // Is there anything we need to do here?
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearNavigateToLoginEvent: function(event) {
+        this.navigate("login", {trigger: true});
     }
 });
 annotate(HomeController).with(
