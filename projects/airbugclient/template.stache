@@ -48,6 +48,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/controller/ControllerRoute.js"></script>
         <script src="/model/Model.js"></script>
         <script src="/view/View.js"></script>
+        <script src="/Carapace.js"></script>
 
         <script src="/templates/application.template.js"></script>
         <script src="/templates/header.template.js"></script>
