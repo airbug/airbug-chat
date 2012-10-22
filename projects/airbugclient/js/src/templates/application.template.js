@@ -1,1 +1,4 @@
-var applicationTemplate =  '<div id="appcontainer"></div>';
+var applicationTemplate =
+    '<div id="application-wrapper" class="container">' +
+        '<div id="application"></div>' +
+    '</div>';

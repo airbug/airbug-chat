@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ApplicationView')
+//@Export('LoginPageView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,6 +12,6 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ApplicationView = Class.extend(MustacheView, {
-    template: applicationTemplate
+var LoginPageView = Class.extend(MustacheView, {
+    template: loginpageTemplate
 });

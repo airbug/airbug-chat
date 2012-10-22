@@ -1,18 +1,52 @@
-(function($) {
-   var applicationView = new ApplicationView({
-        el: $('body')
-    });
-    var startNames = [
-        new NameModel({
-            name: "Brian"
-        }),
-        new NameModel({
-            name: "Tom"
-        })
-    ];
-    var nameCollection = new NameCollection(startNames);
-    var nameCollectionView = new NameCollectionView({
-        el: $('#appcontainer'),
-        collection: nameCollection
-    });
-})(jQuery);
+//-------------------------------------------------------------------------------
+// Requires
+//-------------------------------------------------------------------------------
+
+//@Export('AirBugApplication')
+
+//@Require('Backbone')
+//@Require('Class')
+//@Require('Obj')
+
+
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
+
+var AirBugApplication = Class.extend(Obj, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function() {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    start: function() {
+        var result = Backbone.history.start();
+    }
+});
+
+
+//-------------------------------------------------------------------------------
+// Bootstrap
+//-------------------------------------------------------------------------------
+
+var airBugApplication = new AirBugApplication();
+airBugApplication.start();

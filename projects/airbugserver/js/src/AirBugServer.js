@@ -5,28 +5,56 @@
 //@Export('AirBugServer')
 
 var express = require("express");
+var fs = require("fs");
 
 
 //-------------------------------------------------------------------------------
 // Build App
 //-------------------------------------------------------------------------------
 
-var AirBugServer = {};
+var AirBugServer = {
 
-var app = express();
-var port = 8080;
-var path = process.cwd();
+    start: function() {
 
-app.use(express.logger('dev'));
+        var app = express();
+        var port = 8080;
+        var path = __dirname + "/../../../..";
 
-app.use(express.static(path + '/airbugclient/src'));
-app.use(express.static(path + '/projects/airbugclient/static'));
-app.use(express.static(path + '/projects/airbugclient/temp'));
-app.use(express.static(path + '/projects/airbugserver/static'));
+        app.configure(function() {
+            app.use(express.errorHandler({dumpExceptions:true,showStack:true}));
+            app.use(express.logger('dev'));
+            app.use(app.router);
 
-app.use(app.router);
-app.listen(port);
+            // TODO BRN: These are temporary static references until we can get the buildbug/client.json deployment model built
+            app.use(express.static(path + '/projects/airbugclient/js/src'));
+            app.use(express.static(path + '/projects/airbugclient/static'));
+            app.use(express.static(path + '/temp/js'));
+            app.use(express.static(path + '/temp/static'));
+            app.use(express.static(path + '/../bugjs/projects/bugjs/js/src'));
+            app.use(express.static(path + '/../bugjs/projects/annotate/js/src'));
+            app.use(express.static(path + '/../bugjs/projects/carapace/js/src'));
+        });
 
-console.log("Express server running on port " + port);
+        app.get('/', function(req, res) {
+            fs.readFile(path + '/projects/airbugclient/template.stache', 'utf8', function(err, data){
+                if (err) {
+                    throw err;
+                }
+                res.send(data);
+            });
+        });
+
+        app.listen(port);
+
+        console.log("Express server running on port " + port);
+    }
+};
+
+
+//-------------------------------------------------------------------------------
+// Export
+//-------------------------------------------------------------------------------
+
+module.exports = AirBugServer;
 
 

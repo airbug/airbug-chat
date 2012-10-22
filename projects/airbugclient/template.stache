@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+NOTE BRN: This file is just temporary for now. The serving of the index page will actually be done by the airbug server.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>AirBug</title>
+        <link rel="stylesheet" href="/css/bootstrap.css" />
+        <link rel="stylesheet" href="/css/bootstrap-responsive.css" />
+        <link rel="stylesheet" href="/css/styles.css" />
+    </head>
+    <body>
+        <script src="/mustache.js"></script>
+        <script src="/jquery.js"></script>
+        <script src="/underscore.js"></script>
+        <script src="/backbone.js"></script>
+        <script src="/bootstrap.js"></script>
+
+        <script src="/TypeUtil.js"></script>
+        <script src="/Class.js"></script>
+        <script src="/IdGenerator.js"></script>
+        <script src="/HashUtil.js"></script>
+        <script src="/Interface.js"></script>
+        <script src="/IEquals.js"></script>
+        <script src="/IHashCode.js"></script>
+        <script src="/Obj.js"></script>
+        <script src="/HashTableEntry.js"></script>
+        <script src="/HashTableNode.js"></script>
+        <script src="/HashTable.js"></script>
+        <script src="/Map.js"></script>
+        <script src="/HashStoreNode.js"></script>
+        <script src="/HashStore.js"></script>
+        <script src="/Collection.js"></script>
+        <script src="/List.js"></script>
+        <script src="/Set.js"></script>
+
+        <script src="/Annotation.js"></script>
+        <script src="/AnnotationProcessor.js"></script>
+        <script src="/Annotate.js"></script>
+
+        <script src="/controller/AnnotateRoute.js"></script>
+        <script src="/controller/Controller.js"></script>
+        <script src="/controller/ControllerRoute.js"></script>
+        <script src="/model/Model.js"></script>
+        <script src="/view/View.js"></script>
+
+        <script src="/templates/application.template.js"></script>
+        <script src="/templates/header.template.js"></script>
+        <script src="/templates/loginpage.template.js"></script>
+        <script src="/templates/loginpagenav.template.js"></script>
+        <script src="/templates/signuppage.template.js"></script>
+        <script src="/templates/signuppagenav.template.js"></script>
+
+        <script src="/views/MustacheView.js"></script>
+        <script src="/views/ApplicationView.js"></script>
+        <script src="/views/HeaderView.js"></script>
+        <script src="/views/LoginPageView.js"></script>
+        <script src="/views/LoginPageNavView.js"></script>
+        <script src="/views/SignupPageView.js"></script>
+        <script src="/views/SignupPageNavView.js"></script>
+
+        <script src="/controllers/HomeController.js"></script>
+        <script src="/controllers/LoginPageController.js"></script>
+
+        <script src="/AirBugApplication.js"></script>
+    </body>
+</html>
