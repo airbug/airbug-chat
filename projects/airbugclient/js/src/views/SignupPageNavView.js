@@ -15,6 +15,10 @@
 
 var SignupPageNavView = Class.extend(MustacheView, {
 
+    //-------------------------------------------------------------------------------
+    // CarapaceView Implementation
+    //-------------------------------------------------------------------------------
+
     template: signuppagenavTemplate,
 
     events: {

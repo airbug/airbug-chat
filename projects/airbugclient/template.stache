@@ -4,8 +4,9 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>AirBug</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/css/bootstrap.css" />
         <link rel="stylesheet" href="/css/bootstrap-responsive.css" />
         <link rel="stylesheet" href="/css/styles.css" />
@@ -38,35 +39,41 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/Event.js"></script>
         <script src="/EventListener.js"></script>
         <script src="/EventDispatcher.js"></script>
+        <script src="/Proxy.js"></script>
 
         <script src="/Annotation.js"></script>
         <script src="/AnnotationProcessor.js"></script>
         <script src="/Annotate.js"></script>
 
         <script src="/controller/AnnotateRoute.js"></script>
-        <script src="/controller/Controller.js"></script>
+        <script src="/controller/CarapaceController.js"></script>
         <script src="/controller/ControllerRoute.js"></script>
-        <script src="/model/Model.js"></script>
-        <script src="/view/View.js"></script>
+        <script src="/model/CarapaceModel.js"></script>
+        <script src="/view/CarapaceView.js"></script>
         <script src="/Carapace.js"></script>
 
         <script src="/templates/application.template.js"></script>
+        <script src="/templates/contactspanel.template.js"></script>
         <script src="/templates/header.template.js"></script>
         <script src="/templates/loginpage.template.js"></script>
         <script src="/templates/loginpagenav.template.js"></script>
         <script src="/templates/signuppage.template.js"></script>
         <script src="/templates/signuppagenav.template.js"></script>
+        <script src="/templates/userhomepage.template.js"></script>
 
         <script src="/views/MustacheView.js"></script>
         <script src="/views/ApplicationView.js"></script>
+        <script src="/views/ContactsPanelView.js"></script>
         <script src="/views/HeaderView.js"></script>
         <script src="/views/LoginPageView.js"></script>
         <script src="/views/LoginPageNavView.js"></script>
         <script src="/views/SignupPageView.js"></script>
         <script src="/views/SignupPageNavView.js"></script>
+        <script src="/views/UserHomePageView.js"></script>
 
-        <script src="/controllers/HomeController.js"></script>
         <script src="/controllers/LoginPageController.js"></script>
+        <script src="/controllers/SignupController.js"></script>
+        <script src="/controllers/UserHomeController.js"></script>
 
         <script src="/AirBugApplication.js"></script>
     </body>

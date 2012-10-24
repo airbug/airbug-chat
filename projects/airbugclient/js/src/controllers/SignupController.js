@@ -2,13 +2,13 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('HomeController')
+//@Export('SignupController')
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationView')
+//@Require('CarapaceController')
 //@Require('Class')
-//@Require('Controller')
 //@Require('HeaderView')
 //@Require('SignupPageView')
 //@Require('SignupPageNavView')
@@ -27,7 +27,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HomeController = Class.extend(Controller, {
+var SignupController = Class.extend(CarapaceController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -45,7 +45,7 @@ var HomeController = Class.extend(Controller, {
 
 
     //-------------------------------------------------------------------------------
-    // Controller Implementation
+    // CarapaceController Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -76,7 +76,7 @@ var HomeController = Class.extend(Controller, {
     /**
      *
      */
-    routeHome: function() {
+    routeSignup: function() {
         // Is there anything we need to do here?
     },
 
@@ -93,8 +93,8 @@ var HomeController = Class.extend(Controller, {
         this.navigate("login", {trigger: true});
     }
 });
-annotate(HomeController).with(
+annotate(SignupController).with(
     annotation("Controller").params(
-        route("").to(HomeController.prototype.routeHome)
+        route("signup").to(SignupController.prototype.routeSignup)
     )
 );

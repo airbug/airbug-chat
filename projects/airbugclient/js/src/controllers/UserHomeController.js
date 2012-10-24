@@ -2,16 +2,16 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginPageController')
+//@Export('UserHomeController')
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationView')
 //@Require('CarapaceController')
 //@Require('Class')
+//@Require('ContactsPanelView')
 //@Require('HeaderView')
-//@Require('LoginPageView')
-//@Require('LoginPageNavView')
+//@Require('UserHomePageView')
 
 
 //-------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageController = Class.extend(CarapaceController, {
+var UserHomeController = Class.extend(CarapaceController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -54,15 +54,13 @@ var LoginPageController = Class.extend(CarapaceController, {
     activate: function() {
         this._super();
 
-        var headerView = new HeaderView();
         var applicationView = new ApplicationView();
-        var loginPageView = new LoginPageView();
-        var loginPageNavView = new LoginPageNavView();
+        var contactsPanelView = new ContactsPanelView();
+        var headerView = new HeaderView();
+        var userHomePageView = new UserHomePageView();
 
-        headerView.addViewChild('#header-right', loginPageNavView);
-        applicationView.addViewChild("#application", loginPageView);
-
-        loginPageNavView.addEventListener(LoginPageNavView.EventTypes.NAVIGATE_TO_SIGNUP, this.hearNavigateToLoginEvent, this);
+        userHomePageView.addViewChild("#leftrow", contactsPanelView);
+        applicationView.addViewChild("#application", userHomePageView);
 
         this.addView(headerView);
         this.addView(applicationView);
@@ -76,25 +74,18 @@ var LoginPageController = Class.extend(CarapaceController, {
     /**
      *
      */
-    routeLoginPage: function() {
+    routeUserHome: function() {
         // Is there anything we need to do here?
-    },
+    }
 
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearNavigateToLoginEvent: function(event) {
-        this.navigate("signup", {trigger: true});
-    }
 });
-annotate(LoginPageController).with(
+annotate(UserHomeController).with(
     annotation("Controller").params(
-        route("login").to(LoginPageController.prototype.routeLoginPage)
+        route("").to(UserHomeController.prototype.routeUserHome)
     )
 );

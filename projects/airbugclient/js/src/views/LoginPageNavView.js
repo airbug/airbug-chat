@@ -15,7 +15,7 @@
 var LoginPageNavView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // Declare Variables
+    // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
     template: loginpagenavTemplate,
@@ -23,6 +23,7 @@ var LoginPageNavView = Class.extend(MustacheView, {
     events: {
         "click #signup-button": "handleSignupButtonClick"
     },
+
 
     //-------------------------------------------------------------------------------
     // Event Dispatchers

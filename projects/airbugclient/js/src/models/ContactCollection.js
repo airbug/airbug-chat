@@ -2,27 +2,23 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('MustacheView')
+//@Export('ContactCollection')
 
-//@Require('CarapaceView')
+//@Require('CarapaceCollection')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('ContactModel')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MustacheView = Class.extend(CarapaceView, {
+var ContactCollection = Class.extend(CarapaceCollection, {
+
+    model: ContactModel
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // CarapaceCollection Implementation
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Element}
-     */
-    make: function() {
-        return $(Mustache.render(this.template, {}));
-    }
 });

@@ -2,27 +2,21 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('MustacheView')
+//@Export('UserHomePageView')
 
-//@Require('CarapaceView')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MustacheView = Class.extend(CarapaceView, {
+var UserHomePageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Element}
-     */
-    make: function() {
-        return $(Mustache.render(this.template, {}));
-    }
+    template: userhomepageTemplate
 });
