@@ -9,8 +9,9 @@
 //@Require('ApplicationView')
 //@Require('CarapaceController')
 //@Require('Class')
-//@Require('ContactsPanelView')
+//@Require('ContactPanelView')
 //@Require('HeaderView')
+//@Require('UserHomePageNavView')
 //@Require('UserHomePageView')
 
 
@@ -54,16 +55,33 @@ var UserHomeController = Class.extend(CarapaceController, {
     activate: function() {
         this._super();
 
+        var contactCollection = new ContactCollection();
+
         var applicationView = new ApplicationView();
-        var contactsPanelView = new ContactsPanelView();
+        var contactsPanelView = new ContactPanelView({
+            collection: contactCollection
+        });
         var headerView = new HeaderView();
         var userHomePageView = new UserHomePageView();
+        var userHomePageNavView = new UserHomePageNavView();
 
-        userHomePageView.addViewChild("#leftrow", contactsPanelView);
-        applicationView.addViewChild("#application", userHomePageView);
+        headerView.addViewChild(userHomePageNavView, '#header-right');
+
+        userHomePageView.addViewChild(contactsPanelView, "#leftrow");
+        applicationView.addViewChild(userHomePageView, "#application");
 
         this.addView(headerView);
         this.addView(applicationView);
+
+
+        //TEST
+        contactCollection.add(new ContactModel({id:1, name: "Tim Pote", status: "away"}));
+        contactCollection.add(new ContactModel({id:2, name: "Brian Neisler", status: "available"}));
+        contactCollection.add(new ContactModel({id:3, name: "Adam Nisenbaum", status: "dnd"}));
+        contactCollection.add(new ContactModel({id:4, name: "Tom Raic", status: "offline"}));
+
+
+        this.addModel(contactCollection);
     },
 
 

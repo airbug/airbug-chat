@@ -4,7 +4,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>AirBug</title>
+        <title>airbug</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/css/bootstrap.css" />
@@ -23,6 +23,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/IdGenerator.js"></script>
         <script src="/HashUtil.js"></script>
         <script src="/Interface.js"></script>
+        <script src="/IDisposable.js"></script>
         <script src="/IEquals.js"></script>
         <script src="/IHashCode.js"></script>
         <script src="/Obj.js"></script>
@@ -49,27 +50,35 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/controller/CarapaceController.js"></script>
         <script src="/controller/ControllerRoute.js"></script>
         <script src="/model/CarapaceModel.js"></script>
+        <script src="/model/CarapaceCollection.js"></script>
         <script src="/view/CarapaceView.js"></script>
         <script src="/Carapace.js"></script>
 
         <script src="/templates/application.template.js"></script>
-        <script src="/templates/contactspanel.template.js"></script>
+        <script src="/templates/contactpanel.template.js"></script>
+        <script src="/templates/contactpanelitem.template.js"></script>
         <script src="/templates/header.template.js"></script>
         <script src="/templates/loginpage.template.js"></script>
         <script src="/templates/loginpagenav.template.js"></script>
         <script src="/templates/signuppage.template.js"></script>
         <script src="/templates/signuppagenav.template.js"></script>
         <script src="/templates/userhomepage.template.js"></script>
+        <script src="/templates/userhomepagenav.template.js"></script>
+
+        <script src="/models/ContactModel.js"></script>
+        <script src="/models/ContactCollection.js"></script>
 
         <script src="/views/MustacheView.js"></script>
         <script src="/views/ApplicationView.js"></script>
-        <script src="/views/ContactsPanelView.js"></script>
         <script src="/views/HeaderView.js"></script>
         <script src="/views/LoginPageView.js"></script>
         <script src="/views/LoginPageNavView.js"></script>
         <script src="/views/SignupPageView.js"></script>
         <script src="/views/SignupPageNavView.js"></script>
+        <script src="/views/ContactPanelItemView.js"></script>
+        <script src="/views/ContactPanelView.js"></script>
         <script src="/views/UserHomePageView.js"></script>
+        <script src="/views/UserHomePageNavView.js"></script>
 
         <script src="/controllers/LoginPageController.js"></script>
         <script src="/controllers/SignupController.js"></script>

@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ContactsPanelView')
+//@Export('ContactPanelItemView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,11 +12,11 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactsPanelView = Class.extend(MustacheView, {
+var ContactPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: contactspanelTemplate
+    template: contactpanelitemTemplate
 });

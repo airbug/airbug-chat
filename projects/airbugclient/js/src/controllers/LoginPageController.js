@@ -59,8 +59,8 @@ var LoginPageController = Class.extend(CarapaceController, {
         var loginPageView = new LoginPageView();
         var loginPageNavView = new LoginPageNavView();
 
-        headerView.addViewChild('#header-right', loginPageNavView);
-        applicationView.addViewChild("#application", loginPageView);
+        headerView.addViewChild(loginPageNavView, '#header-right');
+        applicationView.addViewChild(loginPageView, "#application");
 
         loginPageNavView.addEventListener(LoginPageNavView.EventTypes.NAVIGATE_TO_SIGNUP, this.hearNavigateToLoginEvent, this);
 
