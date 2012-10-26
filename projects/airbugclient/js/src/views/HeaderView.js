@@ -18,5 +18,5 @@ var HeaderView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: headerTemplate
+    template: HeaderTemplate
 });

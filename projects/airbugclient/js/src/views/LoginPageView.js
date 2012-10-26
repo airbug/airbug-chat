@@ -18,5 +18,5 @@ var LoginPageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: loginpageTemplate
+    template: LoginPageTemplate
 });

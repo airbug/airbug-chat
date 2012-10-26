@@ -1,4 +1,4 @@
-var applicationTemplate =
+var ApplicationTemplate =
     '<div class="container column">' +
         '<div class="application-wrapper">' +
             '<div class="application">' +

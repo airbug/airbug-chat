@@ -18,5 +18,5 @@ var UserHomePageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: userhomepageTemplate
+    template: UserHomePageTemplate
 });

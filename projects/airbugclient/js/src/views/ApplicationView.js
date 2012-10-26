@@ -18,5 +18,5 @@ var ApplicationView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: applicationTemplate
+    template: ApplicationTemplate
 });

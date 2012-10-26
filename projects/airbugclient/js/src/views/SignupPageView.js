@@ -18,5 +18,5 @@ var SignupPageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: signuppageTemplate
+    template: SignupPageTemplate
 });

@@ -54,18 +54,18 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/view/CarapaceView.js"></script>
         <script src="/Carapace.js"></script>
 
-        <script src="/templates/application.template.js"></script>
-        <script src="/templates/contactpanel.template.js"></script>
-        <script src="/templates/contactpanelitem.template.js"></script>
-        <script src="/templates/header.template.js"></script>
-        <script src="/templates/loginpage.template.js"></script>
-        <script src="/templates/loginpagenav.template.js"></script>
-        <script src="/templates/roompanel.template.js"></script>
-        <script src="/templates/roompanelitem.template.js"></script>
-        <script src="/templates/signuppage.template.js"></script>
-        <script src="/templates/signuppagenav.template.js"></script>
-        <script src="/templates/userhomepage.template.js"></script>
-        <script src="/templates/userhomepagenav.template.js"></script>
+        <script src="/templates/Application.template.js"></script>
+        <script src="/templates/ContactPanel.template.js"></script>
+        <script src="/templates/ContactPanelItem.template.js"></script>
+        <script src="/templates/Header.template.js"></script>
+        <script src="/templates/LoginPage.template.js"></script>
+        <script src="/templates/LoginPageNav.template.js"></script>
+        <script src="/templates/RoomPanel.template.js"></script>
+        <script src="/templates/RoomPanelItem.template.js"></script>
+        <script src="/templates/SignupPage.template.js"></script>
+        <script src="/templates/SignupPageNav.template.js"></script>
+        <script src="/templates/UserHomePage.template.js"></script>
+        <script src="/templates/UserHomePageNav.template.js"></script>
 
         <script src="/models/ContactModel.js"></script>
         <script src="/models/ContactCollection.js"></script>

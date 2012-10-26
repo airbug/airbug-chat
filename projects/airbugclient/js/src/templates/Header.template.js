@@ -1,4 +1,4 @@
-var headerTemplate =
+var HeaderTemplate =
     '<div id="header-wrapper" class="navbar navbar-fixed-top">' +
         '<div class="container">' +
             '<div id="header">' +

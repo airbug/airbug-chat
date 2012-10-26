@@ -18,5 +18,5 @@ var RoomPanelItemView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: roompanelitemTemplate
+    template: RoomPanelItemTemplate
 });

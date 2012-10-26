@@ -18,7 +18,7 @@ var LoginPageNavView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: loginpagenavTemplate,
+    template: LoginPageNavTemplate,
 
     events: {
         "click #signup-button": "handleSignupButtonClick"

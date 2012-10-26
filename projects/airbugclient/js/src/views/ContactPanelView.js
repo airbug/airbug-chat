@@ -19,7 +19,7 @@ var ContactPanelView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: contactpanelTemplate,
+    template: ContactPanelTemplate,
 
     /**
      *

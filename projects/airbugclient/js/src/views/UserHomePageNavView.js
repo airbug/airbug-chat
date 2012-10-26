@@ -19,7 +19,7 @@ var UserHomePageNavView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: userhomepagenavTemplate,
+    template: UserHomePageNavTemplate,
 
     events: {
         "click #account-button": "handleAccountButtonClick"
