@@ -11,6 +11,7 @@
 //@Require('Class')
 //@Require('ContactPanelView')
 //@Require('HeaderView')
+//@Require('RoomPanelView')
 //@Require('UserHomePageNavView')
 //@Require('UserHomePageView')
 
@@ -56,10 +57,14 @@ var UserHomeController = Class.extend(CarapaceController, {
         this._super();
 
         var contactCollection = new ContactCollection();
+        var roomCollection = new RoomCollection();
 
         var applicationView = new ApplicationView();
-        var contactsPanelView = new ContactPanelView({
+        var contactPanelView = new ContactPanelView({
             collection: contactCollection
+        });
+        var roomPanelView = new RoomPanelView({
+            collection: roomCollection
         });
         var headerView = new HeaderView();
         var userHomePageView = new UserHomePageView();
@@ -67,7 +72,8 @@ var UserHomeController = Class.extend(CarapaceController, {
 
         headerView.addViewChild(userHomePageNavView, '#header-right');
 
-        userHomePageView.addViewChild(contactsPanelView, "#leftrow");
+        userHomePageView.addViewChild(contactPanelView, "#leftrow");
+        userHomePageView.addViewChild(roomPanelView, "#rightrow");
         applicationView.addViewChild(userHomePageView, "#application");
 
         this.addView(headerView);
@@ -80,8 +86,12 @@ var UserHomeController = Class.extend(CarapaceController, {
         contactCollection.add(new ContactModel({id:3, name: "Adam Nisenbaum", status: "dnd"}));
         contactCollection.add(new ContactModel({id:4, name: "Tom Raic", status: "offline"}));
 
+        roomCollection.add(new RoomModel({id:1, name: "airbug Company Room"}));
+        roomCollection.add(new RoomModel({id:1, name: "airbug Dev Room"}));
+
 
         this.addModel(contactCollection);
+        this.addModel(roomCollection);
     },
 
 

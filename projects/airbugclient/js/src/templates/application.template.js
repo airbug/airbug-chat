@@ -1,4 +1,8 @@
 var applicationTemplate =
-    '<div id="application-wrapper" class="container">' +
-        '<div id="application"></div>' +
+    '<div class="container column">' +
+        '<div class="application-wrapper">' +
+            '<div class="application">' +
+                '<div id="application" class="application-body">' +
+            '</div>' +
+        '</div>' +
     '</div>';

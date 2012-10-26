@@ -60,6 +60,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/templates/header.template.js"></script>
         <script src="/templates/loginpage.template.js"></script>
         <script src="/templates/loginpagenav.template.js"></script>
+        <script src="/templates/roompanel.template.js"></script>
+        <script src="/templates/roompanelitem.template.js"></script>
         <script src="/templates/signuppage.template.js"></script>
         <script src="/templates/signuppagenav.template.js"></script>
         <script src="/templates/userhomepage.template.js"></script>
@@ -67,6 +69,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/models/ContactModel.js"></script>
         <script src="/models/ContactCollection.js"></script>
+        <script src="/models/RoomModel.js"></script>
+        <script src="/models/RoomCollection.js"></script>
 
         <script src="/views/MustacheView.js"></script>
         <script src="/views/ApplicationView.js"></script>
@@ -77,6 +81,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/SignupPageNavView.js"></script>
         <script src="/views/ContactPanelItemView.js"></script>
         <script src="/views/ContactPanelView.js"></script>
+        <script src="/views/RoomPanelItemView.js"></script>
+        <script src="/views/RoomPanelView.js"></script>
         <script src="/views/UserHomePageView.js"></script>
         <script src="/views/UserHomePageNavView.js"></script>
 
