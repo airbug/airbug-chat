@@ -1,4 +1,4 @@
 var RoomPanelItemTemplate =
-    '<div class="panel-item">' +
-        '<span id="room-name-{{id}}" class="panel-item-text room-name">{{name}}</span>' +
+    '<div id="room-{{id}}" class="panel-item clickable-box">' +
+        '<span id="room-name-{{uid}}" class="panel-item-text room-name">{{name}}</span>' +
     '</div>';

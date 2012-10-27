@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ContactPanelView')
+//@Export('ConversationPanelView')
 
 //@Require('Class')
-//@Require('ContactPanelItemView')
+//@Require('ConversationPanelItemView')
 //@Require('MustacheView')
 
 
@@ -13,21 +13,21 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactPanelView = Class.extend(MustacheView, {
+var ConversationPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ContactPanelTemplate,
+    template: ConversationPanelTemplate,
 
     /**
      *
      */
     initialize: function() {
         var _this = this;
-        this.collection.bind('add', function(contactModel) {
-            _this.handleCollectionAdd(contactModel);
+        this.collection.bind('add', function(conversationModel) {
+            _this.handleCollectionAdd(conversationModel);
         });
     },
 
@@ -37,12 +37,12 @@ var ContactPanelView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {ContactModel} contactModel
+     * @param {ConversationModel} conversationModel
      */
-    handleCollectionAdd: function(contactModel) {
-        var contactPanelItemView = new ContactPanelItemView({
-            model: contactModel
+    handleCollectionAdd: function(conversationModel) {
+        var conversationPanelItemView = new ConversationPanelItemView({
+            model: conversationModel
         });
-        this.addViewChild(contactPanelItemView, "#contact-panel-body");
+        this.addViewChild(conversationPanelItemView, "#conversation-panel-body");
     }
 });

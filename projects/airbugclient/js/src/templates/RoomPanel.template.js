@@ -1,5 +1,5 @@
 var RoomPanelTemplate =
-    '<div class="panel-wrapper">' +
+    '<div class="panel-wrapper panel-wrapper-right">' +
         '<div class="panel">' +
             '<div class="panel-header">' +
                 '<span class="panel-header-text">Rooms</span>' +

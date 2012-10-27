@@ -1,5 +1,5 @@
 var ContactPanelTemplate =
-    '<div class="panel-wrapper">' +
+    '<div class="panel-wrapper panel-wrapper-left">' +
         '<div class="panel">' +
             '<div class="panel-header">' +
                 '<span class="panel-header-text">Contacts</span>' +

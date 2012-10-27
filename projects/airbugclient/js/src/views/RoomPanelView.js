@@ -27,14 +27,19 @@ var RoomPanelView = Class.extend(MustacheView, {
     initialize: function() {
         var _this = this;
         this.collection.bind('add', function(roomModel) {
-            _this.processCollectionAdd(roomModel);
+            _this.handleCollectionAdd(roomModel);
         });
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Model Event Handlers
+    //-------------------------------------------------------------------------------
 
     /**
      * @param {ContactModel} roomModel
      */
-    processCollectionAdd: function(roomModel) {
+    handleCollectionAdd: function(roomModel) {
         var roomPanelItemView = new RoomPanelItemView({
             model: roomModel
         });

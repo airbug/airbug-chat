@@ -5,6 +5,7 @@
 //@Export('LoginPageNavView')
 
 //@Require('Class')
+//@Require('LoginPageEvent')
 //@Require('MustacheView')
 
 
@@ -26,7 +27,7 @@ var LoginPageNavView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Event Dispatchers
+    // View Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
@@ -35,13 +36,6 @@ var LoginPageNavView = Class.extend(MustacheView, {
      */
     handleSignupButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new Event(LoginPageNavView.EventTypes.NAVIGATE_TO_SIGNUP));
+        this.dispatchEvent(new LoginPageEvent(LoginPageEvent.EventTypes.NAVIGATE_TO_SIGNUP));
     }
 });
-
-/**
- * @enum {string}
- */
-LoginPageNavView.EventTypes = {
-    NAVIGATE_TO_SIGNUP: "LoginPageNavView:NavigateToSignup"
-};

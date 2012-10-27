@@ -23,7 +23,19 @@ var MustacheView = Class.extend(CarapaceView, {
      * @return {Element}
      */
     make: function() {
-        var data = this.model ? this.model.toJSON() : {};
+        var data = this.generateTemplateData();
         return $(Mustache.render(this.template, data));
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        return this.model ? this.model.toJSON() : {};
     }
 });

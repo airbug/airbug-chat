@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ContactPanelItemView')
+//@Export('ConversationPanelItemView')
 
 //@Require('Class')
-//@Require('ContactPanelEvent')
+//@require('ConversationPanelEvent')
 //@Require('MustacheView')
 
 
@@ -13,13 +13,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactPanelItemView = Class.extend(MustacheView, {
+var ConversationPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ContactPanelItemTemplate,
+    template: ConversationPanelItemTemplate,
 
     /**
      * @protected
@@ -28,8 +28,27 @@ var ContactPanelItemView = Class.extend(MustacheView, {
         this._super();
         var _this = this;
         this.$el.bind("click", function(event) {
-            _this.handleContactClick(event);
+            _this.handleConversationClick(event);
         });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data = this.model ? this.model.toJSON() : {};
+
+        //TODO BRN: This is a good unit test candidate.
+
+        if (data.unreadMessageCount > 99) {
+            data.unreadMessageCount = "99+";
+        }
+        return data;
     },
 
 
@@ -41,8 +60,8 @@ var ContactPanelItemView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleContactClick: function(event) {
+    handleConversationClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ContactPanelEvent(ContactPanelEvent.EventTypes.CONTACT_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new ConversationPanelEvent(ConversationPanelEvent.EventTypes.CONVERSATION_SELECTED, this.model.toJSON()));
     }
 });

@@ -27,7 +27,7 @@ var UserHomePageNavView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Event Dispatchers
+    // View Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
@@ -36,13 +36,7 @@ var UserHomePageNavView = Class.extend(MustacheView, {
      */
     handleAccountButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new Event(UserHomePageNavView.EventTypes.ACCOUNT_BUTTON_CLICKED));
+
+        //TODO BRN: Open up the drop down menu here
     }
 });
-
-/**
- * @enum {string}
- */
-UserHomePageNavView.EventTypes = {
-    ACCOUNT_BUTTON_CLICKED: "UserHomePageNavView:AccountButtonClicked"
-};

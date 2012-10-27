@@ -10,8 +10,9 @@
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('HeaderView')
-//@Require('SignupPageView')
+//@Require('SignupPageEvent')
 //@Require('SignupPageNavView')
+//@Require('SignupPageView')
 
 
 //-------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ var SignupController = Class.extend(CarapaceController, {
         headerView.addViewChild(signupPageNavView, '#header-right');
         applicationView.addViewChild(signupPageView, "#application");
 
-        signupPageNavView.addEventListener(SignupPageNavView.EventTypes.NAVIGATE_TO_LOGIN, this.hearNavigateToLoginEvent, this);
+        signupPageNavView.addEventListener(SignupPageEvent.EventTypes.NAVIGATE_TO_LOGIN, this.hearNavigateToLoginEvent, this);
 
         this.addView(headerView);
         this.addView(applicationView);

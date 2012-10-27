@@ -57,6 +57,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/templates/Application.template.js"></script>
         <script src="/templates/ContactPanel.template.js"></script>
         <script src="/templates/ContactPanelItem.template.js"></script>
+        <script src="/templates/ConversationPanel.template.js"></script>
+        <script src="/templates/ConversationPanelItem.template.js"></script>
         <script src="/templates/Header.template.js"></script>
         <script src="/templates/LoginPage.template.js"></script>
         <script src="/templates/LoginPageNav.template.js"></script>
@@ -69,8 +71,16 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/models/ContactModel.js"></script>
         <script src="/models/ContactCollection.js"></script>
+        <script src="/models/ConversationModel.js"></script>
+        <script src="/models/ConversationCollection.js"></script>
         <script src="/models/RoomModel.js"></script>
         <script src="/models/RoomCollection.js"></script>
+
+        <script src="/views/events/ContactPanelEvent.js"></script>
+        <script src="/views/events/ConversationPanelEvent.js"></script>
+        <script src="/views/events/LoginPageEvent.js"></script>
+        <script src="/views/events/RoomPanelEvent.js"></script>
+        <script src="/views/events/SignupPageEvent.js"></script>
 
         <script src="/views/MustacheView.js"></script>
         <script src="/views/ApplicationView.js"></script>
@@ -81,6 +91,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/SignupPageNavView.js"></script>
         <script src="/views/ContactPanelItemView.js"></script>
         <script src="/views/ContactPanelView.js"></script>
+        <script src="/views/ConversationPanelItemView.js"></script>
+        <script src="/views/ConversationPanelView.js"></script>
         <script src="/views/RoomPanelItemView.js"></script>
         <script src="/views/RoomPanelView.js"></script>
         <script src="/views/UserHomePageView.js"></script>
