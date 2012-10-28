@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationPanelEvent')
+//@Export('ChatPanelEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationPanelEvent = Class.extend(Event, {});
+var ChatPanelEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -22,6 +22,6 @@ var ConversationPanelEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-ConversationPanelEvent.EventTypes = {
-    CONVERSATION_SELECTED: "ConversationPanelEvent:ConversationSelected"
+ChatPanelEvent.EventTypes = {
+    CONVERSATION_SELECTED: "ChatPanelEvent:ChatSelected"
 };

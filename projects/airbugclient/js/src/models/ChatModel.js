@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationModel')
+//@Export('ChatModel')
 
 //@Require('CarapaceModel')
 //@Require('Class')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationModel = Class.extend(CarapaceModel, {
+var ChatModel = Class.extend(CarapaceModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation

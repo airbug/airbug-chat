@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationPanelItemView')
+//@Export('ChatPanelItemView')
 
 //@Require('Class')
-//@require('ConversationPanelEvent')
+//@require('ChatPanelEvent')
 //@Require('MustacheView')
 
 
@@ -13,13 +13,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationPanelItemView = Class.extend(MustacheView, {
+var ChatPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ConversationPanelItemTemplate,
+    template: ChatPanelItemTemplate,
 
     /**
      * @protected
@@ -28,7 +28,7 @@ var ConversationPanelItemView = Class.extend(MustacheView, {
         this._super();
         var _this = this;
         this.$el.bind("click", function(event) {
-            _this.handleConversationClick(event);
+            _this.handleChatClick(event);
         });
     },
 
@@ -60,8 +60,8 @@ var ConversationPanelItemView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleConversationClick: function(event) {
+    handleChatClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ConversationPanelEvent(ConversationPanelEvent.EventTypes.CONVERSATION_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new ChatPanelEvent(ChatPanelEvent.EventTypes.CONVERSATION_SELECTED, this.model.toJSON()));
     }
 });

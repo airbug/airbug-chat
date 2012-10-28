@@ -50,7 +50,7 @@ var LoginPageController = Class.extend(CarapaceController, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @protected
      */
     activate: function() {
         this._super();

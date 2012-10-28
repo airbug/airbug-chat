@@ -2,23 +2,22 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationCollection')
+//@Export('ChatRoomPageView')
 
-//@Require('CarapaceCollection')
+//@Require('ChatRoomPageTemplate')
 //@Require('Class')
-//@Require('ConversationModel')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationCollection = Class.extend(CarapaceCollection, {
-
-    model: ConversationModel
+var ChatRoomPageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceCollection Implementation
+    // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
+    template: ChatRoomPageTemplate
 });

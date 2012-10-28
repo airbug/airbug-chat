@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationPanelView')
+//@Export('ChatPanelView')
 
 //@Require('Class')
-//@Require('ConversationPanelItemView')
+//@Require('ChatPanelItemView')
 //@Require('MustacheView')
 
 
@@ -13,21 +13,21 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationPanelView = Class.extend(MustacheView, {
+var ChatPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ConversationPanelTemplate,
+    template: ChatPanelTemplate,
 
     /**
      *
      */
     initialize: function() {
         var _this = this;
-        this.collection.bind('add', function(conversationModel) {
-            _this.handleCollectionAdd(conversationModel);
+        this.collection.bind('add', function(chatModel) {
+            _this.handleCollectionAdd(chatModel);
         });
     },
 
@@ -37,12 +37,12 @@ var ConversationPanelView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {ConversationModel} conversationModel
+     * @param {ChatModel} chatModel
      */
-    handleCollectionAdd: function(conversationModel) {
-        var conversationPanelItemView = new ConversationPanelItemView({
-            model: conversationModel
+    handleCollectionAdd: function(chatModel) {
+        var chatPanelItemView = new ChatPanelItemView({
+            model: chatModel
         });
-        this.addViewChild(conversationPanelItemView, "#conversation-panel-body");
+        this.addViewChild(chatPanelItemView, "#chat-panel-body");
     }
 });

@@ -162,6 +162,7 @@ html, body {
 .button-wrapper {
     padding-top: 10px;
     padding-right: 15px;
+    padding-left: 15px;
 }
 
 .clickable-box {
@@ -215,11 +216,11 @@ html, body {
     float: left;
 }
 
-#centerrow {
+#userhomepage-centerrow {
     margin-left: 0px;
 }
 
-#rightrow {
+#userhomepage-rightrow {
     margin-left: 0px;
 }
 
@@ -289,7 +290,7 @@ html, body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#999999', endColorstr='#EFEFEF',GradientType=0 ); /* IE6-9 */
 }
 
-.conversation-unread-message-count {
+.chat-unread-message-count {
     left: 5px;
     top: 5px;
     position: absolute;
@@ -302,7 +303,7 @@ html, body {
     border-radius: 6px;
 }
 
-.conversation-name {
+.chat-name {
     font-size: 18px;
     font-weight: 400;
     line-height: 34px;
@@ -311,7 +312,7 @@ html, body {
     top: 2px;
 }
 
-.conversation-unread-message-preview {
+.chat-unread-message-preview {
     position: absolute;
     top: 34px;
     left: 5px;
@@ -326,19 +327,19 @@ html, body {
 }
 
 @media (min-width: 1200px) {
-    #centerrow {
+    #userhomepage-centerrow {
         width: 630px;
     }
 }
 
 @media (min-width: 980px) and (max-width: 1199px) {
-    #centerrow {
+    #userhomepage-centerrow {
         width: 500px;
     }
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
-    #centerrow {
+    #userhomepage-centerrow {
         width: 392px;
     }
 }
