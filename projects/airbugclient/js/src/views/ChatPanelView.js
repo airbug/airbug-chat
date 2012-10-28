@@ -4,8 +4,9 @@
 
 //@Export('ChatPanelView')
 
-//@Require('Class')
 //@Require('ChatPanelItemView')
+//@Require('ChatPanelTemplate')
+//@Require('Class')
 //@Require('MustacheView')
 
 

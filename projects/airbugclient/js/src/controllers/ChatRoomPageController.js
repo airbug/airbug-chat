@@ -9,6 +9,7 @@
 //@Require('AnnotateRoute')
 //@Require('ApplicationView')
 //@Require('CarapaceController')
+//@Require('ChatPanelEvent')
 //@Require('ChatRoomPageView')
 //@Require('Class')
 //@Require('ChatCollection')
@@ -18,6 +19,8 @@
 //@Require('HomeButtonEvent')
 //@Require('HomeButtonView')
 //@Require('RoomMemberCollection')
+//@Require('RoomMemberPanelEvent')
+//@Require('RoomMemberPanelView')
 
 
 //-------------------------------------------------------------------------------
@@ -61,25 +64,35 @@ var ChatRoomPageController = Class.extend(CarapaceController, {
         this._super();
 
         var chatCollection = new ChatCollection();
+        var roomMemberCollection = new RoomMemberCollection();
 
         var applicationView = new ApplicationView();
         var chatPanelView = new ChatPanelView({
             collection: chatCollection
+        });
+        var roomMemberPanelView = new RoomMemberPanelView({
+           collection: roomMemberCollection
         });
         var headerView = new HeaderView();
         var chatRoomPageView = new ChatRoomPageView();
         var homeButtonView = new HomeButtonView();
         var accountButtonView = new AccountButtonView();
 
+        chatPanelView.addEventListener(ChatPanelEvent.EventTypes.CHAT_SELECTED, this.hearChatSelectedEvent, this);
         homeButtonView.addEventListener(HomeButtonEvent.EventTypes.CLICKED, this.hearHomeButtonClickedEvent, this);
+        roomMemberPanelView.addEventListener(RoomMemberPanelEvent.EventTypes.ROOM_MEMBER_SELECTED, this.hearRoomMemberSelected, this);
 
         headerView.addViewChild(homeButtonView, '#header-left');
         headerView.addViewChild(accountButtonView, '#header-right');
+        chatRoomPageView.addViewChild(roomMemberPanelView, "#chatroompage-leftrow");
         chatRoomPageView.addViewChild(chatPanelView, "#chatroompage-rightrow");
         applicationView.addViewChild(chatRoomPageView, "#application");
 
         this.addView(headerView);
         this.addView(applicationView);
+
+        roomMemberCollection.add(new RoomMemberModel({uid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
+        roomMemberCollection.add(new RoomMemberModel({uid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
 
         chatCollection.add(new ChatModel({
             uid: "1aRtls0",
@@ -112,6 +125,7 @@ var ChatRoomPageController = Class.extend(CarapaceController, {
             }
         }));
 
+        this.addModel(roomMemberCollection);
         this.addModel(chatCollection);
     },
 
@@ -136,10 +150,35 @@ var ChatRoomPageController = Class.extend(CarapaceController, {
 
     /**
      * @private
+     * @param {ChatPanelEvent} event
+     */
+    hearChatSelectedEvent: function(event) {
+        var chat = event.getData();
+        var context = chat.context;
+        if (context.type === "contact") {
+            this.navigate("contact/" + context.uid, {trigger: true});
+        } else if (context.type === "room") {
+            this.navigate("room/" + context.uid, {trigger: true});
+        } else {
+            throw new Error("unrecognized chat context type");
+        }
+    },
+
+    /**
+     * @private
      * @param {Event} event
      */
     hearHomeButtonClickedEvent: function(event) {
         this.navigate("", {trigger: true});
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearRoomMemberSelected: function(event) {
+        var roomMember = event.getData();
+        this.navigate("contact/" + roomMember.uid, {trigger: true});
     }
 });
 annotate(ChatRoomPageController).with(

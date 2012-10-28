@@ -2,48 +2,48 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomPanelItemView')
+//@Export('RoomMemberPanelView')
 
 //@Require('Class')
+//@Require('RoomMemberPanelItemView')
+//@Require('RoomMemberPanelTemplate')
 //@Require('MustacheView')
-//@Require('RoomPanelEvent')
-//@Require('RoomPanelItemTemplate')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomPanelItemView = Class.extend(MustacheView, {
+var RoomMemberPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: RoomPanelItemTemplate,
+    template: RoomMemberPanelTemplate,
 
     /**
-     * @protected
+     *
      */
     initialize: function() {
-        this._super();
         var _this = this;
-        this.$el.bind("click", function(event) {
-            _this.handleRoomClick(event);
+        this.collection.bind('add', function(roomMemberModel) {
+            _this.handleCollectionAdd(roomMemberModel);
         });
     },
 
 
     //-------------------------------------------------------------------------------
-    // View Event Handlers
+    // Model Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param event
+     * @param {RoomMemberModel} roomMemberModel
      */
-    handleRoomClick: function(event) {
-        event.preventDefault();
-        this.dispatchEvent(new RoomPanelEvent(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.model.toJSON()));
+    handleCollectionAdd: function(roomMemberModel) {
+        var roomMemberPanelItemView = new RoomMemberPanelItemView({
+            model: roomMemberModel
+        });
+        this.addViewChild(roomMemberPanelItemView, "#room-member-panel-body");
     }
 });

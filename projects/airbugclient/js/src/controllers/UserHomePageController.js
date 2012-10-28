@@ -81,8 +81,8 @@ var UserHomePageController = Class.extend(CarapaceController, {
         var userHomePageView = new UserHomePageView();
         var accountButtonView = new AccountButtonView();
 
+        chatPanelView.addEventListener(ChatPanelEvent.EventTypes.CHAT_SELECTED, this.hearChatSelectedEvent, this);
         contactPanelView.addEventListener(ContactPanelEvent.EventTypes.CONTACT_SELECTED, this.hearContactSelectedEvent, this);
-        chatPanelView.addEventListener(ChatPanelEvent.EventTypes.CONVERSATION_SELECTED, this.hearChatSelectedEvent, this);
         roomPanelView.addEventListener(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.hearRoomSelectedEvent, this);
 
         headerView.addViewChild(accountButtonView, '#header-right');

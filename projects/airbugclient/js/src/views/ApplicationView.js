@@ -4,6 +4,7 @@
 
 //@Export('ApplicationView')
 
+//@Require('ApplicationTemplate')
 //@Require('Class')
 //@Require('MustacheView')
 

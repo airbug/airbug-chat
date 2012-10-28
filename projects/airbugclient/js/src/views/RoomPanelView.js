@@ -5,8 +5,9 @@
 //@Export('RoomPanelView')
 
 //@Require('Class')
-//@Require('RoomPanelItemView')
 //@Require('MustacheView')
+//@Require('RoomPanelItemView')
+//@Require('RoomPanelTemplate')
 
 
 //-------------------------------------------------------------------------------

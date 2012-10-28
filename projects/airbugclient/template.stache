@@ -65,6 +65,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/templates/HomeButton.template.js"></script>
         <script src="/templates/LoginButton.template.js"></script>
         <script src="/templates/LoginPage.template.js"></script>
+        <script src="/templates/RoomMemberPanel.template.js"></script>
+        <script src="/templates/RoomMemberPanelItem.template.js"></script>
         <script src="/templates/RoomPanel.template.js"></script>
         <script src="/templates/RoomPanelItem.template.js"></script>
         <script src="/templates/SignupButton.template.js"></script>
@@ -84,6 +86,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/events/ContactPanelEvent.js"></script>
         <script src="/views/events/HomeButtonEvent.js"></script>
         <script src="/views/events/LoginButtonEvent.js"></script>
+        <script src="/views/events/RoomMemberPanelEvent.js"></script>
         <script src="/views/events/RoomPanelEvent.js"></script>
         <script src="/views/events/SignupButtonEvent.js"></script>
 
@@ -99,6 +102,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/HomeButtonView.js"></script>
         <script src="/views/LoginButtonView.js"></script>
         <script src="/views/LoginPageView.js"></script>
+        <script src="/views/RoomMemberPanelItemView.js"></script>
+        <script src="/views/RoomMemberPanelView.js"></script>
         <script src="/views/RoomPanelItemView.js"></script>
         <script src="/views/RoomPanelView.js"></script>
         <script src="/views/SignupButtonView.js"></script>

@@ -4,6 +4,7 @@
 
 //@Export('AccountButtonView')
 
+//@Require('AccountButtonTemplate')
 //@Require('Class')
 //@Require('Event')
 //@Require('MustacheView')

@@ -183,6 +183,11 @@ html, body {
     left: 10px;
 }
 
+.room-member-name {
+    position: absolute;
+    left: 34px;
+}
+
 #header {
     width: 100%;
     height: 60px;
@@ -235,7 +240,7 @@ html, body {
     text-shadow: 0 1px 0 #222222;
 }
 
-.contact-status-indicator {
+.user-status-indicator {
     border-width: 1px;
     border-color: rgb(196, 196, 196);
     border-style: solid;
@@ -246,7 +251,7 @@ html, body {
     position: absolute;
 }
 
-.contact-status-indicator-available {
+.user-status-indicator-available {
     background-color: rgb(46, 191, 5); /* Old browsers */
     background: -moz-linear-gradient(top, rgb(46, 191, 5) 0%, rgb(217, 234, 211) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(46, 191, 5)), color-stop(100%,rgb(217, 234, 211))); /* Chrome,Safari4+ */
@@ -257,7 +262,7 @@ html, body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2EBF05', endColorstr='#D9EAD3',GradientType=0 ); /* IE6-9 */
 }
 
-.contact-status-indicator-away {
+.user-status-indicator-away {
     background-color: rgb(223, 216, 18);/* Old browsers */
     background: -moz-linear-gradient(top, rgb(223, 216, 18) 0%, rgb(255, 242, 204) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(223, 216, 18)), color-stop(100%,rgb(255, 242, 204))); /* Chrome,Safari4+ */
@@ -268,7 +273,7 @@ html, body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#DFD812', endColorstr='#FFF2CC',GradientType=0 ); /* IE6-9 */
 }
 
-.contact-status-indicator-dnd {
+.user-status-indicator-dnd {
     background-color: rgb(195, 30, 14);/* Old browsers */
     background: -moz-linear-gradient(top, rgb(195, 30, 14) 0%, rgb(244, 204, 204) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(195, 30, 14)), color-stop(100%,rgb(244, 204, 204))); /* Chrome,Safari4+ */
@@ -279,7 +284,7 @@ html, body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c31e0e', endColorstr='#F4CCCC',GradientType=0 ); /* IE6-9 */
 }
 
-.contact-status-indicator-offline {
+.user-status-indicator-offline {
     background-color: rgb(153, 153, 153); /* Old browsers */
     background: -moz-linear-gradient(top, rgb(153, 153, 153) 0%, rgb(239, 239, 239) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(153, 153, 153)), color-stop(100%,rgb(239, 239, 239))); /* Chrome,Safari4+ */

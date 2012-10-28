@@ -5,6 +5,7 @@
 //@Export('HeaderView')
 
 //@Require('Class')
+//@Require('HeaderTemplate')
 //@Require('MustacheView')
 
 

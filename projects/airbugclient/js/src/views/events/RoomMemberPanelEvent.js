@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatPanelEvent')
+//@Export('RoomMemberPanelEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatPanelEvent = Class.extend(Event, {});
+var RoomMemberPanelEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -22,6 +22,6 @@ var ChatPanelEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-ChatPanelEvent.EventTypes = {
-    CHAT_SELECTED: "ChatPanelEvent:ChatSelected"
+RoomMemberPanelEvent.EventTypes = {
+    ROOM_MEMBER_SELECTED: "RoomMemberPanelEvent:RoomMemberSelected"
 };

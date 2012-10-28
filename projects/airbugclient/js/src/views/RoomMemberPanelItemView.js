@@ -2,25 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomPanelItemView')
+//@Export('RoomMemberPanelItemView')
 
 //@Require('Class')
+//@Require('RoomMemberPanelItemTemplate')
+//@Require('RoomMemberPanelEvent')
 //@Require('MustacheView')
-//@Require('RoomPanelEvent')
-//@Require('RoomPanelItemTemplate')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomPanelItemView = Class.extend(MustacheView, {
+var RoomMemberPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: RoomPanelItemTemplate,
+    template: RoomMemberPanelItemTemplate,
 
     /**
      * @protected
@@ -29,7 +29,7 @@ var RoomPanelItemView = Class.extend(MustacheView, {
         this._super();
         var _this = this;
         this.$el.bind("click", function(event) {
-            _this.handleRoomClick(event);
+            _this.handleRoomMemberClick(event);
         });
     },
 
@@ -42,8 +42,8 @@ var RoomPanelItemView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleRoomClick: function(event) {
+    handleRoomMemberClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new RoomPanelEvent(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new RoomMemberPanelEvent(RoomMemberPanelEvent.EventTypes.ROOM_MEMBER_SELECTED, this.model.toJSON()));
     }
 });

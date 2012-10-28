@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('LoginButtonEvent')
+//@Require('LoginButtonTemplate')
 //@Require('MustacheView')
 
 

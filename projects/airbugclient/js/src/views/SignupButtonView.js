@@ -5,8 +5,9 @@
 //@Export('SignupButtonView')
 
 //@Require('Class')
-//@Require('SignupButtonEvent')
 //@Require('MustacheView')
+//@Require('SignupButtonEvent')
+//@Require('SignupButtonTemplate')
 
 
 //-------------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('ContactPanelItemView')
+//@Require('ContactPanelTemplate')
 //@Require('MustacheView')
 
 

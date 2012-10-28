@@ -5,6 +5,7 @@
 //@Export('ContactPanelItemView')
 
 //@Require('Class')
+//@Require('ContactPanelItemTemplate')
 //@Require('ContactPanelEvent')
 //@Require('MustacheView')
 

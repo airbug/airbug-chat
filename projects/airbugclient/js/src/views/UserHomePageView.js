@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('MustacheView')
+//@Require('UserHomePageTemplate')
 
 
 //-------------------------------------------------------------------------------

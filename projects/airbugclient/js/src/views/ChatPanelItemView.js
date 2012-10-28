@@ -4,8 +4,9 @@
 
 //@Export('ChatPanelItemView')
 
+//@Require('ChatPanelEvent')
+//@Require('ChatPanelItemTemplate')
 //@Require('Class')
-//@require('ChatPanelEvent')
 //@Require('MustacheView')
 
 
@@ -62,6 +63,6 @@ var ChatPanelItemView = Class.extend(MustacheView, {
      */
     handleChatClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ChatPanelEvent(ChatPanelEvent.EventTypes.CONVERSATION_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new ChatPanelEvent(ChatPanelEvent.EventTypes.CHAT_SELECTED, this.model.toJSON()));
     }
 });

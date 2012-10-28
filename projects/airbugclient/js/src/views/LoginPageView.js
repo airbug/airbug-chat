@@ -5,6 +5,7 @@
 //@Export('LoginPageView')
 
 //@Require('Class')
+//@Require('LoginPageTemplate')
 //@Require('MustacheView')
 
 
