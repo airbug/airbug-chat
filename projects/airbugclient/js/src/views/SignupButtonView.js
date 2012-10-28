@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginPageNavView')
+//@Export('SignupButtonView')
 
 //@Require('Class')
-//@Require('LoginPageEvent')
+//@Require('SignupButtonEvent')
 //@Require('MustacheView')
 
 
@@ -13,13 +13,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageNavView = Class.extend(MustacheView, {
+var SignupButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: LoginPageNavTemplate,
+    template: SignupButtonTemplate,
 
     events: {
         "click #signup-button": "handleSignupButtonClick"
@@ -36,6 +36,6 @@ var LoginPageNavView = Class.extend(MustacheView, {
      */
     handleSignupButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new LoginPageEvent(LoginPageEvent.EventTypes.NAVIGATE_TO_SIGNUP));
+        this.dispatchEvent(new SignupButtonEvent(SignupButtonEvent.EventTypes.CLICKED));
     }
 });

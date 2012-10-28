@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupController')
+//@Export('SignupPageController')
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
@@ -10,8 +10,8 @@
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('HeaderView')
-//@Require('SignupPageEvent')
-//@Require('SignupPageNavView')
+//@Require('LoginButtonEvent')
+//@Require('LoginButtonView')
 //@Require('SignupPageView')
 
 
@@ -28,7 +28,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupController = Class.extend(CarapaceController, {
+var SignupPageController = Class.extend(CarapaceController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -58,12 +58,12 @@ var SignupController = Class.extend(CarapaceController, {
         var headerView = new HeaderView();
         var applicationView = new ApplicationView();
         var signupPageView = new SignupPageView();
-        var signupPageNavView = new SignupPageNavView();
+        var loginButtonView = new LoginButtonView();
 
-        headerView.addViewChild(signupPageNavView, '#header-right');
+        headerView.addViewChild(loginButtonView, '#header-right');
         applicationView.addViewChild(signupPageView, "#application");
 
-        signupPageNavView.addEventListener(SignupPageEvent.EventTypes.NAVIGATE_TO_LOGIN, this.hearNavigateToLoginEvent, this);
+        loginButtonView.addEventListener(LoginButtonEvent.EventTypes.CLICKED, this.hearLoginButtonClickedEvent, this);
 
         this.addView(headerView);
         this.addView(applicationView);
@@ -90,12 +90,12 @@ var SignupController = Class.extend(CarapaceController, {
      * @private
      * @param {Event} event
      */
-    hearNavigateToLoginEvent: function(event) {
+    hearLoginButtonClickedEvent: function(event) {
         this.navigate("login", {trigger: true});
     }
 });
-annotate(SignupController).with(
+annotate(SignupPageController).with(
     annotation("Controller").params(
-        route("signup").to(SignupController.prototype.routeSignup)
+        route("signup").to(SignupPageController.prototype.routeSignup)
     )
 );

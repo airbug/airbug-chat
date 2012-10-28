@@ -2,10 +2,11 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('UserHomePageNavView')
+//@Export('LoginButtonView')
 
 //@Require('Class')
 //@Require('Event')
+//@Require('LoginButtonEvent')
 //@Require('MustacheView')
 
 
@@ -13,16 +14,16 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomePageNavView = Class.extend(MustacheView, {
+var LoginButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: UserHomePageNavTemplate,
+    template: LoginButtonTemplate,
 
     events: {
-        "click #account-button": "handleAccountButtonClick"
+        "click #login-button": "handleLoginButtonClick"
     },
 
 
@@ -34,9 +35,8 @@ var UserHomePageNavView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleAccountButtonClick: function(event) {
+    handleLoginButtonClick: function(event) {
         event.preventDefault();
-
-        //TODO BRN: Open up the drop down menu here
+        this.dispatchEvent(new LoginButtonEvent(LoginButtonEvent.EventTypes.CLICKED));
     }
 });

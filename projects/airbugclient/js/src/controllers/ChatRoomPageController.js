@@ -2,25 +2,19 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('UserHomeController')
+//@Export('ChatRoomPageController')
 
+//@Require('AccountButtonView')
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationView')
 //@Require('CarapaceController')
+//@Require('ChatRoomPageView')
 //@Require('Class')
-//@Require('ContactCollection')
-//@Require('ContactPanelEvent')
-//@Require('ContactPanelView')
 //@Require('ConversationCollection')
 //@Require('ConversationPanelEvent')
 //@Require('ConversationPanelView')
 //@Require('HeaderView')
-//@Require('RoomCollection')
-//@Require('RoomPanelEvent')
-//@Require('RoomPanelView')
-//@Require('UserHomePageNavView')
-//@Require('UserHomePageView')
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +30,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomeController = Class.extend(CarapaceController, {
+var ChatRoomPageController = Class.extend(CarapaceController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -63,29 +57,19 @@ var UserHomeController = Class.extend(CarapaceController, {
     activate: function() {
         this._super();
 
-        var contactCollection = new ContactCollection();
         var conversationCollection = new ConversationCollection();
-        var roomCollection = new RoomCollection();
 
         var applicationView = new ApplicationView();
-        var contactPanelView = new ContactPanelView({
-            collection: contactCollection
-        });
         var conversationPanelView = new ConversationPanelView({
             collection: conversationCollection
         });
-        var roomPanelView = new RoomPanelView({
-            collection: roomCollection
-        });
         var headerView = new HeaderView();
-        var userHomePageView = new UserHomePageView();
-        var userHomePageNavView = new UserHomePageNavView();
+        var chatRoomPageView = new ChatRoomPageView();
+        var chatRoomPageNavView = new ChatRoomPageNavView();
 
-        contactPanelView.addEventListener(ContactPanelEvent.EventTypes.CONTACT_SELECTED, this.hearContactSelectedEvent, this);
         conversationPanelView.addEventListener(ConversationPanelEvent.EventTypes.CONVERSATION_SELECTED, this.hearConversationSelectedEvent, this);
-        roomPanelView.addEventListener(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.hearRoomSelectedEvent, this);
 
-        headerView.addViewChild(userHomePageNavView, '#header-right');
+        headerView.addViewChild(chatRoomPageNavView, '#header-right');
         userHomePageView.addViewChild(contactPanelView, "#leftrow");
         userHomePageView.addViewChild(conversationPanelView, "#centerrow");
         userHomePageView.addViewChild(roomPanelView, "#rightrow");
@@ -191,8 +175,8 @@ var UserHomeController = Class.extend(CarapaceController, {
         this.navigate("room/" + room.uid, {trigger: true});
     }
 });
-annotate(UserHomeController).with(
+annotate(UserHomePageController).with(
     annotation("Controller").params(
-        route("").to(UserHomeController.prototype.routeUserHome)
+        route("").to(UserHomePageController.prototype.routeUserHome)
     )
 );

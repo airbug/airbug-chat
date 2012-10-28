@@ -2,28 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupPageNavView')
+//@Export('AccountButtonView')
 
 //@Require('Class')
 //@Require('Event')
 //@Require('MustacheView')
-//@Require('SignupPageEvent')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageNavView = Class.extend(MustacheView, {
+var AccountButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: SignupPageNavTemplate,
+    template: AccountButtonTemplate,
 
     events: {
-        "click #login-button": "handleLoginButtonClick"
+        "click #account-button": "handleAccountButtonClick"
     },
 
 
@@ -35,8 +34,9 @@ var SignupPageNavView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleLoginButtonClick: function(event) {
+    handleAccountButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new SignupPageEvent(SignupPageEvent.EventTypes.NAVIGATE_TO_LOGIN));
+
+        //TODO BRN: Open up the drop down menu here
     }
 });

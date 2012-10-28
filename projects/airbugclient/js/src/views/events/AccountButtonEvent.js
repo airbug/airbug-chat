@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupPageEvent')
+//@Export('AccountButtonEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageEvent = Class.extend(Event, {});
+var AccountButtonEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -22,6 +22,6 @@ var SignupPageEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-SignupPageEvent.EventTypes = {
-    NAVIGATE_TO_LOGIN: "SignupPageEvent:NavigateToLogin"
+AccountButtonEvent.EventTypes = {
+    CLICKED: "AccountButtonEvent:Clicked"
 };

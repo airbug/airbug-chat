@@ -54,20 +54,20 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/view/CarapaceView.js"></script>
         <script src="/Carapace.js"></script>
 
+        <script src="/templates/AccountButton.template.js"></script>
         <script src="/templates/Application.template.js"></script>
         <script src="/templates/ContactPanel.template.js"></script>
         <script src="/templates/ContactPanelItem.template.js"></script>
         <script src="/templates/ConversationPanel.template.js"></script>
         <script src="/templates/ConversationPanelItem.template.js"></script>
         <script src="/templates/Header.template.js"></script>
+        <script src="/templates/LoginButton.template.js"></script>
         <script src="/templates/LoginPage.template.js"></script>
-        <script src="/templates/LoginPageNav.template.js"></script>
         <script src="/templates/RoomPanel.template.js"></script>
         <script src="/templates/RoomPanelItem.template.js"></script>
+        <script src="/templates/SignupButton.template.js"></script>
         <script src="/templates/SignupPage.template.js"></script>
-        <script src="/templates/SignupPageNav.template.js"></script>
         <script src="/templates/UserHomePage.template.js"></script>
-        <script src="/templates/UserHomePageNav.template.js"></script>
 
         <script src="/models/ContactModel.js"></script>
         <script src="/models/ContactCollection.js"></script>
@@ -78,29 +78,29 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/views/events/ContactPanelEvent.js"></script>
         <script src="/views/events/ConversationPanelEvent.js"></script>
-        <script src="/views/events/LoginPageEvent.js"></script>
+        <script src="/views/events/LoginButtonEvent.js"></script>
         <script src="/views/events/RoomPanelEvent.js"></script>
-        <script src="/views/events/SignupPageEvent.js"></script>
+        <script src="/views/events/SignupButtonEvent.js"></script>
 
         <script src="/views/MustacheView.js"></script>
+        <script src="/views/AccountButtonView.js"></script>
         <script src="/views/ApplicationView.js"></script>
         <script src="/views/HeaderView.js"></script>
-        <script src="/views/LoginPageView.js"></script>
-        <script src="/views/LoginPageNavView.js"></script>
-        <script src="/views/SignupPageView.js"></script>
-        <script src="/views/SignupPageNavView.js"></script>
         <script src="/views/ContactPanelItemView.js"></script>
         <script src="/views/ContactPanelView.js"></script>
         <script src="/views/ConversationPanelItemView.js"></script>
         <script src="/views/ConversationPanelView.js"></script>
+        <script src="/views/LoginButtonView.js"></script>
+        <script src="/views/LoginPageView.js"></script>
         <script src="/views/RoomPanelItemView.js"></script>
         <script src="/views/RoomPanelView.js"></script>
+        <script src="/views/SignupButtonView.js"></script>
+        <script src="/views/SignupPageView.js"></script>
         <script src="/views/UserHomePageView.js"></script>
-        <script src="/views/UserHomePageNavView.js"></script>
 
         <script src="/controllers/LoginPageController.js"></script>
-        <script src="/controllers/SignupController.js"></script>
-        <script src="/controllers/UserHomeController.js"></script>
+        <script src="/controllers/SignupPageController.js"></script>
+        <script src="/controllers/UserHomePageController.js"></script>
 
         <script src="/AirBugApplication.js"></script>
     </body>

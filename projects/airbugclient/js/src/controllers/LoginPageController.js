@@ -10,9 +10,9 @@
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('HeaderView')
-//@Require('LoginPageEvent')
-//@Require('LoginPageNavView')
 //@Require('LoginPageView')
+//@Require('SignupButtonEvent')
+//@Require('SignupButtonView')
 
 
 //-------------------------------------------------------------------------------
@@ -58,12 +58,12 @@ var LoginPageController = Class.extend(CarapaceController, {
         var headerView = new HeaderView();
         var applicationView = new ApplicationView();
         var loginPageView = new LoginPageView();
-        var loginPageNavView = new LoginPageNavView();
+        var signupButtonView = new SignupButtonView();
 
-        headerView.addViewChild(loginPageNavView, '#header-right');
+        headerView.addViewChild(signupButtonView, '#header-right');
         applicationView.addViewChild(loginPageView, "#application");
 
-        loginPageNavView.addEventListener(LoginPageEvent.EventTypes.NAVIGATE_TO_SIGNUP, this.hearNavigateToSignupEvent, this);
+        signupButtonView.addEventListener(SignupButtonEvent.EventTypes.CLICKED, this.hearSignupButtonClickedEvent, this);
 
         this.addView(headerView);
         this.addView(applicationView);
@@ -90,7 +90,7 @@ var LoginPageController = Class.extend(CarapaceController, {
      * @private
      * @param {Event} event
      */
-    hearNavigateToSignupEvent: function(event) {
+    hearSignupButtonClickedEvent: function(event) {
         this.navigate("signup", {trigger: true});
     }
 });
