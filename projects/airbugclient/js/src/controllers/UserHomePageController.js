@@ -14,8 +14,8 @@
 //@Require('ContactPanelEvent')
 //@Require('ContactPanelView')
 //@Require('ChatCollection')
-//@Require('ChatPanelEvent')
-//@Require('ChatPanelView')
+//@Require('ChatListPanelEvent')
+//@Require('ChatListPanelView')
 //@Require('HeaderView')
 //@Require('RoomCollection')
 //@Require('RoomPanelEvent')
@@ -50,6 +50,24 @@ var UserHomePageController = Class.extend(CarapaceController, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ContactCollection}
+         */
+        this.contactCollection = null;
+
+        /**
+         * @protected
+         * @type {ChatCollection}
+         */
+        this.chatCollection = null;
+
+        /**
+         * @protected
+         * @type {RoomCollection}
+         */
+        this.roomCollection = null;
     },
 
 
@@ -63,27 +81,39 @@ var UserHomePageController = Class.extend(CarapaceController, {
     activate: function() {
         this._super();
 
-        var contactCollection = new ContactCollection();
-        var chatCollection = new ChatCollection();
-        var roomCollection = new RoomCollection();
+
+        // Create Models
+        //-------------------------------------------------------------------------------
+
+        this.contactCollection = new ContactCollection();
+        this.chatCollection = new ChatCollection();
+        this.roomCollection = new RoomCollection();
+
+        this.addModel(this.contactCollection);
+        this.addModel(this.chatCollection);
+        this.addModel(this.roomCollection);
+
+
+        // Create Views
+        //-------------------------------------------------------------------------------
 
         var applicationView = new ApplicationView();
+        var headerView = new HeaderView();
         var contactPanelView = new ContactPanelView({
-            collection: contactCollection
+            collection: this.contactCollection
         });
-        var chatPanelView = new ChatPanelView({
-            collection: chatCollection
+        var chatPanelView = new ChatListPanelView({
+            collection: this.chatCollection
         });
         var roomPanelView = new RoomPanelView({
-            collection: roomCollection
+            collection: this.roomCollection
         });
-        var headerView = new HeaderView();
         var userHomePageView = new UserHomePageView();
         var accountButtonView = new AccountButtonView();
 
-        chatPanelView.addEventListener(ChatPanelEvent.EventTypes.CHAT_SELECTED, this.hearChatSelectedEvent, this);
-        contactPanelView.addEventListener(ContactPanelEvent.EventTypes.CONTACT_SELECTED, this.hearContactSelectedEvent, this);
-        roomPanelView.addEventListener(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.hearRoomSelectedEvent, this);
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
 
         headerView.addViewChild(accountButtonView, '#header-right');
         userHomePageView.addViewChild(contactPanelView, "#userhomepage-leftrow");
@@ -91,53 +121,30 @@ var UserHomePageController = Class.extend(CarapaceController, {
         userHomePageView.addViewChild(roomPanelView, "#userhomepage-rightrow");
         applicationView.addViewChild(userHomePageView, "#application");
 
+
+        // Initialize View Listeners
+        //-------------------------------------------------------------------------------
+
+        chatPanelView.addEventListener(ChatListPanelEvent.EventTypes.CHAT_SELECTED, this.hearChatSelectedEvent, this);
+        contactPanelView.addEventListener(ContactPanelEvent.EventTypes.CONTACT_SELECTED, this.hearContactSelectedEvent, this);
+        roomPanelView.addEventListener(RoomPanelEvent.EventTypes.ROOM_SELECTED, this.hearRoomSelectedEvent, this);
+
+
+        // Start the Views
+        //-------------------------------------------------------------------------------
+
         this.addView(headerView);
         this.addView(applicationView);
+    },
 
-
-        //TEST
-        contactCollection.add(new ContactModel({uid: "aN9o234", firstName: "Tim", lastName: "Pote", status: "away"}));
-        contactCollection.add(new ContactModel({uid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
-        contactCollection.add(new ContactModel({uid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
-        contactCollection.add(new ContactModel({uid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
-
-        chatCollection.add(new ChatModel({
-            uid: "1aRtls0",
-            name: "Tim Pote",
-            unreadMessageCount: 4,
-            unreadMessagePreview: "Hey bro!",
-            context: {
-                type: "contact",
-                uid: "aN9o234"
-            }
-        }));
-        chatCollection.add(new ChatModel({
-            uid: "bn6LPsd",
-            name: "airbug Company Room",
-            unreadMessageCount: 20,
-            unreadMessagePreview:"Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
-            context: {
-                type: "room",
-                uid: "g13Dl0s"
-            }
-        }));
-        chatCollection.add(new ChatModel({
-            uid: "PLn865D",
-            name: "airbug Dev Room",
-            unreadMessageCount: 105,
-            unreadMessagePreview: "Brian: Can someone checkout bug air-542?",
-            context: {
-                type: "room",
-                uid: "nb0psdf"
-            }
-        }));
-
-        roomCollection.add(new RoomModel({uid: "g13Dl0s", name: "airbug Company Room"}));
-        roomCollection.add(new RoomModel({uid: "nb0psdf", name: "airbug Dev Room"}));
-
-        this.addModel(contactCollection);
-        this.addModel(chatCollection);
-        this.addModel(roomCollection);
+    /**
+     * @protected
+     */
+    deactivate: function() {
+        this._super();
+        this.contactCollection = null;
+        this.chatCollection = null;
+        this.roomCollection = null;
     },
 
 
@@ -149,7 +156,47 @@ var UserHomePageController = Class.extend(CarapaceController, {
      *
      */
     routeUserHome: function() {
-        // Is there anything we need to do here?
+        //TODO BRN:
+
+        //TEST
+        this.contactCollection.add(new ContactModel({uid: "aN9o234", firstName: "Tim", lastName: "Pote", status: "away"}));
+        this.contactCollection.add(new ContactModel({uid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
+        this.contactCollection.add(new ContactModel({uid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
+        this.contactCollection.add(new ContactModel({uid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
+
+        this.chatCollection.add(new ChatModel({
+            uid: "1aRtls0",
+            name: "Tim Pote",
+            unreadMessageCount: 4,
+            unreadMessagePreview: "Hey bro!",
+            context: {
+                type: "contact",
+                uid: "aN9o234"
+            }
+        }));
+        this.chatCollection.add(new ChatModel({
+            uid: "bn6LPsd",
+            name: "airbug Company Room",
+            unreadMessageCount: 20,
+            unreadMessagePreview:"Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
+            context: {
+                type: "room",
+                uid: "g13Dl0s"
+            }
+        }));
+        this.chatCollection.add(new ChatModel({
+            uid: "PLn865D",
+            name: "airbug Dev Room",
+            unreadMessageCount: 105,
+            unreadMessagePreview: "Brian: Can someone checkout bug air-542?",
+            context: {
+                type: "room",
+                uid: "nb0psdf"
+            }
+        }));
+
+        this.roomCollection.add(new RoomModel({uid: "g13Dl0s", name: "airbug Company Room"}));
+        this.roomCollection.add(new RoomModel({uid: "nb0psdf", name: "airbug Dev Room"}));
     },
 
 
@@ -168,7 +215,7 @@ var UserHomePageController = Class.extend(CarapaceController, {
 
     /**
      * @private
-     * @param {ChatPanelEvent} event
+     * @param {ChatListPanelEvent} event
      */
     hearChatSelectedEvent: function(event) {
         var chat = event.getData();

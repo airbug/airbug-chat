@@ -2,22 +2,26 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('HomeButtonView')
+//@Export('ButtonViewEvent')
 
-//@Require('ButtonView')
 //@Require('Class')
-//@Require('HomeButtonTemplate')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HomeButtonView = Class.extend(ButtonView, {
+var ButtonViewEvent = Class.extend(Event, {});
 
-    //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
-    //-------------------------------------------------------------------------------
 
-    template: HomeButtonTemplate
-});
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+ButtonViewEvent.EventTypes = {
+    CLICKED: "ButtonViewEvent:Clicked"
+};

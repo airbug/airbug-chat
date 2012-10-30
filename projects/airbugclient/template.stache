@@ -56,9 +56,11 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/templates/AccountButton.template.js"></script>
         <script src="/templates/Application.template.js"></script>
-        <script src="/templates/ChatPanel.template.js"></script>
-        <script src="/templates/ChatPanelItem.template.js"></script>
+        <script src="/templates/Button.template.js"></script>
+        <script src="/templates/ChatListPanel.template.js"></script>
+        <script src="/templates/ChatListPanelItem.template.js"></script>
         <script src="/templates/ChatRoomPage.template.js"></script>
+        <script src="/templates/ChatRoomTitlePanel.template.js"></script>
         <script src="/templates/ContactPanel.template.js"></script>
         <script src="/templates/ContactPanelItem.template.js"></script>
         <script src="/templates/Header.template.js"></script>
@@ -82,20 +84,21 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/models/RoomModel.js"></script>
         <script src="/models/RoomCollection.js"></script>
 
-        <script src="/views/events/ChatPanelEvent.js"></script>
-        <script src="/views/events/ContactPanelEvent.js"></script>
-        <script src="/views/events/HomeButtonEvent.js"></script>
-        <script src="/views/events/LoginButtonEvent.js"></script>
-        <script src="/views/events/RoomMemberPanelEvent.js"></script>
-        <script src="/views/events/RoomPanelEvent.js"></script>
-        <script src="/views/events/SignupButtonEvent.js"></script>
+        <script src="/views/events/ButtonViewEvent.js"></script>
+        <script src="/views/events/ListViewEvent.js"></script>
 
         <script src="/views/MustacheView.js"></script>
+        <script src="/views/ButtonView.js"></script>
+        <script src="/views/ListView.js"></script>
+        <script src="/views/PageView.js"></script>
+        <script src="/views/PanelView.js"></script>
+
         <script src="/views/AccountButtonView.js"></script>
         <script src="/views/ApplicationView.js"></script>
-        <script src="/views/ChatPanelItemView.js"></script>
-        <script src="/views/ChatPanelView.js"></script>
+        <script src="/views/ChatListPanelItemView.js"></script>
+        <script src="/views/ChatListPanelView.js"></script>
         <script src="/views/ChatRoomPageView.js"></script>
+        <script src="/views/ChatRoomTitlePanelView.js"></script>
         <script src="/views/ContactPanelItemView.js"></script>
         <script src="/views/ContactPanelView.js"></script>
         <script src="/views/HeaderView.js"></script>

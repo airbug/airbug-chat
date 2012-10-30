@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AccountButtonEvent')
+//@Export('ChatListPanelEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AccountButtonEvent = Class.extend(Event, {});
+var ChatListPanelEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -22,6 +22,6 @@ var AccountButtonEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-AccountButtonEvent.EventTypes = {
-    CLICKED: "AccountButtonEvent:Clicked"
+ChatListPanelEvent.EventTypes = {
+    CHAT_SELECTED: "ChatListPanelEvent:ChatSelected"
 };

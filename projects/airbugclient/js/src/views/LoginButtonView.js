@@ -4,40 +4,20 @@
 
 //@Export('LoginButtonView')
 
+//@Require('ButtonView')
 //@Require('Class')
-//@Require('Event')
-//@Require('LoginButtonEvent')
 //@Require('LoginButtonTemplate')
-//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginButtonView = Class.extend(MustacheView, {
+var LoginButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: LoginButtonTemplate,
-
-    events: {
-        "click #login-button": "handleLoginButtonClick"
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // View Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param event
-     */
-    handleLoginButtonClick: function(event) {
-        event.preventDefault();
-        this.dispatchEvent(new LoginButtonEvent(LoginButtonEvent.EventTypes.CLICKED));
-    }
+    template: LoginButtonTemplate
 });

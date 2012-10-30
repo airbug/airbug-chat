@@ -2,12 +2,12 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatRoomPageController')
+//@Export('ChatRoomPageContainer')
 
 //@Require('AccountButtonView')
 //@Require('Annotate')
 //@Require('AnnotateRoute')
-//@Require('ApplicationController')
+//@Require('ApplicationContainer')
 //@Require('ApplicationView')
 //@Require('ButtonViewEvent')
 //@Require('ChatModel')
@@ -25,19 +25,10 @@
 
 
 //-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
-
-
-//-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatRoomPageController = Class.extend(ApplicationController, {
+var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -86,13 +77,13 @@ var ChatRoomPageController = Class.extend(ApplicationController, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
     /**
      * @protected
      */
-    activate: function() {
+    createContainer: function() {
         this._super();
 
         // Create Models
@@ -112,17 +103,15 @@ var ChatRoomPageController = Class.extend(ApplicationController, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        var accountButtonView = new AccountButtonView();
-        var applicationView = new ApplicationView();
+
         var chatRoomPageView = new ChatRoomPageView({
             chatCollection: this.chatCollection,
             chatModel: this.chatModel,
             roomMemberCollection: this.roomMemberCollection,
             roomModel: this.roomModel
         });
-        var headerView = new HeaderView();
         var homeButtonView = new HomeButtonView();
-        
+
 
 
         // Wire Up Views

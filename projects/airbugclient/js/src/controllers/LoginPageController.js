@@ -7,11 +7,11 @@
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationView')
+//@Require('ButtonViewEvent')
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('HeaderView')
 //@Require('LoginPageView')
-//@Require('SignupButtonEvent')
 //@Require('SignupButtonView')
 
 
@@ -63,7 +63,7 @@ var LoginPageController = Class.extend(CarapaceController, {
         headerView.addViewChild(signupButtonView, '#header-right');
         applicationView.addViewChild(loginPageView, "#application");
 
-        signupButtonView.addEventListener(SignupButtonEvent.EventTypes.CLICKED, this.hearSignupButtonClickedEvent, this);
+        signupButtonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearSignupButtonClickedEvent, this);
 
         this.addView(headerView);
         this.addView(applicationView);

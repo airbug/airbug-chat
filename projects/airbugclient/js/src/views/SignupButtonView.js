@@ -4,9 +4,8 @@
 
 //@Export('SignupButtonView')
 
+//@Require('ButtonView')
 //@Require('Class')
-//@Require('MustacheView')
-//@Require('SignupButtonEvent')
 //@Require('SignupButtonTemplate')
 
 
@@ -14,29 +13,11 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupButtonView = Class.extend(MustacheView, {
+var SignupButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: SignupButtonTemplate,
-
-    events: {
-        "click #signup-button": "handleSignupButtonClick"
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // View Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param event
-     */
-    handleSignupButtonClick: function(event) {
-        event.preventDefault();
-        this.dispatchEvent(new SignupButtonEvent(SignupButtonEvent.EventTypes.CLICKED));
-    }
+    template: SignupButtonTemplate
 });

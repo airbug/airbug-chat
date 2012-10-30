@@ -2,17 +2,14 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupButtonEvent')
-
-//@Require('Class')
-//@Require('Event')
+//@Export('NavigationMessage')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupButtonEvent = Class.extend(Event, {});
+var NavigationMessage = {};
 
 
 //-------------------------------------------------------------------------------
@@ -22,6 +19,6 @@ var SignupButtonEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-SignupButtonEvent.EventTypes = {
-    CLICKED: "SignupButtonEvent:Clicked"
+NavigationMessage.MessageTopics = {
+    NAVIGATE: "NavigationMessage:Navigate"
 };

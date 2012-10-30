@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatPanelItemView')
+//@Export('ButtonView')
 
-//@Require('ChatPanelEvent')
-//@Require('ChatPanelItemTemplate')
+//@Require('ButtonTemplate')
+//@Require('ButtonViewEvent')
 //@Require('Class')
 //@Require('MustacheView')
 
@@ -14,13 +14,21 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatPanelItemView = Class.extend(MustacheView, {
+var ButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ChatPanelItemTemplate,
+    template: HomeButtonTemplate,
+
+    /**
+     * @protected
+     */
+    deinitialize: function() {
+        this._super();
+        this.$el.find('button-' + this.cid).unbind();
+    },
 
     /**
      * @protected
@@ -28,28 +36,9 @@ var ChatPanelItemView = Class.extend(MustacheView, {
     initialize: function() {
         this._super();
         var _this = this;
-        this.$el.bind("click", function(event) {
-            _this.handleChatClick(event);
-        });
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data = this.model ? this.model.toJSON() : {};
-
-        //TODO BRN: This is a good unit test candidate.
-
-        if (data.unreadMessageCount > 99) {
-            data.unreadMessageCount = "99+";
-        }
-        return data;
+        this.$el.find('#button-' + this.cid).bind('click', function(event) {
+            _this.handleButtonClick(event);
+        })
     },
 
 
@@ -61,8 +50,8 @@ var ChatPanelItemView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleChatClick: function(event) {
+    handleButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ChatPanelEvent(ChatPanelEvent.EventTypes.CHAT_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventTypes.CLICKED));
     }
 });

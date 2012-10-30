@@ -5,39 +5,20 @@
 //@Export('AccountButtonView')
 
 //@Require('AccountButtonTemplate')
+//@Require('ButtonView')
 //@Require('Class')
-//@Require('Event')
-//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AccountButtonView = Class.extend(MustacheView, {
+var AccountButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: AccountButtonTemplate,
+    template: AccountButtonTemplate
 
-    events: {
-        "click #account-button": "handleAccountButtonClick"
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // View Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param event
-     */
-    handleAccountButtonClick: function(event) {
-        event.preventDefault();
-
-        //TODO BRN: Open up the drop down menu here
-    }
 });

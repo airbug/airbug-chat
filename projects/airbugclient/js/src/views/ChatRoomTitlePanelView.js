@@ -2,10 +2,9 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatPanelView')
+//@Export('ChatRoomTitlePanelView')
 
-//@Require('ChatPanelItemView')
-//@Require('ChatPanelTemplate')
+//@Require('ChatRoomTitlePanelTemplate')
 //@Require('Class')
 //@Require('MustacheView')
 
@@ -14,36 +13,25 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatPanelView = Class.extend(MustacheView, {
+var ChatRoomTitlePanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ChatPanelTemplate,
+    template: ChatRoomTitlePanelTemplate,
 
     /**
      *
      */
     initialize: function() {
         var _this = this;
-        this.collection.bind('add', function(chatModel) {
-            _this.handleCollectionAdd(chatModel);
-        });
-    },
+        //TODO BRN: Add listeners to the model for updates to the RoomModel (such as the name of the room)
+    }
 
 
     //-------------------------------------------------------------------------------
     // Model Event Handlers
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {ChatModel} chatModel
-     */
-    handleCollectionAdd: function(chatModel) {
-        var chatPanelItemView = new ChatPanelItemView({
-            model: chatModel
-        });
-        this.addViewChild(chatPanelItemView, "#chat-panel-body");
-    }
 });

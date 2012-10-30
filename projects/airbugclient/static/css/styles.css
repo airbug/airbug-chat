@@ -144,6 +144,9 @@ html, body {
     line-height: 34px;
     font-size: 16px;
     font-weight: 200;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .form-wrapper {
@@ -181,11 +184,13 @@ html, body {
 .room-name {
     position: absolute;
     left: 10px;
+    right: 5px;
 }
 
 .room-member-name {
     position: absolute;
     left: 34px;
+    right: 5px;
 }
 
 #header {
@@ -314,6 +319,7 @@ html, body {
     line-height: 34px;
     position: absolute;
     left: 5px;
+    right: 5px;
     top: 2px;
 }
 
@@ -326,9 +332,6 @@ html, body {
     font-size: 15px;
     font-weight: 200;
     line-height: 34px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 @media (min-width: 1200px) {

@@ -2,22 +2,23 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('HomeButtonView')
+//@Export('ChatMessageCollection')
 
-//@Require('ButtonView')
+//@Require('CarapaceCollection')
 //@Require('Class')
-//@Require('HomeButtonTemplate')
+//@Require('ChatMessageModel')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HomeButtonView = Class.extend(ButtonView, {
+var ChatMessageCollection = Class.extend(CarapaceCollection, {
+
+    model: ChatMessageModel
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // CarapaceCollection Implementation
     //-------------------------------------------------------------------------------
 
-    template: HomeButtonTemplate
 });

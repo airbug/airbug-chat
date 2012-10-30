@@ -2,42 +2,48 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('MustacheView')
+//@Export('ChatListPanelView')
 
-//@Require('CarapaceView')
+//@Require('ChatListPanelItemView')
+//@Require('ChatListPanelTemplate')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MustacheView = Class.extend(CarapaceView, {
+var ChatListPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
+    template: ChatListPanelTemplate,
+
     /**
-     * @return {Element}
+     *
      */
-    make: function() {
-        var data = this.generateTemplateData();
-        return $(Mustache.render(this.template, data));
+    initialize: function() {
+        var _this = this;
+        this.collection.bind('add', function(chatModel) {
+            _this.handleCollectionAdd(chatModel);
+        });
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Model Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @param {ChatModel} chatModel
      */
-    generateTemplateData: function() {
-        var data = this.model ? this.model.toJSON() : {};
-        data.cid = this.cid;
-        return data;
+    handleCollectionAdd: function(chatModel) {
+        var chatPanelItemView = new ChatListPanelItemView({
+            model: chatModel
+        });
+        this.addViewChild(chatPanelItemView, "#chat-panel-body");
     }
 });
