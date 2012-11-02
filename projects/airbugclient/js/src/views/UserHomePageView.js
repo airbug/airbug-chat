@@ -6,7 +6,6 @@
 
 //@Require('Class')
 //@Require('MustacheView')
-//@Require('UserHomePageTemplate')
 
 
 //-------------------------------------------------------------------------------
@@ -16,8 +15,12 @@
 var UserHomePageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: UserHomePageTemplate
+    template:   '<div class="row column">' +
+                    '<div id="userhomepage-leftrow" class="span3 column"></div>' +
+                    '<div id="userhomepage-centerrow" class="span6 column"></div>' +
+                    '<div id="userhomepage-rightrow" class="span3 column"></div>' +
+                '</div>'
 });

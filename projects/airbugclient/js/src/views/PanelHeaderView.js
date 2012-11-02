@@ -2,22 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupButtonView')
+//@Export('PanelHeaderView')
 
-//@Require('ButtonView')
 //@Require('Class')
-//@Require('SignupButtonTemplate')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupButtonView = Class.extend(ButtonView, {
+var PanelHeaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: SignupButtonTemplate
+    template:   '<div id="panel-header-{{cid}}" class="panel-header">' +
+                    '<span class="panel-header-title">{{headerTitle}}</span>' +
+                    '<span id="panel-header-nav-{{cid}}" class="panel-header-nav pull-right"></span>' +
+                '</div>'
 });

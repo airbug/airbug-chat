@@ -17,7 +17,7 @@ var AirBugServer = {
     start: function() {
 
         var app = express();
-        var port = 8080;
+        var port = 8000;
         var path = __dirname + "/../../../..";
 
         app.configure(function() {

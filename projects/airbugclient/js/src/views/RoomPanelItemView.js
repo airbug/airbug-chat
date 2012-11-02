@@ -7,7 +7,6 @@
 //@Require('Class')
 //@Require('MustacheView')
 //@Require('RoomPanelEvent')
-//@Require('RoomPanelItemTemplate')
 
 
 //-------------------------------------------------------------------------------
@@ -17,15 +16,22 @@
 var RoomPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: RoomPanelItemTemplate,
+    template:   '<div id="room-{{id}}" class="panel-item clickable-box">' +
+                    '<span id="room-name-{{uid}}" class="panel-item-text room-name">{{name}}</span>' +
+                '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @protected
      */
-    initialize: function() {
+    initializeView: function() {
         this._super();
         var _this = this;
         this.$el.bind("click", function(event) {

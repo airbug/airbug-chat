@@ -5,7 +5,6 @@
 //@Export('ContactPanelItemView')
 
 //@Require('Class')
-//@Require('ContactPanelItemTemplate')
 //@Require('ContactPanelEvent')
 //@Require('MustacheView')
 
@@ -17,15 +16,23 @@
 var ContactPanelItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: ContactPanelItemTemplate,
+    template:   '<div id="contact-{{uid}}" class="panel-item clickable-box">' +
+                    '<span id="contact-status-indicator-{{uid}}" class="user-status-indicator user-status-indicator-{{status}}"></span>' +
+                    '<span id="contact-name-{{uid}}" class="panel-item-text contact-name">{{firstName}} {{lastName}}</span>' +
+                '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @protected
      */
-    initialize: function() {
+    initializeView: function() {
         this._super();
         var _this = this;
         this.$el.bind("click", function(event) {

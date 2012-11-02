@@ -2,10 +2,9 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginPageView')
+//@Export('ListItemView')
 
 //@Require('Class')
-//@Require('LoginPageTemplate')
 //@Require('MustacheView')
 
 
@@ -13,11 +12,11 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageView = Class.extend(MustacheView, {
+var ListItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: LoginPageTemplate
+    template: ''
 });

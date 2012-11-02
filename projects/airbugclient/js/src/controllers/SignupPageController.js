@@ -6,13 +6,9 @@
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
-//@Require('ApplicationView')
-//@Require('ButtonViewEvent')
-//@Require('CarapaceController')
+//@Require('ApplicationController')
 //@Require('Class')
-//@Require('HeaderView')
-//@Require('LoginButtonView')
-//@Require('SignupPageView')
+//@Require('SignupPageContainer')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +24,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageController = Class.extend(CarapaceController, {
+var SignupPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -42,31 +38,26 @@ var SignupPageController = Class.extend(CarapaceController, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @type {SignupPageContainer}
+         */
+        this.signupPageContainer = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceController Extensions
     //-------------------------------------------------------------------------------
 
     /**
      * @protected
      */
-    activate: function() {
+    createController: function() {
         this._super();
-
-        var headerView = new HeaderView();
-        var applicationView = new ApplicationView();
-        var signupPageView = new SignupPageView();
-        var loginButtonView = new LoginButtonView();
-
-        headerView.addViewChild(loginButtonView, '#header-right');
-        applicationView.addViewChild(signupPageView, "#application");
-
-        loginButtonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearLoginButtonClickedEvent, this);
-
-        this.addView(headerView);
-        this.addView(applicationView);
+        this.signupPageContainer = new SignupPageContainer(this.apiPublisher);
+        this.setContainerTop(this.signupPageContainer);
     },
 
 
@@ -77,25 +68,12 @@ var SignupPageController = Class.extend(CarapaceController, {
     /**
      *
      */
-    routeSignup: function() {
-        // Is there anything we need to do here?
-    },
+    routeSignupPage: function() {
 
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearLoginButtonClickedEvent: function(event) {
-        this.navigate("login", {trigger: true});
     }
 });
 annotate(SignupPageController).with(
     annotation("Controller").params(
-        route("signup").to(SignupPageController.prototype.routeSignup)
+        route("signup").to(SignupPageController.prototype.routeSignupPage)
     )
 );

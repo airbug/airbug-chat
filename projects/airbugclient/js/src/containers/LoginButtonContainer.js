@@ -2,19 +2,20 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupPageContainer')
+//@Export('LoginButtonContainer')
 
+//@Require('ButtonView')
+//@Require('ButtonViewEvent')
+//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('LoginButtonContainer')
-//@Require('PageView')
-//@Require('SignupFormView')
+//@Require('NavigationMessage')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageContainer = Class.extend(ApplicationContainer, {
+var LoginButtonContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -30,27 +31,15 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
-         * @type {LoginButtonContainer}
+         * @private
+         * @type {ButtonView}
          */
-        this.loginButtonContainer = null;
-
-        /**
-         * @protected
-         * @type {PageView}
-         */
-        this.pageView = null;
-
-        /**
-         * @protected
-         * @type {SignupFormView}
-         */
-        this.signupFormView = null;
+        this.buttonView = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -58,18 +47,33 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainer: function() {
         this._super();
-        this.pageView = new PageView();
-        this.signupFormView = new SignupFormView();
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
-        this.pageView.addViewChild(this.signupFormView, "#page-" + this.pageView.cid);
+        this.buttonView = new ButtonView({text: "Login", type: "primary", align: "right"});
+        this.setViewTop(this.buttonView);
     },
 
     /**
      * @protected
      */
-    createContainerChildren: function() {
+    initializeContainer: function() {
         this._super();
-        this.loginButtonContainer = new LoginButtonContainer(this.apiPublisher);
-        this.addContainerChild(this.loginButtonContainer, "#header-right");
+        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
+    hearButtonClickedEvent: function(event) {
+        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
+            fragment: "login",
+            options: {
+                trigger: true
+            }
+        });
     }
 });

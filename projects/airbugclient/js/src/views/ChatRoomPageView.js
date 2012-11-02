@@ -5,7 +5,6 @@
 //@Export('ChatRoomPageView')
 
 //@Require('ChatListPanelView')
-//@Require('ChatRoomPageTemplate')
 //@Require('ChatRoomTitlePanelView')
 //@Require('Class')
 //@Require('MustacheView')
@@ -17,6 +16,17 @@
 //-------------------------------------------------------------------------------
 
 var ChatRoomPageView = Class.extend(MustacheView, {
+
+    //-------------------------------------------------------------------------------
+    // Template
+    //-------------------------------------------------------------------------------
+
+    template:   '<div class="row column">' +
+                    '<div id="chatroompage-leftrow" class="span3 column"></div>' +
+                    '<div id="chatroompage-centerrow" class="span6 column"></div>' +
+                    '<div id="chatroompage-rightrow" class="span3 column"></div>' +
+                '</div>',
+
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -110,8 +120,6 @@ var ChatRoomPageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template: ChatRoomPageTemplate,
-
     /**
      * @protected
      */
@@ -134,7 +142,7 @@ var ChatRoomPageView = Class.extend(MustacheView, {
     /**
      * @protected
      */
-    initialize: function() {
+    initializeView: function() {
         this._super();
 
     }

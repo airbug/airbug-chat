@@ -4,7 +4,6 @@
 
 //@Export('AccountButtonView')
 
-//@Require('AccountButtonTemplate')
 //@Require('ButtonView')
 //@Require('Class')
 
@@ -16,9 +15,11 @@
 var AccountButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: AccountButtonTemplate
+    template:   '<div class="button-wrapper pull-right">' +
+                    '<button id="button-{{cid}}" class="btn btn-primary"><i class="icon-user icon-white"></i></button>' +
+                '</div>'
 
 });

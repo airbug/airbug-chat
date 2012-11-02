@@ -41,11 +41,15 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/EventListener.js"></script>
         <script src="/EventDispatcher.js"></script>
         <script src="/Proxy.js"></script>
+        <script src="/Message.js"></script>
+        <script src="/PublisherSubscription.js"></script>
+        <script src="/Publisher.js"></script>
 
         <script src="/Annotation.js"></script>
         <script src="/AnnotationProcessor.js"></script>
         <script src="/Annotate.js"></script>
 
+        <script src="/container/CarapaceContainer.js"></script>
         <script src="/controller/AnnotateRoute.js"></script>
         <script src="/controller/CarapaceController.js"></script>
         <script src="/controller/ControllerRoute.js"></script>
@@ -53,27 +57,6 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/model/CarapaceCollection.js"></script>
         <script src="/view/CarapaceView.js"></script>
         <script src="/Carapace.js"></script>
-
-        <script src="/templates/AccountButton.template.js"></script>
-        <script src="/templates/Application.template.js"></script>
-        <script src="/templates/Button.template.js"></script>
-        <script src="/templates/ChatListPanel.template.js"></script>
-        <script src="/templates/ChatListPanelItem.template.js"></script>
-        <script src="/templates/ChatRoomPage.template.js"></script>
-        <script src="/templates/ChatRoomTitlePanel.template.js"></script>
-        <script src="/templates/ContactPanel.template.js"></script>
-        <script src="/templates/ContactPanelItem.template.js"></script>
-        <script src="/templates/Header.template.js"></script>
-        <script src="/templates/HomeButton.template.js"></script>
-        <script src="/templates/LoginButton.template.js"></script>
-        <script src="/templates/LoginPage.template.js"></script>
-        <script src="/templates/RoomMemberPanel.template.js"></script>
-        <script src="/templates/RoomMemberPanelItem.template.js"></script>
-        <script src="/templates/RoomPanel.template.js"></script>
-        <script src="/templates/RoomPanelItem.template.js"></script>
-        <script src="/templates/SignupButton.template.js"></script>
-        <script src="/templates/SignupPage.template.js"></script>
-        <script src="/templates/UserHomePage.template.js"></script>
 
         <script src="/models/ChatModel.js"></script>
         <script src="/models/ChatCollection.js"></script>
@@ -95,6 +78,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/views/AccountButtonView.js"></script>
         <script src="/views/ApplicationView.js"></script>
+        <script src="/views/BodyView.js"></script>
         <script src="/views/ChatListPanelItemView.js"></script>
         <script src="/views/ChatListPanelView.js"></script>
         <script src="/views/ChatRoomPageView.js"></script>
@@ -103,15 +87,28 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/ContactPanelView.js"></script>
         <script src="/views/HeaderView.js"></script>
         <script src="/views/HomeButtonView.js"></script>
-        <script src="/views/LoginButtonView.js"></script>
-        <script src="/views/LoginPageView.js"></script>
+        <script src="/views/LoginFormView.js"></script>
         <script src="/views/RoomMemberPanelItemView.js"></script>
         <script src="/views/RoomMemberPanelView.js"></script>
         <script src="/views/RoomPanelItemView.js"></script>
         <script src="/views/RoomPanelView.js"></script>
-        <script src="/views/SignupButtonView.js"></script>
-        <script src="/views/SignupPageView.js"></script>
+        <script src="/views/SignupFormView.js"></script>
         <script src="/views/UserHomePageView.js"></script>
+
+        <script src="/containers/ApplicationContainer.js"></script>
+
+        <script src="/containers/AccountButtonContainer.js"></script>
+        <script src="/containers/ChatRoomPageContainer.js"></script>
+        <script src="/containers/ContactPanelContainer.js"></script>
+        <script src="/containers/HomeButtonContainer.js"></script>
+        <script src="/containers/LoginButtonContainer.js"></script>
+        <script src="/containers/LoginPageContainer.js"></script>
+        <script src="/containers/SignupButtonContainer.js"></script>
+        <script src="/containers/SignupPageContainer.js"></script>
+        <script src="/containers/UserHomePageContainer.js"></script>
+
+        <script src="/controllers/messages/NavigationMessage.js"></script>
+        <script src="/controllers/ApplicationController.js"></script>
 
         <script src="/controllers/ChatRoomPageController.js"></script>
         <script src="/controllers/LoginPageController.js"></script>

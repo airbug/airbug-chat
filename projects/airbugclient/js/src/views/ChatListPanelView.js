@@ -5,7 +5,6 @@
 //@Export('ChatListPanelView')
 
 //@Require('ChatListPanelItemView')
-//@Require('ChatListPanelTemplate')
 //@Require('Class')
 //@Require('MustacheView')
 
@@ -17,15 +16,25 @@
 var ChatListPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: ChatListPanelTemplate,
+    template:   '<div class="panel-wrapper panel-wrapper-center">' +
+                    '<div class="panel">' +
+                        '<div id="chat-panel-body" class="panel-body panel-body-no-header">' +
+                        '</div>' +
+                    '</div>' +
+                '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    initialize: function() {
+    initializeView: function() {
         var _this = this;
         this.collection.bind('add', function(chatModel) {
             _this.handleCollectionAdd(chatModel);

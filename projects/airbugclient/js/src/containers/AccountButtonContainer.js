@@ -62,7 +62,7 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
-     * @param {ButtonViewEvent} Event
+     * @param {ButtonViewEvent} event
      */
     hearAccountButtonClickedEvent: function(event) {
         //TODO BRN: Open account drop down.

@@ -21,9 +21,9 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function(apiPublisher) {
 
-        this._super(router);
+        this._super(apiPublisher);
 
 
         //-------------------------------------------------------------------------------
@@ -107,6 +107,20 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);
+        this.setViewTop(this.bodyView);
+    },
+
+    /**
+     * @proetected
+     */
+    destroyContainer: function() {
+        this.headerView.dispose();
+        this.applicationView.dispose();
+        this.viewTop = null;
+        this.modelList.forEach(function(model) {
+            model.dispose();
+        });
+        this.modelList.clear();
     },
 
 
@@ -119,10 +133,11 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      */
     createApplication: function() {
         this.bodyView = new BodyView();
-        this.bodyView.elDetach();
+        this.bodyView.create();
+        this.bodyView.hide();
         this.createContainer();
         this.createContainerChildren();
-        this.bodyView.elAppendTo('html');
+        this.bodyView.show();
     },
 
     /**

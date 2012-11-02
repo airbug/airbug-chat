@@ -6,7 +6,6 @@
 
 //@Require('Class')
 //@Require('ContactPanelItemView')
-//@Require('ContactPanelTemplate')
 //@Require('MustacheView')
 
 
@@ -17,15 +16,31 @@
 var ContactPanelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: ContactPanelTemplate,
+    template:   '<div class="panel-wrapper panel-wrapper-left">' +
+                    '<div class="panel">' +
+                        '<div class="panel-header">' +
+                            '<span class="panel-header-title">Contacts</span>' +
+                            '<span class="panel-header-nav pull-right">' +
+                                '<button id="add-contact-button" class="btn btn-small">+</button>' +
+                            '</span>' +
+                        '</div>' +
+                        '<div id="contact-panel-body" class="panel-body">' +
+                        '</div>' +
+                    '</div>' +
+                '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    initialize: function() {
+    initializeView: function() {
         var _this = this;
         this.collection.bind('add', function(contactModel) {
             _this.handleCollectionAdd(contactModel);

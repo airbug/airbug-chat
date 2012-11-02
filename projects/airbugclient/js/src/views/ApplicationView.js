@@ -4,7 +4,6 @@
 
 //@Export('ApplicationView')
 
-//@Require('ApplicationTemplate')
 //@Require('Class')
 //@Require('MustacheView')
 
@@ -16,8 +15,15 @@
 var ApplicationView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: ApplicationTemplate
+    template:   '<div class="container column">' +
+                    '<div class="application-wrapper">' +
+                        '<div class="application">' +
+                            '<div id="application-{{cid}}" class="application-body">' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
 });

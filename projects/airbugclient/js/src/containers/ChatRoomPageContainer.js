@@ -34,9 +34,9 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function(apiPublisher) {
 
-        this._super(router);
+        this._super(apiPublisher);
 
 
         //-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
 
-        var chatRoomPageView = new ChatRoomPageView({
+        /*var chatRoomPageView = new ChatRoomPageView({
             chatCollection: this.chatCollection,
             chatModel: this.chatModel,
             roomMemberCollection: this.roomMemberCollection,
@@ -134,13 +134,13 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         this.addView(headerView);
-        this.addView(applicationView);
+        this.addView(applicationView);  */
     },
 
     /**
      * @protected
      */
-    deactivate: function() {
+    deactivateContainer: function() {
         this._super();
         this.chatCollection = null;
         this.chatModel = null;
@@ -156,13 +156,13 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
     /**
      *
      */
-    routeChatRoomPage: function(uid) {
+    activateContainer: function(uid) {
         // TODO BRN: Load the room associated with the passed in uid.
         // TODO BRN: Load the members associated with this room and add the to the roomMemberPanel
         // TODO BRN: Load the chat associated with this room and add it to the chatPanel
 
 
-        this.loadCurrentRoom(uid);
+        //this.loadCurrentRoom(uid);
     },
 
 
@@ -289,8 +289,3 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
         this.navigate("contact/" + roomMember.uid, {trigger: true});
     }
 });
-annotate(ChatRoomPageController).with(
-    annotation("Controller").params(
-        route("room/:uid").to(ChatRoomPageController.prototype.routeChatRoomPage)
-    )
-);

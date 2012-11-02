@@ -2,22 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SignupPageView')
+//@Export('PanelBodyView')
 
 //@Require('Class')
 //@Require('MustacheView')
-//@Require('SignupPageTemplate')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageView = Class.extend(MustacheView, {
+var PanelBodyView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: SignupPageTemplate
+    template:   '<div id="panel-body-{{cid}}" class="panel-body {{panelBodyClasses}}">' +
+                '</div>'
 });
+
+

@@ -6,7 +6,6 @@
 
 //@Require('ButtonView')
 //@Require('Class')
-//@Require('HomeButtonTemplate')
 
 
 //-------------------------------------------------------------------------------
@@ -16,8 +15,10 @@
 var HomeButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template: HomeButtonTemplate
+    template:   '<div class="button-wrapper">' +
+                    '<button id="button-{{cid}}" class="btn btn-primary"><i class="icon-chevron-left icon-white"></i>Home</button>' +
+                '</div>'
 });
