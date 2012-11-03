@@ -58,22 +58,10 @@ var SignupPageController = Class.extend(ApplicationController, {
         this._super();
         this.signupPageContainer = new SignupPageContainer(this.apiPublisher);
         this.setContainerTop(this.signupPageContainer);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    routeSignupPage: function() {
-
     }
 });
 annotate(SignupPageController).with(
     annotation("Controller").params(
-        route("signup").to(SignupPageController.prototype.routeSignupPage)
+        route("signup")
     )
 );

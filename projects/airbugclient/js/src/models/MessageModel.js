@@ -2,25 +2,20 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('UserHomePageView')
+//@Export('MessageModel')
 
+//@Require('CarapaceModel')
 //@Require('Class')
-//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomePageView = Class.extend(MustacheView, {
+var MessageModel = Class.extend(CarapaceModel, {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="row column">' +
-                    '<div id="userhomepage-leftrow" class="span3 column"></div>' +
-                    '<div id="userhomepage-centerrow" class="span6 column"></div>' +
-                    '<div id="userhomepage-rightrow" class="span3 column"></div>' +
-                '</div>'
 });

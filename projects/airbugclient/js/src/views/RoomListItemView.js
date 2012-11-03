@@ -2,23 +2,23 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatMessageCollection')
+//@Export('RoomListItemView')
 
-//@Require('CarapaceCollection')
 //@Require('Class')
-//@Require('ChatMessageModel')
+//@Require('ListItemView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageCollection = Class.extend(CarapaceCollection, {
-
-    model: ChatMessageModel
+var RoomListItemView = Class.extend(ListItemView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceCollection Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
+    template:   '<div class="list-item clickable-box">' +
+                    '<span id="room-name-{{uid}}" class="list-item-text room-name">{{name}}</span>' +
+                '</div>'
 });

@@ -2,20 +2,23 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatMessageModel')
+//@Export('MessageCollection')
 
-//@Require('CarapaceModel')
+//@Require('CarapaceCollection')
 //@Require('Class')
+//@Require('MessageModel')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageModel = Class.extend(CarapaceModel, {
+var MessageCollection = Class.extend(CarapaceCollection, {
+
+    model: MessageModel
 
     //-------------------------------------------------------------------------------
-    // CarapaceModel Implementation
+    // CarapaceCollection Implementation
     //-------------------------------------------------------------------------------
 
 });

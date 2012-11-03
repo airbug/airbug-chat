@@ -32,9 +32,9 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {HomeButtonView}
+         * @type {ButtonView}
          */
-        this.homeButtonView = null;
+        this.buttonView = null;
     },
 
 
@@ -46,15 +46,19 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainer: function() {
-        this.homeButtonView = new HomeButtonView();
-        this.setViewTop(this.homeButtonView);
+        this._super();
+        this.buttonView = new ButtonView({text: "Home", type: "primary", align: "right"});
+        this.iconView = new IconView({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE});
+        this.buttonView.addViewChild(this.iconView);
+        this.setViewTop(this.buttonView);
     },
 
     /**
      * @protected
      */
     initializeContainer: function() {
-        this.homeButtonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearHomeButtonClickedEvent, this);
+        this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -66,7 +70,7 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearHomeButtonClickedEvent: function(event) {
+    hearButtonClickedEvent: function(event) {
         this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
             fragment: "",
             options: {

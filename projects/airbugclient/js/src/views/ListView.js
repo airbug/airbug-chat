@@ -18,5 +18,5 @@ var ListView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: ''
+    template: '<div class="list"></div>'
 });

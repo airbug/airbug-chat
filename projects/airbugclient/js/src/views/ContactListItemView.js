@@ -2,24 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('PanelHeaderView')
+//@Export('ContactListItemView')
 
 //@Require('Class')
-//@Require('MustacheView')
+//@Require('ListItemView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PanelHeaderView = Class.extend(MustacheView, {
+var ContactListItemView = Class.extend(ListItemView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="panel-header-{{cid}}" class="panel-header">' +
-                    '<span class="panel-header-title">{{headerTitle}}</span>' +
-                    '<span id="panel-header-nav-{{cid}}" class="panel-header-nav pull-right"></span>' +
+    template:   '<div class="list-item clickable-box">' +
+                    '<span id="contact-status-indicator-{{cid}}" class="user-status-indicator user-status-indicator-{{status}}"></span>' +
+                    '<span id="contact-name-{{cid}}" class="list-item-text contact-name">{{firstName}} {{lastName}}</span>' +
                 '</div>'
 });

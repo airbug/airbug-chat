@@ -58,22 +58,10 @@ var ChatRoomPageController = Class.extend(ApplicationController, {
         this._super();
         this.chatRoomPageContainer = new ChatRoomPageContainer(this.apiPublisher);
         this.setContainerTop(this.chatRoomPageContainer);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    routeChatRoomPage: function() {
-
     }
 });
 annotate(ChatRoomPageController).with(
     annotation("Controller").params(
-        route("room/:uid").to(ChatRoomPageController.prototype.routeChatRoomPage)
+        route("room/:uid")
     )
 );

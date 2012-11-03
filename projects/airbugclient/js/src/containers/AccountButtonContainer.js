@@ -30,9 +30,15 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {AccountButtonView}
+         * @type {ButtonView}
          */
-        this.accountButtonView = null;
+        this.buttonView = null;
+
+        /**
+         * @private
+         * @type {IconView}
+         */
+        this.iconView = null;
     },
 
 
@@ -44,15 +50,19 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainer: function() {
-        this.accountButtonView = new AccountButtonView();
-        this.setViewTop(this.accountButtonView);
+        this._super();
+        this.buttonView = new ButtonView({type: "primary", align: "right"});
+        this.iconView = new IconView({type: IconView.Type.USER, color: IconView.Color.WHITE});
+        this.buttonView.addViewChild(this.iconView, "#button-" + this.buttonView.cid);
+        this.setViewTop(this.buttonView);
     },
 
     /**
      * @protected
      */
     initializeContainer: function() {
-        this.accountButtonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearAccountButtonClickedEvent, this);
+        this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -64,7 +74,7 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearAccountButtonClickedEvent: function(event) {
+    hearButtonClickedEvent: function(event) {
         //TODO BRN: Open account drop down.
     }
 });

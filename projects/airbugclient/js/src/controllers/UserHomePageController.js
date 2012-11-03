@@ -58,22 +58,10 @@ var UserHomePageController = Class.extend(ApplicationController, {
         this._super();
         this.userHomePageContainer = new UserHomePageContainer(this.apiPublisher);
         this.setContainerTop(this.userHomePageContainer);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    routeUserHomePage: function() {
-
     }
 });
 annotate(UserHomePageController).with(
     annotation("Controller").params(
-        route("").to(UserHomePageController.prototype.routeUserHomePage)
+        route("")
     )
 );

@@ -50,7 +50,7 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
     /**

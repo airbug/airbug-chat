@@ -58,22 +58,10 @@ var LoginPageController = Class.extend(ApplicationController, {
         this._super();
         this.loginPageContainer = new LoginPageContainer(this.apiPublisher);
         this.setContainerTop(this.loginPageContainer);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    routeLoginPage: function() {
-
     }
 });
 annotate(LoginPageController).with(
     annotation("Controller").params(
-        route("login").to(LoginPageController.prototype.routeLoginPage)
+        route("login")
     )
 );

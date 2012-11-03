@@ -4,23 +4,11 @@
 
 //@Export('ChatRoomPageContainer')
 
-//@Require('AccountButtonView')
-//@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationContainer')
-//@Require('ApplicationView')
-//@Require('ButtonViewEvent')
 //@Require('ChatModel')
-//@Require('ChatRoomPageView')
 //@Require('Class')
-//@Require('ChatCollection')
-//@Require('ChatListPanelView')
-//@Require('HeaderView')
-//@Require('HomeButtonView')
-//@Require('ListViewEvent')
-//@Require('RoomMemberCollection')
-//@Require('RoomMemberPanelEvent')
-//@Require('RoomMemberPanelView')
+//@Require('ConversationListPanelContainer')
+//@Require('RoomMemberListPanelContainer')
 //@Require('RoomModel')
 
 
@@ -43,20 +31,26 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Collections
+        // Containers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ChatCollection}
+         * @type {AccountButtonContainer}
          */
-        this.chatCollection = null;
+        this.accountButtonContainer = null;
 
         /**
          * @private
-         * @type {RoomMemberCollection}
+         * @type {ConversationListPanelContainer}
          */
-        this.roomMemberCollection = null;
+        this.conversationListPanelContainer = null;
+
+        /**
+         * @private
+         * @type {RoomMemberListPanelContainer}
+         */
+        this.roomMemberListPanelContainer = null;
 
 
         // Models
@@ -64,15 +58,19 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {ChatModel}
-         */
-        this.chatModel = null;
-
-        /**
-         * @private
          * @type {RoomModel}
          */
         this.roomModel = null;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @type {PageThreeColumnView}
+         */
+        this.pageThreeColumnView = null;
     },
 
 
@@ -82,59 +80,55 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
+     */
+    activateContainer: function(routerArgs) {
+        this._super(routerArgs);
+        // TODO BRN: Load the room associated with the passed in uid.
+        // TODO BRN: Load the members associated with this room and add the to the roomMemberPanel
+        // TODO BRN: Load the chat associated with this room and add it to the chatPanel
+        var roomUuid = routerArgs[0];
+
+        this.loadCurrentRoom(roomUuid);
+    },
+
+    /**
+     * @protected
      */
     createContainer: function() {
         this._super();
 
+
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.chatCollection = new ChatCollection();
-        this.chatModel = new ChatModel();
-        this.roomMemberCollection = new RoomMemberCollection();
         this.roomModel = new RoomModel();
-
-        this.addModel(this.chatCollection);
-        this.addModel(this.chatModel);
-        this.addModel(this.roomMemberCollection);
         this.addModel(this.roomModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-
-        /*var chatRoomPageView = new ChatRoomPageView({
-            chatCollection: this.chatCollection,
-            chatModel: this.chatModel,
-            roomMemberCollection: this.roomMemberCollection,
-            roomModel: this.roomModel
-        });
-        var homeButtonView = new HomeButtonView();
-
+        this.pageThreeColumnView = new PageThreeColumnView();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        headerView.addViewChild(homeButtonView, '#header-left');
-        headerView.addViewChild(accountButtonView, '#header-right');
-        applicationView.addViewChild(chatRoomPageView, "#application");
+        this.applicationView.addViewChild(this.pageThreeColumnView, "#application-" + this.applicationView.cid);
+    },
 
-
-        // Initialize View Listeners
-        //-------------------------------------------------------------------------------
-
-        chatRoomPageView.addEventListener(ChatListPanelEvent.EventTypes.CHAT_SELECTED, this.hearChatSelectedEvent, this);
-        chatRoomPageView.addEventListener(RoomMemberPanelEvent.EventTypes.ROOM_MEMBER_SELECTED, this.hearRoomMemberSelected, this);
-        homeButtonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearHomeButtonClickedEvent, this);
-
-
-        // Start the Views
-        //-------------------------------------------------------------------------------
-
-        this.addView(headerView);
-        this.addView(applicationView);  */
+    /**
+     * @protected
+     */
+    createContainerChildren: function() {
+        this._super();
+        this.accountButtonContainer = new AccountButtonContainer(this.apiPublisher);
+        this.conversationListPanelContainer = new ConversationListPanelContainer(this.apiPublisher);
+        this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.apiPublisher, this.roomModel);
+        this.addContainerChild(this.accountButtonContainer, '#header-right');
+        this.addContainerChild(this.conversationListPanelContainer, "#page-rightrow");
+        this.addContainerChild(this.roomMemberListPanelContainer, "#page-leftrow");
     },
 
     /**
@@ -142,27 +136,7 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
      */
     deactivateContainer: function() {
         this._super();
-        this.chatCollection = null;
-        this.chatModel = null;
-        this.roomMemberCollection = null;
         this.roomModel = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    activateContainer: function(uid) {
-        // TODO BRN: Load the room associated with the passed in uid.
-        // TODO BRN: Load the members associated with this room and add the to the roomMemberPanel
-        // TODO BRN: Load the chat associated with this room and add it to the chatPanel
-
-
-        //this.loadCurrentRoom(uid);
     },
 
 
@@ -172,10 +146,10 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
 
     /**
      * @private
-     * @param {string} uid
+     * @param {string} uuid
      */
-    loadCurrentRoom: function(uid) {
-        this.roomModel.set("uid", uid);
+    loadCurrentRoom: function(uuid) {
+        this.roomModel.set("uuid", uuid);
 
         //TODO BRN: This is where we will begin to sync this value.
         // this.roomModel.fetch({
@@ -186,69 +160,69 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
         // });
 
         //TEST
-        if (uid === "g13Dl0s") {
-            this.roomModel = new RoomModel({uid: "g13Dl0s", name: "airbug Company Room"});
+        /*if (uid === "g13Dl0s") {
+            this.roomModel = new RoomModel({uuid: "g13Dl0s", name: "airbug Company Room"});
             this.chatModel = new ChatModel({
-                uid: "bn6LPsd",
+                uuid: "bn6LPsd",
                 name: "airbug Company Room",
                 unreadMessageCount: 20,
                 unreadMessagePreview:"Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
                 context: {
                     type: "room",
-                    uid: "g13Dl0s"
+                    uuid: "g13Dl0s"
                 }
             });
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "aN9o234", firstName: "Tim", lastName: "Pote", status: "away"}));
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "aN9o234", firstName: "Tim", lastName: "Pote", status: "away"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
         } else if (uid === "nb0psdf") {
-            this.roomModel = new RoomModel({uid: "nb0psdf", name: "airbug Dev Room"});
+            this.roomModel = new RoomModel({uuid: "nb0psdf", name: "airbug Dev Room"});
             this.chatModel = new ChatModel({
-                uid: "PLn865D",
+                uuid: "PLn865D",
                 name: "airbug Dev Room",
                 unreadMessageCount: 105,
                 unreadMessagePreview: "Brian: Can someone checkout bug air-542?",
                 context: {
                     type: "room",
-                    uid: "nb0psdf"
+                    uuid: "nb0psdf"
                 }
             });
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
-            this.roomMemberCollection.add(new RoomMemberModel({uid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "nv40pfs", firstName: "Brian", lastName: "Neisler", status: "available"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "amvp06d", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"}));
+            this.roomMemberCollection.add(new RoomMemberModel({uuid: "djGh4DA", firstName: "Tom", lastName: "Raic", status: "offline"}));
         }
 
         this.chatCollection.add(new ChatModel({
-            uid: "1aRtls0",
+            uuid: "1aRtls0",
             name: "Tim Pote",
             unreadMessageCount: 4,
             unreadMessagePreview: "Hey bro!",
             context: {
                 type: "contact",
-                uid: "aN9o234"
+                uuid: "aN9o234"
             }
         }));
         this.chatCollection.add(new ChatModel({
-            uid: "bn6LPsd",
+            uuid: "bn6LPsd",
             name: "airbug Company Room",
             unreadMessageCount: 20,
             unreadMessagePreview:"Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
             context: {
                 type: "room",
-                uid: "g13Dl0s"
+                uuid: "g13Dl0s"
             }
         }));
         this.chatCollection.add(new ChatModel({
-            uid: "PLn865D",
+            uuid: "PLn865D",
             name: "airbug Dev Room",
             unreadMessageCount: 105,
             unreadMessagePreview: "Brian: Can someone checkout bug air-542?",
             context: {
                 type: "room",
-                uid: "nb0psdf"
+                uuid: "nb0psdf"
             }
-        }));
+        }));*/
     },
 
 

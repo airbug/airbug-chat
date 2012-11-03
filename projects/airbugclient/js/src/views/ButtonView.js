@@ -44,7 +44,7 @@ var ButtonView = Class.extend(MustacheView, {
 
         /**
          * @private
-         * @type {?string}
+         * @type {ButtonView.Size}
          */
         this.size = options.size;
 
@@ -97,13 +97,13 @@ var ButtonView = Class.extend(MustacheView, {
         var data = this._super();
         data.buttonClasses = "";
         switch (this.size) {
-            case "large":
+            case ButtonView.Size.LARGE:
                 data.buttonClasses += " btn-large";
                 break;
-            case "small":
+            case ButtonView.Size.SMALL:
                 data.buttonClasses += " btn-small";
                 break;
-            case "mini":
+            case ButtonView.Size.MINI:
                 data.buttonClasses += " btn-mini";
                 break;
         }
@@ -153,3 +153,13 @@ var ButtonView = Class.extend(MustacheView, {
         this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventTypes.CLICKED));
     }
 });
+
+/**
+ * @enum {number}
+ */
+ButtonView.Size = {
+    LARGE: 1,
+    NORMAL: 2,
+    SMALL: 3,
+    MINI: 4
+};

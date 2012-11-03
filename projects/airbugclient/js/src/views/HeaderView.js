@@ -20,7 +20,7 @@ var HeaderView = Class.extend(MustacheView, {
 
     template:   '<div id="header-wrapper" class="navbar navbar-fixed-top">' +
                     '<div class="container">' +
-                        '<div id="header">' +
+                        '<div class="header">' +
                             '<div id="header-left">' +
                             '</div>' +
                             '<div id="header-center">' +

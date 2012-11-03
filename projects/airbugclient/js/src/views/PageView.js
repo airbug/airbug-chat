@@ -18,6 +18,6 @@ var PageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="page-{{cid}}" class="page">' +
+    template:   '<div id="page-{{cid}}" class="page column">' +
                 '</div>'
 });

@@ -2,24 +2,23 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AccountButtonView')
+//@Export('ConversationCollection')
 
-//@Require('ButtonView')
+//@Require('CarapaceCollection')
 //@Require('Class')
+//@Require('ConversationModel')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AccountButtonView = Class.extend(ButtonView, {
+var ConversationCollection = Class.extend(CarapaceCollection, {
+
+    model: ConversationModel
 
     //-------------------------------------------------------------------------------
-    // Template
+    // CarapaceCollection Implementation
     //-------------------------------------------------------------------------------
-
-    template:   '<div class="button-wrapper pull-right">' +
-                    '<button id="button-{{cid}}" class="btn btn-primary"><i class="icon-user icon-white"></i></button>' +
-                '</div>'
 
 });
