@@ -8,11 +8,14 @@
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ContactCollection')
-//@Require('ContactListItemView')
 //@Require('ContactModel')
+//@Require('ListItemView')
 //@Require('ListView')
 //@Require('NavigationMessage')
 //@Require('PanelWithHeaderView')
+//@Require('TextView')
+//@Require('UserNameView')
+//@Require('UserStatusIndicatorView')
 
 
 //-------------------------------------------------------------------------------
@@ -64,6 +67,12 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.panelView = null;
+
+        /**
+         * @private
+         * @type {TextView}
+         */
+        this.textView = null;
     },
 
 
@@ -103,14 +112,16 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView = new ButtonView({text: "+", size: ButtonView.Size.SMALL});
+        this.addContactButtonView = new ButtonView({size: ButtonView.Size.SMALL});
         this.listView = new ListView({});
         this.panelView = new PanelWithHeaderView({headerTitle: "Contacts"});
+        this.textView = new TextView({text: "+"});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
+        this.addContactButtonView.addViewChild(this.textView, "#button-" + this.addContactButtonView.cid);
         this.panelView.addViewChild(this.addContactButtonView, "#panel-header-nav-" + this.panelView.cid);
         this.panelView.addViewChild(this.listView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
@@ -121,7 +132,6 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        var _this = this;
         this.contactCollection.bind('add', this.handleContactCollectionAdd, this);
         this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
@@ -162,9 +172,17 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {ContactModel} contactModel
      */
     handleContactCollectionAdd: function(contactModel) {
-        var contactListItemView = new ContactListItemView({
+        var listItemView = new ListItemView({
             model: contactModel
         });
-        this.listView.addViewChild(contactListItemView);
+        var userNameView = new UserNameView({
+            model: contactModel
+        });
+        var userStatusIndicatorView = new UserStatusIndicatorView({
+            model: contactModel
+        });
+        listItemView.addViewChild(userStatusIndicatorView);
+        listItemView.addViewChild(userNameView);
+        this.listView.addViewChild(listItemView);
     }
 });

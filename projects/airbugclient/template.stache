@@ -81,18 +81,18 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/PageThreeColumnView.js"></script>
         <script src="/views/PanelWithHeaderView.js"></script>
         <script src="/views/PanelView.js"></script>
+        <script src="/views/TextView.js"></script>
 
         <script src="/views/ApplicationView.js"></script>
         <script src="/views/BodyView.js"></script>
-        <script src="/views/ChatRoomPageView.js"></script>
-        <script src="/views/ChatRoomTitlePanelView.js"></script>
-        <script src="/views/ContactListItemView.js"></script>
+        <script src="/views/BoxWithHeaderView.js"></script>
         <script src="/views/ConversationListItemView.js"></script>
         <script src="/views/HeaderView.js"></script>
         <script src="/views/LoginFormView.js"></script>
-        <script src="/views/RoomMemberListItemView.js"></script>
-        <script src="/views/RoomListItemView.js"></script>
+        <script src="/views/RoomNameView.js"></script>
         <script src="/views/SignupFormView.js"></script>
+        <script src="/views/UserNameView.js"></script>
+        <script src="/views/UserStatusIndicatorView.js"></script>
 
         <script src="/containers/ApplicationContainer.js"></script>
 
@@ -102,9 +102,11 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/containers/HomeButtonContainer.js"></script>
         <script src="/containers/LoginButtonContainer.js"></script>
         <script src="/containers/LoginPageContainer.js"></script>
+        <script src="/containers/RoomChatBoxContainer.js"></script>
         <script src="/containers/RoomChatPageContainer.js"></script>
         <script src="/containers/RoomListPanelContainer.js"></script>
         <script src="/containers/RoomMemberListPanelContainer.js"></script>
+        <script src="/containers/RoomNamePanelContainer.js"></script>
         <script src="/containers/SignupButtonContainer.js"></script>
         <script src="/containers/SignupPageContainer.js"></script>
         <script src="/containers/UserHomePageContainer.js"></script>

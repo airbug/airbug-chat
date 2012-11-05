@@ -2,27 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatPanelContainer')
+//@Export('RoomChatBoxContainer')
 
+//@Require('BoxWithHeaderView')
 //@Require('CarapaceContainer')
+//@Require('ChatWidgetContainer')
 //@Require('Class')
-//@Require('PanelWithHeaderView')
-//@Require('RoomCollection')
-//@Require('RoomListItemView')
-//@Require('RoomModel')
+//@Require('ConversationModel')
+//@Require('RoomNamePanelContainer')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatContainer = Class.extend(CarapaceContainer, {
+var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function(apiPublisher, roomModel) {
 
         this._super(apiPublisher);
 
@@ -31,11 +31,20 @@ var ChatContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-
         // Containers
         //-------------------------------------------------------------------------------
 
-        this.
+        /**
+         * @private
+         * @type {ChatWidgetContainer}
+         */
+        this.chatWidgetContainer = null;
+
+        /**
+         * @private
+         * @type {RoomNamePanelContainer}
+         */
+        this.roomNamePanelContainer = null;
 
 
         // Models
@@ -43,9 +52,15 @@ var ChatContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ChatModel}
+         * @type {ConversationModel}
          */
-        this.chatModel = null;
+        this.conversationModel = null;
+
+        /**
+         * @private
+         * @type {RoomModel}
+         */
+        this.roomModel = roomModel;
 
 
         // Views
@@ -53,9 +68,9 @@ var ChatContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {BoxView}
+         * @type {BoxWithHeaderView}
          */
-        this.boxView = null;
+        this.boxWithHeaderView = null;
     },
 
 
@@ -71,9 +86,7 @@ var ChatContainer = Class.extend(CarapaceContainer, {
         this._super(routerArgs);
         //TODO BRN:
 
-        //TEST
-        this.roomCollection.add(new RoomModel({uuid: "g13Dl0s", name: "airbug Company Room"}));
-        this.roomCollection.add(new RoomModel({uuid: "nb0psdf", name: "airbug Dev Room"}));
+
     },
 
     /**
@@ -86,24 +99,31 @@ var ChatContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomCollection = new RoomCollection();
-        this.addModel(this.roomCollection);
+        this.conversationModel = new ConversationModel();
+        this.addModel(this.conversationModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomButtonView = new ButtonView({text: "+", size: ButtonView.Size.SMALL});
-        this.listView = new ListView({});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Rooms"});
+        this.boxWithHeaderView = new BoxWithHeaderView({});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.panelView.addViewChild(this.addRoomButtonView, "#panel-header-nav-" + this.panelView.cid);
-        this.panelView.addViewChild(this.listView, "#panel-body-" + this.panelView.cid);
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxWithHeaderView);
+    },
+
+    /**
+     * @protected
+     */
+    createContainerChildren: function() {
+        this._super();
+        //this.chatWidgetContainer = new ChatWidgetContainer(this.apiPublisher, this.conversationModel);
+        this.roomNamePanelContainer = new RoomNamePanelContainer(this.apiPublisher, this.roomModel);
+       // this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
+        this.addContainerChild(this.roomNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
     },
 
     /**
@@ -111,9 +131,7 @@ var ChatContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        var _this = this;
-        this.roomCollection.bind('add', this.handleRoomCollectionAdd, this);
-        this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+        this.roomModel.bind('change:uuid', this.handleRoomModelChangeUuid, this);
     },
 
     /**
@@ -121,26 +139,31 @@ var ChatContainer = Class.extend(CarapaceContainer, {
      */
     destroyContainer: function() {
         this._super();
-        this.roomCollection = null;
+        this.conversationModel = null;
+        this.roomModel = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {ListViewEvent} event
+     * @protected
+     * @param {string} conversationUuid
      */
-    hearListViewItemSelectedEvent: function(event) {
-        var room = event.getData();
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "room/" + room.uid,
-            options: {
-                trigger: true
-            }
-        });
+    loadConversationModel: function(conversationUuid) {
+        // TODO BRN: Load the Conversation associated with the passed in uuid.
+        // TODO BRN: Send the conversation uuid and the conversationModel to the API. It's the API's responsibility to change the model
+
+        //TEST
+        this.conversationModel.set("uuid", conversationUuid);
+
+        if (conversationUuid === "bn6LPsd") {
+
+        } else if (conversationUuid === "PLn865D") {
+
+        }
     },
 
 
@@ -149,12 +172,9 @@ var ChatContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {RoomModel} roomModel
+     * @private
      */
-    handleRoomCollectionAdd: function(roomModel) {
-        var roomListItemView = new RoomListItemView({
-            model: roomModel
-        });
-        this.listView.addViewChild(roomListItemView);
+    handleRoomModelChangeUuid: function() {
+        this.loadConversationModel(this.roomModel.get('conversationUuid'));
     }
 });

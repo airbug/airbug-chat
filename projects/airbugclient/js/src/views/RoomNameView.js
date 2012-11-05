@@ -2,49 +2,40 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('MustacheView')
+//@Export('RoomNameView')
 
-//@Require('CarapaceView')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MustacheView = Class.extend(CarapaceView, {
+var RoomNameView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Element}
-     */
-    make: function() {
-        var data = this.generateTemplateData();
-        return $(Mustache.render(this.template, data));
-    },
+    template:   '<span id="room-name-{{cid}}" class="room-name text {{options.classes}}">{{model.name}}</span>',
 
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions
     //-------------------------------------------------------------------------------
 
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @return {Object}
+     * @protected
+     * @param {string} attributeName
+     * @param {string} attributeValue
      */
-    generateTemplateData: function() {
-        var data = {};
-        data.model = this.model ? this.model.toJSON() : {};
-        data.options = this.options;
-        data.cid = this.cid;
-        return data;
+    renderModelAttribute: function(attributeName, attributeValue) {
+        this._super(attributeName, attributeValue);
+        switch(attributeName) {
+            case "name":
+                this.findElement('#room-name-' + this.cid).text(attributeValue);
+                break;
+        }
     }
 });

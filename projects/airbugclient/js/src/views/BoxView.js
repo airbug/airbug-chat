@@ -2,23 +2,22 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomListItemView')
+//@Export('BoxView')
 
 //@Require('Class')
-//@Require('ListItemView')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomListItemView = Class.extend(ListItemView, {
+var BoxView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="list-item clickable-box">' +
-                    '<span id="room-name-{{uid}}" class="list-item-text room-name">{{name}}</span>' +
+    template:   '<div id="box-{{cid}}" class="box">' +
                 '</div>'
 });

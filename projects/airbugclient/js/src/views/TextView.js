@@ -2,24 +2,21 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomMemberListItemView')
+//@Export('TextView')
 
 //@Require('Class')
-//@Require('ListItemView')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMemberListItemView = Class.extend(ListItemView, {
+var TextView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="list-item clickable-box">' +
-                    '<span id="room-member-status-indicator-{{uid}}" class="user-status-indicator user-status-indicator-{{status}}"></span>' +
-                    '<span id="room-member-name-{{uid}}" class="list-item-text room-member-name">{{firstName}} {{lastName}}</span>' +
-                '</div>'
+    template:   '<span id="text-{{cid}}" class="text">{{options.text}}</span>'
 });

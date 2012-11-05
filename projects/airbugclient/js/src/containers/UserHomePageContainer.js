@@ -85,7 +85,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView = new PageThreeColumnView();
+        this.pageThreeColumnView = new PageThreeColumnView({configuration: PageThreeColumnView.Configuration.DEFAULT});
 
 
         // Wire Up Views

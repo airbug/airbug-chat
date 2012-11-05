@@ -58,8 +58,17 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainer: function() {
         this._super();
+
+        // Create Views
+        //-------------------------------------------------------------------------------
+
         this.pageView = new PageView();
         this.signupFormView = new SignupFormView();
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
         this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
         this.pageView.addViewChild(this.signupFormView, "#page-" + this.pageView.cid);
     },

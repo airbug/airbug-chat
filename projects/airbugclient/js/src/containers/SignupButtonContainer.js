@@ -9,6 +9,7 @@
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('NavigationMessage')
+//@Require('TextView')
 
 
 //-------------------------------------------------------------------------------
@@ -35,6 +36,12 @@ var SignupButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
+
+        /**
+         * @private
+         * @type {TextView}
+         */
+        this.textView = null;
     },
 
 
@@ -47,7 +54,19 @@ var SignupButtonContainer = Class.extend(CarapaceContainer, {
      */
     createContainer: function() {
         this._super();
-        this.buttonView = new ButtonView({text: "Signup", type: "primary", align: "right"});
+
+
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        this.buttonView = new ButtonView({type: "primary", align: "right"});
+        this.textView = new TextView({text: "Signup"});
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
+        this.buttonView.addViewChild(this.textView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },
 

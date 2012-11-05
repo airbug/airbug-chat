@@ -51,8 +51,17 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
      */
     createContainer: function() {
         this._super();
+
+        // Create Views
+        //-------------------------------------------------------------------------------
+
         this.buttonView = new ButtonView({type: "primary", align: "right"});
         this.iconView = new IconView({type: IconView.Type.USER, color: IconView.Color.WHITE});
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
         this.buttonView.addViewChild(this.iconView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },

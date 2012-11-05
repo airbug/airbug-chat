@@ -20,11 +20,11 @@ var ConversationListItemView = Class.extend(ListItemView, {
 
     template:   '<div class="list-item list-item-large clickable-box">' +
                     '<div class="list-item-left">' +
-                        '<span id="chat-list-unread-message-count-{{uid}}" class="chat-unread-message-count">{{unreadMessageCount}}</span>' +
+                        '<span id="chat-list-unread-message-count-{{cid}}" class="chat-unread-message-count">{{model.unreadMessageCount}}</span>' +
                     '</div>' +
                     '<div class="list-item-center">' +
-                        '<span id="chat-name-{{uid}}" class="list-item-text chat-name">{{name}}</span>' +
-                        '<span id="chat-unread-message-preview-{{uid}}" class="list-item-text chat-unread-message-preview">{{unreadMessagePreview}}</span>' +
+                        '<span id="chat-name-{{cid}}" class="text chat-name">{{model.name}}</span>' +
+                        '<span id="chat-unread-message-preview-{{cid}}" class="text chat-unread-message-preview">{{model.unreadMessagePreview}}</span>' +
                     '</div>' +
                 '</div>',
     
@@ -41,8 +41,8 @@ var ConversationListItemView = Class.extend(ListItemView, {
 
         //TODO BRN: This is a good unit test candidate.
 
-        if (data.unreadMessageCount > 99) {
-            data.unreadMessageCount = "99+";
+        if (data.model.unreadMessageCount > 99) {
+            data.model.unreadMessageCount = "99+";
         }
         return data;
     }

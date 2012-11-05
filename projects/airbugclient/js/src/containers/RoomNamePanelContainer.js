@@ -2,27 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginButtonContainer')
+//@Export('RoomNamePanelContainer')
 
-//@Require('ButtonView')
-//@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('NavigationMessage')
-//@Require('TextView')
+//@Require('PanelView')
+//@Require('RoomNameView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginButtonContainer = Class.extend(CarapaceContainer, {
+var RoomNamePanelContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function(apiPublisher, roomModel) {
 
         this._super(apiPublisher);
 
@@ -31,22 +29,35 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {ButtonView}
-         */
-        this.buttonView = null;
+        // Models
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {TextView}
+         * @type {RoomModel}
          */
-        this.textView = null;
+        this.roomModel = roomModel;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {PanelView}
+         */
+        this.panelView = null;
+
+        /**
+         * @private
+         * @type {RoomNameView}
+         */
+        this.roomNameView = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -55,43 +66,26 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
+
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = new ButtonView({type: "primary", align: "right"});
-        this.textView = new TextView({text: "Login"});
+        this.panelView = new PanelView({});
+        this.roomNameView = new RoomNameView({model: this.roomModel});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView.addViewChild(this.textView, "#button-" + this.buttonView.cid);
-        this.setViewTop(this.buttonView);
+        this.panelView.addViewChild(this.roomNameView, "#panel-body-" + this.panelView.cid);
+        this.setViewTop(this.panelView);
     },
 
     /**
      * @protected
      */
-    initializeContainer: function() {
+    destroyContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "login",
-            options: {
-                trigger: true
-            }
-        });
+        this.roomModel = null;
     }
 });

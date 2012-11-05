@@ -11,51 +11,55 @@ html, body {
     position: relative;
 }
 
+
+/* Application CSS
+*******************************************************************/
+
 .application-wrapper {
     background-color: rgb(243, 243, 243);
-    border-width: 1px;
     border-color: rgb(196, 196, 196);
     border-style: solid;
-    position: absolute;
-    top: 0px;
+    border-width: 1px;
     bottom: 0px;
     left: -1px;
+    position: absolute;
     right: -1px;
+    top: 0px;
 }
 
 .application {
-    width: 100%;
     height: 100%;
     position: relative;
+    width: 100%;
 }
 
 .application-body {
-    margin-top: 60px;
-    position: absolute;
-    top: 0px;
     bottom: 0px;
     left: 0px;
+    margin-top: 60px;
+    position: absolute;
     right: 0px;
+    top: 0px;
 }
 
 .page {
-    padding: 0;
     margin: 0;
+    padding: 0;
 }
 
 .panel-wrapper {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    border-width: 1px;
+    background-color: rgb(255, 255, 255);
     border-color: rgb(196, 196, 196);
+    border-width: 1px;
     border-style: solid;
     border-radius: 10px;
-    background-color: rgb(255, 255, 255);
+    bottom: 0px;
     box-shadow: 2px 2px 10px #888888;
+    left: 0px;
     margin: 4px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 
 .leftrow .panel-wrapper {
@@ -79,25 +83,33 @@ html, body {
     margin-left: 2px;
 }
 
+
+/* Panel CSS
+*******************************************************************/
+
 .panel {
     height: 100%;
     position: relative;
 }
 
 .panel-header {
-    border-bottom-width: 1px;
     border-bottom-color: rgb(196, 196, 196);
+    border-bottom-width: 1px;
     border-bottom-style: solid;
-    width: 100%;
-    height: 34px;
-    position: absolute;
     font-size: 18px;
     font-weight: 400;
+    height: 34px;
     line-height: 34px;
+    position: absolute;
+    width: 100%;
 }
 
 .panel-header-title {
+    left: 0px;
     padding-left: 10px;
+    padding-right: 35px;
+    position: absolute;
+    right: 0px;
 }
 
 .panel-header-nav {
@@ -121,17 +133,69 @@ html, body {
     margin-top: 0px;
 }
 
+
+/* Box CSS
+*******************************************************************/
+
+.box {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.box-body {
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+}
+
+.box-with-header .box-body {
+    margin-top: 42px;
+}
+
+.box-with-footer .box-body {
+    margin-bottom: 42px;
+}
+
+.box-footer {
+    bottom: 0px;
+    height: 42px;
+    left: 0px;
+    position: absolute;
+    width: 100%;
+}
+
+.box-header {
+    font-size: 18px;
+    font-weight: 500;
+    left: 0px;
+    line-height: 32px;
+    height: 42px;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+}
+
+
+/* List CSS
+*******************************************************************/
+
 .list {
 
 }
 
 .list-item {
-    border-bottom-width: 1px;
     border-bottom-color: rgb(196, 196, 196);
     border-bottom-style: solid;
-    width: 100%;
+    border-bottom-width: 1px;
+    font-size: 16px;
+    font-weight: 200;
     height: 34px;
+    line-height: 34px;
     position: relative;
+    width: 100%;
 }
 
 .list-item-large {
@@ -139,9 +203,9 @@ html, body {
 }
 
 .list-item-left {
+    height: 100%;
     position: absolute;
     width: 40px;
-    height: 100%;
 }
 
 .list-item-center {
@@ -153,10 +217,11 @@ html, body {
     right: 0px;
 }
 
-.list-item-text {
-    line-height: 34px;
-    font-size: 16px;
-    font-weight: 200;
+
+/* Text CSS
+*******************************************************************/
+
+.text {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -194,9 +259,10 @@ html, body {
     background-color: rgb(206, 225, 243);
 }
 
-.contact-name {
+.user-name {
     position: absolute;
     left: 34px;
+    right: 5px;
 }
 
 .room-name {
@@ -311,16 +377,17 @@ html, body {
 }
 
 .chat-unread-message-count {
-    left: 5px;
-    top: 5px;
-    position: absolute;
-    color: rgb(255, 255, 255);
     background-color: rgb(196, 196, 196);
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
     border-radius: 6px;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    height: 30px;
+    left: 5px;
+    line-height: 30px;
+    position: absolute;
+    text-align: center;
+    top: 5px;
+    width: 30px;
 }
 
 .chat-name {
@@ -344,23 +411,6 @@ html, body {
     line-height: 34px;
 }
 
-@media (min-width: 1200px) {
-    .centerrow {
-        width: 630px;
-    }
-}
-
-@media (min-width: 980px) and (max-width: 1199px) {
-    .centerrow {
-        width: 500px;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 979px) {
-    .centerrow {
-        width: 392px;
-    }
-}
 
 /* Twitter Bootstrap Overrides */
 @media (max-width: 979px) {
@@ -370,5 +420,293 @@ html, body {
 
     .navbar-fixed-top {
         margin: 0;
+    }
+}
+
+
+@media (min-width: 1200px) {
+    .row {
+        margin-left: 0px;
+    }
+    [class*="span"] {
+        margin-left: 0px;
+    }
+    .container,
+    .navbar-static-top .container,
+    .navbar-fixed-top .container,
+    .navbar-fixed-bottom .container {
+        width: 1200px;
+    }
+    .span12 {
+        width: 1200px;
+    }
+    .span11 {
+        width: 1100px;
+    }
+    .span10 {
+        width: 1000px;
+    }
+    .span9 {
+        width: 900px;
+    }
+    .span8 {
+        width: 800px;
+    }
+    .span7 {
+        width: 700px;
+    }
+    .span6 {
+        width: 600px;
+    }
+    .span5 {
+        width: 500px;
+    }
+    .span4 {
+        width: 400px;
+    }
+    .span3 {
+        width: 300px;
+    }
+    .span2 {
+        width: 200px;
+    }
+    .span1 {
+        width: 100px;
+    }
+    .offset12 {
+        margin-left: 1200px;
+    }
+    .offset11 {
+        margin-left: 1100px;
+    }
+    .offset10 {
+        margin-left: 1000px;
+    }
+    .offset9 {
+        margin-left: 900px;
+    }
+    .offset8 {
+        margin-left: 800px;
+    }
+    .offset7 {
+        margin-left: 700px;
+    }
+    .offset6 {
+        margin-left: 600px;
+    }
+    .offset5 {
+        margin-left: 500px;
+    }
+    .offset4 {
+        margin-left: 400px;
+    }
+    .offset3 {
+        margin-left: 300px;
+    }
+    .offset2 {
+        margin-left: 200px;
+    }
+    .offset1 {
+        margin-left: 100px;
+    }
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+    .row {
+        margin-left: 0px;
+    }
+
+    [class*="span"] {
+        margin-left: 0px;
+    }
+
+    .container,
+    .navbar-static-top .container,
+    .navbar-fixed-top .container,
+    .navbar-fixed-bottom .container {
+        width: 960px;
+    }
+
+    .span12 {
+        width: 960px;
+    }
+
+    .span11 {
+        width: 880px;
+    }
+
+    .span10 {
+        width: 800px;
+    }
+
+    .span9 {
+        width: 720px;
+    }
+
+    .span8 {
+        width: 640px;
+    }
+
+    .span7 {
+        width: 560px;
+    }
+
+    .span6 {
+        width: 480px;
+    }
+
+    .span5 {
+        width: 400px;
+    }
+
+    .span4 {
+        width: 320px;
+    }
+
+    .span3 {
+        width: 240px;
+    }
+
+    .span2 {
+        width: 160px;
+    }
+
+    .span1 {
+        width: 80px;
+    }
+
+    .offset12 {
+        margin-left: 960px;
+    }
+
+    .offset11 {
+        margin-left: 880px;
+    }
+
+    .offset10 {
+        margin-left: 800px;
+    }
+
+    .offset9 {
+        margin-left: 720px;
+    }
+
+    .offset8 {
+        margin-left: 640px;
+    }
+
+    .offset7 {
+        margin-left: 560px;
+    }
+
+    .offset6 {
+        margin-left: 480px;
+    }
+
+    .offset5 {
+        margin-left: 400px;
+    }
+
+    .offset4 {
+        margin-left: 320px;
+    }
+
+    .offset3 {
+        margin-left: 240px;
+    }
+
+    .offset2 {
+        margin-left: 160px;
+    }
+
+    .offset1 {
+        margin-left: 80px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .row {
+        margin-left: 0px;
+    }
+    [class*="span"] {
+        margin-left: 0px;
+    }
+    .container,
+    .navbar-static-top .container,
+    .navbar-fixed-top .container,
+    .navbar-fixed-bottom .container {
+        width: 744px;
+    }
+    .span12 {
+        width: 744px;
+    }
+    .span11 {
+        width: 682px;
+    }
+    .span10 {
+        width: 620px;
+    }
+    .span9 {
+        width: 558px;
+    }
+    .span8 {
+        width: 496px;
+    }
+    .span7 {
+        width: 434px;
+    }
+    .span6 {
+        width: 372px;
+    }
+    .span5 {
+        width: 310px;
+    }
+    .span4 {
+        width: 248px;
+    }
+    .span3 {
+        width: 186px;
+    }
+    .span2 {
+        width: 124px;
+    }
+    .span1 {
+        width: 62px;
+    }
+    .offset12 {
+        margin-left: 744px;
+    }
+    .offset11 {
+        margin-left: 682px;
+    }
+    .offset10 {
+        margin-left: 620px;
+    }
+    .offset9 {
+        margin-left: 558px;
+    }
+    .offset8 {
+        margin-left: 496px;
+    }
+    .offset7 {
+        margin-left: 434px;
+    }
+    .offset6 {
+        margin-left: 372px;
+    }
+    .offset5 {
+        margin-left: 310px;
+    }
+    .offset4 {
+        margin-left: 248px;
+    }
+    .offset3 {
+        margin-left: 186px;
+    }
+    .offset2 {
+        margin-left: 124px;
+    }
+    .offset1 {
+        margin-left: 62px;
     }
 }

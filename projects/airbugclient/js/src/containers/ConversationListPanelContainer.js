@@ -14,6 +14,8 @@
 //@Require('NavigationMessage')
 //@Require('PanelView')
 
+//TODO BRN: Add support for current selected conversation. The conversation that we're currently viewing should be
+// highlighted in this panel.
 
 //-------------------------------------------------------------------------------
 // Declare Class

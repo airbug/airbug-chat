@@ -8,7 +8,9 @@
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('HomeButtonView')
+//@Require('IconView')
 //@Require('NavigationMessage')
+//@Require('TextView')
 
 
 //-------------------------------------------------------------------------------
@@ -35,6 +37,18 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
+
+        /**
+         * @private
+         * @type {IconView}
+         */
+        this.iconView = null;
+
+        /**
+         * @private
+         * @type {TextView}
+         */
+        this.textView = null;
     },
 
 
@@ -47,9 +61,20 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      */
     createContainer: function() {
         this._super();
-        this.buttonView = new ButtonView({text: "Home", type: "primary", align: "right"});
+
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        this.buttonView = new ButtonView({type: "primary", align: "left"});
         this.iconView = new IconView({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE});
-        this.buttonView.addViewChild(this.iconView);
+        this.textView = new TextView({text: "Home"});
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
+        this.buttonView.addViewChild(this.iconView, "#button-" + this.buttonView.cid);
+        this.buttonView.addViewChild(this.textView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },
 

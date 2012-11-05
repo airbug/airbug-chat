@@ -20,7 +20,7 @@ var ButtonView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div class="button-wrapper {{buttonWrapperClasses}}">' +
-                    '<button id="button-{{cid}}" class="btn {{buttonClasses}}">{{buttonText}}</button>' +
+                    '<button id="button-{{cid}}" class="btn {{buttonClasses}}"></button>' +
                 '</div>',
 
 
@@ -47,12 +47,6 @@ var ButtonView = Class.extend(MustacheView, {
          * @type {ButtonView.Size}
          */
         this.size = options.size;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.text = options.text;
 
         /**
          * @private
@@ -135,7 +129,6 @@ var ButtonView = Class.extend(MustacheView, {
                 break;
         }
 
-        data.buttonText = this.text;
         return data;
     },
 

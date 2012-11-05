@@ -2,49 +2,41 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('MustacheView')
+//@Export('UserNameView')
 
-//@Require('CarapaceView')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MustacheView = Class.extend(CarapaceView, {
+var UserNameView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Element}
-     */
-    make: function() {
-        var data = this.generateTemplateData();
-        return $(Mustache.render(this.template, data));
-    },
+    template:   '<span id="user-name-{{cid}}" class="text user-name">{{model.firstName}} {{model.lastName}}</span>',
 
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions
     //-------------------------------------------------------------------------------
 
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @return {Object}
+     * @protected
+     * @param {string} attributeName
+     * @param {string} attributeValue
      */
-    generateTemplateData: function() {
-        var data = {};
-        data.model = this.model ? this.model.toJSON() : {};
-        data.options = this.options;
-        data.cid = this.cid;
-        return data;
+    renderModelAttribute: function(attributeName, attributeValue) {
+        this._super(attributeName, attributeValue);
+        switch(attributeName) {
+            case "firstName":
+            case "lastName":
+                this.findElement('#user-name-' + this.cid).text(this.model.firstName + " " + this.model.lastName);
+                break;
+        }
     }
 });

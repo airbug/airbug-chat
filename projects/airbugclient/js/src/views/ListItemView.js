@@ -19,7 +19,7 @@ var ListItemView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div class="list-item clickable-box">' +
+    template: '<div id="list-item-{{cid}}" class="list-item clickable-box">' +
               '</div>',
 
 

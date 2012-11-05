@@ -6,13 +6,15 @@
 
 //@Require('CarapaceContainer')
 //@Require('Class')
+//@Require('ListItemView')
 //@Require('ListView')
 //@Require('ListViewEvent')
 //@Require('NavigationMessage')
 //@Require('PanelWithHeaderView')
 //@Require('RoomCollection')
-//@Require('RoomListItemView')
 //@Require('RoomModel')
+//@Require('RoomNameView')
+//@Require('TextView')
 
 
 //-------------------------------------------------------------------------------
@@ -64,6 +66,12 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.panelView = null;
+
+        /**
+         * @private
+         * @type {TextView}
+         */
+        this.textView = null;
     },
 
 
@@ -101,14 +109,16 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomButtonView = new ButtonView({text: "+", size: ButtonView.Size.SMALL});
+        this.addRoomButtonView = new ButtonView({size: ButtonView.Size.SMALL});
         this.listView = new ListView({});
         this.panelView = new PanelWithHeaderView({headerTitle: "Rooms"});
+        this.textView = new TextView({text: "+"});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
+        this.addRoomButtonView.addViewChild(this.textView, "#button-" + this.addRoomButtonView.cid);
         this.panelView.addViewChild(this.addRoomButtonView, "#panel-header-nav-" + this.panelView.cid);
         this.panelView.addViewChild(this.listView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
@@ -160,9 +170,13 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {RoomModel} roomModel
      */
     handleRoomCollectionAdd: function(roomModel) {
-        var roomListItemView = new RoomListItemView({
+        var listItemView = new ListItemView({
             model: roomModel
         });
-        this.listView.addViewChild(roomListItemView);
+        var roomNameView = new RoomNameView({
+            model: roomModel
+        });
+        listItemView.addViewChild(roomNameView);
+        this.listView.addViewChild(listItemView);
     }
 });
