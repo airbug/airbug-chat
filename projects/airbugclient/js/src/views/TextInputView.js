@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('PageView')
+//@Export('TextInputView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,12 +12,11 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PageView = Class.extend(MustacheView, {
+var TextInputView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="page-{{cid}}" class="page">' +
-                '</div>'
+    template:   '<input id="text-input-{{cid}}" type="text" placeholder="{{options.placeholder}}">'
 });

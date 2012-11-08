@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatRoomPageContainer')
+//@Export('RoomChatPageContainer')
 
 //@Require('AccountButtonContainer')
 //@Require('ApplicationContainer')
@@ -20,7 +20,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
+var RoomChatPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -46,9 +46,9 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {ConversationListPanelContainer}
+         * @type {ConversationListSlidePanelContainer}
          */
-        this.conversationListPanelContainer = null;
+        this.conversationListSlidePanelContainer = null;
 
         /**
          * @private
@@ -136,12 +136,12 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
     createContainerChildren: function() {
         this._super();
         this.accountButtonContainer = new AccountButtonContainer(this.apiPublisher);
-        this.conversationListPanelContainer = new ConversationListPanelContainer(this.apiPublisher);
+        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer(this.apiPublisher);
         this.homeButtonContainer = new HomeButtonContainer(this.apiPublisher);
         this.roomChatBoxContainer = new RoomChatBoxContainer(this.apiPublisher, this.roomModel);
         this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.apiPublisher, this.roomModel);
         this.addContainerChild(this.accountButtonContainer, '#header-right');
-        this.addContainerChild(this.conversationListPanelContainer, "#page-rightrow");
+        this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");
         this.addContainerChild(this.homeButtonContainer, "#header-left");
         this.addContainerChild(this.roomChatBoxContainer, "#page-centerrow");
         this.addContainerChild(this.roomMemberListPanelContainer, "#page-leftrow");
@@ -177,43 +177,5 @@ var ChatRoomPageContainer = Class.extend(ApplicationContainer, {
             this.roomModel.set("name", "airbug Dev Room");
             this.roomModel.set("conversationUuid", "PLn865D");
         }
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ChatListPanelEvent} event
-     */
-    hearChatSelectedEvent: function(event) {
-        var chat = event.getData();
-        var context = chat.context;
-        if (context.type === "contact") {
-            this.navigate("contact/" + context.uid, {trigger: true});
-        } else if (context.type === "room") {
-            this.navigate("room/" + context.uid, {trigger: true});
-        } else {
-            throw new Error("unrecognized chat context type");
-        }
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearHomeButtonClickedEvent: function(event) {
-        this.navigate("", {trigger: true});
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearRoomMemberSelected: function(event) {
-        var roomMember = event.getData();
-        this.navigate("contact/" + roomMember.uid, {trigger: true});
     }
 });

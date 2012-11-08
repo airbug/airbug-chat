@@ -2,19 +2,19 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ConversationListPanelContainer')
+//@Export('ConversationListSlidePanelContainer')
 
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ConversationListContainer')
-//@Require('PanelView')
+//@Require('SlidePanelView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
+var ConversationListSlidePanelContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -44,9 +44,9 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {PanelView}
+         * @type {SlidePanelView}
          */
-        this.panelView = null;
+        this.slidePanelView = null;
     },
 
 
@@ -63,13 +63,13 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView = new PanelView({});
+        this.slidePanelView = new SlidePanelView({});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.slidePanelView);
     },
 
     /**
@@ -78,6 +78,6 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.conversationListContainer = new ConversationListContainer(this.apiPublisher);
-        this.addContainerChild(this.conversationListContainer, "#panel-body-" + this.panelView.cid);
+        this.addContainerChild(this.conversationListContainer, "#panel-body-" + this.slidePanelView.cid);
     }
 });

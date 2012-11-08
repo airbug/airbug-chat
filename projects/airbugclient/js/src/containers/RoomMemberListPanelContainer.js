@@ -7,12 +7,12 @@
 //@Require('ButtonView')
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListItemView')
 //@Require('ListView')
 //@Require('NavigationMessage')
 //@Require('PanelWithHeaderView')
 //@Require('RoomMemberCollection')
 //@Require('RoomMemberModel')
+//@Require('SelectableListItemView')
 //@Require('TextView')
 //@Require('UserNameView')
 //@Require('UserStatusIndicatorView')
@@ -201,18 +201,19 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {RoomMemberModel} roomMemberModel
      */
     handleRoomMemberCollectionAdd: function(roomMemberModel) {
-        var listItemView = new ListItemView({
+        var selectableListItemView = new SelectableListItemView({
             model: roomMemberModel
         });
         var userNameView = new UserNameView({
-            model: roomMemberModel
+            model: roomMemberModel,
+            classes: "text-simple"
         });
         var userStatusIndicatorView = new UserStatusIndicatorView({
             model: roomMemberModel
         });
-        listItemView.addViewChild(userStatusIndicatorView);
-        listItemView.addViewChild(userNameView);
-        this.listView.addViewChild(listItemView);
+        selectableListItemView.addViewChild(userStatusIndicatorView, '#list-item-' + selectableListItemView.cid);
+        selectableListItemView.addViewChild(userNameView, '#list-item-' + selectableListItemView.cid);
+        this.listView.addViewChild(selectableListItemView);
     },
 
     /**

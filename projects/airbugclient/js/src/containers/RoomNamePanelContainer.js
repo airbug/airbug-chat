@@ -71,7 +71,9 @@ var RoomNamePanelContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.panelView = new PanelView({});
-        this.roomNameView = new RoomNameView({model: this.roomModel});
+        this.roomNameView = new RoomNameView({
+            model: this.roomModel
+        });
 
 
         // Wire Up Views

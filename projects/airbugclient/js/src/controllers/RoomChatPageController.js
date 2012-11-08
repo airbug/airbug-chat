@@ -2,13 +2,13 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ChatRoomPageController')
+//@Export('RoomChatPageController')
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationController')
-//@Require('ChatRoomPageContainer')
 //@Require('Class')
+//@Require('RoomChatPageContainer')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatRoomPageController = Class.extend(ApplicationController, {
+var RoomChatPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -41,9 +41,9 @@ var ChatRoomPageController = Class.extend(ApplicationController, {
 
         /**
          * @private
-         * @type {ChatRoomPageContainer}
+         * @type {RoomChatPageController}
          */
-        this.chatRoomPageContainer = null;
+        this.roomChatPageContainer = null;
     },
 
 
@@ -56,11 +56,11 @@ var ChatRoomPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.chatRoomPageContainer = new ChatRoomPageContainer(this.apiPublisher);
-        this.setContainerTop(this.chatRoomPageContainer);
+        this.roomChatPageContainer = new RoomChatPageContainer(this.apiPublisher);
+        this.setContainerTop(this.roomChatPageContainer);
     }
 });
-annotate(ChatRoomPageController).with(
+annotate(RoomChatPageController).with(
     annotation("Controller").params(
         route("room/:uid")
     )

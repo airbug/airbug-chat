@@ -2,41 +2,38 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('UserNameView')
+//@Export('TextAreaView')
 
 //@Require('Class')
 //@Require('MustacheView')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserNameView = Class.extend(MustacheView, {
+var TextAreaView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="user-name-{{cid}}" class="text user-name {{options.classes}}">{{model.firstName}} {{model.lastName}}</span>',
+    template:   '<textarea id="text-area-{{cid}}" rows="{{options.rows}}">{{options.placeholder}}</textarea>',
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // MustacheView Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @return {Object}
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
-        switch(attributeName) {
-            case "firstName":
-            case "lastName":
-                this.findElement('#user-name-' + this.cid).text(this.model.firstName + " " + this.model.lastName);
-                break;
+    generateTemplateData: function() {
+        var data = this._super();
+        if (!TypeUtil.isNumber(data.options.rows)) {
+            data.options.rows = 3;
         }
+        return data;
     }
 });

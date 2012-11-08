@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('PageView')
+//@Export('BoxWithFooterView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,12 +12,16 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PageView = Class.extend(MustacheView, {
+var BoxWithFooterView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="page-{{cid}}" class="page">' +
+    template:   '<div id="box-{{cid}}" class="box box-with-footer">' +
+                    '<div id="box-body-{{cid}}" class="box-body">' +
+                    '</div>' +
+                    '<div id="box-footer-{{cid}}" class="box-footer">' +
+                    '</div>' +
                 '</div>'
 });

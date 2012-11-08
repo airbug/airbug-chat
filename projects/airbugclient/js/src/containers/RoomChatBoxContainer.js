@@ -99,7 +99,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel = new ConversationModel();
+        this.conversationModel = new ConversationModel({});
         this.addModel(this.conversationModel);
 
 
@@ -120,9 +120,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        //this.chatWidgetContainer = new ChatWidgetContainer(this.apiPublisher, this.conversationModel);
+        this.chatWidgetContainer = new ChatWidgetContainer(this.apiPublisher, this.conversationModel);
         this.roomNamePanelContainer = new RoomNamePanelContainer(this.apiPublisher, this.roomModel);
-       // this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
+        this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
         this.addContainerChild(this.roomNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
     },
 
@@ -131,7 +131,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.roomModel.bind('change:uuid', this.handleRoomModelChangeUuid, this);
+        this.roomModel.bind('change:conversationUuid', this.handleRoomModelChangeConversationUuid, this);
     },
 
     /**
@@ -156,7 +156,6 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: Load the Conversation associated with the passed in uuid.
         // TODO BRN: Send the conversation uuid and the conversationModel to the API. It's the API's responsibility to change the model
 
-        //TEST
         this.conversationModel.set("uuid", conversationUuid);
 
         if (conversationUuid === "bn6LPsd") {
@@ -174,7 +173,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    handleRoomModelChangeUuid: function() {
+    handleRoomModelChangeConversationUuid: function() {
         this.loadConversationModel(this.roomModel.get('conversationUuid'));
     }
 });

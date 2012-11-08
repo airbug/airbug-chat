@@ -61,8 +61,8 @@ var PageThreeColumnView = Class.extend(MustacheView, {
         data.rightColumnSpan = "span2";
         switch (this.configuration) {
             case PageThreeColumnView.Configuration.THIN_RIGHT:
-                data.rightColumnSpan = "span1";
-                data.centerColumnSpan = "span9";
+                data.rightColumnSpan = "span3";
+                data.centerColumnSpan = "span7";
                 break;
         }
         return data;

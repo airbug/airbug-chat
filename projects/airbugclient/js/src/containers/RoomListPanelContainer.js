@@ -6,7 +6,6 @@
 
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListItemView')
 //@Require('ListView')
 //@Require('ListViewEvent')
 //@Require('NavigationMessage')
@@ -14,6 +13,7 @@
 //@Require('RoomCollection')
 //@Require('RoomModel')
 //@Require('RoomNameView')
+//@Require('SelectableListItemView')
 //@Require('TextView')
 
 
@@ -170,13 +170,14 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {RoomModel} roomModel
      */
     handleRoomCollectionAdd: function(roomModel) {
-        var listItemView = new ListItemView({
+        var selectableListItemView = new SelectableListItemView({
             model: roomModel
         });
         var roomNameView = new RoomNameView({
-            model: roomModel
+            model: roomModel,
+            classes : "text-simple"
         });
-        listItemView.addViewChild(roomNameView);
-        this.listView.addViewChild(listItemView);
+        selectableListItemView.addViewChild(roomNameView, '#list-item-' + selectableListItemView.cid);
+        this.listView.addViewChild(selectableListItemView);
     }
 });

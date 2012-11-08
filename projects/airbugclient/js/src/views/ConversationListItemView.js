@@ -5,14 +5,14 @@
 //@Export('ConversationListItemView')
 
 //@Require('Class')
-//@Require('ListItemView')
+//@Require('SelectableListItemView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationListItemView = Class.extend(ListItemView, {
+var ConversationListItemView = Class.extend(SelectableListItemView, {
 
     //-------------------------------------------------------------------------------
     // Template
