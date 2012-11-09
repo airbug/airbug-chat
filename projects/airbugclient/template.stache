@@ -6,7 +6,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
     <head>
         <title>airbug</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=false" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
         <link rel="stylesheet" href="/css/bootstrap.css" />
         <link rel="stylesheet" href="/css/bootstrap-responsive.css" />
         <link rel="stylesheet" href="/css/styles.css" />
@@ -45,6 +45,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/PublisherSubscription.js"></script>
         <script src="/Publisher.js"></script>
         <script src="/DateUtil.js"></script>
+        <script src="/StringUtil.js"></script>
 
         <script src="/Annotation.js"></script>
         <script src="/AnnotationProcessor.js"></script>
@@ -69,6 +70,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/models/RoomMemberCollection.js"></script>
         <script src="/models/RoomModel.js"></script>
         <script src="/models/RoomCollection.js"></script>
+        <script src="/models/UserModel.js"></script>
 
         <script src="/views/events/ButtonViewEvent.js"></script>
         <script src="/views/events/ListViewEvent.js"></script>
@@ -80,6 +82,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/ListView.js"></script>
         <script src="/views/PageView.js"></script>
         <script src="/views/PageThreeColumnView.js"></script>
+        <script src="/views/PageTwoColumnView.js"></script>
         <script src="/views/PanelWithHeaderView.js"></script>
         <script src="/views/PanelView.js"></script>
         <script src="/views/SelectableListItemView.js"></script>
@@ -105,8 +108,8 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/containers/AccountButtonContainer.js"></script>
         <script src="/containers/ChatWidgetContainer.js"></script>
+        <script src="/containers/ContactChatBoxContainer.js"></script>
         <script src="/containers/ContactListPanelContainer.js"></script>
-        <script src="/containers/ConversationListContainer.js"></script>
         <script src="/containers/ConversationListPanelContainer.js"></script>
         <script src="/containers/ConversationListSlidePanelContainer.js"></script>
         <script src="/containers/HomeButtonContainer.js"></script>
@@ -116,7 +119,18 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/containers/RoomMemberListPanelContainer.js"></script>
         <script src="/containers/RoomNamePanelContainer.js"></script>
         <script src="/containers/SignupButtonContainer.js"></script>
+        <script src="/containers/UserNamePanelContainer.js"></script>
 
+        <script src="/containers/lists/UserListItemContainer.js"></script>
+
+        <script src="/containers/lists/ContactListContainer.js"></script>
+        <script src="/containers/lists/ContactListItemContainer.js"></script>
+        <script src="/containers/lists/ConversationListContainer.js"></script>
+        <script src="/containers/lists/RoomMemberListContainer.js"></script>
+        <script src="/containers/lists/RoomMemberListItemContainer.js"></script>
+
+
+        <script src="/containers/pages/ContactChatPageContainer.js"></script>
         <script src="/containers/pages/LoginPageContainer.js"></script>
         <script src="/containers/pages/RoomChatPageContainer.js"></script>
         <script src="/containers/pages/SignupPageContainer.js"></script>
@@ -125,6 +139,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/controllers/messages/NavigationMessage.js"></script>
         <script src="/controllers/ApplicationController.js"></script>
 
+        <script src="/controllers/ContactChatPageController.js"></script>
         <script src="/controllers/LoginPageController.js"></script>
         <script src="/controllers/RoomChatPageController.js"></script>
         <script src="/controllers/SignupPageController.js"></script>

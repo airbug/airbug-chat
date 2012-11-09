@@ -2,14 +2,14 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomChatPageContainer')
+//@Export('ContactChatPageContainer')
 
 //@Require('AccountButtonContainer')
 //@Require('ApplicationContainer')
 //@Require('Class')
 //@Require('ConversationListSlidePanelContainer')
 //@Require('HomeButtonContainer')
-//@Require('PageThreeColumnView')
+//@Require('PageTwoColumnView')
 //@Require('RoomChatBoxContainer')
 //@Require('RoomMemberListPanelContainer')
 //@Require('RoomModel')
@@ -19,7 +19,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomChatPageContainer = Class.extend(ApplicationContainer, {
+var ContactChatPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -45,6 +45,12 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
+         * @type {ContactChatBoxContainer}
+         */
+        this.contactChatBoxContainer = null;
+
+        /**
+         * @private
          * @type {ConversationListSlidePanelContainer}
          */
         this.conversationListSlidePanelContainer = null;
@@ -55,27 +61,15 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
          */
         this.homeButtonContainer = null;
 
-        /**
-         * @private
-         * @type {RoomChatBoxContainer}
-         */
-        this.roomChatBoxContainer = null;
-
-        /**
-         * @private
-         * @type {RoomMemberListPanelContainer}
-         */
-        this.roomMemberListPanelContainer = null;
-
 
         // Models
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {RoomModel}
+         * @type {ContactModel}
          */
-        this.roomModel = null;
+        this.contactModel = null;
 
 
         // Views
@@ -83,9 +77,9 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {PageThreeColumnView}
+         * @type {PageTwoColumnView}
          */
-        this.pageThreeColumnView = null;
+        this.pageTwoColumnView = null;
     },
 
 
@@ -99,8 +93,8 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        var roomUuid = routerArgs[0];
-        this.loadRoomModel(roomUuid);
+        var contactUuid = routerArgs[0];
+        this.loadContactModel(contactUuid);
     },
 
     /**
@@ -113,20 +107,20 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomModel = new RoomModel();
-        this.addModel(this.roomModel);
+        this.contactModel = new ContactModel();
+        this.addModel(this.contactModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView = new PageThreeColumnView({configuration: PageThreeColumnView.Configuration.THICK_RIGHT});
+        this.pageTwoColumnView = new PageTwoColumnView({configuration: PageTwoColumnView.Configuration.THIN_RIGHT});
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageThreeColumnView, "#application-" + this.applicationView.cid);
+        this.applicationView.addViewChild(this.pageTwoColumnView, "#application-" + this.applicationView.cid);
     },
 
     /**
@@ -135,15 +129,13 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
     createContainerChildren: function() {
         this._super();
         this.accountButtonContainer = new AccountButtonContainer(this.apiPublisher);
+        this.contactChatBoxContainer = new ContactChatBoxContainer(this.apiPublisher, this.contactModel);
         this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer(this.apiPublisher);
         this.homeButtonContainer = new HomeButtonContainer(this.apiPublisher);
-        this.roomChatBoxContainer = new RoomChatBoxContainer(this.apiPublisher, this.roomModel);
-        this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.apiPublisher, this.roomModel);
         this.addContainerChild(this.accountButtonContainer, '#header-right');
+        this.addContainerChild(this.contactChatBoxContainer, "#page-leftrow");
         this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");
         this.addContainerChild(this.homeButtonContainer, "#header-left");
-        this.addContainerChild(this.roomChatBoxContainer, "#page-centerrow");
-        this.addContainerChild(this.roomMemberListPanelContainer, "#page-leftrow");
     },
 
     /**
@@ -151,7 +143,7 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      */
     destroyContainer: function() {
         this._super();
-        this.roomModel = null;
+        this.userModel = null;
     },
 
 
@@ -163,15 +155,19 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {string} uuid
      */
-    loadRoomModel: function(uuid) {
-        // TODO BRN: Load the Room associated with the passed in uuid.
-        // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
+    loadContactModel: function(uuid) {
+        // TODO BRN: Load the Contact associated with the passed in uuid.
+        // TODO BRN: Send the contact uuid and the ContactModel to the API. It's the API's responsibility to change the model
 
         //TEST
-        if (uuid === "g13Dl0s") {
-            this.roomModel.set({"uuid": uuid, "name": "airbug Company Room", "conversationUuid": "bn6LPsd"});
-        } else if (uuid === "nb0psdf") {
-            this.roomModel.set({"uuid": uuid, "name": "airbug Dev Room", "conversationUuid": "PLn865D"});
+        if (uuid === "aN9o234") {
+            this.contactModel.set({uuid: "aN9o234", userUuid: "nmhsieh", conversationUuid: "1aRtls0"}); //Tim
+        } else if (uuid === "nv40pfs") {
+            this.contactModel.set({uuid: "nv40pfs", userUuid: "a93hdug", conversationUuid: "lm7497s"}); //Brian
+        } else if (uuid === "amvp06d") {
+            this.contactModel.set({uuid: "amvp06d", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"}); //Adam
+        } else if (uuid === "djGh4DA") {
+            this.contactModel.set({uuid: "djGh4DA", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"}); //Tom
         }
     }
 });

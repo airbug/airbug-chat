@@ -2,13 +2,13 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('RoomChatPageController')
+//@Export('ContactChatPageController')
 
 //@Require('Annotate')
 //@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
-//@Require('RoomChatPageContainer')
+//@Require('ContactChatPageContainer')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var route = AnnotateRoute.route;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomChatPageController = Class.extend(ApplicationController, {
+var ContactChatPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -41,9 +41,9 @@ var RoomChatPageController = Class.extend(ApplicationController, {
 
         /**
          * @private
-         * @type {RoomChatPageController}
+         * @type {ContactChatPageContainer}
          */
-        this.roomChatPageContainer = null;
+        this.contactChatPageContainer = null;
     },
 
 
@@ -56,12 +56,12 @@ var RoomChatPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.roomChatPageContainer = new RoomChatPageContainer(this.apiPublisher);
-        this.setContainerTop(this.roomChatPageContainer);
+        this.contactChatPageContainer = new ContactChatPageContainer(this.apiPublisher);
+        this.setContainerTop(this.contactChatPageContainer);
     }
 });
-annotate(RoomChatPageController).with(
+annotate(ContactChatPageController).with(
     annotation("Controller").params(
-        route("room/:uuid")
+        route("contact/:uuid")
     )
 );

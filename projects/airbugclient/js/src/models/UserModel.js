@@ -2,21 +2,20 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ListView')
+//@Export('UserModel')
 
+//@Require('CarapaceModel')
 //@Require('Class')
-//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ListView = Class.extend(MustacheView, {
+var UserModel = Class.extend(CarapaceModel, {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
 });

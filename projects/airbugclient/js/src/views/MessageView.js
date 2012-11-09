@@ -5,7 +5,9 @@
 //@Export('MessageView')
 
 //@Require('Class')
+//@Require('DateUtil')
 //@Require('MustacheView')
+//@Require('StringUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -85,8 +87,12 @@ var MessageView = Class.extend(MustacheView, {
         var timestampDate = new Date(timestampUTC);
         var howLongAgo = "";
 
+        // Did this message occur within the last minute?
+        if (nowUTC < timestampUTC + (1000 * 60)) {
+            howLongAgo += "a few seconds ago";
+        }
         // Did this message occur within the last hour?
-        if (nowUTC < timestampUTC + (1000 * 60 * 60)) {
+        else if (nowUTC < timestampUTC + (1000 * 60 * 60)) {
             var numberOfMinutesAgo = DateUtil.getNumberMinutesAgo(timestampDate, nowDate);
             howLongAgo += numberOfMinutesAgo + " minutes ago";
         }
@@ -96,16 +102,16 @@ var MessageView = Class.extend(MustacheView, {
             // Did this message occur on the same day and month?
             if (nowDate.getDate() === timestampDate.getDate() && nowDate.getMonth() === timestampDate.getMonth()) {
                 howLongAgo += DateUtil.getHour12HourClock(timestampDate) + ":" +
-                    timestampDate.getMinutes() + " " + DateUtil.getAMPM(timestampDate);
+                    StringUtil.pad(timestampDate.getMinutes(), "0", 2) + " " + DateUtil.getAMPM(timestampDate);
             }
             // Did this message occur yesterday?
             else if (yesterdayDate.getDate() === timestampDate.getDate() && yesterdayDate.getMonth() === timestampDate.getMonth()) {
                 howLongAgo += "yesterday " + DateUtil.getHour12HourClock(timestampDate) + ":" +
-                    timestampDate.getMinutes() + " " + DateUtil.getAMPM(timestampDate);
+                    StringUtil.pad(timestampDate.getMinutes(), "0", 2) + " " + DateUtil.getAMPM(timestampDate);
             }
             else {
                 howLongAgo += DateUtil.getMonthName(timestampDate) + " " + timestampDate.getDate() + ", " +
-                    DateUtil.getHour12HourClock(timestampDate) + ":" + timestampDate.getMinutes() + " " +
+                    DateUtil.getHour12HourClock(timestampDate) + ":" + StringUtil.pad(timestampDate.getMinutes(), "0", 2) + " " +
                     DateUtil.getAMPM(timestampDate);
             }
         }
@@ -113,7 +119,7 @@ var MessageView = Class.extend(MustacheView, {
         else {
             howLongAgo += DateUtil.getMonthName(timestampDate) + " " + timestampDate.getDate() + ", " +
                 timestampDate.getFullYear() + " " + DateUtil.getHour12HourClock(timestampDate) + ":" +
-                timestampDate.getMinutes() + " " + DateUtil.getAMPM(timestampDate);
+                StringUtil.pad(timestampDate.getMinutes(), "0", 2) + " " + DateUtil.getAMPM(timestampDate);
         }
 
 

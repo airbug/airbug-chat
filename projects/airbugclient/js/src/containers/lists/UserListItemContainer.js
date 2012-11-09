@@ -2,21 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ContactListPanelContainer')
+//@Export('UserListItemContainer')
 
-//@Require('ButtonView')
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ContactListContainer')
-//@Require('PanelWithHeaderView')
+//@Require('ContactCollection')
+//@Require('ContactModel')
+//@Require('ListView')
+//@Require('NavigationMessage')
+//@Require('SelectableListItemView')
 //@Require('TextView')
+//@Require('UserNameView')
+//@Require('UserStatusIndicatorView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactListPanelContainer = Class.extend(CarapaceContainer, {
+var UserListItemContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -31,36 +35,36 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // Models
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {UserModel}
+         */
+        this.userModel = null;
+
+
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {SelectableListItemView}
          */
-        this.addContactButtonView = null;
+        this.selectableListItemView = null;
 
         /**
          * @private
-         * @type {PanelView}
+         * @type {UserNameView}
          */
-        this.panelView = null;
+        this.userNameView = null;
 
         /**
          * @private
-         * @type {TextView}
+         * @type {UserStatusIndicatorView}
          */
-        this.textView = null;
-
-
-        // Containers
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ContactListContainer}
-         */
-        this.contactListContainer = null;
+        this.userStatusIndicatorView = null;
     },
 
 
@@ -75,28 +79,41 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         this._super();
 
 
+        // Create Models
+        //-------------------------------------------------------------------------------
+
+        this.userModel = new UserModel();
+        this.addModel(this.userModel);
+
+
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView = new ButtonView({size: ButtonView.Size.SMALL});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Contacts"});
-        this.textView = new TextView({text: "+"});
+        this.selectableListItemView = new SelectableListItemView({
+            model: this.userModel
+        });
+        this.userNameView = new UserNameView({
+            model: this.userModel,
+            classes: "text-simple"
+        });
+        this.userStatusIndicatorView = new UserStatusIndicatorView({
+            model: this.userModel
+        });
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView.addViewChild(this.textView, "#button-" + this.addContactButtonView.cid);
-        this.panelView.addViewChild(this.addContactButtonView, "#panel-header-nav-" + this.panelView.cid);
-        this.setViewTop(this.panelView);
+        this.selectableListItemView.addViewChild(this.userStatusIndicatorView, '#list-item-' + this.selectableListItemView.cid);
+        this.selectableListItemView.addViewChild(this.userNameView, '#list-item-' + this.selectableListItemView.cid);
+        this.setViewTop(this.selectableListItemView);
     },
 
     /**
      * @protected
      */
-    createContainerChildren: function() {
+    destroyContainer: function() {
         this._super();
-        this.contactListContainer = new ContactListContainer(this.apiPublisher);
-        this.addContainerChild(this.contactListContainer, "#panel-body-" + this.panelView.cid);
+        this.userModel = null;
     }
 });

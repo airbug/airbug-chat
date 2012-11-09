@@ -148,7 +148,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             this.messageCollection.add(new MessageModel({
                 message: "Hey bro!",
                 sentBy: "Tim Pote",
-                sentAtUtc: (new Date()).getTime()
+                sentAtUtc: (new Date()).getTime() - (1000 * 30)
             }));
         } else if (conversationUuid === "bn6LPsd") {
             this.messageCollection.add(new MessageModel({

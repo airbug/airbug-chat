@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('PageThreeColumnView')
+//@Export('PageTwoColumnView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PageThreeColumnView = Class.extend(MustacheView, {
+var PageTwoColumnView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
@@ -21,7 +21,6 @@ var PageThreeColumnView = Class.extend(MustacheView, {
     template:   '<div id="page-{{cid}}" class="page column">' +
                     '<div class="row column">' +
                         '<div id="page-leftrow" class="{{leftColumnSpan}} column leftrow"></div>' +
-                        '<div id="page-centerrow" class="{{centerColumnSpan}} column centerrow"></div>' +
                         '<div id="page-rightrow" class="{{rightColumnSpan}} column rightrow"></div>' +
                     '</div>' +
                 '</div>',
@@ -56,13 +55,12 @@ var PageThreeColumnView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.leftColumnSpan = "span2";
-        data.centerColumnSpan = "span8";
-        data.rightColumnSpan = "span2";
+        data.leftColumnSpan = "span6";
+        data.rightColumnSpan = "span6";
         switch (this.configuration) {
-            case PageThreeColumnView.Configuration.THICK_RIGHT:
+            case PageTwoColumnView.Configuration.THIN_RIGHT:
+                data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";
-                data.centerColumnSpan = "span7";
                 break;
         }
         return data;
@@ -72,7 +70,7 @@ var PageThreeColumnView = Class.extend(MustacheView, {
 /**
  * @enum {number}
  */
-PageThreeColumnView.Configuration = {
+PageTwoColumnView.Configuration = {
     DEFAULT: 1,
-    THICK_RIGHT: 2
+    THIN_RIGHT: 2
 };

@@ -2,27 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('ContactListPanelContainer')
+//@Export('UserNamePanelContainer')
 
-//@Require('ButtonView')
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ContactListContainer')
-//@Require('PanelWithHeaderView')
-//@Require('TextView')
+//@Require('PanelView')
+//@Require('UserNameView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactListPanelContainer = Class.extend(CarapaceContainer, {
+var UserNamePanelContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function(apiPublisher, userModel) {
 
         this._super(apiPublisher);
 
@@ -31,14 +29,18 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Views
+        // Models
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {UserModel}
          */
-        this.addContactButtonView = null;
+        this.userModel = userModel;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
@@ -48,19 +50,15 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {TextView}
+         * @type {UserNameView}
          */
-        this.textView = null;
-
-
-        // Containers
-        //-------------------------------------------------------------------------------
+        this.userNameView = null;
 
         /**
          * @private
-         * @type {ContactListContainer}
+         * @type {UserStatusIndicatorView}
          */
-        this.contactListContainer = null;
+        this.userStatusIndicatorView = null;
     },
 
 
@@ -78,25 +76,27 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView = new ButtonView({size: ButtonView.Size.SMALL});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Contacts"});
-        this.textView = new TextView({text: "+"});
-
+        this.panelView = new PanelView({});
+        this.userNameView = new UserNameView({
+            model: this.userModel
+        });
+        this.userStatusIndicatorView = new UserStatusIndicatorView({
+            model: this.userModel
+        });
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView.addViewChild(this.textView, "#button-" + this.addContactButtonView.cid);
-        this.panelView.addViewChild(this.addContactButtonView, "#panel-header-nav-" + this.panelView.cid);
+        this.panelView.addViewChild(this.userStatusIndicatorView, "#panel-body-" + this.panelView.cid);
+        this.panelView.addViewChild(this.userNameView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
     },
 
     /**
      * @protected
      */
-    createContainerChildren: function() {
+    destroyContainer: function() {
         this._super();
-        this.contactListContainer = new ContactListContainer(this.apiPublisher);
-        this.addContainerChild(this.contactListContainer, "#panel-body-" + this.panelView.cid);
+        this.userModel = null;
     }
 });
