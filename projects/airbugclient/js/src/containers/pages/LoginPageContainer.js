@@ -9,6 +9,14 @@
 //@Require('LoginFormView')
 //@Require('PageView')
 //@Require('SignupButtonContainer')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -38,12 +46,6 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {LoginFormView}
-         */
-        this.loginFormView = null;
-
-        /**
-         * @protected
          * @type {SignupButtonContainer}
          */
         this.signupButtonContainer = null;
@@ -59,10 +61,24 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainer: function() {
         this._super();
-        this.pageView = new PageView();
-        this.loginFormView = new LoginFormView();
+
+
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        this.pageView =
+            view(PageView)
+                .children([
+                    view(LoginFormView)
+                        .appendTo("*[id|=page]")
+                ])
+                .build();
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
         this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
-        this.pageView.addViewChild(this.loginFormView, "#page-" + this.pageView.cid);
     },
 
     /**

@@ -10,6 +10,14 @@
 //@Require('ContactListContainer')
 //@Require('PanelWithHeaderView')
 //@Require('TextView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -46,12 +54,6 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
          */
         this.panelView = null;
 
-        /**
-         * @private
-         * @type {TextView}
-         */
-        this.textView = null;
-
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -78,17 +80,27 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView = new ButtonView({size: ButtonView.Size.SMALL});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Contacts"});
-        this.textView = new TextView({text: "+"});
-
+        this.panelView =
+            view(PanelWithHeaderView)
+                .attributes({headerTitle: "Contacts"})
+                .children([
+                    view(ButtonView)
+                        .attributes({size: ButtonView.Size.SMALL})
+                        .id("addContactButtonView")
+                        .appendTo('*[id|="panel-header-nav"]')
+                        .children([
+                            view(TextView)
+                                .attributes({text: "+"})
+                                .appendTo('*[id|="button"]')
+                        ])
+                ])
+                .build();
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.addContactButtonView.addViewChild(this.textView, "#button-" + this.addContactButtonView.cid);
-        this.panelView.addViewChild(this.addContactButtonView, "#panel-header-nav-" + this.panelView.cid);
         this.setViewTop(this.panelView);
+        this.addContactButtonView = this.findViewById("addContactButtonView");
     },
 
     /**

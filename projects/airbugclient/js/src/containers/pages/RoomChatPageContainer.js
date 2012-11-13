@@ -13,6 +13,14 @@
 //@Require('RoomChatBoxContainer')
 //@Require('RoomMemberListPanelContainer')
 //@Require('RoomModel')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -113,14 +121,17 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomModel = new RoomModel();
+        this.roomModel = new RoomModel({}, "roomModel");
         this.addModel(this.roomModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView = new PageThreeColumnView({configuration: PageThreeColumnView.Configuration.THICK_RIGHT});
+        this.pageThreeColumnView =
+            view(PageThreeColumnView)
+                .attributes({configuration: PageThreeColumnView.Configuration.THICK_RIGHT})
+                .build();
 
 
         // Wire Up Views
@@ -144,14 +155,6 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.homeButtonContainer, "#header-left");
         this.addContainerChild(this.roomChatBoxContainer, "#page-centerrow");
         this.addContainerChild(this.roomMemberListPanelContainer, "#page-leftrow");
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.roomModel = null;
     },
 
 

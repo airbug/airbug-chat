@@ -7,6 +7,14 @@
 //@Require('AccountButtonView')
 //@Require('CarapaceContainer')
 //@Require('Class')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -33,12 +41,6 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
-
-        /**
-         * @private
-         * @type {IconView}
-         */
-        this.iconView = null;
     },
 
 
@@ -55,14 +57,20 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = new ButtonView({type: "primary", align: "right"});
-        this.iconView = new IconView({type: IconView.Type.USER, color: IconView.Color.WHITE});
+        this.buttonView =
+            view(ButtonView)
+                .attributes({type: "primary", align: "right"})
+                .children([
+                    view(IconView)
+                        .attributes({type: IconView.Type.USER, color: IconView.Color.WHITE})
+                        .appendTo('*[id|="button"]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView.addViewChild(this.iconView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },
 

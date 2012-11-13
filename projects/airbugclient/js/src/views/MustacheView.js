@@ -43,7 +43,7 @@ var MustacheView = Class.extend(CarapaceView, {
     generateTemplateData: function() {
         var data = {};
         data.model = this.model ? this.model.toJSON() : {};
-        data.options = this.options;
+        data.attributes = this.attributes;
         data.cid = this.cid;
         return data;
     }

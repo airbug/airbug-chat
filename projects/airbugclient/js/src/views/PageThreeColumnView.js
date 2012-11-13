@@ -28,26 +28,6 @@ var PageThreeColumnView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(options) {
-        this._super(options);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {?string}
-         */
-        this.configuration = options.configuration;
-    },
-
-
-    //-------------------------------------------------------------------------------
     // MustacheView Implementation
     //-------------------------------------------------------------------------------
 
@@ -59,7 +39,7 @@ var PageThreeColumnView = Class.extend(MustacheView, {
         data.leftColumnSpan = "span2";
         data.centerColumnSpan = "span8";
         data.rightColumnSpan = "span2";
-        switch (this.configuration) {
+        switch (this.attributes.configuration) {
             case PageThreeColumnView.Configuration.THICK_RIGHT:
                 data.rightColumnSpan = "span3";
                 data.centerColumnSpan = "span7";

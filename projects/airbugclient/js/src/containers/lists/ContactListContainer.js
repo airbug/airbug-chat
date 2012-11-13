@@ -14,6 +14,14 @@
 //@Require('TextView')
 //@Require('UserNameView')
 //@Require('UserStatusIndicatorView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -85,14 +93,14 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.contactCollection = new ContactCollection();
-        this.addModel(this.contactCollection);
+        this.contactCollection = new ContactCollection([], "contactCollection");
+        this.addCollection(this.contactCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listView = new ListView({});
+        this.listView = view(ListView).build();
 
 
         // Wire Up Views
@@ -108,14 +116,6 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.contactCollection.bind('add', this.handleContactCollectionAdd, this);
         this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.contactCollection = null;
     },
 
 

@@ -11,6 +11,14 @@
 //@Require('PanelWithHeaderView')
 //@Require('RoomMemberListContainer')
 //@Require('TextView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -59,12 +67,6 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
          */
         this.panelView = null;
 
-        /**
-         * @private
-         * @type {TextView}
-         */
-        this.textView = null;
-
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -91,17 +93,28 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomMemberButtonView = new ButtonView({size: ButtonView.Size.SMALL});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Room Members"});
-        this.textView = new TextView({text: "+"});
+        this.panelView =
+            view(PanelWithHeaderView)
+                .attributes({headerTitle: "Room Members"})
+                .children([
+                    view(ButtonView)
+                        .id("addRoomMemberButtonView")
+                        .attributes({size: ButtonView.Size.SMALL})
+                        .appendTo('*[id|="panel-header-nav"]')
+                        .children([
+                            view(TextView)
+                                .attributes({text: "+"})
+                                .appendTo('*[id|="button"]')
+                        ])
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomMemberButtonView.addViewChild(this.textView, "#button-" + this.addRoomMemberButtonView.cid);
-        this.panelView.addViewChild(this.addRoomMemberButtonView, "#panel-header-nav-" + this.panelView.cid);
         this.setViewTop(this.panelView);
+        this.addRoomMemberButtonView = this.findViewById("addRoomMemberButtonView");
     },
 
     /**

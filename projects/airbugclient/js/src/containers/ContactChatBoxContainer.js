@@ -10,6 +10,14 @@
 //@Require('Class')
 //@Require('ConversationModel')
 //@Require('UserNamePanelContainer')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -105,8 +113,8 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel = new ConversationModel({});
-        this.userModel = new UserModel({});
+        this.conversationModel = new ConversationModel({}, "conversationModel");
+        this.userModel = new UserModel({}, "userModel");
         this.addModel(this.conversationModel);
         this.addModel(this.userModel);
 
@@ -114,7 +122,7 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxWithHeaderView = new BoxWithHeaderView({});
+        this.boxWithHeaderView = view(BoxWithHeaderView).build();
 
 
         // Wire Up Views
@@ -141,16 +149,6 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.contactModel.bind('change:conversationUuid', this.handleContactModelChangeConversationUuid, this);
         this.contactModel.bind('change:userUuid', this.handleContactModelChangeUserUuid, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.contactModel = null;
-        this.conversationModel = null;
-        this.userModel = null;
     },
 
 

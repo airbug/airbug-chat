@@ -8,6 +8,14 @@
 //@Require('Class')
 //@Require('PanelView')
 //@Require('UserNameView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -47,18 +55,6 @@ var UserNamePanelContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.panelView = null;
-
-        /**
-         * @private
-         * @type {UserNameView}
-         */
-        this.userNameView = null;
-
-        /**
-         * @private
-         * @type {UserStatusIndicatorView}
-         */
-        this.userStatusIndicatorView = null;
     },
 
 
@@ -76,27 +72,22 @@ var UserNamePanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView = new PanelView({});
-        this.userNameView = new UserNameView({
-            model: this.userModel
-        });
-        this.userStatusIndicatorView = new UserStatusIndicatorView({
-            model: this.userModel
-        });
+        this.panelView =
+            view(PanelView)
+                .children([
+                    view(UserStatusIndicatorView)
+                        .model(this.userModel)
+                        .appendTo('*[id|="panel-body"]'),
+                    view(UserNameView)
+                        .model(this.userModel)
+                        .appendTo('*[id|="panel-body"]')
+                ])
+                .build();
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.panelView.addViewChild(this.userStatusIndicatorView, "#panel-body-" + this.panelView.cid);
-        this.panelView.addViewChild(this.userNameView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.userModel = null;
     }
 });

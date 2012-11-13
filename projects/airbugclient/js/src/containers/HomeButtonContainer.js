@@ -11,6 +11,14 @@
 //@Require('IconView')
 //@Require('NavigationMessage')
 //@Require('TextView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -37,18 +45,6 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
-
-        /**
-         * @private
-         * @type {IconView}
-         */
-        this.iconView = null;
-
-        /**
-         * @private
-         * @type {TextView}
-         */
-        this.textView = null;
     },
 
 
@@ -65,16 +61,23 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = new ButtonView({type: "primary", align: "left"});
-        this.iconView = new IconView({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE});
-        this.textView = new TextView({text: "Home"});
+        this.buttonView =
+            view(ButtonView)
+                .attributes({type: "primary", align: "left"})
+                .children([
+                    view(IconView)
+                        .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
+                        .appendTo('*[id|="button"]'),
+                    view(TextView)
+                        .attributes({text: "Home"})
+                        .appendTo('*[id|="button"]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView.addViewChild(this.iconView, "#button-" + this.buttonView.cid);
-        this.buttonView.addViewChild(this.textView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },
 

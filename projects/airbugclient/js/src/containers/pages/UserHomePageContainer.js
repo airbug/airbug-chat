@@ -11,6 +11,14 @@
 //@Require('ConversationListPanelContainer')
 //@Require('PageThreeColumnView')
 //@Require('RoomListPanelContainer')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -85,7 +93,10 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView = new PageThreeColumnView({configuration: PageThreeColumnView.Configuration.DEFAULT});
+        this.pageThreeColumnView =
+            view(PageThreeColumnView)
+                .attributes({configuration: PageThreeColumnView.Configuration.DEFAULT})
+                .build();
 
 
         // Wire Up Views

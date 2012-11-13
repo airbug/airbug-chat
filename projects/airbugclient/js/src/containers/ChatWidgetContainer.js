@@ -12,6 +12,14 @@
 //@Require('MessageCollection')
 //@Require('PanelView')
 //@Require('TextAreaView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -66,12 +74,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {PanelView}
-         */
-        this.panelView = null;
-
-        /**
-         * @private
          * @type {TextAreaView}
          */
         this.textAreaView = null;
@@ -100,25 +102,37 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.messageCollection = new MessageCollection();
+        this.messageCollection = new MessageCollection([], "messageCollection");
+        this.addCollection(this.messageCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetView = new ChatWidgetView({});
-        this.messageListView = new ListView({});
-        this.panelView = new PanelView({});
-        this.textAreaView = new TextAreaView({rows: 1});
+        this.chatWidgetView =
+            view(ChatWidgetView)
+                .children([
+                    view(PanelView)
+                        .appendTo('*[id|="chat-widget-messages"]')
+                        .children([
+                            view(ListView)
+                                .id("messageListView")
+                                .appendTo('*[id|="panel-body"]')
+                        ]),
+                    view(TextAreaView)
+                        .id("textAreaView")
+                        .attributes({rows: 1})
+                        .appendTo('*[id|="chat-widget-input"]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.panelView.addViewChild(this.messageListView, "#panel-body-" + this.panelView.cid);
-        this.chatWidgetView.addViewChild(this.panelView, "#chat-widget-messages-" + this.chatWidgetView.cid);
-        this.chatWidgetView.addViewChild(this.textAreaView, "#chat-widget-input-" + this.chatWidgetView.cid);
         this.setViewTop(this.chatWidgetView);
+        this.messageListView = this.findViewById("messageListView");
+        this.textAreaView = this.findViewById("textAreaView");
     },
 
     /**

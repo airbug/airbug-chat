@@ -14,6 +14,14 @@
 //@Require('TextView')
 //@Require('UserNameView')
 //@Require('UserStatusIndicatorView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -53,18 +61,6 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
          * @type {SelectableListItemView}
          */
         this.selectableListItemView = null;
-
-        /**
-         * @private
-         * @type {UserNameView}
-         */
-        this.userNameView = null;
-
-        /**
-         * @private
-         * @type {UserStatusIndicatorView}
-         */
-        this.userStatusIndicatorView = null;
     },
 
 
@@ -82,38 +78,31 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.userModel = new UserModel();
+        this.userModel = new UserModel({}, "userModel");
         this.addModel(this.userModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.selectableListItemView = new SelectableListItemView({
-            model: this.userModel
-        });
-        this.userNameView = new UserNameView({
-            model: this.userModel,
-            classes: "text-simple"
-        });
-        this.userStatusIndicatorView = new UserStatusIndicatorView({
-            model: this.userModel
-        });
+        this.selectableListItemView =
+            view(SelectableListItemView)
+                .model(this.userModel)
+                .children([
+                    view(UserStatusIndicatorView)
+                        .model(this.userModel)
+                        .appendTo('*[id|=list-item]'),
+                    view(UserNameView)
+                        .model(this.userModel)
+                        .attributes({classes: "text-simple"})
+                        .appendTo('*[id|=list-item]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.selectableListItemView.addViewChild(this.userStatusIndicatorView, '#list-item-' + this.selectableListItemView.cid);
-        this.selectableListItemView.addViewChild(this.userNameView, '#list-item-' + this.selectableListItemView.cid);
         this.setViewTop(this.selectableListItemView);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.userModel = null;
     }
 });

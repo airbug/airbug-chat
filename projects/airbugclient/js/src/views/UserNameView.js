@@ -18,7 +18,7 @@ var UserNameView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="user-name-{{cid}}" class="text user-name {{options.classes}}">{{model.firstName}} {{model.lastName}}</span>',
+    template:   '<span id="user-name-{{cid}}" class="text user-name {{attributes.classes}}">{{model.firstName}} {{model.lastName}}</span>',
 
 
     //-------------------------------------------------------------------------------

@@ -12,13 +12,22 @@
 //@Require('ListView')
 //@Require('ListViewEvent')
 //@Require('NavigationMessage')
+//@Require('ViewBuilder')
 
-//TODO BRN: Add support for current selected conversation. The conversation that we're currently viewing should be
-// highlighted in this panel.
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
+
+//TODO BRN: Add support for current selected conversation. The conversation that we're currently viewing should be
+// highlighted in this panel.
 
 var ConversationListContainer = Class.extend(CarapaceContainer, {
 
@@ -111,14 +120,14 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationCollection = new ConversationCollection();
-        this.addModel(this.conversationCollection);
+        this.conversationCollection = new ConversationCollection([], "conversationCollection");
+        this.addCollection(this.conversationCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listView = new ListView({});
+        this.listView = view(ListView).build();
 
 
         // Wire Up Views
@@ -134,14 +143,6 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.conversationCollection.bind('add', this.handleConversationCollectionAdd, this);
         this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.conversationCollection = null;
     },
 
 

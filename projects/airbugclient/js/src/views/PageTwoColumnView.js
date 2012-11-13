@@ -27,26 +27,6 @@ var PageTwoColumnView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(options) {
-        this._super(options);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {?string}
-         */
-        this.configuration = options.configuration;
-    },
-
-
-    //-------------------------------------------------------------------------------
     // MustacheView Implementation
     //-------------------------------------------------------------------------------
 
@@ -57,7 +37,7 @@ var PageTwoColumnView = Class.extend(MustacheView, {
         var data = this._super();
         data.leftColumnSpan = "span6";
         data.rightColumnSpan = "span6";
-        switch (this.configuration) {
+        switch (this.attributes.configuration) {
             case PageTwoColumnView.Configuration.THIN_RIGHT:
                 data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";

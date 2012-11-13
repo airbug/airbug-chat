@@ -25,38 +25,6 @@ var ButtonView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(options) {
-        this._super(options);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {?string}
-         */
-        this.align = options.align;
-
-        /**
-         * @private
-         * @type {ButtonView.Size}
-         */
-        this.size = options.size;
-
-        /**
-         * @private
-         * @type {?string}
-         */
-        this.type = options.type;
-    },
-
-
-    //-------------------------------------------------------------------------------
     // CarapaceView Extensions
     //-------------------------------------------------------------------------------
 
@@ -90,7 +58,7 @@ var ButtonView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         data.buttonClasses = "";
-        switch (this.size) {
+        switch (this.attributes.size) {
             case ButtonView.Size.LARGE:
                 data.buttonClasses += " btn-large";
                 break;
@@ -101,7 +69,7 @@ var ButtonView = Class.extend(MustacheView, {
                 data.buttonClasses += " btn-mini";
                 break;
         }
-        switch (this.type) {
+        switch (this.attributes.type) {
             case "primary":
                 data.buttonClasses += " btn-primary";
                 break;
@@ -123,7 +91,7 @@ var ButtonView = Class.extend(MustacheView, {
         }
 
         data.buttonWrapperClasses = "";
-        switch (this.align) {
+        switch (this.attributes.align) {
             case "right":
                 data.buttonWrapperClasses += "pull-right";
                 break;

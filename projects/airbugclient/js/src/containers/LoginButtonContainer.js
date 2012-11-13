@@ -10,6 +10,14 @@
 //@Require('Class')
 //@Require('NavigationMessage')
 //@Require('TextView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -36,12 +44,6 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
-
-        /**
-         * @private
-         * @type {TextView}
-         */
-        this.textView = null;
     },
 
 
@@ -58,14 +60,20 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = new ButtonView({type: "primary", align: "right"});
-        this.textView = new TextView({text: "Login"});
+        this.buttonView =
+            view(ButtonView)
+                .attributes({type: "primary", align: "right"})
+                .children([
+                    view(TextView)
+                        .attributes({text: "Login"})
+                        .appendTo('*[id|="button"]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView.addViewChild(this.textView, "#button-" + this.buttonView.cid);
         this.setViewTop(this.buttonView);
     },
 

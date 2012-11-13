@@ -15,6 +15,14 @@
 //@Require('RoomNameView')
 //@Require('SelectableListItemView')
 //@Require('TextView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -66,12 +74,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.panelView = null;
-
-        /**
-         * @private
-         * @type {TextView}
-         */
-        this.textView = null;
     },
 
 
@@ -102,26 +104,39 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomCollection = new RoomCollection();
-        this.addModel(this.roomCollection);
+        this.roomCollection = new RoomCollection([], "roomCollection");
+        this.addCollection(this.roomCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomButtonView = new ButtonView({size: ButtonView.Size.SMALL});
-        this.listView = new ListView({});
-        this.panelView = new PanelWithHeaderView({headerTitle: "Rooms"});
-        this.textView = new TextView({text: "+"});
+        this.panelView =
+        view(PanelWithHeaderView)
+            .attributes({headerTitle: "Rooms"})
+            .children([
+                view(ButtonView)
+                    .attributes({size: ButtonView.Size.SMALL})
+                    .id("addRoomButtonView")
+                    .appendTo('*[id|="panel-header-nav"]')
+                    .children([
+                        view(TextView)
+                            .attributes({text: "+"})
+                            .appendTo('*[id|="button"]')
+                    ]),
+                view(ListView)
+                    .id("listView")
+                    .appendTo('*[id|="panel-body"]')
+            ])
+            .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.addRoomButtonView.addViewChild(this.textView, "#button-" + this.addRoomButtonView.cid);
-        this.panelView.addViewChild(this.addRoomButtonView, "#panel-header-nav-" + this.panelView.cid);
-        this.panelView.addViewChild(this.listView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
+        this.addRoomButtonView = this.findViewById("addRoomButtonView");
+        this.listView = this.findViewById("listView");
     },
 
     /**
@@ -129,17 +144,8 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        var _this = this;
         this.roomCollection.bind('add', this.handleRoomCollectionAdd, this);
         this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.roomCollection = null;
     },
 
 
@@ -170,14 +176,17 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {RoomModel} roomModel
      */
     handleRoomCollectionAdd: function(roomModel) {
-        var selectableListItemView = new SelectableListItemView({
-            model: roomModel
-        });
-        var roomNameView = new RoomNameView({
-            model: roomModel,
-            classes : "text-simple"
-        });
-        selectableListItemView.addViewChild(roomNameView, '#list-item-' + selectableListItemView.cid);
+        var selectableListItemView =
+            view(SelectableListItemView)
+                .model(roomModel)
+                .children([
+                    view(RoomNameView)
+                        .model(roomModel)
+                        .attributes({classes : "text-simple"})
+                        .appendTo('*[id|="list-item"]')
+                ])
+                .build();
+
         this.listView.addViewChild(selectableListItemView);
     }
 });

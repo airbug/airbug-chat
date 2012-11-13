@@ -102,8 +102,11 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
-        this.headerView = new HeaderView();
-        this.applicationView = new ApplicationView();
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        this.headerView = new HeaderView({id: "headerView"});
+        this.applicationView = new ApplicationView({id: "applicationView"});
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);
@@ -117,10 +120,14 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         this.headerView.dispose();
         this.applicationView.dispose();
         this.viewTop = null;
-        this.modelList.forEach(function(model) {
+        this.collectionMap.forEach(function(collection) {
+            collection.dispose();
+        });
+        this.collectionMap.clear();
+        this.modelMap.forEach(function(model) {
             model.dispose();
         });
-        this.modelList.clear();
+        this.modelMap.clear();
     },
 
 

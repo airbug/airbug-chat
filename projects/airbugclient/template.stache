@@ -58,6 +58,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/model/CarapaceModel.js"></script>
         <script src="/model/CarapaceCollection.js"></script>
         <script src="/view/CarapaceView.js"></script>
+        <script src="/view/ViewBuilder.js"></script>
         <script src="/Carapace.js"></script>
 
         <script src="/models/ContactModel.js"></script>

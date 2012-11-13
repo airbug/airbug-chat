@@ -18,5 +18,5 @@ var TextView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="text-{{cid}}" class="text">{{options.text}}</span>'
+    template:   '<span id="text-{{cid}}" class="text">{{attributes.text}}</span>'
 });

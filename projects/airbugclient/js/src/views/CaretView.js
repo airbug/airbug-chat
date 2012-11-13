@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('TextInputView')
+//@Export('CaretView')
 
 //@Require('Class')
 //@Require('MustacheView')
@@ -12,11 +12,11 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TextInputView = Class.extend(MustacheView, {
+var CaretView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<input id="text-input-{{cid}}" type="text" placeholder="{{attributes.placeholder}}">'
+    template:   '<span class="caret"></span>'
 });

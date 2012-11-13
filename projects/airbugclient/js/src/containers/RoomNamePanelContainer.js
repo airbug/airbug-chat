@@ -8,6 +8,14 @@
 //@Require('Class')
 //@Require('PanelView')
 //@Require('RoomNameView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -47,12 +55,6 @@ var RoomNamePanelContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.panelView = null;
-
-        /**
-         * @private
-         * @type {RoomNameView}
-         */
-        this.roomNameView = null;
     },
 
 
@@ -70,24 +72,19 @@ var RoomNamePanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView = new PanelView({});
-        this.roomNameView = new RoomNameView({
-            model: this.roomModel
-        });
+        this.panelView =
+            view(PanelView)
+                .children([
+                    view(RoomNameView)
+                        .model(this.roomModel)
+                        .appendTo('*[id|="panel-body"]')
+                ])
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.panelView.addViewChild(this.roomNameView, "#panel-body-" + this.panelView.cid);
         this.setViewTop(this.panelView);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.roomModel = null;
     }
 });

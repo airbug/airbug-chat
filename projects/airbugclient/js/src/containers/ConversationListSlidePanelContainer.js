@@ -8,6 +8,14 @@
 //@Require('Class')
 //@Require('ConversationListContainer')
 //@Require('SlidePanelView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -63,7 +71,7 @@ var ConversationListSlidePanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.slidePanelView = new SlidePanelView({});
+        this.slidePanelView = view(SlidePanelView).build();
 
 
         // Wire Up Views

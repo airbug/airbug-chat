@@ -13,6 +13,14 @@
 //@Require('RoomChatBoxContainer')
 //@Require('RoomMemberListPanelContainer')
 //@Require('RoomModel')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -107,14 +115,17 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.contactModel = new ContactModel();
+        this.contactModel = new ContactModel({}, "contactModel");
         this.addModel(this.contactModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageTwoColumnView = new PageTwoColumnView({configuration: PageTwoColumnView.Configuration.THIN_RIGHT});
+        this.pageTwoColumnView =
+            view(PageTwoColumnView)
+                .attributes({configuration: PageTwoColumnView.Configuration.THIN_RIGHT})
+                .build();
 
 
         // Wire Up Views

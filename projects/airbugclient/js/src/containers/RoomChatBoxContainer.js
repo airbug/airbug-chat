@@ -10,6 +10,14 @@
 //@Require('Class')
 //@Require('ConversationModel')
 //@Require('RoomNamePanelContainer')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -99,14 +107,14 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel = new ConversationModel({});
+        this.conversationModel = new ConversationModel({}, "conversationModel");
         this.addModel(this.conversationModel);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxWithHeaderView = new BoxWithHeaderView({});
+        this.boxWithHeaderView = view(BoxWithHeaderView).build();
 
 
         // Wire Up Views
@@ -132,15 +140,6 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.roomModel.bind('change:conversationUuid', this.handleRoomModelChangeConversationUuid, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.conversationModel = null;
-        this.roomModel = null;
     },
 
 

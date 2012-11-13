@@ -14,6 +14,14 @@
 //@Require('TextView')
 //@Require('UserNameView')
 //@Require('UserStatusIndicatorView')
+//@Require('ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var view = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -76,14 +84,14 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomMemberCollection = new RoomMemberCollection();
-        this.addModel(this.roomMemberCollection);
+        this.roomMemberCollection = new RoomMemberCollection([], "roomMemberCollection");
+        this.addCollection(this.roomMemberCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listView = new ListView({});
+        this.listView = view(ListView).build();
 
 
         // Wire Up Views
@@ -100,14 +108,6 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         this.roomMemberCollection.bind("add", this.handleRoomMemberCollectionAdd, this);
         this.roomModel.bind('change:uuid', this.handleRoomModelChangeUuid, this);
         this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    destroyContainer: function() {
-        this._super();
-        this.roomMemberCollection = null;
     },
 
 
