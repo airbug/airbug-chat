@@ -2,29 +2,28 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SelectableListItemView')
+//@Export('DropdownItemView')
 
 //@Require('Class')
-//@Require('ListItemView')
-//@Require('ListViewEvent')
+//@Require('DropdownViewEvent')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SelectableListItemView = Class.extend(ListItemView, {
+var DropdownItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="list-item-{{cid}}" class="list-item list-item-small clickable-box">' +
-                '</div>',
+    template:   '<li><a id ="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // CarapaceView Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -41,8 +40,8 @@ var SelectableListItemView = Class.extend(ListItemView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.bind("click", function(event) {
-            _this.handleListItemClick(event);
+        this.$el.bind('click', function(event) {
+            _this.handleDropdownItemClick(event);
         });
     },
 
@@ -55,8 +54,8 @@ var SelectableListItemView = Class.extend(ListItemView, {
      * @private
      * @param event
      */
-    handleListItemClick: function(event) {
+    handleDropdownItemClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ListViewEvent(ListViewEvent.EventTypes.ITEM_SELECTED, this.model.toJSON()));
+        this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventTypes.DROPDOWN_SELECTED));
     }
 });

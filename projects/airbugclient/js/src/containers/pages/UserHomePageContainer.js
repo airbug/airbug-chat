@@ -4,7 +4,7 @@
 
 //@Export('UserHomePageContainer')
 
-//@Require('AccountButtonContainer')
+//@Require('AccountButtonDropdownContainer')
 //@Require('ApplicationContainer')
 //@Require('Class')
 //@Require('ContactListPanelContainer')
@@ -46,9 +46,9 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {AccountButtonContainer}
+         * @type {AccountButtonDropdownContainer}
          */
-        this.accountButtonContainer = null;
+        this.accountButtonDropdownContainer = null;
 
         /**
          * @private
@@ -110,11 +110,11 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonContainer = new AccountButtonContainer(this.apiPublisher);
+        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer(this.apiPublisher);
         this.contactListPanelContainer = new ContactListPanelContainer(this.apiPublisher);
         this.conversationListPanelContainer = new ConversationListPanelContainer(this.apiPublisher);
         this.roomListPanelContainer = new RoomListPanelContainer(this.apiPublisher);
-        this.addContainerChild(this.accountButtonContainer, '#header-right');
+        this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
         this.addContainerChild(this.contactListPanelContainer, "#page-leftrow");
         this.addContainerChild(this.conversationListPanelContainer, "#page-centerrow");
         this.addContainerChild(this.roomListPanelContainer, "#page-rightrow");

@@ -7,6 +7,7 @@
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('NavigationMessage')
+//@Require('SessionMessage')
 
 
 //-------------------------------------------------------------------------------
@@ -39,13 +40,34 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @protected
      */
     initializeController: function() {
-        this.apiPublisher.subscribe(NavigationMessage.MessageTopics.NAVIGATE, this.receiveNavigationMessageNavigate, this)
+        this._super();
+        this.apiPublisher.subscribe(NavigationMessage.MessageTopics.GO_BACK, this.receiveNavigationMessageGoBack, this);
+        this.apiPublisher.subscribe(NavigationMessage.MessageTopics.MARK_GO_BACK, this.receiveNavigationMessageMarkGoBack, this);
+        this.apiPublisher.subscribe(NavigationMessage.MessageTopics.NAVIGATE, this.receiveNavigationMessageNavigate, this);
+        this.apiPublisher.subscribe(SessionMessage.MessageTopics.LOGIN, this.receiveSessionMessageLogin, this);
+        this.apiPublisher.subscribe(SessionMessage.MessageTopics.LOGOUT, this.receiveSessionMessageLogout, this);
     },
 
 
     //-------------------------------------------------------------------------------
     // Protected Class Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param email
+     * @param password
+     */
+    login: function(email, password) {
+
+    },
+
+    /**
+     * @protected
+     */
+    logout: function() {
+
+    },
 
     /**
      * @protected
@@ -62,9 +84,42 @@ var ApplicationController = Class.extend(CarapaceController, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @private
+     * @param {Message} message
+     */
+    receiveNavigationMessageGoBack: function(message) {
+
+    },
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    receiveNavigationMessageMarkGoBack: function(message) {
+
+    },
+
+    /**
+     * @private
      * @param {Message} message
      */
     receiveNavigationMessageNavigate: function(message) {
         this.navigate(message.getData().fragment, message.getData().options);
+    },
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    receiveSessionMessageLogin: function(message) {
+        this.login(message.getData().email, message.getData().password);
+    },
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    receiveSessionMessageLogout: function(message) {
+        this.logout();
     }
 });

@@ -8,7 +8,6 @@
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('HeaderView')
-//@Require('NavigationMessage')
 
 
 //-------------------------------------------------------------------------------

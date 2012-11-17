@@ -2,11 +2,12 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AccountButtonContainer')
+//@Export('SettingsPageContainer')
 
-//@Require('AccountButtonView')
-//@Require('CarapaceContainer')
+//@Require('ApplicationContainer')
+//@Require('BackButtonContainer')
 //@Require('Class')
+//@Require('PageView')
 //@Require('ViewBuilder')
 
 
@@ -21,7 +22,7 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AccountButtonContainer = Class.extend(CarapaceContainer, {
+var LoginPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -37,15 +38,21 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {ButtonView}
+         * @protected
+         * @type {PageView}
          */
-        this.buttonView = null;
+        this.pageView = null;
+
+        /**
+         * @protected
+         * @type {SignupButtonContainer}
+         */
+        this.signupButtonContainer = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -54,44 +61,31 @@ var AccountButtonContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
+
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "right"})
+        this.pageView =
+            view(PageView)
                 .children([
-                    view(IconView)
-                        .attributes({type: IconView.Type.USER, color: IconView.Color.WHITE})
-                        .appendTo('*[id|="button"]')
-                ])
+                view(LoginFormView)
+                    .appendTo("*[id|=page]")
+            ])
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
+        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
     },
 
     /**
      * @protected
      */
-    initializeContainer: function() {
+    createContainerChildren: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-        //TODO BRN: Open account drop down.
+        this.signupButtonContainer = new SignupButtonContainer(this.apiPublisher);
+        this.addContainerChild(this.signupButtonContainer, "#header-right");
     }
 });

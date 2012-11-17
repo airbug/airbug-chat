@@ -2,14 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('NavigationMessage')
+//@Export('DropdownViewEvent')
+
+//@Require('Class')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var NavigationMessage = {};
+var DropdownViewEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -19,8 +22,6 @@ var NavigationMessage = {};
 /**
  * @enum {string}
  */
-NavigationMessage.MessageTopics = {
-    MARK_GO_BACK: "NavigationMessage:MarkGoBack",
-    NAVIGATE: "NavigationMessage:Navigate",
-    GO_BACK: "NavigationMessage:GoBack"
+DropdownViewEvent.EventTypes = {
+    DROPDOWN_SELECTED: "DropdownViewEvent:DropdownSelected"
 };

@@ -4,7 +4,7 @@
 
 //@Export('ContactChatPageContainer')
 
-//@Require('AccountButtonContainer')
+//@Require('AccountButtonDropdownContainer')
 //@Require('ApplicationContainer')
 //@Require('Class')
 //@Require('ConversationListSlidePanelContainer')
@@ -47,9 +47,9 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {AccountButtonContainer}
+         * @type {AccountButtonDropdownContainer}
          */
-        this.accountButtonContainer = null;
+        this.accountButtonDropdownContainer = null;
 
         /**
          * @private
@@ -139,11 +139,11 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonContainer = new AccountButtonContainer(this.apiPublisher);
+        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer(this.apiPublisher);
         this.contactChatBoxContainer = new ContactChatBoxContainer(this.apiPublisher, this.contactModel);
         this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer(this.apiPublisher);
         this.homeButtonContainer = new HomeButtonContainer(this.apiPublisher);
-        this.addContainerChild(this.accountButtonContainer, '#header-right');
+        this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
         this.addContainerChild(this.contactChatBoxContainer, "#page-leftrow");
         this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");
         this.addContainerChild(this.homeButtonContainer, "#header-left");

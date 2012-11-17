@@ -2,14 +2,14 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('NavigationMessage')
+//@Export('SessionMessage')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var NavigationMessage = {};
+var SessionMessage = {};
 
 
 //-------------------------------------------------------------------------------
@@ -19,8 +19,7 @@ var NavigationMessage = {};
 /**
  * @enum {string}
  */
-NavigationMessage.MessageTopics = {
-    MARK_GO_BACK: "NavigationMessage:MarkGoBack",
-    NAVIGATE: "NavigationMessage:Navigate",
-    GO_BACK: "NavigationMessage:GoBack"
+SessionMessage.MessageTopics = {
+    LOGIN: "SessionMessage:Login",
+    LOGOUT: "SessionMessage:Logout"
 };
