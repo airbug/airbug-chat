@@ -4,11 +4,12 @@
 
 //@Export('LoginButtonContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('ButtonView')
 //@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('NavigationMessage')
 //@Require('TextView')
 //@Require('ViewBuilder')
 
@@ -17,6 +18,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -30,13 +34,26 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
+
+
+        // Views
         //-------------------------------------------------------------------------------
 
         /**
@@ -95,11 +112,13 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "login",
-            options: {
-                trigger: true
-            }
+        this.navigationModule.navigate("login", {
+            trigger: true
         });
     }
 });
+annotate(LoginButtonContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule")
+    )
+);

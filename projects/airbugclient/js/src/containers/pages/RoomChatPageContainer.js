@@ -33,9 +33,9 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -145,11 +145,11 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer(this.apiPublisher);
-        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer(this.apiPublisher);
-        this.homeButtonContainer = new HomeButtonContainer(this.apiPublisher);
-        this.roomChatBoxContainer = new RoomChatBoxContainer(this.apiPublisher, this.roomModel);
-        this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.apiPublisher, this.roomModel);
+        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
+        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer();
+        this.homeButtonContainer = new HomeButtonContainer();
+        this.roomChatBoxContainer = new RoomChatBoxContainer(this.roomModel);
+        this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.roomModel);
         this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
         this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");
         this.addContainerChild(this.homeButtonContainer, "#header-left");

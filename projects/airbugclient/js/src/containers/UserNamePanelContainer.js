@@ -28,9 +28,9 @@ var UserNamePanelContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, userModel) {
+    _constructor: function(userModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

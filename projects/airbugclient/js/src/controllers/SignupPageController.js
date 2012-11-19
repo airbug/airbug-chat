@@ -56,7 +56,7 @@ var SignupPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.signupPageContainer = new SignupPageContainer(this.apiPublisher);
+        this.signupPageContainer = new SignupPageContainer();
         this.setContainerTop(this.signupPageContainer);
     }
 });

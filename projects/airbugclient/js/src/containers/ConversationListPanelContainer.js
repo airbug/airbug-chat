@@ -28,9 +28,9 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.conversationListContainer = new ConversationListContainer(this.apiPublisher);
+        this.conversationListContainer = new ConversationListContainer();
         this.addContainerChild(this.conversationListContainer, "#panel-body-" + this.panelView.cid);
     }
 });

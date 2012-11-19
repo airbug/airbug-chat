@@ -33,9 +33,9 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, roomModel) {
+    _constructor: function(roomModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.roomMemberListContainer = new RoomMemberListContainer(this.apiPublisher, this.roomModel);
+        this.roomMemberListContainer = new RoomMemberListContainer(this.roomModel);
         this.addContainerChild(this.roomMemberListContainer, "#panel-body-" + this.panelView.cid);
     }
 });

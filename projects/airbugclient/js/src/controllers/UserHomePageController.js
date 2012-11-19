@@ -56,7 +56,7 @@ var UserHomePageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.userHomePageContainer = new UserHomePageContainer(this.apiPublisher);
+        this.userHomePageContainer = new UserHomePageContainer();
         this.setContainerTop(this.userHomePageContainer);
     }
 });

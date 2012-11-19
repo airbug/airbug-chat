@@ -31,9 +31,9 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -110,10 +110,10 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer(this.apiPublisher);
-        this.contactListPanelContainer = new ContactListPanelContainer(this.apiPublisher);
-        this.conversationListPanelContainer = new ConversationListPanelContainer(this.apiPublisher);
-        this.roomListPanelContainer = new RoomListPanelContainer(this.apiPublisher);
+        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
+        this.contactListPanelContainer = new ContactListPanelContainer();
+        this.conversationListPanelContainer = new ConversationListPanelContainer();
+        this.roomListPanelContainer = new RoomListPanelContainer();
         this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
         this.addContainerChild(this.contactListPanelContainer, "#page-leftrow");
         this.addContainerChild(this.conversationListPanelContainer, "#page-centerrow");

@@ -18,9 +18,9 @@ var ContactListItemContainer = Class.extend(UserListItemContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, contactModel) {
+    _constructor: function(contactModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

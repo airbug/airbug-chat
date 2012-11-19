@@ -30,9 +30,9 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.contactListContainer = new ContactListContainer(this.apiPublisher);
+        this.contactListContainer = new ContactListContainer();
         this.addContainerChild(this.contactListContainer, "#panel-body-" + this.panelView.cid);
     }
 });

@@ -56,7 +56,7 @@ var SettingsPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.settingsPageContainer = new SettingsPageContainer(this.apiPublisher);
+        this.settingsPageContainer = new SettingsPageContainer();
         this.setContainerTop(this.settingsPageContainer);
     }
 });

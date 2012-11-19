@@ -4,6 +4,8 @@
 
 //@Export('AccountButtonDropdownContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('ButtonDropdownView')
 //@Require('CarapaceContainer')
 //@Require('Class')
@@ -17,6 +19,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -30,13 +35,32 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
+
+        /**
+         * @private
+         * @type {SessionModule}
+         */
+        this.sessionModule = null;
+
+
+        // Views
         //-------------------------------------------------------------------------------
 
         /**
@@ -132,20 +156,15 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
     hearLogoutDropdownSelectedEvent: function(event) {
         var _this = this;
 
-        this.apiPublisher.publish(SessionMessage.MessageTopics.LOGOUT, {
-            callback: function(response) {
-                if (response.error) {
-                    // TODO BRN: Show error popup
-                    // TODO BRN: What should we do if we are already logged out? How would this happen? If it does,
-                    // perhaps we just redirect to the goodbye page. Some how the states have gotten out of sync.
-                } else if (response.success) {
-                    _this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-                        fragment: "goodbye",
-                        options: {
-                            trigger: true
-                        }
-                    });
-                }
+        this.sessionModule.logout(function(response) {
+            if (response.error) {
+                // TODO BRN: Show error popup
+                // TODO BRN: What should we do if we are already logged out? How would this happen? If it does,
+                // perhaps we just redirect to the goodbye page. Some how the states have gotten out of sync.
+            } else if (response.success) {
+                _this.navigationModule.navigate("goodbye", {
+                    trigger: true
+                });
             }
         });
     },
@@ -155,11 +174,16 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
      * @param {Event} event
      */
     hearSettingsDropdownSelectedEvent: function(event) {
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "settings",
-            options: {
-                trigger: true
-            }
+        this.navigationModule.navigate("settings", {
+            trigger: true
         });
     }
 });
+
+annotate(AccountButtonDropdownContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule"),
+        property("sessionModule").ref("sessionModule")
+    )
+);
+

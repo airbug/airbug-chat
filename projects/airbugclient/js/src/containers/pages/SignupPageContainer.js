@@ -28,9 +28,9 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.loginButtonContainer = new LoginButtonContainer(this.apiPublisher);
+        this.loginButtonContainer = new LoginButtonContainer();
         this.addContainerChild(this.loginButtonContainer, "#header-right");
     }
 });

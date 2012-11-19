@@ -116,6 +116,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
 
         <script src="/views/ApplicationView.js"></script>
         <script src="/views/BodyView.js"></script>
+        <script src="/views/BoxView.js"></script>
         <script src="/views/BoxWithFooterView.js"></script>
         <script src="/views/BoxWithHeaderView.js"></script>
         <script src="/views/ButtonDropdownView.js"></script>
@@ -141,8 +142,10 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/containers/RoomMemberListPanelContainer.js"></script>
         <script src="/containers/RoomNamePanelContainer.js"></script>
         <script src="/containers/UserNamePanelContainer.js"></script>
+        <script src="/containers/SettingsPanelContainer.js"></script>
 
         <script src="/containers/buttons/AccountButtonDropdownContainer.js"></script>
+        <script src="/containers/buttons/BackButtonContainer.js"></script>
         <script src="/containers/buttons/HomeButtonContainer.js"></script>
         <script src="/containers/buttons/LoginButtonContainer.js"></script>
         <script src="/containers/buttons/SignupButtonContainer.js"></script>
@@ -155,24 +158,23 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/containers/lists/RoomMemberListContainer.js"></script>
         <script src="/containers/lists/RoomMemberListItemContainer.js"></script>
 
-
         <script src="/containers/pages/ContactChatPageContainer.js"></script>
         <script src="/containers/pages/LoginPageContainer.js"></script>
         <script src="/containers/pages/RoomChatPageContainer.js"></script>
+        <script src="/containers/pages/SettingsPageContainer.js"></script>
         <script src="/containers/pages/SignupPageContainer.js"></script>
         <script src="/containers/pages/UserHomePageContainer.js"></script>
 
-        <script src="/controllers/messages/NavigationMessage.js"></script>
-        <script src="/controllers/messages/SessionMessage.js"></script>
         <script src="/controllers/ApplicationController.js"></script>
-
         <script src="/controllers/ContactChatPageController.js"></script>
         <script src="/controllers/LoginPageController.js"></script>
         <script src="/controllers/RoomChatPageController.js"></script>
+        <script src="/controllers/SettingsPageController.js"></script>
         <script src="/controllers/SignupPageController.js"></script>
         <script src="/controllers/UserHomePageController.js"></script>
 
         <script src="/modules/NavigationModule.js"></script>
+        <script src="/modules/PageStateModule.js"></script>
         <script src="/modules/SessionModule.js"></script>
 
         <script src="/configurations/ApplicationConfiguration.js"></script>

@@ -15,6 +15,7 @@
 //@Require('IConfiguration')
 //@Require('NavigationModule')
 //@Require('Obj')
+//@Require('PageStateModule')
 //@Require('SessionModule')
 
 
@@ -127,6 +128,13 @@ var ApplicationConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {PageStateModule}
+     */
+    pageStateModule: function() {
+        return new PageStateModule();
+    },
+
+    /**
      * @return {SessionModule}
      */
     sessionModule: function() {
@@ -147,6 +155,10 @@ annotate(ApplicationConfiguration).with(
                 arg().ref("carapaceApplication")
             ]),
         module("navigationModule")
+            .properties([
+                property("carapaceRouter").ref("carapaceRouter")
+            ]),
+        module("pageStateModule")
             .properties([
                 property("carapaceRouter").ref("carapaceRouter")
             ]),

@@ -8,6 +8,7 @@
 //@Require('BackButtonContainer')
 //@Require('Class')
 //@Require('PageView')
+//@Require('SettingsPanelContainer')
 //@Require('ViewBuilder')
 
 
@@ -22,19 +23,22 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageContainer = Class.extend(ApplicationContainer, {
+var SettingsPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        // Views
         //-------------------------------------------------------------------------------
 
         /**
@@ -43,11 +47,21 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
          */
         this.pageView = null;
 
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
         /**
          * @protected
-         * @type {SignupButtonContainer}
+         * @type {BackButtonContainer}
          */
-        this.signupButtonContainer = null;
+        this.backButtonContainer = null;
+
+        /**
+         * @protected
+         * @type {SettingsPanelContainer}
+         */
+        this.settingsPanelContainer = null;
     },
 
 
@@ -68,9 +82,10 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
         this.pageView =
             view(PageView)
                 .children([
-                view(LoginFormView)
-                    .appendTo("*[id|=page]")
-            ])
+                    view(BoxView)
+                        .attributes({classes: "settings-box"})
+                        .appendTo('*[id|="page"]')
+                ])
                 .build();
 
 
@@ -85,7 +100,9 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.signupButtonContainer = new SignupButtonContainer(this.apiPublisher);
-        this.addContainerChild(this.signupButtonContainer, "#header-right");
+        this.backButtonContainer = new BackButtonContainer();
+        this.settingsPanelContainer = new SettingsPanelContainer();
+        this.addContainerChild(this.backButtonContainer, "#header-left");
+        this.addContainerChild(this.settingsPanelContainer, '*[id|="box"]');
     }
 });

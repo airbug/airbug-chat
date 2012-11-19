@@ -4,10 +4,11 @@
 
 //@Export('RoomMemberListContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ListView')
-//@Require('NavigationMessage')
 //@Require('RoomMemberCollection')
 //@Require('RoomMemberListItemContainer')
 //@Require('RoomMemberModel')
@@ -21,6 +22,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -34,9 +38,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, roomModel) {
+    _constructor: function(roomModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -57,6 +61,16 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          * @type {RoomModel}
          */
         this.roomModel = roomModel;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
 
 
         // Views
@@ -149,11 +163,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     hearListViewItemSelectedEvent: function(event) {
         var roomMember = event.getData();
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "room-member/" + roomMember.uuid,
-            options: {
-                trigger: true
-            }
+        this.navigationModule.navigate("room-member/" + roomMember.uuid, {
+            trigger: true
         });
     },
 
@@ -166,7 +177,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {RoomMemberModel} roomMemberModel
      */
     handleRoomMemberCollectionAdd: function(roomMemberModel) {
-        var roomMemberListItemContainer = new RoomMemberListItemContainer(this.apiPublisher, roomMemberModel);
+        var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
         this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.cid);
     },
 
@@ -177,3 +188,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         this.loadRoomMemberCollection(this.roomModel.get('uuid'));
     }
 });
+
+annotate(RoomMemberListContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule")
+    )
+);

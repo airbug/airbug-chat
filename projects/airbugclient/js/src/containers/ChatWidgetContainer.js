@@ -32,9 +32,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, conversationModel) {
+    _constructor: function(conversationModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @param {string} conversationUuid
      */
     loadMessageCollection: function(conversationUuid) {
-        // TODO BRN: This is where we make an apiPublisher call and send both the conversationUuid and the messageCollection.
+        // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding MessageModels to the messageCollection.
 
         //TEST

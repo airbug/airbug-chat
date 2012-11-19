@@ -4,12 +4,13 @@
 
 //@Export('BackButtonContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('HomeButtonView')
 //@Require('IconView')
-//@Require('NavigationMessage')
 //@Require('TextView')
 //@Require('ViewBuilder')
 
@@ -18,6 +19,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -31,13 +35,32 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
+
+        /**
+         * @private
+         * @type {PageStateModule}
+         */
+        this.pageStateModule = null;
+
+
+        // Views
         //-------------------------------------------------------------------------------
 
         /**
@@ -45,6 +68,12 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView = null;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.goBackId = null;
     },
 
 
@@ -84,9 +113,22 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+        this.pageStateModule.putState(BackButtonContainer.STATE_KEY, this.goBackId);
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
+
+        this.goBackId = this.pageStateModule.getState(BackButtonContainer.STATE_KEY);
+        if (!this.goBackId) {
+            this.goBackId = this.navigationModule.markPreviousGoBack();
+        }
     },
 
 
@@ -99,11 +141,22 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.PREVIOUS, {
-            fragment: "",
-            options: {
-                trigger: true
-            }
+        this.navigationModule.goBack(this.goBackId, {
+            trigger: true
         });
     }
 });
+
+annotate(BackButtonContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule"),
+        property("pageStateModule").ref("pageStateModule")
+    )
+);
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+BackButtonContainer.STATE_KEY = "BackButtonContainer:goBackId";

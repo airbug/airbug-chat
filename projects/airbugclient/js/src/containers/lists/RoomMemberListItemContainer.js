@@ -18,9 +18,9 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, roomMemberModel) {
+    _constructor: function(roomMemberModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

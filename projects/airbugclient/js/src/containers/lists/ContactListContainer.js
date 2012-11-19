@@ -4,12 +4,13 @@
 
 //@Export('ContactListContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ContactCollection')
 //@Require('ContactModel')
 //@Require('ListView')
-//@Require('NavigationMessage')
 //@Require('SelectableListItemView')
 //@Require('TextView')
 //@Require('UserNameView')
@@ -21,6 +22,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -34,9 +38,9 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -51,6 +55,16 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
          * @type {ContactCollection}
          */
         this.contactCollection = null;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
 
 
         // Views
@@ -129,11 +143,8 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
      */
     hearListViewItemSelectedEvent: function(event) {
         var contact = event.getData();
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: "contact/" + contact.uuid,
-            options: {
-                trigger: true
-            }
+        this.navigationModule.navigate("contact/" + contact.uuid, {
+            trigger: true
         });
     },
 
@@ -146,7 +157,13 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
      * @param {ContactModel} contactModel
      */
     handleContactCollectionAdd: function(contactModel) {
-        var contactListItemContainer = new ContactListItemContainer(this.apiPublisher, contactModel);
+        var contactListItemContainer = new ContactListItemContainer(contactModel);
         this.addContainerChild(contactListItemContainer, "#list-" + this.listView.cid);
     }
 });
+
+annotate(ContactListContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule")
+    )
+);

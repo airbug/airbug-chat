@@ -33,9 +33,9 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -139,10 +139,10 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer(this.apiPublisher);
-        this.contactChatBoxContainer = new ContactChatBoxContainer(this.apiPublisher, this.contactModel);
-        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer(this.apiPublisher);
-        this.homeButtonContainer = new HomeButtonContainer(this.apiPublisher);
+        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
+        this.contactChatBoxContainer = new ContactChatBoxContainer(this.contactModel);
+        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer();
+        this.homeButtonContainer = new HomeButtonContainer();
         this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
         this.addContainerChild(this.contactChatBoxContainer, "#page-leftrow");
         this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");

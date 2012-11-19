@@ -30,9 +30,9 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, contactModel) {
+    _constructor: function(contactModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -136,8 +136,8 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.chatWidgetContainer = new ChatWidgetContainer(this.apiPublisher, this.conversationModel);
-        this.userNamePanelContainer = new UserNamePanelContainer(this.apiPublisher, this.userModel);
+        this.chatWidgetContainer = new ChatWidgetContainer(this.conversationModel);
+        this.userNamePanelContainer = new UserNamePanelContainer(this.userModel);
         this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
         this.addContainerChild(this.userNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
     },

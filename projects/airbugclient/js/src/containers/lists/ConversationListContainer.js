@@ -4,6 +4,8 @@
 
 //@Export('ConversationListContainer')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ConversationCollection')
@@ -11,7 +13,6 @@
 //@Require('ConversationModel')
 //@Require('ListView')
 //@Require('ListViewEvent')
-//@Require('NavigationMessage')
 //@Require('ViewBuilder')
 
 
@@ -19,6 +20,9 @@
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 var view = ViewBuilder.view;
 
 
@@ -35,9 +39,9 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -52,6 +56,16 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
          * @type {ConversationCollection}
          */
         this.conversationCollection = null;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
 
 
         // Views
@@ -167,11 +181,8 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
             throw new Error("unrecognized conversation context type");
         }
 
-        this.apiPublisher.publish(NavigationMessage.MessageTopics.NAVIGATE, {
-            fragment: fragment,
-            options: {
-                trigger: true
-            }
+        this.navigationModule.navigate(fragment, {
+            trigger: true
         });
     },
 
@@ -190,3 +201,9 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
         this.listView.addViewChild(conversationListItemView);
     }
 });
+
+annotate(ConversationListContainer).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule")
+    )
+);

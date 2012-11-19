@@ -56,7 +56,7 @@ var LoginPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.loginPageContainer = new LoginPageContainer(this.apiPublisher);
+        this.loginPageContainer = new LoginPageContainer();
         this.setContainerTop(this.loginPageContainer);
     }
 });

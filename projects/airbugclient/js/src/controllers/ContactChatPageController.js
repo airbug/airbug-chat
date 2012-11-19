@@ -56,7 +56,7 @@ var ContactChatPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.contactChatPageContainer = new ContactChatPageContainer(this.apiPublisher);
+        this.contactChatPageContainer = new ContactChatPageContainer();
         this.setContainerTop(this.contactChatPageContainer);
     }
 });

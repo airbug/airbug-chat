@@ -18,6 +18,6 @@ var BoxView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="box">' +
+    template:   '<div id="box-{{cid}}" class="box {{attributes.classes}}">' +
                 '</div>'
 });

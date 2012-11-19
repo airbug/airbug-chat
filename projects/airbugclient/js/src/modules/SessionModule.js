@@ -27,6 +27,23 @@ var SessionModule = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {UserModel}
+         */
+        this.currentUserModel = new UserModel({});
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {UserModel}
+     */
+    getCurrentUserModel: function() {
+        return this.currentUserModel;
     },
 
 

@@ -6,12 +6,10 @@
 
 //@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ContactCollection')
-//@Require('ContactModel')
 //@Require('ListView')
-//@Require('NavigationMessage')
 //@Require('SelectableListItemView')
 //@Require('TextView')
+//@Require('UserModel')
 //@Require('UserNameView')
 //@Require('UserStatusIndicatorView')
 //@Require('ViewBuilder')
@@ -34,9 +32,9 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

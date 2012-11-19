@@ -30,9 +30,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher, roomModel) {
+    _constructor: function(roomModel) {
 
-        this._super(apiPublisher);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -128,8 +128,8 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.chatWidgetContainer = new ChatWidgetContainer(this.apiPublisher, this.conversationModel);
-        this.roomNamePanelContainer = new RoomNamePanelContainer(this.apiPublisher, this.roomModel);
+        this.chatWidgetContainer = new ChatWidgetContainer(this.conversationModel);
+        this.roomNamePanelContainer = new RoomNamePanelContainer(this.roomModel);
         this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
         this.addContainerChild(this.roomNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
     },

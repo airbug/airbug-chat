@@ -2,19 +2,18 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('NavigationModule')
+//@Export('PageStateModule')
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var NavigationModule = Class.extend(Obj, {
+var PageStateModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -37,15 +36,9 @@ var NavigationModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<number, string>}
+         * @type {Map<string, *>}
          */
-        this.goBackIdToFragmentMap = new Map();
-
-        /**
-         * @private
-         * @type {number}
-         */
-        this.lastGoBackId = 0;
+        this.stateKeyToPageStateDataMap = new Map();
     },
 
 
@@ -54,32 +47,36 @@ var NavigationModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} goBackId
-     * @param {Object} options
+     * @param {string} key
+     * @return {*}
      */
-    goBack: function(goBackId, options) {
-        var goBackFragment = this.goBackIdToFragmentMap.get(goBackId);
-        if (TypeUtil.isString(goBackFragment)) {
-            this.goBackIdToFragmentMap.remove(goBackId);
-            this.navigate(goBackFragment, options);
-        }
+    getState: function(key) {
+        var stateKey = this.generateStateKey(key);
+        return this.stateKeyToPageStateDataMap.get(stateKey);
     },
 
     /**
-     * @return {number}
+     * @param {string} key
+     * @param {*} data
      */
-    markPreviousGoBack: function() {
-        var previousFragment = this.carapaceRouter.getPreviousFragment();
-        var goBackId = ++this.lastGoBackId;
-        this.goBackIdToFragmentMap.put(goBackId, previousFragment);
-        return goBackId;
+    putState: function(key, data) {
+        var stateKey = this.generateStateKey(key);
+        this.stateKeyToPageStateDataMap.put(stateKey, data);
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     * @param {string} fragment
-     * @param {Object} options
+     * @private
+     * @param {string} key
+     * @return {string}
      */
-    navigate: function(fragment, options) {
-        this.carapaceRouter.navigate(fragment, options);
+    generateStateKey: function(key) {
+        var currentFragment = this.carapaceRouter.getCurrentFragment();
+        var stateKey = currentFragment + "_" + key;
+        return stateKey;
     }
 });
