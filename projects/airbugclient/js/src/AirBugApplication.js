@@ -4,8 +4,8 @@
 
 //@Export('AirBugApplication')
 
-//@Require('Backbone')
 //@Require('Class')
+//@Require('ConfigurationScan')
 //@Require('Obj')
 
 
@@ -28,6 +28,11 @@ var AirBugApplication = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {ConfigurationScan}
+         */
+        this.configurationScan = new ConfigurationScan();
     },
 
 
@@ -39,7 +44,7 @@ var AirBugApplication = Class.extend(Obj, {
      *
      */
     start: function() {
-        var result = Backbone.history.start();
+        this.configurationScan.scan();
     }
 });
 
@@ -49,4 +54,6 @@ var AirBugApplication = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 var airBugApplication = new AirBugApplication();
-airBugApplication.start();
+setTimeout(function(){
+    airBugApplication.start();
+}, 0);

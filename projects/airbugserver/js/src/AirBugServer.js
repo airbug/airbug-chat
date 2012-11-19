@@ -30,8 +30,9 @@ var AirBugServer = {
             app.use(express.static(path + '/projects/airbugclient/static'));
             app.use(express.static(path + '/temp/js'));
             app.use(express.static(path + '/temp/static'));
-            app.use(express.static(path + '/../bugjs/projects/bugjs/js/src'));
             app.use(express.static(path + '/../bugjs/projects/annotate/js/src'));
+            app.use(express.static(path + '/../bugjs/projects/bugioc/js/src'));
+            app.use(express.static(path + '/../bugjs/projects/bugjs/js/src'));
             app.use(express.static(path + '/../bugjs/projects/carapace/js/src'));
         });
 

@@ -2,29 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginPageController')
+//@Export('NavigationModule')
 
-//@Require('Annotate')
-//@Require('AnnotateRoute')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('LoginPageContainer')
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageController = Class.extend(ApplicationController, {
+var NavigationModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -40,28 +28,22 @@ var LoginPageController = Class.extend(ApplicationController, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
-         * @type {LoginPageContainer}
+         * @private
+         * @type {CarapaceRouter}
          */
-        this.loginPageContainer = null;
+        this.carapaceRouter = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @param {string} fragment
+     * @param {Object} options
      */
-    createController: function() {
-        this._super();
-        this.loginPageContainer = new LoginPageContainer(this.apiPublisher);
-        this.setContainerTop(this.loginPageContainer);
+    navigate: function(fragment, options) {
+        this.carapaceRouter.navigate(fragment, options);
     }
 });
-annotate(LoginPageController).with(
-    annotation("Controller").params(
-        route("login")
-    )
-);

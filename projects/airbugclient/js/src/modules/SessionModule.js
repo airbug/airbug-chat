@@ -2,29 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('LoginPageController')
+//@Export('SessionModule')
 
-//@Require('Annotate')
-//@Require('AnnotateRoute')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('LoginPageContainer')
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageController = Class.extend(ApplicationController, {
+var SessionModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -39,29 +27,26 @@ var LoginPageController = Class.extend(ApplicationController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @protected
-         * @type {LoginPageContainer}
-         */
-        this.loginPageContainer = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // Class Methods
     //-------------------------------------------------------------------------------
 
+
     /**
-     * @protected
+     * @param {string} email
+     * @param {string} password
      */
-    createController: function() {
-        this._super();
-        this.loginPageContainer = new LoginPageContainer(this.apiPublisher);
-        this.setContainerTop(this.loginPageContainer);
+    login: function(email, password) {
+
+    },
+
+    /**
+     *
+     */
+    logout: function() {
+
     }
 });
-annotate(LoginPageController).with(
-    annotation("Controller").params(
-        route("login")
-    )
-);

@@ -30,9 +30,9 @@ var SettingsPageController = Class.extend(ApplicationController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function() {
 
-        this._super(router);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

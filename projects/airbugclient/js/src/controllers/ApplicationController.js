@@ -4,10 +4,21 @@
 
 //@Export('ApplicationController')
 
+//@Require('Annotate')
+//@Require('AnnotateProperty')
 //@Require('CarapaceController')
 //@Require('Class')
 //@Require('NavigationMessage')
 //@Require('SessionMessage')
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var annotate = Annotate.annotate;
+var annotation = Annotate.annotation;
+var property = AnnotateProperty.property;
 
 
 //-------------------------------------------------------------------------------
@@ -20,15 +31,26 @@ var ApplicationController = Class.extend(CarapaceController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function() {
 
-        this._super(router);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule = null;
+
+        /**
+         * @private
+         * @type {SessionModule}
+         */
+        this.sessionModule = null;
     },
 
 
@@ -46,36 +68,6 @@ var ApplicationController = Class.extend(CarapaceController, {
         this.apiPublisher.subscribe(NavigationMessage.MessageTopics.NAVIGATE, this.receiveNavigationMessageNavigate, this);
         this.apiPublisher.subscribe(SessionMessage.MessageTopics.LOGIN, this.receiveSessionMessageLogin, this);
         this.apiPublisher.subscribe(SessionMessage.MessageTopics.LOGOUT, this.receiveSessionMessageLogout, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param email
-     * @param password
-     */
-    login: function(email, password) {
-
-    },
-
-    /**
-     * @protected
-     */
-    logout: function() {
-
-    },
-
-    /**
-     * @protected
-     * @param {string} fragment
-     * @param {Object} options
-     */
-    navigate: function(fragment, options) {
-        this.router.navigate(fragment, options);
     },
 
 
@@ -104,7 +96,7 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @param {Message} message
      */
     receiveNavigationMessageNavigate: function(message) {
-        this.navigate(message.getData().fragment, message.getData().options);
+        this.navigationModule.navigate(message.getData().fragment, message.getData().options);
     },
 
     /**
@@ -112,7 +104,7 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @param {Message} message
      */
     receiveSessionMessageLogin: function(message) {
-        this.login(message.getData().email, message.getData().password);
+        this.sessionModule.login(message.getData().email, message.getData().password);
     },
 
     /**
@@ -120,6 +112,12 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @param {Message} message
      */
     receiveSessionMessageLogout: function(message) {
-        this.logout();
+        this.sessionModule.logout();
     }
 });
+annotate(ApplicationController).with(
+    annotation("Autowired").params(
+        property("navigationModule").ref("navigationModule"),
+        property("sessionModule").ref("sessionModule")
+    )
+);
