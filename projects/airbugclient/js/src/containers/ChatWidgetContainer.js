@@ -211,13 +211,16 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @param {MessageModel} messageModel
      */
     handleMessageCollectionAdd: function(messageModel) {
-        var listItemView = new ListItemView({
-            model: messageModel
-        });
-        var messageView = new MessageView({
-            model: messageModel
-        });
-        listItemView.addViewChild(messageView);
+        var listItemView =
+            view(ListItemView)
+                .model(messageModel)
+                .attributes({size: "flex"})
+                .children([
+                    view(MessageView)
+                        .model(messageModel)
+                ])
+                .build();
+
         this.messageListView.addViewChild(listItemView);
     }
 });

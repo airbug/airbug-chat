@@ -22,6 +22,6 @@ var ButtonViewEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-ButtonViewEvent.EventTypes = {
+ButtonViewEvent.EventType = {
     CLICKED: "ButtonViewEvent:Clicked"
 };

@@ -5,11 +5,12 @@
 //@Export('LoginButtonContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('ButtonView')
 //@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
+//@Require('PropertyAnnotation')
 //@Require('TextView')
 //@Require('ViewBuilder')
 
@@ -19,8 +20,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -99,7 +100,7 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -118,7 +119,7 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
     }
 });
 annotate(LoginButtonContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule")
-    )
+    ])
 );

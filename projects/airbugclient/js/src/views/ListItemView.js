@@ -18,6 +18,15 @@ var ListItemView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-item-{{cid}}" class="list-item">' +
-              '</div>'
+    template: '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}}">' +
+              '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
+
+    attributes: {
+        size: "small"
+    }
 });

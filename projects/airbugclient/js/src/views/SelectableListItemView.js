@@ -19,7 +19,7 @@ var SelectableListItemView = Class.extend(ListItemView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="list-item-{{cid}}" class="list-item list-item-small clickable-box">' +
+    template:   '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}} clickable-box">' +
                 '</div>',
 
 
@@ -57,6 +57,7 @@ var SelectableListItemView = Class.extend(ListItemView, {
      */
     handleListItemClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ListViewEvent(ListViewEvent.EventTypes.ITEM_SELECTED, this.model.toJSON()));
+        var modelData = this.model ? this.model.toJSON() : {};
+        this.dispatchEvent(new ListViewEvent(ListViewEvent.EventType.ITEM_SELECTED, modelData));
     }
 });

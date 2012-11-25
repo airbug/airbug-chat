@@ -5,7 +5,7 @@
 //@Export('ConversationListContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ConversationCollection')
@@ -13,6 +13,7 @@
 //@Require('ConversationModel')
 //@Require('ListView')
 //@Require('ListViewEvent')
+//@Require('PropertyAnnotation')
 //@Require('ViewBuilder')
 
 
@@ -21,8 +22,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -156,7 +157,7 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.conversationCollection.bind('add', this.handleConversationCollectionAdd, this);
-        this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+        this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
 
 
@@ -203,7 +204,7 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
 });
 
 annotate(ConversationListContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule")
-    )
+    ])
 );

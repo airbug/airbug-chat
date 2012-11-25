@@ -5,12 +5,13 @@
 //@Export('BackButtonContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('HomeButtonView')
 //@Require('IconView')
+//@Require('PropertyAnnotation')
 //@Require('TextView')
 //@Require('ViewBuilder')
 
@@ -20,8 +21,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -123,7 +124,7 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
 
         this.goBackId = this.pageStateModule.getState(BackButtonContainer.STATE_KEY);
         if (!this.goBackId) {
@@ -148,10 +149,10 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
 });
 
 annotate(BackButtonContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("pageStateModule").ref("pageStateModule")
-    )
+    ])
 );
 
 

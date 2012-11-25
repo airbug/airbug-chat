@@ -22,6 +22,6 @@ var ListViewEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-ListViewEvent.EventTypes = {
+ListViewEvent.EventType = {
     ITEM_SELECTED: "ListViewEvent:ItemSelected"
 };

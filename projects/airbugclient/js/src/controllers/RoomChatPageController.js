@@ -5,9 +5,9 @@
 //@Export('RoomChatPageController')
 
 //@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
+//@Require('ControllerAnnotation')
 //@Require('RoomChatPageContainer')
 
 
@@ -17,7 +17,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+var controller = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,5 @@ var RoomChatPageController = Class.extend(ApplicationController, {
     }
 });
 annotate(RoomChatPageController).with(
-    annotation("Controller").params(
-        route("room/:uuid")
-    )
+    controller().route("room/:uuid")
 );

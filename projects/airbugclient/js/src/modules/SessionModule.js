@@ -5,7 +5,9 @@
 //@Export('SessionModule')
 
 //@Require('Class')
+//@Require('CurrentUserModel')
 //@Require('Obj')
+//@Require('SessionModel')
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +33,13 @@ var SessionModule = Class.extend(Obj, {
          * @private
          * @type {UserModel}
          */
-        this.currentUserModel = new UserModel({});
+        this.currentUserModel = new CurrentUserModel({});
+
+        /**
+         * @private
+         * @type {SessionModel}
+         */
+        this.sessionModel = new SessionModel({});
     },
 
 
@@ -40,10 +48,17 @@ var SessionModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {UserModel}
+     * @return {CurrentUserModel}
      */
     getCurrentUserModel: function() {
         return this.currentUserModel;
+    },
+
+    /**
+     * @return {SessionModel}
+     */
+    getSessionModel: function() {
+        return this.sessionModel;
     },
 
 

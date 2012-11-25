@@ -5,12 +5,13 @@
 //@Export('RoomListPanelContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ListView')
 //@Require('ListViewEvent')
 //@Require('PanelWithHeaderView')
+//@Require('PropertyAnnotation')
 //@Require('RoomCollection')
 //@Require('RoomModel')
 //@Require('RoomNameView')
@@ -24,8 +25,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -159,7 +160,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.roomCollection.bind('add', this.handleRoomCollectionAdd, this);
-        this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+        this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
 
 
@@ -202,7 +203,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     }
 });
 annotate(RoomListPanelContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule")
-    )
+    ])
 );

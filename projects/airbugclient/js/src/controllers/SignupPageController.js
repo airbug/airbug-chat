@@ -5,9 +5,9 @@
 //@Export('SignupPageController')
 
 //@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
+//@Require('ControllerAnnotation')
 //@Require('SignupPageContainer')
 
 
@@ -17,7 +17,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+var controller = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,5 @@ var SignupPageController = Class.extend(ApplicationController, {
     }
 });
 annotate(SignupPageController).with(
-    annotation("Controller").params(
-        route("signup")
-    )
+    controller().route("signup")
 );

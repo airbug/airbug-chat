@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SessionModel')
+//@Export('CurrentUserModel')
 
 //@Require('CarapaceModel')
 //@Require('Class')
@@ -12,7 +12,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionModel = Class.extend(CarapaceModel, {
+var CurrentUserModel = Class.extend(CarapaceModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation
@@ -20,6 +20,10 @@ var SessionModel = Class.extend(CarapaceModel, {
 
     defaults: {
         uuid: "",
-        data: {}
+        email: "",
+        emailSet: [],
+        firstName: "",
+        lastName: "",
+        status: ""
     }
 });

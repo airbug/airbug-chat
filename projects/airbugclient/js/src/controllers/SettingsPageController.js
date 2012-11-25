@@ -5,9 +5,9 @@
 //@Export('SettingsPageController')
 
 //@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
+//@Require('ControllerAnnotation')
 //@Require('LoginPageContainer')
 
 
@@ -17,7 +17,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+var controller = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,5 @@ var SettingsPageController = Class.extend(ApplicationController, {
     }
 });
 annotate(SettingsPageController).with(
-    annotation("Controller").params(
-        route("settings")
-    )
+    controller().route("settings")
 );

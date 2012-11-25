@@ -5,10 +5,10 @@
 //@Export('ContactChatPageController')
 
 //@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
 //@Require('ContactChatPageContainer')
+//@Require('ControllerAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -17,7 +17,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+var controller = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,5 @@ var ContactChatPageController = Class.extend(ApplicationController, {
     }
 });
 annotate(ContactChatPageController).with(
-    annotation("Controller").params(
-        route("contact/:uuid")
-    )
+    controller().route("contact/:uuid")
 );

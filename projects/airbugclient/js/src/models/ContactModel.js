@@ -18,4 +18,9 @@ var ContactModel = Class.extend(CarapaceModel, {
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
+    defaults: {
+        uuid: "",
+        userUuid: "",
+        conversationUuid: ""
+    }
 });

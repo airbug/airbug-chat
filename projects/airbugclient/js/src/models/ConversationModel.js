@@ -18,4 +18,14 @@ var ConversationModel = Class.extend(CarapaceModel, {
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
+    defaults: {
+        uuid: "",
+        name: "",
+        unreadMessageCount: 0,
+        unreadMessagePreview: "",
+        context: {
+            type: "",
+            uuid: ""
+        }
+    }
 });

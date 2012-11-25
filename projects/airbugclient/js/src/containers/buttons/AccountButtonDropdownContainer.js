@@ -5,13 +5,14 @@
 //@Export('AccountButtonDropdownContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('ButtonDropdownView')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('DropdownItemView')
 //@Require('DropdownViewEvent')
 //@Require('IconView')
+//@Require('PropertyAnnotation')
 //@Require('ViewBuilder')
 
 
@@ -20,8 +21,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -138,9 +139,9 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.logoutDropdownItemView.addEventListener(DropdownViewEvent.EventTypes.DROPDOWN_SELECTED,
+        this.logoutDropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED,
             this.hearLogoutDropdownSelectedEvent, this);
-        this.settingsDropdownItemView.addEventListener(DropdownViewEvent.EventTypes.DROPDOWN_SELECTED,
+        this.settingsDropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED,
             this.hearSettingsDropdownSelectedEvent, this);
     },
 
@@ -181,9 +182,9 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
 });
 
 annotate(AccountButtonDropdownContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("sessionModule").ref("sessionModule")
-    )
+    ])
 );
 

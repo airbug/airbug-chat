@@ -18,4 +18,10 @@ var UserModel = Class.extend(CarapaceModel, {
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
+    defaults: {
+        uuid:"",
+        firstName: "",
+        lastName: "",
+        status: ""
+    }
 });

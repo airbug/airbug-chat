@@ -18,4 +18,9 @@ var MessageModel = Class.extend(CarapaceModel, {
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
+    defaults: {
+        message: "",
+        sentBy: "",
+        sentAtUtc: 0
+    }
 });

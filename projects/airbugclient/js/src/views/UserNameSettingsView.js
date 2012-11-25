@@ -2,24 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SessionModel')
+//@Export('UserNameSettingsView')
 
-//@Require('CarapaceModel')
 //@Require('Class')
+//@Require('UserNameView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionModel = Class.extend(CarapaceModel, {
+var UserNameSettingsView = Class.extend(UserNameView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceModel Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    defaults: {
-        uuid: "",
-        data: {}
-    }
+    template:   '<div>' +
+                    '<span class="setting-label text">Name:</span>' +
+                    '<span id="user-name-{{cid}}" class="text user-name">{{model.firstName}} {{model.lastName}}</span>' +
+                '</div>'
 });

@@ -5,17 +5,18 @@
 //@Export('ApplicationConfiguration')
 
 //@Require('Annotate')
-//@Require('AnnotateArg')
-//@Require('AnnotateModule')
-//@Require('AnnotateProperty')
+//@Require('ArgAnnotation')
 //@Require('CarapaceApplication')
 //@Require('CarapaceRouter')
 //@Require('Class')
+//@Require('ConfigurationAnnotation')
 //@Require('ControllerScan')
 //@Require('IConfiguration')
+//@Require('ModuleAnnotation')
 //@Require('NavigationModule')
 //@Require('Obj')
 //@Require('PageStateModule')
+//@Require('PropertyAnnotation')
 //@Require('SessionModule')
 
 
@@ -24,10 +25,10 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var arg = AnnotateArg.arg;
-var module = AnnotateModule.module;
-var property = AnnotateProperty.property;
+var arg = ArgAnnotation.arg;
+var configuration = ConfigurationAnnotation.configuration;
+var module = ModuleAnnotation.module;
+var property = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -143,7 +144,7 @@ var ApplicationConfiguration = Class.extend(Obj, {
 });
 Class.implement(ApplicationConfiguration, IConfiguration);
 annotate(ApplicationConfiguration).with(
-    annotation("Configuration").params(
+    configuration().modules([
         module("autowiredScan"),
         module("carapaceApplication")
             .args([
@@ -163,5 +164,5 @@ annotate(ApplicationConfiguration).with(
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
         module("sessionModule")
-    )
+    ])
 );

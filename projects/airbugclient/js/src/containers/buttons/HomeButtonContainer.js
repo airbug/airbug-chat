@@ -5,12 +5,13 @@
 //@Export('HomeButtonContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('ButtonViewEvent')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('HomeButtonView')
 //@Require('IconView')
+//@Require('PropertyAnnotation')
 //@Require('TextView')
 //@Require('ViewBuilder')
 
@@ -21,7 +22,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -103,7 +104,7 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventTypes.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -122,7 +123,7 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
     }
 });
 annotate(HomeButtonContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule")
-    )
+    ])
 );

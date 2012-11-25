@@ -45,6 +45,7 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/Publisher.js"></script>
         <script src="/DateUtil.js"></script>
         <script src="/StringUtil.js"></script>
+        <script src="/JsonUtil.js"></script>
         <script src="/GraphEdge.js"></script>
         <script src="/GraphNode.js"></script>
         <script src="/Graph.js"></script>
@@ -55,11 +56,12 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/Annotate.js"></script>
 
         <script src="/annotate/ControllerScan.js"></script>
-        <script src="/annotate/AnnotateRoute.js"></script>
+        <script src="/annotate/ControllerAnnotation.js"></script>
         <script src="/application/CarapaceApplication.js"></script>
         <script src="/container/CarapaceContainer.js"></script>
         <script src="/controller/CarapaceController.js"></script>
         <script src="/controller/ControllerRoute.js"></script>
+        <script src="/controller/RoutingRequest.js"></script>
         <script src="/model/CarapaceModel.js"></script>
         <script src="/model/CarapaceCollection.js"></script>
         <script src="/router/CarapaceRouter.js"></script>
@@ -71,11 +73,13 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/IOCConfiguration.js"></script>
         <script src="/IOCModule.js"></script>
         <script src="/IOCProperty.js"></script>
-        <script src="/annotate/AnnotateArg.js"></script>
-        <script src="/annotate/AnnotateModule.js"></script>
-        <script src="/annotate/AnnotateProperty.js"></script>
+        <script src="/annotate/ArgAnnotation.js"></script>
+        <script src="/annotate/ModuleAnnotation.js"></script>
+        <script src="/annotate/PropertyAnnotation.js"></script>
+        <script src="/annotate/ConfigurationAnnotation.js"></script>
         <script src="/annotate/ConfigurationScan.js"></script>
-        <script src="/autowired/AutowiredScan.js"></script>
+        <script src="/annotate/AutowiredScan.js"></script>
+        <script src="/annotate/AutowiredAnnotation.js"></script>
         <script src="/configuration/IConfiguration.js"></script>
         <script src="/scope/Scope.js"></script>
         <script src="/scope/PrototypeScope.js"></script>
@@ -85,12 +89,14 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/models/ContactCollection.js"></script>
         <script src="/models/ConversationModel.js"></script>
         <script src="/models/ConversationCollection.js"></script>
+        <script src="/models/CurrentUserModel.js"></script>
         <script src="/models/MessageModel.js"></script>
         <script src="/models/MessageCollection.js"></script>
         <script src="/models/RoomMemberModel.js"></script>
         <script src="/models/RoomMemberCollection.js"></script>
         <script src="/models/RoomModel.js"></script>
         <script src="/models/RoomCollection.js"></script>
+        <script src="/models/SessionModel.js"></script>
         <script src="/models/UserModel.js"></script>
 
         <script src="/views/events/ButtonViewEvent.js"></script>
@@ -129,6 +135,10 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <script src="/views/SignupFormView.js"></script>
         <script src="/views/UserNameView.js"></script>
         <script src="/views/UserStatusIndicatorView.js"></script>
+
+        <script src="/views/UserEmailSettingsView.js"></script>
+        <script src="/views/UserNameSettingsView.js"></script>
+        <script src="/views/UserPasswordSettingsView.js"></script>
 
         <script src="/containers/ApplicationContainer.js"></script>
 

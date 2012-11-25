@@ -22,6 +22,6 @@ var DropdownViewEvent = Class.extend(Event, {});
 /**
  * @enum {string}
  */
-DropdownViewEvent.EventTypes = {
+DropdownViewEvent.EventType = {
     DROPDOWN_SELECTED: "DropdownViewEvent:DropdownSelected"
 };

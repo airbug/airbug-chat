@@ -5,12 +5,13 @@
 //@Export('ContactListContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ContactCollection')
 //@Require('ContactModel')
 //@Require('ListView')
+//@Require('PropertyAnnotation')
 //@Require('SelectableListItemView')
 //@Require('TextView')
 //@Require('UserNameView')
@@ -23,8 +24,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -129,7 +130,7 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.contactCollection.bind('add', this.handleContactCollectionAdd, this);
-        this.listView.addEventListener(ListViewEvent.EventTypes.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+        this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
 
 
@@ -163,7 +164,7 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
 });
 
 annotate(ContactListContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule")
-    )
+    ])
 );

@@ -5,17 +5,16 @@
 //@Export('SettingsPanelContainer')
 
 //@Require('Annotate')
-//@Require('AnnotateProperty')
+//@Require('AutowiredAnnotation')
 //@Require('CarapaceContainer')
 //@Require('Class')
 //@Require('ListView')
 //@Require('ListViewEvent')
-//@Require('PanelWithHeaderView')
-//@Require('RoomCollection')
-//@Require('RoomModel')
-//@Require('RoomNameView')
+//@Require('PropertyAnnotation')
 //@Require('SelectableListItemView')
-//@Require('TextView')
+//@Require('UserEmailSettingsView')
+//@Require('UserNameSettingsView')
+//@Require('UserPasswordSettingsView')
 //@Require('ViewBuilder')
 
 
@@ -24,8 +23,8 @@
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var property = AnnotateProperty.property;
+var autowired = AutowiredAnnotation.autowired;
+var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
 
@@ -79,6 +78,24 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ListItemView}
+         */
+        this.listItemUserEmailView = null;
+
+        /**
+         * @private
+         * @type {ListItemView}
+         */
+        this.listItemUserNameView = null;
+
+        /**
+         * @private
+         * @type {ListItemView}
+         */
+        this.listItemUserPasswordView = null;
+
+        /**
+         * @private
          * @type {PanelView}
          */
         this.panelView = null;
@@ -118,6 +135,30 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
         this.panelView =
             view(PanelWithHeaderView)
                 .attributes({headerTitle: "Settings"})
+                .children([
+                    view(ListView)
+                        .appendTo('*[id|="panel-body"]')
+                        .children([
+                            view(SelectableListItemView)
+                                .id("listItemUserNameView")
+                                .children([
+                                    view(UserNameSettingsView)
+                                        .model(this.currentUserModel)
+                                ]),
+                            view(SelectableListItemView)
+                                .id("listItemUserEmailView")
+                                .children([
+                                    view(UserEmailSettingsView)
+                                        .model(this.currentUserModel)
+                                ]),
+                            view(SelectableListItemView)
+                                .id("listItemUserPasswordView")
+                                .children([
+                                    view(UserPasswordSettingsView)
+                                        .model(this.currentUserModel)
+                                ])
+                        ])
+                ])
                 .build();
 
 
@@ -125,6 +166,9 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.panelView);
+        this.listItemUserEmailView = this.findViewById("listItemUserEmailView");
+        this.listItemUserNameView = this.findViewById("listItemUserNameView");
+        this.listItemUserPasswordView = this.findViewById("listItemUserPasswordView");
     },
 
     /**
@@ -132,26 +176,53 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-    }
+        this.listItemUserEmailView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED,
+            this.hearListItemUserEmailViewSelectedEvent, this);
+        this.listItemUserNameView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED,
+            this.hearListItemUserNameViewSelectedEvent, this);
+        this.listItemUserPasswordView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED,
+            this.hearListItemUserPasswordViewSelectedEvent, this);
+    },
 
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearListItemUserEmailViewSelectedEvent: function(event) {
+        this.navigationModule.navigate("settings/email", {
+            trigger: true
+        });
+    },
 
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearListItemUserNameViewSelectedEvent: function(event) {
+        this.navigationModule.navigate("settings/name", {
+            trigger: true
+        });
+    },
 
-
-    //-------------------------------------------------------------------------------
-    // Model Event Handlers
-    //-------------------------------------------------------------------------------
-
-
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearListItemUserPasswordViewSelectedEvent: function(event) {
+        this.navigationModule.navigate("settings/password", {
+            trigger: true
+        });
+    }
 });
 
 annotate(SettingsPanelContainer).with(
-    annotation("Autowired").params(
+    autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("sessionModule").ref("sessionModule")
-    )
+    ])
 );

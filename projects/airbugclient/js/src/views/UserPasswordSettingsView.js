@@ -2,24 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SessionModel')
+//@Export('UserPasswordSettingsView')
 
-//@Require('CarapaceModel')
 //@Require('Class')
+//@Require('MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionModel = Class.extend(CarapaceModel, {
+var UserPasswordSettingsView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceModel Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    defaults: {
-        uuid: "",
-        data: {}
-    }
+    template:   '<div>' +
+                    '<span class="setting-label text">Password:</span>' +
+                    '<span class="text user-password">**********</span>' +
+                '</div>'
 });

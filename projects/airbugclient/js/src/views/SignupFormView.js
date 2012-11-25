@@ -33,7 +33,7 @@ var SignupFormView = Class.extend(MustacheView, {
                             '<input class="input-xxlarge" type="password" id="inputPassword" placeholder="Password">' +
                         '</div>' +
                         '<div class="control-group">' +
-                            '<button type="submit" class="btn">Signup</button>' +
+                            '<button id="signup-button-{{cid}}" type="button" class="btn">Signup</button>' +
                         '</div>' +
                     '</form>' +
                 '</div>'

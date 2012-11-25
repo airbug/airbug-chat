@@ -18,4 +18,8 @@ var RoomModel = Class.extend(CarapaceModel, {
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
+    defaults: {
+        uuid: "",
+        name: ""
+    }
 });

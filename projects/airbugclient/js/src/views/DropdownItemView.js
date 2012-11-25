@@ -56,6 +56,6 @@ var DropdownItemView = Class.extend(MustacheView, {
      */
     handleDropdownItemClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventTypes.DROPDOWN_SELECTED));
+        this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventType.DROPDOWN_SELECTED));
     }
 });

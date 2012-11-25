@@ -5,9 +5,9 @@
 //@Export('UserHomePageController')
 
 //@Require('Annotate')
-//@Require('AnnotateRoute')
 //@Require('ApplicationController')
 //@Require('Class')
+//@Require('ControllerAnnotation')
 //@Require('UserHomePageContainer')
 
 
@@ -17,7 +17,7 @@
 
 var annotate = Annotate.annotate;
 var annotation = Annotate.annotation;
-var route = AnnotateRoute.route;
+var controller = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,5 @@ var UserHomePageController = Class.extend(ApplicationController, {
     }
 });
 annotate(UserHomePageController).with(
-    annotation("Controller").params(
-        route("")
-    )
+    controller().route("")
 );
