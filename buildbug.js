@@ -41,8 +41,8 @@ buildProperties({
             main: "./lib/AirBugServer.js"
         },
         sourcePaths: [
-            "./projects/airbugserver",
-            "../bugjs/projects/bugjs"
+            "./projects/airbugserver/js/src",
+            "../bugjs/projects/bugjs/js/src"
         ]
     },
     client: {
@@ -51,7 +51,7 @@ buildProperties({
             version: "0.0.1"
         },
         sourcePaths: [
-            "./projects/airbugclient"
+            "./projects/airbugclient/js/src"
         ]
     }
 });
@@ -65,6 +65,10 @@ buildProperties({
 //-------------------------------------------------------------------------------
 // Declare Flows
 //-------------------------------------------------------------------------------
+
+buildTarget('clean').buildFlow(
+   targetTask('clean')
+);
 
 buildTarget('local').buildFlow(
     series([
@@ -85,8 +89,7 @@ buildTarget('local').buildFlow(
                     init: function(task, buildProject, properties) {
                         var nodePackage = nodejs.findNodePackage(buildProject.getProperties().server.packageJson.name);
                         task.updateProperties({
-                            targetDirs: [nodePackage.getBuildPath() + path.sep + "lib"],
-                            outputDir: nodePackage.getBuildPath()
+                            sourceRoot: nodePackage.getBuildPath()
                         });
                     }
                 }),
