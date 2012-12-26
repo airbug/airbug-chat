@@ -38,7 +38,10 @@ buildProperties({
         packageJson: {
             name: "airbugserver",
             version: "0.0.1",
-            main: "./lib/AirBugServer.js"
+            main: "./lib/AirBugServer.js",
+            "dependencies": {
+                "bugpack": "git+ssh://git@github.com:bneisler/bugpack.git#master"
+            }
         },
         sourcePaths: [
             "./projects/airbugserver/js/src",
