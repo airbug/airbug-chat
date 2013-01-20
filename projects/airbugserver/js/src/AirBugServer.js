@@ -4,7 +4,7 @@
 
 //@Export('AirBugServer')
 
-var bugpack = require('bugpack');
+var bugpack = require('bugpack').context();
 var express = require("express");
 var fs = require("fs");
 
@@ -13,8 +13,6 @@ var fs = require("fs");
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
-
-bugpack.declare('AirBugServer');
 
 
 //-------------------------------------------------------------------------------
@@ -65,4 +63,4 @@ var AirBugServer = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(AirBugServer);
+bugpack.export('AirBugServer', AirBugServer);

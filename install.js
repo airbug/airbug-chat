@@ -5,7 +5,7 @@ afterNpmModuleInstalled(function() {
 
     var requiredPackages = [
         {name: 'express', install: 'express'},
-        {name: 'bugpack', install: 'git+ssh://git@github.com:bneisler/bugpack.git#master'}
+        {name: 'bugpack', install: 'git+ssh://git@github.com:airbug/bugpack.git#master'}
         //{name: 'buildbug', install: '../buildbug/buildbug-0.0.1.tgz'}
     ];
 
