@@ -24,7 +24,7 @@ var targetTask = buildbug.targetTask;
 //-------------------------------------------------------------------------------
 
 var bugpack = enableModule('bugpack');
-//var bugunit = enableModule('bugunit');
+var bugunit = enableModule('bugunit');
 var clientjs = enableModule('clientjs');
 var core = enableModule('core');
 var nodejs = enableModule('nodejs');
@@ -52,10 +52,11 @@ buildProperties({
             "./projects/airbugserver/js/src",
             "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/annotate/js/src",
-            "../bugunit/projects/bugunit-annotate/js/src"
+            "../bugunit/projects/bugunit/js/src"
         ],
         scriptPaths: [
-            "./projects/airbugserver/js/scripts"
+            "./projects/airbugserver/js/scripts",
+            "../bugunit/projects/bugunit/js/scripts"
         ],
         testPaths: [
             "../bugjs/projects/bugjs/js/test"
@@ -100,28 +101,17 @@ buildTarget('local').buildFlow(
             series([
                 targetTask('createNodePackage', {
                     properties: {
-                        packageJson: buildProject.getProperties().server.packageJson,
-                        sourcePaths: buildProject.getProperties().server.sourcePaths,
-                        scriptPaths: buildProject.getProperties().server.scriptPaths,
-                        testPaths: buildProject.getProperties().server.testPaths
+                        packageJson: buildProject.getProperty("server.packageJson"),
+                        sourcePaths: buildProject.getProperty("server.sourcePaths"),
+                        scriptPaths: buildProject.getProperty("server.scriptPaths"),
+                        testPaths: buildProject.getProperty("server.testPaths")
                     }
                 }),
-                /*targetTask('runNodeModuleTests', {
-                    init: function(task, buildProject, properties) {
-                        var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperties().server.packageJson.name,
-                            buildProject.getProperties().server.packageJson.version
-                        );
-                        task.updateProperties({
-                            modulePath: nodePackage.getBuildPath()
-                        });
-                    }
-                }),*/
                 targetTask('generateBugPackRegistry', {
                     init: function(task, buildProject, properties) {
                         var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperties().server.packageJson.name,
-                            buildProject.getProperties().server.packageJson.version
+                            buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version")
                         );
                         task.updateProperties({
                             sourceRoot: nodePackage.getBuildPath()
@@ -130,8 +120,19 @@ buildTarget('local').buildFlow(
                 }),
                 targetTask('packNodePackage', {
                     properties: {
-                        packageName: buildProject.getProperties().server.packageJson.name,
-                        packageVersion: buildProject.getProperties().server.packageJson.version
+                        packageName: buildProject.getProperty("server.packageJson.name"),
+                        packageVersion: buildProject.getProperty("server.packageJson.version")
+                    }
+                }),
+                targetTask('startNodeModuleTests', {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(
+                            buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version")
+                        );
+                        task.updateProperties({
+                            modulePath: packedNodePackage.getFilePath()
+                        });
                     }
                 })
             ]),
