@@ -3,7 +3,6 @@
 //-------------------------------------------------------------------------------
 
 var buildbug = require('buildbug');
-var path = require('path');
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +22,7 @@ var targetTask = buildbug.targetTask;
 // Enable Modules
 //-------------------------------------------------------------------------------
 
+var aws = enableModule("aws");
 var bugpack = enableModule('bugpack');
 var bugunit = enableModule('bugunit');
 var clientjs = enableModule('clientjs');
@@ -41,7 +41,7 @@ buildProperties({
             version: "0.0.1",
             main: "./lib/AirBugServer.js",
             dependencies: {
-                bugpack: "https://s3.amazonaws.com/node_modules/bugpack-0.0.3.tgz",
+                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.3.tgz",
                 express: "3.0.x"
             },
             scripts: {
@@ -83,9 +83,16 @@ buildProperties({
 // Declare Flows
 //-------------------------------------------------------------------------------
 
+// Clean Flow
+//-------------------------------------------------------------------------------
+
 buildTarget('clean').buildFlow(
    targetTask('clean')
 );
+
+
+// Local Flow
+//-------------------------------------------------------------------------------
 
 //TODO BRN: Local development of node js and client side projects should "create" the packages and package them up but
 // the sources should be symlinked to instead
@@ -134,6 +141,26 @@ buildTarget('local').buildFlow(
                             modulePath: packedNodePackage.getFilePath()
                         });
                     }
+                }),
+                targetTask("s3EnsureBucket", {
+                    properties: {
+                        bucket: buildProject.getProperty("bucket-local")
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version"));
+                        task.updateProperties({
+                            file: packedNodePackage.getFilePath(),
+                            options: {
+                                ACL: 'public-read'
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: buildProject.getProperty("bucket-local")
+                    }
                 })
             ]),
             series([
@@ -142,3 +169,80 @@ buildTarget('local').buildFlow(
         ])
     ])
 ).makeDefault();
+
+
+// Prod Flow
+//-------------------------------------------------------------------------------
+
+buildTarget('prod').buildFlow(
+    series([
+
+        // TODO BRN: This "clean" task is temporary until we're not modifying the build so much. This also ensures that
+        // old source files are removed. We should figure out a better way of doing that.
+
+        targetTask('clean'),
+        parallel([
+            series([
+                targetTask('createNodePackage', {
+                    properties: {
+                        packageJson: buildProject.getProperty("server.packageJson"),
+                        sourcePaths: buildProject.getProperty("server.sourcePaths"),
+                        scriptPaths: buildProject.getProperty("server.scriptPaths"),
+                        testPaths: buildProject.getProperty("server.testPaths")
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var nodePackage = nodejs.findNodePackage(
+                            buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: nodePackage.getBuildPath()
+                        });
+                    }
+                }),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: buildProject.getProperty("server.packageJson.name"),
+                        packageVersion: buildProject.getProperty("server.packageJson.version")
+                    }
+                }),
+                targetTask('startNodeModuleTests', {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(
+                            buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version")
+                        );
+                        task.updateProperties({
+                            modulePath: packedNodePackage.getFilePath()
+                        });
+                    }
+                }),
+                targetTask("s3EnsureBucket", {
+                    properties: {
+                        bucket: "airbug"
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version"));
+                        task.updateProperties({
+                            file: packedNodePackage.getFilePath(),
+                            options: {
+                                ACL: 'public-read'
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: "airbug"
+                    }
+                })
+            ]),
+            series([
+                // TODO BRN: build client app
+            ])
+        ])
+    ])
+);
