@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('UserPasswordSettingsView')
 
 //@Require('Class')
-//@Require('MustacheView')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var MustacheView =  bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -23,3 +40,10 @@ var UserPasswordSettingsView = Class.extend(MustacheView, {
                     '<span class="text user-password">**********</span>' +
                 '</div>'
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.UserPasswordSettingsView", UserPasswordSettingsView);

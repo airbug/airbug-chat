@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ContactChatPageController')
 
-//@Require('Annotate')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('ContactChatPageContainer')
-//@Require('ControllerAnnotation')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.ContactChatPageContainer')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ApplicationController =     bugpack.require('airbug.ApplicationController');
+var ContactChatPageContainer =  bugpack.require('airbug.ContactChatPageContainer');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var ControllerAnnotation =      bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -63,3 +83,10 @@ var ContactChatPageController = Class.extend(ApplicationController, {
 annotate(ContactChatPageController).with(
     controller().route("contact/:uuid")
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ContactChatPageController", ContactChatPageController);

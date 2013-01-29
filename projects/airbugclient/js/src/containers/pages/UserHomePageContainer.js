@@ -1,17 +1,40 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('UserHomePageContainer')
 
-//@Require('AccountButtonDropdownContainer')
-//@Require('ApplicationContainer')
 //@Require('Class')
-//@Require('ContactListPanelContainer')
-//@Require('ConversationListPanelContainer')
-//@Require('PageThreeColumnView')
-//@Require('RoomListPanelContainer')
-//@Require('ViewBuilder')
+//@Require('airbug.AccountButtonDropdownContainer')
+//@Require('airbug.ApplicationContainer')
+//@Require('airbug.ContactListPanelContainer')
+//@Require('airbug.ConversationListPanelContainer')
+//@Require('airbug.PageThreeColumnView')
+//@Require('airbug.RoomListPanelContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                             bugpack.require('Class');
+var AccountButtonDropdownContainer =    bugpack.require('airbug.AccountButtonDropdownContainer');
+var ApplicationContainer =              bugpack.require('airbug.ApplicationContainer');
+var ContactListPanelContainer =         bugpack.require('airbug.ContactListPanelContainer');
+var ConversationListPanelContainer =    bugpack.require('airbug.ConversationListPanelContainer');
+var PageThreeColumnView =               bugpack.require('airbug.PageThreeColumnView');
+var RoomListPanelContainer =            bugpack.require('airbug.RoomListPanelContainer');
+var ViewBuilder =                       bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -120,3 +143,10 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.roomListPanelContainer, "#page-rightrow");
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.UserHomePageContainer", UserHomePageContainer);

@@ -1,23 +1,52 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomListPanelContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListView')
-//@Require('ListViewEvent')
-//@Require('PanelWithHeaderView')
-//@Require('PropertyAnnotation')
-//@Require('RoomCollection')
-//@Require('RoomModel')
-//@Require('RoomNameView')
-//@Require('SelectableListItemView')
-//@Require('TextView')
-//@Require('ViewBuilder')
+//@Require('airbug.ListView')
+//@Require('airbug.ListViewEvent')
+//@Require('airbug.PanelWithHeaderView')
+//@Require('airbug.RoomCollection')
+//@Require('airbug.RoomModel')
+//@Require('airbug.RoomNameView')
+//@Require('airbug.SelectableListItemView')
+//@Require('airbug.TextView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ListView =                  bugpack.require('airbug.ListView');
+var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
+var PanelWithHeaderView =       bugpack.require('airbug.PanelWithHeaderView');
+var RoomCollection =            bugpack.require('airbug.RoomCollection');
+var RoomModel =                 bugpack.require('airbug.RoomModel');
+var RoomNameView =              bugpack.require('airbug.RoomNameView');
+var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
+var TextView =                  bugpack.require('airbug.TextView');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -207,3 +236,10 @@ annotate(RoomListPanelContainer).with(
         property("navigationModule").ref("navigationModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomListPanelContainer", RoomListPanelContainer);

@@ -1,23 +1,52 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ApplicationConfiguration')
 
-//@Require('Annotate')
-//@Require('ArgAnnotation')
-//@Require('CarapaceApplication')
-//@Require('CarapaceRouter')
 //@Require('Class')
-//@Require('ConfigurationAnnotation')
-//@Require('ControllerScan')
-//@Require('IConfiguration')
-//@Require('ModuleAnnotation')
-//@Require('NavigationModule')
 //@Require('Obj')
-//@Require('PageStateModule')
-//@Require('PropertyAnnotation')
-//@Require('SessionModule')
+//@Require('airbug.NavigationModule')
+//@Require('airbug.PageStateModule')
+//@Require('airbug.SessionModule')
+//@Require('annotate.Annotate')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ConfigurationAnnotation')
+//@Require('bugioc.IConfiguration')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('carapace.CarapaceApplication')
+//@Require('carapace.CarapaceRouter')
+//@Require('carapace.ControllerScan')
+//@Require('bugioc.PropertyAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var Obj =                       bugpack.require('Obj');
+var NavigationModule =          bugpack.require('airbug.NavigationModule');
+var PageStateModule =           bugpack.require('airbug.PageStateModule');
+var SessionModule =             bugpack.require('airbug.SessionModule');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var ArgAnnotation =             bugpack.require('bugioc.ArgAnnotation');
+var ConfigurationAnnotation =   bugpack.require('bugioc.ConfigurationAnnotation');
+var IConfiguration =            bugpack.require('bugioc.IConfiguration');
+var ModuleAnnotation =          bugpack.require('bugioc.ModuleAnnotation');
+var CarapaceApplication =       bugpack.require('carapace.CarapaceApplication');
+var CarapaceRouter =            bugpack.require('carapace.CarapaceRouter');
+var ControllerScan =            bugpack.require('carapace.ControllerScan');
+var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -166,3 +195,10 @@ annotate(ApplicationConfiguration).with(
         module("sessionModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ApplicationConfiguration", ApplicationConfiguration);

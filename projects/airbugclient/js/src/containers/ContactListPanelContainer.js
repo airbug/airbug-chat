@@ -1,16 +1,38 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ContactListPanelContainer')
 
-//@Require('ButtonView')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ContactListContainer')
-//@Require('PanelWithHeaderView')
-//@Require('TextView')
-//@Require('ViewBuilder')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ContactListContainer')
+//@Require('airbug.PanelWithHeaderView')
+//@Require('airbug.TextView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ButtonView =            bugpack.require('airbug.ButtonView');
+var ContactListContainer =  bugpack.require('airbug.ContactListContainer');
+var PanelWithHeaderView =   bugpack.require('airbug.PanelWithHeaderView');
+var TextView =              bugpack.require('airbug.TextView');
+var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -112,3 +134,10 @@ var ContactListPanelContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.contactListContainer, "#panel-body-" + this.panelView.cid);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ContactListPanelContainer", ContactListPanelContainer);

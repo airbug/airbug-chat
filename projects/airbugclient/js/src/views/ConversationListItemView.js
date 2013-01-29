@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ConversationListItemView')
 
 //@Require('Class')
-//@Require('SelectableListItemView')
+//@Require('airbug.SelectableListItemView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
 
 
 //-------------------------------------------------------------------------------
@@ -47,3 +64,10 @@ var ConversationListItemView = Class.extend(SelectableListItemView, {
         return data;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ConversationListItemView", ConversationListItemView);

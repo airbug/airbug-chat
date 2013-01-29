@@ -1,20 +1,46 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ConversationListContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ConversationCollection')
-//@Require('ConversationListItemView')
-//@Require('ConversationModel')
-//@Require('ListView')
-//@Require('ListViewEvent')
-//@Require('PropertyAnnotation')
-//@Require('ViewBuilder')
+//@Require('airbug.ConversationCollection')
+//@Require('airbug.ConversationListItemView')
+//@Require('airbug.ConversationModel')
+//@Require('airbug.ListView')
+//@Require('airbug.ListViewEvent')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ConversationCollection =    bugpack.require('airbug.ConversationCollection');
+var ConversationListItemView =  bugpack.require('airbug.ConversationListItemView');
+var ConversationModel =         bugpack.require('airbug.ConversationModel');
+var ListView =                  bugpack.require('airbug.ListView');
+var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -208,3 +234,10 @@ annotate(ConversationListContainer).with(
         property("navigationModule").ref("navigationModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ConversationListContainer", ConversationListContainer);

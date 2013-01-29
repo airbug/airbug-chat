@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SignupPageContainer')
 
 //@Require('Class')
-//@Require('LoginButtonContainer')
-//@Require('PageView')
-//@Require('SignupFormView')
-//@Require('ViewBuilder')
+//@Require('airbug.LoginButtonContainer')
+//@Require('airbug.PageView')
+//@Require('airbug.SignupFormView')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var LoginButtonContainer =  bugpack.require('airbug.LoginButtonContainer')
+var PageView =              bugpack.require('airbug.PageView')
+var SignupFormView =        bugpack.require('airbug.SignupFormView')
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder')
 
 
 //-------------------------------------------------------------------------------
@@ -88,3 +108,11 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.loginButtonContainer, "#header-right");
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SignupPageContainer", SignupPageContainer);
+
