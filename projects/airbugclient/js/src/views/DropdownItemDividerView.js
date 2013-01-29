@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('DropdownItemDividerView')
 
 //@Require('Class')
-//@Require('MustacheView')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var MustacheView =  bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -20,3 +37,10 @@ var DropdownItemDividerView = Class.extend(MustacheView, {
 
     template:   '<li class="divider"></li>'
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.DropdownItemDividerView", DropdownItemDividerView);

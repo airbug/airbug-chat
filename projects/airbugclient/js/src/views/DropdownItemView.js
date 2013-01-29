@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('DropdownItemView')
 
 //@Require('Class')
-//@Require('DropdownViewEvent')
-//@Require('MustacheView')
+//@Require('airbug.DropdownViewEvent')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var DropdownViewEvent = bugpack.require('airbug.DropdownViewEvent');
+var MustacheView =      bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -59,3 +77,10 @@ var DropdownItemView = Class.extend(MustacheView, {
         this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventType.DROPDOWN_SELECTED));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.DropdownItemView", DropdownItemView);

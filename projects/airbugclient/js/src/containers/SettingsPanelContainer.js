@@ -1,21 +1,48 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SettingsPanelContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListView')
-//@Require('ListViewEvent')
-//@Require('PropertyAnnotation')
-//@Require('SelectableListItemView')
-//@Require('UserEmailSettingsView')
-//@Require('UserNameSettingsView')
-//@Require('UserPasswordSettingsView')
-//@Require('ViewBuilder')
+//@Require('airbug.ListView')
+//@Require('airbug.ListViewEvent')
+//@Require('airbug.SelectableListItemView')
+//@Require('airbug.UserEmailSettingsView')
+//@Require('airbug.UserNameSettingsView')
+//@Require('airbug.UserPasswordSettingsView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ListView =                  bugpack.require('airbug.ListView');
+var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
+var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
+var UserEmailSettingsView =     bugpack.require('airbug.UserEmailSettingsView');
+var UserNameSettingsView =      bugpack.require('airbug.UserNameSettingsView');
+var UserPasswordSettingsView =  bugpack.require('airbug.UserPasswordSettingsView');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -226,3 +253,10 @@ annotate(SettingsPanelContainer).with(
         property("sessionModule").ref("sessionModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SettingsPanelContainer", SettingsPanelContainer);

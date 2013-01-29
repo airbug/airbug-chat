@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('MessageCollection')
 
-//@Require('CarapaceCollection')
 //@Require('Class')
-//@Require('MessageModel')
+//@Require('airbug.CarapaceCollection')
+//@Require('airbug.MessageModel')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var CarapaceCollection =    bugpack.require('airbug.CarapaceCollection');
+var MessageModel =          bugpack.require('airbug.MessageModel');
 
 
 //-------------------------------------------------------------------------------
@@ -22,3 +40,10 @@ var MessageCollection = Class.extend(CarapaceCollection, {
     //-------------------------------------------------------------------------------
 
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.MessageCollection", MessageCollection);

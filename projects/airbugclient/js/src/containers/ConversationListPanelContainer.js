@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ConversationListPanelContainer')
 
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ConversationListContainer')
-//@Require('PanelView')
-//@Require('ViewBuilder')
+//@Require('airbug.ConversationListContainer')
+//@Require('airbug.PanelView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ConversationListContainer = bugpack.require('airbug.ConversationListContainer');
+var PanelView =                 bugpack.require('airbug.PanelView');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -89,3 +109,10 @@ var ConversationListPanelContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.conversationListContainer, "#panel-body-" + this.panelView.cid);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ConversationListPanelContainer", ConversationListPanelContainer);

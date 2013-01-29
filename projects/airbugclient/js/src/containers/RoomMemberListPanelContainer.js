@@ -1,17 +1,40 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomMemberListPanelContainer')
 
-//@Require('ButtonView')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListView')
-//@Require('PanelWithHeaderView')
-//@Require('RoomMemberListContainer')
-//@Require('TextView')
-//@Require('ViewBuilder')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ListView')
+//@Require('airbug.PanelWithHeaderView')
+//@Require('airbug.RoomMemberListContainer')
+//@Require('airbug.TextView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ButtonView =                bugpack.require('airbug.ButtonView');
+var ListView =                  bugpack.require('airbug.ListView');
+var PanelWithHeaderView =       bugpack.require('airbug.PanelWithHeaderView');
+var RoomMemberListContainer =   bugpack.require('airbug.RoomMemberListContainer');
+var TextView =                  bugpack.require('airbug.TextView');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -126,3 +149,10 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.roomMemberListContainer, "#panel-body-" + this.panelView.cid);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomMemberListPanelContainer", RoomMemberListPanelContainer);

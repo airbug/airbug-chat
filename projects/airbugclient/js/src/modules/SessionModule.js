@@ -1,13 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SessionModule')
 
 //@Require('Class')
-//@Require('CurrentUserModel')
 //@Require('Obj')
-//@Require('SessionModel')
+//@Require('airbug.CurrentUserModel')
+//@Require('airbug.SessionModel')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var CurrentUserModel =  bugpack.require('airbug.CurrentUserModel');
+var SessionModel =      bugpack.require('airbug.SessionModel');
 
 
 //-------------------------------------------------------------------------------
@@ -82,3 +101,10 @@ var SessionModule = Class.extend(Obj, {
 
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SessionModule", SessionModule);

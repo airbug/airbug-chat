@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SelectableListItemView')
 
 //@Require('Class')
-//@Require('ListItemView')
-//@Require('ListViewEvent')
+//@Require('airbug.ListItemView')
+//@Require('airbug.ListViewEvent')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var ListItemView =  bugpack.require('airbug.ListItemView');
+var MustacheView =  bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -61,3 +79,10 @@ var SelectableListItemView = Class.extend(ListItemView, {
         this.dispatchEvent(new ListViewEvent(ListViewEvent.EventType.ITEM_SELECTED, modelData));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SelectableListItemView", SelectableListItemView);

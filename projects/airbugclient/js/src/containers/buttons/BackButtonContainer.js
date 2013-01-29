@@ -1,19 +1,44 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('BackButtonContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('ButtonViewEvent')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('HomeButtonView')
-//@Require('IconView')
-//@Require('PropertyAnnotation')
-//@Require('TextView')
-//@Require('ViewBuilder')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.HomeButtonView')
+//@Require('airbug.IconView')
+//@Require('airbug.TextView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
+var HomeButtonView =        bugpack.require('airbug.HomeButtonView');
+var IconView =              bugpack.require('airbug.IconView');
+var TextView =              bugpack.require('airbug.TextView');
+var Annotate =              bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -161,3 +186,10 @@ annotate(BackButtonContainer).with(
 //-------------------------------------------------------------------------------
 
 BackButtonContainer.STATE_KEY = "BackButtonContainer:goBackId";
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.BackButtonContainer", BackButtonContainer);

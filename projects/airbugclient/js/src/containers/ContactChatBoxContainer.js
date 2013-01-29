@@ -1,16 +1,38 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ContactChatBoxContainer')
 
-//@Require('BoxWithHeaderView')
-//@Require('CarapaceContainer')
-//@Require('ChatWidgetContainer')
 //@Require('Class')
-//@Require('ConversationModel')
-//@Require('UserNamePanelContainer')
-//@Require('ViewBuilder')
+//@Require('airbug.BoxWithHeaderView')
+//@Require('airbug.ChatWidgetContainer')
+//@Require('airbug.ConversationModel')
+//@Require('airbug.UserNamePanelContainer')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var BoxWithHeaderView =         bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer =       bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel =         bugpack.require('airbug.ConversationModel');
+var UserNamePanelContainer =    bugpack.require('airbug.UserNamePanelContainer');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -206,3 +228,10 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         this.loadUserModel(this.contactModel.get('userUuid'));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ContactChatBoxContainer", ContactChatBoxContainer);

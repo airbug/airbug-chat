@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ButtonView')
 
-//@Require('ButtonViewEvent')
 //@Require('Class')
-//@Require('MustacheView')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var ButtonViewEvent =   bugpack.require('airbug.ButtonViewEvent');
+var MustacheView =      bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -124,3 +142,10 @@ ButtonView.Size = {
     SMALL: 3,
     MINI: 4
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ButtonView", ButtonView);

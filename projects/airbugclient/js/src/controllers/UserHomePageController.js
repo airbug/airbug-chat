@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('UserHomePageController')
 
-//@Require('Annotate')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('ControllerAnnotation')
-//@Require('UserHomePageContainer')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.UserHomePageContainer')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ApplicationController = bugpack.require('airbug.ApplicationController');
+var UserHomePageContainer = bugpack.require('airbug.UserHomePageContainer');
+var Annotate =              bugpack.require('annotate.Annotate');
+var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -63,3 +83,10 @@ var UserHomePageController = Class.extend(ApplicationController, {
 annotate(UserHomePageController).with(
     controller().route("")
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.UserHomePageController", UserHomePageController);

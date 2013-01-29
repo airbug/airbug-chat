@@ -1,13 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ApplicationContainer')
 
-//@Require('ApplicationView')
-//@Require('CarapaceController')
 //@Require('Class')
-//@Require('HeaderView')
+//@Require('airbug.ApplicationView')
+//@Require('airbug.HeaderView')
+//@Require('carapace.CarapaceController')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ApplicationView =       bugpack.require('airbug.ApplicationView');
+var HeaderView =            bugpack.require('airbug.HeaderView');
+var CarapaceController =    bugpack.require('carapace.CarapaceController');
 
 
 //-------------------------------------------------------------------------------
@@ -153,3 +172,10 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         this.initializeContainer();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ApplicationContainer", ApplicationContainer);

@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('AirBugApplication')
 
 //@Require('Class')
-//@Require('ConfigurationScan')
 //@Require('Obj')
+//@Require('bugioc.ConfigurationScan')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
 
 
 //-------------------------------------------------------------------------------
@@ -57,3 +75,10 @@ var airBugApplication = new AirBugApplication();
 setTimeout(function(){
     airBugApplication.start();
 }, 0);
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.AirBugApplication", AirBugApplication);
