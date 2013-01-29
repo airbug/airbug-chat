@@ -1,19 +1,44 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomChatPageContainer')
 
-//@Require('AccountButtonDropdownContainer')
-//@Require('ApplicationContainer')
 //@Require('Class')
-//@Require('ConversationListSlidePanelContainer')
-//@Require('HomeButtonContainer')
-//@Require('PageThreeColumnView')
-//@Require('RoomChatBoxContainer')
-//@Require('RoomMemberListPanelContainer')
-//@Require('RoomModel')
-//@Require('ViewBuilder')
+//@Require('airbug.AccountButtonDropdownContainer')
+//@Require('airbug.ApplicationContainer')
+//@Require('airbug.ConversationListSlidePanelContainer')
+//@Require('airbug.HomeButtonContainer')
+//@Require('airbug.PageThreeColumnView')
+//@Require('airbug.RoomChatBoxContainer')
+//@Require('airbug.RoomMemberListPanelContainer')
+//@Require('airbug.RoomModel')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                                 bugpack.require('Class');
+var AccountButtonDropdownContainer =        bugpack.require('airbug.AccountButtonDropdownContainer');
+var ApplicationContainer =                  bugpack.require('airbug.ApplicationContainer');
+var ConversationListSlidePanelContainer =   bugpack.require('airbug.ConversationListSlidePanelContainer');
+var HomeButtonContainer =                   bugpack.require('airbug.HomeButtonContainer');
+var PageThreeColumnView =                   bugpack.require('airbug.PageThreeColumnView');
+var RoomChatBoxContainer =                  bugpack.require('airbug.RoomChatBoxContainer');
+var RoomMemberListPanelContainer =          bugpack.require('airbug.RoomMemberListPanelContainer');
+var RoomModel =                             bugpack.require('airbug.RoomModel');
+var ViewBuilder =                           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -178,3 +203,10 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomChatPageContainer", RoomChatPageContainer);

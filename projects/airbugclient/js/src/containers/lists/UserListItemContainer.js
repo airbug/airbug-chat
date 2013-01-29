@@ -1,18 +1,40 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('UserListItemContainer')
 
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ListView')
-//@Require('SelectableListItemView')
-//@Require('TextView')
-//@Require('UserModel')
-//@Require('UserNameView')
-//@Require('UserStatusIndicatorView')
-//@Require('ViewBuilder')
+//@Require('airbug.SelectableListItemView')
+//@Require('airbug.TextView')
+//@Require('airbug.UserModel')
+//@Require('airbug.UserNameView')
+//@Require('airbug.UserStatusIndicatorView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
+var TextView =                  bugpack.require('airbug.TextView');
+var UserModel =                 bugpack.require('airbug.UserModel');
+var UserNameView =              bugpack.require('airbug.UserNameView');
+var UserStatusIndicatorView =   bugpack.require('airbug.UserStatusIndicatorView');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -104,3 +126,10 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.selectableListItemView);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.UserListItemContainer", UserListItemContainer);

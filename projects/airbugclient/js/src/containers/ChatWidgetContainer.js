@@ -1,18 +1,42 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ChatWidgetContainer')
 
-//@Require('BoxWithFooterView')
-//@Require('CarapaceContainer')
-//@Require('ChatWidgetView')
 //@Require('Class')
-//@Require('ListItemView')
-//@Require('MessageCollection')
-//@Require('PanelView')
-//@Require('TextAreaView')
-//@Require('ViewBuilder')
+//@Require('airbug.BoxWithFooterView')
+//@Require('airbug.ChatWidgetView')
+//@Require('airbug.ListItemView')
+//@Require('airbug.MessageCollection')
+//@Require('airbug.PanelView')
+//@Require('airbug.TextAreaView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var BoxWithFooterView = bugpack.require('airbug.BoxWithFooterView');
+var ChatWidgetView =    bugpack.require('airbug.ChatWidgetView');
+var ListItemView =      bugpack.require('airbug.ListItemView');
+var MessageCollection = bugpack.require('airbug.MessageCollection');
+var PanelView =         bugpack.require('airbug.PanelView');
+var TextAreaView =      bugpack.require('airbug.TextAreaView');
+var CarapaceContainer = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =       bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -224,3 +248,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.messageListView.addViewChild(listItemView);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ChatWidgetContainer", ChatWidgetContainer);

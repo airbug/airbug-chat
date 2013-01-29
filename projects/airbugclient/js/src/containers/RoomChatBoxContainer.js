@@ -1,16 +1,38 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomChatBoxContainer')
 
-//@Require('BoxWithHeaderView')
-//@Require('CarapaceContainer')
-//@Require('ChatWidgetContainer')
 //@Require('Class')
-//@Require('ConversationModel')
-//@Require('RoomNamePanelContainer')
-//@Require('ViewBuilder')
+//@Require('airbug.BoxWithHeaderView')
+//@Require('airbug.ChatWidgetContainer')
+//@Require('airbug.ConversationModel')
+//@Require('airbug.RoomNamePanelContainer')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var BoxWithHeaderView =         bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer =       bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel =         bugpack.require('airbug.ConversationModel');
+var RoomNamePanelContainer =    bugpack.require('airbug.RoomNamePanelContainer');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -176,3 +198,10 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.loadConversationModel(this.roomModel.get('conversationUuid'));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomChatBoxContainer", RoomChatBoxContainer);

@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ContactListItemContainer')
 
 //@Require('Class')
-//@Require('UserListItemContainer')
+//@Require('airbug.UserListItemContainer')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var UserListItemContainer = bugpack.require('airbug.UserListItemContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -74,3 +91,10 @@ var ContactListItemContainer = Class.extend(UserListItemContainer, {
         this.selectableListItemView.model = this.contactModel;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ContactListItemContainer", ContactListItemContainer);

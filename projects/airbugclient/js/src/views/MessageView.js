@@ -1,13 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('MessageView')
 
 //@Require('Class')
 //@Require('DateUtil')
-//@Require('MustacheView')
 //@Require('StringUtil')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var DateUtil =      bugpack.require('DateUtil');
+var StringUtil =    bugpack.require('StringUtil');
+var MustacheView =  bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -126,3 +145,10 @@ var MessageView = Class.extend(MustacheView, {
         return howLongAgo;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.MessageView", MessageView);

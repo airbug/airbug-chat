@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('TextInputView')
 
 //@Require('Class')
-//@Require('MustacheView')
+//@Require('airbug.MustacheView')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var MustacheView =  bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -20,3 +37,10 @@ var TextInputView = Class.extend(MustacheView, {
 
     template:   '<input id="text-input-{{cid}}" type="text" placeholder="{{attributes.placeholder}}">'
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.TextInputView", TextInputView);

@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('UserNamePanelContainer')
 
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('PanelView')
-//@Require('UserNameView')
-//@Require('ViewBuilder')
+//@Require('airbug.PanelView')
+//@Require('airbug.UserNameView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             bugpack.require('Class');
+var PanelView =         bugpack.require('airbug.PanelView');
+var UserNameView =      bugpack.require('airbug.UserNameView');
+var CarapaceContainer = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =       bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -91,3 +111,10 @@ var UserNamePanelContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.panelView);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.UserNamePanelContainer", UserNamePanelContainer);

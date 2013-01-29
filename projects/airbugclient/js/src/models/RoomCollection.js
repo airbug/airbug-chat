@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomCollection')
 
-//@Require('CarapaceCollection')
 //@Require('Class')
-//@Require('RoomModel')
+//@Require('airbug.CarapaceCollection')
+//@Require('airbug.RoomModel')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var CarapaceCollection =    bugpack.require('airbug.CarapaceCollection');
+var RoomModel =             bugpack.require('airbug.RoomModel');
 
 
 //-------------------------------------------------------------------------------
@@ -22,3 +40,10 @@ var RoomCollection = Class.extend(CarapaceCollection, {
     //-------------------------------------------------------------------------------
 
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomCollection", RoomCollection);

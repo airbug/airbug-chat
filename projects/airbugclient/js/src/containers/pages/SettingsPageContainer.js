@@ -1,15 +1,36 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SettingsPageContainer')
 
-//@Require('ApplicationContainer')
-//@Require('BackButtonContainer')
 //@Require('Class')
-//@Require('PageView')
-//@Require('SettingsPanelContainer')
-//@Require('ViewBuilder')
+//@Require('airbug.ApplicationContainer')
+//@Require('airbug.BackButtonContainer')
+//@Require('airbug.PageView')
+//@Require('airbug.SettingsPanelContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ApplicationContainer =      bugpack.require('airbug.ApplicationContainer');
+var BackButtonContainer =       bugpack.require('airbug.BackButtonContainer');
+var PageView =                  bugpack.require('airbug.PageView');
+var SettingsPanelContainer =    bugpack.require('airbug.SettingsPanelContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -106,3 +127,10 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.settingsPanelContainer, '*[id|="box"]');
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SettingsPageContainer", SettingsPageContainer);

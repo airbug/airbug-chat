@@ -1,12 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('MustacheView')
 
-//@Require('CarapaceView')
 //@Require('Class')
-//@Require('Mustache')
+//@Require('carapace.CarapaceView')
+//@Require('mustache.Mustache')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =         bugpack.require('Class');
+var CarapaceView =  bugpack.require('carapace.CarapaceView');
+var Mustache =      bugpack.require('mustache.Mustache');
 
 
 //-------------------------------------------------------------------------------
@@ -48,3 +66,10 @@ var MustacheView = Class.extend(CarapaceView, {
         return data;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.MustacheView", MustacheView);

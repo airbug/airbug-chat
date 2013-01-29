@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ApplicationController')
 
-//@Require('CarapaceController')
 //@Require('Class')
+//@Require('carapace.CarapaceController')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var CarapaceController =    bugpack.require('carapace.CarapaceController');
 
 
 //-------------------------------------------------------------------------------
@@ -41,3 +58,11 @@ var ApplicationController = Class.extend(CarapaceController, {
         this._super();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ApplicationController", ApplicationController);
+

@@ -1,22 +1,50 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ContactListContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ContactCollection')
-//@Require('ContactModel')
-//@Require('ListView')
-//@Require('PropertyAnnotation')
-//@Require('SelectableListItemView')
-//@Require('TextView')
-//@Require('UserNameView')
-//@Require('UserStatusIndicatorView')
-//@Require('ViewBuilder')
+//@Require('airbug.ContactCollection')
+//@Require('airbug.ContactModel')
+//@Require('airbug.ListView')
+//@Require('airbug.SelectableListItemView')
+//@Require('airbug.TextView')
+//@Require('airbug.UserNameView')
+//@Require('airbug.UserStatusIndicatorView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ContactCollection =         bugpack.require('airbug.ContactCollection');
+var ContactModel =              bugpack.require('airbug.ContactModel');
+var ListView =                  bugpack.require('airbug.ListView');
+var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
+var TextView =                  bugpack.require('airbug.TextView');
+var UserNameView =              bugpack.require('airbug.UserNameView');
+var UserStatusIndicatorView =   bugpack.require('airbug.UserStatusIndicatorView');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -168,3 +196,10 @@ annotate(ContactListContainer).with(
         property("navigationModule").ref("navigationModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ContactListContainer", ContactListContainer);
