@@ -1,18 +1,42 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('LoginPageContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('ApplicationContainer')
 //@Require('Class')
-//@Require('LoginFormView')
-//@Require('PageView')
-//@Require('PropertyAnnotation')
-//@Require('SignupButtonContainer')
-//@Require('ViewBuilder')
+//@Require('airbug.ApplicationContainer')
+//@Require('airbug.LoginFormView')
+//@Require('airbug.PageView')
+//@Require('airbug.SignupButtonContainer')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ApplicationContainer =  bugpack.require('airbug.ApplicationContainer');
+var LoginFormView =         bugpack.require('airbug.LoginFormView');
+var PageView =              bugpack.require('airbug.PageView');
+var SignupButtonContainer = bugpack.require('airbug.SignupButtonContainer');
+var Annotate =              bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -149,3 +173,11 @@ annotate(LoginPageContainer).with(
         property("navigationModule").ref("navigationModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.LoginPageContainer", LoginPageContainer);
+

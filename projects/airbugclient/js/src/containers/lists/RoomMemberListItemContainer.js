@@ -1,11 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomMemberListItemContainer')
 
 //@Require('Class')
-//@Require('UserListItemContainer')
+//@Require('airbug.UserListItemContainer')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var UserListItemContainer = bugpack.require('airbug.UserListItemContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -74,3 +91,10 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         this.selectableListItemView.model = this.roomMemberModel;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomMemberListItemContainer", RoomMemberListItemContainer);

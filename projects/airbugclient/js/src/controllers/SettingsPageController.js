@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SettingsPageController')
 
-//@Require('Annotate')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('ControllerAnnotation')
-//@Require('LoginPageContainer')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.LoginPageContainer')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ApplicationController = bugpack.require('airbug.ApplicationController');
+var LoginPageContainer =    bugpack.require('airbug.LoginPageContainer');
+var Annotate =              bugpack.require('annotate.Annotate');
+var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -63,3 +83,10 @@ var SettingsPageController = Class.extend(ApplicationController, {
 annotate(SettingsPageController).with(
     controller().route("settings")
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SettingsPageController", SettingsPageController);

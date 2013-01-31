@@ -1,19 +1,44 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('AccountButtonDropdownContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('ButtonDropdownView')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('DropdownItemView')
-//@Require('DropdownViewEvent')
-//@Require('IconView')
-//@Require('PropertyAnnotation')
-//@Require('ViewBuilder')
+//@Require('airbug.ButtonDropdownView')
+//@Require('airbug.DropdownItemView')
+//@Require('airbug.DropdownViewEvent')
+//@Require('airbug.IconView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ButtonDropdownView =    bugpack.require('airbug.ButtonDropdownView');
+var DropdownItemView =      bugpack.require('airbug.DropdownItemView');
+var DropdownViewEvent =     bugpack.require('airbug.DropdownViewEvent');
+var IconView =              bugpack.require('airbug.IconView');
+var Annotate =              bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -188,3 +213,9 @@ annotate(AccountButtonDropdownContainer).with(
     ])
 );
 
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.AccountButtonDropdownContainer", AccountButtonDropdownContainer);

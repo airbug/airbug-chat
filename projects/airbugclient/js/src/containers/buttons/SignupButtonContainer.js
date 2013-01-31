@@ -1,18 +1,42 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('SignupButtonContainer')
 
-//@Require('Annotate')
-//@Require('AutowiredAnnotation')
-//@Require('ButtonView')
-//@Require('ButtonViewEvent')
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('PropertyAnnotation')
-//@Require('TextView')
-//@Require('ViewBuilder')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.TextView')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ButtonView =            bugpack.require('airbug.ButtonView');
+var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
+var TextView =              bugpack.require('airbug.TextView');
+var Annotate =              bugpack.require('annotate.Annotate');
+var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -124,3 +148,10 @@ annotate(SignupButtonContainer).with(
         property("navigationModule").ref("navigationModule")
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.SignupButtonContainer", SignupButtonContainer);

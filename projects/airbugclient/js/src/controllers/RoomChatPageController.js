@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('RoomChatPageController')
 
-//@Require('Annotate')
-//@Require('ApplicationController')
 //@Require('Class')
-//@Require('ControllerAnnotation')
-//@Require('RoomChatPageContainer')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.RoomChatPageContainer')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                 bugpack.require('Class');
+var ApplicationController = bugpack.require('airbug.ApplicationController');
+var RoomChatPageContainer = bugpack.require('airbug.RoomChatPageContainer');
+var Annotate =              bugpack.require('annotate.Annotate');
+var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -63,3 +83,10 @@ var RoomChatPageController = Class.extend(ApplicationController, {
 annotate(RoomChatPageController).with(
     controller().route("room/:uuid")
 );
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.RoomChatPageController", RoomChatPageController);

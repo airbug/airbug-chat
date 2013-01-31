@@ -1,14 +1,34 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('airbug')
 
 //@Export('ConversationListSlidePanelContainer')
 
-//@Require('CarapaceContainer')
 //@Require('Class')
-//@Require('ConversationListContainer')
-//@Require('SlidePanelView')
-//@Require('ViewBuilder')
+//@Require('airbug.ConversationListContainer')
+//@Require('airbug.SlidePanelView')
+//@Require('carapace.CarapaceContainer')
+//@Require('carapace.ViewBuilder')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =                     bugpack.require('Class');
+var ConversationListContainer = bugpack.require('airbug.ConversationListContainer');
+var SlidePanelView =            bugpack.require('airbug.SlidePanelView');
+var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -89,3 +109,10 @@ var ConversationListSlidePanelContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.conversationListContainer, "#panel-body-" + this.slidePanelView.cid);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.ConversationListSlidePanelContainer", ConversationListSlidePanelContainer);
