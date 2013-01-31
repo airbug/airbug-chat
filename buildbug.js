@@ -66,14 +66,14 @@ buildProperties({
         clientJson: {
             name: "airbugclient",
             version: "0.0.1",
-			template: "static/template.stache"
+            template: "static/template.stache"
         },
         sourcePaths: [
             "./projects/airbugclient/js/src"
         ],
-		staticPaths: [
-			"./projects/airbugclient/static"
-		]
+        staticPaths: [
+            "./projects/airbugclient/static"
+        ]
     }
 });
 
@@ -169,8 +169,8 @@ buildTarget('local').buildFlow(
             ]),
             series([
                 // TODO BRN: build client app
-				 targetTask('createClientPackage', {
-	                   properties: {
+                 targetTask('createClientPackage', {
+                       properties: {
                         clientJson: buildProject.getProperty("client.clientJson"),
                         sourcePaths: buildProject.getProperty("client.sourcePaths"),
                         staticPaths: buildProject.getProperty("client.staticPaths")
@@ -290,8 +290,8 @@ buildTarget('prod').buildFlow(
             ]),
             series([
                 // TODO BRN: build client app
-				 targetTask('createClientPackage', {
-	                  properties: {
+                 targetTask('createClientPackage', {
+                      properties: {
                        clientJson: buildProject.getProperty("client.clientJson"),
                        sourcePaths: buildProject.getProperty("client.sourcePaths"),
                        staticPaths: buildProject.getProperty("client.staticPaths")
