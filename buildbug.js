@@ -65,11 +65,15 @@ buildProperties({
     client: {
         clientJson: {
             name: "airbugclient",
-            version: "0.0.1"
+            version: "0.0.1",
+			template: "static/template.stache"
         },
         sourcePaths: [
             "./projects/airbugclient/js/src"
-        ]
+        ],
+		staticPaths: [
+			"./projects/airbugclient/static"
+		]
     }
 });
 
@@ -165,6 +169,50 @@ buildTarget('local').buildFlow(
             ]),
             series([
                 // TODO BRN: build client app
+				 targetTask('createClientPackage', {
+	                   properties: {
+                        clientJson: buildProject.getProperty("client.clientJson"),
+                        sourcePaths: buildProject.getProperty("client.sourcePaths"),
+                        staticPaths: buildProject.getProperty("client.staticPaths")
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var clientPackage = clientjs.findClientPackage(
+                            buildProject.getProperty("client.clientJson.name"),
+                            buildProject.getProperty("client.clientJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: clientPackage.getBuildPath()
+                        });
+                    }
+                }),
+                targetTask('packClientPackage', {
+                    properties: {
+                        packageName: buildProject.getProperty("client.clientJson.name"),
+                        packageVersion: buildProject.getProperty("client.clientJson.version")
+                    }
+                }),
+                targetTask("s3EnsureBucket", {
+                    properties: {
+                        bucket: buildProject.getProperty("local-bucket")
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedClientPackage = clientjs.findPackedClientPackage(buildProject.getProperty("client.clientJson.name"),
+                            buildProject.getProperty("client.clientJson.version"));
+                        task.updateProperties({
+                            file: packedClientPackage.getFilePath(),
+                            options: {
+                                ACL: 'public-read'
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: buildProject.getProperty("local-bucket")
+                    }
+                })
             ])
         ])
     ])
@@ -242,6 +290,50 @@ buildTarget('prod').buildFlow(
             ]),
             series([
                 // TODO BRN: build client app
+				 targetTask('createClientPackage', {
+	                  properties: {
+                       clientJson: buildProject.getProperty("client.clientJson"),
+                       sourcePaths: buildProject.getProperty("client.sourcePaths"),
+                       staticPaths: buildProject.getProperty("client.staticPaths")
+                   }
+               }),
+               targetTask('generateBugPackRegistry', {
+                   init: function(task, buildProject, properties) {
+                       var clientPackage = clientjs.findClientPackage(
+                           buildProject.getProperty("client.clientJson.name"),
+                           buildProject.getProperty("client.clientJson.version")
+                       );
+                       task.updateProperties({
+                           sourceRoot: clientPackage.getBuildPath()
+                       });
+                   }
+               }),
+               targetTask('packClientPackage', {
+                   properties: {
+                       packageName: buildProject.getProperty("client.clientJson.name"),
+                       packageVersion: buildProject.getProperty("client.clientJson.version")
+                   }
+               }),
+               targetTask("s3EnsureBucket", {
+                   properties: {
+                       bucket: "airbug"
+                   }
+               }),
+               targetTask("s3PutFile", {
+                   init: function(task, buildProject, properties) {
+                       var packedClientPackage = clientjs.findPackedClientPackage(buildProject.getProperty("client.clientJson.name"),
+                           buildProject.getProperty("client.clientJson.version"));
+                       task.updateProperties({
+                           file: packedClientPackage.getFilePath(),
+                           options: {
+                               ACL: 'public-read'
+                           }
+                       });
+                   },
+                   properties: {
+                       bucket: "airbug"
+                   }
+               })
             ])
         ])
     ])
