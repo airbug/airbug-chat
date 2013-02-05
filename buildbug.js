@@ -115,7 +115,12 @@ buildTarget('local').buildFlow(
                         packageJson: buildProject.getProperty("server.packageJson"),
                         sourcePaths: buildProject.getProperty("server.sourcePaths"),
                         scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        testPaths: buildProject.getProperty("server.testPaths")
+                        testPaths: buildProject.getProperty("server.testPaths"),
+
+                        // NOTE BRN: Place symlinks in to the package instead of actual files. This way we can update
+                        // the source code and test changes without having to rebuild.
+
+                        symlink: true
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
@@ -132,7 +137,8 @@ buildTarget('local').buildFlow(
                 targetTask('packNodePackage', {
                     properties: {
                         packageName: buildProject.getProperty("server.packageJson.name"),
-                        packageVersion: buildProject.getProperty("server.packageJson.version")
+                        packageVersion: buildProject.getProperty("server.packageJson.version"),
+                        absoluteSymlinks: true
                     }
                 }),
                 targetTask('startNodeModuleTests', {
