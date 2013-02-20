@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package.('airbug')
+//@Package('airbug')
 
 //@Export('AirBugServer')
 
