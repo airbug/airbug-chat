@@ -41,7 +41,7 @@ buildProperties({
             version: "0.0.1",
             main: "./lib/AirBugServer.js",
             dependencies: {
-                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.3.tgz",
+                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.4.tgz",
                 express: "3.0.x"
             },
             scripts: {
@@ -74,6 +74,12 @@ buildProperties({
         staticPaths: [
             "./projects/airbugclient/static"
         ]
+    },
+    marketingContent: {
+        emailFacebookIcon: "./projects/marketing/static/img/airbug_email_facebook-icon.jpg",
+        emailTwitterIcon: "./projects/marketing/static/img/airbug_email_twitter-icon.jpg",
+        emailLogoImage320x120: "./projects/marketing/static/img/airbug_email_text-logo_320x120.png",
+        emailLogoImage200x70: "./projects/marketing/static/img/airbug_email_text-logo_200x70.png"
     }
 });
 
@@ -158,7 +164,7 @@ buildTarget('local').buildFlow(
                         task.updateProperties({
                             file: packedNodePackage.getFilePath(),
                             options: {
-                                ACL: 'public-read'
+                                acl: 'public-read'
                             }
                         });
                     },
@@ -170,7 +176,7 @@ buildTarget('local').buildFlow(
             series([
                 // TODO BRN: build client app
                  targetTask('createClientPackage', {
-                       properties: {
+                    properties: {
                         clientJson: buildProject.getProperty("client.clientJson"),
                         sourcePaths: buildProject.getProperty("client.sourcePaths"),
                         staticPaths: buildProject.getProperty("client.staticPaths")
@@ -205,7 +211,7 @@ buildTarget('local').buildFlow(
                         task.updateProperties({
                             file: packedClientPackage.getFilePath(),
                             options: {
-                                ACL: 'public-read'
+                                acl: 'public-read'
                             }
                         });
                     },
@@ -279,7 +285,7 @@ buildTarget('prod').buildFlow(
                         task.updateProperties({
                             file: packedNodePackage.getFilePath(),
                             options: {
-                                ACL: 'public-read'
+                                acl: 'public-read'
                             }
                         });
                     },
@@ -326,7 +332,7 @@ buildTarget('prod').buildFlow(
                        task.updateProperties({
                            file: packedClientPackage.getFilePath(),
                            options: {
-                               ACL: 'public-read'
+                               acl: 'public-read'
                            }
                        });
                    },
@@ -335,6 +341,58 @@ buildTarget('prod').buildFlow(
                    }
                })
             ])
+        ])
+    ])
+);
+
+
+// Marketing Flow
+//-------------------------------------------------------------------------------
+
+buildTarget('marketing').buildFlow(
+    series([
+        targetTask("s3EnsureBucket", {
+            properties: {
+                bucket: "airbug"
+            }
+        }),
+        parallel([
+            targetTask("s3PutFile", {
+                properties: {
+                    file: buildProject.getProperty("marketingContent.emailFacebookIcon"),
+                    options: {
+                        acl: 'public-read'
+                    },
+                    bucket: "airbug"
+                }
+            }),
+            targetTask("s3PutFile", {
+                properties: {
+                    file: buildProject.getProperty("marketingContent.emailTwitterIcon"),
+                    options: {
+                        acl: 'public-read'
+                    },
+                    bucket: "airbug"
+                }
+            }),
+            targetTask("s3PutFile", {
+                properties: {
+                    file: buildProject.getProperty("marketingContent.emailLogoImage320x120"),
+                    options: {
+                        acl: 'public-read'
+                    },
+                    bucket: "airbug"
+                }
+            }),
+            targetTask("s3PutFile", {
+                properties: {
+                    file: buildProject.getProperty("marketingContent.emailLogoImage200x70"),
+                    options: {
+                        acl: 'public-read'
+                    },
+                    bucket: "airbug"
+                }
+            })
         ])
     ])
 );
