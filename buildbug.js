@@ -246,7 +246,7 @@ buildTarget('local').buildFlow(
                         packageVersion: buildProject.getProperty("server.packageJson.version")
                     }
                 }),
-                targetTask('startNodeModuleTests', {
+                /*targetTask('startNodeModuleTests', {
                     init: function(task, buildProject, properties) {
                         var packedNodePackage = nodejs.findPackedNodePackage(
                             buildProject.getProperty("server.packageJson.name"),
@@ -256,7 +256,7 @@ buildTarget('local').buildFlow(
                             modulePath: packedNodePackage.getFilePath()
                         });
                     }
-                }),
+                }),*/
                 targetTask("s3EnsureBucket", {
                     properties: {
                         bucket: buildProject.getProperty("local-bucket")
@@ -325,9 +325,8 @@ buildTarget('local').buildFlow(
                         bucket: buildProject.getProperty("local-bucket")
                     }
                 })
-            ])*/
-            ,
-            series([
+            ])*/,
+            /*series([
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("splash.packageJson"),
@@ -399,7 +398,7 @@ buildTarget('local').buildFlow(
                         bucket: buildProject.getProperty("local-bucket")
                     }
                 })
-            ])
+            ])*/
         ])
     ])
 ).makeDefault();
