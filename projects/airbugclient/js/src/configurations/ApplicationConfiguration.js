@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('ApplicationConfiguration')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
@@ -13,6 +14,7 @@
 //@Require('airbug.SessionModule')
 //@Require('annotate.Annotate')
 //@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
@@ -40,6 +42,7 @@ var PageStateModule =           bugpack.require('airbug.PageStateModule');
 var SessionModule =             bugpack.require('airbug.SessionModule');
 var Annotate =                  bugpack.require('annotate.Annotate');
 var ArgAnnotation =             bugpack.require('bugioc.ArgAnnotation');
+var AutowiredScan =             bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation =   bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration =            bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation =          bugpack.require('bugioc.ModuleAnnotation');

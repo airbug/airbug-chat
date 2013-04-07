@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('LoginPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')

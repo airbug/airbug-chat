@@ -7,8 +7,8 @@
 //@Export('ConversationCollection')
 
 //@Require('Class')
-//@Require('airbug.CarapaceCollection')
 //@Require('airbug.ConversationModel')
+//@Require('carapace.CarapaceCollection')
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =                 bugpack.require('Class');
-var CarapaceCollection =    bugpack.require('airbug.CarapaceCollection');
 var ConversationModel =     bugpack.require('airbug.ConversationModel');
+var CarapaceCollection =    bugpack.require('carapace.CarapaceCollection');
 
 
 //-------------------------------------------------------------------------------

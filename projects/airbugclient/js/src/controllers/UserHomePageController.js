@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('UserHomePageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
@@ -81,7 +82,7 @@ var UserHomePageController = Class.extend(ApplicationController, {
     }
 });
 annotate(UserHomePageController).with(
-    controller().route("")
+    controller().route("home")
 );
 
 

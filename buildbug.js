@@ -82,6 +82,8 @@ buildProperties({
             "../bugjs/external/bootstrap/js/src",
             "../bugjs/external/bootstrap/static",
             "../bugjs/external/jquery/js/src",
+            "../bugjs/external/mustache/js/src",
+            "../bugjs/external/underscore/js/src",
             "../bugjs/projects/annotate/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",

@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('RoomChatPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')

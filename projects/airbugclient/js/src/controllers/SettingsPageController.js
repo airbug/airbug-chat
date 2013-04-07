@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('SettingsPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')

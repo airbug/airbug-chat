@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('ContactChatPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
