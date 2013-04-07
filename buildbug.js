@@ -65,6 +65,24 @@ buildProperties({
         ],
         testPaths: [
             "../bugjs/projects/bugjs/js/test"
+        ],
+
+        //TODO BRN: These static paths are temporary until we get the client js server working.
+
+        resourcePaths: [
+            "./projects/airbugclient/resources"
+        ],
+        staticPaths: [
+            "./projects/airbugclient/js/src",
+            "./projects/airbugclient/static",
+            "../bugjs/external/backbone/js/src",
+            "../bugjs/external/bootstrap/js/src",
+            "../bugjs/external/bootstrap/static",
+            "../bugjs/external/jquery/js/src",
+            "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugioc/js/src",
+            "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/carapace/js/src"
         ]
     },
     client: {
@@ -140,20 +158,39 @@ buildTarget('local').buildFlow(
                         packageJson: buildProject.getProperty("server.packageJson"),
                         sourcePaths: buildProject.getProperty("server.sourcePaths"),
                         scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        testPaths: buildProject.getProperty("server.testPaths")
+                        testPaths: buildProject.getProperty("server.testPaths"),
+
+                        //TODO BRN: This is temporary until we get client js packages working.
+
+                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
+                        staticPaths: buildProject.getProperty("server.staticPaths")
                     }
                 }),
-                targetTask('generateBugPackRegistry', {
-                    init: function(task, buildProject, properties) {
-                        var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperty("server.packageJson.name"),
-                            buildProject.getProperty("server.packageJson.version")
-                        );
-                        task.updateProperties({
-                            sourceRoot: nodePackage.getBuildPath()
-                        });
-                    }
-                }),
+                parallel([
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("server.packageJson.name"),
+                                buildProject.getProperty("server.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath(),
+                                ignore: ["static"]
+                            });
+                        }
+                    }),
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("server.packageJson.name"),
+                                buildProject.getProperty("server.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath().getAbsolutePath() + "/static"
+                            });
+                        }
+                    })
+                ]),
                 targetTask('packNodePackage', {
                     properties: {
                         packageName: buildProject.getProperty("server.packageJson.name"),
@@ -191,7 +228,7 @@ buildTarget('local').buildFlow(
                         bucket: buildProject.getProperty("local-bucket")
                     }
                 })
-            ]),
+            ])/*,
             series([
                 // TODO BRN: build client app
                  targetTask('createClientPackage', {
@@ -238,7 +275,7 @@ buildTarget('local').buildFlow(
                         bucket: buildProject.getProperty("local-bucket")
                     }
                 })
-            ])
+            ])*/
         ])
     ])
 ).makeDefault();
