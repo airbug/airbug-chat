@@ -14,6 +14,9 @@
 //@Require('carapace.ControllerAnnotation')
 
 
+//TEST
+console.log("SignUpPageController loaded");
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------

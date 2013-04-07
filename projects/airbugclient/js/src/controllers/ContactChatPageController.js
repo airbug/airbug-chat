@@ -14,6 +14,9 @@
 //@Require('carapace.ControllerAnnotation')
 
 
+//TEST
+console.log("ContactChatPageController loaded");
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
