@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ButtonViewEvent')
+//@Export('FormViewEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -48,4 +48,4 @@ FormViewEvent.EventType = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ButtonViewEvent", ButtonViewEvent);
+bugpack.export("airbug.FormViewEvent", FormViewEvent);

@@ -43,7 +43,9 @@ buildProperties({
             dependencies: {
                 bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
                 express: "3.0.x",
-                mu2express: "0.0.x"
+                mu2express: "0.0.x",
+                "mongodb": ">=1.2.11",
+                "mongoose": ">=3.5.6"
             },
             scripts: {
                 start: "node ./scripts/start.js"
@@ -51,13 +53,14 @@ buildProperties({
         },
         sourcePaths: [
             "./projects/airbugserver/js/src",
-            "../bugjs/projects/annotate/js/src",
-            "../bugjs/projects/bugboil/js/src",
-            "../bugjs/projects/bugflow/js/src",
-            "../bugjs/projects/bugfs/js/src",
-            "../bugjs/projects/bugjs/js/src",
-            "../bugjs/projects/clientjs/js/src",
-            "../bugunit/projects/bugunit/js/src"
+            '../bugjs/projects/annotate/js/src',
+            '../bugjs/projects/bugboil/js/src',
+            '../bugjs/projects/bugflow/js/src',
+            '../bugjs/projects/bugfs/js/src',
+            '../bugjs/projects/bugjs/js/src',
+            '../bugjs/projects/bugtrace/js/src',
+            '../bugunit/projects/bugunit/js/src'
+           // "../bugjs/projects/clientjs/js/src"
         ],
         scriptPaths: [
             "./projects/airbugserver/js/scripts",
@@ -82,7 +85,8 @@ buildProperties({
             "../bugjs/projects/annotate/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
-            "../bugjs/projects/carapace/js/src"
+            "../bugjs/projects/carapace/js/src",
+            '../bugpack/projects/bugpack-client/js/src'
         ]
     },
     client: {

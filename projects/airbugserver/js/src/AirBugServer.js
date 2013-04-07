@@ -16,6 +16,7 @@
 var bugpack = require('bugpack').context();
 var express = require("express");
 var fs = require("fs");
+var http = require('http');
 var mongoose = require('mongoose');
 var mu2Express = require("mu2Express");
 var path = require('path');
@@ -52,17 +53,17 @@ var AirBugServer = {
 
         //var clientJSServer = new ClientJSServer(app);
 
-        app.set('view engine', 'mustache');
-        app.engine('mustache', mu2Express.engine);
-
 
         //TODO BRN: These lines are temporary until we get the client js server working
 
         app.configure(function(){
+            app.engine('mustache', mu2Express.engine);
+            app.set('view engine', 'mustache');
+            app.set('views', path.resolve(__dirname, '../resources/views'));
+
             app.set('port', config.port);
 
-            /*app.set('views', path.resolve(__dirname, '../resources/views'));
-            app.set('view engine', 'jade');*/
+            /*app.set('view engine', 'jade');*/
 
             app.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
             app.use(express.logger('dev'));
@@ -94,6 +95,37 @@ var AirBugServer = {
                 throw error;
             }
         });*/
+
+
+        // Routes
+        //-------------------------------------------------------------------------------
+
+        app.get('/alpha', function(req, res){
+            res.render('alpha', {
+                title: 'airbug',
+                production: config.production
+            });
+        });
+
+
+        // Shut Down
+        //-------------------------------------------------------------------------------
+
+        // Graceful Shutdown
+        process.on('SIGTERM', function () {
+            console.log("Server Closing");
+            app.close();
+        });
+
+        app.on('close', function () {
+            console.log("Server Closed");
+            db.connection.close();
+        });
+
+        // Create Server
+        http.createServer(app).listen(app.get('port'), function(){
+            console.log("Express server listening on port " + app.get('port'));
+        });
     }
 };
 
