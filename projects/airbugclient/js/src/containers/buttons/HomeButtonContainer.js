@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.HomeButtonView')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
 //@Require('annotate.Annotate')
@@ -31,7 +30,6 @@ var bugpack = require('bugpack').context();
 
 var Class =                 bugpack.require('Class');
 var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
-var HomeButtonView =        bugpack.require('airbug.HomeButtonView');
 var IconView =              bugpack.require('airbug.IconView');
 var TextView =              bugpack.require('airbug.TextView');
 var Annotate =              bugpack.require('annotate.Annotate');
@@ -46,7 +44,7 @@ var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 //-------------------------------------------------------------------------------
 
 var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
+var autowired = AutowiredAnnotation.autowired;
 var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
 
