@@ -14,11 +14,14 @@
 var bugpack = require('bugpack').context();
 var express = require("express");
 var fs = require("fs");
+var mu2Express = require("mu2Express");
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
+
+var ClientJSServer = bugpack.require('clientjs.ClientJSServer');
 
 
 //-------------------------------------------------------------------------------
@@ -31,36 +34,25 @@ var AirBugServer = {
 
         var app = express();
         var port = 8000;
-        var path = __dirname + "/../../../..";
+        var clientJSServer = new ClientJSServer(app);
 
-        app.configure(function() {
-            app.use(express.errorHandler({dumpExceptions:true,showStack:true}));
-            app.use(express.logger('dev'));
-            app.use(app.router);
+        app.set('view engine', 'mustache');
+        app.engine('mustache', mu2Express.engine);
+        clientJSServer.initializeServer(function(error) {
+            if (!error) {
+                app.configure(function() {
+                    app.use(express.errorHandler({dumpExceptions:true, showStack:true}));
+                    app.use(express.logger('dev'));
+                    app.use(app.router);
+                });
 
-            // TODO BRN: These are temporary static references until we can get the buildbug/client.json deployment model built
-            app.use(express.static(path + '/projects/airbugclient/js/src'));
-            app.use(express.static(path + '/projects/airbugclient/static'));
-            app.use(express.static(path + '/temp/js'));
-            app.use(express.static(path + '/temp/static'));
-            app.use(express.static(path + '/../bugjs/projects/annotate/js/src'));
-            app.use(express.static(path + '/../bugjs/projects/bugioc/js/src'));
-            app.use(express.static(path + '/../bugjs/projects/bugjs/js/src'));
-            app.use(express.static(path + '/../bugjs/projects/carapace/js/src'));
+                app.listen(port);
+
+                console.log("Express server running on port " + port);
+            } else {
+                throw error;
+            }
         });
-
-        app.get('/', function(req, res) {
-            fs.readFile(path + '/projects/airbugclient/template.stache', 'utf8', function(err, data){
-                if (err) {
-                    throw err;
-                }
-                res.send(data);
-            });
-        });
-
-        app.listen(port);
-
-        console.log("Express server running on port " + port);
     }
 };
 
@@ -69,4 +61,4 @@ var AirBugServer = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('AirBugServer', AirBugServer);
+bugpack.export('airbug.AirBugServer', AirBugServer);

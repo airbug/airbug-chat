@@ -41,8 +41,9 @@ buildProperties({
             version: "0.0.1",
             main: "./lib/AirBugServer.js",
             dependencies: {
-                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.4.tgz",
-                express: "3.0.x"
+                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+                express: "3.0.x",
+                mu2express: "0.0.x"
             },
             scripts: {
                 start: "node ./scripts/start.js"
@@ -50,8 +51,12 @@ buildProperties({
         },
         sourcePaths: [
             "./projects/airbugserver/js/src",
-            "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugboil/js/src",
+            "../bugjs/projects/bugflow/js/src",
+            "../bugjs/projects/bugfs/js/src",
+            "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/clientjs/js/src",
             "../bugunit/projects/bugunit/js/src"
         ],
         scriptPaths: [
@@ -66,10 +71,24 @@ buildProperties({
         clientJson: {
             name: "airbugclient",
             version: "0.0.1",
-            template: "static/template.stache"
+            template: "static/template.mustache"
+            /*templates: [
+                {
+                    template: "static/template.mustache",
+                    urlPattern: "/"
+                }
+            ]*/
         },
         sourcePaths: [
-            "./projects/airbugclient/js/src"
+            "./projects/airbugclient/js/src",
+            "../bugjs/external/backbone/js/src",
+            "../bugjs/external/bootstrap/js/src",
+            "../bugjs/external/jquery/js/src",
+            "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugioc/js/src",
+            "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/carapace/js/src"
+
         ],
         staticPaths: [
             "./projects/airbugclient/static"
