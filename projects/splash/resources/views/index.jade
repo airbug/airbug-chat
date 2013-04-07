@@ -1,0 +1,139 @@
+extends layout
+
+block content
+  script
+      var firstPage="explainerPage";
+      Loader.numExpectedLoadedItems = 6;
+  div(id="page-container")
+    div(id="loading-page", class="page")
+      div(class="row-fluid")
+        div(class="span8 offset2")
+          div(class="airbug-loader-container")
+            img(class="loader", src="/img/ajax-loader.gif", alt="loading...")
+    div(id="explainer-page", class="page")
+      div(class="row-fluid")
+        div(class="span12")
+          div(class="logo-container")
+            img(class="logo", src="/img/airbug-logo-large.png", alt="airbug", onload="Loader.loaded();")
+          div(class="marketing-container")
+            div(class="marketing-tagline")
+              h2(id="marketing-tagline-header")
+            div(class="marketing-subpoints")
+              div(class="marketing-subpoint1")
+                h4 Enrich and streamline team communication
+                p airbug enables content from the other tools you already use to be embedded directly into your team’s conversations.
+              div(class="marketing-subpoint2")
+                h4 Easily search conversations and content
+                p Hours, days or months down the road your team’s conversations and content remain searchable, keeping everyone moving forward not endlessly scrolling backward.
+              div(class="marketing-subpoint3")
+                h4 Enable action through integration
+                p By removing barriers to communication airbug sets team collaboration free of cross platform barriers to focus on what they do best, production.
+          div(class="beta-sign-up-button-container")
+            button(id="beta-sign-up-button", class="btn btn-large btn-info") Sign up for the beta
+    div(id="beta-sign-up-page", class="page")
+      a(id="home") Home
+      div(class="row-fluid")
+        div(class="span12")
+          div(class="beta-sign-up-container")
+            div(id="instructions-container")
+              h3(class="instructions-text") Select the three tools you use the most and place them in the jar
+            div(class="arrow-container")
+              img(class="arrow", src="/img/arrow-down.png", alt="drag and drop the airbugs to the bug jar");
+            div(id="continue-sign-up-button-container")
+              button(id="continue-sign-up-button", class="btn btn-large btn-info") Continue sign up
+            div(id="bug-swarm-container")
+              div(id="airbug-zendesk-container", class="airbug-container")
+                img(id="airbug-zendesk-image", class="airbug-image", src="/img/airbug-service-swarm-zendesk.png", alt="Zendesk")
+              div(id="airbug-salesforce-container", class="airbug-container")
+                img(id="airbug-salesforce-image", class="airbug-image", src="/img/airbug-service-swarm-salesforce.png", alt="Salesforce")
+              div(id="airbug-jira-container", class="airbug-container")
+                img(id="airbug-jira-image", class="airbug-image", src="/img/airbug-service-swarm-jira.png", alt="JIRA")
+              div(id="airbug-uservoice-container", class="airbug-container")
+                img(id="airbug-uservoice-image", class="airbug-image", src="/img/airbug-service-swarm-uservoice.png", alt="User Voice")
+              div(id="airbug-basecamp-container", class="airbug-container")
+                img(id="airbug-basecamp-image", class="airbug-image", src="/img/airbug-service-swarm-basecamp.png", alt="Basecamp")
+              div(id="airbug-bitbucket-container", class="airbug-container")
+                img(id="airbug-bitbucket-image", class="airbug-image", src="/img/airbug-service-swarm-bitbucket.png", alt="bitbucket")
+              div(id="airbug-github-container", class="airbug-container")
+                img(id="airbug-github-image", class="airbug-image", src="/img/airbug-service-swarm-github.png", alt="github")
+              div(id="airbug-pivotaltracker-container", class="airbug-container")
+                img(id="airbug-pivotaltracker-image", class="airbug-image", src="/img/airbug-service-swarm-pivotaltracker.png", alt="Pivotal Tracker")
+              div(id="airbug-other-container", class="airbug-container")
+                img(id="airbug-other-image", class="airbug-image", src="/img/airbug-service-swarm-other.png", alt="Other")
+                div(id="other-airbug-faux-form")
+                  div(class="control-group")
+                    label(class="control-label", for="other")
+                    div(class="controls")
+                      input(type="text", id="other", name="other", placeholder="Other Tools")
+            div(id="airbug-jar-container")
+              img(class="airbug-jar-image", src="/img/airbug-jar.png")
+              div(id="airbug-jar-hotspot-1", class="airbug-jar-hotspot")
+              div(id="airbug-jar-hotspot-2", class="airbug-jar-hotspot")
+              div(id="airbug-jar-hotspot-3", class="airbug-jar-hotspot")
+              div(id="other-airbug-form-container")
+                div(id="other-airbug-form")
+                  div(class="control-group")
+                    label(class="control-label", for="other")
+                    div(class="controls")
+                      input(type="text", id="other", name="other", placeholder="Other Tools")
+                  div(class="control-group")
+                    div(class="controls")
+                      button(id="other-airbug-form-submit-button", class="btn btn-info", type="button") Submit
+                      button(id="other-airbug-form-cancel-button", class="btn", type="button") Cancel
+      div(id="beta-sign-up-modal", class="modal hide fade")
+        div(class="modal-header")
+          button(type="button", class="close", data-dismiss="modal", aria-hidden="true")&times;
+          h3 Beta sign up
+        div(class="modal-body")
+          div(class="beta-sign-up-form-container")
+            form(method="post", action="beta-sign-up", id="beta-sign-up-form", class="form-horizontal")
+              div(class="control-group")
+                label(class="control-label", for="name") Name
+                div(class="controls")
+                  input(type="text", id="name", name="name", placeholder="Name")
+                  div(class="validation required") * required
+              div(class="control-group")
+                label(class="control-label", for="email") Email
+                div(class="controls")
+                  input(type="text", id="email", name="email", placeholder="Email")
+                  div(class="validation required") * required
+              div(class="control-group")
+                label(class="control-label", for="company") Company
+                div(class="controls")
+                  input(type="text", id="company", name="company", placeholder="Company")
+                  div(class="validation")
+              div(class="control-group")
+                label(class="control-label", for="phoneNumber") Phone Number
+                div(class="controls")
+                  input(type="text", id="phoneNumber", name="phoneNumber", placeholder="Phone Number")
+                  div(class="validation")
+              div(class="control-group")
+                label(class="control-label", for="companySize") CompanySize
+                div(class="controls")
+                  select(id="companySize", name="companySize")
+                    option 1 person
+                    option 2 - 5 people
+                    option 6 - 20 people
+                    option 20+ people
+                  div(class="validation")
+              div(class="control-group")
+                label(class="control-label", for="position") Position in Company
+                div(class="controls")
+                  input(type="text", id="position", name="position", placeholder="Position in Company")
+                  div(class="validation")
+              div(class="control-group")
+                div(class="controls")
+                  button(id="beta-sign-up-form-submit-button", class="btn btn-info", type="button") Submit
+                  button(id="beta-sign-up-form-cancel-button", class="btn", type="button") Cancel
+    div(id="thank-you-page", class="page")
+      div(class="row-fluid")
+        div(class="span12")
+          div(class="thank-you-container")
+            div(id="thank-you-airbug")
+              img(id="thank-you-airbug-image", class="thankyou-airbug-image", src="/img/airbug-carry.png")
+              div(id="thank-you-message")
+                p(style='white-space:pre;')
+                    | Thank you for signing up!
+                p(style='white-space:pre;')
+                    | We'll contact you when
+                    | the beta opens up.

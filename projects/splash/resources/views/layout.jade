@@ -1,0 +1,91 @@
+doctype 5
+html
+  head
+    title= title
+    meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1")
+    link(rel="stylesheet", href="/css/style.css")
+    link(rel="stylesheet", href="/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/css/bootstrap-responsive.min.css")
+    script
+        var _appConfig = {
+            production: "#{production}"
+        };
+        var Loader = {
+            numLoadedItems: 0,
+            numExpectedLoadedItems: 0,
+            appLoaded: false,
+            loadListeners: [],
+            addLoadedListener: function(listener) {
+                Loader.loadListeners.push(listener);
+            },
+            notifyLoadedListeners: function() {
+                Loader.loadListeners.forEach(function(listener) {
+                    listener();
+                });
+            },
+            loaded: function() {
+                Loader.numLoadedItems++;
+                if (Loader.numLoadedItems >= Loader.numExpectedLoadedItems && !Loader.appLoaded) {
+                    Loader.appLoaded = true;
+                    Loader.notifyLoadedListeners();
+                }
+            }
+        };
+        var _gaq = _gaq || [];
+        if (_appConfig.production) {
+            _gaq.push(['_setAccount', 'UA-39328558-1']);
+            _gaq.push(['_setDomainName', 'airbug.com']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        }
+  body
+    div(id="app-container")
+      block content
+      div(id="interference-container")
+      div(id="feedback-container", class="feedback-container-collapse")
+        div(id="feedback-edge-container", class="feedback-edge-container")
+          div(class="feedback-airbug-container")
+            img(id="feedback-airbug-pull-1", class="feedback-airbug-image feedback-airbug-show", src="/img/airbug-pull-1.png", onload="Loader.loaded();")
+            img(id="feedback-airbug-pull-2", class="feedback-airbug-image feedback-airbug-hide", src="/img/airbug-pull-2.png", onload="Loader.loaded();")
+            img(id="feedback-airbug-pull-3", class="feedback-airbug-image feedback-airbug-hide", src="/img/airbug-pull-3.png", onload="Loader.loaded();")
+            div(id="feedback-airbug-thankyou", class="feedback-airbug-hide")
+              img(id="feedback-airbug-thankyou-image", class="feedback-airbug-image", src="/img/airbug-carry.png", onload="Loader.loaded();")
+              div(id="feedback-thankyou-message") Thank You
+          div(class="feedback-tab-container")
+            div(id="feedback-tab", class="btn btn-large")
+              img(class="feedback-tab-image", src="/img/feedback-tab.png", onload="Loader.loaded();")
+        div(class="feedback-form-container")
+          form(method="post", action="feedback", id="feedback-form")
+            fieldset
+              label What else would you like to see on this page?
+              input(type="text", name="whatElse", class="input-feedback")
+            fieldset
+              label What's the number 1 reason that is stopping you from signing up for the beta?
+              input(type="text", name="stoppingSignUp", class="input-feedback")
+            fieldset
+              label What's your biggest concern about this product or service?
+              input(type="text", name="biggestConcern", class="input-feedback")
+            fieldset
+              label Is there anything that is confusing on this page?
+              input(type="text", name="anythingConfusing", class="input-feedback")
+            fieldset
+              label What can we help you solve?
+              input(type="text", name="helpSolve", class="input-feedback")
+            button(id="feedback-form-submit-button", class="btn btn-info", type="button") Submit
+            button(id="feedback-form-cancel-button", class="btn", type="button") Cancel
+    script(type="text/javascript", src="/js/jquery-1.9.1.min.js")
+    script(type="text/javascript", src="/js/bootstrap.min.js")
+    script(type="text/javascript", src="/BugPackKey.js")
+    script(type="text/javascript", src="/BugPackPackage.js")
+    script(type="text/javascript", src="/BugPackSource.js")
+    script(type="text/javascript", src="/BugPackRegistryEntry.js")
+    script(type="text/javascript", src="/BugPackRegistry.js")
+    script(type="text/javascript", src="/BugPackRegistryFile.js")
+    script(type="text/javascript", src="/BugPackContext.js")
+    script(type="text/javascript", src="/BugPackApi.js")
+    script(type="text/javascript", src="/js/splash-application-loader.js")
