@@ -4,18 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('UserHomePageController')
-//@Autoload
+//@Export('AirbugApi')
 
 //@Require('Class')
-//@Require('airbug.ApplicationController')
-//@Require('airbug.UserHomePageContainer')
-//@Require('annotate.Annotate')
-//@Require('carapace.ControllerAnnotation')
+//@Require('Obj')
 
-
-//TEST
-console.log("UserHonePageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -28,27 +21,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationController = bugpack.require('airbug.ApplicationController');
-var UserHomePageContainer = bugpack.require('airbug.UserHomePageContainer');
-var Annotate =              bugpack.require('annotate.Annotate');
-var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var controller = ControllerAnnotation.controller;
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomePageController = Class.extend(ApplicationController, {
+var AirbugApi = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -63,34 +44,24 @@ var UserHomePageController = Class.extend(ApplicationController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {UserHomePageContainer}
-         */
-        this.userHomePageContainer = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    createController: function() {
-        this._super();
-        this.userHomePageContainer = new UserHomePageContainer();
-        this.setContainerTop(this.userHomePageContainer);
     }
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
 });
-annotate(UserHomePageController).with(
-    controller().route("home")
-);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.UserHomePageController", UserHomePageController);
+bugpack.export("airbug.AirbugApi", AirbugApi);

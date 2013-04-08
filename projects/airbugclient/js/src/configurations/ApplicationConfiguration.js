@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbug.AirbugApi')
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
 //@Require('airbug.SessionModule')
@@ -40,6 +41,7 @@ var bugpack = require('bugpack').context();
 
 var Class =                     bugpack.require('Class');
 var Obj =                       bugpack.require('Obj');
+var AirbugApi =                 bugpack.require('airbug.AirbugApi');
 var NavigationModule =          bugpack.require('airbug.NavigationModule');
 var PageStateModule =           bugpack.require('airbug.PageStateModule');
 var SessionModule =             bugpack.require('airbug.SessionModule');
@@ -124,6 +126,13 @@ var ApplicationConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {AirbugApi}
+     */
+    airbugApi: function() {
+        return new AirbugApi();
+    },
+
+    /**
      * @return {AutowiredScan}
      */
     autowiredScan: function() {
@@ -199,6 +208,9 @@ annotate(ApplicationConfiguration).with(
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
         module("sessionModule")
+            .properties([
+                property("airbugApi").ref("airbugApi")
+            ])
     ])
 );
 

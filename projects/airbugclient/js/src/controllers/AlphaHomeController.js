@@ -4,18 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('UserHomePageController')
+//@Export('AlphaHomePageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.UserHomePageContainer')
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
 
 
 //TEST
-console.log("UserHonePageController loaded");
+console.log("AlphaHomePageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -30,7 +29,6 @@ var bugpack = require('bugpack').context();
 
 var Class =                 bugpack.require('Class');
 var ApplicationController = bugpack.require('airbug.ApplicationController');
-var UserHomePageContainer = bugpack.require('airbug.UserHomePageContainer');
 var Annotate =              bugpack.require('annotate.Annotate');
 var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
 
@@ -48,7 +46,7 @@ var controller = ControllerAnnotation.controller;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomePageController = Class.extend(ApplicationController, {
+var AlphaHomePageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -65,9 +63,9 @@ var UserHomePageController = Class.extend(ApplicationController, {
 
         /**
          * @private
-         * @type {UserHomePageContainer}
+         * @type {AlphaHomePageContainer}
          */
-        this.userHomePageContainer = null;
+        this.alphaHomePageContainer = null;
     },
 
 
@@ -80,12 +78,12 @@ var UserHomePageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.userHomePageContainer = new UserHomePageContainer();
-        this.setContainerTop(this.userHomePageContainer);
+        /*this.userHomePageContainer = new UserHomePageContainer();
+        this.setContainerTop(this.userHomePageContainer);*/
     }
 });
-annotate(UserHomePageController).with(
-    controller().route("home")
+annotate(AlphaHomePageController).with(
+    controller().route("")
 );
 
 
@@ -93,4 +91,4 @@ annotate(UserHomePageController).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.UserHomePageController", UserHomePageController);
+bugpack.export("airbug.AlphaHomePageController", AlphaHomePageController);
