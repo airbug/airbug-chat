@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.BackButtonContainer')
+//@Require('airbug.BoxView')
 //@Require('airbug.PageView')
 //@Require('airbug.SettingsPanelContainer')
 //@Require('carapace.ViewBuilder')
@@ -28,6 +29,7 @@ var bugpack = require('bugpack').context();
 var Class =                     bugpack.require('Class');
 var ApplicationContainer =      bugpack.require('airbug.ApplicationContainer');
 var BackButtonContainer =       bugpack.require('airbug.BackButtonContainer');
+var BoxView =                   bugpack.require('airbug.BoxView');
 var PageView =                  bugpack.require('airbug.PageView');
 var SettingsPanelContainer =    bugpack.require('airbug.SettingsPanelContainer');
 var ViewBuilder =               bugpack.require('carapace.ViewBuilder');

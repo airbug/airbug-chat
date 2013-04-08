@@ -107,13 +107,6 @@ var AirBugServer = {
             });
         });
 
-        app.get('/home', function(req, res){
-            res.render('alpha', {
-                title: 'airbug',
-                production: config.production
-            });
-        });
-
 
         // Shut Down
         //-------------------------------------------------------------------------------

@@ -85,7 +85,7 @@ var UserHomePageController = Class.extend(ApplicationController, {
     }
 });
 annotate(UserHomePageController).with(
-    controller().route("home")
+    controller().route("")
 );
 
 

@@ -7,10 +7,10 @@
 //@Export('ChatWidgetContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxWithFooterView')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.ListItemView')
 //@Require('airbug.MessageCollection')
+//@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
 //@Require('airbug.TextAreaView')
 //@Require('carapace.CarapaceContainer')
@@ -29,10 +29,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =             bugpack.require('Class');
-var BoxWithFooterView = bugpack.require('airbug.BoxWithFooterView');
 var ChatWidgetView =    bugpack.require('airbug.ChatWidgetView');
 var ListItemView =      bugpack.require('airbug.ListItemView');
 var MessageCollection = bugpack.require('airbug.MessageCollection');
+var MessageView =       bugpack.require('airbug.MessageView');
 var PanelView =         bugpack.require('airbug.PanelView');
 var TextAreaView =      bugpack.require('airbug.TextAreaView');
 var CarapaceContainer = bugpack.require('carapace.CarapaceContainer');

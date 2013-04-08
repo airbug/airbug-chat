@@ -8,8 +8,9 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationView')
+//@Require('airbug.BodyView')
 //@Require('airbug.HeaderView')
-//@Require('carapace.CarapaceController')
+//@Require('carapace.CarapaceContainer')
 
 
 //-------------------------------------------------------------------------------
@@ -25,8 +26,9 @@ var bugpack = require('bugpack').context();
 
 var Class =                 bugpack.require('Class');
 var ApplicationView =       bugpack.require('airbug.ApplicationView');
+var BodyView =              bugpack.require('airbug.BodyView');
 var HeaderView =            bugpack.require('airbug.HeaderView');
-var CarapaceController =    bugpack.require('carapace.CarapaceController');
+var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
 
 
 //-------------------------------------------------------------------------------
