@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('airbug.AlphaHomePageContainer')
 //@Require('airbug.ApplicationController')
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
@@ -27,10 +28,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationController = bugpack.require('airbug.ApplicationController');
-var Annotate =              bugpack.require('annotate.Annotate');
-var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
+var Class =                     bugpack.require('Class');
+var AlphaHomePageContainer =    bugpack.require('airbug.AlphaHomePageContainer');
+var ApplicationController =     bugpack.require('airbug.ApplicationController');
+var Annotate =                  bugpack.require('annotate.Annotate');
+var ControllerAnnotation =      bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -78,8 +80,8 @@ var AlphaHomePageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        /*this.userHomePageContainer = new UserHomePageContainer();
-        this.setContainerTop(this.userHomePageContainer);*/
+        this.alphaHomePageContainer = new AlphaHomePageContainer();
+        this.setContainerTop(this.alphaHomePageContainer);
     }
 });
 annotate(AlphaHomePageController).with(

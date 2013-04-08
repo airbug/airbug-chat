@@ -189,6 +189,7 @@ var ApplicationConfiguration = Class.extend(Obj, {
 Class.implement(ApplicationConfiguration, IConfiguration);
 annotate(ApplicationConfiguration).with(
     configuration().modules([
+        module("airbugApi"),
         module("autowiredScan"),
         module("carapaceApplication")
             .args([

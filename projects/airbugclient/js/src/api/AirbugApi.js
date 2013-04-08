@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Queue')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack = require('bugpack').context();
 
 var Class =             bugpack.require('Class');
 var Obj =               bugpack.require('Obj');
+var Queue =             bugpack.require('Queue');
 
 
 //-------------------------------------------------------------------------------
@@ -44,7 +46,24 @@ var AirbugApi = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-    }
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.initialized = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.initializing = false;
+
+        /**
+         * @private
+         * @type {Queue}
+         */
+        this.initializeQueue = new Queue();
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -57,6 +76,28 @@ var AirbugApi = Class.extend(Obj, {
     // Class Methods
     //-------------------------------------------------------------------------------
 
+    createUser: function(fullName, email, callback) {
+        this.initialize(function() {
+            //Do some socket io call to create a user
+        });
+    },
+
+    initialize: function(callback) {
+        if (!this.initialized) {
+            if (!this.initializing) {
+                this.initializing = true;
+
+
+                //Initialize here (connect to socket server)
+                //this.initialized = true;
+
+            } else {
+                this.initializeQueue.enqueue(callback);
+            }
+        } else {
+            callback();
+        }
+    }
 });
 
 
