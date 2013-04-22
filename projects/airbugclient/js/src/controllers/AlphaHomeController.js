@@ -82,6 +82,14 @@ var AlphaHomePageController = Class.extend(ApplicationController, {
         this._super();
         this.alphaHomePageContainer = new AlphaHomePageContainer();
         this.setContainerTop(this.alphaHomePageContainer);
+    },
+
+    /**
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        routingRequest.accept();
     }
 });
 annotate(AlphaHomePageController).with(

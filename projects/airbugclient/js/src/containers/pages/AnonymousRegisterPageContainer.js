@@ -4,12 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('AlphaHomePageContainer')
+//@Export('AnonymousRegisterPageContainer')
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.CreateRoomFormView')
-//@Require('airbug.FormViewEvent')
 //@Require('airbug.PageView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
@@ -31,7 +30,6 @@ var bugpack = require('bugpack').context();
 var Class =                 bugpack.require('Class');
 var ApplicationContainer =  bugpack.require('airbug.ApplicationContainer');
 var CreateRoomFormView =    bugpack.require('airbug.CreateRoomFormView');
-var FormViewEvent =         bugpack.require('airbug.FormViewEvent');
 var PageView =              bugpack.require('airbug.PageView');
 var Annotate =              bugpack.require('annotate.Annotate');
 var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
@@ -53,7 +51,7 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
+var AnonymousRegisterPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -89,15 +87,21 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {CreateRoomFormView}
+         * @type {LoginFormView}
          */
-        this.createRoomFormView = null;
+        this.loginFormView = null;
 
         /**
          * @protected
          * @type {PageView}
          */
         this.pageView = null;
+
+        /**
+         * @protected
+         * @type {SignupButtonContainer}
+         */
+        this.signupButtonContainer = null;
     },
 
 
@@ -118,18 +122,27 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
         this.pageView =
             view(PageView)
                 .children([
-                    view(CreateRoomFormView)
-                        .id("createRoomFormView")
-                        .appendTo("*[id|=page]")
-                ])
+                view(LoginFormView)
+                    .id("loginFormView")
+                    .appendTo("*[id|=page]")
+            ])
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.createRoomFormView = this.findViewById("createRoomFormView");
+        this.loginFormView = this.findViewById("loginFormView");
         this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+    },
+
+    /**
+     * @protected
+     */
+    createContainerChildren: function() {
+        this._super();
+        this.signupButtonContainer = new SignupButtonContainer();
+        this.addContainerChild(this.signupButtonContainer, "#header-right");
     },
 
     /**
@@ -137,7 +150,7 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearCreateRoomFormViewSubmitEvent, this);
+        this.loginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearLoginFormViewSubmitEvent, this);
     },
 
 
@@ -149,23 +162,13 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {FormViewEvent} event
      */
-    hearCreateRoomFormViewSubmitEvent: function(event) {
-        //TODO BRN: Validate the event data
+    hearLoginFormViewSubmitEvent: function(event) {
 
-        this.roomManagerModule.createRoom(event.getData().roomName, function(error, roomModel) {
-            if (!error) {
-
-            } else {
-                console.log(error);
-                //TODO BRN: Handle the server error
-            }
-        });
     }
 });
-annotate(AlphaHomePageContainer).with(
+annotate(AnonymousRegisterPageContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule"),
-        property("roomManagerModule").ref("roomManagerModule")
+        property("navigationModule").ref("navigationModule")
     ])
 );
 
@@ -174,5 +177,5 @@ annotate(AlphaHomePageContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.AlphaHomePageContainer", AlphaHomePageContainer);
+bugpack.export("airbug.AnonymousRegisterPageContainer", AnonymousRegisterPageContainer);
 
