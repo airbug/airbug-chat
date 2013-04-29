@@ -45,7 +45,8 @@ buildProperties({
                 express: "3.0.x",
                 mu2express: "0.0.x",
                 "mongodb": ">=1.2.11",
-                "mongoose": ">=3.5.6"
+                "mongoose": ">=3.5.6",
+                "socket.io": "0.9.x"
             },
             scripts: {
                 start: "node ./scripts/start.js"
