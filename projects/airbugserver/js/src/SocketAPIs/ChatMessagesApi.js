@@ -18,6 +18,7 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var ChatMessage = bugpack.require('airbugserver.ChatMessage');
 
 
 //-------------------------------------------------------------------------------
@@ -27,9 +28,8 @@ var bugpack     = require('bugpack').context();
 var ChatMessagesApi = {
 
     create: function(message){
-        var message = new Message(message);
-        RoomApi.sendMessage(message);
-
+        var newChatMessage = ChatMessage.create(message, function(){});
+        RoomApi.sendMessage(newChatMessage);
     }
 
     update: function(){

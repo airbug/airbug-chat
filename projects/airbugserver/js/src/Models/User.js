@@ -14,7 +14,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-
 var UserSchema = bugpack.require('airbugserver.UserSchema');
 
 
@@ -24,6 +23,7 @@ var UserSchema = bugpack.require('airbugserver.UserSchema');
 
 /*
  * @param {string} email
+ * @param {function(Error, User)} callback
  * @return {User}
  **/
 UserSchema.statics.findOneByEmail = function (email, callback){

@@ -27,7 +27,7 @@ var io          = require('socket.io');
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
-var SessionToSocketsMap = bugpack.require('airbugserver.SessionToSocketsMap');
+var SocketsMap          = bugpack.require('airbugserver.SocketsMap');
 
 var ChatMessagesApi     = bugpack.require('airbugserver.ChatMessagesApi');
 var ConversationsApi    = bugpack.require('airbugserver.ConversationsApi');
@@ -55,21 +55,16 @@ var SocketManager = Class.extend(Obj, {
         this.socketIoManager        = null;
 
         /*
-         * @type {Map}
+         * @type {SocketsMap}
          **/
-        this.sessionToSocketsMap    = null;
+        this.socketsMap             = null;
 
-        /*
-         * @type {Map}
-         **/
-        this.sessionToUserMap       = null;
     },
 
     initialize: function(server){
-        this.server                 = server;
-        this.socketIoManager        = io.listen(server);
-        this.sessionToSocketsMap    = new SessionToSocketsMap();
-        this.sessionToUserMap       = new Map();
+        this.server             = server;
+        this.socketIoManager    = io.listen(server);
+        this.socketsMap         = new SocketsMap();
 
         return this;
     },
@@ -78,7 +73,7 @@ var SocketManager = Class.extend(Obj, {
         var server = this.server;
         var socketIoManager = this.socketIoManager;
         var sessionToUserMap = this.sessionToUserMap;
-        var sessionToSocketsMap = this.sessionToSocketsMap;
+        var sessionToSocketsMap = this.socketsMap;
         var alphaSocketManager = socketIoManager.of('/alpha');
 
         alphaSocketManager.set('authorization', function(data, callback){

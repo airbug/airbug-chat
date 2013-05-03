@@ -4,58 +4,71 @@
 
 //@Package('airbugserver')
 
-//@Export('ExpressServer')
+//@Export('AirBugApplication')
+//@Autoload
+
+//@Require('Class')
+//@Require('Obj')
+//@Require('bugioc.ConfigurationScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var http        = require('http');
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
+
 
 //-------------------------------------------------------------------------------
-// Build App
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var AirBugApplication = Class.extend(Obj, {
 
-    _constructor: function(){
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
 
-        this.super();
+    _constructor: function() {
+
+        this._super();
+
 
         //-------------------------------------------------------------------------------
-        // Variables
+        // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.expressApp = null;
-
+        /**
+         * @private
+         * @type {ConfigurationScan}
+         */
+        this.configurationScan = new ConfigurationScan();
     },
 
-    initialize: function(){
 
-    },
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     start: function() {
-
-        // Create Server
-        //-------------------------------------------------------------------------------
-        return http.createServer(app).listen(app.get('port'), function(){
-            console.log("Express server listening on port " + app.get('port'));
-        });
-
+        this.configurationScan.scan();
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ExpressServer', ExpressServer);
+bugpack.export('airbug.AirBugApplication', AirBugApplication);

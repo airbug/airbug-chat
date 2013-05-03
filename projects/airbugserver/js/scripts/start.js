@@ -11,11 +11,12 @@ var bugpack = require('bugpack').context(module);
 // BugPack
 //-------------------------------------------------------------------------------
 
-var AirBugServer = bugpack.require('airbug.AirBugServer');
+var AirBugApplication = bugpack.require('airbug.AirBugApplication');
 
 
 //-------------------------------------------------------------------------------
 // Script
 //-------------------------------------------------------------------------------
 
-AirBugServer.start();
+var airBugApplication = new AirBugApplication();
+airBugApplication.start();

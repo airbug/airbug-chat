@@ -43,12 +43,32 @@ var SocketManager   = bugpack.require('airbugserver.SocketManager');
 // Build App
 //-------------------------------------------------------------------------------
 
-var AirBugServer = {
+var AirBugServer = Class.extend(Obj, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(){
+
+        this.super();
+
+        /*
+         * @type {ExpressServer}
+         **/
+        this.expressServer = null;
+
+        /*
+         * @type {SocketManager}
+         **/
+        this.socketManager = null;
+
+    }
 
     start: function() {
 
-        var expressServer   = new ExpressServer().initialize().start();
-        var socketManager   = new SocketManager().initialize(expressServer);
+        var expressServer   = this.expressServer.start();
+        var socketManager   = this.socketManager.initialize(expressServer);
         var cookieParser    = expressServer.cookieParser;
         var sessionStore    = expressServer.sessionStore;
         var sessionKey      = expressServer.sessionKey;
@@ -92,7 +112,7 @@ var AirBugServer = {
         });*/
         
     }
-};
+});
 
 
 //-------------------------------------------------------------------------------

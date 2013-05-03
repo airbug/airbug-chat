@@ -40,6 +40,10 @@ var SocketsMap = Class.extend(Obj, {
 
         this._super();
 
+        //-------------------------------------------------------------------------------
+        // Variables
+        //-------------------------------------------------------------------------------
+
         this.userToSessionsMap = null;
 
         this.sessionToUserMap = null;
@@ -60,9 +64,10 @@ var SocketsMap = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Public Instance Methods
     //-------------------------------------------------------------------------------
+
     /*
      * @param {{
-     *      sessionId: number, //???
+     *      sessionId: number, //string???
      *      socket: Socket
      * }} params
      **/
@@ -172,4 +177,4 @@ var SocketsMap = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.SessionToSocketsMap', SessionToSocketsMap);
+bugpack.export('airbugserver.SocketsMap', SocketsMap);

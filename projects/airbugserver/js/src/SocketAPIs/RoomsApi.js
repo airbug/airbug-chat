@@ -18,16 +18,23 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Room        = bugpack.require('airbugserver.Room');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomsApi = {
+var RoomsApi = Class.extend({
 
-    create: function(){
+    _constructor: function(){
+        this.super();
 
+        this.socketsMap = null;
+    },
+
+    create: function(room){
+        var room = Room.create();
     }
 
     update: function(){
@@ -42,7 +49,7 @@ var RoomsApi = {
      * @param {function()} callback
      **/
     notifyRoomMembers: function(roomId, eventName, data, callback){
-        var room = Rooms.findById();
+        var room = Room.findById();
         var roomMembers = room.membersList;
         roomMembers.forEach(function(roomMember){
             var userId = roomMember.userId;
@@ -55,7 +62,7 @@ var RoomsApi = {
         callback();
     }
 
-}
+});
 
 
 //-------------------------------------------------------------------------------
