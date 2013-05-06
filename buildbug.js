@@ -55,7 +55,6 @@ buildProperties({
         sourcePaths: [
             "./projects/airbugserver/js/src",
             '../bugjs/projects/annotate/js/src',
-            '../bugjs/projects/bugboil/js/src',
             '../bugjs/projects/bugflow/js/src',
             '../bugjs/projects/bugfs/js/src',
             '../bugjs/projects/bugjs/js/src',
@@ -150,7 +149,6 @@ buildProperties({
         sourcePaths: [
             '../bugjs/projects/annotate/js/src',
             '../bugjs/projects/bugjs/js/src',
-            '../bugjs/projects/bugboil/js/src',
             '../bugjs/projects/bugflow/js/src',
             '../bugjs/projects/bugfs/js/src',
             '../bugjs/projects/bugtrace/js/src',
