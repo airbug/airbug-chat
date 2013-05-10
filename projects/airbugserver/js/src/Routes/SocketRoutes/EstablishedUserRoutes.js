@@ -4,28 +4,34 @@
 
 //@Package('airbugserver')
 
-//@Export('SocketRoutes')
+//@Export('EstablishedUserRoutes')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.Route')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
+var UsersApi, RoomsApi, ConversationsApi, ChatMessagesApi;
 
-var SocketRoutes = Class.extend(Obj, {
-    
-    _constructor: function(){
 
-        this._super();
-        
-        
-    }
-});
+EstablishedUserRoutes = {
+    enableAllOnSocket: function(socket){
+        EstablishedUserRoutes.routes.forEach(function(route){
+            route.enableOnSocket(socket);
+        })
+    },
+
+    routes: [
+        new Route("addUserToRoom", RoomsApi.addUserToRoom),
+        new Route("newChatMessage", ChatMessagesApi.newChatMessage)
+    ]
+};
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.SocketRoutes', SocketRoutes);
+bugpack.export('airbugserver.EstablishedUserRoutes', EstablishedUserRoutes);

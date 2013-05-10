@@ -61,8 +61,8 @@ var SocketManager = Class.extend(Obj, {
 
     },
 
-    initialize: function(server){
-        this.server             = server;
+    initialize: function(){
+        // this.server             = server;
         this.socketIoManager    = io.listen(server);
         this.socketsMap         = new SocketsMap();
 

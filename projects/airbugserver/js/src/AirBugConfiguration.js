@@ -21,8 +21,8 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var connect = require('connect');
+var bugpack                 = require('bugpack').context();
+var connect                 = require('connect');
 
 
 //-------------------------------------------------------------------------------
@@ -42,28 +42,23 @@ var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
 var ExpressRoutes           = bugpack.require('airbugserver.ExpressRoutes');
 var SocketManager           = bugpack.require('airbugserver.SocketManager');
 var SocketRoutes            = bugpack.require('airbugserver.SocketRoutes');
-
-var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
-var Conversation            = bugpack.require('airbugserver.Conversation');
-var Dialogue                = bugpack.require('airbugserver.Dialogue');
-var Room                    = bugpack.require('airbugserver.Room');
-var RoomMember              = bugpack.require('airbugserver.RoomMember');
-var User                    = bugpack.require('airbugserver.User');
+var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
 var ChatMessagesApi         = bugpack.require('airbugserver.ChatMessagesApi');
 var ConversationsApi        = bugpack.require('airbugserver.ConversationsApi');
 var RoomsApi                = bugpack.require('airbugserver.RoomsApi');
 var UsersApi                = bugpack.require('airbugserver.UsersApi');
 
+
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate =      Annotate.annotate;
-var arg =           ArgAnnotation.arg;
-var configuration = ConfigurationAnnotation.configuration;
-var module =        ModuleAnnotation.module;
-var property =      PropertyAnnotation.property;
+var annotate                = Annotate.annotate;
+var arg                     = ArgAnnotation.arg;
+var configuration           = ConfigurationAnnotation.configuration;
+var module                  = ModuleAnnotation.module;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -82,14 +77,13 @@ var AirBugConfiguration = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Variables
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {SplashController}
+         * @type {AirBugServer}
          */
-        // this._splashController = null;
         this._airBugServer = null;
     },
 
@@ -102,7 +96,6 @@ var AirBugConfiguration = Class.extend(Obj, {
      *
      */
     initializeConfiguration: function() {
-        // this._splashController.start();
         this._airBugServer.start();
     },
 
@@ -116,7 +109,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      */
     airBugServer: function() {
         this._airBugServer = new AirBugServer();
-        return this.airBugServer;
+        return this._airBugServer;
     },
 
     /**
@@ -134,17 +127,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ExpressRoutes}
-     */
-    expressRoutes: function() {
-        return new ExpressRoutes();
-    },
-
-    /**
      * @return {ExpressServer}
      */
     expressApp: function() {
         return new ExpressApp();
+    },
+
+    /**
+     * @return {ExpressRoutes}
+     */
+    expressRoutes: function() {
+        return new ExpressRoutes();
     },
 
     /**
@@ -172,7 +165,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {SocketManager}
      */
     socketManager: function() {
-        return new SocketManager();
+        return new SocketManager().initialize();
     },
 
     /**
@@ -180,6 +173,10 @@ var AirBugConfiguration = Class.extend(Obj, {
      */
     socketRoutes: function() {
         return new SocketRoutes();
+    },
+
+    socketsMap: function() {
+        return new SocketsMap();
     },
 
     /**
@@ -204,10 +201,45 @@ Class.implement(AirBugServerConfiguration, IConfiguration);
 
 annotate(AirBugServerConfiguration).with(
     configuration().modules([
+        
+        //-------------------------------------------------------------------------------
+        // AirBugServer
+        //-------------------------------------------------------------------------------
+        module("airBugServer")
+            .properties([
+                property("expressServer").ref("expressServer"),
+                property("socketManager").ref("socketManager")
+            ]),
+
+        //-------------------------------------------------------------------------------
+        // Express
+        //-------------------------------------------------------------------------------
+        module("expressApp"),
+        module("expressRoutes"),
         module("expressServer")
             .properties([
                 property("sessionStore").ref("sessionStore")
-            ])
+            ]),
+
+        //-------------------------------------------------------------------------------
+        // Sockets
+        //-------------------------------------------------------------------------------
+        module("socketManager")
+            .properties([
+                property("server").ref("expressServer"),
+                // property("socketIoManager").ref("socketIoManager"),
+                property("socketsMap").ref("socketsMap")
+            ]),
+        module("socketsMap"),
+        module("socketRoutes"),
+
+        //-------------------------------------------------------------------------------
+        // Apis
+        //-------------------------------------------------------------------------------
+        module("chatMessagesApi"),
+        module("conversationsApi"),
+        module("roomsApi"),
+        module("usersApi")
     ])
 );
 

@@ -6,6 +6,9 @@
 
 //@Export('RoomsApi')
 
+//@Require('Class')
+//@Require('Obj')
+//@Require('airbugserver.Room')
 
 //-------------------------------------------------------------------------------
 // Common Modules

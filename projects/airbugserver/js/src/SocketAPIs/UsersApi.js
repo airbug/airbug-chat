@@ -6,6 +6,9 @@
 
 //@Export('UsersApi')
 
+//@Require('Class')
+//@Require('Obj')
+//@Require('airbugserver.User')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -24,7 +27,7 @@ var User        = bugpack.require('airbugserver.User');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UsersApi = {
+var UsersApi = Class.extend(Obj, {
 
     /*
      * @param {{
@@ -41,7 +44,7 @@ var UsersApi = {
             new: true,
             upsert: true
         };
-        var callback = function(){
+        var callback = function(error, user){
             
         };
         User.findOneAndUpdate(query, update, options, callback);
@@ -63,7 +66,7 @@ var UsersApi = {
         
     },
 
-}
+});
 
 
 //-------------------------------------------------------------------------------

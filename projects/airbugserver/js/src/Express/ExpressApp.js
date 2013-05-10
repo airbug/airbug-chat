@@ -36,7 +36,7 @@ var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 
 //-------------------------------------------------------------------------------
-// Build App
+// Declare Class
 //-------------------------------------------------------------------------------
 
 var ExpressApp = Class.extend(Obj, {
@@ -44,29 +44,56 @@ var ExpressApp = Class.extend(Obj, {
     _constructor: function(){
 
         this.super();
+        
+        //-------------------------------------------------------------------------------
+        // Variables
+        //-------------------------------------------------------------------------------
 
-        this.app = null;
+        this.app            = null;
 
-        this.secret = null;
+        this.secret         = null;
 
-        this.sessionKey = null;
+        this.sessionKey     = null;
 
-        this.cookieParser = null;
+        this.cookieParser   = null;
 
-        this.sessionStore = null;
+        this.sessionStore   = null;
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /*
+     * @return {ExpressApp}
+     **/
     initialize: function(){
 
-        var app = this.app = express();
+        /*
+         * @type {}
+         **/
+        var app             = this.app              = express();
 
-        var secret = this.secret = 'some secret'; // LOAD FROM CONFIG
+        /*
+         * @type {string}
+         **/
+        var secret          = this.secret           = 'some secret'; // LOAD FROM CONFIG
 
-        var sessionKey = this.sessionKey = 'express.sid';
+        /*
+         * @type {string}
+         **/
+        var sessionKey      = this.sessionKey       = 'express.sid';
 
-        var cookieParser = this.cookieParser = express.cookieParser(secret);
+        /*
+         * @type {}
+         **/
+        var cookieParser    = this.cookieParser     = express.cookieParser(secret);
 
-        var sessionStore = this.sessionStore = new connect.middleware.session.MemoryStore();
+        /*
+         * @type {MemoryStore}
+         **/
+        var sessionStore    = this.sessionStore     = new connect.middleware.session.MemoryStore();
 
         return this;
     },
@@ -88,7 +115,7 @@ var ExpressApp = Class.extend(Obj, {
             config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
         }
 
-        // mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+        mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
 
         // Configure App
         //-------------------------------------------------------------------------------
@@ -104,6 +131,42 @@ var ExpressApp = Class.extend(Obj, {
 
     },
 
+
+    //-------------------------------------------------------------------------------
+    //  Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /*
+     * @return {}
+     **/
+    getCookieParser: function(){
+        return this.getCookieParser;
+    },
+
+    /*
+     * @return {}
+     **/
+    getSessionStore: function(){
+        return this.getSessionStore;
+    },
+
+
+    /*
+     * @return {}
+     **/
+    getSessionKey: function(){
+        return this.getSessionKey;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /*
+     * @private
+     * @param {} app
+     **/
     configure: function(app){
         app.configure(function(){
             app.engine('mustache', mu2Express.engine);
@@ -129,15 +192,19 @@ var ExpressApp = Class.extend(Obj, {
         });
     },
 
+
+    /*
+     * @private
+     * @param {} app
+     **/
     enableRoutes: function(app){
-        app.get('/alpha', function(req, res){
-            res.render('alpha', {
-                title: 'airbug',
-                production: config.production
-            });
-        });
+
     },
 
+    /*
+     * @private
+     * @param {} app
+     **/
     enableGracefulShutdown: function(app){
         process.on('SIGTERM', function () {
             console.log("Server Closing");

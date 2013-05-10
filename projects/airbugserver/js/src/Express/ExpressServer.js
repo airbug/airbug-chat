@@ -34,14 +34,21 @@ var ExpressServer = Class.extend(Obj, {
         // Variables
         //-------------------------------------------------------------------------------
 
+        /*
+         * @type {ExpressApp}
+         **/
         this.expressApp = null;
 
     },
 
-    initialize: function(){
 
-    },
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
 
+    /*
+     * @return {http.Server}
+     **/
     start: function() {
 
         // Create Server
@@ -50,8 +57,22 @@ var ExpressServer = Class.extend(Obj, {
             console.log("Express server listening on port " + app.get('port'));
         });
 
+    },
+
+
+    //-------------------------------------------------------------------------------
+    //  Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    getCookieParser: function(){
+        return this.expressApp.getCookieParser;
+    },
+    getSessionStore: function(){
+        return this.expressApp.getSessionStore;
+    },
+    getSessionKey: function(){
+        return this.expressApp.getSessionKey;
     }
-});
 
 
 //-------------------------------------------------------------------------------

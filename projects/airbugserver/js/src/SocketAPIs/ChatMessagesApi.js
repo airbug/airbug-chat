@@ -6,6 +6,10 @@
 
 //@Export('ChatMessagesApi')
 
+//@Require('Class')
+//@Require('Obj')
+//@Require('airbugserver.ChatMessage')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -25,7 +29,7 @@ var ChatMessage = bugpack.require('airbugserver.ChatMessage');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessagesApi = {
+var ChatMessagesApi = Class.extend(Obj, {
 
     create: function(message){
         var newChatMessage = ChatMessage.create(message, function(){});
@@ -39,7 +43,7 @@ var ChatMessagesApi = {
     destroy: function(){
         
     }
-}
+});
 
 
 //-------------------------------------------------------------------------------

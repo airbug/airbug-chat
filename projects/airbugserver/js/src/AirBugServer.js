@@ -7,7 +7,9 @@
 //@Export('AirBugServer')
 
 //@Require('bugfs.BugFs')
+//@Require('Class')
 //@Require('Map')
+//@Require('Obj')
 //@Require('airbugserver.ExpressServer')
 //@Require('airbugserver.SocketManager')
 
@@ -69,9 +71,9 @@ var AirBugServer = Class.extend(Obj, {
 
         var expressServer   = this.expressServer.start();
         var socketManager   = this.socketManager.initialize(expressServer);
-        var cookieParser    = expressServer.cookieParser;
-        var sessionStore    = expressServer.sessionStore;
-        var sessionKey      = expressServer.sessionKey;
+        var cookieParser    = expressServer.getCookieParser();
+        var sessionStore    = expressServer.getSessionStore();
+        var sessionKey      = expressServer.getSessionKey();
         
         socketManager.enablesockets(cookieParser, sessionStore, sessionKey);
         

@@ -59,6 +59,8 @@ var SocketsMap = Class.extend(Obj, {
 
         this.sessionToUserMap = new Map();
 
+        return this;
+
     },
 
     //-------------------------------------------------------------------------------
