@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  script
+      var firstPage="four04Page";
+      Loader.numExpectedLoadedItems = 2;
+  div(id="page-container")
+    div(id="loading-page", class="page")
+      div(class="row-fluid")
+        div(class="span8 offset2")
+          div(class="airbug-loader-container")
+            img(class="loader", src="/img/ajax-loader.gif", alt="loading...")
+    div(id="four04-page", class="page")
+      div(class="row-fluid")
+        div(class="span12")
+          div(class="wrapper-404")
+            div(id="logo-404")
+              img(src="/img/404_404.png", alt="404", onload="Loader.loaded();")
+            div(id="message-404") The page you are looking for got away.
+            div(id="jar-404")
+              img(src="/img/404_open-jar.png", alt="airbug Jar", onload="Loader.loaded();")
+            

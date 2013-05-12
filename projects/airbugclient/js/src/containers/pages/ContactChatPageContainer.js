@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.AccountButtonDropdownContainer')
 //@Require('airbug.ApplicationContainer')
+//@Require('airbug.ContactChatBoxContainer')
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.PageTwoColumnView')
@@ -32,6 +33,7 @@ var bugpack = require('bugpack').context();
 var Class =                                 bugpack.require('Class');
 var AccountButtonDropdownContainer =        bugpack.require('airbug.AccountButtonDropdownContainer');
 var ApplicationContainer =                  bugpack.require('airbug.ApplicationContainer');
+var ContactChatBoxContainer =               bugpack.require('airbug.ContactChatBoxContainer');
 var ConversationListSlidePanelContainer =   bugpack.require('airbug.ConversationListSlidePanelContainer');
 var HomeButtonContainer =                   bugpack.require('airbug.HomeButtonContainer');
 var PageTwoColumnView =                     bugpack.require('airbug.PageTwoColumnView');

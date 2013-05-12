@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('UserHomePageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
@@ -12,6 +13,9 @@
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
 
+
+//TEST
+console.log("UserHonePageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -81,7 +85,7 @@ var UserHomePageController = Class.extend(ApplicationController, {
     }
 });
 annotate(UserHomePageController).with(
-    controller().route("")
+    controller().route("home")
 );
 
 

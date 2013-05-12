@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ContactCollection')
+//@Require('airbug.ContactListItemContainer')
 //@Require('airbug.ContactModel')
 //@Require('airbug.ListView')
 //@Require('airbug.SelectableListItemView')
@@ -34,6 +35,7 @@ var bugpack = require('bugpack').context();
 
 var Class =                     bugpack.require('Class');
 var ContactCollection =         bugpack.require('airbug.ContactCollection');
+var ContactListItemContainer =  bugpack.require('airbug.ContactListItemContainer');
 var ContactModel =              bugpack.require('airbug.ContactModel');
 var ListView =                  bugpack.require('airbug.ListView');
 var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');

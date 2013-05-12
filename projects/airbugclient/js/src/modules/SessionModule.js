@@ -50,6 +50,12 @@ var SessionModule = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {AirbugApi}
+         */
+        this.airbugApi = null;
+
+        /**
+         * @private
          * @type {UserModel}
          */
         this.currentUserModel = new CurrentUserModel({});

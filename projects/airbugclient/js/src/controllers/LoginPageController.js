@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('LoginPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
@@ -12,6 +13,9 @@
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
 
+
+//TEST
+console.log("LoginPageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules

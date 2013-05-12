@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('SignupPageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
@@ -12,6 +13,9 @@
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
 
+
+//TEST
+console.log("SignUpPageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules

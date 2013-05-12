@@ -5,14 +5,17 @@
 //@Package('airbug')
 
 //@Export('ApplicationConfiguration')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbug.AirbugApi')
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
 //@Require('airbug.SessionModule')
 //@Require('annotate.Annotate')
 //@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
@@ -21,6 +24,9 @@
 //@Require('carapace.ControllerScan')
 //@Require('bugioc.PropertyAnnotation')
 
+
+//TEST
+console.log("ApplicationConfiguration loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -35,11 +41,13 @@ var bugpack = require('bugpack').context();
 
 var Class =                     bugpack.require('Class');
 var Obj =                       bugpack.require('Obj');
+var AirbugApi =                 bugpack.require('airbug.AirbugApi');
 var NavigationModule =          bugpack.require('airbug.NavigationModule');
 var PageStateModule =           bugpack.require('airbug.PageStateModule');
 var SessionModule =             bugpack.require('airbug.SessionModule');
 var Annotate =                  bugpack.require('annotate.Annotate');
 var ArgAnnotation =             bugpack.require('bugioc.ArgAnnotation');
+var AutowiredScan =             bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation =   bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration =            bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation =          bugpack.require('bugioc.ModuleAnnotation');
@@ -118,6 +126,13 @@ var ApplicationConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {AirbugApi}
+     */
+    airbugApi: function() {
+        return new AirbugApi();
+    },
+
+    /**
      * @return {AutowiredScan}
      */
     autowiredScan: function() {
@@ -174,6 +189,7 @@ var ApplicationConfiguration = Class.extend(Obj, {
 Class.implement(ApplicationConfiguration, IConfiguration);
 annotate(ApplicationConfiguration).with(
     configuration().modules([
+        module("airbugApi"),
         module("autowiredScan"),
         module("carapaceApplication")
             .args([
@@ -193,6 +209,9 @@ annotate(ApplicationConfiguration).with(
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
         module("sessionModule")
+            .properties([
+                property("airbugApi").ref("airbugApi")
+            ])
     ])
 );
 
