@@ -86,6 +86,20 @@ var AirBugConfiguration = Class.extend(Obj, {
          * @type {AirBugServer}
          */
         this._airBugServer = null;
+
+        /**
+         * @private
+         * @type {{
+         *      port: number,
+         *      mongoDbIp: string
+         * }}
+         */
+        this._config = null;
+
+        /**
+         * @type {string}
+         */
+        this._configFilePath = null;
     },
 
 
@@ -99,11 +113,6 @@ var AirBugConfiguration = Class.extend(Obj, {
     initializeConfiguration: function() {
         this._airBugServer.start();
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Configuration Methods
-    //-------------------------------------------------------------------------------
 
     /**
      * @return {AirBugServer}
@@ -120,6 +129,12 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new ChatMessagesApi();
     },
 
+    config: function(){
+        this._configFilePath = path.resolve(__dirname, '../config.json');
+        this._config = this.loadConfig(this.configFilePath);
+        return this._config;
+    },
+
     /**
      * @return {ConversationsApi}
      */
@@ -131,7 +146,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {ExpressServer}
      */
     expressApp: function() {
-        return new ExpressApp();
+        return new ExpressApp().initialize();
     },
 
     /**
@@ -148,6 +163,9 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new ExpressServer();
     },
 
+    /**
+     * @return {Mongoose}
+     */
     mongoose: function(){
         return mongoose;
     },
@@ -189,6 +207,40 @@ var AirBugConfiguration = Class.extend(Obj, {
      */
     usersApi: function(){
         return new UsersApi();
+    },
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /*
+     * @private
+     * @param {?string=} configPath
+     * @return {{
+     *      port: number,
+     *      mongoDbIp: string
+     * }}
+     **/
+    loadConfig: function(configPath){
+        var config;
+        var defaults = {
+            port: 8000,
+            mongoDbIp: "localhost"
+        };
+
+        if (BugFs.existsSync(configPath)) {
+            try {
+                config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
+            } catch(error) {
+                    console.log(configPath, "could not be parsed. Invalid JSON.");
+                    console.log(AirBugServer, "config set to defaults.");
+                    return defaults;
+            } finally {
+                return config;
+            }
+        } else {
+            return defaults;
+        }
     }
 });
 
@@ -212,6 +264,7 @@ annotate(AirBugServerConfiguration).with(
         //-------------------------------------------------------------------------------
         module("airBugServer")
             .properties([
+                property("config").ref("config"),
                 property("expressServer").ref("expressServer"),
                 property("mongoose").ref("mongoose"),
                 property("socketManager").ref("socketManager")
@@ -220,12 +273,14 @@ annotate(AirBugServerConfiguration).with(
         //-------------------------------------------------------------------------------
         // Express
         //-------------------------------------------------------------------------------
-        module("expressApp"),
-        module("expressRoutes"),
-        module("expressServer")
+        module("expressApp")
             .properties([
+                property("config").ref("config"),
+                property("expressRoutes").re("expressRoutes"),
                 property("sessionStore").ref("sessionStore")
             ]),
+        module("expressRoutes"),
+        module("expressServer"),
 
         //-------------------------------------------------------------------------------
         // Sockets
@@ -233,7 +288,6 @@ annotate(AirBugServerConfiguration).with(
         module("socketManager")
             .properties([
                 property("server").ref("expressServer"),
-                // property("socketIoManager").ref("socketIoManager"),
                 property("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),

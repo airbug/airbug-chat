@@ -8,7 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.Route')
+//@Require('bugroutes.ExpressRoute')
+//@Require('bugroutes.Routes')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,27 +22,26 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ExpressRoutes = {
-    
-    enableRoutes: function(){
-        
-    },
-    
-    routes: [
-        new Route('/alpha', function(req, res){
-            res.render('alpha', {
-                title: 'airbug',
-                production: config.production
-            }, 'get')
-    ]
-};
+var Routes          = require('bugroutes.Routes');
+var ExpressRoute    = require('bugroutes.ExpressRoute');
 
-// app.get('/alpha', function(req, res){
-//     res.render('alpha', {
-//         title: 'airbug',
-//         production: config.production
-//     });
-// });
+
+//-------------------------------------------------------------------------------
+// Routes
+//-------------------------------------------------------------------------------
+var getAlpha = new ExpressRoute('get', '/alpha', function(req, res){
+    res.render('alpha', {
+        title: 'airbug',
+        production: config.production
+    });
+});
+
+var routes = [getAlpha];
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
+
+var ExpressRoutes = new Routes(routes);
 
 //-------------------------------------------------------------------------------
 // Exports

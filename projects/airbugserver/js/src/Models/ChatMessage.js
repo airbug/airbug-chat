@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('User')
+//@Export('ChatMessage')
 
 //@Require('airbugserver.ChatMessageSchema')
 

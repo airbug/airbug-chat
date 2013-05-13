@@ -42,6 +42,7 @@ buildProperties({
             main: "./lib/AirBugServer.js",
             dependencies: {
                 bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+                connect: "2.x",
                 express: "3.0.x",
                 mu2express: "0.0.x",
                 "mongodb": ">=1.2.11",
@@ -55,10 +56,11 @@ buildProperties({
         sourcePaths: [
             "./projects/airbugserver/js/src",
             '../bugjs/projects/annotate/js/src',
-            '../bugjs/projects/bugboil/js/src',
             '../bugjs/projects/bugflow/js/src',
             '../bugjs/projects/bugfs/js/src',
+            '../bugjs/projects/bugioc/js/src',
             '../bugjs/projects/bugjs/js/src',
+            '../bugjs/projects/bugroutes/js/src',
             '../bugjs/projects/bugtrace/js/src',
             '../bugunit/projects/bugunit/js/src'
            // "../bugjs/projects/clientjs/js/src"
@@ -68,7 +70,8 @@ buildProperties({
             "../bugunit/projects/bugunit/js/scripts"
         ],
         testPaths: [
-            "../bugjs/projects/bugjs/js/test"
+            "../bugjs/projects/bugjs/js/test",
+            '../bugjs/projects/bugroutes/js/test'
         ],
 
         //TODO BRN: These static paths are temporary until we get the client js server working.
@@ -150,7 +153,6 @@ buildProperties({
         sourcePaths: [
             '../bugjs/projects/annotate/js/src',
             '../bugjs/projects/bugjs/js/src',
-            '../bugjs/projects/bugboil/js/src',
             '../bugjs/projects/bugflow/js/src',
             '../bugjs/projects/bugfs/js/src',
             '../bugjs/projects/bugtrace/js/src',
@@ -247,7 +249,7 @@ buildTarget('local').buildFlow(
                         packageVersion: buildProject.getProperty("server.packageJson.version")
                     }
                 }),
-                /*targetTask('startNodeModuleTests', {
+                targetTask('startNodeModuleTests', {
                     init: function(task, buildProject, properties) {
                         var packedNodePackage = nodejs.findPackedNodePackage(
                             buildProject.getProperty("server.packageJson.name"),
@@ -257,7 +259,7 @@ buildTarget('local').buildFlow(
                             modulePath: packedNodePackage.getFilePath()
                         });
                     }
-                }),*/
+                }),
                 targetTask("s3EnsureBucket", {
                     properties: {
                         bucket: buildProject.getProperty("local-bucket")

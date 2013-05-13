@@ -34,7 +34,6 @@ var path        = require('path');
 //-------------------------------------------------------------------------------
 
 var BugFs           = bugpack.require('bugfs.BugFs');
-// var Map             = bugpack.require('Map');
 var ExpressServer   = bugpack.require('airbugserver.ExpressServer');
 var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
@@ -60,19 +59,27 @@ var AirBugServer = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /*
-         * @type {ExpressServer}
+         * @type {{
+         *      port: number,
+         *      mongoDbIp: string
+         * }}
          **/
-        this.expressServer = null;
+        this.config         = null;
 
         /*
-         * @type {mongoose}
+         * @type {ExpressServer}
          **/
-        this.mongoose = null;
+        this.expressServer  = null;
+
+        /*
+         * @type {Mongoose}
+         **/
+        this.mongoose       = null;
 
         /*
          * @type {SocketManager}
          **/
-        this.socketManager = null;
+        this.socketManager  = null;
 
     }
 
@@ -80,28 +87,34 @@ var AirBugServer = Class.extend(Obj, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    /*
+     **/
     start: function() {
 
+        var configPath      = path.resolve(__dirname, '../config.json');
+        var config          = this.loadConfig(configPath);
         var expressServer   = this.expressServer.start();
         var mongoose        = this.mongoose;
         var socketManager   = this.socketManager.initialize(expressServer);
         var cookieParser    = expressServer.getCookieParser();
         var sessionStore    = expressServer.getSessionStore();
         var sessionKey      = expressServer.getSessionKey();
-        
-        socketManager.enablesockets(cookieParser, sessionStore, sessionKey);
-        
-        var configPath = path.resolve(__dirname, '../config.json');
-        var config = {
-            port: 8000,
-            mongoDbIp: "localhost"
-        };
 
-        if (BugFs.existsSync(configPath)) {
-            config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
-        }
+        //-------------------------------------------------------------------------------
+        // Connect to MongoDB
+        //-------------------------------------------------------------------------------
 
         mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+
+        //-------------------------------------------------------------------------------
+        // Enable Sockets
+        //-------------------------------------------------------------------------------
+
+        socketManager.enablesockets(cookieParser, sessionStore, sessionKey);
+
+        //-------------------------------------------------------------------------------
+        // 
+        //-------------------------------------------------------------------------------
 
         //var clientJSServer = new ClientJSServer(app);
 
@@ -128,6 +141,11 @@ var AirBugServer = Class.extend(Obj, {
         });*/
         
     }
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
 });
 
 
@@ -135,4 +153,4 @@ var AirBugServer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbug.AirBugServer', AirBugServer);
+bugpack.export('airbugserver.AirBugServer', AirBugServer);

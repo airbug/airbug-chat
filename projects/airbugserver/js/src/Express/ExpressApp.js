@@ -49,14 +49,36 @@ var ExpressApp = Class.extend(Obj, {
         // Variables
         //-------------------------------------------------------------------------------
 
+        /*
+         * @type {express.app}
+         **/
         this.app            = null;
 
+        /*
+         * @type {{}}
+         **/
+        this.config         = null; // Injected by AirBugConfiguration
+
+        this.expressRoutes  = null;
+
+        /*
+         * @type {}
+         **/
         this.secret         = null;
 
+        /*
+         * @type {}
+         **/
         this.sessionKey     = null;
 
+        /*
+         * @type {}
+         **/
         this.cookieParser   = null;
 
+        /*
+         * @type {}
+         **/
         this.sessionStore   = null;
     },
 
@@ -95,26 +117,6 @@ var ExpressApp = Class.extend(Obj, {
          **/
         var sessionStore    = this.sessionStore     = new connect.middleware.session.MemoryStore();
 
-        return this;
-    },
-
-    start: function() {
-
-        var app = this.app;
-        var configPath = path.resolve(__dirname, '../config.json');
-        var config = {
-            port: 8000,
-            mongoDbIp: "localhost"
-        };
-        var secret = 'some secret'; 
-        var sessionKey = 'express.sid';
-        var cookieParser = express.cookieParser(secret);
-        var sessionStore = new connect.middleware.session.MemoryStore();
-        
-        if (BugFs.existsSync(configPath)) {
-            config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
-        }
-
         // Configure App
         //-------------------------------------------------------------------------------
         this.configure(app);
@@ -126,6 +128,8 @@ var ExpressApp = Class.extend(Obj, {
         // Graceful Shut Down
         //-------------------------------------------------------------------------------
         this.enableGracefulShutdown(app);
+
+        return this;
 
     },
 
@@ -163,7 +167,7 @@ var ExpressApp = Class.extend(Obj, {
 
     /*
      * @private
-     * @param {} app
+     * @param {express.app} app
      **/
     configure: function(app){
         app.configure(function(){
@@ -193,7 +197,7 @@ var ExpressApp = Class.extend(Obj, {
 
     /*
      * @private
-     * @param {} app
+     * @param {express.app} app
      **/
     enableRoutes: function(app){
 
@@ -201,7 +205,7 @@ var ExpressApp = Class.extend(Obj, {
 
     /*
      * @private
-     * @param {} app
+     * @param {express.app} app
      **/
     enableGracefulShutdown: function(app){
         process.on('SIGTERM', function () {
@@ -221,4 +225,4 @@ var ExpressApp = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ExpressServer', ExpressServer);
+bugpack.export('airbugserver.ExpressApp', ExpressApp);

@@ -71,4 +71,4 @@ var AirBugApplication = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbug.AirBugApplication', AirBugApplication);
+bugpack.export('airbugserver.AirBugApplication', AirBugApplication);

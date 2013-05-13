@@ -6,6 +6,9 @@
 
 //@Export('ExpressServer')
 
+//@Require('Class')
+//@Require('Obj')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -19,6 +22,9 @@ var http        = require('http');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Build App
@@ -28,7 +34,7 @@ var ExpressServer = Class.extend(Obj, {
 
     _constructor: function(){
 
-        this.super();
+        this._super();
 
         //-------------------------------------------------------------------------------
         // Variables
@@ -53,9 +59,12 @@ var ExpressServer = Class.extend(Obj, {
 
         // Create Server
         //-------------------------------------------------------------------------------
-        return http.createServer(app).listen(app.get('port'), function(){
+        var server = http.createServer(app);
+        server.listen(app.get('port'), function(){
             console.log("Express server listening on port " + app.get('port'));
         });
+
+        return server;
 
     },
 
@@ -73,7 +82,7 @@ var ExpressServer = Class.extend(Obj, {
     getSessionKey: function(){
         return this.expressApp.getSessionKey;
     }
-
+});
 
 //-------------------------------------------------------------------------------
 // Exports

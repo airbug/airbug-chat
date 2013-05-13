@@ -20,8 +20,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Annotate            = bugpack.require('annotate.Annotate');
+var SocketsMap          = bugpack.require('airbugserver.SocketsMap');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -42,7 +43,7 @@ var associateSocketWithSessionTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
     setup: function(){
-        this.socketsMap = new SocketsMap()initialize();
+        this.socketsMap = new SocketsMap().initialize();
         this.socketsMap.findSocketsBySessionIdTest
     },
 
@@ -69,7 +70,7 @@ var associateUserWithSessionTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
     setup: function(){
-        this.socketsMap = new SocketsMap()initialize();
+        this.socketsMap = new SocketsMap().initialize();
     },
 
     //-------------------------------------------------------------------------------
@@ -89,7 +90,7 @@ var findSocketsBySessionIdTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
     setup: function(){
-        this.socketsMap = new SocketsMap()initialize();
+        this.socketsMap = new SocketsMap().initialize();
     },
 
     //-------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ var findSocketsBySessionIdTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
     setup: function(){
-        this.socketsMap = new SocketsMap()initialize();
+        this.socketsMap = new SocketsMap().initialize();
     },
 
     //-------------------------------------------------------------------------------
@@ -129,7 +130,7 @@ var findSocketsByUserIdTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
     setup: function(){
-        this.socketsMap = new SocketsMap()initialize();
+        this.socketsMap = new SocketsMap().initialize();
     },
 
     //-------------------------------------------------------------------------------
