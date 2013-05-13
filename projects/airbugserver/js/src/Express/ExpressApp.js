@@ -115,8 +115,6 @@ var ExpressApp = Class.extend(Obj, {
             config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
         }
 
-        mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
-
         // Configure App
         //-------------------------------------------------------------------------------
         this.configure(app);

@@ -50,8 +50,13 @@ var associateSocketWithSessionTest = {
     // Run Test
     //-------------------------------------------------------------------------------
     test: function(){
-        this.socketsMap.associateSocketWithSessionTest();
-        findSocketsBySessionIdTest
+        var socket    = {id: "socketIdX"};
+        var session     = "sessionX";
+        this.socketsMap.associateSocketWithSessionTest(socket, session);
+        var returnedSocket = this.socketMap.findSocketsBySessionIdTest(socket.id);
+        
+        test.assertEqual(socket, returnedSocket,
+            "");
     }
 };
 annotate(associateSocketWithSessionTest).with(
@@ -136,56 +141,4 @@ var findSocketsByUserIdTest = {
 };
 annotate(findSocketsByUserIdTest).with(
     test().name("SocketsMap #findSocketsByUserIdTest Test")
-);
-
-var updateLogEventManagersTest = {
-
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function() {
-        var _this = this;
-        this.callCount = 0;
-        this.logsManager = new LogsManager();
-        this.logsManager.moveCompletedFolderToToPackageFolderAndRemoveLogEventManager = function(folderName, callback){
-            callback();
-        };
-        this.logsManager.logEventManagers = {
-            "completed-1": {
-                getMoveCount: function(){
-                    _this.callCount++;
-                    return this.moveCount
-                },
-                moveCount: 0,
-                onceOn: function(eventName, callback){
-                    callback();
-                }
-            },
-            "completed-2": {
-                getMoveCount: function(){
-                    _this.callCount++;
-                    return this.moveCount
-                },
-                moveCount: 3,
-                onceOn: function(eventName, callback){
-                    callback();
-                }
-            }
-        };
-        this.logsManager.packagedFolderPath = "packaged";
-    },
-
-
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        console.log(this);
-        this.logsManager.updateLogEventManagers(function(){});
-        test.assertEqual(this.callCount, 2,
-            "Assert that all of the logEventManagers have been called once.");
-    }
-};
-annotate(updateLogEventManagersTest).with(
-    test().name("LogsManager #updateLogEventManagers Test")
 );

@@ -13,8 +13,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var UserSchema = bugpack.require('airbugserver.UserSchema');
+var bugpack     = require('bugpack').context();
+var mongoose    = require('mongoose');
+
+
+//-------------------------------------------------------------------------------
+// Bugpack Modules
+//-------------------------------------------------------------------------------
+
+var UserSchema  = bugpack.require('airbugserver.UserSchema');
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +36,7 @@ var UserSchema = bugpack.require('airbugserver.UserSchema');
 UserSchema.statics.findOneByEmail = function (email, callback){
     this.findOne({email: email}, callback);
 };
+
 
 //-------------------------------------------------------------------------------
 // Instance Methods

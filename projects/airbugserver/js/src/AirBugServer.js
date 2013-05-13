@@ -53,12 +53,21 @@ var AirBugServer = Class.extend(Obj, {
 
     _constructor: function(){
 
-        this.super();
+        this._super();
+
+        //-------------------------------------------------------------------------------
+        // Variables
+        //-------------------------------------------------------------------------------
 
         /*
          * @type {ExpressServer}
          **/
         this.expressServer = null;
+
+        /*
+         * @type {mongoose}
+         **/
+        this.mongoose = null;
 
         /*
          * @type {SocketManager}
@@ -67,9 +76,14 @@ var AirBugServer = Class.extend(Obj, {
 
     }
 
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
     start: function() {
 
         var expressServer   = this.expressServer.start();
+        var mongoose        = this.mongoose;
         var socketManager   = this.socketManager.initialize(expressServer);
         var cookieParser    = expressServer.getCookieParser();
         var sessionStore    = expressServer.getSessionStore();

@@ -13,16 +13,22 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
+var mongoose            = require('mongoose');
 
-var UserSchema = bugpack.require('airbugserver.CoversationSchema');
+
+//-------------------------------------------------------------------------------
+// Bugpack Modules
+//-------------------------------------------------------------------------------
+
+var ConversationSchema  = bugpack.require('airbugserver.CoversationSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var User = mongoose.model("Coversation", CoversationSchema);
+var Conversation = mongoose.model("Coversation", CoversationSchema);
 
 //-------------------------------------------------------------------------------
 // Exports

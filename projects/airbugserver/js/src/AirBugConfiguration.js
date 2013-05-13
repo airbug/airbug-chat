@@ -23,6 +23,7 @@
 
 var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
+var mongoose                = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
@@ -147,6 +148,10 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new ExpressServer();
     },
 
+    mongoose: function(){
+        return mongoose;
+    },
+
     /**
      * @return {RoomsApi}
      */
@@ -208,6 +213,7 @@ annotate(AirBugServerConfiguration).with(
         module("airBugServer")
             .properties([
                 property("expressServer").ref("expressServer"),
+                property("mongoose").ref("mongoose"),
                 property("socketManager").ref("socketManager")
             ]),
 
