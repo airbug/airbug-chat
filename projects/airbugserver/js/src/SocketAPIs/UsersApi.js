@@ -21,6 +21,8 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 var User        = bugpack.require('airbugserver.User');
 
 //-------------------------------------------------------------------------------
@@ -28,6 +30,12 @@ var User        = bugpack.require('airbugserver.User');
 //-------------------------------------------------------------------------------
 
 var UsersApi = Class.extend(Obj, {
+
+    _constructor: function(){
+
+        this._super();
+
+    },
 
     /*
      * @param {{
@@ -60,11 +68,11 @@ var UsersApi = Class.extend(Obj, {
             }
         });
 
-    }
+    },
 
     updateName: function(data){
         
-    },
+    }
 
 });
 

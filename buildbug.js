@@ -70,8 +70,10 @@ buildProperties({
             "../bugunit/projects/bugunit/js/scripts"
         ],
         testPaths: [
+            "../bugjs/projects/bugflow/js/test",
             "../bugjs/projects/bugjs/js/test",
-            '../bugjs/projects/bugroutes/js/test'
+            "../bugjs/projects/bugtrace/js/test",
+            "../bugjs/projects/bugroutes/js/test"
         ],
 
         //TODO BRN: These static paths are temporary until we get the client js server working.
@@ -92,7 +94,8 @@ buildProperties({
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/carapace/js/src",
-            '../bugpack/projects/bugpack-client/js/src'
+            '../bugpack/projects/bugpack-client/js/src',
+            '../bugjs/projects/bugroutes/js/src'
         ]
     },
     client: {

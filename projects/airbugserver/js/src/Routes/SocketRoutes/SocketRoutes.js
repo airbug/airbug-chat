@@ -6,23 +6,19 @@
 
 //@Export('SocketRoutes')
 
-//@Require('Class')
-//@Require('Obj')
+//@Require('bugroutes.Routes')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var SocketRoutes = Class.extend(Obj, {
-    
-    _constructor: function(){
+var bugpack     = require('bugpack').context();
 
-        this._super();
-        
-        
-    }
-});
+var Routes      = bugpack.require('bugroutes.Routes');
+
+
+var SocketRoutes = new Routes();
 
 //-------------------------------------------------------------------------------
 // Exports

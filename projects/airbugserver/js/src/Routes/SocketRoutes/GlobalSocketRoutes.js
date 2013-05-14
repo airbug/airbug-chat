@@ -6,30 +6,48 @@
 
 //@Export('GlobalSocketRoutes')
 
-//@Require('Class')
-//@Require('Obj')
-//@Require('airbugserver.Route')
+//@Require('airbugserver.ChatMessagesApi')
+//@Require('airbugserver.ConversationsApi')
+//@Require('airbugserver.RoomsApi')
+//@Require('airbugserver.UsersApi')
+//@Require('bugroutes.ExpressRoute')
+//@Require('bugroutes.Routes')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
-var UsersApi, RoomsApi, ConversationsApi, ChatMessagesApi;
+
+var bugpack     = require('bugpack').context();
 
 
-GlobalSocketRoutes = {
-    enableAllOnSocket: function(socket){
-        GlobalSocketRoutes.routes.forEach(function(route){
-            route.enableOnSocket(socket);
-        })
-    },
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
 
-    routes: [
-        new Route("establishUser", UsersApi.establishUser),
-        new Route("error", function(){}),
-        new Route("disconnect", function(){})
-    ]
-};
+var ChatMessagesApi     = bugpack.require('airbugserver.ChatMessagesApi');
+var ConversationsApi    = bugpack.require('airbugserver.ConversationsApi');
+var RoomsApi            = bugpack.require('airbugserver.RoomsApi');
+var UsersApi            = bugpack.require('airbugserver.UsersApi');
+var ExpressRoute        = bugpack.require('bugroutes.ExpressRoute');
+var Routes              = bugpack.require('bugroutes.Routes');
+
+//-------------------------------------------------------------------------------
+// Declare Routes
+//-------------------------------------------------------------------------------
+
+var routes = routes: [
+    new Route("establishUser", UsersApi.establishUser),
+    new Route("error", function(){}),
+    new Route("disconnect", function(){})
+];
+
+
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
+
+var GlobalSocketRoutes = new Routes(routes);
 
 //-------------------------------------------------------------------------------
 // Exports

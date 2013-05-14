@@ -21,6 +21,8 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 var Room        = bugpack.require('airbugserver.Room');
 
 
@@ -28,17 +30,21 @@ var Room        = bugpack.require('airbugserver.Room');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomsApi = Class.extend({
+var RoomsApi = Class.extend(Obj, {
 
     _constructor: function(){
-        this.super();
+
+        this._super();
 
         this.socketsMap = null;
     },
 
+    /*
+     * @param {Room} room
+     **/
     create: function(room){
-        var room = Room.create();
-    }
+        var room = Room.create(room);
+    },
 
     update: function(){
         

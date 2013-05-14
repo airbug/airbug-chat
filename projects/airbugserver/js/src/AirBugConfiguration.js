@@ -249,14 +249,14 @@ var AirBugConfiguration = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(AirBugServerConfiguration, IConfiguration);
+Class.implement(AirBugConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
 // Annotate
 //-------------------------------------------------------------------------------
 
-annotate(AirBugServerConfiguration).with(
+annotate(AirBugConfiguration).with(
     configuration().modules([
         
         //-------------------------------------------------------------------------------
@@ -276,7 +276,7 @@ annotate(AirBugServerConfiguration).with(
         module("expressApp")
             .properties([
                 property("config").ref("config"),
-                property("expressRoutes").re("expressRoutes"),
+                property("expressRoutes").ref("expressRoutes"),
                 property("sessionStore").ref("sessionStore")
             ]),
         module("expressRoutes"),

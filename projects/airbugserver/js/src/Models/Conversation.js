@@ -4,9 +4,9 @@
 
 //@Package('airbugserver')
 
-//@Export('Coversation')
+//@Export('Conversation')
 
-//@Require('airbugserver.CoversationSchema')
+//@Require('airbugserver.ConversationSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -21,17 +21,17 @@ var mongoose            = require('mongoose');
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var ConversationSchema  = bugpack.require('airbugserver.CoversationSchema');
+var ConversationSchema  = bugpack.require('airbugserver.ConversationSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Conversation = mongoose.model("Coversation", CoversationSchema);
+var Conversation = mongoose.model("Conversation", ConversationSchema);
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Coversation', Coversation);
+bugpack.export('airbugserver.Conversation', Conversation);

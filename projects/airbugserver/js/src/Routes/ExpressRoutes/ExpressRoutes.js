@@ -6,10 +6,9 @@
 
 //@Export('ExpressRoutes')
 
-//@Require('Class')
-//@Require('Obj')
 //@Require('bugroutes.ExpressRoute')
 //@Require('bugroutes.Routes')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -22,8 +21,8 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Routes          = require('bugroutes.Routes');
-var ExpressRoute    = require('bugroutes.ExpressRoute');
+var Routes          = bugpack.require('bugroutes.Routes');
+var ExpressRoute    = bugpack.require('bugroutes.ExpressRoute');
 
 
 //-------------------------------------------------------------------------------

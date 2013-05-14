@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('SessionToSocketsMap')
+//@Export('SocketsMap')
 
 //@Require('Class')
 //@Require('Map')
