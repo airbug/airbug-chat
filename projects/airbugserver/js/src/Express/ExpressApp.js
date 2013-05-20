@@ -6,23 +6,26 @@
 
 //@Export('ExpressApp')
 
-//@Require('bugfs.BugFs')
+//@Require('Class')
+//@Require('Obj')
 //@Require('Map')
+//@Require('bugfs.BugFs')
+//@Require('airbugserver.SocketManager')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var connect     = require('connect');
-var cookie      = require('cookie');
-var express     = require("express");
-var fs          = require("fs");
-var http        = require('http');
-var mongoose    = require('mongoose');
-var mu2Express  = require("mu2Express");
-var path        = require('path');
+var bugpack         = require('bugpack').context();
+var connect         = require('connect');
+// var cookie          = require('cookie');
+var express         = require("express");
+var fs              = require("fs");
+var http            = require('http');
+var mongoose        = require('mongoose');
+var mu2Express      = require("mu2Express");
+var path            = require('path');
 
 
 //-------------------------------------------------------------------------------
@@ -30,6 +33,8 @@ var path        = require('path');
 //-------------------------------------------------------------------------------
 
 var BugFs           = bugpack.require('bugfs.BugFs');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
 var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 //var ClientJSServer = bugpack.require('clientjs.ClientJSServer');
@@ -41,9 +46,9 @@ var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 var ExpressApp = Class.extend(Obj, {
 
-    _constructor: function(){
-
-        this.super();
+    _constructor: function(config){
+        console.log("config:", config);
+        this._super();
         
         //-------------------------------------------------------------------------------
         // Variables
@@ -52,14 +57,17 @@ var ExpressApp = Class.extend(Obj, {
         /*
          * @type {express.app}
          **/
-        this.app            = null;
+        this.app            = express();
 
         /*
          * @type {{}}
          **/
-        this.config         = null; // Injected by AirBugConfiguration
+        this.config         = config;
 
-        this.expressRoutes  = null;
+        /*
+         * @type {ExpressRoutes}
+         **/
+        this.expressRoutes  = null; // Injected by AirBugConfiguration
 
         /*
          * @type {}
@@ -92,11 +100,7 @@ var ExpressApp = Class.extend(Obj, {
      **/
     initialize: function(){
 
-        /*
-         * @type {}
-         **/
-        var app             = this.app              = express();
-
+        var app             = this.app;
         /*
          * @type {string}
          **/
@@ -111,11 +115,6 @@ var ExpressApp = Class.extend(Obj, {
          * @type {}
          **/
         var cookieParser    = this.cookieParser     = express.cookieParser(secret);
-
-        /*
-         * @type {MemoryStore}
-         **/
-        var sessionStore    = this.sessionStore     = new connect.middleware.session.MemoryStore();
 
         // Configure App
         //-------------------------------------------------------------------------------
@@ -137,6 +136,13 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     //  Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /*
+     * @return {}
+     **/
+    getApp: function(){
+        return this.app;
+    },
 
     /*
      * @return {}
@@ -170,6 +176,12 @@ var ExpressApp = Class.extend(Obj, {
      * @param {express.app} app
      **/
     configure: function(app){
+        var config = this.config;
+        var cookieParser = this.cookieParser;
+        var secret = this.secret;
+        var sessionKey = this.sessionKey;
+        
+        console.log("config:", config);
         app.configure(function(){
             app.engine('mustache', mu2Express.engine);
             app.set('view engine', 'mustache');
@@ -200,7 +212,7 @@ var ExpressApp = Class.extend(Obj, {
      * @param {express.app} app
      **/
     enableRoutes: function(app){
-
+        this.expressRoutes.enableAll(app);
     },
 
     /*
@@ -218,6 +230,11 @@ var ExpressApp = Class.extend(Obj, {
             db.connection.close();
         });
     }
+    
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
 });
 
 

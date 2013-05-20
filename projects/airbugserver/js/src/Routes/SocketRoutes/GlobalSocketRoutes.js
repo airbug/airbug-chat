@@ -36,10 +36,14 @@ var Routes              = bugpack.require('bugroutes.Routes');
 // Declare Routes
 //-------------------------------------------------------------------------------
 
-var routes = routes: [
+var routes = [
     new Route("establishUser", UsersApi.establishUser),
-    new Route("error", function(){}),
-    new Route("disconnect", function(){})
+    new Route("error", function(error){
+        console.log(error);
+    }),
+    new Route("disconnect", function(){
+        
+    })
 ];
 
 

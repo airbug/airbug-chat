@@ -32,7 +32,7 @@ var Obj         = bugpack.require('Obj');
 
 var ExpressServer = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(expressApp){
 
         this._super();
 
@@ -43,7 +43,9 @@ var ExpressServer = Class.extend(Obj, {
         /*
          * @type {ExpressApp}
          **/
-        this.expressApp = null;
+        this.expressApp = expressApp;
+
+        this.httpServer = null;
 
     },
 
@@ -53,18 +55,20 @@ var ExpressServer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /*
-     * @return {http.Server}
      **/
     start: function() {
 
+        var app         = this.expressApp.getApp();
+
         // Create Server
         //-------------------------------------------------------------------------------
-        var server = http.createServer(app);
-        server.listen(app.get('port'), function(){
+        this.httpServer = http.createServer(app);
+
+        this.httpServer.listen(app.get('port'), function(){
             console.log("Express server listening on port " + app.get('port'));
         });
 
-        return server;
+        return this;
 
     },
 
@@ -72,6 +76,10 @@ var ExpressServer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     //  Getters and Setters
     //-------------------------------------------------------------------------------
+
+    getHttpServer: function(){
+        return this.httpServer;
+    },
 
     getCookieParser: function(){
         return this.expressApp.getCookieParser;

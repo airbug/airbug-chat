@@ -50,6 +50,10 @@ var RoomsApi = Class.extend(Obj, {
         
     },
 
+    addUserToRoom: function(){
+        
+    },
+
     /*
      * @private
      * @param {ObjectId} roomId

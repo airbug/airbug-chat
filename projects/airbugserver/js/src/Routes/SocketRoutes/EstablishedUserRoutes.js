@@ -50,8 +50,8 @@ var routes = [getAlpha];
 
 var UsersApi, RoomsApi, ConversationsApi, ChatMessagesApi;
 
-var routes: [
-    new Route("addUserToRoom", RoomsApi.addUserToRoom),
+var routes = [
+    new Route("addUserToRoom",  RoomsApi.addUserToRoom),
     new Route("newChatMessage", ChatMessagesApi.newChatMessage)
 ];
 

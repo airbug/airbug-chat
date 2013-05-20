@@ -44,6 +44,19 @@ var UsersApi = Class.extend(Obj, {
      * }} userObj
      **/
     establishUser: function(data){
+        var userObj = {email: data.email, name: data.name};
+        var callback = function(error, currentUser){
+            if(!error && currentUser){
+                currentUser = currentUser; //make sure this currentUser variable is the proper one
+                SocketManager.addEstablishedUserListeners(socket); //make sure this socket is the proper one
+            } else if (!error && !error) {
+                
+            } else {
+                console.log(error);
+            }
+        };
+
+            // UsersApi.establishUser(userObj, callback);
         // create or update
         // set as currentUser
         var query = {email: userObj.email};
@@ -52,9 +65,7 @@ var UsersApi = Class.extend(Obj, {
             new: true,
             upsert: true
         };
-        var callback = function(error, user){
-            
-        };
+
         User.findOneAndUpdate(query, update, options, callback);
         User.findByEmail(userObj.email, function(error, user){
             if(error){
@@ -68,12 +79,7 @@ var UsersApi = Class.extend(Obj, {
             }
         });
 
-    },
-
-    updateName: function(data){
-        
     }
-
 });
 
 

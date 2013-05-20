@@ -9,7 +9,6 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -45,9 +44,9 @@ var SocketManager = Class.extend(Obj, {
         this._super();
 
         /*
-         * @type {http.Server}
+         * @type {ExpressServer}
          **/
-        this.server                 = null;
+        this.expressServer                 = null;
 
         /*
          * @type {}
@@ -62,7 +61,7 @@ var SocketManager = Class.extend(Obj, {
     },
 
     initialize: function(){
-        // this.server             = server;
+        var server              = this.expressServer.getHttpServer();
         this.socketIoManager    = io.listen(server);
         this.socketsMap         = new SocketsMap();
 
@@ -99,29 +98,15 @@ var SocketManager = Class.extend(Obj, {
             var session = socket.handshake.session;
             // var cookie = socket.handshake.headers.cookie;
             var currentUser = sessionToUserMap.get(session);
-            sessionToSocketsMap.addSocketToSession(session, socket);
+            SocketsMap.associateSocketWithSession({session: session, socket: socket});
 
+            GlobalSocketRoutes.enableAll(null, socket);
 
-            // SocketRoutes.globalRoutes.enable(socket);
-
-            socket.on('establishUser', function(data){
-                var userObj = {email: data.email, name: data.name};
-                var callback = function(error, currentUser){
-                    if(!error){
-                        currentUser = currentUser;
-                        SocketManager.addEstablishedUserListeners(socket);
-                    } else {
-                        console.log(error);
-                    }
-                };
-
-                UsersApi.establishUser(userObj, callback);
-            });
         });
     },
 
     addEstablishedUserListeners: function(socket){
-        // SocketRoutes.establishedUserRoutes.enable(socket);
+        EstablishedUserRoutes.enableAll(null, socket);
     }
 });
 

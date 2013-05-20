@@ -10,12 +10,24 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('annotate.Annotate')
+//@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 
+//@Require('airbugserver.AirBugServer')
+//@Require('airbugserver.ExpressApp')
+//@Require('airbugserver.ExpressServer')
+//@Require('airbugserver.ExpressRoutes')
+//@Require('airbugserver.SocketManager')
+//@Require('airbugserver.SocketRoutes')
+//@Require('airbugserver.SocketsMap')
+//@Require('airbugserver.ChatMessagesApi')
+//@Require('airbugserver.ConversationsApi')
+//@Require('airbugserver.RoomsApi')
+//@Require('airbugserver.UsersApi')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -24,12 +36,14 @@
 var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
 var mongoose                = require('mongoose');
+var path                    = require('path');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
+var BugFs                   = bugpack.require('bugfs.BugFs');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var Annotate                = bugpack.require('annotate.Annotate');
@@ -39,6 +53,8 @@ var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 
+var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
+var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
 var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
 var ExpressRoutes           = bugpack.require('airbugserver.ExpressRoutes');
 var SocketManager           = bugpack.require('airbugserver.SocketManager');
@@ -99,7 +115,7 @@ var AirBugConfiguration = Class.extend(Obj, {
         /**
          * @type {string}
          */
-        this._configFilePath = null;
+        this._configFilePath = path.resolve(__dirname, '../config.json');;
     },
 
 
@@ -111,6 +127,8 @@ var AirBugConfiguration = Class.extend(Obj, {
      *
      */
     initializeConfiguration: function() {
+        this._expressApp.initialize();
+        this._socketManager.initialize();
         this._airBugServer.start();
     },
 
@@ -129,38 +147,41 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new ChatMessagesApi();
     },
 
+    /**
+     * @return {}
+     */
     config: function(){
-        this._configFilePath = path.resolve(__dirname, '../config.json');
-        this._config = this.loadConfig(this.configFilePath);
+        this._config = this.loadConfig(this._configFilePath);
         return this._config;
     },
 
     /**
      * @return {ConversationsApi}
      */
-    coversationsApi: function(){
+    conversationsApi: function(){
         return new ConversationsApi();
     },
 
     /**
      * @return {ExpressServer}
      */
-    expressApp: function() {
-        return new ExpressApp().initialize();
+    expressApp: function(config) {
+        this._expressApp = new ExpressApp(config);
+        return this._expressApp;
     },
 
     /**
      * @return {ExpressRoutes}
      */
     expressRoutes: function() {
-        return new ExpressRoutes();
+        return ExpressRoutes;
     },
 
     /**
      * @return {ExpressServer}
      */
-    expressServer: function() {
-        return new ExpressServer();
+    expressServer: function(expressApp) {
+        return new ExpressServer(expressApp);
     },
 
     /**
@@ -173,7 +194,7 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {RoomsApi}
      */
-    roomApi: function(){
+    roomsApi: function(){
         return new RoomsApi();
     },
 
@@ -188,14 +209,15 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {SocketManager}
      */
     socketManager: function() {
-        return new SocketManager().initialize();
+        this._socketManager = new SocketManager();
+        return this._socketManager;
     },
 
     /**
      * @return {SocketRoutes}
      */
     socketRoutes: function() {
-        return new SocketRoutes();
+        return SocketRoutes;
     },
 
     socketsMap: function() {
@@ -269,25 +291,37 @@ annotate(AirBugConfiguration).with(
                 property("mongoose").ref("mongoose"),
                 property("socketManager").ref("socketManager")
             ]),
+        module("mongoose"),
+
+        //-------------------------------------------------------------------------------
+        // Common Config Object
+        //-------------------------------------------------------------------------------
+        module("config"),
 
         //-------------------------------------------------------------------------------
         // Express
         //-------------------------------------------------------------------------------
         module("expressApp")
+            .args([
+                arg("config").ref("config")
+            ])
             .properties([
-                property("config").ref("config"),
                 property("expressRoutes").ref("expressRoutes"),
                 property("sessionStore").ref("sessionStore")
             ]),
         module("expressRoutes"),
-        module("expressServer"),
+        module("expressServer")
+            .args([
+                arg("expressApp").ref("expressApp")
+            ]),
+        module("sessionStore"),
 
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
         module("socketManager")
             .properties([
-                property("server").ref("expressServer"),
+                property("expressServer").ref("expressServer"),
                 property("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),
@@ -302,6 +336,16 @@ annotate(AirBugConfiguration).with(
         module("usersApi")
     ])
 );
+
+// module("minerbugWorkerSocketManager")
+//     .args([
+//         arg("socketIoServer").ref("socketIoServer")
+//     ]),
+// module("socketIoServer").
+//     args([
+//         arg("config").ref("socketIoServerConfig"),
+//         arg("expressServer").ref("expressServer")
+//     ]),
 
 
 //-------------------------------------------------------------------------------

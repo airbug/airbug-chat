@@ -13,12 +13,12 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
-var Routes      = bugpack.require('bugroutes.Routes');
+var Routes          = bugpack.require('bugroutes.Routes');
 
-
-var SocketRoutes = new Routes();
+var routes          = [];
+var SocketRoutes    = new Routes(routes);
 
 //-------------------------------------------------------------------------------
 // Exports

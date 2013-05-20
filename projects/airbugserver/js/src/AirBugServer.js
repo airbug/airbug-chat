@@ -20,7 +20,7 @@
 
 var bugpack     = require('bugpack').context();
 var connect     = require('connect');
-var cookie      = require('cookie');
+// var cookie      = require('cookie');
 var express     = require("express");
 var fs          = require("fs");
 var http        = require('http');
@@ -34,7 +34,9 @@ var path        = require('path');
 //-------------------------------------------------------------------------------
 
 var BugFs           = bugpack.require('bugfs.BugFs');
+var Class           = bugpack.require('Class');
 var ExpressServer   = bugpack.require('airbugserver.ExpressServer');
+var Obj             = bugpack.require('Obj');
 var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 //var ClientJSServer = bugpack.require('clientjs.ClientJSServer');
@@ -81,7 +83,7 @@ var AirBugServer = Class.extend(Obj, {
          **/
         this.socketManager  = null;
 
-    }
+    },
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -91,8 +93,7 @@ var AirBugServer = Class.extend(Obj, {
      **/
     start: function() {
 
-        var configPath      = path.resolve(__dirname, '../config.json');
-        var config          = this.loadConfig(configPath);
+        var config          = this.config;
         var expressServer   = this.expressServer.start();
         var mongoose        = this.mongoose;
         var socketManager   = this.socketManager.initialize(expressServer);
@@ -141,11 +142,6 @@ var AirBugServer = Class.extend(Obj, {
         });*/
         
     }
-
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
-
 });
 
 
