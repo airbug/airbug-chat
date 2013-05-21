@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('annotate.Annotate')
+//@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ConfigurationAnnotation')
@@ -43,6 +44,7 @@ var path                    = require('path');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugFs                   = bugpack.require('bugfs.BugFs');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
@@ -76,6 +78,9 @@ var arg                     = ArgAnnotation.arg;
 var configuration           = ConfigurationAnnotation.configuration;
 var module                  = ModuleAnnotation.module;
 var property                = PropertyAnnotation.property;
+
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -127,9 +132,56 @@ var AirBugConfiguration = Class.extend(Obj, {
      *
      */
     initializeConfiguration: function() {
-        this._expressApp.initialize();
-        this._socketManager.initialize();
-        this._airBugServer.start();
+        var _this = this;
+        console.log("Initializing AirBugConfiguration");
+        $series([
+            $task(function(flow){
+                console.log("Initializing expressApp");
+
+                _this._expressApp.initialize(function(error){
+                    if(!error){
+                        console.log("expressApp initialized");
+                    }
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                console.log("starting expressServer");
+
+                _this._expressServer.start(function(error){
+                    if(!error){
+                        console.log("expressServer started");
+                    }
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                console.log("Initializing socketManager");
+
+                _this._socketManager.initialize(function(error){
+                    if(!error){
+                        console.log("socketManager initialized");
+                    }
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                console.log("Initializing airBugServer");
+
+                _this._airBugServer.start(function(error){
+                    if(!error){
+                        console.log("airBugServer initialized");
+                    }
+                    flow.complete(error);
+                });
+            }),
+        ]).execute(function(error){
+            if(!error){
+                console.log("AirBugConfiguration successfully initialized.")
+            } else {
+                console.log(error);
+            }
+        });
     },
 
     /**
@@ -181,7 +233,8 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {ExpressServer}
      */
     expressServer: function(expressApp) {
-        return new ExpressServer(expressApp);
+        this._expressServer = new ExpressServer(expressApp);
+        return this._expressServer;
     },
 
     /**

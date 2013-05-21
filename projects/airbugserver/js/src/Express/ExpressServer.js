@@ -45,6 +45,9 @@ var ExpressServer = Class.extend(Obj, {
          **/
         this.expressApp = expressApp;
 
+        /*
+         * @type {}
+         **/
         this.httpServer = null;
 
     },
@@ -56,8 +59,9 @@ var ExpressServer = Class.extend(Obj, {
 
     /*
      **/
-    start: function() {
+    start: function(callback) {
 
+        var callback    = callback || function(){};
         var app         = this.expressApp.getApp();
 
         // Create Server
@@ -68,6 +72,7 @@ var ExpressServer = Class.extend(Obj, {
             console.log("Express server listening on port " + app.get('port'));
         });
 
+        callback();
         return this;
 
     },

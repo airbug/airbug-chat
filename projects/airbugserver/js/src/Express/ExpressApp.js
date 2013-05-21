@@ -32,12 +32,16 @@ var path            = require('path');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var BugFlow         = bugpack.require('bugflow.BugFlow');
 var BugFs           = bugpack.require('bugfs.BugFs');
 var Class           = bugpack.require('Class');
 var Obj             = bugpack.require('Obj');
 var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 //var ClientJSServer = bugpack.require('clientjs.ClientJSServer');
+
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -47,7 +51,7 @@ var SocketManager   = bugpack.require('airbugserver.SocketManager');
 var ExpressApp = Class.extend(Obj, {
 
     _constructor: function(config){
-        console.log("config:", config);
+
         this._super();
         
         //-------------------------------------------------------------------------------
@@ -96,11 +100,19 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /*
+     * @param {} callback
      * @return {ExpressApp}
      **/
-    initialize: function(){
+    initialize: function(callback){
 
+        var _this           = this;
+        var callback        = callback || function(){};
+
+        /*
+         * @type {}
+         **/
         var app             = this.app;
+
         /*
          * @type {string}
          **/
@@ -116,17 +128,32 @@ var ExpressApp = Class.extend(Obj, {
          **/
         var cookieParser    = this.cookieParser     = express.cookieParser(secret);
 
-        // Configure App
-        //-------------------------------------------------------------------------------
-        this.configure(app);
+        $series([
+            $task(function(flow){
 
-        // Routes
-        //-------------------------------------------------------------------------------
-        this.enableRoutes(app);
+                // Configure App
+                //-------------------------------------------------------------------------------
+                _this.configure(app, function(error){
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
 
-        // Graceful Shut Down
-        //-------------------------------------------------------------------------------
-        this.enableGracefulShutdown(app);
+                // Routes
+                //-------------------------------------------------------------------------------
+                _this.enableRoutes(app, function(error){
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+
+                // Graceful Shut Down
+                //-------------------------------------------------------------------------------
+                _this.enableGracefulShutdown(app, function(error){
+                    flow.complete(error);
+                });
+            })
+        ]).execute(callback);
 
         return this;
 
@@ -175,13 +202,13 @@ var ExpressApp = Class.extend(Obj, {
      * @private
      * @param {express.app} app
      **/
-    configure: function(app){
+    configure: function(app, callback){
+        var callback = callback || function(){};
         var config = this.config;
         var cookieParser = this.cookieParser;
         var secret = this.secret;
         var sessionKey = this.sessionKey;
         
-        console.log("config:", config);
         app.configure(function(){
             app.engine('mustache', mu2Express.engine);
             app.set('view engine', 'mustache');
@@ -204,6 +231,8 @@ var ExpressApp = Class.extend(Obj, {
         app.configure('development', function(){
             app.use(express.errorHandler());
         });
+
+        callback();
     },
 
 
@@ -211,15 +240,21 @@ var ExpressApp = Class.extend(Obj, {
      * @private
      * @param {express.app} app
      **/
-    enableRoutes: function(app){
+    enableRoutes: function(app, callback){
+        var callback = callback || function(){};
+
         this.expressRoutes.enableAll(app);
+
+        callback();
     },
 
     /*
      * @private
      * @param {express.app} app
      **/
-    enableGracefulShutdown: function(app){
+    enableGracefulShutdown: function(app, callback){
+        var callback = callback || function(){};
+
         process.on('SIGTERM', function () {
             console.log("Server Closing");
             app.close();
@@ -229,6 +264,8 @@ var ExpressApp = Class.extend(Obj, {
             console.log("Server Closed");
             db.connection.close();
         });
+
+        callback();
     }
     
     //-------------------------------------------------------------------------------

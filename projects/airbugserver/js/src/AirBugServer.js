@@ -91,12 +91,13 @@ var AirBugServer = Class.extend(Obj, {
 
     /*
      **/
-    start: function() {
+    start: function(callback) {
 
+        var callback        = callback || function(){};
         var config          = this.config;
-        var expressServer   = this.expressServer.start();
+        var expressServer   = this.expressServer;
         var mongoose        = this.mongoose;
-        var socketManager   = this.socketManager.initialize(expressServer);
+        var socketManager   = this.socketManager;
         var cookieParser    = expressServer.getCookieParser();
         var sessionStore    = expressServer.getSessionStore();
         var sessionKey      = expressServer.getSessionKey();
@@ -111,7 +112,7 @@ var AirBugServer = Class.extend(Obj, {
         // Enable Sockets
         //-------------------------------------------------------------------------------
 
-        socketManager.enablesockets(cookieParser, sessionStore, sessionKey);
+        socketManager.enableSockets(cookieParser, sessionStore, sessionKey);
 
         //-------------------------------------------------------------------------------
         // 
@@ -141,6 +142,7 @@ var AirBugServer = Class.extend(Obj, {
             }
         });*/
         
+        callback();
     }
 });
 

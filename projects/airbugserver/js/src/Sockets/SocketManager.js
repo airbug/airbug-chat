@@ -46,7 +46,7 @@ var SocketManager = Class.extend(Obj, {
         /*
          * @type {ExpressServer}
          **/
-        this.expressServer                 = null;
+        this.expressServer          = null;
 
         /*
          * @type {}
@@ -60,11 +60,12 @@ var SocketManager = Class.extend(Obj, {
 
     },
 
-    initialize: function(){
+    initialize: function(callback){
+        var callback            = callback || function(){};
         var server              = this.expressServer.getHttpServer();
         this.socketIoManager    = io.listen(server);
-        this.socketsMap         = new SocketsMap();
 
+        callback();
         return this;
     },
 
@@ -75,7 +76,7 @@ var SocketManager = Class.extend(Obj, {
         var sessionToSocketsMap = this.socketsMap;
         var alphaSocketManager = socketIoManager.of('/alpha');
 
-        alphaSocketManager.set('authorization', function(data, callback){
+        alphaSocketManager.manager.set('authorization', function(data, callback){
             cookieParser(data, {}, function(error) {
                 if(!error){
                     sessionStore.get(data.signedCookies[sessionKey], function(error, session){
@@ -92,7 +93,7 @@ var SocketManager = Class.extend(Obj, {
             });
         });
 
-        alphaSocketManager.sockets.on('connection', function(socket){
+        alphaSocketManager.on('connection', function(socket){
             console.log("Connection established")
             console.log("session:", socket.handshake.session);
             var session = socket.handshake.session;
