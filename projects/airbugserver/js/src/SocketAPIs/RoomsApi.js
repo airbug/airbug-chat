@@ -36,18 +36,27 @@ var RoomsApi = Class.extend(Obj, {
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Dependencies
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @type {SocketsMap}
+         */
         this.socketsMap = null;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Methods
+    //-------------------------------------------------------------------------------
 
     /*
      * @param {Room} room
      **/
     create: function(room){
         var room = Room.create(room);
-    },
-
-    update: function(){
-        
     },
 
     addUserToRoom: function(){
@@ -65,8 +74,8 @@ var RoomsApi = Class.extend(Obj, {
         var room = Room.findById();
         var roomMembers = room.membersList;
         roomMembers.forEach(function(roomMember){
-            var userId = roomMember.userId;
-            sockets = socketsMap.findSocketsByUserId(userId);
+            var userId = roomMember.userId; //BUGBUG
+            sockets = socketsMap.findSocketsByUser(user); //BUGBUG
             sockets.forEach(function(socket){
                 socket.emit(eventName, data);
             });

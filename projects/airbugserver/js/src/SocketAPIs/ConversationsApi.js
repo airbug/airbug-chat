@@ -32,16 +32,10 @@ var Obj             = bugpack.require('Obj');
 
 var ConversationsApi = Class.extend(Obj, {
 
-    create: function(){
+    _constructor: function(){
 
-    },
+        this._super();
 
-    update: function(){
-        
-    },
-
-    destroy: function(){
-        
     }
 });
 

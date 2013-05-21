@@ -32,17 +32,17 @@ var Obj         = bugpack.require('Obj');
 
 var ChatMessagesApi = Class.extend(Obj, {
 
+    _constructor: function(){
+
+        this._super();
+
+        this.model = null;
+
+    },
+
     create: function(message){
         var newChatMessage = ChatMessage.create(message, function(){});
         RoomApi.sendMessage(newChatMessage);
-    },
-
-    update: function(){
-        
-    },
-
-    destroy: function(){
-        
     }
 });
 

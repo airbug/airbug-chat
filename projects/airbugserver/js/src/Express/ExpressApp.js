@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Map')
+//@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('airbugserver.SocketManager')
 
@@ -39,6 +40,11 @@ var Obj             = bugpack.require('Obj');
 var SocketManager   = bugpack.require('airbugserver.SocketManager');
 
 //var ClientJSServer = bugpack.require('clientjs.ClientJSServer');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
 
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;

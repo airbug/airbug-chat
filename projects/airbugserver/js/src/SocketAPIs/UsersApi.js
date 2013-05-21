@@ -34,6 +34,8 @@ var UsersApi = Class.extend(Obj, {
     _constructor: function(){
 
         this._super();
+        // this.model = User;
+        // this.socketManager = SocketManager;
 
     },
 
@@ -56,7 +58,7 @@ var UsersApi = Class.extend(Obj, {
             }
         };
 
-            // UsersApi.establishUser(userObj, callback);
+        // UsersApi.establishUser(userObj, callback);
         // create or update
         // set as currentUser
         var query = {email: userObj.email};
@@ -66,18 +68,18 @@ var UsersApi = Class.extend(Obj, {
             upsert: true
         };
 
-        User.findOneAndUpdate(query, update, options, callback);
-        User.findByEmail(userObj.email, function(error, user){
-            if(error){
-                console.log(error);
-            } else {
-                if(!user){
-                    user = new User(userObj);
-                    user.save();
-                    return user;
-                }
-            }
-        });
+        User.findOneAndUpdate(query, update, options, callback); //cannot use pre post hooks with this method
+        // User.findByEmail(userObj.email, function(error, user){
+        //     if(error){
+        //         console.log(error);
+        //     } else {
+        //         if(!user){
+        //             user = new User(userObj);
+        //             user.save();
+        //             return user;
+        //         }
+        //     }
+        // });
 
     }
 });

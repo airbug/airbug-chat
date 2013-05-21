@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('SocketManager')
+//@Export('SocketIoManager')
 
 //@Require('Class')
 //@Require('Map')
@@ -37,7 +37,7 @@ var UsersApi            = bugpack.require('airbugserver.UsersApi');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketManager = Class.extend(Obj, {
+var SocketIoManager = Class.extend(Obj, {
     
     _constructor: function(){
 
@@ -69,12 +69,22 @@ var SocketManager = Class.extend(Obj, {
         return this;
     },
 
-    enableSockets: function(cookieParser, sessionStore, sessionKey){
-        var server = this.server;
-        var socketIoManager = this.socketIoManager;
-        var sessionToUserMap = this.sessionToUserMap;
-        var sessionToSocketsMap = this.socketsMap;
-        var alphaSocketManager = socketIoManager.of('/alpha');
+    enableSockets: function(cookieParser, sessionStore, sessionKey, callback){
+        var callback            = callback || function(){};
+        var socketIoManager     = this.socketIoManager;
+        var sessionToUserMap    = this.sessionToUserMap;
+        var socketsMap          = this.socketsMap;
+        var alphaSocketManager  = socketIoManager.of('/alpha');
+
+        socketIoManager.set('transports', [
+            'websocket',
+            'flashsocket',
+            'htmlfile',
+            'xhr-polling',
+            'jsonp-polling'
+        ]);
+        socketIoManager.set('match origin protocol', true); //NOTE: Only necessary for use with wss, WebSocket Secure protocol
+        socketIoManager.set('resource', '/socket-api'); //NOTE: forward slash is required here unlike client setting
 
         alphaSocketManager.manager.set('authorization', function(data, callback){
             cookieParser(data, {}, function(error) {
@@ -104,6 +114,9 @@ var SocketManager = Class.extend(Obj, {
             GlobalSocketRoutes.enableAll(null, socket);
 
         });
+        
+        console.log("socketIoManager:", socketIoManager);
+        console.log("alphaSocketManager:", alphaSocketManager);
     },
 
     addEstablishedUserListeners: function(socket){
@@ -112,30 +125,8 @@ var SocketManager = Class.extend(Obj, {
 });
 
 
-// createRoom: function(){
-//     
-// },
-// 
-// joinRoom:function(){
-//     
-// },
-// 
-// notifyRoom: function(roomId, eventObj){
-//     var room = Rooms.get(roomId);
-//     var sessions = room.sessions;
-//     sessions.forEach(function(session){
-//         var socket = SessionToSocketMap.get(session);
-//         socket.emit(eventObj.name, eventObj.data);
-//     })
-// },
-// 
-// notifyUser: function(userId, eventObj){
-//     var user = Users.get(userId);
-//     
-// },
-
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.SocketManager', SocketManager);
+bugpack.export('airbugserver.SocketIoManager', SocketIoManager);

@@ -22,7 +22,7 @@
 //@Require('airbugserver.ExpressApp')
 //@Require('airbugserver.ExpressServer')
 //@Require('airbugserver.ExpressRoutes')
-//@Require('airbugserver.SocketManager')
+//@Require('airbugserver.SocketIoManager')
 //@Require('airbugserver.SocketRoutes')
 //@Require('airbugserver.SocketsMap')
 //@Require('airbugserver.ChatMessagesApi')
@@ -59,7 +59,7 @@ var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
 var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
 var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
 var ExpressRoutes           = bugpack.require('airbugserver.ExpressRoutes');
-var SocketManager           = bugpack.require('airbugserver.SocketManager');
+var SocketIoManager         = bugpack.require('airbugserver.SocketIoManager');
 var SocketRoutes            = bugpack.require('airbugserver.SocketRoutes');
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
@@ -120,7 +120,23 @@ var AirBugConfiguration = Class.extend(Obj, {
         /**
          * @type {string}
          */
-        this._configFilePath = path.resolve(__dirname, '../config.json');;
+        this._configFilePath = path.resolve(__dirname, '../config.json');
+
+        /**
+         * @type {ExpressApp}
+         */
+        this._expressApp = null;
+
+        /**
+         * @type {ExpressServer}
+         */
+        this._expressServer = null;
+
+        /**
+         * @type {SocketIoManager}
+         */
+        this._socketIoManager = null;
+
     },
 
 
@@ -156,11 +172,11 @@ var AirBugConfiguration = Class.extend(Obj, {
                 });
             }),
             $task(function(flow){
-                console.log("Initializing socketManager");
+                console.log("Initializing socketIoManager");
 
-                _this._socketManager.initialize(function(error){
+                _this._socketIoManager.initialize(function(error){
                     if(!error){
-                        console.log("socketManager initialized");
+                        console.log("socketIoManager initialized");
                     }
                     flow.complete(error);
                 });
@@ -259,11 +275,11 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {SocketManager}
+     * @return {SocketIoManager}
      */
-    socketManager: function() {
-        this._socketManager = new SocketManager();
-        return this._socketManager;
+    socketIoManager: function() {
+        this._socketIoManager = new SocketIoManager();
+        return this._socketIoManager;
     },
 
     /**
@@ -342,7 +358,7 @@ annotate(AirBugConfiguration).with(
                 property("config").ref("config"),
                 property("expressServer").ref("expressServer"),
                 property("mongoose").ref("mongoose"),
-                property("socketManager").ref("socketManager")
+                property("socketIoManager").ref("socketIoManager")
             ]),
         module("mongoose"),
 
@@ -372,7 +388,7 @@ annotate(AirBugConfiguration).with(
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
-        module("socketManager")
+        module("socketIoManager")
             .properties([
                 property("expressServer").ref("expressServer"),
                 property("socketsMap").ref("socketsMap")
