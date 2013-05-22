@@ -19,16 +19,17 @@
 //@Require('bugioc.PropertyAnnotation')
 
 //@Require('airbugserver.AirBugServer')
+//@Require('airbugserver.ApplicationController')
 //@Require('airbugserver.ExpressApp')
 //@Require('airbugserver.ExpressServer')
 //@Require('airbugserver.ExpressRoutes')
 //@Require('airbugserver.SocketIoManager')
 //@Require('airbugserver.SocketRoutes')
 //@Require('airbugserver.SocketsMap')
-//@Require('airbugserver.ChatMessagesApi')
-//@Require('airbugserver.ConversationsApi')
-//@Require('airbugserver.RoomsApi')
-//@Require('airbugserver.UsersApi')
+//@Require('airbugserver.ChatMessageApi')
+//@Require('airbugserver.ConversationApi')
+//@Require('airbugserver.RoomApi')
+//@Require('airbugserver.UserApi')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -55,19 +56,26 @@ var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 
+var ApplicationController   = bugpack.require('airbugserver.ApplicationController');
 var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
 var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
 var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
 var ExpressRoutes           = bugpack.require('airbugserver.ExpressRoutes');
 var SocketIoManager         = bugpack.require('airbugserver.SocketIoManager');
+var SocketIoServer          = bugpack.require('airbugserver.SocketIoServer');
+var SocketIoServerConfig    = bugpack.require('airbugserver.SocketIoServerConfig');
 var SocketRoutes            = bugpack.require('airbugserver.SocketRoutes');
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
-var ChatMessagesApi         = bugpack.require('airbugserver.ChatMessagesApi');
-var ConversationsApi        = bugpack.require('airbugserver.ConversationsApi');
-var RoomsApi                = bugpack.require('airbugserver.RoomsApi');
-var UsersApi                = bugpack.require('airbugserver.UsersApi');
+var ChatMessageApi          = bugpack.require('airbugserver.ChatMessageApi');
+var ConversationApi         = bugpack.require('airbugserver.ConversationApi');
+var RoomApi                 = bugpack.require('airbugserver.RoomApi');
+var UserApi                 = bugpack.require('airbugserver.UserApi');
 
+var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
+var Conversation            = bugpack.require('airbugserver.Conversation');
+var Room                    = bugpack.require('airbugserver.Room');
+var User                    = bugpack.require('airbugserver.User');
 
 //-------------------------------------------------------------------------------
 // Simplify References
@@ -172,11 +180,11 @@ var AirBugConfiguration = Class.extend(Obj, {
                 });
             }),
             $task(function(flow){
-                console.log("Initializing socketIoManager");
+                console.log("Starting socketIoServer");
 
-                _this._socketIoManager.initialize(function(error){
+                _this._socketIoServer.start(function(error){
                     if(!error){
-                        console.log("socketIoManager initialized");
+                        console.log("socketIoServer started");
                     }
                     flow.complete(error);
                 });
@@ -200,6 +208,17 @@ var AirBugConfiguration = Class.extend(Obj, {
         });
     },
 
+    alphaSocketIoManager: function(socketIoServer, socketsMap){
+        return new SocketIoManager(socketIoServer, '/alpha', socketsMap);
+    },
+
+    /**
+     * @return {ApplicationController}
+     */
+    applicationController: function(roomApi, userApi, socketIoManager, socketsMap){
+        return new ApplicationController(roomApi, userApi, socketIoManager, socketsMap);
+    },
+
     /**
      * @return {AirBugServer}
      */
@@ -209,10 +228,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ChatMessagesApi}
+     * @return {ChatMessage}
      */
-    chatMessagesApi: function(){
-        return new ChatMessagesApi();
+    chatMessage: function(){
+        return ChatMessage;
+    },
+
+    /**
+     * @return {ChatMessageApi}
+     */
+    chatMessageApi: function(model){
+        return new ChatMessageApi(model);
     },
 
     /**
@@ -224,10 +250,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ConversationsApi}
+     * @return {Conversation}
      */
-    conversationsApi: function(){
-        return new ConversationsApi();
+    conversation: function(){
+        return Conversation;
+    },
+
+    /**
+     * @return {ConversationApi}
+     */
+    conversationApi: function(model){
+        return new ConversationApi(model);
     },
 
     /**
@@ -261,10 +294,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {RoomsApi}
+     * @return {Room}
      */
-    roomsApi: function(){
-        return new RoomsApi();
+    room: function(){
+        return Room;
+    },
+
+    /**
+     * @return {RoomApi}
+     */
+    roomApi: function(model){
+        return new RoomApi(model);
     },
 
     /**
@@ -272,6 +312,15 @@ var AirBugConfiguration = Class.extend(Obj, {
      */
     sessionStore: function(){
         return new connect.middleware.session.MemoryStore();
+    },
+
+    socketIoServer: function(config, expressServer){
+        this._socketIoServer = new SocketIoServer(config, expressServer);
+        return this._socketIoServer;
+    },
+
+    socketIoServerConfig: function(){
+        return new SocketIoServerConfig({});
     },
 
     /**
@@ -294,10 +343,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {UsersApi}
+     * @return {User}
      */
-    usersApi: function(){
-        return new UsersApi();
+    user: function(){
+        return User;
+    },
+
+    /**
+     * @return {UserApi}
+     */
+    userApi: function(model){
+        return new UserApi(model);
     },
 
     //-------------------------------------------------------------------------------
@@ -388,33 +444,52 @@ annotate(AirBugConfiguration).with(
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
-        module("socketIoManager")
-            .properties([
-                property("expressServer").ref("expressServer"),
-                property("socketsMap").ref("socketsMap")
+        module("socketIoServer").
+            args([
+                arg("config").ref("socketIoServerConfig"),
+                arg("expressServer").ref("expressServer")
+            ]),
+        module("socketIoServerConfig"),
+        module("alphaSocketIoManager")
+            .args([
+                arg("socketIoServer").ref("socketIoServer"),
+                arg("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),
         module("socketRoutes"),
 
+
+        //-------------------------------------------------------------------------------
+        // Controllers
+        //-------------------------------------------------------------------------------
+        module("applicationController")
+            .args([
+                arg("roomApi").ref("roomApi"),
+                arg("userApi").ref("userApi"),
+                arg("socketIoManager").ref("socketIoManager"),
+                arg("socketsMap").ref("socketsMap")
+            ]),
         //-------------------------------------------------------------------------------
         // Apis
         //-------------------------------------------------------------------------------
-        module("chatMessagesApi"),
-        module("conversationsApi"),
-        module("roomsApi"),
-        module("usersApi")
+        module("chatMessageApi")
+            .args([
+                arg("model").ref("chatMessage")
+            ]),
+        module("conversationApi")
+            .args([
+                arg("model").ref("coversation")
+            ]),
+        module("roomApi")
+            .args([
+                arg("model").ref("room")
+            ]),
+        module("userApi")
+            .args([
+                arg("model").ref("user")
+            ]),
     ])
 );
-
-// module("minerbugWorkerSocketManager")
-//     .args([
-//         arg("socketIoServer").ref("socketIoServer")
-//     ]),
-// module("socketIoServer").
-//     args([
-//         arg("config").ref("socketIoServerConfig"),
-//         arg("expressServer").ref("expressServer")
-//     ]),
 
 
 //-------------------------------------------------------------------------------

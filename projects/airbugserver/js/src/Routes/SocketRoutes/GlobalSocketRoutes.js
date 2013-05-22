@@ -6,10 +6,6 @@
 
 //@Export('GlobalSocketRoutes')
 
-//@Require('airbugserver.ChatMessagesApi')
-//@Require('airbugserver.ConversationsApi')
-//@Require('airbugserver.RoomsApi')
-//@Require('airbugserver.UsersApi')
 //@Require('bugroutes.ExpressRoute')
 //@Require('bugroutes.Routes')
 
@@ -25,10 +21,8 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ChatMessagesApi     = bugpack.require('airbugserver.ChatMessagesApi');
-var ConversationsApi    = bugpack.require('airbugserver.ConversationsApi');
-var RoomsApi            = bugpack.require('airbugserver.RoomsApi');
-var UsersApi            = bugpack.require('airbugserver.UsersApi');
+var RoomApi             = bugpack.require('airbugserver.RoomApi');
+var UserApi             = bugpack.require('airbugserver.UserApi');
 var ExpressRoute        = bugpack.require('bugroutes.ExpressRoute');
 var Routes              = bugpack.require('bugroutes.Routes');
 
@@ -37,7 +31,7 @@ var Routes              = bugpack.require('bugroutes.Routes');
 //-------------------------------------------------------------------------------
 
 var routes = [
-    new Route("establishUser", UsersApi.establishUser),
+    new Route("establishUser", UsersController.establishUser),
     new Route("error", function(error){
         console.log(error);
     }),

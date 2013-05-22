@@ -4,11 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomsApi')
+//@Export('UserApi')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.Room')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -23,67 +22,78 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
-var Room        = bugpack.require('airbugserver.Room');
-
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomsApi = Class.extend(Obj, {
+var UserInterface = {
+    establishUser: function(){},
+};
 
-    _constructor: function(){
+// Implementation
+var UserApi = Class.extend(Obj, {
+
+    _constructor: function(model){
 
         this._super();
 
-
         //-------------------------------------------------------------------------------
-        // Dependencies
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {SocketsMap}
+         * @type {mongoose.Model.User}
          */
-        this.socketsMap = null;
+        this.model = model;
+
     },
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /*
-     * @param {Room} room
+     * @param {{
+     *      name: string,
+     *      email: string
+     * }} data
+     * @param {function(Error, User)} callback
      **/
-    create: function(room){
-        var room = Room.create(room);
-    },
-
-    addUserToRoom: function(){
-        
+    establishUser: function(data, callback){ //findOrCreate
+        this.findOrCreate(data, callback);
     },
 
     /*
-     * @private
-     * @param {ObjectId} roomId
-     * @param {string} eventName
-     * @param {{*}} data
-     * @param {function()} callback
+     * @param {{
+     *      name: string,
+     *      email: string
+     * }} data
+     * @param {function(Error, User)} callback
      **/
-    notifyRoomMembers: function(roomId, eventName, data, callback){
-        var room = Room.findById();
-        var roomMembers = room.membersList;
-        roomMembers.forEach(function(roomMember){
-            var userId = roomMember.userId; //BUGBUG
-            sockets = socketsMap.findSocketsByUser(user); //BUGBUG
-            sockets.forEach(function(socket){
-                socket.emit(eventName, data);
-            });
+    findOrCreate: function(data, callback){
+        var _this       = this;
+        var userObj     = {email: data.email, name: data.name}; // sanitizing the data
+        var conditions  = {email: userObj.email};
+        var fields      = null;
+        var options = {
+            lean: false;
+        };
+
+        // this.model.findOneAndUpdate(query, update, options, otherCallback); //cannot use pre post hooks with this method
+        this.model.findOne(conditions, fields, options, function(error, user){
+            if(error){
+                callback(error);
+            } else {
+                if(!user){
+                    _this.model.create(userObj, callback);
+                } else {
+                    callback(null, user);
+                }
+            }
         });
-
-        callback();
     }
-
 });
 
 
@@ -91,4 +101,4 @@ var RoomsApi = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomsApi', RoomsApi);
+bugpack.export('airbugserver.UserApi', UserApi);

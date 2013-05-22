@@ -4,11 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('ConversationsApi')
+//@Export('ConversationApi')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.Conversation')
 
 
 //-------------------------------------------------------------------------------
@@ -23,18 +22,19 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Conversation    = bugpack.require('airbugserver.Conversation');
 var Obj             = bugpack.require('Obj');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationsApi = Class.extend(Obj, {
+var ConversationApi = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(model){
 
         this._super();
+
+        this.model      = model;
 
     }
 });
@@ -44,4 +44,4 @@ var ConversationsApi = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ConversationsApi', ConversationsApi);
+bugpack.export('airbugserver.ConversationApi', ConversationApi);

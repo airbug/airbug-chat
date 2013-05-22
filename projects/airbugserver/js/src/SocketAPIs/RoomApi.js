@@ -4,22 +4,21 @@
 
 //@Package('airbugserver')
 
-//@Export('ExpressServer')
+//@Export('RoomApi')
 
 //@Require('Class')
 //@Require('Obj')
-
+//@Require('Proxy')
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugpack     = require('bugpack').context();
-var http        = require('http');
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
@@ -27,70 +26,70 @@ var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
-// Build App
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var RoomInterface = {
+    
+};
 
-    _constructor: function(expressApp){
+// Implementation of Room interface for mongoose Model
+var RoomApi = Class.extend(Obj, {
+
+    _constructor: function(model){
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
-        // Variables
+        // Dependencies
         //-------------------------------------------------------------------------------
 
-        /*
-         * @type {ExpressApp}
-         **/
-        this.expressApp = expressApp;
-
-        /*
-         * @type {}
-         **/
-        this.httpServer = null;
+        /**
+         * @type {mongoose.Model.Room}
+         */
+        this.model = model;
 
     },
 
+    //-------------------------------------------------------------------------------
+    // Instance Methods
+    //-------------------------------------------------------------------------------
+
+    getModel: function(){
+        return this.model;
+    },
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Static Methods
     //-------------------------------------------------------------------------------
 
-    /*
-     **/
-    start: function(callback) {
-        var callback    = callback || function(){};
-        var app         = this.expressApp.getApp();
-
-        // Create Server
-        //-------------------------------------------------------------------------------
-        this.httpServer = http.createServer(app);
-
-        this.httpServer.listen(app.get('port'), function(){
-            console.log("Express server listening on port " + app.get('port'));
+    getMembersList: function(roomId){
+        this.model.findById(roomId, function(error, room){
+            return room.memberslist;
         });
-
-        callback();
     },
 
-
-    //-------------------------------------------------------------------------------
-    //  Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    getHttpServer: function(){
-        return this.httpServer;
+    create: function(room, callback){
+        this.model.create(room, callback);
     },
 
-    getCookieParser: function(){
-        return this.expressApp.getCookieParser;
+    findById: function(id, callback){
+        this.model.findById(id, function(error, room){
+            callback(error, room);
+        });
     },
-    getSessionStore: function(){
-        return this.expressApp.getSessionStore;
-    },
-    getSessionKey: function(){
-        return this.expressApp.getSessionKey;
+
+    addUser: function(roomId, user, callback){
+        this.model.findById(roomId, function(error, room){
+            if(!error){
+                var roomMemeber = new RoomMember();
+                room.membersList.push(roomMember);
+                room.save(callback);
+            } else {
+                callback(error);
+            }
+        })
     }
 });
 
@@ -98,4 +97,4 @@ var ExpressServer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ExpressServer', ExpressServer);
+bugpack.export('airbugserver.RoomApi', RoomApi);

@@ -7,122 +7,135 @@
 //@Export('SocketIoManager')
 
 //@Require('Class')
+//@Require('Event')
+//@Require('EventDispatcher')
 //@Require('Map')
-//@Require('Obj')
+//@Require('bugflow.BugFlow')
+//@Require('socketio:server.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var io          = require('socket.io');
+var bugpack         = require('bugpack').context();
+var io              = require('socket.io');
 
 
 //-------------------------------------------------------------------------------
-// Bugpack Modules
+// BugPack Modules
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Event               = bugpack.require('Event');
+var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
-var Obj                 = bugpack.require('Obj');
-var SocketsMap          = bugpack.require('airbugserver.SocketsMap');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+var SocketIoConnection  = bugpack.require('socketio:server.SocketIoConnection');
 
-var ChatMessagesApi     = bugpack.require('airbugserver.ChatMessagesApi');
-var ConversationsApi    = bugpack.require('airbugserver.ConversationsApi');
-var RoomsApi            = bugpack.require('airbugserver.RoomsApi');
-var UsersApi            = bugpack.require('airbugserver.UsersApi');
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoManager = Class.extend(Obj, {
-    
-    _constructor: function(){
+var SocketIoManager = Class.extend(EventDispatcher, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(socketIoServer, namespace) {
 
         this._super();
 
-        /*
-         * @type {ExpressServer}
-         **/
-        this.expressServer          = null;
 
-        /*
-         * @type {}
-         **/
-        this.socketIoManager        = null;
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
 
-        /*
-         * @type {SocketsMap}
-         **/
-        this.socketsMap             = null;
+        /**
+         * @private
+         * @type {*}
+         */
+        this.ioManager = socketIoServer.of(namespace);
 
+        /**
+         * @private
+         * @type {SocketIoServer}
+         */
+        this.socketIoServer  = socketIoServer;
+
+        /**
+         * @private
+         * @type {Map.<string, SocketIoConnection>}
+         */
+        this.socketUuidToSocketConnectionMap = new Map();
     },
 
-    initialize: function(callback){
-        var callback            = callback || function(){};
-        var server              = this.expressServer.getHttpServer();
-        this.socketIoManager    = io.listen(server);
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} socketUuid
+     * @return {SocketIoConnection}
+     */
+    getSocketConnection:function(socketUuid) {
+        return this.socketUuidToSocketConnectionMap.get(socketUuid);
+    },
+
+    /**
+     * @param {function(Error)} callback
+     */
+    initialize: function(callback) {
+        var _this = this;
+        this.ioManager.on("connection", function(socket) {
+            var socketConnection = new SocketIoConnection(socket);
+            socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
+            _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
+            _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
+                socket: socketConnection
+            }));
+        });
 
         callback();
-        return this;
     },
 
-    enableSockets: function(cookieParser, sessionStore, sessionKey, callback){
-        var callback            = callback || function(){};
-        var socketIoManager     = this.socketIoManager;
-        var sessionToUserMap    = this.sessionToUserMap;
-        var socketsMap          = this.socketsMap;
-        var alphaSocketManager  = socketIoManager.of('/alpha');
 
-        socketIoManager.set('transports', [
-            'websocket',
-            'flashsocket',
-            'htmlfile',
-            'xhr-polling',
-            'jsonp-polling'
-        ]);
-        socketIoManager.set('match origin protocol', true); //NOTE: Only necessary for use with wss, WebSocket Secure protocol
-        socketIoManager.set('resource', '/socket-api'); //NOTE: forward slash is required here unlike client setting
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
 
-        alphaSocketManager.manager.set('authorization', function(data, callback){
-            cookieParser(data, {}, function(error) {
-                if(!error){
-                    sessionStore.get(data.signedCookies[sessionKey], function(error, session){
-                        if(!error){
-                            data.session = session;
-                            callback(null, true);
-                        } else {
-                            callback('Session error', true);
-                        }
-                    });
-                } else {
-                    callback(error, false);
-                }
-            });
-        });
-
-        alphaSocketManager.on('connection', function(socket){
-            console.log("Connection established")
-            console.log("session:", socket.handshake.session);
-            var session = socket.handshake.session;
-            // var cookie = socket.handshake.headers.cookie;
-            var currentUser = sessionToUserMap.get(session);
-            SocketsMap.associateSocketWithSession({session: session, socket: socket});
-
-            GlobalSocketRoutes.enableAll(null, socket);
-
-        });
-        
-        console.log("socketIoManager:", socketIoManager);
-        console.log("alphaSocketManager:", alphaSocketManager);
-    },
-
-    addEstablishedUserListeners: function(socket){
-        EstablishedUserRoutes.enableAll(null, socket);
+    /**
+     *
+     * @param event
+     */
+    hearSocketDisconnect: function(event) {
+        var socketConnection = event.getTarget();
+        this.socketUuidToSocketConnectionMap.remove(socketConnection.getUuid());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+SocketIoManager.EventTypes = {
+    CONNECTION: "SocketIoManager:Connection"
+};
 
 
 //-------------------------------------------------------------------------------

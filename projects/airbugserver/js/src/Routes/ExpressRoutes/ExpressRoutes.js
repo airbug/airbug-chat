@@ -28,7 +28,7 @@ var ExpressRoute    = bugpack.require('bugroutes.ExpressRoute');
 //-------------------------------------------------------------------------------
 // Routes
 //-------------------------------------------------------------------------------
-var getAlpha = new ExpressRoute('get', '/alpha', function(req, res){
+var getAlpha = new ExpressRoute('get', '/alpha', function(req, res){ //TODO SUNG Create static pages controller
     res.render('alpha', {
         title: 'airbug',
         production: config.production
@@ -47,4 +47,3 @@ var ExpressRoutes = new Routes(routes);
 //-------------------------------------------------------------------------------
 
 bugpack.export('airbugserver.ExpressRoutes', ExpressRoutes);
-

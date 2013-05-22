@@ -160,9 +160,6 @@ var ExpressApp = Class.extend(Obj, {
                 });
             })
         ]).execute(callback);
-
-        return this;
-
     },
 
 
