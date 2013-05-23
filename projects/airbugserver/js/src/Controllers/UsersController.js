@@ -4,39 +4,64 @@
 
 //@Package('airbugserver')
 
-//@Export('ConversationApi')
+//@Export('UsersController')
 
 //@Require('Class')
 //@Require('Obj')
-
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationApi = Class.extend(Obj, {
+var UsersController = Class.extend(Obj, {
 
-    _constructor: function(model){
+    _constructor: function(){
 
         this._super();
 
-        this.model      = model;
+    },
 
-    }
+
+    //-------------------------------------------------------------------------------
+    // Methods
+    //-------------------------------------------------------------------------------
+
+    /*
+     * @param {} 
+     **/
+     establishUser: function(params){
+             UserService.establishUser();
+     },
+
+     /*
+      * @param {} 
+      **/
+     getCurrentUser: function(params){
+         
+     },
+
+     /*
+      * @param {} 
+      **/
+     logoutCurrentUser: function(params){
+         
+     }
+
 });
 
 
@@ -44,4 +69,4 @@ var ConversationApi = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ConversationApi', ConversationApi);
+bugpack.export('airbugserver.UsersController', UsersController);

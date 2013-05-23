@@ -30,6 +30,7 @@ var ChatMessageSchema  = bugpack.require('airbugserver.ChatMessageSchema');
 
 var ChatMessage = mongoose.model("ChatMessage", ChatMessageSchema);
 
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------

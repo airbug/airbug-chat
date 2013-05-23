@@ -4,10 +4,11 @@
 
 //@Package('airbugserver')
 
-//@Export('UserApi')
+//@Export('RoomManager')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Proxy')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -22,83 +23,77 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var Proxy       = bugpack.require('Proxy');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserInterface = {
-    establishUser: function(){},
+var RoomInterface = {
+    
 };
 
-// Implementation
-var UserApi = Class.extend(Obj, {
+// Implementation of Room interface for mongoose Model
+var RoomManager = Class.extend(Obj, {
 
     _constructor: function(model){
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
-        // Properties
+        // Dependencies
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model.User}
+         * @type {mongoose.Model.Room}
          */
         this.model = model;
 
     },
 
-
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
-    /*
-     * @param {{
-     *      name: string,
-     *      email: string
-     * }} data
-     * @param {function(Error, User)} callback
-     **/
-    establishUser: function(data, callback){ //findOrCreate
-        this.findOrCreate(data, callback);
+    getModel: function(){
+        return this.model;
     },
 
-    /*
-     * @param {{
-     *      name: string,
-     *      email: string
-     * }} data
-     * @param {function(Error, User)} callback
-     **/
-    findOrCreate: function(data, callback){
-        var _this       = this;
-        var userObj     = {email: data.email, name: data.name}; // sanitizing the data
-        var conditions  = {email: userObj.email};
-        var fields      = null;
-        var options = {
-            lean: false;
-        };
+    //-------------------------------------------------------------------------------
+    // Static Methods
+    //-------------------------------------------------------------------------------
 
-        // this.model.findOneAndUpdate(query, update, options, otherCallback); //cannot use pre post hooks with this method
-        this.model.findOne(conditions, fields, options, function(error, user){
-            if(error){
-                callback(error);
-            } else {
-                if(!user){
-                    _this.model.create(userObj, callback);
-                } else {
-                    callback(null, user);
-                }
-            }
+    getMembersList: function(roomId){
+        this.model.findById(roomId, function(error, room){
+            return room.memberslist;
         });
+    },
+
+    create: function(room, callback){
+        this.model.create(room, callback);
+    },
+
+    findById: function(id, callback){
+        this.model.findById(id, callback);
+    },
+
+    addUser: function(roomId, user, callback){
+        this.model.findById(roomId, function(error, room){
+            if(!error){
+                var roomMemeber = new RoomMember();
+                room.membersList.push(roomMember);
+                room.save(callback);
+            } else {
+                callback(error);
+            }
+        })
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserApi', UserApi);
+bugpack.export('airbugserver.RoomManager', RoomManager);

@@ -30,6 +30,7 @@ var ConversationSchema  = bugpack.require('airbugserver.ConversationSchema');
 
 var Conversation = mongoose.model("Conversation", ConversationSchema);
 
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------

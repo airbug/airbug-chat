@@ -4,35 +4,49 @@
 
 //@Package('airbugserver')
 
-//@Export('Dialogue')
+//@Export('ChatMessageManager')
 
-//@Require('airbugserver.DialogueSchema')
+//@Require('Class')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-var mongoose        = require('mongoose');
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var DialogueSchema  = bugpack.require('airbugserver.DialogueSchema');
-
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Dialogue = mongoose.model("Dialogue", DialogueSchema);
+var ChatMessageManager = Class.extend(Obj, {
+
+    _constructor: function(model){
+
+        this._super();
+
+        this.model = model;
+
+    },
+
+    create: function(message, callback){
+        var newChatMessage = this.model.create(message, callback);
+        // RoomApi.sendMessage(newChatMessage);
+    }
+});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Dialogue', Dialogue);
+bugpack.export('airbugserver.ChatMessageManager', ChatMessageManager);

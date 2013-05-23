@@ -45,16 +45,17 @@ var path                    = require('path');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var BugFs                   = bugpack.require('bugfs.BugFs');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var Annotate                = bugpack.require('annotate.Annotate');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var BugFs                   = bugpack.require('bugfs.BugFs');
 var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var RoutesManager           = bugpack.require('bugroutes.RoutesManager');
 
 var ApplicationController   = bugpack.require('airbugserver.ApplicationController');
 var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
@@ -279,6 +280,13 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {RoutesManager}
+     */
+    expressRoutesManager: function(app, routes){
+        return new RoutesManager(app, routes);
+    },
+
+    /**
      * @return {ExpressServer}
      */
     expressServer: function(expressApp) {
@@ -434,6 +442,11 @@ annotate(AirBugConfiguration).with(
                 property("expressRoutes").ref("expressRoutes"),
                 property("sessionStore").ref("sessionStore")
             ]),
+        module("expressRoutesManager")
+            .args([
+                arg("app").ref("expressApp"),
+                arg("routes").ref("expressRoutes")
+            ])
         module("expressRoutes"),
         module("expressServer")
             .args([

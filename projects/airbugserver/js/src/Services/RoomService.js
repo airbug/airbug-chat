@@ -4,11 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomsApi')
+//@Export('RoomService')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.ApplicationController')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,7 +20,6 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var ApplicationController   = bugpack.require('airbugserver.ApplicationController');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 
@@ -30,11 +28,19 @@ var Obj                     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomsController = Class.extend(ApplicationController, {
+var RoomService = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(roomManager, socketIoManager, socketsMap, userManager){
 
         this._super();
+
+        this.roomManager            = roomManager;
+
+        this.socketIoManager        = socketIoManager;
+
+        this.socketsMap             = socketsMap;
+
+        this.userManager            = userManager;
 
     },
 
@@ -47,17 +53,24 @@ var RoomsController = Class.extend(ApplicationController, {
      * @param {Room} room
      **/
     create: function(currentUser, room){
-        var room = this.roomApi.create(room);
-        this.addUserToRoom(currentUser, room.id);
+        var _this = this;
+        var room = this.roomManager.create(room, function(error, room){
+            if(!error && room){
+                _this.addUserToRoom(currentUser, room.id);
+            }
+        });
     },
 
     addUserToRoom: function(user, roomId){
-        this.roomApi.addUser(roomId, user);
+        this.roomManager.addUser(roomId, user);
         this.notifyRoomMembers(roomId, "userAddedToRoom", {}, function(){
             
         });
     },
 
+    removeUserFromRoom: function(user, roomId){
+        
+    },
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -72,13 +85,13 @@ var RoomsController = Class.extend(ApplicationController, {
      **/
     notifyRoomMembers: function(roomId, eventName, data, callback){
         var socketsMap  = this.socketsMap;
-        var room        = this.roomApi.findById(roomId);
+        var room        = this.roomManager.findById(roomId);
         var roomMembers = room.membersList;
-        var userApi     = this.userApi;
+        var userManager = this.userManager;
 
         roomMembers.forEach(function(roomMember){
             var userId  = roomMember.userId;
-            var user    = userApi.findById(userId);
+            var user    = userManager.findById(userId);
             sockets = socketsMap.findSocketsByUser(user);
             sockets.forEach(function(socket){
                 socket.emit(eventName, data);
@@ -95,4 +108,4 @@ var RoomsController = Class.extend(ApplicationController, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomsController', RoomsController);
+bugpack.export('airbugserver.RoomService', RoomService);

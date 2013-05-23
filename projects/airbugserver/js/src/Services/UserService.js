@@ -4,11 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('UsersController')
+//@Export('UserService')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.ApplicationController')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,7 +20,6 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var ApplicationController   = bugpack.require('airbugserver.ApplicationController');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 
@@ -29,11 +27,15 @@ var Obj                     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UsersController = Class.extend(ApplicationController, {
+var UserService = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(socketIoManager, userManager){
 
         this._super();
+
+        this.socketIoManager    = socketIoManager;
+
+        this.userManager        = userManager;
 
     },
 
@@ -49,7 +51,7 @@ var UsersController = Class.extend(ApplicationController, {
      **/
     establishUser: function(data){
         var _this = this;
-        this.userApi.establishUser(data, function(error, user){
+        this.userManager.findOrCreate(data, function(error, user){
             if(!error){
                 currentUser = user;
                 _this.socketIoManager.addEstablishedUserListeners(socket); //make sure this socket is the proper one
@@ -65,5 +67,5 @@ var UsersController = Class.extend(ApplicationController, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UsersController', UsersController);
+bugpack.export('airbugserver.UserService', UserService);
 

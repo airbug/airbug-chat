@@ -4,11 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('ChatMessageApi')
+//@Export('AlphaPagesController')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.ChatMessage')
 
 
 //-------------------------------------------------------------------------------
@@ -19,36 +18,35 @@ var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Bugpack Modules
+// BugPack
 //-------------------------------------------------------------------------------
 
-var ChatMessage = bugpack.require('airbugserver.ChatMessage');
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageApi = Class.extend(Obj, {
+var AlphaPagesController = Class.extend(Obj, {
 
-    _constructor: function(model){
+    _constructor: function(){
 
         this._super();
 
-        this.model = model;
-
     },
 
-    create: function(message, callback){
-        var newChatMessage = this.model.create(message, callback);
-        // RoomApi.sendMessage(newChatMessage);
+    home: function(req, res){
+        res.render('alpha', {
+            title: 'airbug',
+            production: config.production
+        });
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ChatMessageApi', ChatMessageApi);
+bugpack.export('airbugserver.AlphaPagesController', AlphaPagesController);

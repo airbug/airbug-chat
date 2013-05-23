@@ -4,45 +4,37 @@
 
 //@Package('airbugserver')
 
-//@Export('ApplicationController')
+//@Export('ConversationManager')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.UsersApi')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var RoomsApi    = bugpack.require('airbugserver.RoomApi');
-var UsersApi    = bugpack.require('airbugserver.UserApi');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ApplicationController = Class.extend(Obj, {
+var ConversationManager = Class.extend(Obj, {
 
-    _constructor: function(roomApi, userApi, socketIoManager, socketsMap){
+    _constructor: function(model){
 
         this._super();
 
-        this.roomApi            = roomApi;
-
-        this.socketIoManager    = socketIoManager;
-
-        this.socketsMap         = socketsMap;
-
-        this.userApi            = usersApi;
+        this.model      = model;
 
     }
 });
@@ -52,5 +44,4 @@ var ApplicationController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ApplicationController', ApplicationController);
-
+bugpack.export('airbugserver.ConversationManager', ConversationManager);
