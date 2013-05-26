@@ -31,17 +31,25 @@ var Obj         = bugpack.require('Obj');
 
 var AlphaPagesController = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(expressRoutesManager){
 
         this._super();
 
+        this.expressRoutesManager = expressRoutesManager;
+
     },
 
-    home: function(req, res){
-        res.render('alpha', {
-            title: 'airbug',
-            production: config.production
-        });
+    configure: function(){
+        
+        this.expressRoutesManager.addAll([
+
+            new ExpressRoute('get', '/alpha', function(req, res){
+                res.render('alpha', {
+                    title: 'airbug',
+                    production: config.production
+                });
+            })
+        ]);
     }
 });
 

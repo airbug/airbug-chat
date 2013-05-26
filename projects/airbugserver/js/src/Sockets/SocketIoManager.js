@@ -85,6 +85,10 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     // Public Class Methods
     //-------------------------------------------------------------------------------
 
+    getIoManager: function(){
+        return this.ioManager;
+    },
+
     /**
      * @param {string} socketUuid
      * @return {SocketIoConnection}

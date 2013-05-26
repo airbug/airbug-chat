@@ -19,17 +19,39 @@
 //@Require('bugioc.PropertyAnnotation')
 
 //@Require('airbugserver.AirBugServer')
-//@Require('airbugserver.ApplicationController')
 //@Require('airbugserver.ExpressApp')
 //@Require('airbugserver.ExpressServer')
 //@Require('airbugserver.ExpressRoutes')
 //@Require('airbugserver.SocketIoManager')
 //@Require('airbugserver.SocketRoutes')
 //@Require('airbugserver.SocketsMap')
-//@Require('airbugserver.ChatMessageApi')
-//@Require('airbugserver.ConversationApi')
-//@Require('airbugserver.RoomApi')
-//@Require('airbugserver.UserApi')
+
+//@Require('airbugserver.AlphaPagesController')
+//@Require('airbugserver.RoomsController')
+//@Require('airbugserver.UsersController')
+
+//@Require('airbugserver.RoomService')
+//@Require('airbugserver.UserService')
+
+//@Require('airbugserver.chatMessageManager')
+//@Require('airbugserver.ConversationManager')
+//@Require('airbugserver.RoomManager')
+//@Require('airbugserver.RoomMemberManager')
+//@Require('airbugserver.UserManager')
+
+//@Require('airbugserver.ChatMessage')
+//@Require('airbugserver.Conversation')
+//@Require('airbugserver.Dialogue')
+//@Require('airbugserver.RoomMember')
+//@Require('airbugserver.Room')
+//@Require('airbugserver.User')
+
+//@Require('airbugserver.ChatMessageSchema')
+//@Require('airbugserver.ConversationSchema')
+//@Require('airbugserver.DialogueSchema')
+//@Require('airbugserver.RoomMemberSchema')
+//@Require('airbugserver.RoomSchema')
+//@Require('airbugserver.UserSchema')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -57,7 +79,6 @@ var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var RoutesManager           = bugpack.require('bugroutes.RoutesManager');
 
-var ApplicationController   = bugpack.require('airbugserver.ApplicationController');
 var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
 var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
 var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
@@ -68,15 +89,32 @@ var SocketIoServerConfig    = bugpack.require('airbugserver.SocketIoServerConfig
 var SocketRoutes            = bugpack.require('airbugserver.SocketRoutes');
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
-var ChatMessageApi          = bugpack.require('airbugserver.ChatMessageApi');
-var ConversationApi         = bugpack.require('airbugserver.ConversationApi');
-var RoomApi                 = bugpack.require('airbugserver.RoomApi');
-var UserApi                 = bugpack.require('airbugserver.UserApi');
+var AlphaPagesController    = bugpack.require('airbugserver.AlphaPagesController');
+var RoomsController         = bugpack.require('airbugserver.RoomsController');
+var UsersController         = bugpack.require('airbugserver.UsersController');
+
+var RoomService             = bugpack.require('airbugserver.RoomService');
+var UserService             = bugpack.require('airbugserver.UserService');
+
+var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
+var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
+var RoomManager             = bugpack.require('airbugserver.RoomManager');
+var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
+var UserManager             = bugpack.require('airbugserver.UserManager');
 
 var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
 var Conversation            = bugpack.require('airbugserver.Conversation');
+var Dialogue                = bugpack.require('airbugserver.Dialogue');
 var Room                    = bugpack.require('airbugserver.Room');
+var RoomMember              = bugpack.require('airbugserver.RoomMember');
 var User                    = bugpack.require('airbugserver.User');
+
+var ChatMessageSchema       = bugpack.require('airbugserver.ChatMessageSchema');
+var ConversationSchema      = bugpack.require('airbugserver.ConversationSchema');
+var DialogueSchema          = bugpack.require('airbugserver.DialogueSchema');
+var RoomMemberSchema        = bugpack.require('airbugserver.RoomMemberSchema');
+var RoomSchema              = bugpack.require('airbugserver.RoomSchema');
+var UserSchema              = bugpack.require('airbugserver.UserSchema');
 
 //-------------------------------------------------------------------------------
 // Simplify References
@@ -88,6 +126,7 @@ var configuration           = ConfigurationAnnotation.configuration;
 var module                  = ModuleAnnotation.module;
 var property                = PropertyAnnotation.property;
 
+var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -115,7 +154,13 @@ var AirBugConfiguration = Class.extend(Obj, {
          * @private
          * @type {AirBugServer}
          */
-        this._airBugServer = null;
+        this._airBugServer          = null;
+
+        /**
+         * @private
+         * @type {SocketIoManager}
+         */
+        this._alphaSocketIoManager  = null;
 
         /**
          * @private
@@ -124,27 +169,37 @@ var AirBugConfiguration = Class.extend(Obj, {
          *      mongoDbIp: string
          * }}
          */
-        this._config = null;
+        this._config                = null;
 
         /**
          * @type {string}
          */
-        this._configFilePath = path.resolve(__dirname, '../config.json');
+        this._configFilePath        = path.resolve(__dirname, '../config.json');
 
         /**
          * @type {ExpressApp}
          */
-        this._expressApp = null;
+        this._expressApp            = null;
 
         /**
          * @type {ExpressServer}
          */
-        this._expressServer = null;
+        this._expressServer         = null;
+
+        /**
+         * @type {RoomsController}
+         */
+        this._roomsController       = null;
 
         /**
          * @type {SocketIoManager}
          */
-        this._socketIoManager = null;
+        this._socketIoManager       = null;
+
+        /**
+         * @type {UsersController}
+         */
+        this._usersController       = null;
 
     },
 
@@ -160,6 +215,69 @@ var AirBugConfiguration = Class.extend(Obj, {
         var _this = this;
         console.log("Initializing AirBugConfiguration");
         $series([
+            //-------------------------------------------------------------------------------
+            // Model Managers
+            //-------------------------------------------------------------------------------
+            $parallel([
+                $task(function(flow){
+                    _this._chatMessageManager.configure(function(error){
+                        if(!error) console.log("chatMessageManager configured");
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(error){
+                    _this._conversationManager.configure(function(error){
+                        if(!error) console.log("conversationManager configured")
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    _this._roomManager.configure(function(error){
+                        if(!error) console.log("roomManager configured");
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    _this._roomMemberManager.configure(function(error){
+                        if(!error) console.log("roomMemberManager configured");
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    _this._userManager.configure(function(error){
+                        if(!error) console.log("userManager configured");
+                        flow.complete(error);
+                    });
+                })
+            ]),
+            //-------------------------------------------------------------------------------
+            // Services
+            //-------------------------------------------------------------------------------
+
+            //-------------------------------------------------------------------------------
+            // Controllers
+            //-------------------------------------------------------------------------------
+            $parallel([
+                $task(function(flow){
+                    _this._roomsController.configure(function(error){
+                        if(!error){
+                            console.log("roomsController configured");
+                        }
+                        flow.complete(error);
+                    })
+                }),
+                $task(function(flow){
+                    _this._usersController.configure(function(error){
+                        if(!error){
+                            console.log("usersController configured");
+                        }
+                        flow.complete(error);
+                    })
+                })
+            ]),
+            //-------------------------------------------------------------------------------
+            // Apps and Servers
+            //-------------------------------------------------------------------------------
             $task(function(flow){
                 console.log("Initializing expressApp");
 
@@ -199,7 +317,7 @@ var AirBugConfiguration = Class.extend(Obj, {
                     }
                     flow.complete(error);
                 });
-            }),
+            })
         ]).execute(function(error){
             if(!error){
                 console.log("AirBugConfiguration successfully initialized.")
@@ -209,15 +327,29 @@ var AirBugConfiguration = Class.extend(Obj, {
         });
     },
 
-    alphaSocketIoManager: function(socketIoServer, socketsMap){
-        return new SocketIoManager(socketIoServer, '/alpha', socketsMap);
+    /**
+     * @param {RoutesManager} expressRoutesManager
+     * @return {AlphaPagesController}
+     */
+    alphaPagesController: function(expressRoutesManager){
+        return new AlphaPagesController(expressRoutesManager);
     },
 
     /**
-     * @return {ApplicationController}
+     * @return {}
      */
-    applicationController: function(roomApi, userApi, socketIoManager, socketsMap){
-        return new ApplicationController(roomApi, userApi, socketIoManager, socketsMap);
+    alphaSocket: function(){
+        return this._alphaSocketIoManager.getIoManager();
+    },
+
+    /**
+     * @param {}
+     * @param {}
+     * @return {SocketIoManager}
+     */
+    alphaSocketIoManager: function(socketIoServer, socketsMap){
+        this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha', socketsMap);
+        return this._alphaSocketIoManager;
     },
 
     /**
@@ -236,10 +368,20 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ChatMessageApi}
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {ChatMessageManager}
      */
-    chatMessageApi: function(model){
-        return new ChatMessageApi(model);
+    chatMessageManager: function(model, schema){
+        this._chatMessageManager = new ChatMessageManager(model, schema);
+        return this._chatMessageManager;
+    },
+
+    /**
+     * @return {ChatMessageSchema}
+     */
+    chatMessageSchema: function(){
+        return ChatMessageSchema;
     },
 
     /**
@@ -258,13 +400,38 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ConversationApi}
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {ConversationManager}
      */
-    conversationApi: function(model){
-        return new ConversationApi(model);
+    conversationManager: function(model, schema){
+        this._conversationManager = new ConversationManager(model, schema);
+        return this._conversationManager;
     },
 
     /**
+     * @return {ConversationSchema}
+     */
+    conversationSchema: function(){
+        return ConversationSchema;
+    },
+
+    /**
+     * @return {Dialogue}
+     */
+    dialogue: function(){
+        return Dialogue;
+    },
+
+    /**
+     * @return {DialogueSchema}
+     */
+    dialogueSchema: function(){
+        return DialogueSchema;
+    },
+
+    /**
+     * @param {}
      * @return {ExpressServer}
      */
     expressApp: function(config) {
@@ -273,13 +440,8 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ExpressRoutes}
-     */
-    expressRoutes: function() {
-        return ExpressRoutes;
-    },
-
-    /**
+     * @param {}
+     * @param {}
      * @return {RoutesManager}
      */
     expressRoutesManager: function(app, routes){
@@ -287,6 +449,7 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
      * @return {ExpressServer}
      */
     expressServer: function(expressApp) {
@@ -309,10 +472,54 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {RoomApi}
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {RoomManager}
      */
-    roomApi: function(model){
-        return new RoomApi(model);
+    roomManager: function(model, schema){
+        this._roomManager = new RoomManager(model, schema);
+        return this._roomManager;
+    },
+
+    /**
+     * @return {RoomMember}
+     */
+    roomMember: function(){
+        return RoomMember;
+    },
+
+    /**
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {RoomMemberManager}
+     */
+    roomMemberManager: function(model, schema){
+        this._roomMemberManager = new RoomMemberManager(model, schema);
+        return this._roomMemberManager;
+    },
+
+    /**
+     * @return {RoomMemberSchema}
+     */
+    roomMemberSchema: function(){
+        return RoomMemberSchema;
+    },
+
+    /**
+     * @param {}
+     * @param {}
+     * @return {RoomsController}
+     */
+    roomsController: function(socketIoManager, roomService){
+        this._roomsController = new RoomsController(socketIoManager, roomService);
+        return this._roomsController;
+    },
+
+    /**
+     * @return {RoomSchema}
+     */
+    roomSchema: function(){
+        return RoomSchema;
     },
 
     /**
@@ -322,11 +529,19 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new connect.middleware.session.MemoryStore();
     },
 
+    /**
+     * @param {}
+     * @param {}
+     * @return {SocketIoServer}
+     */
     socketIoServer: function(config, expressServer){
         this._socketIoServer = new SocketIoServer(config, expressServer);
         return this._socketIoServer;
     },
 
+    /**
+     * @return {SocketIoServerConfig}
+     */
     socketIoServerConfig: function(){
         return new SocketIoServerConfig({});
     },
@@ -335,17 +550,12 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {SocketIoManager}
      */
     socketIoManager: function() {
-        this._socketIoManager = new SocketIoManager();
-        return this._socketIoManager;
+        return new SocketIoManager();
     },
 
     /**
-     * @return {SocketRoutes}
+     * @return {SocketsMap}
      */
-    socketRoutes: function() {
-        return SocketRoutes;
-    },
-
     socketsMap: function() {
         return new SocketsMap();
     },
@@ -358,10 +568,30 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {UserApi}
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {UserManager}
      */
-    userApi: function(model){
-        return new UserApi(model);
+    userManager: function(model, schema){
+        this._userManager = new UserManager(model, schema);
+        return this._userManager;
+    },
+
+    /**
+     * @param {}
+     * @param {}
+     * @return {UsersController}
+     */
+    usersController: function(socketIoManager, userService){
+        this._usersController = new UsersController(socketIoManager, userService);
+        return this._usersController;
+    },
+
+    /**
+     * @return {UserSchema}
+     */
+    userSchema: function(){
+        return UserSchema;
     },
 
     //-------------------------------------------------------------------------------
@@ -439,21 +669,17 @@ annotate(AirBugConfiguration).with(
                 arg("config").ref("config")
             ])
             .properties([
-                property("expressRoutes").ref("expressRoutes"),
                 property("sessionStore").ref("sessionStore")
             ]),
         module("expressRoutesManager")
             .args([
                 arg("app").ref("expressApp"),
-                arg("routes").ref("expressRoutes")
             ])
-        module("expressRoutes"),
         module("expressServer")
             .args([
                 arg("expressApp").ref("expressApp")
             ]),
         module("sessionStore"),
-
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
@@ -463,44 +689,76 @@ annotate(AirBugConfiguration).with(
                 arg("expressServer").ref("expressServer")
             ]),
         module("socketIoServerConfig"),
+        module("socketIoManager"),
         module("alphaSocketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer"),
                 arg("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),
-        module("socketRoutes"),
-
-
         //-------------------------------------------------------------------------------
         // Controllers
         //-------------------------------------------------------------------------------
-        module("applicationController")
+        module("alphaPagesController")
             .args([
-                arg("roomApi").ref("roomApi"),
-                arg("userApi").ref("userApi"),
-                arg("socketIoManager").ref("socketIoManager"),
-                arg("socketsMap").ref("socketsMap")
+                arg("expressRoutesManager").ref("expressRoutesManager"),
+            ]),
+        module("RoomsController")
+            .args([
+                arg("socketIoManager").ref("alphaSocketIoManager"),
+                arg("roomService").ref("roomService")
+            ]),
+        module("UsersController")
+            .args([
+                arg("socketIoManager").ref("alphaSocketIoManager"),
+                arg("userService").ref("userService")
             ]),
         //-------------------------------------------------------------------------------
-        // Apis
+        // ModelManagers
         //-------------------------------------------------------------------------------
-        module("chatMessageApi")
+        module("chatMessageManager")
             .args([
-                arg("model").ref("chatMessage")
+                arg("model").ref("chatMessage"),
+                arg("schema").ref("chatMessageSchema")
             ]),
-        module("conversationApi")
+        module("conversationManager")
             .args([
-                arg("model").ref("coversation")
+                arg("model").ref("conversation"),
+                arg("schema").ref("conversationSchema")
             ]),
-        module("roomApi")
+        module("roomManager")
             .args([
-                arg("model").ref("room")
+                arg("model").ref("room"),
+                arg("schema").ref("roomSchema")
             ]),
-        module("userApi")
+        module("roomMemberManager")
             .args([
-                arg("model").ref("user")
+                arg("model").ref("roomMember"),
+                arg("schema").ref("roomMemberSchema")
             ]),
+        module("userManager")
+            .args([
+                arg("model").ref("user"),
+                arg("schema").ref("userSchema")
+            ]),
+        //-------------------------------------------------------------------------------
+        // Models
+        //-------------------------------------------------------------------------------
+        module("chatMessage"),
+        module("conversation"),
+        module("dialogue"),
+        module("room"),
+        module("roomMember"),
+        module("user"),
+        //-------------------------------------------------------------------------------
+        // Schemas
+        //-------------------------------------------------------------------------------
+        module("chatMessageSchema"),
+        module("conversationSchema"),
+        module("dialogueSchema"),
+        module("roomMemberSchema"),
+        module("roomSchema"),
+        module("userSchema")
     ])
 );
 

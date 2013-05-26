@@ -33,7 +33,7 @@ var UserService = Class.extend(Obj, {
 
         this._super();
 
-        this.socketIoManager    = socketIoManager;
+        this.socketIoManager    = socketIoManager.getIoManager();
 
         this.userManager        = userManager;
 
@@ -47,18 +47,32 @@ var UserService = Class.extend(Obj, {
      * @param {{
      *      name: string,
      *      email: string
-     * }} data
+     * }} user
      **/
-    establishUser: function(data){
+    establishUser: function(user){
         var _this = this;
-        this.userManager.findOrCreate(data, function(error, user){
+        this.userManager.findOrCreate(user, function(error, user){
             if(!error){
                 currentUser = user;
-                _this.socketIoManager.addEstablishedUserListeners(socket); //make sure this socket is the proper one
+                _this.socketsMap.findBy
             } else {
                 //_this.socketIoManager.emit('unableToEstablishUser')
             }
         });
+    },
+
+    /**
+     * @param {} 
+     */
+    getCurrentUser: function(callback){
+        
+    },
+
+    /**
+     * @param {} 
+     */
+    logoutCurrentUser: function(callback){
+        
     }
 });
 

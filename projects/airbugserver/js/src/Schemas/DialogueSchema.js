@@ -28,7 +28,6 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 //-------------------------------------------------------------------------------
 
 var DialogueSchema = new Schema({
-    name: String,
     conversationId: ObjectId,
     membersList: [ObjectId],
     createdAt: Date,

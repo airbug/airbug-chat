@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('UserManager')
+//@Export('RoomMemberManager')
 
 //@Require('Class')
 //@Require('Obj')
@@ -25,37 +25,38 @@ var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
 var Proxy       = bugpack.require('Proxy');
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserInterface = {
-    establishUser: function(){},
+var RoomMemberInterface = {
+    
 };
 
-// Implementation
-var UserManager = Class.extend(Obj, {
+// Implementation of Room interface for mongoose Model
+var RoomMemberManager = Class.extend(Obj, {
 
     _constructor: function(model, schema){
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
-        // Properties
+        // Dependencies
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model.User}
+         * @type {mongoose.Model.Room}
          */
-        this.model = model;
+        this.model  = model;
 
-        /**
-         * @type {mongoose.Schema.UserSchema}
-         */
         this.schema = schema;
 
         Proxy.proxy(this, this.model, [
-            'findById'
+            'find',
+            'findById',
+            'populate'
         ]);
 
         Proxy.proxy(this, this.schema, [
@@ -63,11 +64,11 @@ var UserManager = Class.extend(Obj, {
             'post',
             'virtual'
         ]);
+
     },
 
-
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
@@ -94,52 +95,13 @@ var UserManager = Class.extend(Obj, {
         return this.schema;
     },
 
-    /*
-     * @param {string} attribute
-     * @param {function(value) | function(value, response)} validationFunction
-     * @param {string} errorMessage
-     **/
-    validate: function(attribute, validationFunction, errorMessage){
-        this.schema.path(attribute).validate(validationFunction, errorMessage);
-    },
-
-    /*
-     * @param {{
-     *      name: string,
-     *      email: string
-     * }} user
-     * @param {function(Error, User)} callback
-     **/
-    findOrCreate: function(user, callback){
-        if(!callback || typeof callback !== 'function'){
-            callback = function(){};
-        }
-
-        var _this       = this;
-        var User        = this.model;
-        var userObj     = user;
-        var conditions  = {email: userObj.email};
-        var fields      = null;
-        var options     = {lean: false};
-
-        // User.findOneAndUpdate(query, update, options, otherCallback); //cannot use pre post hooks with this method
-        User.findOne(conditions, fields, options, function(error, user){
-            if(error){
-                callback(error);
-            } else {
-                if(!user){
-                    User.create(userObj, callback);
-                } else {
-                    callback(null, user);
-                }
-            }
-        });
+    create: function(roomMember, callback){
+        this.model.create(roomMember, callback);
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserManager', UserManager);
+bugpack.export('airbugserver.RoomMemberManager', RoomMemberManager);

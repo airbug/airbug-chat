@@ -52,24 +52,24 @@ var RoomService = Class.extend(Obj, {
     /*
      * @param {Room} room
      **/
-    create: function(currentUser, room){
+    create: function(currentUser, room, callback){
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
             if(!error && room){
-                _this.addUserToRoom(currentUser, room.id);
+                _this.addUserToRoom(currentUser.id, room.id);
             }
         });
     },
 
-    addUserToRoom: function(user, roomId){
+    addUserToRoom: function(userId, roomId, callback){
         this.roomManager.addUser(roomId, user);
         this.notifyRoomMembers(roomId, "userAddedToRoom", {}, function(){
             
         });
     },
 
-    removeUserFromRoom: function(user, roomId){
-        
+    removeUserFromRoom: function(userId, roomId, callback){
+        this.roomManager.removeUser(roomId, userId);
     },
 
     //-------------------------------------------------------------------------------
@@ -85,18 +85,23 @@ var RoomService = Class.extend(Obj, {
      **/
     notifyRoomMembers: function(roomId, eventName, data, callback){
         var socketsMap  = this.socketsMap;
-        var room        = this.roomManager.findById(roomId);
-        var roomMembers = room.membersList;
         var userManager = this.userManager;
+        this.roomManager.findById(roomId, function(error, room){
+            var roomMembers = room.membersList;
+            //populate
+            roomMembers.forEach(function(roomMember){
+                var userId  = roomMember.userId;
+                userManager.findById(userId, function(error, user){
 
-        roomMembers.forEach(function(roomMember){
-            var userId  = roomMember.userId;
-            var user    = userManager.findById(userId);
-            sockets = socketsMap.findSocketsByUser(user);
-            sockets.forEach(function(socket){
-                socket.emit(eventName, data);
+                });
+                sockets = socketsMap.findSocketsByUser(user);
+                sockets.forEach(function(socket){
+                    socket.emit(eventName, data);
+                });
             });
         });
+
+        
 
         callback();
     }

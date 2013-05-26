@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var Proxy		= bugpack.require('Proxy');
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -30,17 +32,28 @@ var Obj         = bugpack.require('Obj');
 
 var ChatMessageManager = Class.extend(Obj, {
 
-    _constructor: function(model){
+    _constructor: function(model, schema){
 
         this._super();
 
-        this.model = model;
+        this.model 	= model;
+
+        this.schema = schema;
 
     },
 
+    configure: function(callback){
+        if(!callback || typeof callback !== 'function'){
+            callback = function(){};
+        }
+        callback();
+    },
+
     create: function(message, callback){
-        var newChatMessage = this.model.create(message, callback);
-        // RoomApi.sendMessage(newChatMessage);
+    	if(!callback || typeof callback !== 'function'){
+            callback = function(){};
+        }
+        this.model.create(message, callback);
     }
 });
 

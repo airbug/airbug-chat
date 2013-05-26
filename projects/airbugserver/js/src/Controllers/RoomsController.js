@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -20,8 +22,17 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -30,11 +41,15 @@ var Obj                     = bugpack.require('Obj');
 
 var RoomsController = Class.extend(Obj, {
 
-    _constructor: function(roomService){
+    _constructor: function(socketIoManager, roomService){
 
         this._super();
 
-        this.roomService = roomService;
+        this.roomService        = roomService;
+
+        this.socketIoManager    = socketIoManager;
+
+        this.ioManager          = null;
 
     },
 
@@ -43,46 +58,48 @@ var RoomsController = Class.extend(Obj, {
     // Methods
     //-------------------------------------------------------------------------------
 
-    // configure: function(){
-    //     
-    // },
+    configure: function(callback){
+        var _this       = this;
+        var callback    = callback || function(){};
+        var ioManager   = this.socketIoManager.getIoManager();
+        this.socketRoutesManager = new RoutesManager(ioManager);
+        this.socketRoutesManager.addAll([
+            new SocketRoute("addUserToRoom", function(params){
+                
+            }),
+            new SocketRoute("createRoom", function(params){
+                var room;
+                if(currentUser){
+                    _this.roomService.create(room)
+                }
+            }),
+            new SocketRoute("joinRoom", function(params){
+                if(currentUser){
+                    var roomId = params.roomId || params.room.id;
+                    _this.roomService.addUserToRoom(currentUser, roomId);
+                }
+            }),
+            new SocketRoute("leaveRoom", function(params){
+                if(currentUser){
+                    _this.roomService.removeUserFromRoom(currentUser, roomId);
+                }
+            })
+        ]);
 
+        callback();
 
-    /*
-     * @param {} params
-     **/
-     createRoom: function(params){
-         if(currentUser){
-             this.roomService.create(params)
-         }
-     },
-
-     /*
-      * @param {} params
-      **/
-     joinRoom: function(params){
-         if(currentUser){
-             var roomId = params.roomId || params.room.id;
-             this.roomService.addUserToRoom(currentUser, roomId);
-         }
-     },
-
-     /*
-      * @param {} params
-      **/
-     leaveRoom: function(params){
-         if(currentUser){
-             var roomId = params.roomId || params.room.id;
-             this.roomService.removeUserFromRoom(currentUser, roomId);
-         }
-     },
+    },
      
      //-------------------------------------------------------------------------------
      // Private Methods
      //-------------------------------------------------------------------------------
 
-     pre: function(){
+     pre: function(params, callback){
+        if(currentUser){
+            callback();
+        } else {
 
+        }
      }
 });
 
