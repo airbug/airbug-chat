@@ -83,9 +83,8 @@ var RoomManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
-        if(!callback || typeof callback !== 'function'){
-            callback = function(){};
-        }
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
 
         this.pre('save', function (next){
             if (!this.createdAt) this.createdAt = new Date();

@@ -40,14 +40,23 @@ var $task                   = BugFlow.$task;
 
 var UsersController = Class.extend(Obj, {
 
-    _constructor: function(socketIoManager, userService){
+    _constructor: function(socketRoutesManager, socketIoManager, userService){
 
         this._super();
 
-        this.socketIoManager        = socketIoManager;
+        /**
+         * @type {SocketRoutesManager}
+         */
+        this.socketRoutesManager    = socketRoutesManager;
 
-        this.socketRoutesManager    = null;
+        /**
+         * @type {SocketIoManager}
+         */
+        this.socketIoManager        = socketIoManager; //Necessary??
 
+        /**
+         * @type {UserService}
+         */
         this.userService            = userService;
 
     },
@@ -58,22 +67,24 @@ var UsersController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
-        var _this       = this;
-        var callback    = callback || function(){};
-        var ioManager   = this.socketIoManager.getIoManager();
-        this.socketRoutesManager = new RoutesManager(ioManager);
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
+        var _this               = this;
+        var ioManager           = this.socketIoManager.getIoManager();
+        var socketRoutesManager = this.socketRoutesManager;
         this.socketRoutesManager.addAll([
-            new SocketRoute("establishUser", function(params){
+
+            new SocketRoute("establishUser", function(socket, data){
                 var user = {
-                    email: params.user.email,
-                    name: params.user.name
+                    email: data.user.email,
+                    name: data.user.name
                 };
-                _this.userService.establishUser(user);
+                _this.userService.establishUser(user, socket);
             }),
-            new SocketRoute("getCurrentUser", function(params){
+            new SocketRoute("getCurrentUser", function(socket, data){
 
             }),
-            new SocketRoute("logoutCurrentUser", function(params){
+            new SocketRoute("logoutCurrentUser", function(socket, data){
 
             })
         ]);

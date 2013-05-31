@@ -40,9 +40,9 @@ var AlphaPagesController = Class.extend(Obj, {
     },
 
     configure: function(){
-        
-        this.expressRoutesManager.addAll([
-
+        var expressRoutesManager = this.expressRoutesManager;
+        expressRoutesManager.addAll([
+            /** @param {string} method @param {string} routeName, @param {function(req, res)} listener */
             new ExpressRoute('get', '/alpha', function(req, res){
                 res.render('alpha', {
                     title: 'airbug',
@@ -50,6 +50,8 @@ var AlphaPagesController = Class.extend(Obj, {
                 });
             })
         ]);
+
+        expressRoutesManager.enableAll();
     }
 });
 

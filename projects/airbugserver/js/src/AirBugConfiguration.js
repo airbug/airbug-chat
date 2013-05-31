@@ -17,13 +17,13 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugroutes.ExpressRoutesManager')
+//@Require('bugroutes.SocketRoutesManager')
 
 //@Require('airbugserver.AirBugServer')
 //@Require('airbugserver.ExpressApp')
 //@Require('airbugserver.ExpressServer')
-//@Require('airbugserver.ExpressRoutes')
 //@Require('airbugserver.SocketIoManager')
-//@Require('airbugserver.SocketRoutes')
 //@Require('airbugserver.SocketsMap')
 
 //@Require('airbugserver.AlphaPagesController')
@@ -77,16 +77,15 @@ var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var RoutesManager           = bugpack.require('bugroutes.RoutesManager');
+var ExpressRoutesManager    = bugpack.require('bugroutes.ExpressRoutesManager');
+var SocketRoutesManager     = bugpack.require('bugroutes.SocketRoutesManager');
 
 var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
 var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
 var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
-var ExpressRoutes           = bugpack.require('airbugserver.ExpressRoutes');
 var SocketIoManager         = bugpack.require('airbugserver.SocketIoManager');
 var SocketIoServer          = bugpack.require('airbugserver.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('airbugserver.SocketIoServerConfig');
-var SocketRoutes            = bugpack.require('airbugserver.SocketRoutes');
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
 var AlphaPagesController    = bugpack.require('airbugserver.AlphaPagesController');
@@ -164,6 +163,12 @@ var AirBugConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {ChatMessageManager}
+         */
+        this._chatMessageManager    = null;
+
+        /**
+         * @private
          * @type {{
          *      port: number,
          *      mongoDbIp: string
@@ -177,6 +182,12 @@ var AirBugConfiguration = Class.extend(Obj, {
         this._configFilePath        = path.resolve(__dirname, '../config.json');
 
         /**
+         * @private
+         * @type {ConversationManager}
+         */
+        this._conversationManager   = null;
+
+        /**
          * @type {ExpressApp}
          */
         this._expressApp            = null;
@@ -187,6 +198,18 @@ var AirBugConfiguration = Class.extend(Obj, {
         this._expressServer         = null;
 
         /**
+         * @private
+         * @type {RoomManager}
+         */
+        this._roomManager           = null;
+
+        /**
+         * @private
+         * @type {RoomMemberManager}
+         */
+        this._roomMemberManager     = null;
+
+        /**
          * @type {RoomsController}
          */
         this._roomsController       = null;
@@ -195,6 +218,18 @@ var AirBugConfiguration = Class.extend(Obj, {
          * @type {SocketIoManager}
          */
         this._socketIoManager       = null;
+
+        /**
+         * @private
+         * @type {SocketRoutesManager}
+         */
+        this._socketRoutesManager   = null;
+
+        /**
+         * @private
+         * @type {UserManager}
+         */
+        this._userManager           = null;
 
         /**
          * @type {UsersController}
@@ -254,6 +289,15 @@ var AirBugConfiguration = Class.extend(Obj, {
             // Services
             //-------------------------------------------------------------------------------
 
+            //-------------------------------------------------------------------------------
+            // RoutesManagers
+            //-------------------------------------------------------------------------------
+            $task(function(flow){
+                _this._socketRoutesManager.initialize(function(error){
+                    if(!error) console.log("socketRoutesManager initialized");
+                    flow.complete(error);
+                });
+            })
             //-------------------------------------------------------------------------------
             // Controllers
             //-------------------------------------------------------------------------------
@@ -445,7 +489,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @return {RoutesManager}
      */
     expressRoutesManager: function(app, routes){
-        return new RoutesManager(app, routes);
+        return new ExpressRoutesManager(app, routes);
     },
 
     /**
@@ -510,8 +554,8 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {}
      * @return {RoomsController}
      */
-    roomsController: function(socketIoManager, roomService){
-        this._roomsController = new RoomsController(socketIoManager, roomService);
+    roomsController: function(socketRoutesManager, socketIoManager, roomService){
+        this._roomsController = new RoomsController(socketRoutesManager, socketIoManager, roomService);
         return this._roomsController;
     },
 
@@ -560,6 +604,11 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new SocketsMap();
     },
 
+    socketRoutesManager: function(ioManager){
+        this._socketRoutesManager = new SocketRoutesManager(ioManager);
+        return this._socketRoutesManager;
+    },
+
     /**
      * @return {User}
      */
@@ -582,8 +631,8 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {}
      * @return {UsersController}
      */
-    usersController: function(socketIoManager, userService){
-        this._usersController = new UsersController(socketIoManager, userService);
+    usersController: function(socketRoutesManager, socketIoManager, userService){
+        this._usersController = new UsersController(socketRoutesManager, socketIoManager, userService);
         return this._usersController;
     },
 
@@ -696,6 +745,10 @@ annotate(AirBugConfiguration).with(
                 arg("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),
+        module("socketRoutesManager")
+            .args([
+                arg("ioManager").ref("alphaSocketIoManager")
+            ]),
         //-------------------------------------------------------------------------------
         // Controllers
         //-------------------------------------------------------------------------------
@@ -705,11 +758,13 @@ annotate(AirBugConfiguration).with(
             ]),
         module("RoomsController")
             .args([
+                arg("socketRoutesManager").ref("socketRoutesManager"),
                 arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("roomService").ref("roomService")
             ]),
         module("UsersController")
             .args([
+                arg("socketRoutesManager").ref("socketRoutesManager"),
                 arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("userService").ref("userService")
             ]),

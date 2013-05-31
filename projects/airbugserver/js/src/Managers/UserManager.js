@@ -71,9 +71,7 @@ var UserManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
-        if(!callback || typeof callback !== 'function'){
-            callback = function(){};
-        }
+        if(!callback || typeof callback !== 'function') var callback = function(){};
 
         this.pre('save', function (next){
             if (!this.createdAt) this.createdAt = new Date();
@@ -111,9 +109,7 @@ var UserManager = Class.extend(Obj, {
      * @param {function(Error, User)} callback
      **/
     findOrCreate: function(user, callback){
-        if(!callback || typeof callback !== 'function'){
-            callback = function(){};
-        }
+        if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this       = this;
         var User        = this.model;

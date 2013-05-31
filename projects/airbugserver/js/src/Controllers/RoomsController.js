@@ -41,15 +41,24 @@ var $task                   = BugFlow.$task;
 
 var RoomsController = Class.extend(Obj, {
 
-    _constructor: function(socketIoManager, roomService){
+    _constructor: function(socketRoutesManager, socketIoManager, roomService){
 
         this._super();
 
-        this.roomService        = roomService;
+        /**
+         * @type {RoomService}
+         */
+        this.roomService            = roomService;
 
-        this.socketIoManager    = socketIoManager;
+        /**
+         * @type {SocketRoutesManager}
+         */
+        this.socketRoutesManager    = socketRoutesManager; 
 
-        this.ioManager          = null;
+        /**
+         * @type {SocketIoManager}
+         */
+        this.socketIoManager        = socketIoManager; //Necessary???
 
     },
 
@@ -59,27 +68,33 @@ var RoomsController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
-        var _this       = this;
-        var callback    = callback || function(){};
-        var ioManager   = this.socketIoManager.getIoManager();
-        this.socketRoutesManager = new RoutesManager(ioManager);
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
+        var _this               = this;
+        var socketRoutesManager = this.socketRoutesManager;
         this.socketRoutesManager.addAll([
-            new SocketRoute("addUserToRoom", function(params){
-                
+
+            new SocketRoute("addUserToRoom", function(socket, data){
+                var currentUser = socket.getUser();
+                if(currentUser){
+
+                }
             }),
-            new SocketRoute("createRoom", function(params){
+            new SocketRoute("createRoom", function(socket, data){
+                var currentUser = socket.getUser();
                 var room;
                 if(currentUser){
-                    _this.roomService.create(room)
+                    _this.roomService.create(currentUser, room, callback);
                 }
             }),
-            new SocketRoute("joinRoom", function(params){
+            new SocketRoute("joinRoom", function(socket, data){
                 if(currentUser){
+                    var userId = currentUser.id;
                     var roomId = params.roomId || params.room.id;
-                    _this.roomService.addUserToRoom(currentUser, roomId);
+                    _this.roomService.addUserToRoom(currentUser.id, roomId);
                 }
             }),
-            new SocketRoute("leaveRoom", function(params){
+            new SocketRoute("leaveRoom", function(socket, data){
                 if(currentUser){
                     _this.roomService.removeUserFromRoom(currentUser, roomId);
                 }
@@ -95,6 +110,8 @@ var RoomsController = Class.extend(Obj, {
      //-------------------------------------------------------------------------------
 
      pre: function(params, callback){
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
         if(currentUser){
             callback();
         } else {

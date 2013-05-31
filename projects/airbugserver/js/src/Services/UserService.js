@@ -48,13 +48,14 @@ var UserService = Class.extend(Obj, {
      *      name: string,
      *      email: string
      * }} user
+     * @param {SocketIoConnection} socket
      **/
-    establishUser: function(user){
+    establishUser: function(user, socket){
         var _this = this;
         this.userManager.findOrCreate(user, function(error, user){
             if(!error){
                 currentUser = user;
-                _this.socketsMap.findBy
+                _this.socketsMap.associateUserWithSocket({user: user, socket: socket});
             } else {
                 //_this.socketIoManager.emit('unableToEstablishUser')
             }

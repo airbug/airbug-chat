@@ -45,22 +45,13 @@ var SocketsMap = Class.extend(Obj, {
         // Variables
         //-------------------------------------------------------------------------------
 
-        this.userToSessionsMap = null;
+        this.sessionToSocketsMap    = new Map(); // session => sockets // has many
 
-        this.sessionToUserMap = null;
+        this.sessionToUserMap       = new Map(); // session => user // has one
 
-        this.sessionToSocketsMap = null;
-    },
+        this.userToSessionsMap      = new Map(); // user => sessions // has many
 
-    initialize: function(){
-
-        this.userToSessionsMap = new Map(); // user => sessions // has many
-
-        this.sessionToSocketsMap = new Map(); // session => sockets // has many
-
-        this.sessionToUserMap = new Map(); // session => user // has one
-
-        return this;
+        this.socketToUserMap        = new Map(); // socket => user // has one
 
     },
 
@@ -78,24 +69,27 @@ var SocketsMap = Class.extend(Obj, {
     associateUserSessionAndSocket: function(params){
         this.associateSocketWithSession(params);
         this.associateUserWithSession(params);
+        this.associateUserWithSocket(params);
     },
 
     /*
      * @param {{
      *      session: {*},
-     *      socket: Socket
+     *      socket: {*}
      * }} params
      **/
     associateSocketWithSession: function(params){
         var session     = params.session;
         var socket      = params.socket;
-        if(!this.findSocketsBySession(session)){
-            var sockets = [socket];
-            this.sessionToSocketsMap.put(session, sockets);
-        } else {
-            var socketsSet = this.sessionToSocketsMap.get(session);
-            socketsSet.push(socket);
-            this.sessionToSocketsMap.put(session, sockets);
+        if(session && socket){
+            if(!this.findSocketsBySession(session)){
+                var sockets = [socket];
+                this.sessionToSocketsMap.put(session, sockets);
+            } else {
+                var socketsSet = this.sessionToSocketsMap.get(session);
+                socketsSet.push(socket);
+                this.sessionToSocketsMap.put(session, sockets);
+            }
         }
     },
 
@@ -108,6 +102,10 @@ var SocketsMap = Class.extend(Obj, {
     associateUserWithSession: function(params){
         this.addUserToSessions(params);
         this.addSessionToUser(params);
+    },
+
+    associateUserWithSocket: function(params){
+        this.addUserToSocket(params);
     },
 
     /*
@@ -154,6 +152,7 @@ var SocketsMap = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Private Instance Methods
     //-------------------------------------------------------------------------------
+
     /*
      * @private
      * @param {{
@@ -164,13 +163,33 @@ var SocketsMap = Class.extend(Obj, {
     addUserToSessions: function(params){ // a user can have more than one session if they login on different computers
         var user      = params.user;
         var session   = params.session;
-        if(!this.userToSessionsMap.get(user)){
-            var sessions = [session];
-            this.userToSessionsMap.put(user, sessions);
-        } else {
-            var sessions = this.userToSessionsMap.get(user);
-            sessions.push(session);
-            this.userToSessionsMap.put(user, sessions);
+        if(user && session){
+            if(!this.userToSessionsMap.get(user)){
+                var sessions = [session];
+                this.userToSessionsMap.put(user, sessions);
+            } else {
+                var sessions = this.userToSessionsMap.get(user);
+                sessions.push(session);
+                this.userToSessionsMap.put(user, sessions);
+            }
+        }
+    },
+
+    /*
+     * @private
+     * @param {{
+     *      user: {mongoose.model.User},
+     *      socket: {*}
+     * }} params
+     **/
+    addUserToSocket: function(params){
+        var user = params.user;
+        var socket = params.socket;
+        if(user && socket){
+            socket.setUser(user);
+            if(!this.socketToUserMap.get(socket)){
+                this.socketToUserMap.put(socket, user);
+            }
         }
     },
 
@@ -184,8 +203,10 @@ var SocketsMap = Class.extend(Obj, {
     addSessionToUser: function(params){ //a session has only one user
         var user      = params.user;
         var session   = params.session;
-        if(!this.sessionToUserMap.get(session)){
-            this.sessionToUserMap.put(session, user);
+        if(user && session){
+            if(!this.sessionToUserMap.get(session)){
+                this.sessionToUserMap.put(session, user);
+            }
         }
     }
 
@@ -195,7 +216,7 @@ var SocketsMap = Class.extend(Obj, {
     //    * @param {*} params
     //    */
     // , mapFromThisToThat: function(fromThis, toThat, params){
-    //     var map = this.[fromThis + toThat + "Map"];
+    //     var map = this.[fromThis + "To" + toThat.capitalize() + "Map"];
     //     
     //     if(!map.get(params[fromThis])){
     //         arr = [];

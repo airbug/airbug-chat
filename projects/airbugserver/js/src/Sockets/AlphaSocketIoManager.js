@@ -4,11 +4,13 @@
 
 //@Package('airbugserver')
 
-//@Export('SocketIoManager')
+//@Export('AlphaSocketIoManager')
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Proxy')
+//@Require('socketio::server.')
 
 
 //-------------------------------------------------------------------------------
@@ -26,18 +28,15 @@ var io          = require('socket.io');
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
-var SocketsMap          = bugpack.require('airbugserver.SocketsMap');
+var Proxy               = bugpack.require("Proxy");
+var SocketIoManager     = bugpack.require("socketio::server.SocketIoManager");
 
-var ChatMessagesApi     = bugpack.require('airbugserver.ChatMessagesApi');
-var ConversationsApi    = bugpack.require('airbugserver.ConversationsApi');
-var RoomsApi            = bugpack.require('airbugserver.RoomsApi');
-var UsersApi            = bugpack.require('airbugserver.UsersApi');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AlphaSocketsIoManager = Class.extend(SocketsIoManager, {
+var AlphaSocketIoManager = Class.extend(Obj, {
 
     _constructor: function(socketIoServer, namespace, socketsMap) {
 
@@ -70,12 +69,48 @@ var AlphaSocketsIoManager = Class.extend(SocketsIoManager, {
          * @type {SocketsMap}
          **/
         this.socketsMap                         = socketsMap;
+
+        Proxy.proxy(this, this.socketsMap, [
+            'associateUserSessionAndSocket',
+            'findUserBySession'
+        ])
     },
 
-    enableSockets: function(cookieParser, sessionStore, sessionKey, callback){
-        var callback            = callback || function(){};
+
+    /**
+     * @override
+     * @param {function(Error)} callback
+     */
+    initialize: function(callback) {
+        var _this = this;
+        this.ioManager.on("connection", function(socket) {
+            console.log("Connection established") //For Debugging
+            console.log("session:", socket.handshake.session); //For Debugging
+
+            var socketConnection = new SocketIoConnection(socket);
+            var session = socket.handshake.session;
+            // var cookie = socket.handshake.headers.cookie;
+            var currentUser = _this.findUserBySession(session);
+            _this.associateUserSessionAndSocket({user: currentUser, session: session, socket: socket});
+
+            socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
+            _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
+            _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
+                socket: socketConnection
+            }));
+        });
+
+        callback();
+    },
+
+    /**
+     * @param {} cookieParser
+     * @param {} sessionStore
+     * @param {} sessionKey
+     */
+    configure: function(cookieParser, sessionStore, sessionKey, callback){
         var socketsMap          = this.socketsMap;
-        var alphaSocketManager  = this.ioManager;
+        var alphaSocketsManager = this.ioManager;
 
         alphaSocketManager.manager.set('authorization', function(data, callback){
             cookieParser(data, {}, function(error) {
@@ -94,24 +129,7 @@ var AlphaSocketsIoManager = Class.extend(SocketsIoManager, {
             });
         });
 
-        alphaSocketManager.on('connection', function(socket){
-            console.log("Connection established")
-            console.log("session:", socket.handshake.session);
-            var session = socket.handshake.session;
-            // var cookie = socket.handshake.headers.cookie;
-            var currentUser = sessionToUserMap.get(session);
-            SocketsMap.associateSocketWithSession({session: session, socket: socket});
-
-            GlobalSocketRoutes.enableAll(null, socket);
-
-        });
-        
-        console.log("socketIoManager:", socketIoManager);
-        console.log("alphaSocketManager:", alphaSocketManager);
-    },
-
-    addEstablishedUserListeners: function(socket){
-        EstablishedUserRoutes.enableAll(null, socket);
+        callback();
     }
 });
 
@@ -120,4 +138,4 @@ var AlphaSocketsIoManager = Class.extend(SocketsIoManager, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.SocketIoManager', SocketIoManager);
+bugpack.export('airbugserver.AlphaSocketIoManager', AlphaSocketIoManager);
