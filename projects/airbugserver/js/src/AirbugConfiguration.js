@@ -64,6 +64,7 @@ var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
 var express                 = require('express');
 var mongoose                = require('mongoose');
+var mu2express              = require("mu2express");
 var path                    = require('path');
 
 
@@ -244,7 +245,7 @@ var AirbugConfiguration = Class.extend(Obj, {
     /**
      *
      */
-    initializeConfiguration: function() {
+    initializeConfiguration: function(callback) {
         var _this = this;
         console.log("Initializing AirbugConfiguration");
 
@@ -253,7 +254,7 @@ var AirbugConfiguration = Class.extend(Obj, {
         var sessionKey = 'express.sid';
 
         this._expressApp.configure(function(){
-            _this._expressApp.engine('mustache', mu2Express.engine);
+            _this._expressApp.engine('mustache', mu2express.engine);
             _this._expressApp.set('view engine', 'mustache');
             _this._expressApp.set('views', path.resolve(__dirname, '../resources/views'));
 
@@ -403,13 +404,7 @@ var AirbugConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute(function(error){
-            if (!error) {
-                console.log("AirbugConfiguration successfully initialized.")
-            } else {
-                console.log(error);
-            }
-        });
+        ]).execute(callback);
     },
 
     /**
@@ -625,10 +620,11 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SocketIoServer} socketIoServer
      * @return {SocketIoManager}
      */
-    socketIoManager: function() {
-        return new SocketIoManager();
+    socketIoManager: function(socketIoServer) {
+        return new SocketIoManager(socketIoServer, "/socket");
     },
 
     /**
@@ -690,7 +686,6 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
 
-
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
@@ -714,8 +709,8 @@ var AirbugConfiguration = Class.extend(Obj, {
             try {
                 config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
             } catch(error) {
-                    console.log(configPath, "could not be parsed. Invalid JSON.");
-                    return defaults;
+                console.log(configPath, "could not be parsed. Invalid JSON.");
+                return defaults;
             } finally {
                 return config;
             }
@@ -782,7 +777,10 @@ annotate(AirbugConfiguration).with(
                 arg("expressServer").ref("expressServer")
             ]),
         module("socketIoServerConfig"),
-        module("socketIoManager"),
+        module("socketIoManager")
+            .args([
+                arg("socketIoServer").ref("socketIoServer")
+            ]),
         module("alphaSocketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer"),
@@ -806,13 +804,11 @@ annotate(AirbugConfiguration).with(
         module("roomController")
             .args([
                 arg("socketRouter").ref("socketRouter"),
-                arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("roomService").ref("roomService")
             ]),
         module("userController")
             .args([
                 arg("socketRouter").ref("socketRouter"),
-                arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("userService").ref("userService")
             ]),
 

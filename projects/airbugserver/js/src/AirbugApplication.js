@@ -62,8 +62,8 @@ var AirbugApplication = Class.extend(Obj, {
     /**
      *
      */
-    start: function() {
-        this.configurationScan.scan();
+    start: function(callback) {
+        this.configurationScan.scan(callback);
     }
 });
 
