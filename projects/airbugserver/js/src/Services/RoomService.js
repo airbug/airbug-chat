@@ -55,21 +55,24 @@ var RoomService = Class.extend(Obj, {
     create: function(currentUser, room, callback){
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
-            if(!error && room){
-                _this.addUserToRoom(currentUser.id, room.id);
+            if(!error){
+                _this.addUserToRoom(currentUser.id, room.id, callback);
+            } else {
+                callback(error);
             }
         });
     },
 
     addUserToRoom: function(userId, roomId, callback){
         this.roomManager.addUser(roomId, user);
+        // callback();
         this.notifyRoomMembers(roomId, "userAddedToRoom", {}, function(){
             
         });
     },
 
     removeUserFromRoom: function(userId, roomId, callback){
-        this.roomManager.removeUser(roomId, userId);
+        this.roomManager.removeUser(roomId, userId, callback);
     },
 
     //-------------------------------------------------------------------------------

@@ -44,7 +44,7 @@ var addUserToSessionsTest = {
     //-------------------------------------------------------------------------------
     setup: function(){
         var _this = this;
-        this.socketsMap = new SocketsMap().initialize();
+        this.socketsMap     = new SocketsMap().initialize();
         this.socket         = {id: "socketIdX"};
         this.session        = {id: "sessionIdX"};
         this.user           = {id: "userIdX"};

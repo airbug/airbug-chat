@@ -10,6 +10,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('annotate.Annotate')
+//@Require('bugcall.BugCallServer')
+//@Require('bugcall.CallManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
@@ -72,6 +74,8 @@ var path                    = require('path');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var Annotate                = bugpack.require('annotate.Annotate');
+var BugCallServer           = bugpack.require('bugcall.BugCallServer');
+var CallManager             = bugpack.require('bugcall.CallManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugFs                   = bugpack.require('bugfs.BugFs');
 var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');

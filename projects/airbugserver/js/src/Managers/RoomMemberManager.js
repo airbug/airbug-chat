@@ -47,10 +47,13 @@ var RoomMemberManager = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model.Room}
+         * @type {mongoose.Model}
          */
         this.model  = model;
 
+        /**
+         * @type {mongoose.Schema}
+         */
         this.schema = schema;
 
         Proxy.proxy(this, this.model, [
@@ -96,6 +99,14 @@ var RoomMemberManager = Class.extend(Obj, {
 
     create: function(roomMember, callback){
         this.model.create(roomMember, callback);
+    },
+
+    findAndRemoveById: function(roomMemberId, callback){
+        this.findById(roomMemberId, function(error, roomMember){
+            if(!error){
+                
+            }
+        })
     }
 });
 

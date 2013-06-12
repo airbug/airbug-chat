@@ -45,12 +45,12 @@ var UserManager = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model.User}
+         * @type {mongoose.Model}
          */
         this.model = model;
 
         /**
-         * @type {mongoose.Schema.UserSchema}
+         * @type {mongoose.Schema}
          */
         this.schema = schema;
 
@@ -67,7 +67,7 @@ var UserManager = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     configure: function(callback){
@@ -93,6 +93,7 @@ var UserManager = Class.extend(Obj, {
     },
 
     /*
+     * @private
      * @param {string} attribute
      * @param {function(value) | function(value, response)} validationFunction
      * @param {string} errorMessage
@@ -118,7 +119,6 @@ var UserManager = Class.extend(Obj, {
         var fields      = null;
         var options     = {lean: false};
 
-        // User.findOneAndUpdate(query, update, options, otherCallback); //cannot use pre post hooks with this method
         User.findOne(conditions, fields, options, function(error, user){
             if(error){
                 callback(error);

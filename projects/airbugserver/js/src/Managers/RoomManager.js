@@ -57,12 +57,18 @@ var RoomManager = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model.Room}
+         * @type {mongoose.Model}
          */
         this.model  = model;
 
+        /**
+         * @type {mongoose.Schema}
+         */
         this.schema = schema;
 
+        /**
+         * @type {airbugserver.RoomMemberManager}
+         */
         this.roomMemberManager = roomMemberManager;
 
         Proxy.proxy(this, this.model, [
@@ -147,15 +153,43 @@ var RoomManager = Class.extend(Obj, {
         var _this = this;
         this.model.findById(roomId, function(error, room){
             if(!error){
-                _this.RoomMemberManager.create({userId: userId}, function(){
-
+                _this.roomMemberManager.create({userId: userId}, function(error, roomMember){
+                    if(!error && roomMember){
+                        room.membersList.push(roomMember);
+                        room.save(callback);
+                    } else {
+                        callback(error);
+                    }
                 });
-                room.membersList.push(roomMember);
-                room.save(callback);
             } else {
                 callback(error);
             }
         })
+    },
+
+    /**
+     * @param {} roomId
+     * @param {} userId
+     * @param {function(error, room)} callback
+     */
+    removeRoomMember: function(roomId, roomMemberId, callback){
+        var _this = this;
+        var room;
+        var roomMemberId;
+        $series([
+            $task(function(flow){
+                _this.model.findById(roomId, function(error, returnedRoom){
+                    if(!error) room = returnedRoom;
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                room.membersList.remove(roomMemberId);
+                room.save(function(error, room){
+                    flow.complete(error);
+                });
+            })
+        ]).execute(callback);
     },
 
     /**
@@ -166,57 +200,37 @@ var RoomManager = Class.extend(Obj, {
     removeUser: function(roomId, userId, callback){
         var _this = this;
         var room;
+        var roomMember;
         var roomMemberId;
         $series([
             $parallel([
                 $task(function(flow){
                     _this.model.findById(roomId, function(error, returnedRoom){
-                        if(!error) room = returnedRoom;
+                        if(!error && room) room = returnedRoom;
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
                     _this.roomMemberManager.find({roomId: roomId, userId: userId}, function(error, roomMember){
-                        if(!error) roomMemberId = roomMember.id;
-                        flow.complete(error);
+                        if(!error && roomMember) {
+                            roomMember.remove(function(error, product){
+                                flow.complete(error);
+                            })
+                        } else {
+                            flow.complete(error);
+                        }
                     });
                 })
             ]),
-            $task(function(flow){
-                room.membersList.remove(roomMemberId);
-                room.save(function(error, room){
-                    flow.complete(error);
-                });
-            })
-            // $task(function(flow){
-            //     var opts = {path: 'roomMember', model: 'RoomMember' , select: "userId"};
-                // _this.roomMemberManager.populate(room, opts, function(error, returnedRoom){
-                //     if(!error) room = returnedRoom;
-                //     flow.complete(error);
-                // });
-            // }),
-            // %task(function(flow){
-            //     room.membersList.remove({userId, userId});
-            //     room.save(function(error, room){
-            //         flow.complete(error);
-            //     })
-            // })
+            $parallel([
+                $task(function(flow){
+                    room.membersList.remove(roomMemberId);
+                    room.save(function(error, room){
+                        flow.complete(error);
+                    });
+                })
+            ])
         ]).execute(callback);
-        // this.model.findById(roomId, function(error, room){
-        //     if(!error){
-        //         var opts = {path: 'roomMember', model: 'RoomMember' , select: "userId"};
-        //         _this.roomMemberManager.populate(room, opts, function(error, room){
-        //             if(!error){
-        //                 room.membersList.remove({userId: userId}); // Test this
-        //                 room.save(callback);
-        //             } else {
-        //                 callback(error);
-        //             }
-        //         });
-        //     } else {
-        //         callback(error);
-        //     }
-        // });
     }
 });
 

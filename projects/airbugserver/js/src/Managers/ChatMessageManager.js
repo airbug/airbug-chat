@@ -37,8 +37,14 @@ var ChatMessageManager = Class.extend(Obj, {
 
         this._super();
 
+        /**
+         * @type {mongoose.Model}
+         */
         this.model 	= model;
 
+        /**
+         * @type {mongoose.Schema}
+         */
         this.schema = schema;
 
     },

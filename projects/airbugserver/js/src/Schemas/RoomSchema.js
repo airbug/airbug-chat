@@ -6,6 +6,7 @@
 
 //@Export('RoomSchema')
 
+//@Require('airbugserver.RoomMemberSchema')
 
 //-------------------------------------------------------------------------------
 // Common Modules
