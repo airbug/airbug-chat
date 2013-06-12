@@ -9,7 +9,6 @@ bugpackApi.loadContext("", function(error, bugpack) {
 
         application.start();
     } else {
-        console.log(error);
-        //TODO BRN: Handle error
+        console.error(error);
     }
 });

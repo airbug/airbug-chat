@@ -24,7 +24,7 @@ var AirbugApplication = bugpack.require('airbugserver.AirbugApplication');
 //-------------------------------------------------------------------------------
 
 var airbugApplication = new AirbugApplication();
-airbugApplication.start(function(error){
+airbugApplication.start(function(error) {
     console.log("Starting airbug server...");
     if (!error){
         console.log("Airbug server successfully started");

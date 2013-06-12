@@ -65,7 +65,7 @@ var HomePageController = Class.extend(Obj, {
     /**
      *
      */
-    configure: function() {
+    configure: function(callback) {
         var _this = this;
         this.expressApp.get('/home', function(req, res) {
             res.render('home', {
@@ -73,6 +73,7 @@ var HomePageController = Class.extend(Obj, {
                 production: _this.config.production
             });
         });
+        callback();
     }
 });
 

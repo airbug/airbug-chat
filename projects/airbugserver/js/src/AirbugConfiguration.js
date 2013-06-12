@@ -176,6 +176,7 @@ var AirbugConfiguration = Class.extend(Obj, {
         this._config                = null;
 
         /**
+         * @private
          * @type {string}
          */
         this._configFilePath        = path.resolve(__dirname, '../config.json');
@@ -187,14 +188,22 @@ var AirbugConfiguration = Class.extend(Obj, {
         this._conversationManager   = null;
 
         /**
+         * @private
          * @type {ExpressApp}
          */
         this._expressApp            = null;
 
         /**
+         * @private
          * @type {ExpressServer}
          */
         this._expressServer         = null;
+
+        /**
+         * @private
+         * @type {HomePageController}
+         */
+        this._homePageController =  null;
 
         /**
          * @private
@@ -209,6 +218,7 @@ var AirbugConfiguration = Class.extend(Obj, {
         this._roomMemberManager     = null;
 
         /**
+         * @private
          * @type {RoomController}
          */
         this._roomController       = null;
@@ -231,6 +241,7 @@ var AirbugConfiguration = Class.extend(Obj, {
         this._userManager           = null;
 
         /**
+         * @private
          * @type {UserController}
          */
         this._userController       = null;
@@ -269,7 +280,7 @@ var AirbugConfiguration = Class.extend(Obj, {
             _this._expressApp.use(express.bodyParser());
             _this._expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
             _this._expressApp.use(express.static(path.resolve(__dirname, '../static')));
-            _this._expressApp.use(_this._expressApp.router);
+            _this._expressApp.use(_this._expressApp.getApp().router);
         });
 
         this._expressApp.configure('development', function() {
@@ -285,7 +296,7 @@ var AirbugConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
 
             $parallel([
-                $task(function(flow){
+                $task(function(flow) {
                     _this._chatMessageManager.configure(function(error) {
                         if (!error) {
                             console.log("chatMessageManager configured");
@@ -293,7 +304,7 @@ var AirbugConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     });
                 }),
-                $task(function(error){
+                $task(function(flow) {
                     _this._conversationManager.configure(function(error) {
                         if (!error) {
                             console.log("conversationManager configured");
@@ -301,7 +312,7 @@ var AirbugConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     });
                 }),
-                $task(function(flow){
+                $task(function(flow) {
                     _this._roomManager.configure(function(error) {
                         if (!error) {
                             console.log("roomManager configured");
@@ -309,7 +320,7 @@ var AirbugConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     });
                 }),
-                $task(function(flow){
+                $task(function(flow) {
                     _this._roomMemberManager.configure(function(error) {
                         if (!error) {
                             console.log("roomMemberManager configured");
@@ -317,7 +328,7 @@ var AirbugConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     });
                 }),
-                $task(function(flow){
+                $task(function(flow) {
                     _this._userManager.configure(function(error) {
                         if (!error) {
                             console.log("userManager configured");
@@ -351,6 +362,14 @@ var AirbugConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
 
             $parallel([
+                $task(function(flow){
+                    _this._homePageController.configure(function(error) {
+                        if (!error) {
+                            console.log("homePageController configured");
+                        }
+                        flow.complete(error);
+                    })
+                }),
                 $task(function(flow){
                     _this._roomController.configure(function(error) {
                         if (!error) {
@@ -405,14 +424,6 @@ var AirbugConfiguration = Class.extend(Obj, {
                 });
             })
         ]).execute(callback);
-    },
-
-    /**
-     * @param {ExpressApp} expressApp
-     * @return {HomePageController}
-     */
-    homePageController: function(expressApp) {
-        return new HomePageController(expressApp);
     },
 
     /**
@@ -518,6 +529,16 @@ var AirbugConfiguration = Class.extend(Obj, {
     expressServer: function(expressApp) {
         this._expressServer = new ExpressServer(expressApp);
         return this._expressServer;
+    },
+
+    /**
+     * @param {Object} config
+     * @param {ExpressApp} expressApp
+     * @return {HomePageController}
+     */
+    homePageController: function(config, expressApp) {
+        this._homePageController = new HomePageController(config, expressApp);
+        return this._homePageController;
     },
 
     /**
@@ -799,7 +820,8 @@ annotate(AirbugConfiguration).with(
 
         module("homePageController")
             .args([
-                arg("expressApp").ref("expressApp"),
+                arg("config").ref("config"),
+                arg("expressApp").ref("expressApp")
             ]),
         module("roomController")
             .args([
