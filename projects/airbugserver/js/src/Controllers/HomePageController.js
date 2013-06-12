@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('ExpressServer')
+//@Export('HomePageController')
 
 //@Require('Class')
 //@Require('Obj')
@@ -15,7 +15,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack     = require('bugpack').context();
-var http        = require('http');
 
 
 //-------------------------------------------------------------------------------
@@ -27,70 +26,53 @@ var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
-// Build App
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var HomePageController = Class.extend(Obj, {
 
-    _constructor: function(expressApp){
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(config, expressApp) {
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
-        // Variables
+        // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /*
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.config = config;
+
+        /**
+         * @private
          * @type {ExpressApp}
-         **/
+         */
         this.expressApp = expressApp;
-
-        /*
-         * @type {}
-         **/
-        this.httpServer = null;
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Class Methods
     //-------------------------------------------------------------------------------
 
-    /*
-     **/
-    start: function(callback) {
-        var callback    = callback || function(){};
-        var app         = this.expressApp.getApp();
-
-        // Create Server
-        //-------------------------------------------------------------------------------
-        this.httpServer = http.createServer(app);
-
-        this.httpServer.listen(app.get('port'), function(){
-            console.log("Express server listening on port " + app.get('port'));
+    /**
+     *
+     */
+    configure: function() {
+        var _this = this;
+        this.expressApp.get('/home', function(req, res) {
+            res.render('home', {
+                title: 'airbug',
+                production: _this.config.production
+            });
         });
-
-        callback();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    //  Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    getHttpServer: function(){
-        return this.httpServer;
-    },
-
-    getCookieParser: function(){
-        return this.expressApp.getCookieParser;
-    },
-    getSessionStore: function(){
-        return this.expressApp.getSessionStore;
-    },
-    getSessionKey: function(){
-        return this.expressApp.getSessionKey;
     }
 });
 
@@ -98,4 +80,4 @@ var ExpressServer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ExpressServer', ExpressServer);
+bugpack.export('airbugserver.HomePageController', HomePageController);

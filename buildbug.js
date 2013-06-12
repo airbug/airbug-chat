@@ -55,14 +55,17 @@ buildProperties({
         },
         sourcePaths: [
             "./projects/airbugserver/js/src",
-            '../bugjs/projects/annotate/js/src',
-            '../bugjs/projects/bugflow/js/src',
-            '../bugjs/projects/bugfs/js/src',
-            '../bugjs/projects/bugioc/js/src',
-            '../bugjs/projects/bugjs/js/src',
-            '../bugjs/projects/bugroutes/js/src',
-            '../bugjs/projects/bugtrace/js/src',
-            '../bugunit/projects/bugunit/js/src'
+            "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugflow/js/src",
+            "../bugjs/projects/bugfs/js/src",
+            "../bugjs/projects/bugioc/js/src",
+            "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/bugroutes/js/src",
+            "../bugjs/projects/bugtrace/js/src",
+            "../bugjs/projects/express/js/src",
+            "../bugjs/projects/socketio/bugjars/server/js/src",
+            "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugunit/projects/bugunit/js/src"
            // "../bugjs/projects/clientjs/js/src"
         ],
         scriptPaths: [

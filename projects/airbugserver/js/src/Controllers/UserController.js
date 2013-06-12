@@ -4,11 +4,12 @@
 
 //@Package('airbugserver')
 
-//@Export('UsersController')
+//@Export('UserController')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
+//@Require('bugroutes.SocketRoute')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,58 +22,57 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var SocketRoute = bugpack.require('bugroutes.SocketRoute');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UsersController = Class.extend(Obj, {
+var UserController = Class.extend(Obj, {
 
-    _constructor: function(socketRoutesManager, socketIoManager, userService){
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(socketRouter, userService){
 
         this._super();
 
-        /**
-         * @type {SocketRoutesManager}
-         */
-        this.socketRoutesManager    = socketRoutesManager;
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
 
         /**
-         * @type {SocketIoManager}
+         * @private
+         * @type {SocketRouter}
          */
-        this.socketIoManager        = socketIoManager; //Necessary??
+        this.socketRouter   = socketRouter;
 
         /**
+         * @private
          * @type {UserService}
          */
-        this.userService            = userService;
+        this.userService    = userService;
 
     },
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {function(Error)} callback
+     */
     configure: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this               = this;
-        var ioManager           = this.socketIoManager.getIoManager();
-        var socketRoutesManager = this.socketRoutesManager;
-        this.socketRoutesManager.addAll([
+        this.socketRouter.addAll([
 
             new SocketRoute("establishUser", function(socket, data){
                 var user = {
@@ -98,4 +98,4 @@ var UsersController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UsersController', UsersController);
+bugpack.export('airbugserver.UserController', UserController);

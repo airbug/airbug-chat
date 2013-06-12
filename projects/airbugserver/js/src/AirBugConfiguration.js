@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('AirBugConfiguration')
+//@Export('AirbugConfiguration')
 //@Autoload
 
 //@Require('Class')
@@ -17,18 +17,18 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('bugroutes.ExpressRoutesManager')
-//@Require('bugroutes.SocketRoutesManager')
+//@Require('bugroutes.SocketRouter')
+//@Require('express.ExpressApp')
+//@Require('express.ExpressServer')
+//@Require('socketio:server.SocketIoManager')
+//@Require('socketio:server.SocketIoServer')
+//@Require('socketio:server.SocketIoServerConfig')
 
-//@Require('airbugserver.AirBugServer')
-//@Require('airbugserver.ExpressApp')
-//@Require('airbugserver.ExpressServer')
-//@Require('airbugserver.SocketIoManager')
 //@Require('airbugserver.SocketsMap')
 
-//@Require('airbugserver.AlphaPagesController')
-//@Require('airbugserver.RoomsController')
-//@Require('airbugserver.UsersController')
+//@Require('airbugserver.HomePageController')
+//@Require('airbugserver.RoomController')
+//@Require('airbugserver.UserController')
 
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.UserService')
@@ -53,12 +53,14 @@
 //@Require('airbugserver.RoomSchema')
 //@Require('airbugserver.UserSchema')
 
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
+var express                 = require('express');
 var mongoose                = require('mongoose');
 var path                    = require('path');
 
@@ -77,20 +79,18 @@ var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var ExpressRoutesManager    = bugpack.require('bugroutes.ExpressRoutesManager');
-var SocketRoutesManager     = bugpack.require('bugroutes.SocketRoutesManager');
+var SocketRouter            = bugpack.require('bugroutes.SocketRouter');
+var ExpressApp              = bugpack.require('express.ExpressApp');
+var ExpressServer           = bugpack.require('express.ExpressServer');
+var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
+var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
+var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
 
-var AirBugServer            = bugpack.require('airbugserver.AirBugServer');
-var ExpressApp              = bugpack.require('airbugserver.ExpressApp');
-var ExpressServer           = bugpack.require('airbugserver.ExpressServer');
-var SocketIoManager         = bugpack.require('airbugserver.SocketIoManager');
-var SocketIoServer          = bugpack.require('airbugserver.SocketIoServer');
-var SocketIoServerConfig    = bugpack.require('airbugserver.SocketIoServerConfig');
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
-var AlphaPagesController    = bugpack.require('airbugserver.AlphaPagesController');
-var RoomsController         = bugpack.require('airbugserver.RoomsController');
-var UsersController         = bugpack.require('airbugserver.UsersController');
+var HomePageController      = bugpack.require('airbugserver.HomePageController');
+var RoomController         = bugpack.require('airbugserver.RoomController');
+var UserController         = bugpack.require('airbugserver.UserController');
 
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var UserService             = bugpack.require('airbugserver.UserService');
@@ -134,7 +134,7 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirBugConfiguration = Class.extend(Obj, {
+var AirbugConfiguration = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -148,12 +148,6 @@ var AirBugConfiguration = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {AirBugServer}
-         */
-        this._airBugServer          = null;
 
         /**
          * @private
@@ -210,9 +204,9 @@ var AirBugConfiguration = Class.extend(Obj, {
         this._roomMemberManager     = null;
 
         /**
-         * @type {RoomsController}
+         * @type {RoomController}
          */
-        this._roomsController       = null;
+        this._roomController       = null;
 
         /**
          * @type {SocketIoManager}
@@ -221,9 +215,9 @@ var AirBugConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SocketRoutesManager}
+         * @type {SocketRouter}
          */
-        this._socketRoutesManager   = null;
+        this._socketRouter   = null;
 
         /**
          * @private
@@ -232,9 +226,9 @@ var AirBugConfiguration = Class.extend(Obj, {
         this._userManager           = null;
 
         /**
-         * @type {UsersController}
+         * @type {UserController}
          */
-        this._usersController       = null;
+        this._userController       = null;
 
     },
 
@@ -248,43 +242,87 @@ var AirBugConfiguration = Class.extend(Obj, {
      */
     initializeConfiguration: function() {
         var _this = this;
-        console.log("Initializing AirBugConfiguration");
+        console.log("Initializing AirbugConfiguration");
+
+        var config = this._config;
+        var secret = 'some secret'; // LOAD FROM CONFIG;
+        var sessionKey = 'express.sid';
+
+        this._expressApp.configure(function(){
+            _this._expressApp.engine('mustache', mu2Express.engine);
+            _this._expressApp.set('view engine', 'mustache');
+            _this._expressApp.set('views', path.resolve(__dirname, '../resources/views'));
+
+            _this._expressApp.set('port', config.port);
+
+            /*app.set('view engine', 'jade');*/
+
+            _this._expressApp.use(express.cookieParser(secret));
+            _this._expressApp.use(express.session({secret: secret, key: sessionKey}));
+            _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
+            _this._expressApp.use(express.logger('dev'));
+            _this._expressApp.use(express.bodyParser());
+            _this._expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
+            _this._expressApp.use(express.static(path.resolve(__dirname, '../static')));
+            _this._expressApp.use(_this._expressApp.router);
+        });
+
+        this._expressApp.configure('development', function() {
+            _this._expressApp.use(express.errorHandler());
+        });
+
+        this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+
         $series([
+
             //-------------------------------------------------------------------------------
             // Model Managers
             //-------------------------------------------------------------------------------
+
             $parallel([
                 $task(function(flow){
-                    _this._chatMessageManager.configure(function(error){
-                        if(!error) console.log("chatMessageManager configured");
+                    _this._chatMessageManager.configure(function(error) {
+                        if (!error) {
+                            console.log("chatMessageManager configured");
+                        }
                         flow.complete(error);
                     });
                 }),
                 $task(function(error){
-                    _this._conversationManager.configure(function(error){
-                        if(!error) console.log("conversationManager configured")
+                    _this._conversationManager.configure(function(error) {
+                        if (!error) {
+                            console.log("conversationManager configured");
+                        }
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this._roomManager.configure(function(error){
-                        if(!error) console.log("roomManager configured");
+                    _this._roomManager.configure(function(error) {
+                        if (!error) {
+                            console.log("roomManager configured");
+                        }
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this._roomMemberManager.configure(function(error){
-                        if(!error) console.log("roomMemberManager configured");
+                    _this._roomMemberManager.configure(function(error) {
+                        if (!error) {
+                            console.log("roomMemberManager configured");
+                        }
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this._userManager.configure(function(error){
-                        if(!error) console.log("userManager configured");
+                    _this._userManager.configure(function(error) {
+                        if (!error) {
+                            console.log("userManager configured");
+                        }
                         flow.complete(error);
                     });
                 })
             ]),
+
+
             //-------------------------------------------------------------------------------
             // Services
             //-------------------------------------------------------------------------------
@@ -292,41 +330,50 @@ var AirBugConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
             // RoutesManagers
             //-------------------------------------------------------------------------------
+
             $task(function(flow){
-                _this._socketRoutesManager.initialize(function(error){
-                    if(!error) console.log("socketRoutesManager initialized");
+                _this._socketRouter.initialize(function(error) {
+                    if (!error) {
+                        console.log("socketRouter initialized");
+                    }
                     flow.complete(error);
                 });
-            })
+            }),
+
+
             //-------------------------------------------------------------------------------
             // Controllers
             //-------------------------------------------------------------------------------
+
             $parallel([
                 $task(function(flow){
-                    _this._roomsController.configure(function(error){
-                        if(!error){
-                            console.log("roomsController configured");
+                    _this._roomController.configure(function(error) {
+                        if (!error) {
+                            console.log("roomController configured");
                         }
                         flow.complete(error);
                     })
                 }),
                 $task(function(flow){
-                    _this._usersController.configure(function(error){
-                        if(!error){
-                            console.log("usersController configured");
+                    _this._userController.configure(function(error){
+                        if (!error) {
+                            console.log("userController configured");
                         }
                         flow.complete(error);
                     })
                 })
             ]),
+
+
             //-------------------------------------------------------------------------------
             // Apps and Servers
             //-------------------------------------------------------------------------------
+
             $task(function(flow){
                 console.log("Initializing expressApp");
 
-                _this._expressApp.initialize(function(error){
-                    if(!error){
+                _this._expressApp.initialize(function(error) {
+                    if (!error) {
                         console.log("expressApp initialized");
                     }
                     flow.complete(error);
@@ -335,8 +382,8 @@ var AirBugConfiguration = Class.extend(Obj, {
             $task(function(flow){
                 console.log("starting expressServer");
 
-                _this._expressServer.start(function(error){
-                    if(!error){
+                _this._expressServer.start(function(error) {
+                    if (!error) {
                         console.log("expressServer started");
                     }
                     flow.complete(error);
@@ -345,26 +392,16 @@ var AirBugConfiguration = Class.extend(Obj, {
             $task(function(flow){
                 console.log("Starting socketIoServer");
 
-                _this._socketIoServer.start(function(error){
-                    if(!error){
+                _this._socketIoServer.start(function(error) {
+                    if (!error) {
                         console.log("socketIoServer started");
-                    }
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow){
-                console.log("Initializing airBugServer");
-
-                _this._airBugServer.start(function(error){
-                    if(!error){
-                        console.log("airBugServer initialized");
                     }
                     flow.complete(error);
                 });
             })
         ]).execute(function(error){
-            if(!error){
-                console.log("AirBugConfiguration successfully initialized.")
+            if (!error) {
+                console.log("AirbugConfiguration successfully initialized.")
             } else {
                 console.log(error);
             }
@@ -372,17 +409,17 @@ var AirBugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {RoutesManager} expressRoutesManager
-     * @return {AlphaPagesController}
+     * @param {ExpressApp} expressApp
+     * @return {HomePageController}
      */
-    alphaPagesController: function(expressRoutesManager){
-        return new AlphaPagesController(expressRoutesManager);
+    homePageController: function(expressApp) {
+        return new HomePageController(expressApp);
     },
 
     /**
      * @return {}
      */
-    alphaSocket: function(){
+    alphaSocket: function() {
         return this._alphaSocketIoManager.getIoManager();
     },
 
@@ -391,23 +428,15 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {}
      * @return {SocketIoManager}
      */
-    alphaSocketIoManager: function(socketIoServer, socketsMap){
+    alphaSocketIoManager: function(socketIoServer, socketsMap) {
         this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha', socketsMap);
         return this._alphaSocketIoManager;
     },
 
     /**
-     * @return {AirBugServer}
-     */
-    airBugServer: function() {
-        this._airBugServer = new AirBugServer();
-        return this._airBugServer;
-    },
-
-    /**
      * @return {ChatMessage}
      */
-    chatMessage: function(){
+    chatMessage: function() {
         return ChatMessage;
     },
 
@@ -416,7 +445,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {ChatMessageManager}
      */
-    chatMessageManager: function(model, schema){
+    chatMessageManager: function(model, schema) {
         this._chatMessageManager = new ChatMessageManager(model, schema);
         return this._chatMessageManager;
     },
@@ -424,14 +453,14 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {ChatMessageSchema}
      */
-    chatMessageSchema: function(){
+    chatMessageSchema: function() {
         return ChatMessageSchema;
     },
 
     /**
-     * @return {}
+     * @return {Object}
      */
-    config: function(){
+    config: function() {
         this._config = this.loadConfig(this._configFilePath);
         return this._config;
     },
@@ -439,7 +468,7 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {Conversation}
      */
-    conversation: function(){
+    conversation: function() {
         return Conversation;
     },
 
@@ -448,7 +477,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {ConversationManager}
      */
-    conversationManager: function(model, schema){
+    conversationManager: function(model, schema) {
         this._conversationManager = new ConversationManager(model, schema);
         return this._conversationManager;
     },
@@ -456,40 +485,31 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {ConversationSchema}
      */
-    conversationSchema: function(){
+    conversationSchema: function() {
         return ConversationSchema;
     },
 
     /**
      * @return {Dialogue}
      */
-    dialogue: function(){
+    dialogue: function() {
         return Dialogue;
     },
 
     /**
      * @return {DialogueSchema}
      */
-    dialogueSchema: function(){
+    dialogueSchema: function() {
         return DialogueSchema;
     },
 
     /**
-     * @param {}
+     * @param {Object} config
      * @return {ExpressServer}
      */
     expressApp: function(config) {
         this._expressApp = new ExpressApp(config);
         return this._expressApp;
-    },
-
-    /**
-     * @param {}
-     * @param {}
-     * @return {RoutesManager}
-     */
-    expressRoutesManager: function(app, routes){
-        return new ExpressRoutesManager(app, routes);
     },
 
     /**
@@ -504,14 +524,15 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {Mongoose}
      */
-    mongoose: function(){
-        return mongoose;
+    mongoose: function() {
+        this._mongoose = mongoose;
+        return this._mongoose;
     },
 
     /**
      * @return {Room}
      */
-    room: function(){
+    room: function() {
         return Room;
     },
 
@@ -520,7 +541,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {RoomManager}
      */
-    roomManager: function(model, schema){
+    roomManager: function(model, schema) {
         this._roomManager = new RoomManager(model, schema);
         return this._roomManager;
     },
@@ -528,7 +549,7 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {RoomMember}
      */
-    roomMember: function(){
+    roomMember: function() {
         return RoomMember;
     },
 
@@ -537,7 +558,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {RoomMemberManager}
      */
-    roomMemberManager: function(model, schema){
+    roomMemberManager: function(model, schema) {
         this._roomMemberManager = new RoomMemberManager(model, schema);
         return this._roomMemberManager;
     },
@@ -545,31 +566,31 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {RoomMemberSchema}
      */
-    roomMemberSchema: function(){
+    roomMemberSchema: function() {
         return RoomMemberSchema;
     },
 
     /**
-     * @param {}
-     * @param {}
-     * @return {RoomsController}
+     * @param {SocketRouter} socketRouter
+     * @param {RoomService} roomService
+     * @return {RoomController}
      */
-    roomsController: function(socketRoutesManager, socketIoManager, roomService){
-        this._roomsController = new RoomsController(socketRoutesManager, socketIoManager, roomService);
-        return this._roomsController;
+    roomController: function(socketRouter, roomService) {
+        this._roomController = new RoomController(socketRouter, roomService);
+        return this._roomController;
     },
 
     /**
      * @return {RoomSchema}
      */
-    roomSchema: function(){
+    roomSchema: function() {
         return RoomSchema;
     },
 
     /**
      * @return {MemoryStore}
      */
-    sessionStore: function(){
+    sessionStore: function() {
         return new connect.middleware.session.MemoryStore();
     },
 
@@ -578,7 +599,7 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {}
      * @return {SocketIoServer}
      */
-    socketIoServer: function(config, expressServer){
+    socketIoServer: function(config, expressServer) {
         this._socketIoServer = new SocketIoServer(config, expressServer);
         return this._socketIoServer;
     },
@@ -586,7 +607,7 @@ var AirBugConfiguration = Class.extend(Obj, {
     /**
      * @return {SocketIoServerConfig}
      */
-    socketIoServerConfig: function(){
+    socketIoServerConfig: function() {
         return new SocketIoServerConfig({});
     },
 
@@ -604,15 +625,19 @@ var AirBugConfiguration = Class.extend(Obj, {
         return new SocketsMap();
     },
 
-    socketRoutesManager: function(ioManager){
-        this._socketRoutesManager = new SocketRoutesManager(ioManager);
-        return this._socketRoutesManager;
+    /**
+     * @param {SocketIoManager} ioManager
+     * @return {SocketRouter}
+     */
+    socketRouter: function(ioManager) {
+        this._socketRouter = new SocketRouter(ioManager);
+        return this._socketRouter;
     },
 
     /**
      * @return {User}
      */
-    user: function(){
+    user: function() {
         return User;
     },
 
@@ -621,27 +646,28 @@ var AirBugConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {UserManager}
      */
-    userManager: function(model, schema){
+    userManager: function(model, schema) {
         this._userManager = new UserManager(model, schema);
         return this._userManager;
     },
 
     /**
-     * @param {}
-     * @param {}
-     * @return {UsersController}
+     * @param {SocketRouter} socketRouter
+     * @param {UserService} userService
+     * @return {UserController}
      */
-    usersController: function(socketRoutesManager, socketIoManager, userService){
-        this._usersController = new UsersController(socketRoutesManager, socketIoManager, userService);
-        return this._usersController;
+    userController: function(socketRouter, userService) {
+        this._userController = new UserController(socketRouter, userService);
+        return this._userController;
     },
 
     /**
      * @return {UserSchema}
      */
-    userSchema: function(){
+    userSchema: function() {
         return UserSchema;
     },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -667,7 +693,6 @@ var AirBugConfiguration = Class.extend(Obj, {
                 config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
             } catch(error) {
                     console.log(configPath, "could not be parsed. Invalid JSON.");
-                    console.log(AirBugServer, "config set to defaults.");
                     return defaults;
             } finally {
                 return config;
@@ -683,36 +708,34 @@ var AirBugConfiguration = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(AirBugConfiguration, IConfiguration);
+Class.implement(AirbugConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
 // Annotate
 //-------------------------------------------------------------------------------
 
-annotate(AirBugConfiguration).with(
+annotate(AirbugConfiguration).with(
     configuration().modules([
         
         //-------------------------------------------------------------------------------
         // AirBugServer
         //-------------------------------------------------------------------------------
-        module("airBugServer")
-            .properties([
-                property("config").ref("config"),
-                property("expressServer").ref("expressServer"),
-                property("mongoose").ref("mongoose"),
-                property("socketIoManager").ref("socketIoManager")
-            ]),
+
         module("mongoose"),
+
 
         //-------------------------------------------------------------------------------
         // Common Config Object
         //-------------------------------------------------------------------------------
+
         module("config"),
+
 
         //-------------------------------------------------------------------------------
         // Express
         //-------------------------------------------------------------------------------
+
         module("expressApp")
             .args([
                 arg("config").ref("config")
@@ -720,18 +743,17 @@ annotate(AirBugConfiguration).with(
             .properties([
                 property("sessionStore").ref("sessionStore")
             ]),
-        module("expressRoutesManager")
-            .args([
-                arg("app").ref("expressApp"),
-            ])
         module("expressServer")
             .args([
                 arg("expressApp").ref("expressApp")
             ]),
         module("sessionStore"),
+
+
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
+
         module("socketIoServer").
             args([
                 arg("config").ref("socketIoServerConfig"),
@@ -745,32 +767,38 @@ annotate(AirBugConfiguration).with(
                 arg("socketsMap").ref("socketsMap")
             ]),
         module("socketsMap"),
-        module("socketRoutesManager")
+        module("socketRouter")
             .args([
                 arg("ioManager").ref("alphaSocketIoManager")
             ]),
+
+
         //-------------------------------------------------------------------------------
         // Controllers
         //-------------------------------------------------------------------------------
-        module("alphaPagesController")
+
+        module("homePageController")
             .args([
-                arg("expressRoutesManager").ref("expressRoutesManager"),
+                arg("expressApp").ref("expressApp"),
             ]),
-        module("RoomsController")
+        module("roomController")
             .args([
-                arg("socketRoutesManager").ref("socketRoutesManager"),
+                arg("socketRouter").ref("socketRouter"),
                 arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("roomService").ref("roomService")
             ]),
-        module("UsersController")
+        module("userController")
             .args([
-                arg("socketRoutesManager").ref("socketRoutesManager"),
+                arg("socketRouter").ref("socketRouter"),
                 arg("socketIoManager").ref("alphaSocketIoManager"),
                 arg("userService").ref("userService")
             ]),
+
+
         //-------------------------------------------------------------------------------
         // ModelManagers
         //-------------------------------------------------------------------------------
+
         module("chatMessageManager")
             .args([
                 arg("model").ref("chatMessage"),
@@ -796,18 +824,30 @@ annotate(AirBugConfiguration).with(
                 arg("model").ref("user"),
                 arg("schema").ref("userSchema")
             ]),
+
+
+        //-------------------------------------------------------------------------------
+        // Services
+        //-------------------------------------------------------------------------------
+
+        //module("roomService"),
+
         //-------------------------------------------------------------------------------
         // Models
         //-------------------------------------------------------------------------------
+
         module("chatMessage"),
         module("conversation"),
         module("dialogue"),
         module("room"),
         module("roomMember"),
         module("user"),
+
+
         //-------------------------------------------------------------------------------
         // Schemas
         //-------------------------------------------------------------------------------
+
         module("chatMessageSchema"),
         module("conversationSchema"),
         module("dialogueSchema"),
@@ -822,4 +862,4 @@ annotate(AirBugConfiguration).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbugserver.AirBugConfiguration", AirBugConfiguration);
+bugpack.export("airbugserver.AirbugConfiguration", AirbugConfiguration);

@@ -24,7 +24,8 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
-var Proxy		= bugpack.require('Proxy');
+var Proxy       = bugpack.require('Proxy');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class

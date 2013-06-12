@@ -4,11 +4,11 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomsController')
+//@Export('RoomController')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
+//@Require('bugroutes.SocketRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -22,44 +22,42 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var SocketRoute = bugpack.require('bugroutes.SocketRoute');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomsController = Class.extend(Obj, {
+var RoomController = Class.extend(Obj, {
 
-    _constructor: function(socketRoutesManager, socketIoManager, roomService){
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(socketRouter, roomService){
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
         /**
+         * @private
          * @type {RoomService}
          */
         this.roomService            = roomService;
 
         /**
-         * @type {SocketRoutesManager}
+         * @private
+         * @type {SocketRouter}
          */
-        this.socketRoutesManager    = socketRoutesManager; 
-
-        /**
-         * @type {SocketIoManager}
-         */
-        this.socketIoManager        = socketIoManager; //Necessary???
-
+        this.socketRouter    = socketRouter;
     },
 
 
@@ -67,34 +65,36 @@ var RoomsController = Class.extend(Obj, {
     // Methods
     //-------------------------------------------------------------------------------
 
-    configure: function(callback){
+    /**
+     * @param {function(Error)} callback
+     */
+    configure: function(callback) {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this               = this;
-        var socketRoutesManager = this.socketRoutesManager;
-        this.socketRoutesManager.addAll([
+        this.socketRouter.addAll([
 
-            new SocketRoute("addUserToRoom", function(socket, data){
-                var currentUser = socket.getUser();
+            new SocketRoute("addUserToRoom", function(connection, data){
+                var currentUser = connection.getUser();
                 if(currentUser){
 
                 }
             }),
-            new SocketRoute("createRoom", function(socket, data){
-                var currentUser = socket.getUser();
+            new SocketRoute("createRoom", function(connection, data){
+                var currentUser = connection.getUser();
                 var room;
                 if(currentUser){
                     _this.roomService.create(currentUser, room, callback);
                 }
             }),
-            new SocketRoute("joinRoom", function(socket, data){
+            new SocketRoute("joinRoom", function(connection, data){
                 if(currentUser){
                     var userId = currentUser.id;
                     var roomId = params.roomId || params.room.id;
                     _this.roomService.addUserToRoom(currentUser.id, roomId);
                 }
             }),
-            new SocketRoute("leaveRoom", function(socket, data){
+            new SocketRoute("leaveRoom", function(connection, data){
                 if(currentUser){
                     _this.roomService.removeUserFromRoom(currentUser, roomId);
                 }
@@ -125,4 +125,4 @@ var RoomsController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomsController', RoomsController);
+bugpack.export('airbugserver.RoomController', RoomController);

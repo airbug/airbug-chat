@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
@@ -20,8 +21,9 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -29,35 +31,45 @@ var Obj                     = bugpack.require('Obj');
 
 var UserService = Class.extend(Obj, {
 
-    _constructor: function(socketIoManager, userManager){
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(userManager) {
 
         this._super();
 
-        this.socketIoManager    = socketIoManager.getIoManager();
 
-        this.userManager        = userManager;
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {UserManager}
+         */
+        this.userManager = userManager;
     },
 
+
     //-------------------------------------------------------------------------------
-    // Declare Class
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
-    /*
+    /**
      * @param {{
      *      name: string,
      *      email: string
      * }} user
-     * @param {SocketIoConnection} socket
-     **/
-    establishUser: function(user, socket){
+     * @param {function(Error, User)} callback
+     */
+    establishUser: function(user, callback) {
         var _this = this;
-        this.userManager.findOrCreate(user, function(error, user){
-            if(!error){
-                currentUser = user;
-                _this.socketsMap.associateUserWithSocket({user: user, socket: socket});
+        this.userManager.findOrCreate(user, function(error, user) {
+            if (!error) {
+                callback(null, user);
             } else {
-                //_this.socketIoManager.emit('unableToEstablishUser')
+                callback(error);
             }
         });
     },

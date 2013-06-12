@@ -10,7 +10,8 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('Proxy')
-//@Require('socketio::server.')
+//@Require('socketio:socket.SocketIoConnection')
+//@Require('socketio:server.SocketIoManager')
 
 
 //-------------------------------------------------------------------------------
@@ -28,8 +29,9 @@ var io          = require('socket.io');
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
-var Proxy               = bugpack.require("Proxy");
-var SocketIoManager     = bugpack.require("socketio::server.SocketIoManager");
+var Proxy               = bugpack.require('Proxy');
+var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+var SocketIoManager     = bugpack.require('socketio:server.SocketIoManager');
 
 
 //-------------------------------------------------------------------------------
@@ -84,7 +86,7 @@ var AlphaSocketIoManager = Class.extend(Obj, {
     initialize: function(callback) {
         var _this = this;
         this.ioManager.on("connection", function(socket) {
-            console.log("Connection established") //For Debugging
+            console.log("Connection established"); //For Debugging
             console.log("session:", socket.handshake.session); //For Debugging
 
             var socketConnection = new SocketIoConnection(socket);
@@ -108,11 +110,8 @@ var AlphaSocketIoManager = Class.extend(Obj, {
      * @param {} sessionStore
      * @param {} sessionKey
      */
-    configure: function(cookieParser, sessionStore, sessionKey, callback){
-        var socketsMap          = this.socketsMap;
-        var alphaSocketsManager = this.ioManager;
-
-        alphaSocketManager.manager.set('authorization', function(data, callback){
+    configure: function(cookieParser, sessionStore, sessionKey, callback) {
+        this.ioManager.manager.set('authorization', function(data, callback){
             cookieParser(data, {}, function(error) {
                 if(!error){
                     sessionStore.get(data.signedCookies[sessionKey], function(error, session){
