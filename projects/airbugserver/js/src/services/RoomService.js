@@ -30,18 +30,30 @@ var Obj                     = bugpack.require('Obj');
 
 var RoomService = Class.extend(Obj, {
 
-    _constructor: function(roomManager, socketIoManager, socketsMap, userManager){
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(roomManager, userManager){
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {RoomManager}
+         */
         this.roomManager            = roomManager;
 
-        this.socketIoManager        = socketIoManager;
-
-        this.socketsMap             = socketsMap;
-
+        /**
+         * @private
+         * @type {UserManager}
+         */
         this.userManager            = userManager;
-
     },
 
 
@@ -49,10 +61,12 @@ var RoomService = Class.extend(Obj, {
     // Methods
     //-------------------------------------------------------------------------------
 
-    /*
+    /**
+     * @param {User} currentUser
      * @param {Room} room
-     **/
-    create: function(currentUser, room, callback){
+     * @param {function(Error, Room)} callback
+     */
+    create: function(currentUser, room, callback) {
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
             if(!error){
@@ -63,6 +77,11 @@ var RoomService = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {string} userId
+     * @param {string} roomId
+     * @param {function(Error)} callback
+     */
     addUserToRoom: function(userId, roomId, callback){
         this.roomManager.addUser(roomId, user);
         // callback();
@@ -71,9 +90,15 @@ var RoomService = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {string} userId
+     * @param {string} roomId
+     * @param {function(Error)} callback
+     */
     removeUserFromRoom: function(userId, roomId, callback){
         this.roomManager.removeUser(roomId, userId, callback);
     },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -103,8 +128,6 @@ var RoomService = Class.extend(Obj, {
                 });
             });
         });
-
-        
 
         callback();
     }

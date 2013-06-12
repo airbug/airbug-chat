@@ -592,6 +592,15 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {RoomManager} roomManager
+     * @param {UserManager} userManager
+     * @return {RoomService}
+     */
+    roomService: function(roomManager, userManager) {
+         return new RoomService(roomManager, userManager);
+    },
+
+    /**
      * @return {MemoryStore}
      */
     sessionStore: function() {
@@ -646,16 +655,6 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
-     * @return {UserManager}
-     */
-    userManager: function(model, schema) {
-        this._userManager = new UserManager(model, schema);
-        return this._userManager;
-    },
-
-    /**
      * @param {SocketRouter} socketRouter
      * @param {UserService} userService
      * @return {UserController}
@@ -666,11 +665,30 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {mongoose.Model} model
+     * @param {mongoose.Schema} schema
+     * @return {UserManager}
+     */
+    userManager: function(model, schema) {
+        this._userManager = new UserManager(model, schema);
+        return this._userManager;
+    },
+
+    /**
      * @return {UserSchema}
      */
     userSchema: function() {
         return UserSchema;
     },
+
+    /**
+     * @param {UserManager} userManager
+     * @return {UserService}
+     */
+    userService: function(userManager) {
+        return new UserService(userManager);
+    },
+
 
 
     //-------------------------------------------------------------------------------
@@ -834,7 +852,16 @@ annotate(AirbugConfiguration).with(
         // Services
         //-------------------------------------------------------------------------------
 
-        //module("roomService"),
+        module("roomService")
+            .args([
+                arg("roomManager").ref("roomManager"),
+                arg("userManager").ref("userManager")
+            ]),
+        module("userService")
+            .args([
+                arg("userManager").ref("userManager")
+            ]),
+
 
         //-------------------------------------------------------------------------------
         // Models

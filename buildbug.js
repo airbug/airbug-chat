@@ -55,13 +55,8 @@ buildProperties({
         },
         sourcePaths: [
             "./projects/airbugserver/js/src",
-            '../bugjs/projects/annotate/js/src',
-            '../bugjs/projects/bugflow/js/src',
-            '../bugjs/projects/bugfs/js/src',
-            '../bugjs/projects/bugjs/js/src',
-            '../bugjs/projects/bugtrace/js/src',
-            '../bugunit/projects/bugunit/js/src'
             "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
