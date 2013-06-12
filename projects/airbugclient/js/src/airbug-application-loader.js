@@ -9,6 +9,6 @@ bugpackApi.loadContext("", function(error, bugpack) {
 
         application.start();
     } else {
-        console.error(error);
+        throw error;
     }
 });

@@ -25,9 +25,6 @@
 //@Require('bugioc.PropertyAnnotation')
 
 
-//TEST
-console.log("ApplicationConfiguration loaded");
-
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------

@@ -95,8 +95,10 @@ buildProperties({
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/underscore/js/src",
             "../bugjs/projects/annotate/js/src",
+            "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/carapace/js/src",
             '../bugpack/projects/bugpack-client/js/src',
             '../bugjs/projects/bugroutes/js/src'

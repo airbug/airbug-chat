@@ -82,10 +82,18 @@ var UserHomePageController = Class.extend(ApplicationController, {
         this._super();
         this.userHomePageContainer = new UserHomePageContainer();
         this.setContainerTop(this.userHomePageContainer);
+    },
+
+    /**
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        routingRequest.accept();
     }
 });
 annotate(UserHomePageController).with(
-    controller().route("home")
+    controller().route("")
 );
 
 
