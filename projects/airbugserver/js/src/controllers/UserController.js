@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugroutes.SocketRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
-var SocketRoute = bugpack.require('bugroutes.SocketRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -37,7 +35,7 @@ var UserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socketRouter, userService){
+    _constructor: function(bugCallRouter, userService){
 
         this._super();
 
@@ -48,9 +46,9 @@ var UserController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SocketRouter}
+         * @type {BugCallRouter}
          */
-        this.socketRouter   = socketRouter;
+        this.bugCallRouter   = bugCallRouter;
 
         /**
          * @private
@@ -71,23 +69,18 @@ var UserController = Class.extend(Obj, {
     configure: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        var _this               = this;
-        this.socketRouter.addAll([
+        var _this = this;
+        this.bugCallRouter.addAll({
+            establishUser: function(request, responder){
 
-            new SocketRoute("establishUser", function(socket, data){
-                var user = {
-                    email: data.user.email,
-                    name: data.user.name
-                };
-                _this.userService.establishUser(user, socket);
-            }),
-            new SocketRoute("getCurrentUser", function(socket, data){
+            },
+            getCurrentUser: function(request, responder){
 
-            }),
-            new SocketRoute("logoutCurrentUser", function(socket, data){
+            },
+            logoutCurrentUser: function(request, responder){
 
-            })
-        ]);
+            }
+        });
 
         callback();
     }

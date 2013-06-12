@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugroutes.SocketRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
-var SocketRoute = bugpack.require('bugroutes.SocketRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +36,7 @@ var RoomController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socketRouter, roomService){
+    _constructor: function(bugCallRouter, roomService){
 
         this._super();
 
@@ -51,13 +49,13 @@ var RoomController = Class.extend(Obj, {
          * @private
          * @type {RoomService}
          */
-        this.roomService            = roomService;
+        this.RoomService    = roomService;
 
         /**
          * @private
-         * @type {SocketRouter}
+         * @type {BugCallRouter}
          */
-        this.socketRouter    = socketRouter;
+        this.bugCallRouter  = bugCallRouter;
     },
 
 
@@ -72,34 +70,20 @@ var RoomController = Class.extend(Obj, {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this               = this;
-        this.socketRouter.addAll([
+        this.bugCallRouter.addAll({
+            addUserToRoom:  function(request, responder){
 
-            new SocketRoute("addUserToRoom", function(connection, data){
-                var currentUser = connection.getUser();
-                if(currentUser){
+            },
+            createRoom:     function(request, responder){
 
-                }
-            }),
-            new SocketRoute("createRoom", function(connection, data){
-                var currentUser = connection.getUser();
-                var room;
-                if(currentUser){
-                    _this.roomService.create(currentUser, room, callback);
-                }
-            }),
-            new SocketRoute("joinRoom", function(connection, data){
-                if(currentUser){
-                    var userId = currentUser.id;
-                    var roomId = params.roomId || params.room.id;
-                    _this.roomService.addUserToRoom(currentUser.id, roomId);
-                }
-            }),
-            new SocketRoute("leaveRoom", function(connection, data){
-                if(currentUser){
-                    _this.roomService.removeUserFromRoom(currentUser, roomId);
-                }
-            })
-        ]);
+            },
+            joinRoom:       function(request, responder){
+
+            },
+            leaveRoom:      function(request, responder){
+
+            }
+        });
 
         callback();
 

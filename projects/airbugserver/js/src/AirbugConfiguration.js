@@ -11,7 +11,7 @@
 //@Require('Obj')
 //@Require('annotate.Annotate')
 //@Require('bugcall.BugCallServer')
-//@Require('bugcall.CallManager')
+//@Require('bugcall.CallServer')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
@@ -19,6 +19,7 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugroutes.BugCallRoutes')
 //@Require('bugroutes.SocketRouter')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
@@ -35,7 +36,7 @@
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.UserService')
 
-//@Require('airbugserver.chatMessageManager')
+//@Require('airbugserver.ChatMessageManager')
 //@Require('airbugserver.ConversationManager')
 //@Require('airbugserver.RoomManager')
 //@Require('airbugserver.RoomMemberManager')
@@ -76,7 +77,7 @@ var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var Annotate                = bugpack.require('annotate.Annotate');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
-var CallManager             = bugpack.require('bugcall.CallManager');
+var CallServer              = bugpack.require('bugcall.CallServer');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugFs                   = bugpack.require('bugfs.BugFs');
 var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
@@ -84,6 +85,7 @@ var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugCallRouter           = BugPack.require('bugroutes.BugCallRouter');
 var SocketRouter            = bugpack.require('bugroutes.SocketRouter');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
@@ -94,8 +96,8 @@ var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerCon
 var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
-var RoomController         = bugpack.require('airbugserver.RoomController');
-var UserController         = bugpack.require('airbugserver.UserController');
+var RoomController          = bugpack.require('airbugserver.RoomController');
+var UserController          = bugpack.require('airbugserver.UserController');
 
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var UserService             = bugpack.require('airbugserver.UserService');
@@ -441,6 +443,31 @@ var AirbugConfiguration = Class.extend(Obj, {
     alphaSocketIoManager: function(socketIoServer, socketsMap) {
         this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha', socketsMap);
         return this._alphaSocketIoManager;
+    },
+
+    /**
+     * @param {BugCallServer} bugCallServer
+     * @return {BugCallRouter}
+     */
+    bugCallRouter: function(bugCallServer) {
+        this._bugCallRouter = new BugCallRouter(bugCallServer);
+        return this._bugCallRouter;
+    },
+
+    /**
+     * @param {CallServer} CallServer
+     * @return {BugCallServer}
+     */
+    bugCallServer: function(callServer) {
+        return new BugCallServer(callServer);
+    },
+
+    /**
+     * @param {SocketIoManager}
+     * @return {CallServer}
+     */
+    callServer: function(socketIoManager) {
+        return new CallServer(socketIoManager);
     },
 
     /**
@@ -815,6 +842,24 @@ annotate(AirbugConfiguration).with(
 
 
         //-------------------------------------------------------------------------------
+        // BugCall
+        //-------------------------------------------------------------------------------
+
+        module("bugCallRouter")
+            .args([
+                arg("bugCallServer").ref("bugCallServer")
+            ])
+        module("bugCallServer")
+            .args([
+                arg("callServer").ref("callServer")
+            ]),
+        module("callServer")
+            .args([
+                arg("socketIoManager").ref("alphaSocketIoManager")
+            ]),
+
+
+        //-------------------------------------------------------------------------------
         // Controllers
         //-------------------------------------------------------------------------------
 
@@ -825,12 +870,12 @@ annotate(AirbugConfiguration).with(
             ]),
         module("roomController")
             .args([
-                arg("socketRouter").ref("socketRouter"),
+                arg("bugCallRouter").ref("bugCallRouter"),
                 arg("roomService").ref("roomService")
             ]),
         module("userController")
             .args([
-                arg("socketRouter").ref("socketRouter"),
+                arg("bugCallRouter").ref("bugCallRouter"),
                 arg("userService").ref("userService")
             ]),
 
