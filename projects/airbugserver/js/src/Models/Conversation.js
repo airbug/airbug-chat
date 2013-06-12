@@ -4,28 +4,35 @@
 
 //@Package('airbugserver')
 
-//@Export('Coversation')
+//@Export('Conversation')
 
-//@Require('airbugserver.CoversationSchema')
+//@Require('airbugserver.ConversationSchema')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
+var mongoose            = require('mongoose');
 
-var UserSchema = bugpack.require('airbugserver.CoversationSchema');
+
+//-------------------------------------------------------------------------------
+// Bugpack Modules
+//-------------------------------------------------------------------------------
+
+var ConversationSchema  = bugpack.require('airbugserver.ConversationSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var User = mongoose.model("Coversation", CoversationSchema);
+var Conversation = mongoose.model("Conversation", ConversationSchema);
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Coversation', Coversation);
+bugpack.export('airbugserver.Conversation', Conversation);

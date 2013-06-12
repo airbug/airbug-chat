@@ -4,7 +4,11 @@
 
 //@Package('airbugserver')
 
-//@Export('ChatMessagesApi')
+//@Export('ChatMessageManager')
+
+//@Require('Class')
+//@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -18,32 +22,48 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var ChatMessage = bugpack.require('airbugserver.ChatMessage');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var Proxy       = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessagesApi = {
+var ChatMessageManager = Class.extend(Obj, {
 
-    create: function(message){
-        var newChatMessage = ChatMessage.create(message, function(){});
-        RoomApi.sendMessage(newChatMessage);
-    }
+    _constructor: function(model, schema){
 
-    update: function(){
-        
+        this._super();
+
+        /**
+         * @type {mongoose.Model}
+         */
+        this.model 	= model;
+
+        /**
+         * @type {mongoose.Schema}
+         */
+        this.schema = schema;
+
     },
 
-    destroy: function(){
-        
+    configure: function(callback){
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+        callback();
+    },
+
+    create: function(message, callback){
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
+        this.model.create(message, callback);
     }
-}
+});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ChatMessagesApi', ChatMessagesApi);
+bugpack.export('airbugserver.ChatMessageManager', ChatMessageManager);

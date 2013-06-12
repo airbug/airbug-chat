@@ -1,4 +1,9 @@
-//@Require('airbug.AirBugServer')
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
+
+//@Require('airbugserver.AirbugApplication')
+
 
 //-------------------------------------------------------------------------------
 // Requires
@@ -11,12 +16,12 @@ var bugpack = require('bugpack').context(module);
 // BugPack
 //-------------------------------------------------------------------------------
 
-var AirBugApplication = bugpack.require('airbug.AirBugApplication');
+var AirbugApplication = bugpack.require('airbugserver.AirbugApplication');
 
 
 //-------------------------------------------------------------------------------
 // Script
 //-------------------------------------------------------------------------------
 
-var airBugApplication = new AirBugApplication();
-airBugApplication.start();
+var airbugApplication = new AirbugApplication();
+airbugApplication.start();

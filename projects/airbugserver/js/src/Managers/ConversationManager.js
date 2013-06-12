@@ -4,52 +4,53 @@
 
 //@Package('airbugserver')
 
-//@Export('ExpressServer')
+//@Export('ConversationManager')
 
+//@Require('Class')
+//@Require('Obj')
+//@Require('Proxy')
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var http        = require('http');
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var Proxy			= bugpack.require('Proxy');
 
 //-------------------------------------------------------------------------------
-// Build App
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var ConversationManager = Class.extend(Obj, {
 
-    _constructor: function(){
+    _constructor: function(model, schema){
 
-        this.super();
+        this._super();
 
-        //-------------------------------------------------------------------------------
-        // Variables
-        //-------------------------------------------------------------------------------
+        /**
+         * @type {mongoose.Model}
+         */
+        this.model      = model;
 
-        this.expressApp = null;
-
+        /**
+         * @type {mongoose.Schema}
+         */
+        this.schema     = schema;
     },
 
-    initialize: function(){
 
-    },
+    configure: function(callback){
+        if(!callback || typeof callback !== 'function') var callback = function(){};
 
-    start: function() {
-
-        // Create Server
-        //-------------------------------------------------------------------------------
-        return http.createServer(app).listen(app.get('port'), function(){
-            console.log("Express server listening on port " + app.get('port'));
-        });
-
+        callback();
     }
 });
 
@@ -58,4 +59,4 @@ var ExpressServer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.ExpressServer', ExpressServer);
+bugpack.export('airbugserver.ConversationManager', ConversationManager);

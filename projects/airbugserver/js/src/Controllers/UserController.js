@@ -4,41 +4,40 @@
 
 //@Package('airbugserver')
 
-//@Export('AirbugApplication')
-//@Autoload
+//@Export('UserController')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ConfigurationScan')
+//@Require('bugroutes.SocketRoute')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var SocketRoute = bugpack.require('bugroutes.SocketRoute');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApplication = Class.extend(Obj, {
+var UserController = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(socketRouter, userService){
 
         this._super();
 
@@ -49,26 +48,54 @@ var AirbugApplication = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ConfigurationScan}
+         * @type {SocketRouter}
          */
-        this.configurationScan = new ConfigurationScan();
+        this.socketRouter   = socketRouter;
+
+        /**
+         * @private
+         * @type {UserService}
+         */
+        this.userService    = userService;
+
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Error)} callback
      */
-    start: function() {
-        this.configurationScan.scan();
+    configure: function(callback){
+        if(!callback || typeof callback !== 'function') var callback = function(){};
+
+        var _this               = this;
+        this.socketRouter.addAll([
+
+            new SocketRoute("establishUser", function(socket, data){
+                var user = {
+                    email: data.user.email,
+                    name: data.user.name
+                };
+                _this.userService.establishUser(user, socket);
+            }),
+            new SocketRoute("getCurrentUser", function(socket, data){
+
+            }),
+            new SocketRoute("logoutCurrentUser", function(socket, data){
+
+            })
+        ]);
+
+        callback();
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.AirbugApplication', AirbugApplication);
+bugpack.export('airbugserver.UserController', UserController);

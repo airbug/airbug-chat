@@ -4,9 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('SessionToSocketsMap')
+//@Export('SocketsMap')
 
 //@Require('Class')
+//@Require('List')
 //@Require('Map')
 //@Require('Obj')
 //@Require('Set')
@@ -24,9 +25,9 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var List        = bugpack.require('List');
 var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
-var Set         = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -44,20 +45,13 @@ var SocketsMap = Class.extend(Obj, {
         // Variables
         //-------------------------------------------------------------------------------
 
-        this.userToSessionsMap = null;
+        this.sessionToSocketsMap    = new Map(); // session => sockets // has many
 
-        this.sessionToUserMap = null;
+        this.sessionToUserMap       = new Map(); // session => user // has one
 
-        this.sessionToSocketsMap = null;
-    },
+        this.userToSessionsMap      = new Map(); // user => sessions // has many
 
-    initialize: function(){
-
-        this.userToSessionsMap = new Map();
-
-        this.sessionToSocketsMap = new Map();
-
-        this.sessionToUserMap = new Map();
+        this.socketToUserMap        = new Map(); // socket => user // has one
 
     },
 
@@ -67,28 +61,42 @@ var SocketsMap = Class.extend(Obj, {
 
     /*
      * @param {{
-     *      sessionId: number, //string???
-     *      socket: Socket
+     *      session: {*},
+     *      socket: {Socket},
+     *      user: {mongoose.model.User}
+     * }} params
+     **/
+    associateUserSessionAndSocket: function(params){
+        this.associateSocketWithSession(params);
+        this.associateUserWithSession(params);
+        this.associateUserWithSocket(params);
+    },
+
+    /*
+     * @param {{
+     *      session: {*},
+     *      socket: {*}
      * }} params
      **/
     associateSocketWithSession: function(params){
-        var sessionId = params.sessionId;
-        var socket = params.socket;
-        if(!this.sessionToSocketsMap.get(sessionId)){
-            var sockets = new Set();
-            sockets.add(socket);
-            this.sessionToSocketsMap.put(sessionId, sockets);
-        } else {
-            var socketsSet = this.sessionToSocketsMap.get(sessionId);
-            socketsSet.add(socket);
-            this.sessionToSocketsMap.put(sessionId, sockets);
+        var session     = params.session;
+        var socket      = params.socket;
+        if(session && socket){
+            if(!this.findSocketsBySession(session)){
+                var sockets = [socket];
+                this.sessionToSocketsMap.put(session, sockets);
+            } else {
+                var socketsSet = this.sessionToSocketsMap.get(session);
+                socketsSet.push(socket);
+                this.sessionToSocketsMap.put(session, sockets);
+            }
         }
     },
 
     /*
      * @param {{
-     *      userId: mongoose.Schema.Types.ObjectId
-     *      sessionId: number, //??
+     *      user: mongoose.model.User,
+     *      session: {*}
      * }} params
      **/
     associateUserWithSession: function(params){
@@ -96,20 +104,46 @@ var SocketsMap = Class.extend(Obj, {
         this.addSessionToUser(params);
     },
 
-    findUserBySessionId: function(sessionId){
-        return this.sessionToUserMap.get(sessionId);
+    associateUserWithSocket: function(params){
+        this.addUserToSocket(params);
     },
 
-    findSocketsBySessionId: function(sessionId){
-        return this.sessionToSocketsMap.get(sessionId);
+    /*
+     * @param {{*}} (Session object)
+     * @return {User}
+     **/
+    findUserBySession: function(session){
+        return this.sessionToUserMap.get(session);
     },
 
-    findSocketsByUserId: function(userId){
+    /*
+     * @param {mongoose.model.User}
+     * @return {Array.<session>}
+     **/
+    findSessionsByUser: function(user){
+        return this.userToSessionsMap.get(user);
+    },
+
+    /*
+     * @param {{*}} (Session object)
+     * @return {Array.<socket>}
+     **/
+    findSocketsBySession: function(session){
+        return this.sessionToSocketsMap.get(session);
+    },
+
+    /*
+     * @return {Array.<socket>}
+     **/
+    findSocketsByUser: function(user){
         var _this = this;
         var sockets = [];
-        var sessions = this.userToSessionsMap.get(userId);
+        var sessions = this.userToSessionsMap.get(user);
         sessions.forEach(function(session, index, array){
-            sockets = sockets.concat(_this.sessionToSocketsMap.get(session.id));
+            var otherSockets = _this.findSocketsBySession(session);
+            if(otherSockets){
+                sockets = sockets.concat(otherSockets);
+            }
         })
         return sockets;
     },
@@ -118,56 +152,80 @@ var SocketsMap = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Private Instance Methods
     //-------------------------------------------------------------------------------
+
     /*
      * @private
      * @param {{
-     *      userId: mongoose.Schema.Types.ObjectId
-     *      sessionId: number, //??
+     *      user: {mongoose.model.User},
+     *      session: {*}
      * }} params
      **/
     addUserToSessions: function(params){ // a user can have more than one session if they login on different computers
-        var userId      = params.userId;
-        var sessionId   = params.sessionId;
-        if(!this.userToSessionsMap.get(userId)){
-            var sessions = new Set();
-            sessions.add(sessionId);
-            this.userToSessionsMap.put(userId, sessions);
-        } else {
-            var sessions = this.userToSessionsMap.get(userId);
-            sessions.add(sessionId);
-            this.userToSessionsMap.put(userId, sessions);
+        var user      = params.user;
+        var session   = params.session;
+        if(user && session){
+            if(!this.userToSessionsMap.get(user)){
+                var sessions = [session];
+                this.userToSessionsMap.put(user, sessions);
+            } else {
+                var sessions = this.userToSessionsMap.get(user);
+                sessions.push(session);
+                this.userToSessionsMap.put(user, sessions);
+            }
         }
     },
 
     /*
      * @private
      * @param {{
-     *      userId: mongoose.Schema.Types.ObjectId
-     *      sessionId: number, //??
+     *      user: {mongoose.model.User},
+     *      socket: {*}
+     * }} params
+     **/
+    addUserToSocket: function(params){
+        var user = params.user;
+        var socket = params.socket;
+        if(user && socket){
+            socket.setUser(user);
+            if(!this.socketToUserMap.get(socket)){
+                this.socketToUserMap.put(socket, user);
+            }
+        }
+    },
+
+    /*
+     * @private
+     * @param {{
+     *      user: {mongoose.model.User},
+     *      session: {*}
      * }} params
      **/
     addSessionToUser: function(params){ //a session has only one user
-        var userId      = params.userId;
-        var sessionId   = params.sessionId;
-        if(this.sessionToUserMap.get(sessionId) !== userId){
-            this.sessionToUserMap.put(sessionId, userId);
+        var user      = params.user;
+        var session   = params.session;
+        if(user && session){
+            if(!this.sessionToUserMap.get(session)){
+                this.sessionToUserMap.put(session, user);
+            }
         }
     }
 
+    //   /**
+    //    * @param {string} fromThis
+    //    * @param {string} toThat
+    //    * @param {*} params
+    //    */
     // , mapFromThisToThat: function(fromThis, toThat, params){
-    //     var map = this.[fromThis + toThat + "Map"];
+    //     var map = this.[fromThis + "To" + toThat.capitalize() + "Map"];
     //     
-    //     
-    //     var userId      = params.userId;
-    //     var sessionId   = params.sessionId;
-    //     if(!this.userToSessionsMap.get(userId)){
-    //         var sessions = new Set();
-    //         sessions.add(sessionId);
-    //         this.userToSessionsMap.put(userId, sessions);
+    //     if(!map.get(params[fromThis])){
+    //         arr = [];
+    //         arr.add(params[toThat]);
+    //         map.put(params[fromThis], arr);
     //     } else {
-    //         var sessions = this.userToSessionsMap.get(userId);
-    //         sessions.add(sessionId);
-    //         this.userToSessionsMap.put(userId, sessions);
+    //         var arr = map.get(params[fromThis]);
+    //         arr.add(params[toThat]);
+    //         map.put(params[fromThis], arr);
     //     }
     // }
 });

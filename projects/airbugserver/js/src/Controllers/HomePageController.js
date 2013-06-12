@@ -4,41 +4,38 @@
 
 //@Package('airbugserver')
 
-//@Export('AirbugApplication')
-//@Autoload
+//@Export('HomePageController')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ConfigurationScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApplication = Class.extend(Obj, {
+var HomePageController = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(config, expressApp) {
 
         this._super();
 
@@ -49,21 +46,33 @@ var AirbugApplication = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ConfigurationScan}
+         * @type {Object}
          */
-        this.configurationScan = new ConfigurationScan();
+        this.config = config;
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp = expressApp;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Class Methods
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    start: function() {
-        this.configurationScan.scan();
+    configure: function() {
+        var _this = this;
+        this.expressApp.get('/home', function(req, res) {
+            res.render('home', {
+                title: 'airbug',
+                production: _this.config.production
+            });
+        });
     }
 });
 
@@ -71,4 +80,4 @@ var AirbugApplication = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.AirbugApplication', AirbugApplication);
+bugpack.export('airbugserver.HomePageController', HomePageController);

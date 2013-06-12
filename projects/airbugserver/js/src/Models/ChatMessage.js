@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('User')
+//@Export('ChatMessage')
 
 //@Require('airbugserver.ChatMessageSchema')
 
@@ -13,16 +13,23 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
+var mongoose    = require('mongoose');
 
-var UserSchema = bugpack.require('airbugserver.ChatMessageSchema');
+
+//-------------------------------------------------------------------------------
+// Bugpack Modules
+//-------------------------------------------------------------------------------
+
+var ChatMessageSchema  = bugpack.require('airbugserver.ChatMessageSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var User = mongoose.model("ChatMessage", ChatMessageSchema);
+var ChatMessage = mongoose.model("ChatMessage", ChatMessageSchema);
+
 
 //-------------------------------------------------------------------------------
 // Exports

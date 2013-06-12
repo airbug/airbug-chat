@@ -4,41 +4,38 @@
 
 //@Package('airbugserver')
 
-//@Export('AirbugApplication')
-//@Autoload
+//@Export('UserService')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ConfigurationScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApplication = Class.extend(Obj, {
+var UserService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(userManager) {
 
         this._super();
 
@@ -49,26 +46,53 @@ var AirbugApplication = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ConfigurationScan}
+         * @type {UserManager}
          */
-        this.configurationScan = new ConfigurationScan();
+        this.userManager = userManager;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {{
+     *      name: string,
+     *      email: string
+     * }} user
+     * @param {function(Error, User)} callback
      */
-    start: function() {
-        this.configurationScan.scan();
+    establishUser: function(user, callback) {
+        var _this = this;
+        this.userManager.findOrCreate(user, function(error, user) {
+            if (!error) {
+                callback(null, user);
+            } else {
+                callback(error);
+            }
+        });
+    },
+
+    /**
+     * @param {} 
+     */
+    getCurrentUser: function(callback){
+        
+    },
+
+    /**
+     * @param {} 
+     */
+    logoutCurrentUser: function(callback){
+        
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.AirbugApplication', AirbugApplication);
+bugpack.export('airbugserver.UserService', UserService);
+
