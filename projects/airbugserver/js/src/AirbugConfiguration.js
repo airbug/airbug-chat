@@ -164,6 +164,12 @@ var AirbugConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {BugCallRouter}
+         */
+        this._bugCallRouter         = null;
+
+        /**
+         * @private
          * @type {ChatMessageManager}
          */
         this._chatMessageManager    = null;
@@ -256,7 +262,7 @@ var AirbugConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(error)} callback
      */
     initializeConfiguration: function(callback) {
         var _this = this;
@@ -429,19 +435,18 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {}
+     * @return {SocketIoManager}
      */
     alphaSocket: function() {
         return this._alphaSocketIoManager.getIoManager();
     },
 
     /**
-     * @param {}
-     * @param {}
+     * @param {SocketIoServer} socketIoServer
      * @return {SocketIoManager}
      */
-    alphaSocketIoManager: function(socketIoServer, socketsMap) {
-        this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha', socketsMap);
+    alphaSocketIoManager: function(socketIoServer) {
+        this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha');
         return this._alphaSocketIoManager;
     },
 
@@ -831,8 +836,7 @@ annotate(AirbugConfiguration).with(
             ]),
         module("alphaSocketIoManager")
             .args([
-                arg("socketIoServer").ref("socketIoServer"),
-                arg("socketsMap").ref("socketsMap")
+                arg("socketIoServer").ref("socketIoServer")
             ]),
         module("socketsMap"),
         module("socketRouter")
