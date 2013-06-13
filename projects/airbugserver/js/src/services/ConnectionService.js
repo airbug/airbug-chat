@@ -8,25 +8,27 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Map')
 //@Require('Set')
-//@Require('socketio:server.SocketIoManager')
+//@Require('bugcall.BugCallServer')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Set     = bugpack.require('Set');
-var SocketIoManager = bugpack.require('socketio:server.SocketIoManager')
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var Map             = bugpack.require('Map');
+var Set             = bugpack.require('Set');
+var BugCallServer   = bugpack.require('bugcall.BugCallServer')
 
 
 //-------------------------------------------------------------------------------
@@ -40,9 +42,9 @@ var ConnectionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {SocketIoManager} socketIoManager
+     * @param {BugCallServer} bugCallServer
      */
-    _constructor: function(socketIoManager) {
+    _constructor: function(bugCallServer) {
 
         this._super();
 
@@ -53,15 +55,16 @@ var ConnectionService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SocketIoManager}
+         * @type {BugCallServer}
          */
-        this.socketIoManager        = socketIoManager;
+        this.bugCallServer              = bugCallServer;
 
         /**
          * @private
          * @type {Map}
          */
-        this.userToConnectionsMap    = new Map();
+        this.userToConnectionsMap       = new Map();
+
     },
 
 
@@ -69,35 +72,49 @@ var ConnectionService = Class.extend(Obj, {
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {function()} callback
+     */
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        this.socketIoManager.on(SocketIoManager.EventTypes.CONNECTION, this.registerConnection);
+        this.bugCallServer.on(BugCallServer.EventTypes.CONNECTION_ESTABLISHED, this.handleConnectionEstablishedEvent, this, false);
 
         callback();
     },
 
-    registerConnection: function(event){
-        var socketIoConnection  = event.getData().socketConnection;
-        var userId              = socketIoConnection.getsocket().handshake.session.user.id;
-        var connectionUuid      = socketIoConnection.getUuid();
-        var connections         = this.userToConnectionsMap.get(userUuid);
+    /**
+     * @param {} userId
+     * @return {Set.<CallConnection>}
+     */
+    findConnectionsByUserId: function(userId){
+        return this.userToConnectionsMap.get(userId);
+    },
 
-        if(!connections){
-            connections = new Set([connectionUuid]);
-        } else {
-            connections.add(connectionUuid);
-        }
+    /**
+     * @param {Event}
+     */
+    handleConnectionEstablishedEvent: function(event){
+        var data                = event.getData();
+        var callConnection      = data.callConnection;
+        var userId              = callConnection.getHandshakeData().session.user.id;
 
-        this.userToConnectionsMap.put(userUuid, connections);
+        this.registerConnection(userId, connection);
     },
 
     /**
      * @param {} userId
-     * @return {Array}
+     * @param {CallConnection} connection
      */
-    findConnectionsByUserId: function(userId){
-        return this.userToConnectionsMap.get(userId).getValueArray();
+    registerConnection: function(userId, connection){
+        var connections = this.userToConnectionsMap.get(userId);
+
+        if(!connections){
+            connections = new Set([connection]);
+            this.userToConnectionsMap.put(userId, connections);
+        } else {
+            connections.add(connection);
+        }
     }
 });
 
