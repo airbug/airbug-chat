@@ -23,11 +23,10 @@
 //@Require('bugroutes.SocketRouter')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
+//@Require('handshaker.Handshaker')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
 //@Require('socketio:server.SocketIoServerConfig')
-
-//@Require('airbugserver.SocketsMap')
 
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.RoomController')
@@ -89,11 +88,10 @@ var BugCallRouter           = BugPack.require('bugroutes.BugCallRouter');
 var SocketRouter            = bugpack.require('bugroutes.SocketRouter');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
+var Handshaker              = bugpack.require('handshaker.Handshaker');
 var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
-
-var SocketsMap              = bugpack.require('airbugserver.SocketsMap');
 
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var RoomController          = bugpack.require('airbugserver.RoomController');
@@ -564,6 +562,13 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {Handshaker}
+     */
+    handshaker: function(){
+        return new Handshaker([]);
+    },
+
+    /**
      * @param {Object} config
      * @param {ExpressApp} expressApp
      * @return {HomePageController}
@@ -656,12 +661,12 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {}
-     * @param {}
+     * @param {SocketIoServerConfig} config
+     * @param {ExpressServer} expressServer
      * @return {SocketIoServer}
      */
-    socketIoServer: function(config, expressServer) {
-        this._socketIoServer = new SocketIoServer(config, expressServer);
+    socketIoServer: function(config, expressServer, handshaker) {
+        this._socketIoServer = new SocketIoServer(config, expressServer, handshaker);
         return this._socketIoServer;
     },
 
@@ -678,13 +683,6 @@ var AirbugConfiguration = Class.extend(Obj, {
      */
     socketIoManager: function(socketIoServer) {
         return new SocketIoManager(socketIoServer, "/socket");
-    },
-
-    /**
-     * @return {SocketsMap}
-     */
-    socketsMap: function() {
-        return new SocketsMap();
     },
 
     /**
@@ -824,12 +822,7 @@ annotate(AirbugConfiguration).with(
         // Sockets
         //-------------------------------------------------------------------------------
 
-        module("socketIoServer").
-            args([
-                arg("config").ref("socketIoServerConfig"),
-                arg("expressServer").ref("expressServer")
-            ]),
-        module("socketIoServerConfig"),
+        module("handshaker"),
         module("socketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer")
@@ -838,11 +831,17 @@ annotate(AirbugConfiguration).with(
             .args([
                 arg("socketIoServer").ref("socketIoServer")
             ]),
-        module("socketsMap"),
         module("socketRouter")
             .args([
                 arg("ioManager").ref("alphaSocketIoManager")
             ]),
+        module("socketIoServer").
+            args([
+                arg("config").ref("socketIoServerConfig"),
+                arg("expressServer").ref("expressServer"),
+                arg("handshaker").ref("handshaker")
+            ]),
+        module("socketIoServerConfig"),
 
 
         //-------------------------------------------------------------------------------
