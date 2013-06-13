@@ -2,13 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('usermedia')
 
-//@Export('AirbugApi')
+//@Export('UserMediaServerApplication')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Queue')
+//@Require('bugioc.ConfigurationScan')
 
 
 //-------------------------------------------------------------------------------
@@ -24,20 +25,20 @@ var bugpack = require('bugpack').context();
 
 var Class =             bugpack.require('Class');
 var Obj =               bugpack.require('Obj');
-var Queue =             bugpack.require('Queue');
+var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApi = Class.extend(Obj, {
+var UserMediaServerApplication = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallClient) {
+    _constructor: function() {
 
         this._super();
 
@@ -48,24 +49,21 @@ var AirbugApi = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {BugCallClient}
+         * @type {ConfigurationScan}
          */
-        this.bugCallClient = bugCallClient;
+        this.configurationScan = new ConfigurationScan();
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
 
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
-    createUser: function(fullName, email, callback) {
-
+    /**
+     * @param {function(Error)} callback
+     */
+    start: function(callback) {
+        this.configurationScan.scan(callback);
     }
 });
 
@@ -74,4 +72,4 @@ var AirbugApi = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.AirbugApi", AirbugApi);
+bugpack.export("usermedia.UserMediaServerApplication", UserMediaServerApplication);

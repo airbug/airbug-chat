@@ -14,15 +14,22 @@
 //@Require('airbug.PageStateModule')
 //@Require('airbug.SessionModule')
 //@Require('annotate.Annotate')
+//@Require('bugcall.BugCallClient')
+//@Require('bugcall.CallClient')
+//@Require('bugcall.CallManager')
+//@Require('bugcall.CallRequester')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('socketio:client.SocketIoClient')
+//@Require('socketio:client.SocketIoConfig')
+//@Require('socketio:factorybrowser.BrowserSocketIoFactory')
 
 
 //-------------------------------------------------------------------------------
@@ -36,22 +43,29 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var Obj =                       bugpack.require('Obj');
-var AirbugApi =                 bugpack.require('airbug.AirbugApi');
-var NavigationModule =          bugpack.require('airbug.NavigationModule');
-var PageStateModule =           bugpack.require('airbug.PageStateModule');
-var SessionModule =             bugpack.require('airbug.SessionModule');
-var Annotate =                  bugpack.require('annotate.Annotate');
-var ArgAnnotation =             bugpack.require('bugioc.ArgAnnotation');
-var AutowiredScan =             bugpack.require('bugioc.AutowiredScan');
-var ConfigurationAnnotation =   bugpack.require('bugioc.ConfigurationAnnotation');
-var IConfiguration =            bugpack.require('bugioc.IConfiguration');
-var ModuleAnnotation =          bugpack.require('bugioc.ModuleAnnotation');
-var CarapaceApplication =       bugpack.require('carapace.CarapaceApplication');
-var CarapaceRouter =            bugpack.require('carapace.CarapaceRouter');
-var ControllerScan =            bugpack.require('carapace.ControllerScan');
-var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var AirbugApi               = bugpack.require('airbug.AirbugApi');
+var NavigationModule        = bugpack.require('airbug.NavigationModule');
+var PageStateModule         = bugpack.require('airbug.PageStateModule');
+var SessionModule           = bugpack.require('airbug.SessionModule');
+var Annotate                = bugpack.require('annotate.Annotate');
+var BugCallClient           = bugpack.require('bugcall.BugCallClient');
+var CallClient              = bugpack.require('bugcall.CallClient');
+var CallManager             = bugpack.require('bugcall.CallManager');
+var CallRequester           = bugpack.require('bugcall.CallRequester');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var AutowiredScan           = bugpack.require('bugioc.AutowiredScan');
+var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
+var IConfiguration          = bugpack.require('bugioc.IConfiguration');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var CarapaceApplication     = bugpack.require('carapace.CarapaceApplication');
+var CarapaceRouter          = bugpack.require('carapace.CarapaceRouter');
+var ControllerScan          = bugpack.require('carapace.ControllerScan');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
+var SocketIoConfig          = bugpack.require('socketio:client.SocketIoConfig');
+var BrowserSocketIoFactory  = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
 
 
 //-------------------------------------------------------------------------------
@@ -101,6 +115,12 @@ var ApplicationConfiguration = Class.extend(Obj, {
          * @type {ControllerScan}
          */
         this._controllerScan = null;
+
+        /**
+         * @private
+         * @type {SocketIoConfig}
+         */
+        this._socketIoConfig = null;
     },
 
 
@@ -109,9 +129,13 @@ var ApplicationConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Error)}
      */
-    initializeConfiguration: function() {
+    initializeConfiguration: function(callback) {
+        this._socketIoConfig.setHost("localhost");
+        this._socketIoConfig.setResource("/");
+        this._socketIoConfig.setPort(8000);
+
         this._autowiredScan.scan();
         this._controllerScan.scan();
         this._carapaceApplication.start();
@@ -123,10 +147,11 @@ var ApplicationConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {BugCallClient} bugCallClient
      * @return {AirbugApi}
      */
-    airbugApi: function() {
-        return new AirbugApi();
+    airbugApi: function(bugCallClient) {
+        return new AirbugApi(bugCallClient);
     },
 
     /**
@@ -135,6 +160,46 @@ var ApplicationConfiguration = Class.extend(Obj, {
     autowiredScan: function() {
         this._autowiredScan = new AutowiredScan();
         return this._autowiredScan;
+    },
+
+    /**
+     * @return {BrowserSocketIoFactory}
+     */
+    browserSocketIoFactory: function() {
+        return new BrowserSocketIoFactory();
+    },
+
+    /**
+     * @param {CallClient} callClient
+     * @param {CallManager} callManager
+     * @param {CallRequester} callRequester
+     * @return {BugCallClient}
+     */
+    bugCallClient: function(callClient, callManager, callRequester) {
+        return new BugCallClient(callClient, callManager, callRequester);
+    },
+
+    /**
+     * @param {SocketIoClient} socketIoClient
+     * @return {CallClient}
+     */
+    callClient: function(socketIoClient) {
+        return new CallClient(socketIoClient);
+    },
+
+    /**
+     * @return {CallManager}
+     */
+    callManager: function() {
+        return new CallManager();
+    },
+
+    /**
+     * @param {CallManager} callManager
+     * @return {CallRequester}
+     */
+    callRequester: function(callManager) {
+        return new CallRequester(callManager)
     },
 
     /**
@@ -181,13 +246,49 @@ var ApplicationConfiguration = Class.extend(Obj, {
      */
     sessionModule: function() {
         return new SessionModule();
+    },
+
+    /**
+     * @param {ISocketFactory} socketIoFactory
+     * @param {SocketIoConfig} socketIoConfig
+     * @return {SocketIoClient}
+     */
+    socketIoClient: function(socketIoFactory, socketIoConfig) {
+        return new SocketIoClient(socketIoFactory, socketIoConfig);
+    },
+
+    /**
+     * @return {SocketIoConfig}
+     */
+    socketIoConfig: function() {
+        this._socketIoConfig = new SocketIoConfig({});
+        return this._socketIoConfig;
     }
 });
 Class.implement(ApplicationConfiguration, IConfiguration);
 annotate(ApplicationConfiguration).with(
     configuration().modules([
-        module("airbugApi"),
+        module("airbugApi")
+            .args([
+                arg("bugCallClient").ref("bugCallClient")
+            ]),
         module("autowiredScan"),
+        module("browserSocketIoFactory"),
+        module("bugCallClient")
+            .args([
+                arg("callClient").ref("callClient"),
+                arg("callManager").ref("callManager"),
+                arg("callRequester").ref("callRequester")
+            ]),
+        module("callClient")
+            .args([
+                arg("socketIoClient")
+            ]),
+        module("callManager"),
+        module("callRequester")
+            .args([
+                arg("callManager").ref("callManager")
+            ]),
         module("carapaceApplication")
             .args([
                 arg().ref("carapaceRouter")
@@ -208,7 +309,13 @@ annotate(ApplicationConfiguration).with(
         module("sessionModule")
             .properties([
                 property("airbugApi").ref("airbugApi")
-            ])
+            ]),
+        module("socketIoClient")
+            .args([
+                arg("socketIoFactory").ref("browserSocketIoFactory"),
+                arg("socketIoConfig").ref("socketIoConfig")
+            ]),
+        module("socketIoConfig")
     ])
 );
 

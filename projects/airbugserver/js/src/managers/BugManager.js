@@ -2,42 +2,40 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugserver')
 
-//@Export('AirbugApi')
+//@Export('BugManager')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Queue')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Queue =             bugpack.require('Queue');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApi = Class.extend(Obj, {
+var BugManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallClient) {
+    _constructor: function(model, schema){
 
         this._super();
 
@@ -48,9 +46,15 @@ var AirbugApi = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {BugCallClient}
+         * @type {mongoose.Model}
          */
-        this.bugCallClient = bugCallClient;
+        this.model      = model;
+
+        /**
+         * @private
+         * @type {mongoose.Schema}
+         */
+        this.schema     = schema;
     },
 
 
@@ -58,14 +62,27 @@ var AirbugApi = Class.extend(Obj, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {mongoose.Model}
+     */
+    getModel: function() {
+        return this.model;
+    },
+
+    /**
+     * @return {mongoose.Schema}
+     */
+    getSchema: function() {
+        return this.schema;
+    },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
-    createUser: function(fullName, email, callback) {
-
+    configure: function(callback) {
+        callback()
     }
 });
 
@@ -74,4 +91,4 @@ var AirbugApi = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.AirbugApi", AirbugApi);
+bugpack.export('airbugserver.BugManager', BugManager);
