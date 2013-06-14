@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('AirbugApplication')
+//@Export('AirbugServerApplication')
 //@Autoload
 
 //@Require('Class')
@@ -32,7 +32,7 @@ var ConfigurationScan = bugpack.require('bugioc.ConfigurationScan');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApplication = Class.extend(Obj, {
+var AirbugServerApplication = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -71,4 +71,4 @@ var AirbugApplication = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.AirbugApplication', AirbugApplication);
+bugpack.export('airbugserver.AirbugServerApplication', AirbugServerApplication);

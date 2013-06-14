@@ -4,7 +4,9 @@
 
 //@Package('airbugserver')
 
-//@Export('UserSchema')
+//@Export('Session')
+
+//@Require('airbugserver.SessionSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -16,30 +18,21 @@ var mongoose    = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
-// Simplify References
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Schema      = mongoose.Schema;
-var ObjectId    = mongoose.Schema.Types.ObjectId;
+var SessionSchema  = bugpack.require('airbugserver.SessionSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserSchema = new Schema({
-    email: {type: String, index: true, unique: true},
-    firstName: String,
-    lastName: String,
-    anonymous: Boolean,
-    roomsList: [ObjectId],
-    createdAt: Date,
-    updatedAt: Date
-});
+var Session = mongoose.model("Session", SessionSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserSchema', UserSchema);
+bugpack.export('airbugserver.Session', Session);

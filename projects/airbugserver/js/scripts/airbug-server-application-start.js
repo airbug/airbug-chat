@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Require('airbugserver.AirbugApplication')
+//@Require('airbugserver.AirbugServerApplication')
 
 
 //-------------------------------------------------------------------------------
@@ -16,15 +16,15 @@ var bugpack = require('bugpack').context(module);
 // BugPack
 //-------------------------------------------------------------------------------
 
-var AirbugApplication = bugpack.require('airbugserver.AirbugApplication');
+var AirbugServerApplication = bugpack.require('airbugserver.AirbugServerApplication');
 
 
 //-------------------------------------------------------------------------------
 // Script
 //-------------------------------------------------------------------------------
 
-var airbugApplication = new AirbugApplication();
-airbugApplication.start(function(error) {
+var airbugServerApplication = new AirbugServerApplication();
+airbugServerApplication.start(function(error) {
     console.log("Starting airbug server...");
     if (!error){
         console.log("Airbug server successfully started");

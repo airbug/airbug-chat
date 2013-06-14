@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('UserSchema')
+//@Export('SessionSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -19,22 +19,31 @@ var mongoose    = require('mongoose');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var Mixed       = mongoose.Schema.Types.Mixed;
 var Schema      = mongoose.Schema;
-var ObjectId    = mongoose.Schema.Types.ObjectId;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserSchema = new Schema({
-    email: {type: String, index: true, unique: true},
-    firstName: String,
-    lastName: String,
-    anonymous: Boolean,
-    roomsList: [ObjectId],
+var SessionSchema = new Schema({
     createdAt: Date,
+    data: {
+        type: Mixed,
+        required: true
+    },
+    expires: Date,
+    sid: {
+        type: String,
+        require: true,
+        unique: true
+    },
     updatedAt: Date
+});
+
+SessionSchema.index({
+    sid: 1
 });
 
 
@@ -42,4 +51,4 @@ var UserSchema = new Schema({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserSchema', UserSchema);
+bugpack.export('airbugserver.SessionSchema', SessionSchema);

@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ApplicationConfiguration')
+//@Export('AirbugClientConfiguration')
 //@Autoload
 
 //@Require('Class')
@@ -83,7 +83,7 @@ var property = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ApplicationConfiguration = Class.extend(Obj, {
+var AirbugClientConfiguration = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -132,8 +132,8 @@ var ApplicationConfiguration = Class.extend(Obj, {
      * @param {function(Error)}
      */
     initializeConfiguration: function(callback) {
-        this._socketIoConfig.setHost("localhost");
-        this._socketIoConfig.setResource("/");
+        this._socketIoConfig.setHost("/api/airbug");
+        this._socketIoConfig.setResource("/api/socket");
         this._socketIoConfig.setPort(8000);
 
         this._autowiredScan.scan();
@@ -265,8 +265,20 @@ var ApplicationConfiguration = Class.extend(Obj, {
         return this._socketIoConfig;
     }
 });
-Class.implement(ApplicationConfiguration, IConfiguration);
-annotate(ApplicationConfiguration).with(
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(AirbugClientConfiguration, IConfiguration);
+
+
+//-------------------------------------------------------------------------------
+// Annotate
+//-------------------------------------------------------------------------------
+
+annotate(AirbugClientConfiguration).with(
     configuration().modules([
         module("airbugApi")
             .args([
@@ -324,4 +336,4 @@ annotate(ApplicationConfiguration).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ApplicationConfiguration", ApplicationConfiguration);
+bugpack.export("airbug.AirbugClientConfiguration", AirbugClientConfiguration);

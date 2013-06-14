@@ -57,6 +57,14 @@ var UserService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {function(Error, User)} callback
+     */
+    createAnonymousUser: function(callback) {
+        var user = {anonymous: true};
+        this.userManager.createUser(user, callback);
+    },
+
+    /**
      * @param {{
      *      name: string,
      *      email: string
@@ -77,14 +85,7 @@ var UserService = Class.extend(Obj, {
     /**
      * @param {} 
      */
-    getCurrentUser: function(callback){
-        
-    },
-
-    /**
-     * @param {} 
-     */
-    logoutCurrentUser: function(callback){
+    logoutUser: function(callback){
         
     }
 });

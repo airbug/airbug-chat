@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack         = require('bugpack').context();
 
 var Class   = bugpack.require('Class');
 var Obj     = bugpack.require('Obj');
+var Proxy   = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
@@ -55,6 +57,34 @@ var BugManager = Class.extend(Obj, {
          * @type {mongoose.Schema}
          */
         this.schema     = schema;
+
+
+        Proxy.proxy(this, this.model, [
+            '$where',
+            'aggregate',
+            'count',
+            'create',
+            'distinct',
+            'ensureIndexes',
+            'find',
+            'findById',
+            'findByIdAndRemove',
+            'findByIdAndUpdate',
+            'findOne',
+            'findOneAndRemove',
+            'findOneAndUpdate',
+            'mapReduce',
+            'populate',
+            'remove',
+            'update',
+            'where'
+        ]);
+
+        Proxy.proxy(this, this.schema, [
+            'pre',
+            'post',
+            'virtual'
+        ]);
     },
 
 

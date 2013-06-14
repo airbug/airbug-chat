@@ -43,14 +43,15 @@ buildProperties({
             dependencies: {
                 bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
                 connect: "2.x",
-                express: "3.0.x",
+                cookie: "0.1.x",
+                express: "3.2.x",
                 mu2express: "0.0.x",
-                "mongodb": ">=1.2.11",
-                "mongoose": ">=3.5.6",
+                mongodb: ">=1.2.11",
+                mongoose: ">=3.5.6",
                 "socket.io": "0.9.x"
             },
             scripts: {
-                start: "node ./scripts/start.js"
+                start: "node ./scripts/airbug-server-application-start.js"
             }
         },
         sourcePaths: [
@@ -65,9 +66,9 @@ buildProperties({
             "../bugjs/projects/bugtrace/js/src",
             "../bugunit/projects/bugunit/js/src",
             "../bugjs/projects/express/js/src",
+            "../bugjs/projects/handshaker/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src"
-           // "../bugjs/projects/clientjs/js/src"
         ],
         scriptPaths: [
             "./projects/airbugserver/js/scripts",

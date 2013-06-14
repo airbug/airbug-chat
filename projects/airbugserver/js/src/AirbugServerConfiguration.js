@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('AirbugConfiguration')
+//@Export('AirbugServerConfiguration')
 //@Autoload
 
 //@Require('Class')
@@ -28,17 +28,21 @@
 //@Require('socketio:server.SocketIoServer')
 //@Require('socketio:server.SocketIoServerConfig')
 
+//@Require('airbugserver.SessionStore')
+
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.RoomController')
 //@Require('airbugserver.UserController')
 
 //@Require('airbugserver.RoomService')
+//@Require('airbugserver.SessionService')
 //@Require('airbugserver.UserService')
 
 //@Require('airbugserver.ChatMessageManager')
 //@Require('airbugserver.ConversationManager')
 //@Require('airbugserver.RoomManager')
 //@Require('airbugserver.RoomMemberManager')
+//@Require('airbugserver.SessionManager')
 //@Require('airbugserver.UserManager')
 
 //@Require('airbugserver.ChatMessage')
@@ -46,6 +50,7 @@
 //@Require('airbugserver.Dialogue')
 //@Require('airbugserver.RoomMember')
 //@Require('airbugserver.Room')
+//@Require('airbugserver.Session')
 //@Require('airbugserver.User')
 
 //@Require('airbugserver.ChatMessageSchema')
@@ -53,6 +58,7 @@
 //@Require('airbugserver.DialogueSchema')
 //@Require('airbugserver.RoomMemberSchema')
 //@Require('airbugserver.RoomSchema')
+//@Require('airbugserver.SessionSchema')
 //@Require('airbugserver.UserSchema')
 
 
@@ -93,10 +99,13 @@ var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager')
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
 
+var SessionStore            = bugpack.require('airbugserver.SessionStore');
+
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var RoomController          = bugpack.require('airbugserver.RoomController');
 var UserController          = bugpack.require('airbugserver.UserController');
 
+var SessionService          = bugpack.require('airbugserver.SessionService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var UserService             = bugpack.require('airbugserver.UserService');
 
@@ -104,6 +113,7 @@ var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager')
 var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
 var RoomManager             = bugpack.require('airbugserver.RoomManager');
 var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
+var SessionManager          = bugpack.require('airbugserver.SessionManager');
 var UserManager             = bugpack.require('airbugserver.UserManager');
 
 var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
@@ -111,6 +121,7 @@ var Conversation            = bugpack.require('airbugserver.Conversation');
 var Dialogue                = bugpack.require('airbugserver.Dialogue');
 var Room                    = bugpack.require('airbugserver.Room');
 var RoomMember              = bugpack.require('airbugserver.RoomMember');
+var Session                 = bugpack.require('airbugserver.Session');
 var User                    = bugpack.require('airbugserver.User');
 
 var ChatMessageSchema       = bugpack.require('airbugserver.ChatMessageSchema');
@@ -118,7 +129,9 @@ var ConversationSchema      = bugpack.require('airbugserver.ConversationSchema')
 var DialogueSchema          = bugpack.require('airbugserver.DialogueSchema');
 var RoomMemberSchema        = bugpack.require('airbugserver.RoomMemberSchema');
 var RoomSchema              = bugpack.require('airbugserver.RoomSchema');
+var SessionSchema           = bugpack.require('airbugserver.SessionSchema');
 var UserSchema              = bugpack.require('airbugserver.UserSchema');
+
 
 //-------------------------------------------------------------------------------
 // Simplify References
@@ -139,7 +152,7 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugConfiguration = Class.extend(Obj, {
+var AirbugServerConfiguration = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -158,7 +171,7 @@ var AirbugConfiguration = Class.extend(Obj, {
          * @private
          * @type {SocketIoManager}
          */
-        this._alphaSocketIoManager  = null;
+        this._apiAirbugSocketIoManager  = null;
 
         /**
          * @private
@@ -207,6 +220,12 @@ var AirbugConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Handshaker}
+         */
+        this._handshaker            = null;
+
+        /**
+         * @private
          * @type {HomePageController}
          */
         this._homePageController =  null;
@@ -227,12 +246,13 @@ var AirbugConfiguration = Class.extend(Obj, {
          * @private
          * @type {RoomController}
          */
-        this._roomController       = null;
+        this._roomController        = null;
 
         /**
-         * @type {SocketIoManager}
+         * @private
+         * @type {SessionStore}
          */
-        this._socketIoManager       = null;
+        this._sessionStore          = null;
 
         /**
          * @private
@@ -279,8 +299,12 @@ var AirbugConfiguration = Class.extend(Obj, {
 
             /*app.set('view engine', 'jade');*/
 
-            _this._expressApp.use(express.cookieParser(secret));
-            _this._expressApp.use(express.session({secret: secret, key: sessionKey}));
+            _this._expressApp.use(express.cookieParser());
+            _this._expressApp.use(express.session({
+                store: _this._sessionStore,
+                secret: secret,
+                key: sessionKey
+            }));
             _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
             _this._expressApp.use(express.logger('dev'));
             _this._expressApp.use(express.bodyParser());
@@ -294,6 +318,14 @@ var AirbugConfiguration = Class.extend(Obj, {
         });
 
         this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+
+        //TODO BRN: This setup should be replaced by an annotation
+        this._handshaker.addHands([
+            this.sessionService,
+            this.userService
+        ]);
+
+        this._socketIoServerConfig.setResource("/api/socket");
 
         $series([
 
@@ -433,19 +465,12 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {SocketIoManager}
-     */
-    alphaSocket: function() {
-        return this._alphaSocketIoManager.getIoManager();
-    },
-
-    /**
      * @param {SocketIoServer} socketIoServer
      * @return {SocketIoManager}
      */
-    alphaSocketIoManager: function(socketIoServer) {
-        this._alphaSocketIoManager = new SocketIoManager(socketIoServer, '/alpha');
-        return this._alphaSocketIoManager;
+    apiAirbugSocketIoManager: function(socketIoServer) {
+        this._apiAirbugSocketIoManager = new SocketIoManager(socketIoServer, '/api/airbug');
+        return this._apiAirbugSocketIoManager;
     },
 
     /**
@@ -458,7 +483,7 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {CallServer} CallServer
+     * @param {CallServer} callServer
      * @return {BugCallServer}
      */
     bugCallServer: function(callServer) {
@@ -564,8 +589,9 @@ var AirbugConfiguration = Class.extend(Obj, {
     /**
      * @return {Handshaker}
      */
-    handshaker: function(){
-        return new Handshaker([]);
+    handshaker: function() {
+        this._handshaker = new Handshaker([]);
+        return this._handshaker;
     },
 
     /**
@@ -611,8 +637,8 @@ var AirbugConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
+     * @param {RoomMember} model
+     * @param {RoomMemberSchema} schema
      * @return {RoomMemberManager}
      */
     roomMemberManager: function(model, schema) {
@@ -650,14 +676,47 @@ var AirbugConfiguration = Class.extend(Obj, {
      * @return {RoomService}
      */
     roomService: function(roomManager, userManager) {
-         return new RoomService(roomManager, userManager);
+        return new RoomService(roomManager, userManager);
     },
 
     /**
-     * @return {MemoryStore}
+     * @return {Session}
      */
-    sessionStore: function() {
-        return new connect.middleware.session.MemoryStore();
+    session: function() {
+        return Session;
+    },
+
+    /**
+     * @param {Session} model
+     * @param {SessionSchema} schema
+     * @return {SessionManager}
+     */
+    sessionManager: function(model, schema) {
+        return new SessionManager(model, schema);
+    },
+
+    /**
+     * @return {SessionSchema}
+     */
+    sessionSchema: function() {
+        return SessionSchema;
+    },
+
+    /**
+     * @param {SessionManager} sessionManager
+     * @return {SessionService}
+     */
+    sessionService: function(sessionManager) {
+        return new SessionService(sessionManager);
+    },
+
+    /**
+     * @param {SessionManager} sessionManager
+     * @return {SessionStore}
+     */
+    sessionStore: function(sessionManager) {
+        this._sessionStore = new SessionStore(sessionManager);
+        return this._sessionStore;
     },
 
     /**
@@ -674,15 +733,8 @@ var AirbugConfiguration = Class.extend(Obj, {
      * @return {SocketIoServerConfig}
      */
     socketIoServerConfig: function() {
-        return new SocketIoServerConfig({});
-    },
-
-    /**
-     * @param {SocketIoServer} socketIoServer
-     * @return {SocketIoManager}
-     */
-    socketIoManager: function(socketIoServer) {
-        return new SocketIoManager(socketIoServer, "/socket");
+        this._socketIoServerConfig = new SocketIoServerConfig({});
+        return this._socketIoServerConfig;
     },
 
     /**
@@ -776,14 +828,14 @@ var AirbugConfiguration = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(AirbugConfiguration, IConfiguration);
+Class.implement(AirbugServerConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
 // Annotate
 //-------------------------------------------------------------------------------
 
-annotate(AirbugConfiguration).with(
+annotate(AirbugServerConfiguration).with(
     configuration().modules([
         
         //-------------------------------------------------------------------------------
@@ -815,7 +867,10 @@ annotate(AirbugConfiguration).with(
             .args([
                 arg("expressApp").ref("expressApp")
             ]),
-        module("sessionStore"),
+        module("sessionStore")
+            .args([
+                arg("sessionManager").ref("sessionManager")
+            ]),
 
 
         //-------------------------------------------------------------------------------
@@ -823,17 +878,13 @@ annotate(AirbugConfiguration).with(
         //-------------------------------------------------------------------------------
 
         module("handshaker"),
-        module("socketIoManager")
-            .args([
-                arg("socketIoServer").ref("socketIoServer")
-            ]),
-        module("alphaSocketIoManager")
+        module("apiAirbugSocketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer")
             ]),
         module("socketRouter")
             .args([
-                arg("ioManager").ref("alphaSocketIoManager")
+                arg("ioManager").ref("apiAirbugSocketIoManager")
             ]),
         module("socketIoServer").
             args([
@@ -851,14 +902,14 @@ annotate(AirbugConfiguration).with(
         module("bugCallRouter")
             .args([
                 arg("bugCallServer").ref("bugCallServer")
-            ])
+            ]),
         module("bugCallServer")
             .args([
                 arg("callServer").ref("callServer")
             ]),
         module("callServer")
             .args([
-                arg("socketIoManager").ref("alphaSocketIoManager")
+                arg("socketIoManager").ref("apiAirbugSocketIoManager")
             ]),
 
 
@@ -907,6 +958,11 @@ annotate(AirbugConfiguration).with(
                 arg("model").ref("roomMember"),
                 arg("schema").ref("roomMemberSchema")
             ]),
+        module("sessionManager")
+            .args([
+                arg("model").ref("session"),
+                arg("schema").ref("sessionSchema")
+            ]),
         module("userManager")
             .args([
                 arg("model").ref("user"),
@@ -923,6 +979,10 @@ annotate(AirbugConfiguration).with(
                 arg("roomManager").ref("roomManager"),
                 arg("userManager").ref("userManager")
             ]),
+        module("sessionService")
+            .args([
+                arg("sessionManager").ref("sessionManager")
+            ]),
         module("userService")
             .args([
                 arg("userManager").ref("userManager")
@@ -938,6 +998,7 @@ annotate(AirbugConfiguration).with(
         module("dialogue"),
         module("room"),
         module("roomMember"),
+        module("session"),
         module("user"),
 
 
@@ -950,6 +1011,7 @@ annotate(AirbugConfiguration).with(
         module("dialogueSchema"),
         module("roomMemberSchema"),
         module("roomSchema"),
+        module("sessionSchema"),
         module("userSchema")
     ])
 );
@@ -959,4 +1021,4 @@ annotate(AirbugConfiguration).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbugserver.AirbugConfiguration", AirbugConfiguration);
+bugpack.export("airbugserver.AirbugServerConfiguration", AirbugServerConfiguration);

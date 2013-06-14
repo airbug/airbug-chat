@@ -7,8 +7,8 @@
 //@Export('UserManager')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('BugManager')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -22,55 +22,20 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var Proxy       = bugpack.require('Proxy');
+var BugManager  = bugpack.require('airbugserver.BugManager');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserInterface = {
-    establishUser: function(){},
-};
-
-// Implementation
-var UserManager = Class.extend(Obj, {
-
-    _constructor: function(model, schema){
-
-        this._super();
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {mongoose.Model}
-         */
-        this.model = model;
-
-        /**
-         * @type {mongoose.Schema}
-         */
-        this.schema = schema;
-
-        Proxy.proxy(this, this.model, [
-            'findById'
-        ]);
-
-        Proxy.proxy(this, this.schema, [
-            'pre',
-            'post',
-            'virtual'
-        ]);
-    },
-
+var UserManager = Class.extend(BugManager, {
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // BugManager Extensions/Overrides
     //-------------------------------------------------------------------------------
 
-    configure: function(callback){
+    configure: function(callback) {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         this.pre('save', function (next){
@@ -84,35 +49,43 @@ var UserManager = Class.extend(Obj, {
         callback();
     },
 
-    getModel: function(){
-        return this.model;
-    },
-
-    getSchema: function(){
-        return this.schema;
-    },
-
-    /*
+    /**
      * @private
      * @param {string} attribute
      * @param {function(value) | function(value, response)} validationFunction
      * @param {string} errorMessage
-     **/
+     */
     validate: function(attribute, validationFunction, errorMessage){
         this.schema.path(attribute).validate(validationFunction, errorMessage);
     },
 
-    /*
+
+    //-------------------------------------------------------------------------------
+    // Public Instance Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Object} user
+     * @param {function(Error, User)=} callback
+     */
+    createUser: function(user, callback) {
+        this.create(user, function(error, user) {
+            if (callback) {
+                callback(error, user);
+            }
+        });
+    },
+
+    /**
      * @param {{
      *      name: string,
      *      email: string
      * }} user
      * @param {function(Error, User)} callback
-     **/
-    findOrCreate: function(user, callback){
+     */
+    findOrCreateUser: function(user, callback) {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        var _this       = this;
         var User        = this.model;
         var userObj     = user;
         var conditions  = {email: userObj.email};
@@ -120,10 +93,10 @@ var UserManager = Class.extend(Obj, {
         var options     = {lean: false};
 
         User.findOne(conditions, fields, options, function(error, user){
-            if(error){
+            if (error) {
                 callback(error);
             } else {
-                if(!user){
+                if (!user) {
                     User.create(userObj, callback);
                 } else {
                     callback(null, user);

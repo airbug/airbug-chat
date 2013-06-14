@@ -35,16 +35,91 @@ var SessionManager = Class.extend(BugManager, {
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {function(Error, number)} callback
+     */
+    countAllSessions: function(callback) {
+         this.count({}, function(error, count) {
+             if (callback) {
+                 callback(error, count);
+             }
+         });
+    },
+
+    /**
+     * @param {string} sid
+     * @param {Session} session
+     * @param {function(Error)=} callback
+     */
+    createOrUpdateSession: function(sid, session, callback) {
+        this.update({sid: sid}, session, {upsert: true}, function(error) {
+            if (callback) {
+                callback(error);
+            }
+        });
+    },
+
+    /**
+     * @param {Object} session
+     * @param {function(Error, Session)=} callback
+     */
     createSession: function(session, callback) {
-
+        this.create(session, function(error, session) {
+            if (callback) {
+                callback(error, session);
+            }
+        });
     },
 
-    updateSession: function(session, callback) {
-
+    /**
+     * @param {function(Error, Array.<Session>} callback
+     */
+    findAllSessions: function(callback) {
+        this.find({}, callback);
     },
 
-    removeSession: function(session, callback) {
+    /**
+     * @param {string} sid
+     * @param {function(Error, Session)}
+     */
+    findSessionBySid: function(sid, callback) {
+        this.findOne({sid: sid}, callback);
+    },
 
+    /**
+     * @param {function(Error)=} callback
+     */
+    removeAllSessions: function(callback) {
+        this.remove({}, function (error) {
+            if (callback) {
+                callback(error);
+            }
+        });
+    },
+
+    /**
+     * @param {string} sid
+     * @param {function(Error)=} callback
+     */
+    removeSessionBySid: function(sid, callback) {
+        this.remove({sid: sid}, function(error) {
+            if (callback) {
+                callback(error);
+            }
+        });
+    },
+
+    /**
+     * @param {string} sid
+     * @param {Session} session
+     * @param {function(Error)=} callback
+     */
+    updateSessionBySid: function(sid, session, callback) {
+        this.update({sid: sid}, session, function(error) {
+            if (callback) {
+                callback(error);
+            }
+        });
     }
 });
 
