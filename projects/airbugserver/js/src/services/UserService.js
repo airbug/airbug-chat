@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('handshaker.IHand')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack     = require('bugpack').context();
 
 var Class   = bugpack.require('Class');
 var Obj     = bugpack.require('Obj');
+var IHand   = bugpack.require('handshaker.IHand');
 
 
 //-------------------------------------------------------------------------------
@@ -49,6 +51,54 @@ var UserService = Class.extend(Obj, {
          * @type {UserManager}
          */
         this.userManager = userManager;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IHand Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {} handshakeData
+     * @param {function(Error, boolean)} callback
+     */
+    shakeIt: function(handshakeData, callback) {
+        var _this = this;
+        if (handshakeData.session) {
+            var session = handshakeData.session;
+            if (session.userId) {
+                this.userManager.findUserById(session.userID, function(error, user) {
+                    if (!error) {
+                        if (user) {
+                            session.user = user;
+                        } else {
+                            delete session.userId;
+                            _this.createAnonymousUser(function(error, user) {
+                                if (!error) {
+                                    session.user = user;
+                                    session.userId = user.id;
+                                } else {
+                                    callback(error);
+                                }
+                            });
+                        }
+                    } else {
+                        callback(error);
+                    }
+                });
+            } else {
+                this.createAnonymousUser(function(error, user) {
+                    if (!error) {
+                        session.user = user;
+                        session.userId = user.id;
+                    } else {
+                        callback(error);
+                    }
+                });
+            }
+        } else {
+            callback(new Error('No session has been generated.'), false);
+        }
     },
 
 
@@ -89,6 +139,13 @@ var UserService = Class.extend(Obj, {
         
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(UserService, IHand);
 
 
 //-------------------------------------------------------------------------------

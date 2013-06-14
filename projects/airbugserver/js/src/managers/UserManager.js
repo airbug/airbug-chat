@@ -103,6 +103,14 @@ var UserManager = Class.extend(BugManager, {
                 }
             }
         });
+    },
+
+    /**
+     * @param {string} id
+     * @param {function(Error, User)} callback
+     */
+    findUserById: function(id, callback) {
+        this.find({_id: id}, callback);
     }
 });
 
