@@ -7,8 +7,8 @@
 //@Export('RoomManager')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Proxy')
+//@Require('airbugserver.BugManager')
 //@Require('bugflow.BugFlow')
 
 
@@ -23,10 +23,10 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugFlow     = bugpack.require('bugflow.BugFlow');
 var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
 var Proxy       = bugpack.require('Proxy');
+var BugManager  = bugpack.require('airbugserver.BugManager');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -36,52 +36,31 @@ var Proxy       = bugpack.require('Proxy');
 var $series     = BugFlow.$series;
 var $task       = BugFlow.$task;
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomInterface = {
-    
-};
+var RoomManager = Class.extend(BugManager, {
 
-// Implementation of Room interface for mongoose Model
-var RoomManager = Class.extend(Obj, {
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema, roomMemberManager){
+    _constructor: function(model, schema, roomMemberManager) {
 
-        this._super();
+        this._super(model, schema);
 
 
         //-------------------------------------------------------------------------------
-        // Dependencies
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {mongoose.Model}
-         */
-        this.model  = model;
-
-        /**
-         * @type {mongoose.Schema}
-         */
-        this.schema = schema;
-
-        /**
-         * @type {airbugserver.RoomMemberManager}
+         * @private
+         * @type {RoomMemberManager}
          */
         this.roomMemberManager = roomMemberManager;
-
-        Proxy.proxy(this, this.model, [
-            'findById',
-            'populate'
-        ]);
-
-        Proxy.proxy(this, this.schema, [
-            'pre',
-            'post',
-            'virtual'
-        ]);
-
     },
 
     //-------------------------------------------------------------------------------

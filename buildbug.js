@@ -64,11 +64,12 @@ buildProperties({
             "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugroutes/js/src",
             "../bugjs/projects/bugtrace/js/src",
-            "../bugunit/projects/bugunit/js/src",
             "../bugjs/projects/express/js/src",
             "../bugjs/projects/handshaker/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
-            "../bugjs/projects/socketio/bugjars/socket/js/src"
+            "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugunit/projects/bugdouble/js/src",
+            "../bugunit/projects/bugunit/js/src"
         ],
         scriptPaths: [
             "./projects/airbugserver/js/scripts",
@@ -94,6 +95,7 @@ buildProperties({
             "../bugjs/external/bootstrap/static",
             "../bugjs/external/jquery/js/src",
             "../bugjs/external/mustache/js/src",
+            "../bugjs/external/socket-io/js/src",
             "../bugjs/external/underscore/js/src",
             "../bugjs/projects/annotate/js/src",
             "../bugjs/projects/bugcall/js/src",

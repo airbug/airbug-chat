@@ -4,18 +4,15 @@
 
 //@Package('airbug')
 
-//@Export('SignupPageController')
+//@Export('RegisterPageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.SignupPageContainer')
+//@Require('airbug.RegisterPageContainer')
 //@Require('annotate.Annotate')
 //@Require('carapace.ControllerAnnotation')
 
-
-//TEST
-console.log("SignUpPageController loaded");
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -28,27 +25,27 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationController = bugpack.require('airbug.ApplicationController');
-var SignupPageContainer =   bugpack.require('airbug.SignupPageContainer');
-var Annotate =              bugpack.require('annotate.Annotate');
-var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
+var Class                   = bugpack.require('Class');
+var ApplicationController   = bugpack.require('airbug.ApplicationController');
+var RegisterPageContainer   = bugpack.require('airbug.RegisterPageContainer');
+var Annotate                = bugpack.require('annotate.Annotate');
+var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var controller = ControllerAnnotation.controller;
+var annotate    = Annotate.annotate;
+var annotation  = Annotate.annotation;
+var controller  = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageController = Class.extend(ApplicationController, {
+var RegisterPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -65,9 +62,9 @@ var SignupPageController = Class.extend(ApplicationController, {
 
         /**
          * @protected
-         * @type {SignupPageContainer}
+         * @type {RegisterPageContainer}
          */
-        this.signupPageContainer = null;
+        this.registerPageContainer = null;
     },
 
 
@@ -80,12 +77,12 @@ var SignupPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.signupPageContainer = new SignupPageContainer();
-        this.setContainerTop(this.signupPageContainer);
+        this.registerPageContainer = new RegisterPageContainer();
+        this.setContainerTop(this.registerPageContainer);
     }
 });
-annotate(SignupPageController).with(
-    controller().route("signup")
+annotate(RegisterPageController).with(
+    controller().route("register")
 );
 
 
@@ -93,4 +90,4 @@ annotate(SignupPageController).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SignupPageController", SignupPageController);
+bugpack.export("airbug.RegisterPageController", RegisterPageController);

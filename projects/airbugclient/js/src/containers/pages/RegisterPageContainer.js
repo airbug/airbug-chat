@@ -4,12 +4,12 @@
 
 //@Package('airbug')
 
-//@Export('SignupPageContainer')
+//@Export('RegisterPageContainer')
 
 //@Require('Class')
 //@Require('airbug.LoginButtonContainer')
 //@Require('airbug.PageView')
-//@Require('airbug.SignupFormView')
+//@Require('airbug.RegisterFormView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -25,10 +25,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =                 bugpack.require('Class');
-var LoginButtonContainer =  bugpack.require('airbug.LoginButtonContainer')
-var PageView =              bugpack.require('airbug.PageView')
-var SignupFormView =        bugpack.require('airbug.SignupFormView')
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder')
+var LoginButtonContainer =  bugpack.require('airbug.LoginButtonContainer');
+var PageView =              bugpack.require('airbug.PageView');
+var RegisterFormView =        bugpack.require('airbug.RegisterFormView');
+var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupPageContainer = Class.extend(ApplicationContainer, {
+var RegisterPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -87,7 +87,7 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
         this.pageView =
             view(PageView)
                 .children([
-                    view(SignupFormView)
+                    view(RegisterFormView)
                         .appendTo('*[id|="page"]')
                 ])
                 .build();
@@ -114,5 +114,5 @@ var SignupPageContainer = Class.extend(ApplicationContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SignupPageContainer", SignupPageContainer);
+bugpack.export("airbug.RegisterPageContainer", RegisterPageContainer);
 

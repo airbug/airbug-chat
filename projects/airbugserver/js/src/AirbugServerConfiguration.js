@@ -169,18 +169,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SocketIoManager}
-         */
-        this._apiAirbugSocketIoManager  = null;
-
-        /**
-         * @private
-         * @type {BugCallRouter}
-         */
-        this._bugCallRouter         = null;
-
-        /**
-         * @private
          * @type {ChatMessageManager}
          */
         this._chatMessageManager    = null;
@@ -228,7 +216,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @private
          * @type {HomePageController}
          */
-        this._homePageController =  null;
+        this._homePageController    = null;
+
+        /**
+         * @private
+         * @type {mongoose}
+         */
+        this._mongoose              = null;
 
         /**
          * @private
@@ -250,15 +244,21 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {SessionService}
+         */
+        this._sessionService        = null;
+
+        /**
+         * @private
          * @type {SessionStore}
          */
         this._sessionStore          = null;
 
         /**
          * @private
-         * @type {SocketRouter}
+         * @type {UserController}
          */
-        this._socketRouter   = null;
+        this._userController       = null;
 
         /**
          * @private
@@ -268,10 +268,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {UserController}
+         * @type {UserService}
          */
-        this._userController       = null;
-
+        this._userService           = null;
     },
 
 
@@ -290,6 +289,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         var secret = 'some secret'; // LOAD FROM CONFIG;
         var sessionKey = 'express.sid';
 
+        this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+
         this._expressApp.configure(function(){
             _this._expressApp.engine('mustache', mu2express.engine);
             _this._expressApp.set('view engine', 'mustache');
@@ -297,10 +298,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
             _this._expressApp.set('port', config.port);
 
-            /*app.set('view engine', 'jade');*/
-
-            _this._expressApp.use(express.cookieParser());
+            _this._expressApp.use(express.cookieParser(secret));
             _this._expressApp.use(express.session({
+                cookie: {
+                    maxAge: 24 * 60 * 60 * 1000
+                },
                 store: _this._sessionStore,
                 secret: secret,
                 key: sessionKey
@@ -313,16 +315,16 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             _this._expressApp.use(_this._expressApp.getApp().router);
         });
 
-        this._expressApp.configure('development', function() {
-            _this._expressApp.use(express.errorHandler());
-        });
+        _this._expressApp.use(express.errorHandler());
 
-        this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+        this._expressApp.configure('development', function() {
+
+        });
 
         //TODO BRN: This setup should be replaced by an annotation
         this._handshaker.addHands([
-            this.sessionService,
-            this.userService
+            this._sessionService,
+            this._userService
         ]);
 
         this._socketIoServerConfig.setResource("/api/socket");
@@ -375,24 +377,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                     });
                 })
             ]),
-
-
-            //-------------------------------------------------------------------------------
-            // Services
-            //-------------------------------------------------------------------------------
-
-            //-------------------------------------------------------------------------------
-            // RoutesManagers
-            //-------------------------------------------------------------------------------
-
-            $task(function(flow){
-                _this._socketRouter.initialize(function(error) {
-                    if (!error) {
-                        console.log("socketRouter initialized");
-                    }
-                    flow.complete(error);
-                });
-            }),
 
 
             //-------------------------------------------------------------------------------
@@ -469,8 +453,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {SocketIoManager}
      */
     apiAirbugSocketIoManager: function(socketIoServer) {
-        this._apiAirbugSocketIoManager = new SocketIoManager(socketIoServer, '/api/airbug');
-        return this._apiAirbugSocketIoManager;
+        return new SocketIoManager(socketIoServer, '/api/airbug');
     },
 
     /**
@@ -478,8 +461,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {BugCallRouter}
      */
     bugCallRouter: function(bugCallServer) {
-        this._bugCallRouter = new BugCallRouter(bugCallServer);
-        return this._bugCallRouter;
+        return new BugCallRouter(bugCallServer);
     },
 
     /**
@@ -654,12 +636,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketRouter} socketRouter
+     * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
      * @return {RoomController}
      */
-    roomController: function(socketRouter, roomService) {
-        this._roomController = new RoomController(socketRouter, roomService);
+    roomController: function(bugCallRouter, roomService) {
+        this._roomController = new RoomController(bugCallRouter, roomService);
         return this._roomController;
     },
 
@@ -707,7 +689,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {SessionService}
      */
     sessionService: function(sessionManager) {
-        return new SessionService(sessionManager);
+        this._sessionService = new SessionService(sessionManager);
+        return this._sessionService;
     },
 
     /**
@@ -738,15 +721,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketIoManager} ioManager
-     * @return {SocketRouter}
-     */
-    socketRouter: function(ioManager) {
-        this._socketRouter = new SocketRouter(ioManager);
-        return this._socketRouter;
-    },
-
-    /**
      * @return {User}
      */
     user: function() {
@@ -754,12 +728,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketRouter} socketRouter
+     * @param {SocketRouter} bugCallRouter
      * @param {UserService} userService
      * @return {UserController}
      */
-    userController: function(socketRouter, userService) {
-        this._userController = new UserController(socketRouter, userService);
+    userController: function(bugCallRouter, userService) {
+        this._userController = new UserController(bugCallRouter, userService);
         return this._userController;
     },
 
@@ -785,7 +759,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {UserService}
      */
     userService: function(userManager) {
-        return new UserService(userManager);
+        this._userService = new UserService(userManager);
+        return this._userService;
     },
 
 
@@ -881,10 +856,6 @@ annotate(AirbugServerConfiguration).with(
         module("apiAirbugSocketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer")
-            ]),
-        module("socketRouter")
-            .args([
-                arg("ioManager").ref("apiAirbugSocketIoManager")
             ]),
         module("socketIoServer").
             args([

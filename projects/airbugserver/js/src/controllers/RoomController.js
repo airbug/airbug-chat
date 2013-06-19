@@ -47,15 +47,15 @@ var RoomController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {RoomService}
-         */
-        this.RoomService    = roomService;
-
-        /**
-         * @private
          * @type {BugCallRouter}
          */
         this.bugCallRouter  = bugCallRouter;
+
+        /**
+         * @private
+         * @type {RoomService}
+         */
+        this.roomService    = roomService;
     },
 
 

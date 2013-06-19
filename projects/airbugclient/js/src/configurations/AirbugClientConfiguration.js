@@ -106,6 +106,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {BugCallClient}
+         */
+        this._bugCallClient = null;
+
+        /**
+         * @private
          * @type {CarapaceApplication}
          */
         this._carapaceApplication = null;
@@ -133,12 +139,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     initializeConfiguration: function(callback) {
         this._socketIoConfig.setHost("/api/airbug");
-        this._socketIoConfig.setResource("/api/socket");
+        this._socketIoConfig.setResource("api/socket");
         this._socketIoConfig.setPort(8000);
+        this._bugCallClient.initialize();
 
         this._autowiredScan.scan();
         this._controllerScan.scan();
-        this._carapaceApplication.start();
+        this._carapaceApplication.start(callback);
     },
 
 
@@ -176,7 +183,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {BugCallClient}
      */
     bugCallClient: function(callClient, callManager, callRequester) {
-        return new BugCallClient(callClient, callManager, callRequester);
+        this._bugCallClient = new BugCallClient(callClient, callManager, callRequester);
+        return this._bugCallClient;
     },
 
     /**
@@ -294,7 +302,7 @@ annotate(AirbugClientConfiguration).with(
             ]),
         module("callClient")
             .args([
-                arg("socketIoClient")
+                arg("socketIoClient").ref("socketIoClient")
             ]),
         module("callManager"),
         module("callRequester")

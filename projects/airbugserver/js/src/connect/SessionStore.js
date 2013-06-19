@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -15,21 +16,23 @@
 //-------------------------------------------------------------------------------
 
 var bugpack     = require('bugpack').context();
+var connect     = require('connect');
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var TypeUtil    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionStore = Class.extend(Obj, {
+var SessionStore = Class.adapt(connect.session.Store, {
 
 
     //-------------------------------------------------------------------------------
@@ -62,14 +65,29 @@ var SessionStore = Class.extend(Obj, {
      * @param {function(Error, Session)} callback
      */
     get: function(sid, callback) {
+        var _this = this;
+        //TEST
+        console.log("SessionStore get sid:'" + sid + "'");
+
         this.sessionManager.findSessionBySid(sid, function(error, session) {
+
+            //TEST
+            console.log("findSessionBySid Response - error:", error, " session:", session);
+
             if (!error && session) {
                 var data = session.data;
                 try {
                     if (typeof data === 'string') {
                         data = JSON.parse(data);
                     }
-                    callback(null, data);
+                    var expires = TypeUtil.isString(session.expires)
+                        ? new Date(session.expires)
+                        : session.expires;
+                    if (!expires || new Date < expires) {
+                        callback(null, data);
+                    } else {
+                        _this.destroy(sid, callback);
+                    }
                 } catch (error) {
                     callback(error);
                 }
@@ -85,6 +103,9 @@ var SessionStore = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     set: function(sid, data, callback) {
+        //TEST
+        console.log("SessionStore set sid:'", sid, "' data:", data, " callback:", callback);
+
         var cookie = data.cookie;
         var expires = new Date(Date.now() + (60 * 60 * 24));
         if (cookie) {
@@ -99,6 +120,10 @@ var SessionStore = Class.extend(Obj, {
             data: JSON.stringify(data),
             expires: expires
         };
+
+        //TEST
+        console.log("sessionStore - createOrUpdateSession");
+
         this.sessionManager.createOrUpdateSession(session.sid, session, callback);
     },
 

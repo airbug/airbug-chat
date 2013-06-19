@@ -63,6 +63,10 @@ var UserService = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     shakeIt: function(handshakeData, callback) {
+
+        //TEST
+        console.log("UserService shakeIt - handshakeData:", handshakeData);
+
         var _this = this;
         if (handshakeData.session) {
             var session = handshakeData.session;

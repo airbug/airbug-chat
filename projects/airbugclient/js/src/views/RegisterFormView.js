@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('SignupFormView')
+//@Export('RegisterFormView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,7 +29,7 @@ var MustacheView =  bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupFormView = Class.extend(MustacheView, {
+var RegisterFormView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
@@ -61,4 +61,4 @@ var SignupFormView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SignupFormView", SignupFormView);
+bugpack.export("airbug.RegisterFormView", RegisterFormView);

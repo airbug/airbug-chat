@@ -52,8 +52,17 @@ var SessionManager = Class.extend(BugManager, {
      * @param {function(Error)=} callback
      */
     createOrUpdateSession: function(sid, session, callback) {
-        this.update({sid: sid}, session, {upsert: true}, function(error) {
+        //TEST
+        console.log("createOrUpdateSession - sid:", sid, " session:", session , " callback:", callback);
+
+        this.update({sid: sid}, session, {upsert: true}, function(error, numberAffected, raw) {
+
+            //TEST
+            console.log("createOrUpdateSession callback - error:", error, " numberAffected:", numberAffected, " raw:", raw);
+
             if (callback) {
+                //TEST
+                console.log("createOrUpdateSession callback about to fire");
                 callback(error);
             }
         });

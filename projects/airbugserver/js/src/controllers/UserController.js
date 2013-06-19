@@ -55,7 +55,6 @@ var UserController = Class.extend(Obj, {
          * @type {UserService}
          */
         this.userService    = userService;
-
     },
 
 
