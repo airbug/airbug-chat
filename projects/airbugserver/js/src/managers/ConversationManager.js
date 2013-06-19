@@ -7,8 +7,7 @@
 //@Export('ConversationManager')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('airbugserver.BugManager')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -29,28 +28,45 @@ var Proxy			= bugpack.require('Proxy');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManager = Class.extend(Obj, {
+var ConversationManager = Class.extend(BugManager, {
 
     _constructor: function(model, schema){
 
-        this._super();
+        this._super(model, schema);
 
-        /**
-         * @type {mongoose.Model}
-         */
-        this.model      = model;
-
-        /**
-         * @type {mongoose.Schema}
-         */
-        this.schema     = schema;
     },
 
+    //-------------------------------------------------------------------------------
+    // Instance Methods
+    //-------------------------------------------------------------------------------
 
+    /**
+     * @override
+     */
     configure: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
+
+        this.pre('save', true, function(next, done){
+            next();
+            if (!this.createdAt) this.createdAt = new Date();
+            done();
+        });
+
+        this.pre('save', true, function(next, done){
+            next();
+            this.updatedAt = new Date();
+            done();
+        });
+
         callback();
+    },
+
+    /**
+     * @return {Conversation}
+     */
+    new: function(conversation){
+        return new this.model(conversation);
     }
 });
 

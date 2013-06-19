@@ -131,16 +131,17 @@ var UserService = Class.extend(Obj, {
             if (!error) {
                 callback(null, user);
             } else {
-                callback(error);
+                callback(error, user);
             }
         });
     },
 
     /**
-     * @param {} 
+     * @param {User} currentUser
+     * @param {function(error)} callback 
      */
-    logoutUser: function(callback){
-        
+    logoutUser: function(currentUser, callback){
+        //TODO
     }
 });
 

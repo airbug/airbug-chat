@@ -7,7 +7,6 @@
 //@Export('RoomManager')
 
 //@Require('Class')
-//@Require('Proxy')
 //@Require('airbugserver.BugManager')
 //@Require('bugflow.BugFlow')
 
@@ -24,7 +23,6 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var Proxy       = bugpack.require('Proxy');
 var BugManager  = bugpack.require('airbugserver.BugManager');
 var BugFlow     = bugpack.require('bugflow.BugFlow');
 
@@ -43,13 +41,9 @@ var $task       = BugFlow.$task;
 
 var RoomManager = Class.extend(BugManager, {
 
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
+    _constructor: function(model, schema, conversationManager, roomMemberManager){
 
-    _constructor: function(model, schema, roomMemberManager) {
-
-        this._super(model, schema);
+        this._super(model, shema);
 
 
         //-------------------------------------------------------------------------------
@@ -57,70 +51,76 @@ var RoomManager = Class.extend(BugManager, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {RoomMemberManager}
+         * @type {airbugserver.ConversationManager}
          */
-        this.roomMemberManager = roomMemberManager;
+        this.conversationManager    = conversationManager;
+
+        /**
+         * @type {airbugserver.RoomMemberManager}
+         */
+        this.roomMemberManager      = roomMemberManager;
+
     },
 
     //-------------------------------------------------------------------------------
     // Instance Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @override
+     */
     configure: function(callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
+        if (!callback || typeof callback !== 'function') var callback = function(){};
+        var _this = this;
 
-
-        this.pre('save', function (next){
-            if (!this.createdAt) this.createdAt = new Date();
+        this.pre('save', true, function(next, done){
             next();
+            if (!this.createdAt) this.createdAt = new Date();
+            done();
         });
-        this.pre('save', function(next){
+        this.pre('save', true, function(next, done){
+            next();
             this.updatedAt = new Date();
+            done();
         });
+
+        this.post('save', function(next){
+            if (!this.conversationId) {
+                var conversation        = _this.conversationManager.new();
+                var conversationId      = conversation.id;
+                conversation.ownerId    = this.id;
+                conversation.save(function(error, conversation){
+                    if (!error && conversation){
+                        next();
+                    } else {
+                        next(error);
+                    }
+                })
+            }
+        })
 
         callback();
     },
 
-    getModel: function(){
-        return this.model;
-    },
-
-    getSchema: function(){
-        return this.schema;
-    },
-
+    /**
+     * @param {} roomId
+     * @param {function(error, membersList)} callback
+     */
     getMembersList: function(roomId, callback){
-        this.model.findById(roomId, function(error, room){
-            return room.memberslist;
+        this.findById(roomId, function(error, room){
+            callback(error, room.membersList);
         });
     },
 
-    getMembers: function(roomId, callback){
-        // var _this = this;
-        // this.model.findById(roomId, function(error, room){
-        //     if(!error){
-        //         var opts = {path: 'roomMember', model: 'RoomMember'};
-        //         _this.roomMemberManager.populate(room, opts, function(error, room){
-        //             if(!error){
-        //                 room.membersList.remove({userId: userId}); // Test this
-        //                 room.save(callback);
-        //             } else {
-        //                 callback(error);
-        //             }
-        //         });
-        //     } else {
-        //         callback(error);
-        //     }
-        // });    
-    },
-
     /**
-     * @param {} room
-     * @param {function(error, room)} callback
+     * @param {} roomId
+     * @param {function(error, members)} callback
      */
-    create: function(room, callback){
-        this.model.create(room, callback);
+    getMembers: function(roomId, callback){
+        var _this = this;
+        this.findById(roomId).populate("membersList").exec(function(error, room){
+            callback(error, room.membersList);
+        });   
     },
 
     /**
@@ -130,18 +130,18 @@ var RoomManager = Class.extend(BugManager, {
      */
     addUser: function(roomId, userId, callback){
         var _this = this;
-        this.model.findById(roomId, function(error, room){
-            if(!error){
+        this.findById(roomId, function(error, room){
+            if(!error && room){
                 _this.roomMemberManager.create({userId: userId}, function(error, roomMember){
                     if(!error && roomMember){
-                        room.membersList.push(roomMember);
+                        room.membersList.push(roomMember); //What happens if I push the entire object instead of just the id???
                         room.save(callback);
                     } else {
                         callback(error);
                     }
                 });
             } else {
-                callback(error);
+                callback(error, room);
             }
         })
     },
@@ -154,47 +154,20 @@ var RoomManager = Class.extend(BugManager, {
     removeRoomMember: function(roomId, roomMemberId, callback){
         var _this = this;
         var room;
-        var roomMemberId;
-        $series([
-            $task(function(flow){
-                _this.model.findById(roomId, function(error, returnedRoom){
-                    if(!error) room = returnedRoom;
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow){
-                room.membersList.remove(roomMemberId);
-                room.save(function(error, room){
-                    flow.complete(error);
-                });
-            })
-        ]).execute(callback);
-    },
-
-    /**
-     * @param {} roomId
-     * @param {} userId
-     * @param {function(error)} callback
-     */
-    removeUser: function(roomId, userId, callback){
-        var _this = this;
-        var room;
-        var roomMember;
-        var roomMemberId;
         $series([
             $parallel([
                 $task(function(flow){
-                    _this.model.findById(roomId, function(error, returnedRoom){
+                    _this.findById(roomId, function(error, returnedRoom){
                         if(!error && room) room = returnedRoom;
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this.roomMemberManager.find({roomId: roomId, userId: userId}, function(error, roomMember){
+                    _this.roomMemberManager.findById(roomMemberId, function(error, roomMember){
                         if(!error && roomMember) {
-                            roomMember.remove(function(error, product){
+                            roomMember.remove(function(error){
                                 flow.complete(error);
-                            })
+                            });
                         } else {
                             flow.complete(error);
                         }
@@ -209,7 +182,50 @@ var RoomManager = Class.extend(BugManager, {
                     });
                 })
             ])
-        ]).execute(callback);
+        ]).execute(function(error){
+            callback(error, room);
+        });
+    },
+
+    /**
+     * @param {} roomId
+     * @param {} userId
+     * @param {function(error, room)} callback
+     */
+    removeUser: function(roomId, userId, callback){
+        var _this = this;
+        var room;
+        $series([
+            $parallel([
+                $task(function(flow){
+                    _this.findById(roomId, function(error, returnedRoom){
+                        if(!error && room) room = returnedRoom;
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    _this.roomMemberManager.findOne({roomId: roomId, userId: userId}, function(error, roomMember){
+                        if(!error && roomMember) {
+                            roomMember.remove(function(error){
+                                flow.complete(error);
+                            });
+                        } else {
+                            flow.complete(error);
+                        }
+                    });
+                })
+            ]),
+            $parallel([
+                $task(function(flow){
+                    room.membersList.remove(roomMemberId);
+                    room.save(function(error, room){
+                        flow.complete(error);
+                    });
+                })
+            ])
+        ]).execute(function(error){
+            callback(error, room);
+        });
     }
 });
 

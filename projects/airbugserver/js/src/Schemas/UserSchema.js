@@ -32,9 +32,27 @@ var UserSchema = new Schema({
     firstName: String,
     lastName: String,
     anonymous: Boolean,
-    roomsList: [ObjectId],
+    roomsList: [{type: ObjectId, ref: 'Room'}],
     createdAt: Date,
     updatedAt: Date
+});
+
+//-------------------------------------------------------------------------------
+// Instance Methods
+//-------------------------------------------------------------------------------
+
+/**
+ * @return {boolean}
+ */
+UserSchema.method("isAnonymous", function(){
+	return this.anonymous;
+});
+
+/**
+ * @return {boolean}
+ */
+UserSchema.method("isNotAnonymous", function(){
+	return !this.anonymous;
 });
 
 

@@ -34,6 +34,9 @@
 //@Require('airbugserver.RoomController')
 //@Require('airbugserver.UserController')
 
+//@Require('airbugserver.ChatMessageService')
+//@Require('airbugserver.ConnectionService')
+//@Require('airbugserver.ConversationService')
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.SessionService')
 //@Require('airbugserver.UserService')
@@ -105,8 +108,11 @@ var HomePageController      = bugpack.require('airbugserver.HomePageController')
 var RoomController          = bugpack.require('airbugserver.RoomController');
 var UserController          = bugpack.require('airbugserver.UserController');
 
-var SessionService          = bugpack.require('airbugserver.SessionService');
+var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
+var ConnectionService       = bugpack.require('airbugserver.ConnectionService')
+var ConversationService     = bugpack.require('airbugserver.ConversationService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
+var SessionService          = bugpack.require('airbugserver.SessionService');
 var UserService             = bugpack.require('airbugserver.UserService');
 
 var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
@@ -175,6 +181,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {ChatMessageService}
+         */
+        this._chatMessageService    = null;
+
+        /**
+         * @private
          * @type {{
          *      port: number,
          *      mongoDbIp: string
@@ -190,9 +202,21 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {ConnectionService}
+         */
+        this._connectionService     = null;
+
+        /**
+         * @private
          * @type {ConversationManager}
          */
         this._conversationManager   = null;
+
+        /**
+         * @private
+         * @type {ConversationService}
+         */
+        this._conversationService   = null;
 
         /**
          * @private
@@ -229,6 +253,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {RoomManager}
          */
         this._roomManager           = null;
+
+        /**
+         * @private
+         * @type {RoomService}
+         */
+        this._roomService           = null;
 
         /**
          * @private
@@ -505,11 +535,29 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ChatMessageManager} chatMessageManager
+     * @return {ChatMessageService}
+     */
+    chatMessageService: function(chatMessageManager) {
+        this._chatMessageService = new ChatMessageService(chatMessageManager);
+        return this._chatMessageService;
+    },
+
+    /**
      * @return {Object}
      */
     config: function() {
         this._config = this.loadConfig(this._configFilePath);
         return this._config;
+    },
+
+    /**
+     * @param {BugCallServer} bugCallServer
+     * @return {ConnectionService}
+     */
+    connectionService: function(bugCallServer){
+        this._connectionService = new ConnectionService(bugCallServer);
+        return this._connectionService;
     },
 
     /**
@@ -527,6 +575,15 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     conversationManager: function(model, schema) {
         this._conversationManager = new ConversationManager(model, schema);
         return this._conversationManager;
+    },
+
+    /**
+     * @param {ConversationManager} conversationManager
+     * @return {ConversationService}
+     */
+    conversationService: function(conversationManager){
+        this._conversationService = new ConversationService(conversationManager);
+        return this._conversationService;
     },
 
     /**
@@ -640,8 +697,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {RoomService} roomService
      * @return {RoomController}
      */
-    roomController: function(bugCallRouter, roomService) {
-        this._roomController = new RoomController(bugCallRouter, roomService);
+    roomController: function(socketRouter, roomService, connectionService) {
+        this._roomController = new RoomController(socketRouter, roomService, connectionService);
         return this._roomController;
     },
 
@@ -658,7 +715,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {RoomService}
      */
     roomService: function(roomManager, userManager) {
-        return new RoomService(roomManager, userManager);
+        this._roomService = new RoomService(roomManager, userManager);
+        return this._roomService;
     },
 
     /**
@@ -896,12 +954,44 @@ annotate(AirbugServerConfiguration).with(
         module("roomController")
             .args([
                 arg("bugCallRouter").ref("bugCallRouter"),
-                arg("roomService").ref("roomService")
+                arg("roomService").ref("roomService"),
+                arg("connectionService").ref("connectionService")
             ]),
         module("userController")
             .args([
                 arg("bugCallRouter").ref("bugCallRouter"),
                 arg("userService").ref("userService")
+            ]),
+
+
+       //-------------------------------------------------------------------------------
+        // Services
+        //-------------------------------------------------------------------------------
+
+        module("chatMessageService")
+            .args([
+                arg("chatMessageManager").ref("chatMessageManager")
+            ]),
+        module("connectionService")
+            .args([
+                arg("bugCallServer").ref("bugCallServer")
+            ]),
+        module("conversationService")
+            .args([
+                arg("conversationManager").ref("conversationManager")
+            ]),
+        module("roomService")
+            .args([
+                arg("roomManager").ref("roomManager"),
+                arg("userManager").ref("userManager")
+            ]),
+        module("sessionService")
+            .args([
+                arg("sessionManager").ref("sessionManager")
+            ]),
+        module("userService")
+            .args([
+                arg("userManager").ref("userManager")
             ]),
 
 
@@ -938,25 +1028,6 @@ annotate(AirbugServerConfiguration).with(
             .args([
                 arg("model").ref("user"),
                 arg("schema").ref("userSchema")
-            ]),
-
-
-        //-------------------------------------------------------------------------------
-        // Services
-        //-------------------------------------------------------------------------------
-
-        module("roomService")
-            .args([
-                arg("roomManager").ref("roomManager"),
-                arg("userManager").ref("userManager")
-            ]),
-        module("sessionService")
-            .args([
-                arg("sessionManager").ref("sessionManager")
-            ]),
-        module("userService")
-            .args([
-                arg("userManager").ref("userManager")
             ]),
 
 

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -20,8 +21,17 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
+var Class   = bugpack.require('Class');
+var BugFlow = bugpack.require('bugflow.BugFlow');
+var Obj     = bugpack.require('Obj');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel   = BugFlow.$parallel;
+var $task       = BugFlow.$parallel;
 
 
 //-------------------------------------------------------------------------------
@@ -66,13 +76,13 @@ var RoomService = Class.extend(Obj, {
      * @param {Room} room
      * @param {function(Error, Room)} callback
      */
-    create: function(currentUser, room, callback) {
+    createRoom: function(currentUser, room, callback) {
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
-            if(!error){
+            if(!error && room){
                 _this.addUserToRoom(currentUser.id, room.id, callback);
             } else {
-                callback(error);
+                callback(error, room);
             }
         });
     },
@@ -83,11 +93,27 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     addUserToRoom: function(userId, roomId, callback){
-        this.roomManager.addUser(roomId, user);
-        // callback();
-        this.notifyRoomMembers(roomId, "userAddedToRoom", {}, function(){
-            
-        });
+        //TODO: change into a "transaction"
+        var _this = this;
+        var room;
+        $parallel([
+            $task(function(flow){
+                _this.roomManager.addUserToRoom(roomId, userId, function(error, returnedRoom){
+                    room = returnedRoom;
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                _this.userManager.addRoomToUser(userId, roomId, function(error, user){
+                    flow.complete(error);
+                });
+            })
+        ]).execute(function(error){
+            if(error){
+                //TODO
+            }
+            callback(error, room);
+        })
     },
 
     /**
@@ -107,31 +133,39 @@ var RoomService = Class.extend(Obj, {
     /*
      * @private
      * @param {ObjectId} roomId
-     * @param {string} eventName
-     * @param {{*}} data
-     * @param {function()} callback
+     * @param {string} requestType
+     * @param {{*}} requestData
+     * @param {function(error)} callback
      **/
-    notifyRoomMembers: function(roomId, eventName, data, callback){
-        var socketsMap  = this.socketsMap;
-        var userManager = this.userManager;
-        this.roomManager.findById(roomId, function(error, room){
-            var roomMembers = room.membersList;
-            //populate
-            roomMembers.forEach(function(roomMember){
-                var userId  = roomMember.userId;
-                userManager.findById(userId, function(error, user){
+    notifyRoomMembers: function(roomId, requestType, requestData, callback){
+        //TODO
+        var _this               = this;
+        var connectionService   = this.connectionService;
+        this.roomManager.findById(roomId).populate("membersList.userId").exec(function(error, room){
+            if(!error && room){
+                var roomMembers = room.membersList;
+                //TODO: Create notification tasks and put them into the queue
+                //TODO: Keep track of responses. handle responses that are missing or erroring
+                var roomMemberConnections = [];
+                roomMembers.forEach(function(roomMember){
+                    var userId          = roomMember.userId;
+                    var callConnections = connectionService.findConnectionsByUserId(userId);
 
+                    roomMemberConnections.concat(callConnections);
+                    var bugCallServer   = _this.bugCallServer;
+                    callConnections.forEach(function(callConnection){
+                        bugCallServer.request(callConnection, requestType, requestData, function(exception, callResponse){
+                            var responseType = callResponse.getType();
+                            var responseData = callResponse.getData();
+                            //TODO
+                        });
+                    });
                 });
-                sockets = socketsMap.findSocketsByUser(user);
-                sockets.forEach(function(socket){
-                    socket.emit(eventName, data);
-                });
-            });
+            } else {
+                callback(error);
+            }
         });
-
-        callback();
     }
-
 });
 
 

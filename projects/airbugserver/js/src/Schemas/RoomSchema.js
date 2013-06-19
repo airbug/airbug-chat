@@ -31,7 +31,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var RoomSchema = new Schema({
     name: String,
     conversationId: ObjectId,
-    membersList: [ObjectId],
+    membersList: [{ type: ObjectId, ref: 'RoomMember' }],
     createdAt: Date,
     updatedAt: Date
 });

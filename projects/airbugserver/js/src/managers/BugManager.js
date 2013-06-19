@@ -113,7 +113,17 @@ var BugManager = Class.extend(Obj, {
 
     configure: function(callback) {
         callback()
-    }
+    },
+
+    /**
+     * @private
+     * @param {string} attribute
+     * @param {function(value) | function(value, response)} validationFunction
+     * @param {string} errorMessage
+     */
+    validate: function(attribute, validationFunction, errorMessage){
+        this.schema.path(attribute).validate(validationFunction, errorMessage);
+    },
 });
 
 

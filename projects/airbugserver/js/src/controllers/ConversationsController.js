@@ -4,15 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomMemberManager')
+//@Export('ConversationController')
 
 //@Require('Class')
-<<<<<<< Updated upstream
-=======
-//@Require('airbugserver.BugManager')
->>>>>>> Stashed changes
-//@Require('Proxy')
-//@Require('airbugserver.BugManager')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -26,71 +21,83 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugManager  = bugpack.require('airbugserver.BugManager');
 var Class       = bugpack.require('Class');
-<<<<<<< Updated upstream
-var Proxy       = bugpack.require('Proxy');
-var BugManager  = bugpack.require('airbugserver.BugManager');
-=======
->>>>>>> Stashed changes
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMemberManager = Class.extend(BugManager, {
+var ConversationController = Class.extend(Obj, {
+
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema, roomManager){
+    _constructor: function(bugCallRouter, conversationService){
 
-        this._super(model, schema);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Declare Variables
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {RoomManager}
+         * @private
+         * @type {ConversationService}
          */
-        this.roomManager = roomManager;
+        this.conversationService    = conversationService;
 
+        /**
+         * @private
+         * @type {BugCallRouter}
+         */
+        this.bugCallRouter          = bugCallRouter;
     },
 
+
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @override
-     * @param {function(error)} callback
+     * @param {function(Error)} callback
      */
-    configure: function(callback){
+    configure: function(callback) {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-
-        this.pre('save', true, function(next, done){
-            next();
-            if (!this.createdAt) this.createdAt = new Date();
-            done();
-        });
-
-        this.pre('save', true, function(next, done){
-            next();
-            this.updatedAt = new Date();
-            done();
+        var _this               = this;
+        this.bugCallRouter.addAll({
+            retrieveConversation: function(request, responder){
+                var currentUser = request.getHandshake().session.user;
+                if(currentUser.isNotAnonymous()){
+                    var data = request.getData();
+                    var conversationId = data.conversationId;
+                    _this.conversationService.retrieveConversation(currentUser, conversationId, function(error, conversation){
+                        if(!error && conversation){
+                            var data = {conversation: conversation};
+                            var response = responder.response("retrievedConversation", data);
+                        } else {
+                            var data = {error: error};
+                            var response = responder.response("retrieveConversationError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                }
+            }
         });
 
         callback();
+
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomMemberManager', RoomMemberManager);
+bugpack.export('airbugserver.ConversationController', ConversationController);

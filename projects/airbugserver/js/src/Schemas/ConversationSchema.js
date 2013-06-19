@@ -29,7 +29,7 @@ var Mixed       = mongoose.Schema.Types.Mixed;
 //-------------------------------------------------------------------------------
 
 var ConversationSchema = new Schema({
-    ownerId: ObjectId,
+    ownerId: {type: ObjectId, require: true}, //NOTE: Room or Dialogue
     messageIdList: [ObjectId],
     messageList: [Mixed], //type: ChatMessage
     createdAt: Date,

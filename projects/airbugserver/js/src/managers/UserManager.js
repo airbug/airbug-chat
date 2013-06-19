@@ -44,19 +44,10 @@ var UserManager = Class.extend(BugManager, {
         });
         this.pre('save', function(next){
             this.updatedAt = new Date();
+            next();
         });
 
         callback();
-    },
-
-    /**
-     * @private
-     * @param {string} attribute
-     * @param {function(value) | function(value, response)} validationFunction
-     * @param {string} errorMessage
-     */
-    validate: function(attribute, validationFunction, errorMessage){
-        this.schema.path(attribute).validate(validationFunction, errorMessage);
     },
 
 
@@ -65,7 +56,29 @@ var UserManager = Class.extend(BugManager, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Object} user
+     * @param {} userId
+     * @param {} roomId
+     * @param {function(Error, User)} callback
+     */
+    addRoomToUser: function(userId, roomId, callback){
+        this.findById(userId, function(error, user){
+            if (!error && user){
+                user.roomsList.push(roomId);
+                user.save(callback);
+            } else if (!user){
+                callback(new Error("User not found"), user);
+            } else {
+                callback(error, user);
+            }
+        });
+    },
+
+    /**
+     * @param {{
+     *      firstName: string,
+     *      lastName: string,
+     *      email: string
+     * }} user
      * @param {function(Error, User)=} callback
      */
     createUser: function(user, callback) {
@@ -78,7 +91,8 @@ var UserManager = Class.extend(BugManager, {
 
     /**
      * @param {{
-     *      name: string,
+     *      firstName: string,
+     *      lastName: string,
      *      email: string
      * }} user
      * @param {function(Error, User)} callback
@@ -111,6 +125,10 @@ var UserManager = Class.extend(BugManager, {
      */
     findUserById: function(id, callback) {
         this.find({_id: id}, callback);
+    },
+
+    removeRoomFromUser: function(userId, roomId, callback){
+        //TODO
     }
 });
 

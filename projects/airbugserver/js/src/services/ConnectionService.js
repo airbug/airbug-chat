@@ -115,6 +115,14 @@ var ConnectionService = Class.extend(Obj, {
         } else {
             connections.add(connection);
         }
+    },
+
+    deregisterConnection: function(userId, connection){
+        var connections = this.userToConnectionsMap.get(userId);
+
+        if(connections){
+            connections.remove(connection);
+        }
     }
 });
 

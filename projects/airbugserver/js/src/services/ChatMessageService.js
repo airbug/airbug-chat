@@ -4,16 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomMemberManager')
+//@Export('ChatMessageService')
 
 //@Require('Class')
-<<<<<<< Updated upstream
-=======
-//@Require('airbugserver.BugManager')
->>>>>>> Stashed changes
-//@Require('Proxy')
-//@Require('airbugserver.BugManager')
-
+//@Require('Obj')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -26,71 +20,76 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugManager  = bugpack.require('airbugserver.BugManager');
 var Class       = bugpack.require('Class');
-<<<<<<< Updated upstream
-var Proxy       = bugpack.require('Proxy');
-var BugManager  = bugpack.require('airbugserver.BugManager');
-=======
->>>>>>> Stashed changes
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMemberManager = Class.extend(BugManager, {
+var ChatMessageService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema, roomManager){
+    _constructor: function(chatMessageManager){
 
-        this._super(model, schema);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Declare Variables
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {RoomManager}
+         * @private
+         * @type {ChatMessageManager}
          */
-        this.roomManager = roomManager;
+        this.chatMessageManager     = chatMessageManager;
 
     },
 
+
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @override
-     * @param {function(error)} callback
+     * @param {User} currentUser
+     * @param {{
+     *      conversationOwnerId: ObjectId,
+     *      conversationId: ObjectId
+     *      senderUserId: ObjectId
+     *      body: string
+     * }} chatMessage
+     * @param {function(Error, ChatMessage)} callback
      */
-    configure: function(callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-
-        this.pre('save', true, function(next, done){
-            next();
-            if (!this.createdAt) this.createdAt = new Date();
-            done();
-        });
-
-        this.pre('save', true, function(next, done){
-            next();
-            this.updatedAt = new Date();
-            done();
-        });
-
-        callback();
+    createChatMessage: function(currentUser, chatMessage, callback) {
+        var _this = this;
+        if(currentUser.id === chatMessage.senderUserId){
+            if(currentUser.roomList.indexOf(chatMessage.conversationOwnerId) > -1 ){
+                this.chatMessageManager.createChatMessage(chatMessage, function(error, chatMessage){
+                    if(!error and chatMessage){
+                        callback(error, chatMessage)
+                    } else {
+                        callback(error);
+                    }
+                });
+            } else {
+                callback(new Error("Unauthorized Access"));
+            }
+        } else {
+            callback(new Error("Unauthorized Access"));
+        }
     }
+
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomMemberManager', RoomMemberManager);
+bugpack.export('airbugserver.ChatMessageService', ChatMessageService);

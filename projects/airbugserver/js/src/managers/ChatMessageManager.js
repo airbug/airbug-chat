@@ -7,8 +7,7 @@
 //@Export('ChatMessageManager')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('airbugserver.BugManager')
 
 
 //-------------------------------------------------------------------------------
@@ -23,41 +22,42 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var Proxy       = bugpack.require('Proxy');
+var Obj         = bugpack.require('airbugserver.BugManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageManager = Class.extend(Obj, {
+var ChatMessageManager = Class.extend(BugManager, {
 
     _constructor: function(model, schema){
 
-        this._super();
+        this._super(model, schema);
 
-        /**
-         * @type {mongoose.Model}
-         */
-        this.model 	= model;
-
-        /**
-         * @type {mongoose.Schema}
-         */
-        this.schema = schema;
 
     },
 
+    /**
+     * @override
+     */
     configure: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
+
+
+        this.pre('save', true, function(next, done){
+            next();
+            if (!this.createdAt) this.createdAt = new Date();
+            done();
+        });
+
+        this.pre('save', true, function(next, done){
+            next();
+            this.updatedAt = new Date();
+            done();
+        });
+
         callback();
-    },
-
-    create: function(message, callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-        this.model.create(message, callback);
     }
 });
 

@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('UserController')
+//@Export('ChatMessageController')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,13 +29,14 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserController = Class.extend(Obj, {
+var ChatMessageController = Class.extend(Obj, {
+
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService){
+    _constructor: function(bugCallRouter, chatMessageService){
 
         this._super();
 
@@ -46,82 +47,56 @@ var UserController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {BugCallRouter}
+         * @type {RoomService}
          */
-        this.bugCallRouter  = bugCallRouter;
+        this.chatMessageService     = chatMessageService;
 
         /**
          * @private
-         * @type {UserService}
+         * @type {BugCallRouter}
          */
-        this.userService    = userService;
+        this.bugCallRouter          = bugCallRouter;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {function(Error)} callback
      */
-    configure: function(callback){
+    configure: function(callback) {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        var _this = this;
+        var _this               = this;
         this.bugCallRouter.addAll({
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            establishUser:      function(request, responder){
+            createChatMessage: function(request, responder){
                 var currentUser = request.getHandshake().session.user;
-                if(currentUser.isAnonymous()){
-                    var data = request.getData();
-                    var user = data.user;
-                    _this.userService.establishUser(user, function(error, user){
-                        if(!error && user){
-                            var data = {user: user};
-                            var response = responder.response("establishedUser", data);
+                if(currentUser.isNotAnonymous()){
+                    var data        = request.getData();
+                    var chatMessage = data.chatMessage;
+                    _this.chatMessageService.createChatMessage(currentUser, chatMessage, function(error, chatMessage){
+                        if(!error && chatMessage){
+                            var data = {chatMessage: chatMessage};
+                            var response = responder.response("createdChatMessage", data);
                         } else {
                             var data = {error: error};
-                            var response = responder.response("establishUserError", data);
+                            var response = responder.response("createChatMessageError", data);
                         }
-                        responder.sendRespons(response);
-                    })
-                } else {
-                    //TODO
+                        responder.sendResponse(response);
+                    });
                 }
-            },
-
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            getCurrentUser:     function(request, responder){
-                var currentUser = request.getHandshake().session.user;
-                var data        = {currentUser: currentUser};
-                var response    = responder.response("gotCurrentUser", data);
-                responder.sendResponse(response);
-            },
-
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            logoutCurrentUser:  function(request, responder){
-                //TODO
-                var currentUser = request.getHandshake().session.user;
-                var connection  = request.getCallConnection();
-                this.connectionService.deregisterConnection(currentUser.id, connection);
-                this.userService.logoutUser(currentUser, function(error){
-
-                });
             }
         });
 
         callback();
+
     }
 });
 
@@ -130,4 +105,4 @@ var UserController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserController', UserController);
+bugpack.export('airbugserver.ChatMessageController', ChatMessageController);
