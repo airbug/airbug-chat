@@ -697,8 +697,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {RoomService} roomService
      * @return {RoomController}
      */
-    roomController: function(socketRouter, roomService, connectionService) {
-        this._roomController = new RoomController(socketRouter, roomService, connectionService);
+    roomController: function(bugCallRouter, roomService, connectionService) {
+        this._roomController = new RoomController(bugCallRouter, roomService, connectionService);
         return this._roomController;
     },
 
