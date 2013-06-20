@@ -28,7 +28,7 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageService = Class.extend(Obj, {
+var ConversationService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -62,7 +62,19 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {function(Error, Conversation)} callback
      */
     retreiveConversation: function(currentUser, conversationId, callback) {
-        this.conversationManager
+        this.conversationManager.findById(conversationId, function(error, conversation){
+            if(!error && conversation){
+                if(currentUser.roomsList.indexOf(conversation.OwnerId) > -1){
+                    callback(null, conversation);
+                } else {
+                    callback(new Error("Unauthorized Access"), null);
+                }
+            } else if(!error) {
+                callback(new Error("No conversation found with id of " + conversationId), null);
+            } else {
+                callback(error, null);
+            }
+        });
     }
 
 });

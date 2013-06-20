@@ -7,11 +7,6 @@
 //@Export('RoomMemberManager')
 
 //@Require('Class')
-<<<<<<< Updated upstream
-=======
-//@Require('airbugserver.BugManager')
->>>>>>> Stashed changes
-//@Require('Proxy')
 //@Require('airbugserver.BugManager')
 
 
@@ -26,13 +21,8 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BugManager  = bugpack.require('airbugserver.BugManager');
 var Class       = bugpack.require('Class');
-<<<<<<< Updated upstream
-var Proxy       = bugpack.require('Proxy');
 var BugManager  = bugpack.require('airbugserver.BugManager');
-=======
->>>>>>> Stashed changes
 
 
 //-------------------------------------------------------------------------------

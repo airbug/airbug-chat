@@ -7,8 +7,10 @@
 //@Require('annotate.Annotate')
 //@Require('bugunit-annotate.TestAnnotation')
 //@Require('airbugserver.Room')
+//@Require('airbugserver.RoomManager')
 //@Require('airbugserver.RoomSchema')
 //@Require('airbugserver.RoomMember')
+//@Require('airbugserver.RoomMemberManager')
 //@Require('airbugserver.RoomMemberSchema')
 
 //-------------------------------------------------------------------------------
@@ -26,7 +28,9 @@ var Annotate 			= bugpack.require('annotate.Annotate');
 var TestAnnotation 		= bugpack.require('bugunit-annotate.TestAnnotation');
 
 var Room 				= bugpack.require('airbugserver.Room');
+var RoomManager         = bugpack.require('airbugserver.RoomManager');
 var RoomMember 			= bugpack.require('airbugserver.RoomMember');
+var RoomMemberManager   = bugpack.require('airbugserver.RoomMemberManager');
 var RoomMemberSchema 	= bugpack.require('airbugserver.RoomMemberSchema');
 var RoomSchema 			= bugpack.require('airbugserver.RoomSchema');
 
@@ -51,8 +55,8 @@ var addUserTest = {
     setup: function(){
     	var _this				= this;
         this.roomMemberManager	= new RoomMemberManager(RoomMember, RoomMemberSchema);
-        this.roomManager    	= new RoomManager(Room, RoomSchema, roomMemberManager);
- 		this.room 				= {name: 'testRoom'};
+        this.roomManager        = new RoomManager(Room, RoomSchema, this.roomMemberManager);
+ 		this.testRoom 		    = {name: 'testRoom'};
         this.roomId				= undefined;
         this.userId         	= undefined;
         this.callbackFunction   = function(error, room){

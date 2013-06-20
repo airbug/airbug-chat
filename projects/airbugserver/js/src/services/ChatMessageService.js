@@ -71,7 +71,7 @@ var ChatMessageService = Class.extend(Obj, {
         if(currentUser.id === chatMessage.senderUserId){
             if(currentUser.roomsList.indexOf(chatMessage.conversationOwnerId) > -1 ){
                 this.chatMessageManager.createChatMessage(chatMessage, function(error, chatMessage){
-                    if(!error and chatMessage){
+                    if(!error && chatMessage){
                         callback(error, chatMessage)
                     } else {
                         callback(error);

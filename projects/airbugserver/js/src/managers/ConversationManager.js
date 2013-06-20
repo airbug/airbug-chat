@@ -13,16 +13,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var Proxy			= bugpack.require('Proxy');
+var Class       = bugpack.require('Class');
+var BugManager  = bugpack.require('airbugserver.BugManager');
 
 //-------------------------------------------------------------------------------
 // Declare Class

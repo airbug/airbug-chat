@@ -182,7 +182,7 @@ var RoomController = Class.extend(Obj, {
                             responder.sendResponse(response);
                         } else {
                             var data        = {
-                                error: error
+                                error: error,
                                 roomId: roomId
                             };
                             var response    = responder.response("leaveRoomError", data);

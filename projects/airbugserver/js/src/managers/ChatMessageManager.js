@@ -22,7 +22,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('airbugserver.BugManager');
+var BugManager  = bugpack.require('airbugserver.BugManager');
 
 
 //-------------------------------------------------------------------------------
