@@ -43,7 +43,7 @@ var RoomManager = Class.extend(BugManager, {
 
     _constructor: function(model, schema, conversationManager, roomMemberManager){
 
-        this._super(model, shema);
+        this._super(model, schema);
 
 
         //-------------------------------------------------------------------------------
