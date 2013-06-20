@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var TypeUtil =      bugpack.require('TypeUtil');
-var MustacheView =  bugpack.require('airbug.MustacheView');
+var Class 			= bugpack.require('Class');
+var TypeUtil 		= bugpack.require('TypeUtil');
+var MustacheView 	= bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------

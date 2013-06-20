@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Map =       bugpack.require('Map');
-var Obj =       bugpack.require('Obj');
+var Class   = bugpack.require('Class');
+var Map     = bugpack.require('Map');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ var PageStateModule = Class.extend(Obj, {
          * @private
          * @type {CarapaceRouter}
          */
-        this.carapaceRouter = null;
+        this.carapaceRouter             = null;
 
         /**
          * @private

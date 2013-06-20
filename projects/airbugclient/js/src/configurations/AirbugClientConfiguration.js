@@ -72,11 +72,11 @@ var BrowserSocketIoFactory  = bugpack.require('socketio:factorybrowser.BrowserSo
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var arg = ArgAnnotation.arg;
-var configuration = ConfigurationAnnotation.configuration;
-var module = ModuleAnnotation.module;
-var property = PropertyAnnotation.property;
+var annotate        = Annotate.annotate;
+var arg             = ArgAnnotation.arg;
+var configuration   = ConfigurationAnnotation.configuration;
+var module          = ModuleAnnotation.module;
+var property        = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------

@@ -24,11 +24,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationView =       bugpack.require('airbug.ApplicationView');
-var BodyView =              bugpack.require('airbug.BodyView');
-var HeaderView =            bugpack.require('airbug.HeaderView');
-var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
+var Class               = bugpack.require('Class');
+var ApplicationView     = bugpack.require('airbug.ApplicationView');
+var BodyView            = bugpack.require('airbug.BodyView');
+var HeaderView          = bugpack.require('airbug.HeaderView');
+var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
 
 
 //-------------------------------------------------------------------------------

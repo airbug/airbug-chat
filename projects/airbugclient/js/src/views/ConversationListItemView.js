@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
+var Class                   = bugpack.require('Class');
+var SelectableListItemView  = bugpack.require('airbug.SelectableListItemView');
 
 
 //-------------------------------------------------------------------------------

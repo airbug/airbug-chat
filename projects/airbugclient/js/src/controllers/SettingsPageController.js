@@ -29,21 +29,21 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationController = bugpack.require('airbug.ApplicationController');
-var LoginPageContainer =    bugpack.require('airbug.LoginPageContainer');
-var SettingsPageContainer = bugpack.require('airbug.SettingsPageContainer');
-var Annotate =              bugpack.require('annotate.Annotate');
-var ControllerAnnotation =  bugpack.require('carapace.ControllerAnnotation');
+var Class                   = bugpack.require('Class');
+var ApplicationController   = bugpack.require('airbug.ApplicationController');
+var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
+var SettingsPageContainer   = bugpack.require('airbug.SettingsPageContainer');
+var Annotate                = bugpack.require('annotate.Annotate');
+var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var annotation = Annotate.annotation;
-var controller = ControllerAnnotation.controller;
+var annotate    = Annotate.annotate;
+var annotation  = Annotate.annotation;
+var controller  = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------

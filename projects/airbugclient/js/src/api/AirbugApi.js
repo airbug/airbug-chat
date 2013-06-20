@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Queue =             bugpack.require('Queue');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
+var Queue   = bugpack.require('Queue');
 
 
 //-------------------------------------------------------------------------------

@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var DropdownViewEvent = bugpack.require('airbug.DropdownViewEvent');
-var MustacheView =      bugpack.require('airbug.MustacheView');
+var Class               = bugpack.require('Class');
+var DropdownViewEvent   = bugpack.require('airbug.DropdownViewEvent');
+var MustacheView        = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------

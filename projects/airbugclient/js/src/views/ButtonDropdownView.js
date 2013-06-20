@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var ButtonView =    bugpack.require('airbug.ButtonView');
+var Class       = bugpack.require('Class');
+var ButtonView  = bugpack.require('airbug.ButtonView');
 
 
 //-------------------------------------------------------------------------------

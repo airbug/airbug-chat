@@ -23,10 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var CurrentUserModel =  bugpack.require('airbug.CurrentUserModel');
-var SessionModel =      bugpack.require('airbug.SessionModel');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
+var SessionModel        = bugpack.require('airbug.SessionModel');
 
 
 //-------------------------------------------------------------------------------
@@ -52,19 +52,19 @@ var SessionModule = Class.extend(Obj, {
          * @private
          * @type {AirbugApi}
          */
-        this.airbugApi = null;
+        this.airbugApi          = null;
 
         /**
          * @private
          * @type {UserModel}
          */
-        this.currentUserModel = new CurrentUserModel({});
+        this.currentUserModel   = new CurrentUserModel({});
 
         /**
          * @private
          * @type {SessionModel}
          */
-        this.sessionModel = new SessionModel({});
+        this.sessionModel       = new SessionModel({});
     },
 
 

@@ -23,10 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var DateUtil =      bugpack.require('DateUtil');
-var StringUtil =    bugpack.require('StringUtil');
-var MustacheView =  bugpack.require('airbug.MustacheView');
+var Class           = bugpack.require('Class');
+var DateUtil        = bugpack.require('DateUtil');
+var StringUtil      = bugpack.require('StringUtil');
+var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------

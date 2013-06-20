@@ -23,10 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Map =       bugpack.require('Map');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
+var Class       = bugpack.require('Class');
+var Map         = bugpack.require('Map');
+var Obj         = bugpack.require('Obj');
+var TypeUtil    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -52,19 +52,19 @@ var NavigationModule = Class.extend(Obj, {
          * @private
          * @type {CarapaceRouter}
          */
-        this.carapaceRouter = null;
+        this.carapaceRouter         = null;
 
         /**
          * @private
          * @type {Map<number, string>}
          */
-        this.goBackIdToFragmentMap = new Map();
+        this.goBackIdToFragmentMap  = new Map();
 
         /**
          * @private
          * @type {number}
          */
-        this.lastGoBackId = 0;
+        this.lastGoBackId           = 0;
     },
 
 
