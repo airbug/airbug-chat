@@ -76,7 +76,6 @@ var RoomController = Class.extend(Obj, {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this               = this;
-        var bugCallServer       = this.bugCallRoute.getBugCallServer();
         this.bugCallRouter.addAll({
 
             /**
@@ -99,6 +98,10 @@ var RoomController = Class.extend(Obj, {
                         }
                         responder.sendResponse(response);
                     })
+                } else {
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("addUserToRoomError", data);
+                    responder.sendResponse(response);
                 }
             },
 
@@ -125,7 +128,8 @@ var RoomController = Class.extend(Obj, {
                         responder.sendResponse(response); 
                     }) 
                 } else {
-                    var response = responder.response("createRoomError", {error: new Error("Unauthorized Access")});
+                    var data        = {error: new Error("Unauthorized Access")}
+                    var response    = responder.response("createRoomError", data);
                     responder.sendResponse(response);
                 }
             },
@@ -155,7 +159,8 @@ var RoomController = Class.extend(Obj, {
                         }
                     });
                 } else {
-                    var response = responder.response("joinRoomError", {error: new Error("Unauthorized Access")});
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("joinRoomError", data);
                     responder.sendResponse(response);
                 }
             },
@@ -185,7 +190,8 @@ var RoomController = Class.extend(Obj, {
                         }
                     });
                 } else {
-                    var response = responder.response("leaveRoomError", {error: new Error("Unauthorized Access")});
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("leaveRoomError", data);
                     responder.sendResponse(response);
                 }
             }

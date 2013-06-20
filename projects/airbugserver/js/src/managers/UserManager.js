@@ -42,6 +42,7 @@ var UserManager = Class.extend(BugManager, {
             if (!this.createdAt) this.createdAt = new Date();
             next();
         });
+
         this.pre('save', function(next){
             this.updatedAt = new Date();
             next();

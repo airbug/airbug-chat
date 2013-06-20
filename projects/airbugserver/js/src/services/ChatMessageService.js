@@ -69,7 +69,7 @@ var ChatMessageService = Class.extend(Obj, {
     createChatMessage: function(currentUser, chatMessage, callback) {
         var _this = this;
         if(currentUser.id === chatMessage.senderUserId){
-            if(currentUser.roomList.indexOf(chatMessage.conversationOwnerId) > -1 ){
+            if(currentUser.roomsList.indexOf(chatMessage.conversationOwnerId) > -1 ){
                 this.chatMessageManager.createChatMessage(chatMessage, function(error, chatMessage){
                     if(!error and chatMessage){
                         callback(error, chatMessage)
@@ -78,10 +78,10 @@ var ChatMessageService = Class.extend(Obj, {
                     }
                 });
             } else {
-                callback(new Error("Unauthorized Access"));
+                callback(new Error("Unauthorized Access"), null);
             }
         } else {
-            callback(new Error("Unauthorized Access"));
+            callback(new Error("Unauthorized Access"), null);
         }
     }
 

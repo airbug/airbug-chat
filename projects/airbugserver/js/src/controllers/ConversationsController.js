@@ -86,6 +86,10 @@ var ConversationController = Class.extend(Obj, {
                         }
                         responder.sendResponse(response);
                     });
+                } else {
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("retrieveConversationError", data);
+                    responder.sendResponse(response);
                 }
             }
         });

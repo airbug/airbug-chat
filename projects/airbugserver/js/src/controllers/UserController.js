@@ -35,7 +35,7 @@ var UserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService){
+    _constructor: function(bugCallRouter, userService, sessionService){
 
         this._super();
 
@@ -48,13 +48,19 @@ var UserController = Class.extend(Obj, {
          * @private
          * @type {BugCallRouter}
          */
-        this.bugCallRouter  = bugCallRouter;
+        this.bugCallRouter      = bugCallRouter;
 
         /**
          * @private
          * @type {UserService}
          */
-        this.userService    = userService;
+         this.sessionService    = sessionService;
+
+        /**
+         * @private
+         * @type {UserService}
+         */
+        this.userService        = userService;
     },
 
 
@@ -76,22 +82,29 @@ var UserController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             establishUser:      function(request, responder){
+                //TODO
                 var currentUser = request.getHandshake().session.user;
                 if(currentUser.isAnonymous()){
                     var data = request.getData();
                     var user = data.user;
                     _this.userService.establishUser(user, function(error, user){
+                        // _this.sessionService.regenerateSession();
+                        //replace session
+                        //replace user in session object
                         if(!error && user){
-                            var data = {user: user};
-                            var response = responder.response("establishedUser", data);
+                            var data        = {user: user};
+                            var response    = responder.response("establishedUser", data);
                         } else {
-                            var data = {error: error};
-                            var response = responder.response("establishUserError", data);
+                            var data        = {error: error};
+                            var response    = responder.response("establishUserError", data);
                         }
-                        responder.sendRespons(response);
+                        responder.sendResponse(response);
                     })
                 } else {
                     //TODO
+                    var data        = {};
+                    var response    = responder.response("establishUserError", data);
+                    responder.sendResponse(response)
                 }
             },
 

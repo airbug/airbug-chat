@@ -96,17 +96,23 @@ var RoomService = Class.extend(Obj, {
         //TODO: change into a "transaction"
         var _this = this;
         var room;
-        $parallel([
+        $series([
+            $parallel([
+                $task(function(flow){
+                    _this.roomManager.addUserToRoom(roomId, userId, function(error, returnedRoom){
+                        room = returnedRoom;
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    _this.userManager.addRoomToUser(userId, roomId, function(error, user){
+                        flow.complete(error);
+                    });
+                })
+            ]),
             $task(function(flow){
-                _this.roomManager.addUserToRoom(roomId, userId, function(error, returnedRoom){
-                    room = returnedRoom;
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow){
-                _this.userManager.addRoomToUser(userId, roomId, function(error, user){
-                    flow.complete(error);
-                });
+                //notify roomMembers of change
+                flow.complete();
             })
         ]).execute(function(error){
             if(error){
