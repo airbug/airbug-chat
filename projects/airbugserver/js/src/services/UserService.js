@@ -64,6 +64,8 @@ var UserService = Class.extend(Obj, {
      */
     shakeIt: function(handshakeData, callback) {
 
+        //TODO BRN (QUESTION): When a session is regenerated, does it automatically rerun the authorization (handshake.shakeIt) call
+
         //TEST
         console.log("UserService shakeIt - handshakeData:", handshakeData);
 
