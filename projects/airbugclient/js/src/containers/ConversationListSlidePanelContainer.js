@@ -24,11 +24,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var ConversationListContainer = bugpack.require('airbug.ConversationListContainer');
-var SlidePanelView =            bugpack.require('airbug.SlidePanelView');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var ConversationListContainer   = bugpack.require('airbug.ConversationListContainer');
+var SlidePanelView              = bugpack.require('airbug.SlidePanelView');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ var ConversationListSlidePanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationListContainer}
          */
-        this.conversationListContainer = null;
+        this.conversationListContainer  = null;
 
 
         // Views
@@ -74,7 +74,7 @@ var ConversationListSlidePanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {SlidePanelView}
          */
-        this.slidePanelView = null;
+        this.slidePanelView             = null;
     },
 
 

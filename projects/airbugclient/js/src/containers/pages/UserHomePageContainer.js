@@ -9,9 +9,8 @@
 //@Require('Class')
 //@Require('airbug.AccountButtonDropdownContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.ContactListPanelContainer')
-//@Require('airbug.ConversationListPanelContainer')
-//@Require('airbug.PageThreeColumnView')
+//@Require('airbug.CreateRoomFormContainer')
+//@Require('airbug.PageTwoColumnView')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -27,14 +26,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                             bugpack.require('Class');
-var AccountButtonDropdownContainer =    bugpack.require('airbug.AccountButtonDropdownContainer');
-var ApplicationContainer =              bugpack.require('airbug.ApplicationContainer');
-var ContactListPanelContainer =         bugpack.require('airbug.ContactListPanelContainer');
-var ConversationListPanelContainer =    bugpack.require('airbug.ConversationListPanelContainer');
-var PageThreeColumnView =               bugpack.require('airbug.PageThreeColumnView');
-var RoomListPanelContainer =            bugpack.require('airbug.RoomListPanelContainer');
-var ViewBuilder =                       bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var AccountButtonDropdownContainer      = bugpack.require('airbug.AccountButtonDropdownContainer');
+var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
+var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
+var PageTwoColumnView                   = bugpack.require('airbug.PageTwoColumnView');
+var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -75,21 +73,15 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {ContactListPanelContainer}
+         * @type {CreateRoomFormContainer}
          */
-        this.contactListPanelContainer = null;
-
-        /**
-         * @private
-         * @type {ConversationListPanelContainer}
-         */
-        this.conversationListPanelContainer = null;
+        this.createRoomFormContainer        = null;
 
         /**
          * @private
          * @type {RoomListPanelContainer}
          */
-        this.roomListPanelContainer = null;
+        this.roomListPanelContainer         = null;
 
 
         // Views
@@ -97,9 +89,9 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {PageThreeColumnView}
+         * @type {PageTwoColumnView}
          */
-        this.pageThreeColumnView = null;
+        this.pageTwoColumnView              = null;
     },
 
 
@@ -116,16 +108,16 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView =
-            view(PageThreeColumnView)
-                .attributes({configuration: PageThreeColumnView.Configuration.DEFAULT})
+        this.pageTwoColumnView =
+            view(PageTwoColumnView)
+                .attributes({configuration: PageTwoColumnView.Configuration.DEFAULT})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageThreeColumnView, "#application-" + this.applicationView.cid);
+        this.applicationView.addViewChild(this.pageTwoColumnView, "#application-" + this.applicationView.cid);
     },
 
     /**
@@ -134,13 +126,15 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
     createContainerChildren: function() {
         this._super();
         this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
-        this.contactListPanelContainer = new ContactListPanelContainer();
-        this.conversationListPanelContainer = new ConversationListPanelContainer();
-        this.roomListPanelContainer = new RoomListPanelContainer();
+        this.createRoomFormContainer        = new CreateRoomFormContainer();
+        this.roomListPanelContainer         = new RoomListPanelContainer();
         this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
-        this.addContainerChild(this.contactListPanelContainer, "#page-leftrow");
-        this.addContainerChild(this.conversationListPanelContainer, "#page-centerrow");
-        this.addContainerChild(this.roomListPanelContainer, "#page-rightrow");
+        this.addContainerChild(this.roomListPanelContainer, "#page-leftrow");
+        this.addContainerChild(this.createRoomFormContainer, "#page-rightrow");
+    },
+
+    activateContainer: function(routingArgs){
+        
     }
 });
 

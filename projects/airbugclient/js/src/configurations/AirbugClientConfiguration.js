@@ -12,6 +12,7 @@
 //@Require('airbug.AirbugApi')
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
+//@Require('airbug.RoomManagerModule')
 //@Require('airbug.SessionModule')
 //@Require('annotate.Annotate')
 //@Require('bugcall.BugCallClient')
@@ -48,6 +49,7 @@ var Obj                     = bugpack.require('Obj');
 var AirbugApi               = bugpack.require('airbug.AirbugApi');
 var NavigationModule        = bugpack.require('airbug.NavigationModule');
 var PageStateModule         = bugpack.require('airbug.PageStateModule');
+var RoomManagerModule       = bugpack.require('airbug.RoomManagerModule');
 var SessionModule           = bugpack.require('airbug.SessionModule');
 var Annotate                = bugpack.require('annotate.Annotate');
 var BugCallClient           = bugpack.require('bugcall.BugCallClient');
@@ -100,33 +102,39 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {AirbugApi}
+         */
+        this._airbugApi             = null;
+
+        /**
+         * @private
          * @type {AutowiredScan}
          */
-        this._autowiredScan = null;
+        this._autowiredScan         = null;
 
         /**
          * @private
          * @type {BugCallClient}
          */
-        this._bugCallClient = null;
+        this._bugCallClient         = null;
 
         /**
          * @private
          * @type {CarapaceApplication}
          */
-        this._carapaceApplication = null;
+        this._carapaceApplication   = null;
 
         /**
          * @private
          * @type {ControllerScan}
          */
-        this._controllerScan = null;
+        this._controllerScan        = null;
 
         /**
          * @private
          * @type {SocketIoConfig}
          */
-        this._socketIoConfig = null;
+        this._socketIoConfig        = null;
     },
 
 
@@ -158,7 +166,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {AirbugApi}
      */
     airbugApi: function(bugCallClient) {
-        return new AirbugApi(bugCallClient);
+        this._airbugApi = new AirbugApi(bugCallClient); 
+        return this._airbugApi;
     },
 
     /**
@@ -250,10 +259,17 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {RoomManagerModule}
+     */
+    roomManagerModule: function(airbugApi){
+        return new RoomManagerModule(airbugApi);
+    },
+
+    /**
      * @return {SessionModule}
      */
-    sessionModule: function() {
-        return new SessionModule();
+    sessionModule: function(airbugApi) {
+        return new SessionModule(airbugApi);
     },
 
     /**
@@ -326,9 +342,13 @@ annotate(AirbugClientConfiguration).with(
             .properties([
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
+        module("roomManagerModule")
+            .args([
+                arg("airbugApi").ref("airbugApi")
+            ]),
         module("sessionModule")
-            .properties([
-                property("airbugApi").ref("airbugApi")
+            .args([
+                arg("airbugApi").ref("airbugApi")
             ]),
         module("socketIoClient")
             .args([

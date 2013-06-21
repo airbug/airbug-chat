@@ -4,12 +4,12 @@
 
 //@Package('airbug')
 
-//@Export('SessionModule')
+//@Export('RoomManagerModule')
 
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.CurrentUserModel')
-//@Require('airbug.SessionModel')
+//@Require('airbug.RoomModel')
 
 
 //-------------------------------------------------------------------------------
@@ -26,14 +26,14 @@ var bugpack = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
-var SessionModel        = bugpack.require('airbug.SessionModel');
+var SessionModel        = bugpack.require('airbug.RoomModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionModule = Class.extend(Obj, {
+var RoomManagerModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -52,19 +52,14 @@ var SessionModule = Class.extend(Obj, {
          * @private
          * @type {AirbugApi}
          */
-        this.airbugApi          = airbugApi;
+        this.airbugApi  = airbugApi;
 
         /**
          * @private
          * @type {UserModel}
          */
-        this.currentUserModel   = new CurrentUserModel({});
+        this.roomModel  = new RoomModel({});
 
-        /**
-         * @private
-         * @type {SessionModel}
-         */
-        this.sessionModel       = new SessionModel({});
     },
 
 
@@ -72,19 +67,6 @@ var SessionModule = Class.extend(Obj, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {CurrentUserModel}
-     */
-    getCurrentUserModel: function() {
-        return this.currentUserModel;
-    },
-
-    /**
-     * @return {SessionModel}
-     */
-    getSessionModel: function() {
-        return this.sessionModel;
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -93,18 +75,16 @@ var SessionModule = Class.extend(Obj, {
 
 
     /**
-     * @param {string} email
-     * @param {string} password
+     * @param {{
+     *      name: string
+     * }} room
+     * @param {function(error, room)} callback
      */
-    login: function(email, password) {
-        this.airbugApi.establishCurrentUser()
-    },
-
-    /**
-     *
-     */
-    logout: function() {
-
+    createRoom: function(room, callback) {
+        var roomName = room.name;
+        this.airbugApi.createRoom(roomName, function(error, room){
+            callback(error, room);
+        });
     }
 });
 
@@ -113,4 +93,4 @@ var SessionModule = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SessionModule", SessionModule);
+bugpack.export("airbug.RoomManagerModule", RoomManagerModule);

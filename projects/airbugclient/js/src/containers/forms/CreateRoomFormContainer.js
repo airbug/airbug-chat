@@ -4,16 +4,16 @@
 
 //@Package('airbug')
 
-//@Export('AlphaHomePageContainer')
+//@Export('CreateRoomFormContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationContainer')
 //@Require('airbug.CreateRoomFormView')
 //@Require('airbug.FormViewEvent')
-//@Require('airbug.PageView')
+//@Require('airbug.RoomModel')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -28,32 +28,32 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationContainer =  bugpack.require('airbug.ApplicationContainer');
-var CreateRoomFormView =    bugpack.require('airbug.CreateRoomFormView');
-var FormViewEvent =         bugpack.require('airbug.FormViewEvent');
-var PageView =              bugpack.require('airbug.PageView');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
+var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var RoomModel               = bugpack.require('airbug.RoomModel');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
+var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -75,34 +75,28 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule   = null;
 
-        /**
+       /**
          * @private
          * @type {RoomManagerModule}
          */
-        this.roomManagerModule = null;
+        this.roomManagerModule  = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
+         * @private
          * @type {CreateRoomFormView}
          */
         this.createRoomFormView = null;
-
-        /**
-         * @protected
-         * @type {PageView}
-         */
-        this.pageView = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -111,25 +105,19 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
     createContainer: function() {
         this._super();
 
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(CreateRoomFormView)
-                        .id("createRoomFormView")
-                        .appendTo("*[id|=page]")
-                ])
+        this.createRoomFormView =
+            view(CreateRoomFormView)
+                // .attributes({type: "primary", align: "left"})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.createRoomFormView = this.findViewById("createRoomFormView");
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.setViewTop(this.createRoomFormView);
     },
 
     /**
@@ -137,7 +125,7 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearCreateRoomFormViewSubmitEvent, this);
+        this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -147,22 +135,25 @@ var AlphaHomePageContainer = Class.extend(ApplicationContainer, {
 
     /**
      * @private
-     * @param {FormViewEvent} event
+     * @param {ButtonViewEvent} event
      */
-    hearCreateRoomFormViewSubmitEvent: function(event) {
-        //TODO BRN: Validate the event data
-
-        this.roomManagerModule.createRoom(event.getData().roomName, function(error, roomModel) {
-            if (!error) {
-
+    hearFormSubmittedEvent: function(event) {
+        var _this       = this;
+        var room        = event.getData();
+        this.roomManagerModule.createRoom(room, function(error, room){
+            if(!error){
+                // _this.roomCollection.add(new RoomModel(room));
+                _this.navigationModule.navigate("room/" + room.id, {
+                    trigger: true
+                });
             } else {
-                console.log(error);
-                //TODO BRN: Handle the server error
+                //TODO
+                console.log("roomManagerModule#createRoom callback error:", error);
             }
         });
     }
 });
-annotate(AlphaHomePageContainer).with(
+annotate(CreateRoomFormContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
@@ -174,5 +165,4 @@ annotate(AlphaHomePageContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.AlphaHomePageContainer", AlphaHomePageContainer);
-
+bugpack.export("airbug.CreateRoomFormContainer", CreateRoomFormContainer);

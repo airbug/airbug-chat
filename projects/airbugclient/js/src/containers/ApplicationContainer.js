@@ -54,19 +54,19 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ApplicationView}
          */
-        this.applicationView = null;
+        this.applicationView    = null;
 
         /**
          * @private
          * @type {BodyView}
          */
-        this.bodyView = null;
+        this.bodyView           = null;
 
         /**
          * @private
          * @type {HeaderView}
          */
-        this.headerView = null;
+        this.headerView         = null;
     },
 
 

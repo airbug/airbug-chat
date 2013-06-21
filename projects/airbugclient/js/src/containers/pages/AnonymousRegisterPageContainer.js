@@ -27,24 +27,24 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationContainer =  bugpack.require('airbug.ApplicationContainer');
-var CreateRoomFormView =    bugpack.require('airbug.CreateRoomFormView');
-var PageView =              bugpack.require('airbug.PageView');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
+var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
+var PageView                = bugpack.require('airbug.PageView');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -73,13 +73,13 @@ var AnonymousRegisterPageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule       = null;
 
         /**
          * @private
          * @type {RoomManagerModule}
          */
-        this.roomManagerModule = null;
+        this.roomManagerModule      = null;
 
 
         // Views
@@ -89,19 +89,19 @@ var AnonymousRegisterPageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {LoginFormView}
          */
-        this.loginFormView = null;
+        this.loginFormView          = null;
 
         /**
          * @protected
          * @type {PageView}
          */
-        this.pageView = null;
+        this.pageView               = null;
 
         /**
          * @protected
          * @type {SignupButtonContainer}
          */
-        this.signupButtonContainer = null;
+        this.signupButtonContainer  = null;
     },
 
 

@@ -51,7 +51,7 @@ var ButtonView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('button-' + this.cid).unbind();
+        this.$el.find('button-' + this.cid).off();
     },
 
     /**
@@ -60,7 +60,7 @@ var ButtonView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#button-' + this.cid).bind('click', function(event) {
+        this.$el.find('#button-' + this.cid).on('click', function(event) {
             _this.handleButtonClick(event);
         });
     },

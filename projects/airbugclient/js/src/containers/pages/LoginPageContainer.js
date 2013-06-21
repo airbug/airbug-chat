@@ -28,25 +28,25 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ApplicationContainer =  bugpack.require('airbug.ApplicationContainer');
-var LoginFormView =         bugpack.require('airbug.LoginFormView');
-var PageView =              bugpack.require('airbug.PageView');
-var SignupButtonContainer = bugpack.require('airbug.SignupButtonContainer');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
+var LoginFormView           = bugpack.require('airbug.LoginFormView');
+var PageView                = bugpack.require('airbug.PageView');
+var SignupButtonContainer   = bugpack.require('airbug.SignupButtonContainer');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -75,13 +75,13 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule       = null;
 
         /**
          * @private
          * @type {SessionModule}
          */
-        this.sessionModule = null;
+        this.sessionModule          = null;
 
 
         // Views
@@ -91,19 +91,19 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {LoginFormView}
          */
-        this.loginFormView = null;
+        this.loginFormView          = null;
 
         /**
          * @protected
          * @type {PageView}
          */
-        this.pageView = null;
+        this.pageView               = null;
 
         /**
          * @protected
          * @type {SignupButtonContainer}
          */
-        this.signupButtonContainer = null;
+        this.signupButtonContainer  = null;
     },
 
 
