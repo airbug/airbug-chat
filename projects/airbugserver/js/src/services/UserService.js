@@ -56,7 +56,7 @@ var UserService = Class.extend(Obj, {
          * @private
          * @type {UserManager}
          */
-        this.userManager = userManager;
+        this.userManager    = userManager;
     },
 
 
@@ -86,7 +86,7 @@ var UserService = Class.extend(Obj, {
                                 if (!error) {
                                     handshakeData.user = user;
                                     session.data.userId = user.id;
-                                    _this.sessionManager.updateSessionBySid(session.sid, session, function(error) {
+                                    session.save(function(error, session){
                                         callback(error);
                                     });
                                 } else {
@@ -102,8 +102,8 @@ var UserService = Class.extend(Obj, {
                 this.createAnonymousUser(function(error, user) {
                     if (!error) {
                         handshakeData.user = user;
-                        session.userId = user.id;
-                        _this.sessionManager.updateSessionBySid(session.sid, session, function(error) {
+                        session.data.userId = user.id;
+                        session.save(function(error, user){
                             callback(error);
                         });
                     } else {

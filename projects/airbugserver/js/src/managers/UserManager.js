@@ -128,6 +128,11 @@ var UserManager = Class.extend(BugManager, {
         this.find({_id: id}, callback);
     },
 
+    /**
+     * @param {string} userId
+     * @param {string} roomId
+     * @param {function(error, user)} callback
+     */
     removeRoomFromUser: function(userId, roomId, callback){
         //TODO
     }

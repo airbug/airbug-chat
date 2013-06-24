@@ -111,11 +111,11 @@ var SessionManager = Class.extend(BugManager, {
 
     /**
      * @param {string} sid
-     * @param {Session} session
+     * @param {{*}} updates //NOTE: Cannot be a Session instance, only generic objects
      * @param {function(Error)=} callback
      */
-    updateSessionBySid: function(sid, session, callback) {
-        this.update({sid: sid}, session, function(error) {
+    updateSessionBySid: function(sid, updates, callback) {
+        this.update({sid: sid}, updates, function(error) {
             if (callback) {
                 callback(error);
             }

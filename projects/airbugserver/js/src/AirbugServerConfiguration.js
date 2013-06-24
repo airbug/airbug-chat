@@ -1016,6 +1016,7 @@ annotate(AirbugServerConfiguration).with(
             ]),
         module("userService")
             .args([
+                arg("sessionManager").ref("sessionManager"),
                 arg("userManager").ref("userManager")
             ]),
 
