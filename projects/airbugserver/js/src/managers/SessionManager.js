@@ -48,11 +48,11 @@ var SessionManager = Class.extend(MongoManager, {
 
     /**
      * @param {string} sid
-     * @param {Session} session
+     * @param {Object} values
      * @param {function(Error)=} callback
      */
-    createOrUpdateSession: function(sid, session, callback) {
-        this.update({sid: sid}, session, {upsert: true}, function(error, numberAffected, raw) {
+    createOrUpdateSession: function(sid, values, callback) {
+        this.update({sid: sid}, values, {upsert: true}, function(error, numberAffected, raw) {
             if (callback) {
                 callback(error);
             }

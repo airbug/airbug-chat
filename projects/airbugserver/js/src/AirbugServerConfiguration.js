@@ -375,6 +375,17 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         $series([
 
+            $task(function(flow){
+                console.log("Configuring socketIoServer");
+
+                _this._socketIoServer.configure(function(error) {
+                    if (!error) {
+                        console.log("socketIoServer configured");
+                    }
+                    flow.complete(error);
+                });
+            }),
+
             //-------------------------------------------------------------------------------
             // Model Managers
             //-------------------------------------------------------------------------------
@@ -487,16 +498,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 _this._expressServer.start(function(error) {
                     if (!error) {
                         console.log("expressServer started");
-                    }
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow){
-                console.log("Starting socketIoServer");
-
-                _this._socketIoServer.start(function(error) {
-                    if (!error) {
-                        console.log("socketIoServer started");
                     }
                     flow.complete(error);
                 });

@@ -151,7 +151,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {function(Error)}
      */
     initializeConfiguration: function(callback) {
-        this._socketIoConfig.setHost("/api/airbug");
+        this._socketIoConfig.setHost("http://localhost/api/airbug");
         this._socketIoConfig.setResource("api/socket");
         this._socketIoConfig.setPort(8000);
         this._bugCallClient.initialize();
