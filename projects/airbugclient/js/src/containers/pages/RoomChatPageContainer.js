@@ -195,7 +195,7 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         // TODO BRN: Load the Room associated with the passed in uuid.
         // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
 
-        //TEST
+
         if (uuid === "g13Dl0s") {
             this.roomModel.set({"uuid": uuid, "name": "airbug Company Room", "conversationUuid": "bn6LPsd"});
         } else if (uuid === "nb0psdf") {

@@ -118,7 +118,6 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
         this._super(routerArgs);
         //TODO BRN:
 
-        //TEST
         this.conversationCollection.add(new ConversationModel({
             uuid: "1aRtls0",
             name: "Tim Pote",

@@ -68,9 +68,6 @@ var HomePageController = Class.extend(Obj, {
     configure: function(callback) {
         var _this = this;
         this.expressApp.get('/home', function(req, res) {
-            //TEST
-            console.log("Made it!!");
-
             res.render('home', {
                 title: 'airbug',
                 production: _this.config.production

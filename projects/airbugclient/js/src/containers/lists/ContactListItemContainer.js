@@ -67,7 +67,7 @@ var ContactListItemContainer = Class.extend(UserListItemContainer, {
         this._super(routerArgs);
         //TODO BRN: This is where we would load the user model associated with this contact.
 
-        //TEST
+
         if (this.contactModel.get("uuid") === "aN9o234") {
             this.userModel.set({uuid:"nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
         } else if (this.contactModel.get("uuid") === "nv40pfs") {

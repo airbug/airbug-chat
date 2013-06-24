@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ChatWidgetView')
+//@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
 //@Require('airbug.MessageCollection')
 //@Require('airbug.MessageView')
@@ -28,15 +29,16 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var ChatWidgetView =    bugpack.require('airbug.ChatWidgetView');
-var ListItemView =      bugpack.require('airbug.ListItemView');
-var MessageCollection = bugpack.require('airbug.MessageCollection');
-var MessageView =       bugpack.require('airbug.MessageView');
-var PanelView =         bugpack.require('airbug.PanelView');
-var TextAreaView =      bugpack.require('airbug.TextAreaView');
-var CarapaceContainer = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =       bugpack.require('carapace.ViewBuilder');
+var Class               = bugpack.require('Class');
+var ChatWidgetView      = bugpack.require('airbug.ChatWidgetView');
+var ListView            = bugpack.require('airbug.ListView');
+var ListItemView        = bugpack.require('airbug.ListItemView');
+var MessageCollection   = bugpack.require('airbug.MessageCollection');
+var MessageView         = bugpack.require('airbug.MessageView');
+var PanelView           = bugpack.require('airbug.PanelView');
+var TextAreaView        = bugpack.require('airbug.TextAreaView');
+var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -181,7 +183,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding MessageModels to the messageCollection.
 
-        //TEST
         if (conversationUuid === "1aRtls0") {
             this.messageCollection.add(new MessageModel({
                 message: "Hey bro!",

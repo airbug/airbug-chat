@@ -66,14 +66,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
      */
     get: function(sid, callback) {
         var _this = this;
-        //TEST
-        console.log("SessionStore get sid:'" + sid + "'");
-
         this.sessionManager.findSessionBySid(sid, function(error, session) {
-
-            //TEST
-            console.log("findSessionBySid Response - error:", error, " session:", session);
-
             if (!error && session) {
                 var data = session.data;
                 try {
@@ -104,7 +97,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
      */
     set: function(sid, data, callback) {
         //TEST
-        console.log("SessionStore set sid:'", sid, "' data:", data, " callback:", callback);
+        console.log("SessionStore.set - sid:" + sid + " data:" + data);
 
         var cookie = data.cookie;
         var expires = new Date(Date.now() + (60 * 60 * 24));
@@ -120,10 +113,6 @@ var SessionStore = Class.adapt(connect.session.Store, {
             data: JSON.stringify(data),
             expires: expires
         };
-
-        //TEST
-        console.log("sessionStore - createOrUpdateSession");
-
         this.sessionManager.createOrUpdateSession(session.sid, session, callback);
     },
 

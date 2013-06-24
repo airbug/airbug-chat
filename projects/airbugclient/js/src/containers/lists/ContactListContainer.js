@@ -121,7 +121,6 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         this._super(routerArgs);
         //TODO BRN:
 
-        //TEST
         this.contactCollection.add(new ContactModel({uuid: "aN9o234", userUuid: "nmhsieh", conversationUuid: "1aRtls0"})); //Tim
         this.contactCollection.add(new ContactModel({uuid: "nv40pfs", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
         this.contactCollection.add(new ContactModel({uuid: "amvp06d", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam

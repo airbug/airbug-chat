@@ -166,15 +166,12 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         //TODO BRN: This is where we make an apiPublisher call and send both the roomUuid and the roomMemberCollection.
         // The api call would then be responsible for adding RoomMemberModels to the roomMemberCollection.
 
-        //TEST
         if (roomUuid === "g13Dl0s") {
-            //TEST
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "akdbvo2", roomUuid: "g13Dl0s", userUuid: "nmhsieh", conversationUuid: "1aRtls0"})); //Tim
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "39dbclc", roomUuid: "g13Dl0s", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "9rbeudb", roomUuid: "g13Dl0s", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "mduekp0", roomUuid: "g13Dl0s", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"})); //Tom
         } else if (roomUuid === "nb0psdf") {
-            //TEST
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "39dbclc", roomUuid: "nb0psdf", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "9rbeudb", roomUuid: "nb0psdf", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam
             this.roomMemberCollection.add(new RoomMemberModel({uuid: "mduekp0", roomUuid: "nb0psdf", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"})); //Tom

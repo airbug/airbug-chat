@@ -197,7 +197,6 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: Load the User associated with the passed in uuid.
         // TODO BRN: Send the user uuid and the userModel to the API. It's the API's responsibility to change the model
 
-        //TEST
         if (userUuid === "nmhsieh") {
             this.userModel.set({uuid:"nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
         } else if (userUuid === "a93hdug") {

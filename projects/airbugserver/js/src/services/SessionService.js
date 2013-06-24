@@ -38,7 +38,7 @@ var SessionService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager) {
+    _constructor: function(cookieSigner, sessionManager) {
 
         this._super();
 
@@ -46,6 +46,12 @@ var SessionService = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CookieSigner}
+         */
+        this.cookieSigner   = cookieSigner;
 
         /**
          * @private
@@ -60,22 +66,14 @@ var SessionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     shakeIt: function(handshakeData, callback) {
-
-        //TEST
-        console.log("SessionService shakeIt - handshakeData:", handshakeData);
-
         if (handshakeData.headers.cookie) {
             handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
-            handshakeData.sessionId = handshakeData.cookie['express.sid'];
+            handshakeData.sessionId = this.cookieSigner.unsign(handshakeData.cookie['express.sid']);
+
             this.sessionManager.findSessionBySid(handshakeData.sessionId, function(error, session) {
-
-                //TEST
-                console.log("sessionService shakeIt - found session:", session);
-
                 if (error || !session) {
                     callback(error, false);
                 } else {
-                    // save the session handshakeData and accept the connection
                     handshakeData.session = session;
                     callback(null, true);
                 }

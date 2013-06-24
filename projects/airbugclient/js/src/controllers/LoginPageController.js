@@ -14,9 +14,6 @@
 //@Require('carapace.ControllerAnnotation')
 
 
-//TEST
-console.log("LoginPageController loaded");
-
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------

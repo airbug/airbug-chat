@@ -37,7 +37,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(userManager) {
+    _constructor: function(sessionManager, userManager) {
 
         this._super();
 
@@ -45,6 +45,12 @@ var UserService = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {SessionManager}
+         */
+        this.sessionManager = sessionManager;
 
         /**
          * @private
@@ -66,23 +72,23 @@ var UserService = Class.extend(Obj, {
 
         //TODO BRN (QUESTION): When a session is regenerated, does it automatically rerun the authorization (handshake.shakeIt) call
 
-        //TEST
-        console.log("UserService shakeIt - handshakeData:", handshakeData);
-
         var _this = this;
         if (handshakeData.session) {
             var session = handshakeData.session;
             if (session.userId) {
-                this.userManager.findUserById(session.userID, function(error, user) {
+                this.userManager.findUserById(session.data.userId, function(error, user) {
                     if (!error) {
                         if (user) {
-                            session.user = user;
+                            handshakeData.user = user;
                         } else {
-                            delete session.userId;
+                            delete session.data.userId;
                             _this.createAnonymousUser(function(error, user) {
                                 if (!error) {
-                                    session.user = user;
-                                    session.userId = user.id;
+                                    handshakeData.user = user;
+                                    session.data.userId = user.id;
+                                    _this.sessionManager.updateSessionBySid(session.sid, session, function(error) {
+                                        callback(error);
+                                    });
                                 } else {
                                     callback(error);
                                 }
@@ -95,8 +101,11 @@ var UserService = Class.extend(Obj, {
             } else {
                 this.createAnonymousUser(function(error, user) {
                     if (!error) {
-                        session.user = user;
+                        handshakeData.user = user;
                         session.userId = user.id;
+                        _this.sessionManager.updateSessionBySid(session.sid, session, function(error) {
+                            callback(error);
+                        });
                     } else {
                         callback(error);
                     }

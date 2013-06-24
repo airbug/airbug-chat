@@ -28,7 +28,12 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 //-------------------------------------------------------------------------------
 
 var UserSchema = new Schema({
-    email: {type: String, index: true, unique: true},
+
+    // NOTE BRN: Cannot make email unique since anonymous users have a 'null' value for their email and we can't have
+    // more than one null. We'll have to validate uniqueness at the application level instead.
+    // More info http://stackoverflow.com/questions/7955040/mongodb-mongoose-unique-if-not-null
+
+    email: {type: String, index: true, unique: false},
     firstName: String,
     lastName: String,
     anonymous: Boolean,

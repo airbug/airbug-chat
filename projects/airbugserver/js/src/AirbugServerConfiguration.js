@@ -19,8 +19,8 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('bugroutes.BugCallRoutes')
-//@Require('bugroutes.SocketRouter')
+//@Require('bugroutes.BugCallRouter')
+//@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 //@Require('handshaker.Handshaker')
@@ -94,7 +94,7 @@ var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugCallRouter           = bugpack.require('bugroutes.BugCallRouter');
-var SocketRouter            = bugpack.require('bugroutes.SocketRouter');
+var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
 var Handshaker              = bugpack.require('handshaker.Handshaker');
@@ -220,6 +220,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {CookieSigner}
+         */
+        this._cookieSigner          = null;
+
+        /**
+         * @private
          * @type {ExpressApp}
          */
         this._expressApp            = null;
@@ -318,6 +324,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         var config = this._config;
         var secret = 'some secret'; // LOAD FROM CONFIG;
         var sessionKey = 'express.sid';
+
+        this._cookieSigner.setSecret(secret);
 
         this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
 
@@ -594,6 +602,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {CookieSigner}
+     */
+    cookieSigner: function() {
+        this._cookieSigner = new CookieSigner();
+        return this._cookieSigner;
+    },
+
+    /**
      * @return {Dialogue}
      */
     dialogue: function() {
@@ -743,11 +759,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {CookieSigner} cookieSigner
      * @param {SessionManager} sessionManager
      * @return {SessionService}
      */
-    sessionService: function(sessionManager) {
-        this._sessionService = new SessionService(sessionManager);
+    sessionService: function(cookieSigner, sessionManager) {
+        this._sessionService = new SessionService(cookieSigner, sessionManager);
         return this._sessionService;
     },
 
@@ -813,11 +830,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SessionManager} sessionManager
      * @param {UserManager} userManager
      * @return {UserService}
      */
-    userService: function(userManager) {
-        this._userService = new UserService(userManager);
+    userService: function(sessionManager, userManager) {
+        this._userService = new UserService(sessionManager, userManager);
         return this._userService;
     },
 
@@ -905,12 +923,18 @@ annotate(AirbugServerConfiguration).with(
                 arg("sessionManager").ref("sessionManager")
             ]),
 
+        //-------------------------------------------------------------------------------
+        // Util
+        //-------------------------------------------------------------------------------
+
+        module("cookieSigner"),
+        module("handshaker"),
+
 
         //-------------------------------------------------------------------------------
         // Sockets
         //-------------------------------------------------------------------------------
 
-        module("handshaker"),
         module("apiAirbugSocketIoManager")
             .args([
                 arg("socketIoServer").ref("socketIoServer")
@@ -987,6 +1011,7 @@ annotate(AirbugServerConfiguration).with(
             ]),
         module("sessionService")
             .args([
+                arg("cookieSigner").ref("cookieSigner"),
                 arg("sessionManager").ref("sessionManager")
             ]),
         module("userService")

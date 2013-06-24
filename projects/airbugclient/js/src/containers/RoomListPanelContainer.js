@@ -133,7 +133,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         this._super(routerArgs);
         //TODO BRN:
 
-        //TEST
         this.roomCollection.add(new RoomModel({uuid: "g13Dl0s", name: "airbug Company Room"}));
         this.roomCollection.add(new RoomModel({uuid: "nb0psdf", name: "airbug Dev Room"}));
     },

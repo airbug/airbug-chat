@@ -197,7 +197,6 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         // TODO BRN: Load the Contact associated with the passed in uuid.
         // TODO BRN: Send the contact uuid and the ContactModel to the API. It's the API's responsibility to change the model
 
-        //TEST
         if (uuid === "aN9o234") {
             this.contactModel.set({uuid: "aN9o234", userUuid: "nmhsieh", conversationUuid: "1aRtls0"}); //Tim
         } else if (uuid === "nv40pfs") {

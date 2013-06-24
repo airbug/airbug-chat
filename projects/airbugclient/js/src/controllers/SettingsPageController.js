@@ -15,9 +15,6 @@
 //@Require('carapace.ControllerAnnotation')
 
 
-//TEST
-console.log("SettingsPageController loaded");
-
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------

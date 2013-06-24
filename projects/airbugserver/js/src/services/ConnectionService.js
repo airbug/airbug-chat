@@ -10,7 +10,7 @@
 //@Require('Obj')
 //@Require('Map')
 //@Require('Set')
-//@Require('bugcall.BugCallServer')
+//@Require('bugcall.BugCallServerEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -24,11 +24,11 @@ var bugpack         = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var Map             = bugpack.require('Map');
-var Set             = bugpack.require('Set');
-var BugCallServer   = bugpack.require('bugcall.BugCallServer')
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var Map                 = bugpack.require('Map');
+var Set                 = bugpack.require('Set');
+var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
 
 
 //-------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ var ConnectionService = Class.extend(Obj, {
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        this.bugCallServer.on(BugCallServer.EventTypes.CONNECTION_ESTABLISHED, this.handleConnectionEstablishedEvent, this, false);
+        this.bugCallServer.on(BugCallServerEvent.CONNECTION_ESTABLISHED, this.handleConnectionEstablishedEvent, this, false);
 
         callback();
     },
