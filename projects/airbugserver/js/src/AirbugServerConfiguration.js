@@ -175,6 +175,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {BugCallRouter}
+         */
+        this._bugCallRouter         = null;
+
+        /**
+         * @private
          * @type {ChatMessageManager}
          */
         this._chatMessageManager    = null;
@@ -416,6 +422,18 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 })
             ]),
 
+            //-------------------------------------------------------------------------------
+            // Routers
+            //-------------------------------------------------------------------------------
+
+            $task(function(flow){
+                _this._bugCallRouter.initialize(function(error){
+                    if(!error){
+                        console.log("bugCallRouter initialized");
+                    }
+                    flow.complete(error);
+                });
+            }),
 
             //-------------------------------------------------------------------------------
             // Controllers
@@ -499,7 +517,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {BugCallRouter}
      */
     bugCallRouter: function(bugCallServer) {
-        return new BugCallRouter(bugCallServer);
+        this._bugCallRouter = new BugCallRouter(bugCallServer);
+        return this._bugCallRouter;
     },
 
     /**
