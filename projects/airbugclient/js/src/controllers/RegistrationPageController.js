@@ -4,13 +4,14 @@
 
 //@Package('airbug')
 
-//@Export('RegisterPageContainer')
+//@Export('RegistrationPageController')
+//@Autoload
 
 //@Require('Class')
-//@Require('airbug.LoginButtonContainer')
-//@Require('airbug.PageView')
-//@Require('airbug.RegisterFormView')
-//@Require('carapace.ViewBuilder')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.RegistrationPageContainer')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -24,25 +25,27 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var LoginButtonContainer =  bugpack.require('airbug.LoginButtonContainer');
-var PageView =              bugpack.require('airbug.PageView');
-var RegisterFormView =        bugpack.require('airbug.RegisterFormView');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var ApplicationController       = bugpack.require('airbug.ApplicationController');
+var RegistrationPageContainer   = bugpack.require('airbug.RegistrationPageContainer');
+var Annotate                    = bugpack.require('annotate.Annotate');
+var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var annotation  = Annotate.annotation;
+var controller  = ControllerAnnotation.controller;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RegisterPageContainer = Class.extend(ApplicationContainer, {
+var RegistrationPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -59,60 +62,32 @@ var RegisterPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {LoginButtonContainer}
+         * @type {RegistrationPageContainer}
          */
-        this.loginButtonContainer = null;
-
-        /**
-         * @protected
-         * @type {PageView}
-         */
-        this.pageView = null;
+        this.registrationPageContainer = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Extensions
     //-------------------------------------------------------------------------------
 
     /**
      * @protected
      */
-    createContainer: function() {
+    createController: function() {
         this._super();
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(RegisterFormView)
-                        .appendTo('*[id|="page"]')
-                ])
-                .build();
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.loginButtonContainer = new LoginButtonContainer();
-        this.addContainerChild(this.loginButtonContainer, "#header-right");
+        this.registrationPageContainer = new RegistrationPageContainer();
+        this.setContainerTop(this.registrationPageContainer);
     }
 });
+annotate(RegistrationPageController).with(
+    controller().route("")
+);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RegisterPageContainer", RegisterPageContainer);
-
+bugpack.export("airbug.RegistrationPageController", RegistrationPageController);

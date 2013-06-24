@@ -103,10 +103,10 @@ var AirbugApi = Class.extend(Obj, {
         this.bugCallClient.request("addUserToRoom", requestData, callback);
     },
 
-    createRoom: function(roomName, callback){
+    createRoom: function(roomObj, callback){
         var requestData = {
             room: {
-                name: roomName
+                name: roomObj.name
             }
         };
         this.bugCallClient.request("createRoom", requestData, callback);
@@ -135,12 +135,12 @@ var AirbugApi = Class.extend(Obj, {
         this.bugCallClient.request("getCurrentUser", {}, callback);
     },
 
-    establishCurrentUser: function(firstName, lastName, email, callback){
+    establishCurrentUser: function(userObj, callback){
         var requestData = {
             user: {
-                firstName: firstName,
-                lastName: lastName,
-                email: email
+                firstName: userObj.firstName,
+                lastName: userObj.lastName,
+                email: userObj.email
             }
         };
         this.bugCallClient.request("establishCurrentUser", requestData, callback);

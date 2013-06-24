@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugApi')
+//@Require('airbug.CurrentUserManagerModule')
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
 //@Require('airbug.RoomManagerModule')
@@ -31,6 +32,8 @@
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
+//@Require('syncbug.SyncModelManager')
+//@Require('syncbugclient.SyncBugClient')
 
 
 //-------------------------------------------------------------------------------
@@ -68,6 +71,8 @@ var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig          = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory  = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
+var SyncModelManager        = bugpack.require('syncbug.SyncModelManager');
+var SyncBugClient           = bugpack.require('syncbugclient.SyncBugClient');
 
 
 //-------------------------------------------------------------------------------
@@ -244,6 +249,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         return this._controllerScan;
     },
 
+    currentUserManagerModule: function(airbugApi){
+        return new CurrentUserManagerModule(airbugApi);
+    },
+
     /**
      * @return {NavigationModule}
      */
@@ -287,6 +296,20 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     socketIoConfig: function() {
         this._socketIoConfig = new SocketIoConfig({});
         return this._socketIoConfig;
+    },
+
+    /**
+     * @return {SyncBugClient}
+     */
+    syncBugClient: function(bugCallClient, syncModelManager) {
+        return new SyncBugClient(bugCallClient, syncModelManager);
+    },
+
+    /**
+     * @return {SyncModelManager}
+     */
+    syncModelManager: function() {
+        return new SyncModelManager();
     }
 });
 
@@ -334,6 +357,10 @@ annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("carapaceApplication")
             ]),
+        module("currentUserManagerModule")
+            .args([
+                arg("airbugApi").ref("airbugApi")
+            ]),
         module("navigationModule")
             .properties([
                 property("carapaceRouter").ref("carapaceRouter")
@@ -355,7 +382,13 @@ annotate(AirbugClientConfiguration).with(
                 arg("socketIoFactory").ref("browserSocketIoFactory"),
                 arg("socketIoConfig").ref("socketIoConfig")
             ]),
-        module("socketIoConfig")
+        module("socketIoConfig"),
+        module("syncBugClient")
+            .args([
+                arg("bugCallClient").ref("bugCallClient"),
+                arg("syncModelManager").ref("syncModelManager")
+            ]),
+        module("syncModelManager")
     ])
 );
 

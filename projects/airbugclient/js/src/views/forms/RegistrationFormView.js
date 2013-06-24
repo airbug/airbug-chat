@@ -4,9 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('LoginFormView')
+//@Export('RegistrationFormView')
 
 //@Require('Class')
+//@Require('airbug.FormViewEvent')
 //@Require('airbug.MustacheView')
 
 
@@ -21,34 +22,38 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
+var Class 			= bugpack.require('Class');
+var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
+var MustacheView 	= bugpack.require('airbug.MustacheView');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginFormView = Class.extend(MustacheView, {
+var RegistrationFormView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="form-wrapper">' +
-                    '<form class="form-horizontal">' +
-                        '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
-                        '</div>' +
-                        '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
-                        '</div>' +
-                        '<div class="control-group">' +
-                            '<button id="login-button-{{cid}}" type="button" class="btn">Login</button>' +
-                        '</div>' +
-                    '</form>' +
-                '</div>',
-
+    template: 	    
+                    '<div class="form-wrapper">' +
+                        '<div class=""> Welcome </div>' +
+                        '<form class="form-horizontal">' +
+                            '<div class="control-group">' +
+                                '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<input class="input-xxlarge" type="text" name="firstName" placeholder="First Name">' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<input class="input-xxlarge" type="text" name="lastName" placeholder="Last Name">' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<button id="submit-button-{{cid}}" type="button" class="btn">Enter</button>' +
+                            '</div>' +
+                        '</form>' +
+                    '</div>',
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions
@@ -59,7 +64,7 @@ var LoginFormView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('login-button-' + this.cid).unbind();
+        this.$el.find('#submit-button-' + this.cid).off();
     },
 
     /**
@@ -68,11 +73,10 @@ var LoginFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#login-button-' + this.cid).bind('click', function(event) {
-            _this.handleLoginButtonClick(event);
+        this.$el.find('#submit-button-' + this.cid).on('click', function(event) {
+            _this.handleButtonClick(event);
         });
     },
-
 
     //-------------------------------------------------------------------------------
     // Protected Methods
@@ -88,7 +92,7 @@ var LoginFormView = Class.extend(MustacheView, {
         // one checkbox.
 
         var formData = {};
-        var formInputs = this.$el.serializeArray();
+        var formInputs = this.$el.find("form").serializeArray();
         formInputs.forEach(function(formInput) {
             formData[formInput.name] = formInput.value;
         });
@@ -100,9 +104,9 @@ var LoginFormView = Class.extend(MustacheView, {
      */
     submitForm: function() {
         var formData = this.getFormData();
-        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT), formData);
+        console.log("formData:", formData);
+        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, formData));
     },
-
 
     //-------------------------------------------------------------------------------
     // View Event Handlers
@@ -112,15 +116,14 @@ var LoginFormView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleLoginButtonClick: function(event) {
+    handleButtonClick: function(event) {
         event.preventDefault();
         this.submitForm();
     }
 });
 
-
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LoginFormView", LoginFormView);
+bugpack.export('airbug.RegistrationFormView', RegistrationFormView);

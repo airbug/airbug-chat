@@ -4,14 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('RegisterPageController')
-//@Autoload
+//@Export('CurrentUserManagerModule')
 
 //@Require('Class')
-//@Require('airbug.ApplicationController')
-//@Require('airbug.RegisterPageContainer')
-//@Require('annotate.Annotate')
-//@Require('carapace.ControllerAnnotation')
+//@Require('Obj')
+//@Require('airbug.CurrentUserModel')
 
 
 //-------------------------------------------------------------------------------
@@ -25,33 +22,22 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var RegisterPageContainer   = bugpack.require('airbug.RegisterPageContainer');
-var Annotate                = bugpack.require('annotate.Annotate');
-var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var annotate    = Annotate.annotate;
-var annotation  = Annotate.annotation;
-var controller  = ControllerAnnotation.controller;
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RegisterPageController = Class.extend(ApplicationController, {
+var CurrentUserManagerModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(airbugApi) {
 
         this._super();
 
@@ -61,33 +47,54 @@ var RegisterPageController = Class.extend(ApplicationController, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
-         * @type {RegisterPageContainer}
+         * @private
+         * @type {AirbugApi}
          */
-        this.registerPageContainer = null;
+        this.airbugApi          = airbugApi;
+
+        /**
+         * @private
+         * @type {CurrentUser}
+         */
+        this.currentUserModel   = new CurrentUserModel({});
+
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+
     /**
-     * @protected
+     * @param {{
+     *      email: string,
+     *      firstName: string,
+     *      lastName: string
+     * }} userObj
+     * @param {function(error, currentUser)} callback
      */
-    createController: function() {
-        this._super();
-        this.registerPageContainer = new RegisterPageContainer();
-        this.setContainerTop(this.registerPageContainer);
+    establishCurrentUser: function(userObj, callback) {
+        this.airbugApi.establishCurrentUser(userObj, callback);
+    },
+
+    /**
+     * @param {function(error, currentUser)} callback
+     */
+    getCurrentUser: function(callback) {
+        this.airbugApi.getCurrentUser(callback);
     }
 });
-annotate(RegisterPageController).with(
-    controller().route("register")
-);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RegisterPageController", RegisterPageController);
+bugpack.export("airbug.CurrentUserManagerModule", CurrentUserManagerModule);

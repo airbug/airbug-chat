@@ -110,7 +110,10 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/client/js/src",
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
-            "../bugpack/projects/bugpack-client/js/src"
+            "../bugpack/projects/bugpack-client/js/src",
+            "../syncbug/projects/syncbug/js/src",
+            "../syncbug/projects/syncbugclient/js/src"
+
         ]
     },
     client: {

@@ -81,7 +81,7 @@ var UserController = Class.extend(Obj, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            establishUser:      function(request, responder){
+            establishCurrentUser:      function(request, responder){
                 //TODO
                 var currentUser = request.getHandshake().session.user;
                 if(currentUser.isAnonymous()){

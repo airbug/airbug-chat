@@ -11,7 +11,7 @@
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.PageThreeColumnView')
+//@Require('airbug.PageTwoColumnView')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomModel')
@@ -29,16 +29,16 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                                 bugpack.require('Class');
-var AccountButtonDropdownContainer =        bugpack.require('airbug.AccountButtonDropdownContainer');
-var ApplicationContainer =                  bugpack.require('airbug.ApplicationContainer');
-var ConversationListSlidePanelContainer =   bugpack.require('airbug.ConversationListSlidePanelContainer');
-var HomeButtonContainer =                   bugpack.require('airbug.HomeButtonContainer');
-var PageThreeColumnView =                   bugpack.require('airbug.PageThreeColumnView');
-var RoomChatBoxContainer =                  bugpack.require('airbug.RoomChatBoxContainer');
-var RoomMemberListPanelContainer =          bugpack.require('airbug.RoomMemberListPanelContainer');
-var RoomModel =                             bugpack.require('airbug.RoomModel');
-var ViewBuilder =                           bugpack.require('carapace.ViewBuilder');
+var Class                                   = bugpack.require('Class');
+var AccountButtonDropdownContainer          = bugpack.require('airbug.AccountButtonDropdownContainer');
+var ApplicationContainer                    = bugpack.require('airbug.ApplicationContainer');
+var ConversationListSlidePanelContainer     = bugpack.require('airbug.ConversationListSlidePanelContainer');
+var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
+var PageTwoColumnView                       = bugpack.require('airbug.PageTwoColumnView');
+var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
+var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
+var RoomModel                               = bugpack.require('airbug.RoomModel');
+var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -116,9 +116,9 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {PageThreeColumnView}
+         * @type {PageTwoColumnView}
          */
-        this.pageThreeColumnView = null;
+        this.pageTwoColumnView = null;
     },
 
 
@@ -153,16 +153,16 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageThreeColumnView =
-            view(PageThreeColumnView)
-                .attributes({configuration: PageThreeColumnView.Configuration.THICK_RIGHT})
+        this.pageTwoColumnView =
+            view(PageTwoColumnView)
+                .attributes({configuration: PageTwoColumnView.Configuration.THICK_RIGHT})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageThreeColumnView, "#application-" + this.applicationView.cid);
+        this.applicationView.addViewChild(this.pageTwoColumnView, "#application-" + this.applicationView.cid);
     },
 
     /**
@@ -170,16 +170,15 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
-        this.conversationListSlidePanelContainer = new ConversationListSlidePanelContainer();
-        this.homeButtonContainer = new HomeButtonContainer();
-        this.roomChatBoxContainer = new RoomChatBoxContainer(this.roomModel);
-        this.roomMemberListPanelContainer = new RoomMemberListPanelContainer(this.roomModel);
-        this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
-        this.addContainerChild(this.conversationListSlidePanelContainer, "#page-rightrow");
-        this.addContainerChild(this.homeButtonContainer, "#header-left");
-        this.addContainerChild(this.roomChatBoxContainer, "#page-centerrow");
-        this.addContainerChild(this.roomMemberListPanelContainer, "#page-leftrow");
+        this.accountButtonDropdownContainer         = new AccountButtonDropdownContainer();
+        this.conversationListSlidePanelContainer    = new ConversationListSlidePanelContainer();
+        this.homeButtonContainer                    = new HomeButtonContainer();
+        this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
+        this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
+        this.addContainerChild(this.accountButtonDropdownContainer, "#header-right");
+        this.addContainerChild(this.homeButtonContainer,            "#header-left");
+        this.addContainerChild(this.roomChatBoxContainer,           "#page-rightrow");
+        this.addContainerChild(this.roomMemberListPanelContainer,   "#page-leftrow");
     },
 
 

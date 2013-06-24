@@ -4,10 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('CreateRoomFormContainer')
+//@Export('RegistrationFormContainer')
 
 //@Require('Class')
-//@Require('airbug.CreateRoomFormView')
+//@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
 //@Require('annotate.Annotate')
@@ -29,7 +29,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
+var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
 var Annotate                = bugpack.require('annotate.Annotate');
@@ -53,7 +53,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
+var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -73,15 +73,15 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {CurrentUserManagerModule}
+         */
+        this.currentUserManagerModule   = null;
+
+        /**
+         * @private
          * @type {NavigationModule}
          */
-        this.navigationModule   = null;
-
-       /**
-         * @private
-         * @type {RoomManagerModule}
-         */
-        this.roomManagerModule  = null;
+        this.navigationModule           = null;
 
 
         // Views
@@ -89,9 +89,9 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {CreateRoomFormView}
+         * @type {RegistrationFormView}
          */
-        this.createRoomFormView = null;
+        this.registrationFormView       = null;
     },
 
 
@@ -108,8 +108,8 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.createRoomFormView =
-            view(CreateRoomFormView)
+        this.registrationFormView =
+            view(RegistrationFormView)
                 // .attributes({type: "primary", align: "left"})
                 .build();
 
@@ -117,7 +117,7 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.createRoomFormView);
+        this.setViewTop(this.registrationFormView);
     },
 
     /**
@@ -125,7 +125,7 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+        this.registrationFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -139,24 +139,25 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
      */
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
-        var roomObj     = event.getData();
-        this.roomManagerModule.createRoom(roomObj, function(error, room){
+        var userObj     = event.getData();
+        this.navigationModule;
+        this.currentUserManagerModule.establishCurrentUser(userObj, function(error, currentUser){
             if(!error){
-                // _this.roomCollection.add(new RoomModel(room));
-                _this.navigationModule.navigate("room/" + room.id, {
+                //TODO
+                _this.navigationModule.navigate("home", {
                     trigger: true
                 });
             } else {
                 //TODO
-                console.log("roomManagerModule#createRoom callback error:", error);
+                console.log("currentUserManagerModule#createRoom callback error:", error);
             }
         });
     }
 });
-annotate(CreateRoomFormContainer).with(
+annotate(RegistrationFormContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
-        property("roomManagerModule").ref("roomManagerModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule")
     ])
 );
 
@@ -165,4 +166,4 @@ annotate(CreateRoomFormContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CreateRoomFormContainer", CreateRoomFormContainer);
+bugpack.export("airbug.RegistrationFormContainer", RegistrationFormContainer);

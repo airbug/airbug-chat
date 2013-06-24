@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbug.CurrentUserModel')
 //@Require('airbug.RoomModel')
 
 
@@ -23,10 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
-var SessionModel        = bugpack.require('airbug.RoomModel');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var RoomModel   = bugpack.require('airbug.RoomModel');
 
 
 //-------------------------------------------------------------------------------
@@ -80,9 +78,8 @@ var RoomManagerModule = Class.extend(Obj, {
      * }} room
      * @param {function(error, room)} callback
      */
-    createRoom: function(room, callback) {
-        var roomName = room.name;
-        this.airbugApi.createRoom(roomName, function(error, room){
+    createRoom: function(roomObj, callback) {
+        this.airbugApi.createRoom(roomObj, function(error, room){
             callback(error, room);
         });
     }
