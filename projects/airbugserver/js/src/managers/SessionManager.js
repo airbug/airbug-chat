@@ -7,7 +7,7 @@
 //@Export('SessionManager')
 
 //@Require('Class')
-//@Require('airbugserver.BugManager')
+//@Require('mongo.MongoManager')
 
 
 //-------------------------------------------------------------------------------
@@ -22,14 +22,14 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var BugManager  = bugpack.require('airbugserver.BugManager');
+var MongoManager  = bugpack.require('mongo.MongoManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionManager = Class.extend(BugManager, {
+var SessionManager = Class.extend(MongoManager, {
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods

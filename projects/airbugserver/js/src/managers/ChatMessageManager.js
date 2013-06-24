@@ -7,7 +7,7 @@
 //@Export('ChatMessageManager')
 
 //@Require('Class')
-//@Require('airbugserver.BugManager')
+//@Require('mongo.MongoManager')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +21,19 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var BugManager  = bugpack.require('airbugserver.BugManager');
+var Class           = bugpack.require('Class');
+var MongoManager    = bugpack.require('mongo.MongoManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageManager = Class.extend(BugManager, {
+var ChatMessageManager = Class.extend(MongoManager, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
 
     _constructor: function(model, schema){
 
@@ -37,6 +41,11 @@ var ChatMessageManager = Class.extend(BugManager, {
 
 
     },
+
+
+    //-------------------------------------------------------------------------------
+    // MongoManager Extensions/Overrides
+    //-------------------------------------------------------------------------------
 
     /**
      * @override

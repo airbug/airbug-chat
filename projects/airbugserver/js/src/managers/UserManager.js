@@ -7,7 +7,7 @@
 //@Export('UserManager')
 
 //@Require('Class')
-//@Require('BugManager')
+//@Require('mongo.MongoManager')
 
 
 //-------------------------------------------------------------------------------
@@ -22,17 +22,17 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var BugManager  = bugpack.require('airbugserver.BugManager');
+var MongoManager  = bugpack.require('mongo.MongoManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserManager = Class.extend(BugManager, {
+var UserManager = Class.extend(MongoManager, {
 
     //-------------------------------------------------------------------------------
-    // BugManager Extensions/Overrides
+    // MongoManager Extensions/Overrides
     //-------------------------------------------------------------------------------
 
     configure: function(callback) {

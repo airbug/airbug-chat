@@ -7,7 +7,7 @@
 //@Export('RoomManager')
 
 //@Require('Class')
-//@Require('airbugserver.BugManager')
+//@Require('mongo.MongoManager')
 //@Require('bugflow.BugFlow')
 
 
@@ -23,7 +23,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var BugManager  = bugpack.require('airbugserver.BugManager');
+var MongoManager  = bugpack.require('mongo.MongoManager');
 var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
@@ -39,7 +39,7 @@ var $task       = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomManager = Class.extend(BugManager, {
+var RoomManager = Class.extend(MongoManager, {
 
     _constructor: function(model, schema, conversationManager, roomMemberManager){
 

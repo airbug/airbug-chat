@@ -68,6 +68,7 @@ buildProperties({
             "../bugjs/projects/cookies/js/src",
             "../bugjs/projects/express/js/src",
             "../bugjs/projects/handshaker/js/src",
+            "../bugjs/projects/mongo/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
             "../bugunit/projects/bugdouble/js/src",

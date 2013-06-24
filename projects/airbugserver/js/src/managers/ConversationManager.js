@@ -7,7 +7,7 @@
 //@Export('ConversationManager')
 
 //@Require('Class')
-//@Require('airbugserver.BugManager')
+//@Require('mongo.MongoManager')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,13 +21,13 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var BugManager  = bugpack.require('airbugserver.BugManager');
+var MongoManager  = bugpack.require('mongo.MongoManager');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManager = Class.extend(BugManager, {
+var ConversationManager = Class.extend(MongoManager, {
 
     _constructor: function(model, schema){
 
