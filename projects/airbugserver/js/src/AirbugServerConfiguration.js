@@ -181,6 +181,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {BugCallServer}
+         */
+        this._bugCallServer         = null;
+
+        /**
+         * @private
          * @type {ChatMessageManager}
          */
         this._chatMessageManager    = null;
@@ -434,6 +440,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             ]),
 
             //-------------------------------------------------------------------------------
+            // BugCall
+            //-------------------------------------------------------------------------------
+
+
+            //-------------------------------------------------------------------------------
             // Routers
             //-------------------------------------------------------------------------------
 
@@ -517,8 +528,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {BugCallServer} bugCallServer
      * @return {BugCallRouter}
      */
-    bugCallRouter: function(bugCallServer) {
-        this._bugCallRouter = new BugCallRouter(bugCallServer);
+    bugCallRouter: function(bugCallRequestEventDispatcher) {
+        this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);
         return this._bugCallRouter;
     },
 
@@ -527,7 +538,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {BugCallServer}
      */
     bugCallServer: function(callServer) {
-        return new BugCallServer(callServer);
+        this._bugCallServer = new BugCallServer(callServer);
+        return this._bugCallServer;
     },
 
     /**
@@ -975,7 +987,7 @@ annotate(AirbugServerConfiguration).with(
 
         module("bugCallRouter")
             .args([
-                arg("bugCallServer").ref("bugCallServer")
+                arg("bugCallRequestEventDispatcher").ref("bugCallServer")
             ]),
         module("bugCallServer")
             .args([
