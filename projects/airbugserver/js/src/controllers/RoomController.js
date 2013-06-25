@@ -83,7 +83,7 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             addUserToRoom:  function(request, responder){
-                var currentUser = request.getHandshake().sessions.user;
+                var currentUser = request.getHandshake().user;
                 var data        = request.getData();
                 var userId      = data.userId;
                 var roomId      = data.roomId;
@@ -110,7 +110,7 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             createRoom:     function(request, responder){
-                var currentUser = request.getHandshake().sessions.user;
+                var currentUser = request.getHandshake().user;
                 var data        = request.getData();
                 var room        = data.room;
                 if(currentUser.isNotAnonymous()){
@@ -139,7 +139,7 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             joinRoom:       function(request, responder){
-                var currentUser = request.getHandshake().sessions.user;
+                var currentUser = request.getHandshake().user;
                 var data        = request.getData();
                 var userId      = currentUser.id;
                 var roomId      = data.roomId;
@@ -170,7 +170,7 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             leaveRoom:      function(request, responder){
-                var currentUser = request.getHandshake().sessions.user;
+                var currentUser = request.getHandshake().user;
                 if(currentUser.isNotAnonymous()){
                     var data        = request.getData();
                     var userId      = currentUser.id;

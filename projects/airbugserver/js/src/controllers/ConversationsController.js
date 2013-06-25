@@ -72,7 +72,7 @@ var ConversationController = Class.extend(Obj, {
         var _this               = this;
         this.bugCallRouter.addAll({
             retrieveConversation: function(request, responder){
-                var currentUser = request.getHandshake().session.user;
+                var currentUser = request.getHandshake().user;
                 if(currentUser.isNotAnonymous()){
                     var data = request.getData();
                     var conversationId = data.conversationId;

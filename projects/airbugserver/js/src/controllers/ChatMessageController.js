@@ -77,7 +77,7 @@ var ChatMessageController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             createChatMessage: function(request, responder){
-                var currentUser = request.getHandshake().session.user;
+                var currentUser = request.getHandshake().user;
                 if(currentUser.isNotAnonymous()){
                     var data        = request.getData();
                     var chatMessage = data.chatMessage;
