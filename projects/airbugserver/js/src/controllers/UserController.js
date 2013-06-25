@@ -83,7 +83,8 @@ var UserController = Class.extend(Obj, {
              */
             establishCurrentUser:      function(request, responder){
                 //TODO
-                var currentUser = request.getHandshake().session.user;
+                console.log("Inside UserController#establishCurrentUser");
+                var currentUser = request.getHandshake().user;
                 if(currentUser.isAnonymous()){
                     var data = request.getData();
                     var user = data.user;
@@ -113,7 +114,7 @@ var UserController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             getCurrentUser:     function(request, responder){
-                var currentUser = request.getHandshake().session.user;
+                var currentUser = request.getHandshake().user;
                 var data        = {currentUser: currentUser};
                 var response    = responder.response("gotCurrentUser", data);
                 responder.sendResponse(response);
@@ -125,7 +126,7 @@ var UserController = Class.extend(Obj, {
              */
             logoutCurrentUser:  function(request, responder){
                 //TODO
-                var currentUser = request.getHandshake().session.user;
+                var currentUser = request.getHandshake().user;
                 var connection  = request.getCallConnection();
                 this.connectionService.deregisterConnection(currentUser.id, connection);
                 this.userService.logoutUser(currentUser, function(error){

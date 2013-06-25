@@ -138,7 +138,7 @@ var UserService = Class.extend(Obj, {
      */
     establishUser: function(user, callback) {
         var _this = this;
-        this.userManager.findOrCreate(user, function(error, user) {
+        this.userManager.findOrCreateUser(user, function(error, user) {
             if (!error) {
                 callback(null, user);
             } else {
