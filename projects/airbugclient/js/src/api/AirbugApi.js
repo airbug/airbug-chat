@@ -67,6 +67,12 @@ var AirbugApi = Class.extend(Obj, {
     // ChatMessage Related Api Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} chatMessageBody
+     * @param {string} conversationOwnerId
+     * @param {string} conversationId
+     * @param {function(error, chatMessage)} callback
+     */
     createChatMessage: function(chatMessageBody, conversationId, conversationOwnerId, callback){
         var requestData = {
             chatMessage: {
@@ -75,7 +81,18 @@ var AirbugApi = Class.extend(Obj, {
                 conversationOwnerId: conversationOwnerId
             }
         };
-        this.bugCallClient.request("createChatMessage", requestData, callback);
+        /**
+         * @param {string} requestType
+         * @param {{*}} requestData
+         * @param {function(Exception, CallResponse)} callback
+         */
+        this.bugCallClient.request("createChatMessage", requestData, function(exception, callResponse){
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error();
+            var chatMessage = data.chatMessage();
+            callback(error, chatMessage);
+        });
     },
 
 
@@ -83,11 +100,21 @@ var AirbugApi = Class.extend(Obj, {
     // Conversation Related Api Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} conversationId
+     * @param {function(error, conversation)} callback
+     */
     retrieveConversation: function(conversationId, callback){
         var requestData = {
             conversationId: conversationId
         };
-        this.bugCallClient.request("retrieveConversation", requestData, callback);
+        this.bugCallClient.request("retrieveConversation", requestData, function(exception, callResponse){
+            var type            = callResponse.getType();
+            var data            = callResponse.getData();
+            var error           = data.error;
+            var conversation    = data.conversation;
+            callback(error, conversation);
+        });
     },
 
 
@@ -95,35 +122,76 @@ var AirbugApi = Class.extend(Obj, {
     // Room Related Api Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} userId
+     * @param {string} roomId
+     * @param {function(error, room)} callback
+     */
     addUserToRoom: function(userId, roomId, callback){
         var requestData = {
             roomId: roomId,
             userId: userId
         };
-        this.bugCallClient.request("addUserToRoom", requestData, callback);
+        this.bugCallClient.request("addUserToRoom", requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var room    = data.room;
+            callback(error, room);
+        });
     },
 
+    /**
+     * @param {{}} roomObj
+     * @param {function(error, room)} callback
+     */
     createRoom: function(roomObj, callback){
         var requestData = {
             room: {
                 name: roomObj.name
             }
         };
-        this.bugCallClient.request("createRoom", requestData, callback);
+        this.bugCallClient.request("createRoom", requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var room    = data.room;
+            callback(error, room);
+        });
     },
 
+    /**
+     * @param {string} roomId
+     * @param {}
+     */
     joinRoom: function(roomId, callback){
         var requestData = {
             roomId: roomId
         };
-        this.bugCallClient.request("joinRoom", requestData, callback);
+        this.bugCallClient.request("joinRoom", requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var room    = data.room;
+            callback(error, room);
+        });
     },
 
+    /**
+     * @param {}
+     * @param {}
+     */
     leaveRoom: function(roomId, callback){
         var requestData = {
             roomId: roomId
         };
-        this.bugCallClient.request("leaveRoom", requestData, callback);
+        this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var room    = data.room;
+            callback(error, room);
+        });
     },
 
 
@@ -131,11 +199,25 @@ var AirbugApi = Class.extend(Obj, {
     // User Related Api Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {}
+     * @param {}
+     */
     getCurrentUser: function(callback){
-        this.bugCallClient.request("getCurrentUser", {}, callback);
+        this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
+            var type = callResponse.getType();
+            var data = callResponse.getData();
+            callback();
+        });
     },
 
+    /**
+     * @param {}
+     * @param {}
+     */
     establishCurrentUser: function(userObj, callback){
+        console.log("Inside AirbugApi#establishCurrentUser");
+        console.log("userObj:", userObj, "callback:", callback);
         var requestData = {
             user: {
                 firstName: userObj.firstName,
@@ -143,10 +225,20 @@ var AirbugApi = Class.extend(Obj, {
                 email: userObj.email
             }
         };
-        this.bugCallClient.request("establishCurrentUser", requestData, callback);
+        this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
+            var type = callResponse.getType();
+            var data = callResponse.getData();
+            var error = data.error;
+            var currentUser = data.user;
+            callback(error, currentUser);
+        });
 
     },
 
+    /**
+     * @param {}
+     * @param {}
+     */
     logoutCurrentUser: function(callback){
         this.bugCallClient.request("logoutCurrentUser", {}, callback);
     }
