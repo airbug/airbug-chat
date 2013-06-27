@@ -85,7 +85,7 @@ var LoginFormView = Class.extend(MustacheView, {
         // one checkbox.
 
         var formData = {};
-        var formInputs = this.$el.serializeArray();
+        var formInputs = this.$el.find("form").serializeArray();
         formInputs.forEach(function(formInput) {
             formData[formInput.name] = formInput.value;
         });
@@ -97,7 +97,8 @@ var LoginFormView = Class.extend(MustacheView, {
      */
     submitForm: function() {
         var formData = this.getFormData();
-        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT), formData);
+        console.log("formData:", formData);
+        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, formData));
     },
 
 

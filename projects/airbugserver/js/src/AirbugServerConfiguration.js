@@ -711,8 +711,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {mongoose.Schema} schema
      * @return {RoomManager}
      */
-    roomManager: function(model, schema) {
-        this._roomManager = new RoomManager(model, schema);
+    roomManager: function(model, schema, conversationManager, roomMemberManager) {
+        this._roomManager = new RoomManager(model, schema, conversationManager, roomMemberManager);
         return this._roomManager;
     },
 
@@ -1071,7 +1071,9 @@ annotate(AirbugServerConfiguration).with(
         module("roomManager")
             .args([
                 arg("model").ref("room"),
-                arg("schema").ref("roomSchema")
+                arg("schema").ref("roomSchema"),
+                arg("conversationManager").ref("conversationManager"),
+                arg("roomMemberManager").ref("roomMemberManager")
             ]),
         module("roomMemberManager")
             .args([

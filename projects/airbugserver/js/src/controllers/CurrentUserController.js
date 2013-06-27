@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('UserController')
+//@Export('CurrentUserController')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,13 +29,13 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserController = Class.extend(Obj, {
+var CurrentUserController = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService, sessionService){
+    _constructor: function(bugCallRouter, currentUserService, sessionService){
 
         this._super();
 
@@ -118,16 +118,10 @@ var UserController = Class.extend(Obj, {
              */
             getCurrentUser:     function(request, responder){
                 var currentUser = request.getHandshake().user;
-                userService.findUserById(currentUser.id, function(error, user){
-                    if(!error && user){
-                        var data        = {user: user};
-                        var response    = responder.response("gotCurrentUser", data);
-                        responder.sendResponse(response);
-                    } else {
-                        var data        = {error: error};
-                        var response    = responder.response("getCurrentUserError", data);
-                    }
-                });
+                var data        = {currentUser: currentUser};
+                // See if currentUser has a populated roomsList???
+                var response    = responder.response("gotCurrentUser", data);
+                responder.sendResponse(response);
             },
 
             loginUser:          function(request, responder){
@@ -188,4 +182,4 @@ var UserController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserController', UserController);
+bugpack.export('airbugserver.CurrentUserController', CurrentUserController);

@@ -52,12 +52,6 @@ var RoomManagerModule = Class.extend(Obj, {
          */
         this.airbugApi  = airbugApi;
 
-        /**
-         * @private
-         * @type {UserModel}
-         */
-        this.roomModel  = new RoomModel({});
-
     },
 
 
@@ -79,9 +73,7 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, room)} callback
      */
     createRoom: function(roomObj, callback) {
-        this.airbugApi.createRoom(roomObj, function(error, room){
-            callback(error, room);
-        });
+        this.airbugApi.createRoom(roomObj, callback);
     }
 });
 

@@ -47,32 +47,33 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var AirbugApi               = bugpack.require('airbug.AirbugApi');
-var NavigationModule        = bugpack.require('airbug.NavigationModule');
-var PageStateModule         = bugpack.require('airbug.PageStateModule');
-var RoomManagerModule       = bugpack.require('airbug.RoomManagerModule');
-var SessionModule           = bugpack.require('airbug.SessionModule');
-var Annotate                = bugpack.require('annotate.Annotate');
-var BugCallClient           = bugpack.require('bugcall.BugCallClient');
-var CallClient              = bugpack.require('bugcall.CallClient');
-var CallManager             = bugpack.require('bugcall.CallManager');
-var CallRequester           = bugpack.require('bugcall.CallRequester');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-var AutowiredScan           = bugpack.require('bugioc.AutowiredScan');
-var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
-var IConfiguration          = bugpack.require('bugioc.IConfiguration');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
-var CarapaceApplication     = bugpack.require('carapace.CarapaceApplication');
-var CarapaceRouter          = bugpack.require('carapace.CarapaceRouter');
-var ControllerScan          = bugpack.require('carapace.ControllerScan');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
-var SocketIoConfig          = bugpack.require('socketio:client.SocketIoConfig');
-var BrowserSocketIoFactory  = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
-var SyncModelManager        = bugpack.require('syncbug.SyncModelManager');
-var SyncBugClient           = bugpack.require('syncbugclient.SyncBugClient');
+var Class                       = bugpack.require('Class');
+var Obj                         = bugpack.require('Obj');
+var AirbugApi                   = bugpack.require('airbug.AirbugApi');
+var CurrentUserManagerModule    = bugpack.require('airbug.CurrentUserManagerModule');
+var NavigationModule            = bugpack.require('airbug.NavigationModule');
+var PageStateModule             = bugpack.require('airbug.PageStateModule');
+var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
+var SessionModule               = bugpack.require('airbug.SessionModule');
+var Annotate                    = bugpack.require('annotate.Annotate');
+var BugCallClient               = bugpack.require('bugcall.BugCallClient');
+var CallClient                  = bugpack.require('bugcall.CallClient');
+var CallManager                 = bugpack.require('bugcall.CallManager');
+var CallRequester               = bugpack.require('bugcall.CallRequester');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
+var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
+var IConfiguration              = bugpack.require('bugioc.IConfiguration');
+var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
+var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
+var ControllerScan              = bugpack.require('carapace.ControllerScan');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
+var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
+var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
+var SyncModelManager            = bugpack.require('syncbug.SyncModelManager');
+var SyncBugClient               = bugpack.require('syncbugclient.SyncBugClient');
 
 
 //-------------------------------------------------------------------------------

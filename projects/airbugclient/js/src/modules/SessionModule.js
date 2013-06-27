@@ -94,9 +94,8 @@ var SessionModule = Class.extend(Obj, {
 
     /**
      * @param {string} email
-     * @param {string} password
      */
-    login: function(email, password) {
+    login: function(email) {
         this.airbugApi.establishCurrentUser()
     },
 

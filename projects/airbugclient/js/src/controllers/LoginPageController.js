@@ -11,6 +11,8 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.LoginPageContainer')
 //@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
 
 
@@ -29,6 +31,8 @@ var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
 var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
 var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
@@ -38,7 +42,9 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 var annotate    = Annotate.annotate;
 var annotation  = Annotate.annotation;
+var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
+var property    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -79,10 +85,29 @@ var LoginPageController = Class.extend(ApplicationController, {
         this._super();
         this.loginPageContainer = new LoginPageContainer();
         this.setContainerTop(this.loginPageContainer);
+    },
+
+    /**
+     * @override
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        if(this.currentUserManagerModule.currentUser){
+            routingRequest.forward("home");
+        } else {
+            routingRequest.accept();
+        }
     }
 });
 annotate(LoginPageController).with(
     controller().route("login")
+);
+
+annotate(LoginPageController).with(
+    autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule")
+    ])
 );
 
 

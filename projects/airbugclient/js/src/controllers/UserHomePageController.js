@@ -11,6 +11,8 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.UserHomePageContainer')
 //@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
 
 
@@ -29,6 +31,8 @@ var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
 var UserHomePageContainer   = bugpack.require('airbug.UserHomePageContainer');
 var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
@@ -38,7 +42,9 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 var annotate    = Annotate.annotate;
 var annotation  = Annotate.annotation;
+var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
+var property    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -82,15 +88,29 @@ var UserHomePageController = Class.extend(ApplicationController, {
     },
 
     /**
+     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        routingRequest.accept();
+        console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
+        if(!this.currentUserManagerModule.currentUser){
+            routingRequest.forward("login");
+        } else if(!this.currentUserManagerModule.currentUser.email){
+            routingRequest.forward("login");
+        } else {
+            routingRequest.accept();
+        }
     }
 });
 annotate(UserHomePageController).with(
     controller().route("home")
+);
+
+annotate(UserHomePageController).with(
+    autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule")
+    ])
 );
 
 

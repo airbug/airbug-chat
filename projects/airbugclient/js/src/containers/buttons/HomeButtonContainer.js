@@ -140,7 +140,7 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("", {
+        this.navigationModule.navigate("home", {
             trigger: true
         });
     }

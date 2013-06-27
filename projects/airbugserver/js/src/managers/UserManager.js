@@ -21,8 +21,8 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var MongoManager  = bugpack.require('mongo.MongoManager');
+var Class           = bugpack.require('Class');
+var MongoManager    = bugpack.require('mongo.MongoManager');
 
 
 //-------------------------------------------------------------------------------
@@ -48,6 +48,10 @@ var UserManager = Class.extend(MongoManager, {
             next();
         });
 
+        this.post('save', function(user){
+
+        });
+
         callback();
     },
 
@@ -61,7 +65,7 @@ var UserManager = Class.extend(MongoManager, {
      * @param {} roomId
      * @param {function(Error, User)} callback
      */
-    addRoomToUser: function(userId, roomId, callback){
+    addRoomToUser: function(roomId, userId, callback){
         this.findById(userId, function(error, user){
             if (!error && user){
                 user.roomsList.push(roomId);
@@ -125,7 +129,7 @@ var UserManager = Class.extend(MongoManager, {
      * @param {function(Error, User)} callback
      */
     findUserById: function(id, callback) {
-        this.find({_id: id}, callback);
+        this.findById(id, callback);
     },
 
     /**
@@ -133,7 +137,7 @@ var UserManager = Class.extend(MongoManager, {
      * @param {string} roomId
      * @param {function(error, user)} callback
      */
-    removeRoomFromUser: function(userId, roomId, callback){
+    removeRoomFromUser: function(roomId, userId, callback){
         //TODO
     }
 });

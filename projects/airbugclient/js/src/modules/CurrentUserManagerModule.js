@@ -53,10 +53,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         this.airbugApi          = airbugApi;
 
         /**
-         * @private
          * @type {CurrentUser}
          */
-        this.currentUserModel   = new CurrentUserModel({});
+        this.currentUser        = null;
 
     },
 
@@ -81,14 +80,60 @@ var CurrentUserManagerModule = Class.extend(Obj, {
      * @param {function(error, currentUser)} callback
      */
     establishCurrentUser: function(userObj, callback) {
-        this.airbugApi.establishCurrentUser(userObj, callback);
+        var _this = this;
+        this.airbugApi.establishCurrentUser(userObj, function(error, currentUser){
+            if(!error && currentUser){
+                _this.currentUser = currentUser;
+                console.log("currentUser updated:", currentUser);
+            }
+            callback(error, currentUser);
+        });
     },
 
     /**
      * @param {function(error, currentUser)} callback
      */
     getCurrentUser: function(callback) {
-        this.airbugApi.getCurrentUser(callback);
+        var _this = this;
+        console.log("Hello from inside CurrentUserManagerModule#getCurrentUser");
+        this.airbugApi.getCurrentUser(function(error, currentUser){
+            if(!error && currentUser){
+                _this.currentUser = currentUser;
+                console.log("currentUser updated:", currentUser);
+            }
+            console.log("Error:", error, "currentUser:", currentUser);
+            callback(error, currentUser);
+        });
+    },
+
+    loginUser: function(userObj, callback){
+        var _this = this;
+        this.airbugApi.loginUser(userObj, function(error, currentUser){
+            if(!error && currentUser){
+                _this.currentUser = currentUser;
+                console.log("currentUser updated:", currentUser);
+            }
+            callback(error, currentUser);
+        });
+    },
+
+    logoutUser: function(){
+        //TODO
+    },
+
+    registerUser: function(userObj, callback){
+        var _this = this;
+        console.log("Inside of CurrentUserManagerModule#registerUser");
+        this.airbugApi.registerUser(userObj, function(error, currentUser){
+            console.log("Inside callback for airbugApi.registerUser inside of CurrentUserManagerModule#registerUser");
+            console.log("Error:", error, "currentUser:", currentUser);
+            if(!error && currentUser){
+                _this.currentUser = currentUser;
+                console.log("currentUser updated:", currentUser);
+            }
+            console.log("callback:", callback);
+            callback(error, currentUser);
+        });
     }
 });
 

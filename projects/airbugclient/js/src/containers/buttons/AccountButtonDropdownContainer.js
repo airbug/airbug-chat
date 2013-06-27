@@ -31,28 +31,28 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var ButtonDropdownView =        bugpack.require('airbug.ButtonDropdownView');
-var DropdownItemDividerView =   bugpack.require('airbug.DropdownItemDividerView');
-var DropdownItemView =          bugpack.require('airbug.DropdownItemView');
-var DropdownViewEvent =         bugpack.require('airbug.DropdownViewEvent');
-var IconView =                  bugpack.require('airbug.IconView');
-var TextView =                  bugpack.require('airbug.TextView');
-var Annotate =                  bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var ButtonDropdownView          = bugpack.require('airbug.ButtonDropdownView');
+var DropdownItemDividerView     = bugpack.require('airbug.DropdownItemDividerView');
+var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
+var DropdownViewEvent           = bugpack.require('airbug.DropdownViewEvent');
+var IconView                    = bugpack.require('airbug.IconView');
+var TextView                    = bugpack.require('airbug.TextView');
+var Annotate                    = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------

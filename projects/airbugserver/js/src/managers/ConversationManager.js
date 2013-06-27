@@ -20,8 +20,8 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var MongoManager  = bugpack.require('mongo.MongoManager');
+var Class           = bugpack.require('Class');
+var MongoManager    = bugpack.require('mongo.MongoManager');
 
 //-------------------------------------------------------------------------------
 // Declare Class

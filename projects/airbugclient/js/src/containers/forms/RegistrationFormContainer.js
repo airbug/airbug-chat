@@ -140,8 +140,9 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var userObj     = event.getData();
-        this.navigationModule;
-        this.currentUserManagerModule.establishCurrentUser(userObj, function(error, currentUser){
+        console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
+        console.log("currentUserManagerModule:", this.currentUserManagerModule);
+        this.currentUserManagerModule.registerUser(userObj, function(error, currentUser){
             if(!error){
                 //TODO
                 _this.navigationModule.navigate("home", {
@@ -149,7 +150,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
                 });
             } else {
                 //TODO
-                console.log("currentUserManagerModule#createRoom callback error:", error);
+                console.log("currentUserManagerModule#registerUser callback error:", error);
             }
         });
     }

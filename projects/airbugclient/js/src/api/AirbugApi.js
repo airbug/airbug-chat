@@ -143,7 +143,7 @@ var AirbugApi = Class.extend(Obj, {
 
     /**
      * @param {{}} roomObj
-     * @param {function(error, room)} callback
+     * @param {function(error, room, user)} callback
      */
     createRoom: function(roomObj, callback){
         var requestData = {
@@ -156,7 +156,11 @@ var AirbugApi = Class.extend(Obj, {
             var data    = callResponse.getData();
             var error   = data.error;
             var room    = data.room;
-            callback(error, room);
+            var user    = data.user; //TODO: Should this be kept?
+            console.log("AirbugApi#createRoom results: user:", user, "room:", room);
+            console.log("Should the user be kept in here?");
+
+            callback(error, room, user);
         });
     },
 
@@ -205,9 +209,11 @@ var AirbugApi = Class.extend(Obj, {
      */
     getCurrentUser: function(callback){
         this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
-            var type = callResponse.getType();
-            var data = callResponse.getData();
-            callback();
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error;
+            var currentUser = data.user;
+            callback(error, currentUser);
         });
     },
 
@@ -215,24 +221,60 @@ var AirbugApi = Class.extend(Obj, {
      * @param {}
      * @param {}
      */
-    establishCurrentUser: function(userObj, callback){
-        console.log("Inside AirbugApi#establishCurrentUser");
-        console.log("userObj:", userObj, "callback:", callback);
+    // establishCurrentUser: function(userObj, callback){
+    //     console.log("Inside AirbugApi#establishCurrentUser");
+    //     console.log("userObj:", userObj, "callback:", callback);
+    //     var requestData = {
+    //         user: userObj
+    //     };
+    //     this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
+    //         var type = callResponse.getType();
+    //         var data = callResponse.getData();
+    //         var error = data.error;
+    //         var currentUser = data.user;
+    //         callback(error, currentUser);
+    //     });
+
+    // },
+
+    loginUser: function(userObj, callback){
+        var requestType = "loginUser";
         var requestData = {
             user: {
-                firstName: userObj.firstName,
-                lastName: userObj.lastName,
                 email: userObj.email
             }
         };
-        this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
-            var type = callResponse.getType();
-            var data = callResponse.getData();
-            var error = data.error;
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error;
             var currentUser = data.user;
-            callback(error, currentUser);
+            callback(error, currentUser); 
         });
+    },
 
+    registerUser: function(userObj, callback){
+        console.log("Inside of AirbugApi#registerUser");
+        var requestType = "registerUser";
+        var requestData = {
+            user: {
+                firstName:  userObj.firstName,
+                lastName:   userObj.lastName,
+                email:      userObj.email
+            }
+        };
+        console.log(this.bugCallClient);
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            console.log("Inside of callback for bugCallClient within AirbugApi#registerUser");
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error;
+            var currentUser = data.user;
+            console.log("Type:", type, "data:", data);
+            console.log("Error:", error, "currentUser:", currentUser);
+            console.log("callback:", callback);
+            callback(error, currentUser); 
+        });
     },
 
     /**
@@ -240,7 +282,13 @@ var AirbugApi = Class.extend(Obj, {
      * @param {}
      */
     logoutCurrentUser: function(callback){
-        this.bugCallClient.request("logoutCurrentUser", {}, callback);
+        this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error;
+            var currentUser = data.user;
+            callback(error, currentUser); 
+        });
     }
 });
 

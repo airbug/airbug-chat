@@ -89,9 +89,15 @@ var RoomController = Class.extend(Obj, {
                 var roomId      = data.roomId;
                 if(currentUser.isNotAnonymous()){
                     _this.roomService.addUserToRoom(userId, roomId, function(error, room){
+                        console.log("************************************************************");
+                        console.log("Inside callback for roomService#addUserToRoom");
+                        console.log("Error:", error);
+                        console.log("Room:", room);
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("addedUserToRoom", data);
+                        } else if(error){
+                            console.log(error);
                         } else {
                             var data        = {error: error};
                             var response    = responder.response("addUserToRoomError", data);
@@ -114,14 +120,17 @@ var RoomController = Class.extend(Obj, {
                 var data        = request.getData();
                 var room        = data.room;
                 if(currentUser.isNotAnonymous()){
-                    _this.roomService.createRoom(currentUser, room, function(error, room){
+                    _this.roomService.createRoom(currentUser, room, function(error, user, room){
                         if(!error && room){
-                            var data        = {room: room};
+                            var data        = {
+                                room: room,
+                                user: user
+                            };
                             var response    = responder.response("createdRoom", data);
                         } else {
                             var data        = {
                                 error: error,
-                                room: room
+                                roomId: room.id
                             };
                             var response    = responder.response("createRoomError", data);
                         }
@@ -144,7 +153,7 @@ var RoomController = Class.extend(Obj, {
                 var userId      = currentUser.id;
                 var roomId      = data.roomId;
                 if(currentUser.isNotAnonymous()){
-                    _this.roomService.addUserToRoom(userId, roomId, function(error, room){
+                    _this.roomService.addUserToRoom(userId, roomId, function(error, user, room){
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("joinedRoom", data);
@@ -175,7 +184,7 @@ var RoomController = Class.extend(Obj, {
                     var data        = request.getData();
                     var userId      = currentUser.id;
                     var roomId      = data.roomId;
-                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, room){
+                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, user, room){
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("leftRoom", data);

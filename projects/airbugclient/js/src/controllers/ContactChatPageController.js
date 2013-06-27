@@ -11,6 +11,8 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.ContactChatPageContainer')
 //@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
 
 
@@ -29,6 +31,8 @@ var Class                       = bugpack.require('Class');
 var ApplicationController       = bugpack.require('airbug.ApplicationController');
 var ContactChatPageContainer    = bugpack.require('airbug.ContactChatPageContainer');
 var Annotate                    = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
 
 
@@ -38,7 +42,9 @@ var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation
 
 var annotate    = Annotate.annotate;
 var annotation  = Annotate.annotation;
+var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
+var property    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -83,6 +89,12 @@ var ContactChatPageController = Class.extend(ApplicationController, {
 });
 annotate(ContactChatPageController).with(
     controller().route("contact/:uuid")
+);
+
+annotate(ContactChatPageController).with(
+    autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule")
+    ])
 );
 
 

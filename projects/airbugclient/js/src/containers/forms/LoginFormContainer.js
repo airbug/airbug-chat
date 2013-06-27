@@ -4,16 +4,16 @@
 
 //@Package('airbug')
 
-//@Export('LoginPageContainer')
+//@Export('LoginFormContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationContainer')
-//@Require('airbug.LoginFormContainer')
-//@Require('airbug.PageView')
-//@Require('airbug.SignupButtonContainer')
+//@Require('airbug.FormViewEvent')
+//@Require('airbug.LoginFormView')
+//@Require('airbug.RoomModel')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -29,13 +29,13 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
-var LoginFormContainer      = bugpack.require('airbug.LoginFormContainer');
-var PageView                = bugpack.require('airbug.PageView');
-var SignupButtonContainer   = bugpack.require('airbug.SignupButtonContainer');
+var LoginFormView           = bugpack.require('airbug.LoginFormView');
+var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var RoomModel               = bugpack.require('airbug.RoomModel');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -53,7 +53,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageContainer = Class.extend(ApplicationContainer, {
+var LoginFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -73,42 +73,30 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {CurrentUserManagerModule}
          */
-        this.navigationModule       = null;
+        this.currentUserManagerModule   = null;
 
         /**
          * @private
-         * @type {SessionModule}
+         * @type {NavigationModule}
          */
-        this.sessionModule          = null;
+        this.navigationModule           = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
+         * @private
          * @type {LoginFormView}
          */
-        this.loginFormView          = null;
-
-        /**
-         * @protected
-         * @type {PageView}
-         */
-        this.pageView               = null;
-
-        /**
-         * @protected
-         * @type {SignupButtonContainer}
-         */
-        this.signupButtonContainer  = null;
+        this.loginFormView       = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -117,30 +105,19 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
     createContainer: function() {
         this._super();
 
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
+        this.loginFormView =
+            view(LoginFormView)
+                // .attributes({type: "primary", align: "left"})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.loginFormContainer     = new LoginFormContainer(); 
-        this.signupButtonContainer  = new SignupButtonContainer();
-        this.addContainerChild(this.signupButtonContainer, "#header-right");
-        this.addContainerChild(this.loginFormContainer, "#page-" + this.pageView.cid);
+        this.setViewTop(this.loginFormView);
     },
 
     /**
@@ -148,6 +125,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.loginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -155,11 +133,30 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
+    hearFormSubmittedEvent: function(event) {
+        var _this       = this;
+        var userObj     = event.getData();
+        this.currentUserManagerModule.loginUser(userObj, function(error, currentUser){
+            if(!error){
+                //TODO
+                _this.navigationModule.navigate("home", {
+                    trigger: true
+                });
+            } else {
+                //TODO
+                console.log("currentUserManagerModule#createRoom callback error:", error);
+            }
+        });
+    }
 });
-annotate(LoginPageContainer).with(
+annotate(LoginFormContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule")
+        property("navigationModule").ref("navigationModule"),
+        property("currentUserManagerModule").ref("currentUserManagerModule")
     ])
 );
 
@@ -168,5 +165,4 @@ annotate(LoginPageContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LoginPageContainer", LoginPageContainer);
-
+bugpack.export("airbug.LoginFormContainer", LoginFormContainer);

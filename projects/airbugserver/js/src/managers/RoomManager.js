@@ -84,20 +84,22 @@ var RoomManager = Class.extend(MongoManager, {
             done();
         });
 
-        this.post('save', function(next){
+        this.post('save', function(room){
             if (!this.conversationId) {
                 var conversation        = _this.conversationManager.new();
-                var conversationId      = conversation.id;
-                conversation.ownerId    = this.id;
+                conversation.ownerId    = room.id;
                 conversation.save(function(error, conversation){
                     if (!error && conversation){
-                        next();
+                        room.conversationId = conversation.id;
+                        room.save(function(error, room){
+                            console.log(error);
+                        });
                     } else {
-                        next(error);
+                        console.log(error);
                     }
-                })
+                });
             }
-        })
+        });
 
         callback();
     },
@@ -106,7 +108,7 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {} roomId
      * @param {function(error, membersList)} callback
      */
-    getMembersList: function(roomId, callback){
+    getMembersListByRoomId: function(roomId, callback){
         this.findById(roomId, function(error, room){
             callback(error, room.membersList);
         });
@@ -116,7 +118,7 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {} roomId
      * @param {function(error, members)} callback
      */
-    getMembers: function(roomId, callback){
+    getMembersByRoomId: function(roomId, callback){
         var _this = this;
         this.findById(roomId).populate("membersList").exec(function(error, room){
             callback(error, room.membersList);
@@ -128,13 +130,14 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {} userId
      * @param {function(error, room)} callback
      */
-    addUser: function(roomId, userId, callback){
+    addUserToRoom: function(userId, roomId, callback){
         var _this = this;
         this.findById(roomId, function(error, room){
             if(!error && room){
                 _this.roomMemberManager.create({userId: userId}, function(error, roomMember){
+                    console.log("************************************************************");
                     if(!error && roomMember){
-                        room.membersList.push(roomMember); //What happens if I push the entire object instead of just the id???
+                        room.membersList.push(roomMember.id); //What happens if I push the entire object instead of just the id???
                         room.save(callback);
                     } else {
                         callback(error);
@@ -151,7 +154,7 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {} userId
      * @param {function(error, room)} callback
      */
-    removeRoomMember: function(roomId, roomMemberId, callback){
+    removeRoomMemberFromRoom: function(roomMemberId, roomId, callback){
         var _this = this;
         var room;
         $series([
@@ -192,7 +195,7 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {} userId
      * @param {function(error, room)} callback
      */
-    removeUser: function(roomId, userId, callback){
+    removeUserFromRoom: function(userId, roomId, callback){
         var _this = this;
         var room;
         $series([

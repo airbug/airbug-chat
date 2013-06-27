@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('UserService')
+//@Export('CurrentUserService')
 
 //@Require('Class')
 //@Require('Obj')
@@ -31,7 +31,7 @@ var IHand   = bugpack.require('handshaker.IHand');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserService = Class.extend(Obj, {
+var CurrentUserService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -150,14 +150,6 @@ var UserService = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} userId
-     * @param {function(error, user)} callback
-     */
-    findUserById: function(userId, callback){
-        this.userManager.findById(userId, callback);
-    },
-
-    /**
      * @param {} userObj
      * @param {function(error, user)} callback
      */
@@ -193,5 +185,5 @@ Class.implement(UserService, IHand);
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserService', UserService);
+bugpack.export('airbugserver.CurrentUserService', CurrentUserService);
 

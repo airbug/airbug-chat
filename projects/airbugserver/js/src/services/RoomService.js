@@ -31,7 +31,8 @@ var Obj     = bugpack.require('Obj');
 //-------------------------------------------------------------------------------
 
 var $parallel   = BugFlow.$parallel;
-var $task       = BugFlow.$parallel;
+var $series     = BugFlow.$series;
+var $task       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -74,15 +75,23 @@ var RoomService = Class.extend(Obj, {
     /**
      * @param {User} currentUser
      * @param {Room} room
-     * @param {function(Error, Room)} callback
+     * @param {function(Error, User, Room)} callback
      */
     createRoom: function(currentUser, room, callback) {
+        console.log("Hello from inside RoomService#createRoom");
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
+            console.log("Results of roomManager#create: error:", error, "room:", room);
             if(!error && room){
-                _this.addUserToRoom(currentUser.id, room.id, callback);
+                _this.addUserToRoom(currentUser.id, room.id, function(error, user, room){
+                    if(!error && user && room){
+                        callback(error, user, room);
+                    } else {
+                        callback(error, user, room);
+                    }
+                });
             } else {
-                callback(error, room);
+                callback(error, currentUser, room);
             }
         });
     },
@@ -90,22 +99,24 @@ var RoomService = Class.extend(Obj, {
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(Error)} callback
+     * @param {function(Error, user, room)} callback
      */
     addUserToRoom: function(userId, roomId, callback){
-        //TODO: change into a "transaction"
+        //TODO: change this into a "transaction"
         var _this = this;
         var room;
+        var user;
         $series([
             $parallel([
                 $task(function(flow){
-                    _this.roomManager.addUserToRoom(roomId, userId, function(error, returnedRoom){
+                    _this.roomManager.addUserToRoom(userId, roomId, function(error, returnedRoom){
                         room = returnedRoom;
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this.userManager.addRoomToUser(userId, roomId, function(error, user){
+                    _this.userManager.addRoomToUser(roomId, userId, function(error, returnedUser){
+                        user = returnedUser;
                         flow.complete(error);
                     });
                 })
@@ -115,17 +126,15 @@ var RoomService = Class.extend(Obj, {
                 flow.complete();
             })
         ]).execute(function(error){
-            if(error){
-                //TODO
-            }
-            callback(error, room);
-        })
+            console.log("RoomService#addUserToRoom results: Error:", error, "user:", user, "room:", room);
+            callback(error, user, room);
+        });
     },
 
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(Error)} callback
+     * @param {function(Error, room)} callback
      */
     removeUserFromRoom: function(userId, roomId, callback){
         this.roomManager.removeUser(roomId, userId, callback);

@@ -71,6 +71,7 @@ var HomePageController = Class.extend(Obj, {
         this.expressApp.get('/app', function(req, res) {
             //TEST
             console.log("Made it!!");
+            console.log("URL Query String:", req.query);
 
             res.render('home', {
                 title: 'airbug',

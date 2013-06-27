@@ -41,6 +41,7 @@ var CurrentUserModel = Class.extend(CarapaceModel, {
         emailSet: [],
         firstName: "",
         lastName: "",
+        roomsList: [],
         status: ""
     }
 });

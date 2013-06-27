@@ -44,6 +44,7 @@ var ApplicationController = Class.extend(CarapaceController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        this.currentUserManagerModule = null;
     },
 
 
@@ -56,6 +57,23 @@ var ApplicationController = Class.extend(CarapaceController, {
      */
     initializeController: function() {
         this._super();
+    },
+
+    /**
+     * @Override
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        //TODO
+        console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
+        if(!this.currentUserManagerModule.currentUser){
+            routingRequest.forward("login");
+        } else if(!this.currentUserManagerModule.currentUser.email){
+            routingRequest.forward("login");
+        } else {
+            routingRequest.accept();
+        }
     }
 });
 
