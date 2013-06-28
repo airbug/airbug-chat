@@ -36,7 +36,7 @@ var RoomModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        uuid: "",
+        id: "",
         name: ""
     }
 });

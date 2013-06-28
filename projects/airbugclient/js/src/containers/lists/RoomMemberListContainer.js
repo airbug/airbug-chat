@@ -32,29 +32,29 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                         bugpack.require('Class');
-var ListView =                      bugpack.require('airbug.ListView');
-var RoomMemberCollection =          bugpack.require('airbug.RoomMemberCollection');
-var RoomMemberListItemContainer =   bugpack.require('airbug.RoomMemberListItemContainer');
-var RoomMemberModel =               bugpack.require('airbug.RoomMemberModel');
-var TextView =                      bugpack.require('airbug.TextView');
-var UserNameView =                  bugpack.require('airbug.UserNameView');
-var UserStatusIndicatorView =       bugpack.require('airbug.UserStatusIndicatorView');
-var Annotate =                      bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =           bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =            bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =             bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =                   bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var ListView                        = bugpack.require('airbug.ListView');
+var RoomMemberCollection            = bugpack.require('airbug.RoomMemberCollection');
+var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
+var RoomMemberModel                 = bugpack.require('airbug.RoomMemberModel');
+var TextView                        = bugpack.require('airbug.TextView');
+var UserNameView                    = bugpack.require('airbug.UserNameView');
+var UserStatusIndicatorView         = bugpack.require('airbug.UserStatusIndicatorView');
+var Annotate                        = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -112,6 +112,10 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         this.listView = null;
     },
 
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
 
     //-------------------------------------------------------------------------------
     // CarapaceController Implementation
@@ -120,15 +124,16 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    createContainer: function() {
-        this._super();
+    createContainer: function(routingArgs) {
+        this._super(routingArgs);
+        console.log("routingArgs:", routingArgs);
 
+        var roomId = routingArgs[0];
 
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomMemberCollection = new RoomMemberCollection([], "roomMemberCollection");
-        this.addCollection(this.roomMemberCollection);
+        this.loadRoomMemberCollection(roomId);
 
 
         // Create Views
@@ -160,22 +165,20 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {string} roomUuid
+     * @param {string} roomId
      */
-    loadRoomMemberCollection: function(roomUuid) {
+    loadRoomMemberCollection: function(roomId) {
         //TODO BRN: This is where we make an apiPublisher call and send both the roomUuid and the roomMemberCollection.
         // The api call would then be responsible for adding RoomMemberModels to the roomMemberCollection.
-
-        if (roomUuid === "g13Dl0s") {
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "akdbvo2", roomUuid: "g13Dl0s", userUuid: "nmhsieh", conversationUuid: "1aRtls0"})); //Tim
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "39dbclc", roomUuid: "g13Dl0s", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "9rbeudb", roomUuid: "g13Dl0s", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "mduekp0", roomUuid: "g13Dl0s", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"})); //Tom
-        } else if (roomUuid === "nb0psdf") {
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "39dbclc", roomUuid: "nb0psdf", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "9rbeudb", roomUuid: "nb0psdf", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam
-            this.roomMemberCollection.add(new RoomMemberModel({uuid: "mduekp0", roomUuid: "nb0psdf", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"})); //Tom
-        }
+        var _this = this;
+        this.roomMemberCollection = new RoomMemberCollection([], roomId);
+        var room = this.roomManagerModule.get(roomId);
+        var membersList = room.membersList;
+        // membersList.forEach(function(roomMember){
+        //     var roomMember = this.roomMemberManagerModule.get(roomMember.id);
+        //     _this.roomMemberCollection.add(new RoomMemberModel(roomMember));
+        // });
+        this.addCollection(this.roomMemberCollection);
     },
 
 
@@ -217,7 +220,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
 annotate(RoomMemberListContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule")
+        property("navigationModule").ref("navigationModule"),
+        property("roomManagerModule").ref("roomManagerModule")
     ])
 );
 

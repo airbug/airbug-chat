@@ -103,10 +103,10 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     /**
      *
      */
-    create: function() {
+    create: function(routingArgs) {
         if (!this.created) {
             this.created = true;
-            this.createApplication();
+            this.createApplication(routingArgs);
             this.initializeApplication();
         }
     },
@@ -119,14 +119,14 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    createContainer: function() {
+    createContainer: function(routingArgs) {
         this._super();
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.headerView = new HeaderView({id: "headerView"});
-        this.applicationView = new ApplicationView({id: "applicationView"});
+        this.headerView         = new HeaderView({id: "headerView"});
+        this.applicationView    = new ApplicationView({id: "applicationView"});
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);
@@ -158,12 +158,12 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    createApplication: function() {
+    createApplication: function(routingArgs) {
         this.bodyView = new BodyView();
         this.bodyView.create();
         this.bodyView.hide();
-        this.createContainer();
-        this.createContainerChildren();
+        this.createContainer(routingArgs);
+        this.createContainerChildren(routingArgs);
         this.bodyView.show();
     },
 

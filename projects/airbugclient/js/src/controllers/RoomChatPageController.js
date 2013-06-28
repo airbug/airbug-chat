@@ -83,7 +83,9 @@ var RoomChatPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
+        console.log("Inside RoomChatPageController#createController");
         this.roomChatPageContainer = new RoomChatPageContainer();
+        console.log("roomChatPageContainer:", this.roomChatPageContainer);
         this.setContainerTop(this.roomChatPageContainer);
     },
 

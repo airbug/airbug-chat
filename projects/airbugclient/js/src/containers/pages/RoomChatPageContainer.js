@@ -74,31 +74,31 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {AccountButtonDropdownContainer}
          */
-        this.accountButtonDropdownContainer = null;
+        this.accountButtonDropdownContainer         = null;
 
         /**
          * @private
          * @type {ConversationListSlidePanelContainer}
          */
-        this.conversationListSlidePanelContainer = null;
+        this.conversationListSlidePanelContainer    = null;
 
         /**
          * @private
          * @type {HomeButtonContainer}
          */
-        this.homeButtonContainer = null;
+        this.homeButtonContainer                    = null;
 
         /**
          * @private
          * @type {RoomChatBoxContainer}
          */
-        this.roomChatBoxContainer = null;
+        this.roomChatBoxContainer                   = null;
 
         /**
          * @private
          * @type {RoomMemberListPanelContainer}
          */
-        this.roomMemberListPanelContainer = null;
+        this.roomMemberListPanelContainer           = null;
 
 
         // Models
@@ -108,7 +108,7 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {RoomModel}
          */
-        this.roomModel = null;
+        this.roomModel                              = null;
 
 
         // Views
@@ -118,7 +118,12 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {PageTwoColumnView}
          */
-        this.pageTwoColumnView = null;
+        this.pageTwoColumnView                      = null;
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        this.roomManagerModule                      = null;
     },
 
 
@@ -130,24 +135,23 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      * @protected
      * @param {Array<*>} routerArgs
      */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-        var roomUuid = routerArgs[0];
-        this.loadRoomModel(roomUuid);
+    activateContainer: function(routingArgs) {
+        this._super(routingArgs);
     },
 
     /**
      * @protected
      */
-    createContainer: function() {
-        this._super();
+    createContainer: function(routingArgs) {
+        this._super(routingArgs);
+        console.log("routingArgs:", routingArgs);
 
+        var roomId = routingArgs[0];
 
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomModel = new RoomModel({}, "roomModel");
-        this.addModel(this.roomModel);
+        this.loadRoomModel(roomId);
 
 
         // Create Views
@@ -168,8 +172,8 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
     /**
      * @protected
      */
-    createContainerChildren: function() {
-        this._super();
+    createContainerChildren: function(routingArgs) {
+        this._super(routingArgs);
         this.accountButtonDropdownContainer         = new AccountButtonDropdownContainer();
         this.conversationListSlidePanelContainer    = new ConversationListSlidePanelContainer();
         this.homeButtonContainer                    = new HomeButtonContainer();
@@ -190,18 +194,21 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {string} uuid
      */
-    loadRoomModel: function(uuid) {
+    loadRoomModel: function(roomId) {
         // TODO BRN: Load the Room associated with the passed in uuid.
         // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
-
-
-        if (uuid === "g13Dl0s") {
-            this.roomModel.set({"uuid": uuid, "name": "airbug Company Room", "conversationUuid": "bn6LPsd"});
-        } else if (uuid === "nb0psdf") {
-            this.roomModel.set({"uuid": uuid, "name": "airbug Dev Room", "conversationUuid": "PLn865D"});
-        }
+        console.log("Loading roomModel inside of RoomChatPageContainer#loadRoomModel");
+        var roomObj     = this.roomManagerModule.get(roomId);
+        this.roomModel  = new RoomModel(roomObj, roomObj._id);;
+        this.addModel(this.roomModel);
     }
 });
+
+annotate(RoomChatPageContainer).with(
+    autowired().properties([
+        property("roomManagerModule").ref("roomManagerModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

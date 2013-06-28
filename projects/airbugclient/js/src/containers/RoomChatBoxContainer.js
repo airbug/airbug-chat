@@ -26,13 +26,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var BoxWithHeaderView =         bugpack.require('airbug.BoxWithHeaderView');
-var ChatWidgetContainer =       bugpack.require('airbug.ChatWidgetContainer');
-var ConversationModel =         bugpack.require('airbug.ConversationModel');
-var RoomNamePanelContainer =    bugpack.require('airbug.RoomNamePanelContainer');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var BoxWithHeaderView           = bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer         = bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel           = bugpack.require('airbug.ConversationModel');
+var RoomNamePanelContainer      = bugpack.require('airbug.RoomNamePanelContainer');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatWidgetContainer}
          */
-        this.chatWidgetContainer = null;
+        this.chatWidgetContainer    = null;
 
         /**
          * @private
@@ -84,13 +84,13 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationModel}
          */
-        this.conversationModel = null;
+        this.conversationModel      = null;
 
         /**
          * @private
          * @type {RoomModel}
          */
-        this.roomModel = roomModel;
+        this.roomModel              = roomModel;
 
 
         // Views
@@ -100,8 +100,12 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderView}
          */
-        this.boxWithHeaderView = null;
+        this.boxWithHeaderView      = null;
     },
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------
@@ -115,6 +119,8 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
         //TODO BRN:
+
+        this.roomModel.bind('change:conversationUuid', this.handleRoomModelChangeConversationUuid, this);
 
 
     },
@@ -150,7 +156,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.chatWidgetContainer = new ChatWidgetContainer(this.conversationModel);
+        this.chatWidgetContainer    = new ChatWidgetContainer(this.conversationModel);
         this.roomNamePanelContainer = new RoomNamePanelContainer(this.roomModel);
         this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
         this.addContainerChild(this.roomNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
@@ -161,7 +167,6 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.roomModel.bind('change:conversationUuid', this.handleRoomModelChangeConversationUuid, this);
     },
 
 

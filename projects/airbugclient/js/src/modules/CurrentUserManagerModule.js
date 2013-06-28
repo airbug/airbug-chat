@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbug.CurrentUserModel')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
-var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
 
 
 //-------------------------------------------------------------------------------

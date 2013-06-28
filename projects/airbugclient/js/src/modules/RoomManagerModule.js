@@ -7,8 +7,8 @@
 //@Export('RoomManagerModule')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
-//@Require('airbug.RoomModel')
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
-var RoomModel   = bugpack.require('airbug.RoomModel');
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +52,12 @@ var RoomManagerModule = Class.extend(Obj, {
          */
         this.airbugApi  = airbugApi;
 
+        /**
+         * @private
+         * @type {Map}
+         */
+        this.roomsMap   = new Map();
+
     },
 
 
@@ -59,7 +65,29 @@ var RoomManagerModule = Class.extend(Obj, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} id
+     * @return {roomObj}
+     */
+    get: function(id){
+        return this.roomsMap.get(id);
+    },
 
+    /**
+     * @param {string} id
+     * @return {roomObj}
+     */
+    put: function(id, room){
+        this.roomsMap.put(id, room);
+    },
+
+    /**
+     * @param {string} id
+     * @return {roomObj}
+     */
+    remove: function(id){
+        this.roomsMap.remove(id);
+    },
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -73,7 +101,14 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, room)} callback
      */
     createRoom: function(roomObj, callback) {
-        this.airbugApi.createRoom(roomObj, callback);
+        var _this = this;
+        this.airbugApi.createRoom(roomObj, function(error, room){
+            if(!error && room){
+                _this.put(room._id, room);
+                console.log("Putting room with id of", room._id, "into roomsMap");
+                callback(error, room);
+            }
+        });
     }
 });
 
