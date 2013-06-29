@@ -198,6 +198,29 @@ var UserController = Class.extend(Obj, {
                     var response = responder.response("retrieveUserError", data);
                     responder.sendResponse(response);
                 }
+            },
+
+            //NOTE: Untested
+            retrieveUsers:       function(request, responder){
+                var currentUser = request.getHandshake().user;
+                var data    = request.getData();
+                var userIds  = data.userIds;
+                if(currentUser.isNotAnonymous()){
+                    userService.retrieveUsers(userIds, function(error, users){
+                        if(!error && users){
+                            var data = {users: users};
+                            var response = responder.response("retrievedUser", data);
+                        } else {
+                            var data = {error: error};
+                            var response = responder.response("retrieveUserError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                } else {
+                    var data = {};
+                    var response = responder.response("retrieveUserError", data);
+                    responder.sendResponse(response);
+                }
             }
         });
 

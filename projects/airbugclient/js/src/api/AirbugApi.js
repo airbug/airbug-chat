@@ -303,6 +303,20 @@ var AirbugApi = Class.extend(Obj, {
             var user    = data.user;
             callback(error, user);
         });
+    },
+
+    retrieveUsers: function(userIds, callback){
+        var requestType = "retrieveUsers";
+        var requestData = {
+            userIds: userIds
+        };
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var users   = data.users;
+            callback(error, users);
+        });
     }
 });
 

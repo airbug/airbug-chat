@@ -96,16 +96,32 @@ var UserManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} userId
-     * @param {function(error, userObj)} callback
+     * @param {function(error, {*})} callback
      */
     retrieveUser: function(userId, callback) {
         var _this = this;
-        this.airbugApi.retrieveUser(userId, function(error, user){
-            if(!error && user){
-                _this.put(user._id, user);
-                console.log("Putting user with id of", user._id, "into usersMap");
-                callback(error, user);
+        this.airbugApi.retrieveUser(userId, function(error, userObj){
+            if(!error && userObj){
+                _this.put(userObj._id, userObj);
+                console.log("Putting user with id of", userObj._id, "into usersMap");
             }
+            callback(error, userObj);
+        });
+    },
+
+    /**
+     * @param {Array.<string>} userIds
+     * @param {function(error, Array.<{*}>)} callback
+     */
+    retrieveUsers: function(userIds, callback){
+        var _this = this;
+        this.airbugApi.retrieveUsers(userIds, function(error, userObjs){
+            if(!error && userObjs){
+                users.forEach(function(userObj){
+                    _this.put(userObj._id, userObj);
+                });
+            }
+            callback(error, userObjs);
         });
     }
 });

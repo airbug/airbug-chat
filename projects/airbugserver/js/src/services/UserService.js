@@ -193,6 +193,11 @@ var UserService = Class.extend(Obj, {
             }
             callback(error, user);
         });
+    },
+
+    //NOTE Untested
+    retrieveUsers: function(userIds, callback){
+        this.userManager.find("id").in(userIds).exec(callback)
     }
 });
 
