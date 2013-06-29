@@ -117,6 +117,8 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
     logoutUser: function(){
         //TODO
+        // Flush cached dataObjs in all modules
+        // redirect to login screen
     },
 
     registerUser: function(userObj, callback){

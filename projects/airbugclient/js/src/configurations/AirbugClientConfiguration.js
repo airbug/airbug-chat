@@ -15,6 +15,7 @@
 //@Require('airbug.PageStateModule')
 //@Require('airbug.RoomManagerModule')
 //@Require('airbug.SessionModule')
+//@Require('airbug.UserManagerModule')
 //@Require('annotate.Annotate')
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
@@ -55,6 +56,7 @@ var NavigationModule            = bugpack.require('airbug.NavigationModule');
 var PageStateModule             = bugpack.require('airbug.PageStateModule');
 var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
 var SessionModule               = bugpack.require('airbug.SessionModule');
+var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var Annotate                    = bugpack.require('annotate.Annotate');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
@@ -311,6 +313,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     syncModelManager: function() {
         return new SyncModelManager();
+    },
+
+    userManagerModule: function(airbugApi){
+        return new UserManagerModule(airbugApi);
     }
 });
 
@@ -389,7 +395,11 @@ annotate(AirbugClientConfiguration).with(
                 arg("bugCallClient").ref("bugCallClient"),
                 arg("syncModelManager").ref("syncModelManager")
             ]),
-        module("syncModelManager")
+        module("syncModelManager"),
+        module("userManagerModule")
+            .args([
+                arg("airbugApi").ref("airbugApi")
+            ])
     ])
 );
 

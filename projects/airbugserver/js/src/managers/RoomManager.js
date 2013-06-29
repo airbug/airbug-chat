@@ -22,9 +22,9 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var MongoManager  = bugpack.require('mongo.MongoManager');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class           = bugpack.require('Class');
+var MongoManager    = bugpack.require('mongo.MongoManager');
+var BugFlow         = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -85,6 +85,7 @@ var RoomManager = Class.extend(MongoManager, {
         });
 
         this.post('save', function(room){
+            //TODO: Move this to presave if possible so that we do not save room twice;
             if (!this.conversationId) {
                 var conversation        = _this.conversationManager.new();
                 conversation.ownerId    = room.id;
@@ -135,7 +136,6 @@ var RoomManager = Class.extend(MongoManager, {
         this.findById(roomId, function(error, room){
             if(!error && room){
                 _this.roomMemberManager.create({userId: userId}, function(error, roomMember){
-                    console.log("************************************************************");
                     if(!error && roomMember){
                         room.membersList.push(roomMember.id); //What happens if I push the entire object instead of just the id???
                         room.save(callback);

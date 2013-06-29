@@ -176,6 +176,28 @@ var UserController = Class.extend(Obj, {
                     }
                     responder.sendResponse(response);
                 });
+            },
+
+            retrieveUser:       function(request, responder){
+                var currentUser = request.getHandshake().user;
+                var data    = request.getData();
+                var userId  = data.userId;
+                if(currentUser.isNotAnonymous()){
+                    userService.retrieveUser(userId, function(error, user){
+                        if(!error && user){
+                            var data = {user: user};
+                            var response = responder.response("retrievedUser", data);
+                        } else {
+                            var data = {error: error};
+                            var response = responder.response("retrieveUserError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                } else {
+                    var data = {};
+                    var response = responder.response("retrieveUserError", data);
+                    responder.sendResponse(response);
+                }
             }
         });
 

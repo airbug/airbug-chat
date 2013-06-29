@@ -253,6 +253,20 @@ var AirbugApi = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {}
+     * @param {}
+     */
+    logoutCurrentUser: function(callback){
+        this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
+            var type        = callResponse.getType();
+            var data        = callResponse.getData();
+            var error       = data.error;
+            var currentUser = data.user;
+            callback(error, currentUser);
+        });
+    },
+
     registerUser: function(userObj, callback){
         console.log("Inside of AirbugApi#registerUser");
         var requestType = "registerUser";
@@ -277,17 +291,17 @@ var AirbugApi = Class.extend(Obj, {
         });
     },
 
-    /**
-     * @param {}
-     * @param {}
-     */
-    logoutCurrentUser: function(callback){
-        this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            var currentUser = data.user;
-            callback(error, currentUser); 
+    retrieveUser: function(userId, callback){
+        var requestType = "retrieveUser";
+        var requestData = {
+            userId: userId
+        };
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            var type    = callResponse.getType();
+            var data    = callResponse.getData();
+            var error   = data.error;
+            var user    = data.user;
+            callback(error, user);
         });
     }
 });

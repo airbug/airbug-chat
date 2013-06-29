@@ -83,13 +83,13 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {RoomMemberCollection}
          */
-        this.roomMemberCollection = null;
+        this.roomMemberCollection   = null;
 
         /**
          * @private
          * @type {RoomModel}
          */
-        this.roomModel = roomModel;
+        this.roomModel              = roomModel;
 
 
         // Modules
@@ -99,7 +99,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule       = null;
 
 
         // Views
@@ -109,7 +109,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ListView}
          */
-        this.listView = null;
+        this.listView               = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -123,17 +123,28 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
+     */
+    activateContainer: function(routingArgs) {
+        this._super(routingArgs);
+    },
+
+    /**
+     * @protected
+     * @param {Array<*>} routerArgs
      */
     createContainer: function(routingArgs) {
         this._super(routingArgs);
-        console.log("routingArgs:", routingArgs);
+        //NOTE: routingArgs are undefined here
 
-        var roomId = routingArgs[0];
+        // @type id of roomModel NOTE: Should be the same as _id of roomObj
+        var roomId = this.roomModel.id;
 
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.loadRoomMemberCollection(roomId);
+        this.roomMemberCollection = new RoomMemberCollection([], roomId);
+        this.addCollection(this.roomMemberCollection);
 
 
         // Create Views
@@ -152,10 +163,15 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     initializeContainer: function() {
+        var roomId = this.roomModel.id;
+        console.log("Initializing RoomMemberListContainer");
         this._super();
         this.roomMemberCollection.bind("add", this.handleRoomMemberCollectionAdd, this);
         this.roomModel.bind('change:uuid', this.handleRoomModelChangeUuid, this);
         this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+
+        this.loadRoomMemberCollection(roomId);
+
     },
 
 
@@ -170,15 +186,13 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     loadRoomMemberCollection: function(roomId) {
         //TODO BRN: This is where we make an apiPublisher call and send both the roomUuid and the roomMemberCollection.
         // The api call would then be responsible for adding RoomMemberModels to the roomMemberCollection.
+        if(!roomId) var roomId = this.roomModel.id;
         var _this = this;
-        this.roomMemberCollection = new RoomMemberCollection([], roomId);
-        var room = this.roomManagerModule.get(roomId);
-        var membersList = room.membersList;
-        // membersList.forEach(function(roomMember){
-        //     var roomMember = this.roomMemberManagerModule.get(roomMember.id);
-        //     _this.roomMemberCollection.add(new RoomMemberModel(roomMember));
-        // });
-        this.addCollection(this.roomMemberCollection);
+        var membersList = this.roomModel.get("membersList");
+        membersList.forEach(function(roomMember){
+            var roomMemberModel = new RoomMemberModel(roomMember, roomMember._id);
+            _this.roomMemberCollection.add(roomMemberModel);
+        });
     },
 
 
@@ -206,6 +220,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {RoomMemberModel} roomMemberModel
      */
     handleRoomMemberCollectionAdd: function(roomMemberModel) {
+        console.log("Inside RoomMemberListContainer#handleRoomMemberCollectionAdd");
         var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
         this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.cid);
     },

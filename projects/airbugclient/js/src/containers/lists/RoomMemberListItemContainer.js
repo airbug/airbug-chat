@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var UserListItemContainer = bugpack.require('airbug.UserListItemContainer');
+var Class                   = bugpack.require('Class');
+var UserListItemContainer   = bugpack.require('airbug.UserListItemContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -44,6 +44,11 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        this.userManagerModule  = null;
+
         // Models
         //-------------------------------------------------------------------------------
 
@@ -51,7 +56,7 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
          * @private
          * @type {RoomMemberModel}
          */
-        this.roomMemberModel = roomMemberModel;
+        this.roomMemberModel    = roomMemberModel;
     },
 
 
@@ -66,16 +71,14 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
         //TODO BRN: This is where we would load the user model associated with this contact.
-
-        if (this.roomMemberModel.get("uuid") === "akdbvo2") {
-            this.userModel.set({uuid:"nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
-        } else if (this.roomMemberModel.get("uuid") === "39dbclc") {
-            this.userModel.set({uuid: "a93hdug", firstName: "Brian", lastName: "Neisler", status: "available"})
-        } else if (this.roomMemberModel.get("uuid") === "9rbeudb") {
-            this.userModel.set({uuid: "18dh7fn", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"});
-        } else if (this.roomMemberModel.get("uuid") === "mduekp0") {
-            this.userModel.set({uuid: "pm8e6ds", firstName: "Tom", lastName: "Raic", status: "offline"})
-        }
+        var _this   = this;
+        var userId  = this.roomMemberModel.get("userId");
+        this.userManagerModule.retrieveUser(userId, function(error, userObj){
+            if(!error && userObj){
+                _this.userModel.set(userObj);
+            }
+        });
+        console.log("Inside RoomMemberListItemContainer#activateContainer");
     },
 
     /**
@@ -90,6 +93,12 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         this.selectableListItemView.model = this.roomMemberModel;
     }
 });
+
+annotate(RoomMemberListItemContainer).with(
+    autowired().properties([
+        property("userManagerModule").ref("userManagerModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

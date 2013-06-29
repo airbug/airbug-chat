@@ -21,9 +21,9 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var BugFlow = bugpack.require('bugflow.BugFlow');
-var Obj     = bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -78,6 +78,7 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Error, User, Room)} callback
      */
     createRoom: function(currentUser, room, callback) {
+        //TODO: SUNG clean this up
         console.log("Hello from inside RoomService#createRoom");
         var _this = this;
         var room = this.roomManager.create(room, function(error, room){
@@ -85,7 +86,13 @@ var RoomService = Class.extend(Obj, {
             if(!error && room){
                 _this.addUserToRoom(currentUser.id, room.id, function(error, user, room){
                     if(!error && user && room){
-                        callback(error, user, room);
+                        _this.roomManager.populate(room, {path: "membersList"}, function(error, room){
+                            if(!error && room){
+                                callback(error, user, room);
+                            } else {
+                                callback(error, user, room);
+                            }
+                        });
                     } else {
                         callback(error, user, room);
                     }

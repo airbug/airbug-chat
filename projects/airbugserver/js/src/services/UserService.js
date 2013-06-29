@@ -178,6 +178,21 @@ var UserService = Class.extend(Obj, {
 
     registerUser: function(userObj, callback){
         this.userManager.create(userObj, callback)
+    },
+
+    retrieveUser: function(userId, callback){
+        this.userManager.findById(userId, function(error, user){
+            //TODO make sure to remove any sensitive information
+            if(user){
+                var user = {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email
+                };
+            }
+            callback(error, user);
+        });
     }
 });
 
