@@ -60,6 +60,9 @@ var RoomManagerModule = Class.extend(Obj, {
 
     },
 
+    clearCache: function(){
+        this.roomsMap.clear();
+    },
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -71,6 +74,10 @@ var RoomManagerModule = Class.extend(Obj, {
      */
     get: function(id){
         return this.roomsMap.get(id);
+    },
+
+    getAll: function(){
+        return this.roomsMap.getValueArray();
     },
 
     /**

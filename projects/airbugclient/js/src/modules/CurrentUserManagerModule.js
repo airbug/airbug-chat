@@ -58,6 +58,10 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     },
 
 
+    clearCache: function(){
+        this.currentUser = null;
+    },
+
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
@@ -65,7 +69,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
 
@@ -119,6 +123,10 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         //TODO
         // Flush cached dataObjs in all modules
         // redirect to login screen
+        this.userManagerModule.clearCache();
+        this.roomManagerModule.clearCache();
+        this.clearCache();
+        this.navigationModule.navigate("login", {trigger:true});
     },
 
     registerUser: function(userObj, callback){

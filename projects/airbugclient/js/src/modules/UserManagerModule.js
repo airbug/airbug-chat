@@ -89,8 +89,12 @@ var UserManagerModule = Class.extend(Obj, {
         this.usersMap.remove(id);
     },
 
+    clearCache: function(){
+        this.usersMap.clear();
+    },
+
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
 

@@ -33,7 +33,7 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
+var Class                       = bugpack.require('Class');
 var ListView =                  bugpack.require('airbug.ListView');
 var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
 var PanelWithHeaderView =       bugpack.require('airbug.PanelWithHeaderView');
@@ -130,11 +130,13 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {Array<*>} routerArgs
      */
     activateContainer: function(routerArgs) {
+        var _this = this;
         this._super(routerArgs);
-        //TODO BRN:
-
-        this.roomCollection.add(new RoomModel({uuid: "g13Dl0s", name: "airbug Company Room"}));
-        this.roomCollection.add(new RoomModel({uuid: "nb0psdf", name: "airbug Dev Room"}));
+        //TODO Should we double check the currency of the roomCache??
+        var rooms = this.roomManagerModule.getAll();
+        rooms.forEach(function(roomObj){
+            _this.roomCollection.add(new RoomModel(roomObj));
+        });
     },
 
     /**
@@ -232,7 +234,8 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 });
 annotate(RoomListPanelContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule")
+        property("navigationModule").ref("navigationModule"),
+        property("roomManagerModule").ref("roomManagerModule")
     ])
 );
 
