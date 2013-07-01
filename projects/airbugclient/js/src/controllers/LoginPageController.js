@@ -88,11 +88,11 @@ var LoginPageController = Class.extend(ApplicationController, {
     },
 
     /**
-     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+        this._super(routingRequest);
         if(this.currentUserManagerModule.currentUser){
             routingRequest.forward("home");
         } else {
@@ -102,12 +102,6 @@ var LoginPageController = Class.extend(ApplicationController, {
 });
 annotate(LoginPageController).with(
     controller().route("login")
-);
-
-annotate(LoginPageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
 );
 
 

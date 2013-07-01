@@ -88,16 +88,16 @@ var UserHomePageController = Class.extend(ApplicationController, {
     },
 
     /**
-     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+        this._super(routingRequest);
         console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
         if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("login");
+            routingRequest.forward("");
         } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("login");
+            routingRequest.forward("");
         } else {
             routingRequest.accept();
         }
@@ -105,12 +105,6 @@ var UserHomePageController = Class.extend(ApplicationController, {
 });
 annotate(UserHomePageController).with(
     controller().route("home")
-);
-
-annotate(UserHomePageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
 );
 
 

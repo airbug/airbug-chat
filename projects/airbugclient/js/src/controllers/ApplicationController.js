@@ -7,6 +7,10 @@
 //@Export('ApplicationController')
 
 //@Require('Class')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.ControllerAnnotation')
 //@Require('carapace.CarapaceController')
 
 
@@ -24,6 +28,16 @@ var bugpack = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var CarapaceController  = bugpack.require('carapace.CarapaceController');
 
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var annotate            = Annotate.annotate;
+var annotation          = Annotate.annotation;
+var autowired           = AutowiredAnnotation.autowired;
+var controller          = ControllerAnnotation.controller;
+var property            = PropertyAnnotation.property;
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -66,17 +80,18 @@ var ApplicationController = Class.extend(CarapaceController, {
      */
     filterRouting: function(routingRequest) {
         //TODO
+        this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
+            //TODO
+        });
         console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
-        if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("login");
-        } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("login");
-        } else {
-            routingRequest.accept();
-        }
     }
 });
 
+annotate(ApplicationController).with(
+    autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

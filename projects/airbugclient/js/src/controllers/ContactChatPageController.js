@@ -85,16 +85,25 @@ var ContactChatPageController = Class.extend(ApplicationController, {
         this._super();
         this.contactChatPageContainer = new ContactChatPageContainer();
         this.setContainerTop(this.contactChatPageContainer);
+    },
+
+    /**
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        this._super(routingRequest);
+        if(!this.currentUserManagerModule.currentUser){
+            routingRequest.forward("");
+        } else if(!this.currentUserManagerModule.currentUser.email){
+            routingRequest.forward("");
+        } else {
+            routingRequest.accept();
+        }
     }
 });
 annotate(ContactChatPageController).with(
     controller().route("contact/:uuid")
-);
-
-annotate(ContactChatPageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
 );
 
 

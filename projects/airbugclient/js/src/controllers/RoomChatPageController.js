@@ -90,16 +90,16 @@ var RoomChatPageController = Class.extend(ApplicationController, {
     },
 
     /**
-     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+        this._super(routingRequest);
         console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
         if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("login");
+            routingRequest.forward("");
         } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("login");
+            routingRequest.forward("");
         } else {
             console.log("Hello from inside RoomChatPageController#filterRouting");
             this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
@@ -121,13 +121,7 @@ var RoomChatPageController = Class.extend(ApplicationController, {
 
 });
 annotate(RoomChatPageController).with(
-    controller().route("room/:uuid")
-);
-
-annotate(RoomChatPageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
+    controller().route("room/:id")
 );
 
 

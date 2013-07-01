@@ -103,14 +103,19 @@ var UserManagerModule = Class.extend(Obj, {
      * @param {function(error, {*})} callback
      */
     retrieveUser: function(userId, callback) {
-        var _this = this;
-        this.airbugApi.retrieveUser(userId, function(error, userObj){
-            if(!error && userObj){
-                _this.put(userObj._id, userObj);
-                console.log("Putting user with id of", userObj._id, "into usersMap");
-            }
-            callback(error, userObj);
-        });
+        var _this   = this;
+        var userObj = this.get(userId);
+        if(userObj){
+            callback(null, userObj)
+        } else {
+            this.airbugApi.retrieveUser(userId, function(error, userObj){
+                if(!error && userObj){
+                    _this.put(userObj._id, userObj);
+                    console.log("Putting user with id of", userObj._id, "into usersMap");
+                }
+                callback(error, userObj);
+            });
+        }
     },
 
     /**
@@ -119,13 +124,24 @@ var UserManagerModule = Class.extend(Obj, {
      */
     retrieveUsers: function(userIds, callback){
         var _this = this;
+        var users = [];
+        for(var i = 0; i < cachedUsers.length; i++){
+            var userObj = this.get(userIds[i]);
+            if(userObj){
+                users.push(userObj);
+                this.put(userIds[i], userObj);
+                userIds.splice(i, 0);
+            }
+        }
+
         this.airbugApi.retrieveUsers(userIds, function(error, userObjs){
             if(!error && userObjs){
-                users.forEach(function(userObj){
+                usersObj.forEach(function(userObj){
+                    users.push(userObj);
                     _this.put(userObj._id, userObj);
                 });
             }
-            callback(error, userObjs);
+            callback(error, users);
         });
     }
 });

@@ -93,6 +93,7 @@ var RegistrationPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+        this._super(routingRequest);
         if(this.currentUserManagerModule.currentUser){
             routingRequest.forward("home");
         } else {
@@ -102,12 +103,6 @@ var RegistrationPageController = Class.extend(ApplicationController, {
 });
 annotate(RegistrationPageController).with(
     controller().route("")
-);
-
-annotate(RegistrationPageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
 );
 
 

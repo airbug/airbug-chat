@@ -252,8 +252,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         return this._controllerScan;
     },
 
-    currentUserManagerModule: function(airbugApi){
-        return new CurrentUserManagerModule(airbugApi);
+    currentUserManagerModule: function(airbugApi, userManagerModule){
+        return new CurrentUserManagerModule(airbugApi, userManagerModule);
     },
 
     /**
@@ -366,7 +366,8 @@ annotate(AirbugClientConfiguration).with(
             ]),
         module("currentUserManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi")
+                arg("airbugApi").ref("airbugApi"),
+                arg("userManagerModule").ref("userManagerModule")
             ]),
         module("navigationModule")
             .properties([

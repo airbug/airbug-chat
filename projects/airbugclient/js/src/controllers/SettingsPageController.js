@@ -94,18 +94,19 @@ var SettingsPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        this.super(routingRequest);
+        this._super(routingRequest);
+        if(!this.currentUserManagerModule.currentUser){
+            routingRequest.forward("");
+        } else if(!this.currentUserManagerModule.currentUser.email){
+            routingRequest.forward("");
+        } else {
+            routingRequest.accept();
+        }
     }
 
 });
 annotate(SettingsPageController).with(
     controller().route("settings")
-);
-
-annotate(SettingsPageController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
 );
 
 

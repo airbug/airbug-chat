@@ -35,7 +35,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi) {
+    _constructor: function(airbugApi, userManagerModule) {
 
         this._super();
 
@@ -54,6 +54,8 @@ var CurrentUserManagerModule = Class.extend(Obj, {
          * @type {CurrentUser}
          */
         this.currentUser        = null;
+
+        this.userManagerModule  = userManagerModule;
 
     },
 
@@ -86,6 +88,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         this.airbugApi.establishCurrentUser(userObj, function(error, currentUser){
             if(!error && currentUser){
                 _this.currentUser = currentUser;
+                _this.userManagerModule.put(currentUser._id, currentUser);
                 console.log("currentUser updated:", currentUser);
             }
             callback(error, currentUser);
@@ -101,6 +104,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         this.airbugApi.getCurrentUser(function(error, currentUser){
             if(!error && currentUser){
                 _this.currentUser = currentUser;
+                _this.userManagerModule.put(currentUser._id, currentUser);
                 console.log("currentUser updated:", currentUser);
             }
             console.log("Error:", error, "currentUser:", currentUser);
@@ -113,6 +117,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         this.airbugApi.loginUser(userObj, function(error, currentUser){
             if(!error && currentUser){
                 _this.currentUser = currentUser;
+                _this.userManagerModule.put(currentUser._id, currentUser);
                 console.log("currentUser updated:", currentUser);
             }
             callback(error, currentUser);
@@ -121,6 +126,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
     logoutUser: function(){
         //TODO
+        // delete session
         // Flush cached dataObjs in all modules
         // redirect to login screen
         this.userManagerModule.clearCache();
@@ -137,6 +143,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             console.log("Error:", error, "currentUser:", currentUser);
             if(!error && currentUser){
                 _this.currentUser = currentUser;
+                _this.userManagerModule.put(currentUser._id, currentUser);
                 console.log("currentUser updated:", currentUser);
             }
             console.log("callback:", callback);
