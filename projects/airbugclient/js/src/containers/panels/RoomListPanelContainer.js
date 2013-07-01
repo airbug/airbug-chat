@@ -34,29 +34,29 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var ListView =                  bugpack.require('airbug.ListView');
-var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
-var PanelWithHeaderView =       bugpack.require('airbug.PanelWithHeaderView');
-var RoomCollection =            bugpack.require('airbug.RoomCollection');
-var RoomModel =                 bugpack.require('airbug.RoomModel');
-var RoomNameView =              bugpack.require('airbug.RoomNameView');
-var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
-var TextView =                  bugpack.require('airbug.TextView');
-var Annotate =                  bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var ListView                    = bugpack.require('airbug.ListView');
+var ListViewEvent               = bugpack.require('airbug.ListViewEvent');
+var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
+var RoomCollection              = bugpack.require('airbug.RoomCollection');
+var RoomModel                   = bugpack.require('airbug.RoomModel');
+var RoomNameView                = bugpack.require('airbug.RoomNameView');
+var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
+var TextView                    = bugpack.require('airbug.TextView');
+var Annotate                    = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         //TODO Should we double check the currency of the roomCache??
         var rooms = this.roomManagerModule.getAll();
         rooms.forEach(function(roomObj){
-            _this.roomCollection.add(new RoomModel(roomObj));
+            _this.roomCollection.add(new RoomModel(roomObj, roomObj._id));
         });
     },
 
@@ -203,8 +203,10 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {ListViewEvent} event
      */
     hearListViewItemSelectedEvent: function(event) {
-        var room = event.getData();
-        this.navigationModule.navigate("room/" + room.uuid, {
+        var room    = event.getData();
+        var roomId  = room.id || room._id; //BUGBUG room.id current = "";
+        console.log("Inside RoomListPanelContainer#hearListViewItemSelectedEvent. data:", room);
+        this.navigationModule.navigate("room/" + roomId, {
             trigger: true
         });
     },
