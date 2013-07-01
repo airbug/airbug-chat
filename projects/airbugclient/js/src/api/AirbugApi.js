@@ -254,21 +254,19 @@ var AirbugApi = Class.extend(Obj, {
     },
 
     /**
-     * @param {}
-     * @param {}
+     * @param {function(error)} callback
      */
     logoutCurrentUser: function(callback){
         this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
             var type        = callResponse.getType();
             var data        = callResponse.getData();
             var error       = data.error;
-            var currentUser = data.user;
-            callback(error, currentUser);
+            // var currentUser = data.user;
+            callback(error);
         });
     },
 
     registerUser: function(userObj, callback){
-        console.log("Inside of AirbugApi#registerUser");
         var requestType = "registerUser";
         var requestData = {
             user: {

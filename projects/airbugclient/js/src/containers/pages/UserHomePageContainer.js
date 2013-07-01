@@ -7,9 +7,9 @@
 //@Export('UserHomePageContainer')
 
 //@Require('Class')
-//@Require('airbug.AccountButtonDropdownContainer')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.CreateRoomFormContainer')
+//@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.PageTwoColumnView')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('carapace.ViewBuilder')
@@ -26,13 +26,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                               = bugpack.require('Class');
-var AccountButtonDropdownContainer      = bugpack.require('airbug.AccountButtonDropdownContainer');
-var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
-var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
-var PageTwoColumnView                   = bugpack.require('airbug.PageTwoColumnView');
-var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
+var CreateRoomFormContainer     = bugpack.require('airbug.CreateRoomFormContainer');
+var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
+var PageTwoColumnView           = bugpack.require('airbug.PageTwoColumnView');
+var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -67,21 +67,21 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {AccountButtonDropdownContainer}
+         * @type {LogoutButtonContainer}
          */
-        this.accountButtonDropdownContainer = null;
+        this.logoutButtonContainer      = null;
 
         /**
          * @private
          * @type {CreateRoomFormContainer}
          */
-        this.createRoomFormContainer        = null;
+        this.createRoomFormContainer    = null;
 
         /**
          * @private
          * @type {RoomListPanelContainer}
          */
-        this.roomListPanelContainer         = null;
+        this.roomListPanelContainer     = null;
 
 
         // Views
@@ -91,7 +91,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {PageTwoColumnView}
          */
-        this.pageTwoColumnView              = null;
+        this.pageTwoColumnView          = null;
     },
 
 
@@ -125,10 +125,10 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.accountButtonDropdownContainer = new AccountButtonDropdownContainer();
-        this.createRoomFormContainer        = new CreateRoomFormContainer();
-        this.roomListPanelContainer         = new RoomListPanelContainer();
-        this.addContainerChild(this.accountButtonDropdownContainer, '#header-right');
+        this.logoutButtonContainer      = new LogoutButtonContainer();
+        this.createRoomFormContainer    = new CreateRoomFormContainer();
+        this.roomListPanelContainer     = new RoomListPanelContainer();
+        this.addContainerChild(this.logoutButtonContainer, '#header-right');
         this.addContainerChild(this.roomListPanelContainer, "#page-leftrow");
         this.addContainerChild(this.createRoomFormContainer, "#page-rightrow");
     },

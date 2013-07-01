@@ -83,9 +83,7 @@ var RoomChatPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        console.log("Inside RoomChatPageController#createController");
         this.roomChatPageContainer = new RoomChatPageContainer();
-        console.log("roomChatPageContainer:", this.roomChatPageContainer);
         this.setContainerTop(this.roomChatPageContainer);
     },
 
@@ -95,13 +93,11 @@ var RoomChatPageController = Class.extend(ApplicationController, {
      */
     filterRouting: function(routingRequest) {
         this._super(routingRequest);
-        console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
         if(!this.currentUserManagerModule.currentUser){
             routingRequest.forward("");
         } else if(!this.currentUserManagerModule.currentUser.email){
             routingRequest.forward("");
         } else {
-            console.log("Hello from inside RoomChatPageController#filterRouting");
             this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
                 if(!error && currentUser){
                     var roomsList   = currentUser.roomsList;

@@ -93,7 +93,6 @@ var UserHomePageController = Class.extend(ApplicationController, {
      */
     filterRouting: function(routingRequest) {
         this._super(routingRequest);
-        console.log("CurrentUser:", this.currentUserManagerModule.currentUser);
         if(!this.currentUserManagerModule.currentUser){
             routingRequest.forward("");
         } else if(!this.currentUserManagerModule.currentUser.email){

@@ -89,7 +89,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             if(!error && currentUser){
                 _this.currentUser = currentUser;
                 _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated:", currentUser);
+                console.log("currentUser updated");
             }
             callback(error, currentUser);
         });
@@ -100,14 +100,12 @@ var CurrentUserManagerModule = Class.extend(Obj, {
      */
     getCurrentUser: function(callback) {
         var _this = this;
-        console.log("Hello from inside CurrentUserManagerModule#getCurrentUser");
         this.airbugApi.getCurrentUser(function(error, currentUser){
             if(!error && currentUser){
                 _this.currentUser = currentUser;
                 _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated:", currentUser);
+                console.log("currentUser updated");
             }
-            console.log("Error:", error, "currentUser:", currentUser);
             callback(error, currentUser);
         });
     },
@@ -118,35 +116,40 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             if(!error && currentUser){
                 _this.currentUser = currentUser;
                 _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated:", currentUser);
+                console.log("currentUser updated");
             }
             callback(error, currentUser);
         });
     },
 
-    logoutUser: function(){
+    logoutCurrentUser: function(callback){
         //TODO
-        // delete session
-        // Flush cached dataObjs in all modules
-        // redirect to login screen
-        this.userManagerModule.clearCache();
-        this.roomManagerModule.clearCache();
-        this.clearCache();
-        this.navigationModule.navigate("login", {trigger:true});
+        var _this = this;
+        this.airbugApi.logoutCurrentUser(function(error){
+            if(!error){
+                //TODO
+                // delete session
+                // Flush cached dataObjs in all modules
+                // redirect to login screen
+                _this.userManagerModule.clearCache();
+                // this.roomManagerModule.clearCache();
+                _this.clearCache();
+                callback(error);
+            } else {
+                callback(error);
+            }
+        });
+
     },
 
     registerUser: function(userObj, callback){
         var _this = this;
-        console.log("Inside of CurrentUserManagerModule#registerUser");
         this.airbugApi.registerUser(userObj, function(error, currentUser){
-            console.log("Inside callback for airbugApi.registerUser inside of CurrentUserManagerModule#registerUser");
-            console.log("Error:", error, "currentUser:", currentUser);
             if(!error && currentUser){
                 _this.currentUser = currentUser;
                 _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated:", currentUser);
+                console.log("currentUser updated");
             }
-            console.log("callback:", callback);
             callback(error, currentUser);
         });
     }

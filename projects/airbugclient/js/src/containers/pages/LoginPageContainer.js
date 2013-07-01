@@ -169,4 +169,3 @@ annotate(LoginPageContainer).with(
 //-------------------------------------------------------------------------------
 
 bugpack.export("airbug.LoginPageContainer", LoginPageContainer);
-

@@ -28,25 +28,25 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ButtonView =            bugpack.require('airbug.ButtonView');
-var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
-var TextView =              bugpack.require('airbug.TextView');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var TextView                = bugpack.require('airbug.TextView');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule   = null;
 
 
         // Views
@@ -85,7 +85,7 @@ var LoginButtonContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ButtonView}
          */
-        this.buttonView = null;
+        this.buttonView         = null;
     },
 
 

@@ -35,7 +35,7 @@ var UserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService, sessionService){
+    _constructor: function(bugCallRouter, userService, sessionService, connectionService){
 
         this._super();
 
@@ -49,6 +49,12 @@ var UserController = Class.extend(Obj, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter      = bugCallRouter;
+
+        /**
+         * @private
+         * @type {ConnectionService}
+         */
+         this.connectionService = connectionService;
 
         /**
          * @private
@@ -75,8 +81,10 @@ var UserController = Class.extend(Obj, {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this = this;
-        var userService     = this.userService;
-        var sessionService  = this.sessionService;
+        var connectionService   = this.connectionService;
+        var userService         = this.userService;
+        var sessionService      = this.sessionService;
+
         this.bugCallRouter.addAll({
 
             /**
@@ -155,9 +163,17 @@ var UserController = Class.extend(Obj, {
                 //TODO
                 var currentUser = request.getHandshake().user;
                 var connection  = request.getCallConnection();
+                //sessionService;
                 connectionService.deregisterConnection(currentUser.id, connection);
                 userService.logoutUser(currentUser, function(error){
-
+                    if(!error){
+                        var data        = {error: null};
+                        var response    = responder.response("loggedoutCurrentUser", data);
+                    } else {
+                        var data        = {error: error};
+                        var response    = responder.responde("logoutCurrentUserError", data);
+                    }
+                    responder.sendResponse(response);
                 });
             },
 

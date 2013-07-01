@@ -111,7 +111,6 @@ var UserManagerModule = Class.extend(Obj, {
             this.airbugApi.retrieveUser(userId, function(error, userObj){
                 if(!error && userObj){
                     _this.put(userObj._id, userObj);
-                    console.log("Putting user with id of", userObj._id, "into usersMap");
                 }
                 callback(error, userObj);
             });

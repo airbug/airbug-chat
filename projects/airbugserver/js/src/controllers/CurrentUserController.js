@@ -1,3 +1,13 @@
+
+
+
+
+//TODO: Separate CurrentUser specific routes from user routes
+
+
+
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -35,7 +45,7 @@ var CurrentUserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, currentUserService, sessionService){
+    _constructor: function(bugCallRouter, currentUserService, sessionService, ){
 
         this._super();
 

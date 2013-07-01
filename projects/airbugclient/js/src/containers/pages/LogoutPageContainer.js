@@ -4,16 +4,16 @@
 
 //@Package('airbug')
 
-//@Export('HomeButtonContainer')
+//@Export('LogoutPageContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.IconView')
-//@Require('airbug.TextView')
+//@Require('airbug.ApplicationContainer')
+//@Require('airbug.LoginFormContainer')
+//@Require('airbug.PageView')
+//@Require('airbug.SignupButtonContainer')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -28,32 +28,32 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
-var IconView =              bugpack.require('airbug.IconView');
-var TextView =              bugpack.require('airbug.TextView');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
+var LoginFormContainer      = bugpack.require('airbug.LoginFormContainer');
+var PageView                = bugpack.require('airbug.PageView');
+var SignupButtonContainer   = bugpack.require('airbug.SignupButtonContainer');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HomeButtonContainer = Class.extend(CarapaceContainer, {
+var LogoutPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -75,22 +75,40 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule       = null;
+
+        /**
+         * @private
+         * @type {SessionModule}
+         */
+        this.sessionModule          = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {ButtonView}
+         * @protected
+         * @type {LoginFormView}
          */
-        this.buttonView = null;
+        this.loginFormView          = null;
+
+        /**
+         * @protected
+         * @type {PageView}
+         */
+        this.pageView               = null;
+
+        /**
+         * @protected
+         * @type {SignupButtonContainer}
+         */
+        this.signupButtonContainer  = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Extensions
     //-------------------------------------------------------------------------------
 
     /**
@@ -99,27 +117,30 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
+
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "left"})
-                .children([
-                    view(IconView)
-                        .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
-                        .appendTo('*[id|="button"]'),
-                    view(TextView)
-                        .attributes({text: "Home"})
-                        .appendTo('*[id|="button"]')
-                ])
+        this.pageView =
+            view(PageView)
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
+        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+    },
+
+    /**
+     * @protected
+     */
+    createContainerChildren: function() {
+        this._super();
+        this.loginFormContainer     = new LoginFormContainer();
+        this.signupButtonContainer  = new SignupButtonContainer();
+        this.addContainerChild(this.signupButtonContainer, "#header-right");
+        this.addContainerChild(this.loginFormContainer, "#page-" + this.pageView.cid);
     },
 
     /**
@@ -127,7 +148,6 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -135,18 +155,9 @@ var HomeButtonContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("home", {
-            trigger: true
-        });
-    }
-});
 
-annotate(HomeButtonContainer).with(
+});
+annotate(LoginPageContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])
@@ -157,4 +168,4 @@ annotate(HomeButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.HomeButtonContainer", HomeButtonContainer);
+bugpack.export("airbug.LogoutPageContainer", LogoutPageContainer);

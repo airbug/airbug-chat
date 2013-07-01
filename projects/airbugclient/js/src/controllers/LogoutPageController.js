@@ -4,14 +4,16 @@
 
 //@Package('airbug')
 
-//@Export('ApplicationController')
+//@Export('LogoutPageController')
+//@Autoload
 
 //@Require('Class')
+//@Require('airbug.ApplicationController')
+//@Require('airbug.LoginPageContainer')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
-//@Require('carapace.CarapaceController')
 
 
 //-------------------------------------------------------------------------------
@@ -25,25 +27,31 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var CarapaceController  = bugpack.require('carapace.CarapaceController');
+var Class                   = bugpack.require('Class');
+var ApplicationController   = bugpack.require('airbug.ApplicationController');
+var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
+var Annotate                = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate            = Annotate.annotate;
-var annotation          = Annotate.annotation;
-var autowired           = AutowiredAnnotation.autowired;
-var controller          = ControllerAnnotation.controller;
-var property            = PropertyAnnotation.property;
+var annotate    = Annotate.annotate;
+var annotation  = Annotate.annotation;
+var autowired   = AutowiredAnnotation.autowired;
+var controller  = ControllerAnnotation.controller;
+var property    = PropertyAnnotation.property;
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ApplicationController = Class.extend(CarapaceController, {
+var LogoutPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -58,7 +66,11 @@ var ApplicationController = Class.extend(CarapaceController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.currentUserManagerModule = null;
+        /**
+         * @protected
+         * @type {LoginPageContainer}
+         */
+        this.loginPageContainer = null;
     },
 
 
@@ -69,32 +81,33 @@ var ApplicationController = Class.extend(CarapaceController, {
     /**
      * @protected
      */
-    initializeController: function() {
+    createController: function() {
         this._super();
+        this.loginPageContainer = new LoginPageContainer();
+        this.setContainerTop(this.loginPageContainer);
     },
 
     /**
-     * @Override
+     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        //TODO
-        this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
-            //TODO
-        });
+        if(this.currentUserManagerModule.currentUser){
+            routingRequest.reject();
+        } else {
+            routingRequest.accept();
+        }
     }
 });
 
-annotate(ApplicationController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
+annotate(LogoutPageController).with(
+    controller().route("logout")
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ApplicationController", ApplicationController);
-
+bugpack.export("airbug.LogoutPageController", LogoutPageController);

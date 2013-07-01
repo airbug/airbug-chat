@@ -112,7 +112,6 @@ var RoomManagerModule = Class.extend(Obj, {
         this.airbugApi.createRoom(roomObj, function(error, room){
             if(!error && room){
                 _this.put(room._id, room);
-                console.log("Putting room with id of", room._id, "into roomsMap");
                 callback(error, room);
             }
         });

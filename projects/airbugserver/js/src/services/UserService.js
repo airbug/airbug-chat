@@ -174,6 +174,8 @@ var UserService = Class.extend(Obj, {
      */
     logoutUser: function(currentUser, callback){
         //TODO
+        //For development purposes only:
+        callback(null);
     },
 
     registerUser: function(userObj, callback){
@@ -197,7 +199,7 @@ var UserService = Class.extend(Obj, {
 
     //NOTE Untested
     retrieveUsers: function(userIds, callback){
-        this.userManager.find("id").in(userIds).exec(callback)
+        this.userManager.find("id").in(userIds).exec(callback);
     }
 });
 

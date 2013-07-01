@@ -76,7 +76,6 @@ var ConversationService = Class.extend(Obj, {
             }
         });
     }
-
 });
 
 
