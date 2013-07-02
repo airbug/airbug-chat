@@ -135,9 +135,9 @@ var CallService = Class.extend(Obj, {
      */
     hearCallOpened: function(event) {
         var data            = event.getData();
-        var callManager   = data.callManager;
+        var callManager     = data.callManager;
         var callConnection  = callManager.getConnection();
-        var userId          = callConnection.getHandshakeData().session.userId;
+        var userId          = callConnection.getHandshake().session.userId;
         this.registerCallManager(userId, callManager);
     }
 });

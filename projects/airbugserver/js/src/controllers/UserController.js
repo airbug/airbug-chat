@@ -35,7 +35,7 @@ var UserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService, sessionService, connectionService){
+    _constructor: function(bugCallRouter, userService, sessionService, callService){
 
         this._super();
 
@@ -54,13 +54,13 @@ var UserController = Class.extend(Obj, {
          * @private
          * @type {ConnectionService}
          */
-        this.connectionService = connectionService;
+        this.callService        = callService;
 
         /**
          * @private
          * @type {UserService}
          */
-        this.sessionService    = sessionService;
+        this.sessionService     = sessionService;
 
         /**
          * @private
@@ -81,9 +81,9 @@ var UserController = Class.extend(Obj, {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this = this;
-        var connectionService   = this.connectionService;
-        var userService         = this.userService;
-        var sessionService      = this.sessionService;
+        var callService     = this.callService;
+        var userService     = this.userService;
+        var sessionService  = this.sessionService;
 
         this.bugCallRouter.addAll({
 
@@ -163,8 +163,8 @@ var UserController = Class.extend(Obj, {
                 //TODO
                 var currentUser = request.getHandshake().user;
                 var connection  = request.getCallConnection();
-                //sessionService;
-                connectionService.deregisterConnection(currentUser.id, connection);
+                // sessionService
+                // callService
                 userService.logoutUser(currentUser, function(error){
                     if(!error){
                         var data        = {error: null};
