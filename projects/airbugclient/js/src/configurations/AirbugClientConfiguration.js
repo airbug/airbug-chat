@@ -20,7 +20,6 @@
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
-//@Require('bugcall.CallRequester')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
@@ -33,8 +32,6 @@
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
-//@Require('syncbug.SyncModelManager')
-//@Require('syncbugclient.SyncBugClient')
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +58,6 @@ var Annotate                    = bugpack.require('annotate.Annotate');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
 var CallManager                 = bugpack.require('bugcall.CallManager');
-var CallRequester               = bugpack.require('bugcall.CallRequester');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
@@ -74,8 +70,6 @@ var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
-var SyncModelManager            = bugpack.require('syncbug.SyncModelManager');
-var SyncBugClient               = bugpack.require('syncbugclient.SyncBugClient');
 
 
 //-------------------------------------------------------------------------------
@@ -116,12 +110,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {AutowiredScan}
-         */
-        this._autowiredScan         = null;
-
-        /**
-         * @private
          * @type {BugCallClient}
          */
         this._bugCallClient         = null;
@@ -157,9 +145,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         this._socketIoConfig.setHost("http://localhost/api/airbug");
         this._socketIoConfig.setResource("api/socket");
         this._socketIoConfig.setPort(8000);
-        this._bugCallClient.initialize();
 
-        this._autowiredScan.scan();
+        //TODO BRN: Pass the session id here...
+        this._bugCallClient.openConnection();
+
         this._controllerScan.scan();
         this._carapaceApplication.start(callback);
     },
@@ -179,14 +168,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {AutowiredScan}
-     */
-    autowiredScan: function() {
-        this._autowiredScan = new AutowiredScan();
-        return this._autowiredScan;
-    },
-
-    /**
      * @return {BrowserSocketIoFactory}
      */
     browserSocketIoFactory: function() {
@@ -196,11 +177,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {CallClient} callClient
      * @param {CallManager} callManager
-     * @param {CallRequester} callRequester
      * @return {BugCallClient}
      */
-    bugCallClient: function(callClient, callManager, callRequester) {
-        this._bugCallClient = new BugCallClient(callClient, callManager, callRequester);
+    bugCallClient: function(callClient, callManager) {
+        this._bugCallClient = new BugCallClient(callClient, callManager);
         return this._bugCallClient;
     },
 
@@ -217,14 +197,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     callManager: function() {
         return new CallManager();
-    },
-
-    /**
-     * @param {CallManager} callManager
-     * @return {CallRequester}
-     */
-    callRequester: function(callManager) {
-        return new CallRequester(callManager)
     },
 
     /**
@@ -302,19 +274,9 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {SyncBugClient}
+     * @param {AirbugApi} airbugApi
+     * @return {UserManagerModule}
      */
-    syncBugClient: function(bugCallClient, syncModelManager) {
-        return new SyncBugClient(bugCallClient, syncModelManager);
-    },
-
-    /**
-     * @return {SyncModelManager}
-     */
-    syncModelManager: function() {
-        return new SyncModelManager();
-    },
-
     userManagerModule: function(airbugApi){
         return new UserManagerModule(airbugApi);
     }
@@ -338,23 +300,17 @@ annotate(AirbugClientConfiguration).with(
             .args([
                 arg("bugCallClient").ref("bugCallClient")
             ]),
-        module("autowiredScan"),
         module("browserSocketIoFactory"),
         module("bugCallClient")
             .args([
                 arg("callClient").ref("callClient"),
-                arg("callManager").ref("callManager"),
-                arg("callRequester").ref("callRequester")
+                arg("callManager").ref("callManager")
             ]),
         module("callClient")
             .args([
                 arg("socketIoClient").ref("socketIoClient")
             ]),
         module("callManager"),
-        module("callRequester")
-            .args([
-                arg("callManager").ref("callManager")
-            ]),
         module("carapaceApplication")
             .args([
                 arg().ref("carapaceRouter")
@@ -391,12 +347,6 @@ annotate(AirbugClientConfiguration).with(
                 arg("socketIoConfig").ref("socketIoConfig")
             ]),
         module("socketIoConfig"),
-        module("syncBugClient")
-            .args([
-                arg("bugCallClient").ref("bugCallClient"),
-                arg("syncModelManager").ref("syncModelManager")
-            ]),
-        module("syncModelManager"),
         module("userManagerModule")
             .args([
                 arg("airbugApi").ref("airbugApi")

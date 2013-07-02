@@ -34,8 +34,8 @@
 //@Require('airbugserver.RoomController')
 //@Require('airbugserver.UserController')
 
+//@Require('airbugserver.CallService')
 //@Require('airbugserver.ChatMessageService')
-//@Require('airbugserver.ConnectionService')
 //@Require('airbugserver.ConversationService')
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.SessionService')
@@ -108,8 +108,8 @@ var HomePageController      = bugpack.require('airbugserver.HomePageController')
 var RoomController          = bugpack.require('airbugserver.RoomController');
 var UserController          = bugpack.require('airbugserver.UserController');
 
+var CallService             = bugpack.require('airbugserver.CallService')
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
-var ConnectionService       = bugpack.require('airbugserver.ConnectionService')
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var SessionService          = bugpack.require('airbugserver.SessionService');
@@ -187,6 +187,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {CallService}
+         */
+        this._callService     = null;
+
+        /**
+         * @private
          * @type {ChatMessageManager}
          */
         this._chatMessageManager    = null;
@@ -211,12 +217,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {string}
          */
         this._configFilePath        = path.resolve(__dirname, '../config.json');
-
-        /**
-         * @private
-         * @type {ConnectionService}
-         */
-        this._connectionService     = null;
 
         /**
          * @private
@@ -448,8 +448,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             // Routers
             //-------------------------------------------------------------------------------
 
-            $task(function(flow){
-                _this._bugCallRouter.initialize(function(error){
+            $task(function(flow) {
+                _this._bugCallRouter.initialize(function(error) {
                     if(!error){
                         console.log("bugCallRouter initialized");
                     }
@@ -462,7 +462,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
 
             $parallel([
-                $task(function(flow){
+                $task(function(flow) {
                     _this._homePageController.configure(function(error) {
                         if (!error) {
                             console.log("homePageController configured");
@@ -470,7 +470,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     })
                 }),
-                $task(function(flow){
+                $task(function(flow) {
                     _this._roomController.configure(function(error) {
                         if (!error) {
                             console.log("roomController configured");
@@ -478,8 +478,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                         flow.complete(error);
                     })
                 }),
-                $task(function(flow){
-                    _this._userController.configure(function(error){
+                $task(function(flow) {
+                    _this._userController.configure(function(error) {
                         if (!error) {
                             console.log("userController configured");
                         }
@@ -493,7 +493,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             // Apps and Servers
             //-------------------------------------------------------------------------------
 
-            $task(function(flow){
+            $task(function(flow) {
                 console.log("Initializing expressApp");
 
                 _this._expressApp.initialize(function(error) {
@@ -503,7 +503,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 console.log("starting expressServer");
 
                 _this._expressServer.start(function(error) {
@@ -525,11 +525,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {BugCallServer} bugCallServer
+     * @param {EventDispatcher} eventDispatcher
      * @return {BugCallRouter}
      */
-    bugCallRouter: function(bugCallRequestEventDispatcher) {
-        this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);
+    bugCallRouter: function(eventDispatcher) {
+        this._bugCallRouter = new BugCallRouter(eventDispatcher);
         return this._bugCallRouter;
     },
 
@@ -550,6 +550,15 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         return new CallServer(socketIoManager);
     },
 
+    /**
+     * @param {BugCallServer} bugCallServer
+     * @return {CallService}
+     */
+    callService: function(bugCallServer){
+        this._callService = new CallService(bugCallServer);
+        return this._callService;
+    },
+    
     /**
      * @return {ChatMessage}
      */
@@ -589,15 +598,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     config: function() {
         this._config = this.loadConfig(this._configFilePath);
         return this._config;
-    },
-
-    /**
-     * @param {BugCallServer} bugCallServer
-     * @return {ConnectionService}
-     */
-    connectionService: function(bugCallServer){
-        this._connectionService = new ConnectionService(bugCallServer);
-        return this._connectionService;
     },
 
     /**
@@ -745,8 +745,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {RoomService} roomService
      * @return {RoomController}
      */
-    roomController: function(bugCallRouter, roomService, connectionService) {
-        this._roomController = new RoomController(bugCallRouter, roomService, connectionService);
+    roomController: function(bugCallRouter, roomService, callService) {
+        this._roomController = new RoomController(bugCallRouter, roomService, callService);
         return this._roomController;
     },
 
@@ -987,7 +987,7 @@ annotate(AirbugServerConfiguration).with(
 
         module("bugCallRouter")
             .args([
-                arg("bugCallRequestEventDispatcher").ref("bugCallServer")
+                arg("eventDispatcher").ref("bugCallServer")
             ]),
         module("bugCallServer")
             .args([
@@ -1012,7 +1012,7 @@ annotate(AirbugServerConfiguration).with(
             .args([
                 arg("bugCallRouter").ref("bugCallRouter"),
                 arg("roomService").ref("roomService"),
-                arg("connectionService").ref("connectionService")
+                arg("callService").ref("callService")
             ]),
         module("userController")
             .args([
@@ -1031,7 +1031,7 @@ annotate(AirbugServerConfiguration).with(
             .args([
                 arg("chatMessageManager").ref("chatMessageManager")
             ]),
-        module("connectionService")
+        module("callService")
             .args([
                 arg("bugCallServer").ref("bugCallServer")
             ]),
