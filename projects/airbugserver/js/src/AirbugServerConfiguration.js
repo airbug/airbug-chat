@@ -839,8 +839,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {UserService} userService
      * @return {UserController}
      */
-    userController: function(bugCallRouter, userService, sessionService, connectionService) {
-        this._userController = new UserController(bugCallRouter, userService, sessionService, connectionService);
+    userController: function(bugCallRouter, userService, sessionService, callService) {
+        this._userController = new UserController(bugCallRouter, userService, sessionService, callService);
         return this._userController;
     },
 
@@ -1019,7 +1019,7 @@ annotate(AirbugServerConfiguration).with(
                 arg("bugCallRouter").ref("bugCallRouter"),
                 arg("userService").ref("userService"),
                 arg("sessionService").ref("sessionService"),
-                arg("connectionService").ref("connectionService")
+                arg("callService").ref("callService")
             ]),
 
 
