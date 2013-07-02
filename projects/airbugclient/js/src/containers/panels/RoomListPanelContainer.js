@@ -160,15 +160,16 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         view(PanelWithHeaderView)
             .attributes({headerTitle: "Rooms"})
             .children([
-                view(ButtonView)
-                    .attributes({size: ButtonView.Size.SMALL})
-                    .id("addRoomButtonView")
-                    .appendTo('*[id|="panel-header-nav"]')
-                    .children([
-                        view(TextView)
-                            .attributes({text: "+"})
-                            .appendTo('*[id|="button"]')
-                    ]),
+                // NOTE: Currently redundant and unecessary
+                // view(ButtonView)
+                //     .attributes({size: ButtonView.Size.SMALL})
+                //     .id("addRoomButtonView")
+                //     .appendTo('*[id|="panel-header-nav"]')
+                //     .children([
+                //         view(TextView)
+                //             .attributes({text: "+"})
+                //             .appendTo('*[id|="button"]')
+                //     ]),
                 view(ListView)
                     .id("listView")
                     .appendTo('*[id|="panel-body"]')
@@ -180,8 +181,8 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.panelView);
-        this.addRoomButtonView = this.findViewById("addRoomButtonView");
-        this.listView = this.findViewById("listView");
+        this.addRoomButtonView  = this.findViewById("addRoomButtonView");
+        this.listView           = this.findViewById("listView");
     },
 
     /**
@@ -205,7 +206,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     hearListViewItemSelectedEvent: function(event) {
         var room    = event.getData();
         var roomId  = room.id || room._id; //BUGBUG room.id current = "";
-        console.log("Inside RoomListPanelContainer#hearListViewItemSelectedEvent. data:", room);
         this.navigationModule.navigate("room/" + roomId, {
             trigger: true
         });
@@ -234,6 +234,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         this.listView.addViewChild(selectableListItemView);
     }
 });
+
 annotate(RoomListPanelContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),

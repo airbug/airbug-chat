@@ -178,10 +178,18 @@ var UserService = Class.extend(Obj, {
         callback(null);
     },
 
+    /**
+     * @param {{*}} userObj
+     * @param {function(error, userObj)} callback 
+     */
     registerUser: function(userObj, callback){
         this.userManager.create(userObj, callback)
     },
 
+    /**
+     * @param {string} userId
+     * @param {function(error, {*})} callback 
+     */
     retrieveUser: function(userId, callback){
         this.userManager.findById(userId, function(error, user){
             //TODO make sure to remove any sensitive information
@@ -197,6 +205,10 @@ var UserService = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {Array.<string>} userIds
+     * @param {function(error, {*})} callback 
+     */
     //NOTE Untested
     retrieveUsers: function(userIds, callback){
         this.userManager.find("id").in(userIds).exec(callback);
@@ -216,4 +228,3 @@ Class.implement(UserService, IHand);
 //-------------------------------------------------------------------------------
 
 bugpack.export('airbugserver.UserService', UserService);
-

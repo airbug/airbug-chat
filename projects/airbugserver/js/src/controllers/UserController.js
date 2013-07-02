@@ -54,13 +54,13 @@ var UserController = Class.extend(Obj, {
          * @private
          * @type {ConnectionService}
          */
-         this.connectionService = connectionService;
+        this.connectionService = connectionService;
 
         /**
          * @private
          * @type {UserService}
          */
-         this.sessionService    = sessionService;
+        this.sessionService    = sessionService;
 
         /**
          * @private
