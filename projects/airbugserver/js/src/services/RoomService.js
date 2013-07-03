@@ -86,8 +86,6 @@ var RoomService = Class.extend(Obj, {
             if(!error && room){
                 _this.addUserToRoom(currentUser.id, room.id, function(error, user, room){
                     if(!error && user && room){
-                        currentUser = user;
-                        console.log("CurrentUser updated?:", currentUser);
                         _this.roomManager.populate(room, {path: "membersList"}, function(error, room){
                             if(!error && room){
                                 callback(error, user, room);
