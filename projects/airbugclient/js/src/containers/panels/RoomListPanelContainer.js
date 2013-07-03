@@ -132,7 +132,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         var _this = this;
         this._super(routerArgs);
-        //TODO Should we double check the currency of the roomCache??
         var rooms = this.roomManagerModule.getAll();
         rooms.forEach(function(roomObj){
             _this.roomCollection.add(new RoomModel(roomObj, roomObj._id));

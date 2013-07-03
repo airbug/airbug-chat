@@ -134,7 +134,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
     },
 
     activateContainer: function(routingArgs){
-        
+        this._super(routingArgs);
     }
 });
 

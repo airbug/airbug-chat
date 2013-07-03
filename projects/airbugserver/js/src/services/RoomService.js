@@ -144,7 +144,7 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Error, room)} callback
      */
     removeUserFromRoom: function(userId, roomId, callback){
-        this.roomManager.removeUser(roomId, userId, callback);
+        this.roomManager.removeUserFromRoom(userId, roomId, callback);
     },
 
 

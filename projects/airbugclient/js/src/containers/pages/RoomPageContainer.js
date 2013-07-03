@@ -10,6 +10,7 @@
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
+//@Require('airbug.LeaveRoomButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.PageTwoColumnView')
 //@Require('airbug.RoomChatBoxContainer')
@@ -33,6 +34,7 @@ var Class                                   = bugpack.require('Class');
 var ApplicationContainer                    = bugpack.require('airbug.ApplicationContainer');
 var ConversationListSlidePanelContainer     = bugpack.require('airbug.ConversationListSlidePanelContainer');
 var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
+var LeaveRoomButtonContainer                = bugpack.require('airbug.LeaveRoomButtonContainer');
 var LogoutButtonContainer                   = bugpack.require('airbug.LogoutButtonContainer');
 var PageTwoColumnView                       = bugpack.require('airbug.PageTwoColumnView');
 var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
@@ -88,6 +90,10 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
          */
         this.homeButtonContainer                    = null;
 
+        this.leaveRoomButtonContainer               = null;
+
+        this.logoutButtonContainer                  = null;
+
         /**
          * @private
          * @type {RoomChatBoxContainer}
@@ -123,6 +129,9 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {RoomManagerModule}
+         */
         this.roomManagerModule                      = null;
     },
 
@@ -176,10 +185,14 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         this._super(routingArgs);
         this.conversationListSlidePanelContainer    = new ConversationListSlidePanelContainer();
         this.homeButtonContainer                    = new HomeButtonContainer();
+        // TODO:
+        this.leaveRoomButtonContainer               = new LeaveRoomButtonContainer(this.roomModel);
         this.logoutButtonContainer                  = new LogoutButtonContainer();
         this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
         this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
-        this.addContainerChild(this.logoutButtonContainer, "#header-right");
+        this.addContainerChild(this.logoutButtonContainer,          "#header-right");
+        // TODO
+        this.addContainerChild(this.leaveRoomButtonContainer,       "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
         this.addContainerChild(this.roomChatBoxContainer,           "#page-rightrow");
         this.addContainerChild(this.roomMemberListPanelContainer,   "#page-leftrow");

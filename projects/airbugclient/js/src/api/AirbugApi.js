@@ -90,8 +90,9 @@ var AirbugApi = Class.extend(Obj, {
         this.bugCallClient.request("createChatMessage", requestData, function(exception, callResponse){
             var type        = callResponse.getType();
             var data        = callResponse.getData();
-            var error       = data.error();
-            var chatMessage = data.chatMessage();
+            var error       = data.error;
+            var chatMessage = data.chatMessage;
+            console.log("Error:", error, "chatMessage:", chatMessage);
             callback(error, chatMessage);
         });
     },

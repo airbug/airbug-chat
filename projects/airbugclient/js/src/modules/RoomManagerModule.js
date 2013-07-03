@@ -77,6 +77,7 @@ var RoomManagerModule = Class.extend(Obj, {
     },
 
     getAll: function(){
+        console.log("getting all rooms");
         return this.roomsMap.getValueArray();
     },
 
@@ -113,6 +114,23 @@ var RoomManagerModule = Class.extend(Obj, {
             if(!error && room){
                 _this.put(room._id, room);
                 callback(error, room);
+            } else {
+                callback(error, null);
+            }
+        });
+    },
+
+    leaveRoom: function(roomId, callback) {
+        //TODO
+        var _this = this;
+        this.airbugApi.leaveRoom(roomId, function(error, room){
+            console.log("Inside RoomManagerModule#leaveRoom");
+            if(!error && room){
+                console.log("removing room from cache");
+                _this.remove(room._id);
+                callback(null);
+            } else {
+                callback(error);
             }
         });
     }

@@ -184,7 +184,7 @@ var RoomController = Class.extend(Obj, {
                     var data        = request.getData();
                     var userId      = currentUser.id;
                     var roomId      = data.roomId;
-                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, user, room){
+                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, room){
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("leftRoom", data);

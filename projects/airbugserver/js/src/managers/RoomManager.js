@@ -32,6 +32,7 @@ var BugFlow         = bugpack.require('bugflow.BugFlow');
 //-------------------------------------------------------------------------------
 
 var $series     = BugFlow.$series;
+var $parallel   = BugFlow.$parallel;
 var $task       = BugFlow.$task;
 
 
@@ -139,7 +140,7 @@ var RoomManager = Class.extend(MongoManager, {
         var _this = this;
         this.findById(roomId, function(error, room){
             if(!error && room){
-                _this.roomMemberManager.create({userId: userId}, function(error, roomMember){
+                _this.roomMemberManager.create({userId: userId, roomId: roomId}, function(error, roomMember){
                     if(!error && roomMember){
                         room.membersList.push(roomMember.id); //What happens if I push the entire object instead of just the id???
                         room.save(callback);
@@ -200,20 +201,25 @@ var RoomManager = Class.extend(MongoManager, {
      * @param {function(error, room)} callback
      */
     removeUserFromRoom: function(userId, roomId, callback){
+        console.log("Inside RoomManager#removeUserFromRoom");
         var _this = this;
         var room;
+        var roomMember;
         $series([
             $parallel([
                 $task(function(flow){
                     _this.findById(roomId, function(error, returnedRoom){
-                        if(!error && room) room = returnedRoom;
+                        console.log("Error:", error, "returnedRoom:", returnedRoom);
+                        if(!error && returnedRoom) room = returnedRoom;
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    _this.roomMemberManager.findOne({roomId: roomId, userId: userId}, function(error, roomMember){
-                        if(!error && roomMember) {
-                            roomMember.remove(function(error){
+                    _this.roomMemberManager.findOne({roomId: roomId, userId: userId}, function(error, returnedroomMember){
+                        console.log("Error:", error, "returnedroomMember:", returnedroomMember);
+                        roomMember = returnedroomMember;
+                        if(!error && returnedroomMember) {
+                            returnedroomMember.remove(function(error){
                                 flow.complete(error);
                             });
                         } else {
@@ -222,15 +228,15 @@ var RoomManager = Class.extend(MongoManager, {
                     });
                 })
             ]),
-            $parallel([
-                $task(function(flow){
-                    room.membersList.remove(roomMemberId);
-                    room.save(function(error, room){
-                        flow.complete(error);
-                    });
-                })
-            ])
+            $task(function(flow){
+                room.membersList.remove(roomMember._id);
+                room.save(function(error, room){
+                    console.log("Error:", error, "room:", room);
+                    flow.complete(error);
+                });
+            })
         ]).execute(function(error){
+            console.log("Error:", error, "Room:", room);
             callback(error, room);
         });
     }

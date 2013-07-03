@@ -30,6 +30,7 @@
 
 //@Require('airbugserver.SessionStore')
 
+//@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.ConversationController')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.RoomController')
@@ -105,6 +106,7 @@ var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerCon
 
 var SessionStore            = bugpack.require('airbugserver.SessionStore');
 
+var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var RoomController          = bugpack.require('airbugserver.RoomController');
@@ -192,6 +194,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {CallService}
          */
         this._callService               = null;
+
+        /**
+         * @private
+         * @type {ChatMessageController}
+         */
+        this._chatMessageController     = null;
 
         /**
          * @private
@@ -471,6 +479,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
             $parallel([
                 $task(function(flow){
+                    _this._chatMessageController.configure(function(error){
+                        if(!error){
+                            console.log("chatMessageController configured");
+                        }
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
                     _this._conversationController.configure(function(error){
                         if(!error){
                             console.log("conversationController configured");
@@ -580,6 +596,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      */
     chatMessage: function() {
         return ChatMessage;
+    },
+
+    chatMessageController: function(bugCallRouter, chatMessageService){
+        this._chatMessageController = new ChatMessageController(bugCallRouter, chatMessageService);
+        return this._chatMessageController;
     },
 
     /**
@@ -1029,6 +1050,11 @@ annotate(AirbugServerConfiguration).with(
         // Controllers
         //-------------------------------------------------------------------------------
 
+        module("chatMessageController")
+            .args([
+                arg("bugCallRouter").ref("bugCallRouter"),
+                arg("chatMessageService").ref("chatMessageService")
+            ]),
         module("conversationController")
             .args([
                 arg("bugCallRouter").ref("bugCallRouter"),
