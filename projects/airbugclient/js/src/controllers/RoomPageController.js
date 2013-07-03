@@ -4,12 +4,12 @@
 
 //@Package('airbug')
 
-//@Export('RoomChatPageController')
+//@Export('RoomPageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.RoomChatPageContainer')
+//@Require('airbug.RoomPageContainer')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -29,7 +29,7 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var RoomChatPageContainer   = bugpack.require('airbug.RoomChatPageContainer');
+var RoomPageContainer       = bugpack.require('airbug.RoomPageContainer');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -51,7 +51,7 @@ var property    = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomChatPageController = Class.extend(ApplicationController, {
+var RoomPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,9 +68,9 @@ var RoomChatPageController = Class.extend(ApplicationController, {
 
         /**
          * @private
-         * @type {RoomChatPageController}
+         * @type {RoomPageContainer}
          */
-        this.roomChatPageContainer = null;
+        this.roomPageContainer = null;
     },
 
 
@@ -83,8 +83,8 @@ var RoomChatPageController = Class.extend(ApplicationController, {
      */
     createController: function() {
         this._super();
-        this.roomChatPageContainer = new RoomChatPageContainer();
-        this.setContainerTop(this.roomChatPageContainer);
+        this.roomPageContainer = new RoomPageContainer();
+        this.setContainerTop(this.roomPageContainer);
     },
 
     /**
@@ -116,7 +116,7 @@ var RoomChatPageController = Class.extend(ApplicationController, {
     }
 
 });
-annotate(RoomChatPageController).with(
+annotate(RoomPageController).with(
     controller().route("room/:id")
 );
 
@@ -125,4 +125,4 @@ annotate(RoomChatPageController).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RoomChatPageController", RoomChatPageController);
+bugpack.export("airbug.RoomPageController", RoomPageController);

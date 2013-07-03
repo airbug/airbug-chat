@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('RoomChatPageContainer')
+//@Export('RoomPageContainer')
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
@@ -52,7 +52,7 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomChatPageContainer = Class.extend(ApplicationContainer, {
+var RoomPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -197,14 +197,14 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
     loadRoomModel: function(roomId) {
         // TODO BRN: Load the Room associated with the passed in uuid.
         // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
-        console.log("Loading roomModel inside of RoomChatPageContainer#loadRoomModel");
+        console.log("Loading roomModel inside of RoomPageContainer#loadRoomModel");
         var roomObj     = this.roomManagerModule.get(roomId);
         this.roomModel  = new RoomModel(roomObj, roomObj._id);
         this.addModel(this.roomModel);
     }
 });
 
-annotate(RoomChatPageContainer).with(
+annotate(RoomPageContainer).with(
     autowired().properties([
         property("roomManagerModule").ref("roomManagerModule")
     ])
@@ -215,4 +215,4 @@ annotate(RoomChatPageContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RoomChatPageContainer", RoomChatPageContainer);
+bugpack.export("airbug.RoomPageContainer", RoomPageContainer);
