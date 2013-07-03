@@ -132,8 +132,14 @@ var ChatMessageManagerModule = Class.extend(Obj, {
     },
 
     retrieveChatMessagesByConversationId: function(conversationId, callback){
-
-        this.airbugApi.
+        this.airbugApi.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
+            if(!error && chatMessageObjs.length > 0){
+                chatMessageObj.forEach(function(chatMessageObj){
+                    this.chatMessagesMap.put(chatMessageObj._id, chatMessageObj);
+                });
+            }
+            callback(error, chatMessageObjs);
+        });
     }
 });
 

@@ -34,7 +34,7 @@ var ChatMessageService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(chatMessageManager){
+    _constructor: function(chatMessageManager, conversationManager){
 
         this._super();
 
@@ -48,6 +48,8 @@ var ChatMessageService = Class.extend(Obj, {
          * @type {ChatMessageManager}
          */
         this.chatMessageManager     = chatMessageManager;
+
+        this.conversationManager    = conversationManager;
 
     },
 
@@ -83,8 +85,43 @@ var ChatMessageService = Class.extend(Obj, {
         } else {
             callback(new Error("Unauthorized Access"), null);
         }
-    }
+    },
 
+    retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
+        var _this = this;
+        this.conversationManager.findById(conversationId).lean(true).exec(function(error, conversation){
+            if(!error && conversation){
+                if(currentUser.roomsList.indexOf(conversation.ownerId) > -1){
+                    _this.chatMessageManager
+                        .find({_id: conversationId})
+                        .populate("chatMessageIdList")
+                        // .lean(true)
+                        .exec(function(error, chatMessages){
+                            callback(error, chatMessages);
+                        });
+                } else {
+                    callback(new Error("Unauthorized Access"), null);
+                }
+            } else {
+                //TODO
+                callback(error, []);
+            }
+        });
+    },
+
+    retrieveChatMessagesByRoomId: function(currentUser, roomId, callback){
+        var _this = this;
+        if(currentUser.roomsList.indexOf(roomId) > -1){
+            this.chatMessageManager
+                .find({conversationOwnerId: roomId})
+                .lean(true)
+                .exec(function(error, chatMessages){
+                    callback(error, chatMessages);
+                });
+        } else {
+            callback(new Error("Unauthorized Access"), null);
+        }
+    }
 });
 
 

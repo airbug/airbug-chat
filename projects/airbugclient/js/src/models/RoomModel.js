@@ -36,8 +36,12 @@ var RoomModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        id: "",
-        name: ""
+        _id: "",
+        name: "",
+        conversationId: "",
+        membersList: [],
+        createdAt: "",
+        updatedAt: ""
     }
 });
 

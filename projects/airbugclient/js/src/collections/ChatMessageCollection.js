@@ -7,7 +7,7 @@
 //@Export('ChatMessageCollection')
 
 //@Require('Class')
-//@Require('airbug.MessageModel')
+//@Require('airbug.ChatMessageModel')
 //@Require('carapace.CarapaceCollection')
 
 
@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 				= bugpack.require('Class');
-var MessageModel 		= bugpack.require('airbug.MessageModel');
-var CarapaceCollection 	= bugpack.require('carapace.CarapaceCollection');
+var Class               = bugpack.require('Class');
+var ChatMessageModel    = bugpack.require('airbug.ChatMessageModel');
+var CarapaceCollection  = bugpack.require('carapace.CarapaceCollection');
 
 
 //-------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ var CarapaceCollection 	= bugpack.require('carapace.CarapaceCollection');
 
 var ChatMessageCollection = Class.extend(CarapaceCollection, {
 
-    model: MessageModel
+    model: ChatMessageModel
 
     //-------------------------------------------------------------------------------
     // CarapaceCollection Implementation

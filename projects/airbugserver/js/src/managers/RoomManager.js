@@ -84,21 +84,25 @@ var RoomManager = Class.extend(MongoManager, {
             done();
         });
 
-        this.post('save', function(room){
+        this.pre('save', true, function(next, done){
             //TODO: Move this to presave if possible so that we do not save room twice;
+            next();
+            var self = this;
             if (!this.conversationId) {
                 var conversation        = _this.conversationManager.new();
-                conversation.ownerId    = room.id;
+                conversation.ownerId    = this.id;
                 conversation.save(function(error, conversation){
-                    if (!error && conversation){
-                        room.conversationId = conversation.id;
-                        room.save(function(error, room){
-                            console.log(error);
-                        });
+                    if(!error && conversation.id === self.conversationId){
+                        done()
                     } else {
-                        console.log(error);
+                        self.conversationId = conversation.id;
+                        self.save(function(error, room){
+                            done(error);
+                        });
                     }
                 });
+            } else {
+                done();
             }
         });
 

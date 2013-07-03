@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('MessageModel')
+//@Export('ChatMessageModel')
 
 //@Require('Class')
 //@Require('carapace.CarapaceModel')
@@ -21,23 +21,25 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
-var CarapaceModel 	= bugpack.require('carapace.CarapaceModel');
+var Class           = bugpack.require('Class');
+var CarapaceModel   = bugpack.require('carapace.CarapaceModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageModel = Class.extend(CarapaceModel, {
+var ChatMessageModel = Class.extend(CarapaceModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation
     //-------------------------------------------------------------------------------
 
     defaults: {
-        message: "",
-        sentBy: "",
+        body: "",
+        senderUserId: "",
+        conversationId: "",
+        conversationOwnerId: "",
         sentAtUtc: 0
     }
 });
@@ -47,4 +49,4 @@ var MessageModel = Class.extend(CarapaceModel, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.MessageModel", MessageModel);
+bugpack.export("airbug.ChatMessageModel", ChatMessageModel);

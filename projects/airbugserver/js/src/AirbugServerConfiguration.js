@@ -30,6 +30,7 @@
 
 //@Require('airbugserver.SessionStore')
 
+//@Require('airbugserver.ConversationController')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.RoomController')
 //@Require('airbugserver.UserController')
@@ -104,6 +105,7 @@ var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerCon
 
 var SessionStore            = bugpack.require('airbugserver.SessionStore');
 
+var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var RoomController          = bugpack.require('airbugserver.RoomController');
 var UserController          = bugpack.require('airbugserver.UserController');
@@ -177,31 +179,31 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @private
          * @type {BugCallRouter}
          */
-        this._bugCallRouter         = null;
+        this._bugCallRouter             = null;
 
         /**
          * @private
          * @type {BugCallServer}
          */
-        this._bugCallServer         = null;
+        this._bugCallServer             = null;
 
         /**
          * @private
          * @type {CallService}
          */
-        this._callService     = null;
+        this._callService               = null;
 
         /**
          * @private
          * @type {ChatMessageManager}
          */
-        this._chatMessageManager    = null;
+        this._chatMessageManager        = null;
 
         /**
          * @private
          * @type {ChatMessageService}
          */
-        this._chatMessageService    = null;
+        this._chatMessageService        = null;
 
         /**
          * @private
@@ -210,115 +212,121 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          *      mongoDbIp: string
          * }}
          */
-        this._config                = null;
+        this._config                    = null;
 
         /**
          * @private
          * @type {string}
          */
-        this._configFilePath        = path.resolve(__dirname, '../config.json');
+        this._configFilePath            = path.resolve(__dirname, '../config.json');
+
+        /**
+         * @private
+         * @type {ConversationController}
+         */
+        this._conversationController    = null;
 
         /**
          * @private
          * @type {ConversationManager}
          */
-        this._conversationManager   = null;
+        this._conversationManager       = null;
 
         /**
          * @private
          * @type {ConversationService}
          */
-        this._conversationService   = null;
+        this._conversationService       = null;
 
         /**
          * @private
          * @type {CookieSigner}
          */
-        this._cookieSigner          = null;
+        this._cookieSigner              = null;
 
         /**
          * @private
          * @type {ExpressApp}
          */
-        this._expressApp            = null;
+        this._expressApp                = null;
 
         /**
          * @private
          * @type {ExpressServer}
          */
-        this._expressServer         = null;
+        this._expressServer             = null;
 
         /**
          * @private
          * @type {Handshaker}
          */
-        this._handshaker            = null;
+        this._handshaker                = null;
 
         /**
          * @private
          * @type {HomePageController}
          */
-        this._homePageController    = null;
+        this._homePageController        = null;
 
         /**
          * @private
          * @type {mongoose}
          */
-        this._mongoose              = null;
+        this._mongoose                  = null;
 
         /**
          * @private
          * @type {RoomManager}
          */
-        this._roomManager           = null;
+        this._roomManager               = null;
 
         /**
          * @private
          * @type {RoomService}
          */
-        this._roomService           = null;
+        this._roomService               = null;
 
         /**
          * @private
          * @type {RoomMemberManager}
          */
-        this._roomMemberManager     = null;
+        this._roomMemberManager         = null;
 
         /**
          * @private
          * @type {RoomController}
          */
-        this._roomController        = null;
+        this._roomController            = null;
 
         /**
          * @private
          * @type {SessionService}
          */
-        this._sessionService        = null;
+        this._sessionService            = null;
 
         /**
          * @private
          * @type {SessionStore}
          */
-        this._sessionStore          = null;
+        this._sessionStore              = null;
 
         /**
          * @private
          * @type {UserController}
          */
-        this._userController       = null;
+        this._userController            = null;
 
         /**
          * @private
          * @type {UserManager}
          */
-        this._userManager           = null;
+        this._userManager               = null;
 
         /**
          * @private
          * @type {UserService}
          */
-        this._userService           = null;
+        this._userService               = null;
     },
 
 
@@ -462,6 +470,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
 
             $parallel([
+                $task(function(flow){
+                    _this._conversationController.configure(function(error){
+                        if(!error){
+                            console.log("conversationController configured");
+                        }
+                        flow.complete(error);
+                    })
+                }),
                 $task(function(flow) {
                     _this._homePageController.configure(function(error) {
                         if (!error) {
@@ -608,6 +624,16 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {BugCallRouter} bugCallRouter
+     * @param {ConversationManager} converationManager
+     * @return {ConversationController}
+     */
+    conversationController: function(bugCallRouter, conversationService) {
+        this._conversationController = new ConversationController(bugCallRouter, conversationService);
+        return this._conversationController;
+    },
+
+    /**
      * @param {mongoose.Model} model
      * @param {mongoose.Schema} schema
      * @return {ConversationManager}
@@ -621,8 +647,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {ConversationManager} conversationManager
      * @return {ConversationService}
      */
-    conversationService: function(conversationManager){
-        this._conversationService = new ConversationService(conversationManager);
+    conversationService: function(conversationManager, userManager){
+        this._conversationService = new ConversationService(conversationManager, userManager);
         return this._conversationService;
     },
 
@@ -1003,6 +1029,11 @@ annotate(AirbugServerConfiguration).with(
         // Controllers
         //-------------------------------------------------------------------------------
 
+        module("conversationController")
+            .args([
+                arg("bugCallRouter").ref("bugCallRouter"),
+                arg("conversationService").ref("conversationService")
+            ]),
         module("homePageController")
             .args([
                 arg("config").ref("config"),
@@ -1037,7 +1068,8 @@ annotate(AirbugServerConfiguration).with(
             ]),
         module("conversationService")
             .args([
-                arg("conversationManager").ref("conversationManager")
+                arg("conversationManager").ref("conversationManager"),
+                arg("userManager").ref("userManager")
             ]),
         module("roomService")
             .args([

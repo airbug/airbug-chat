@@ -199,7 +199,7 @@ var RoomChatPageContainer = Class.extend(ApplicationContainer, {
         // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
         console.log("Loading roomModel inside of RoomChatPageContainer#loadRoomModel");
         var roomObj     = this.roomManagerModule.get(roomId);
-        this.roomModel  = new RoomModel(roomObj, roomObj._id);;
+        this.roomModel  = new RoomModel(roomObj, roomObj._id);
         this.addModel(this.roomModel);
     }
 });

@@ -11,6 +11,9 @@
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
 //@Require('airbug.RoomNamePanelContainer')
+//@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -39,7 +42,10 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var annotate    = Annotate.annotate;
+var autowired   = AutowiredAnnotation.autowired;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -61,6 +67,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        this.conversationManagerModule  = null;
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -68,13 +75,13 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatWidgetContainer}
          */
-        this.chatWidgetContainer    = null;
+        this.chatWidgetContainer        = null;
 
         /**
          * @private
          * @type {RoomNamePanelContainer}
          */
-        this.roomNamePanelContainer = null;
+        this.roomNamePanelContainer     = null;
 
 
         // Models
@@ -84,13 +91,13 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationModel}
          */
-        this.conversationModel      = null;
+        this.conversationModel          = null;
 
         /**
          * @private
          * @type {RoomModel}
          */
-        this.roomModel              = roomModel;
+        this.roomModel                  = roomModel;
 
 
         // Views
@@ -100,7 +107,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderView}
          */
-        this.boxWithHeaderView      = null;
+        this.boxWithHeaderView          = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -129,14 +136,22 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainer: function() {
+        var _this = this;
         this._super();
 
 
         // Create Models
         //-------------------------------------------------------------------------------
-
-        this.conversationModel = new ConversationModel({}, "conversationModel");
+        var conversationId = this.roomModel.get("conversationId"); //undefined because the returned room from create room does not have conversationid on it!!
+        this.conversationModel = new ConversationModel({}, conversationId);
+        console.log("conversationModelId:", this.conversationModel.getId());
         this.addModel(this.conversationModel);
+        this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationObj){
+            console.log("Inside RoomChatBoxContainer#createContainer inside of callback for conversationManagerModule#retrieveConversation");
+            if(!error && conversationObj){
+                _this.conversationModel.set(conversationObj);
+            }
+        });
 
 
         // Create Views
@@ -156,6 +171,8 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
+        console.log("Inside of RoomChatBoxContainer#createContainerChildren");
+        console.log("conversationModel:", this.conversationModel);
         this.chatWidgetContainer    = new ChatWidgetContainer(this.conversationModel);
         this.roomNamePanelContainer = new RoomNamePanelContainer(this.roomModel);
         this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
@@ -182,13 +199,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: Load the Conversation associated with the passed in uuid.
         // TODO BRN: Send the conversation uuid and the conversationModel to the API. It's the API's responsibility to change the model
 
-        this.conversationModel.set("uuid", conversationUuid);
 
-        if (conversationUuid === "bn6LPsd") {
-
-        } else if (conversationUuid === "PLn865D") {
-
-        }
     },
 
 
@@ -203,6 +214,12 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.loadConversationModel(this.roomModel.get('conversationUuid'));
     }
 });
+
+annotate(RoomChatBoxContainer).with(
+    autowired().properties([
+        property("conversationManagerModule").ref("conversationManagerModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

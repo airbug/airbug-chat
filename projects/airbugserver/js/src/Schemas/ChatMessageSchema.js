@@ -29,8 +29,8 @@ var Mixed       = mongoose.Schema.Types.Mixed;
 //-------------------------------------------------------------------------------
 
 var ChatMessageSchema = new Schema({
-	conversationOwnerId: {type: ObjectId, require: true},
-	conversationId: {type: ObjectId, require: true},
+    conversationOwnerId: {type: ObjectId, require: true},
+    conversationId: {type: ObjectId, require: true},
     senderUserId: {type: ObjectId, require: true},
     messageBody: {type: String, require: true},
     createdAt: Date,

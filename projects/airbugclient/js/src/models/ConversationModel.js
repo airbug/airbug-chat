@@ -36,14 +36,9 @@ var ConversationModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        uuid: "",
-        name: "",
-        unreadMessageCount: 0,
-        unreadMessagePreview: "",
-        context: {
-            type: "",
-            uuid: ""
-        }
+        _id: "",
+        ownerId: "",
+        chatMessageIdList: []
     }
 });
 

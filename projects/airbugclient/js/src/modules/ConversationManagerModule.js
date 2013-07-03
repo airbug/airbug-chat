@@ -50,7 +50,7 @@ var ConversationManagerModule = Class.extend(Obj, {
          * @private
          * @type {AirbugApi}
          */
-        this.airbugApi  = airbugApi;
+        this.airbugApi          = airbugApi;
 
         /**
          * @private
@@ -94,13 +94,30 @@ var ConversationManagerModule = Class.extend(Obj, {
      */
     remove: function(id){
         this.conversationsMap.remove(id);
-    }
+    },
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
-
+    /**
+     * @param {string} conversationId
+     * @param {function(error, conversationObj)} callback
+     */
+    retrieveConversation: function(conversationId, callback){
+        var _this = this;
+        var conversationObj = this.conversationsMap.get(conversationId);
+        if(conversationObj){
+            callback(null, conversationObj);
+        } else {
+            this.airbugApi.retrieveConversation(conversationId, function(error, conversationObj){
+                if(!error && conversationObj){
+                    _this.put(conversationObj._id, conversationObj);
+                }
+                callback(error, conversationObj);
+            });
+        }
+    }
 });
 
 

@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugApi')
+//@Require('airbug.ConversationManagerModule')
 //@Require('airbug.CurrentUserManagerModule')
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
@@ -48,6 +49,7 @@ var bugpack = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var AirbugApi                   = bugpack.require('airbug.AirbugApi');
+var ConversationManagerModule   = bugpack.require('airbug.ConversationManagerModule');
 var CurrentUserManagerModule    = bugpack.require('airbug.CurrentUserManagerModule');
 var NavigationModule            = bugpack.require('airbug.NavigationModule');
 var PageStateModule             = bugpack.require('airbug.PageStateModule');
@@ -224,6 +226,19 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         return this._controllerScan;
     },
 
+    /**
+     * @param {AirbugApi} airbugApi
+     * @return {ConversationManagerModule}
+     */
+    conversationManagerModule: function(airbugApi){
+        return new ConversationManagerModule(airbugApi);
+    },
+
+    /**
+     * @param {AirbugApi} airbugApi
+     * @param {UserManagerModule} userManagerModule
+     * @return {CurrentUserManagerModule}
+     */
     currentUserManagerModule: function(airbugApi, userManagerModule){
         return new CurrentUserManagerModule(airbugApi, userManagerModule);
     },
@@ -319,6 +334,10 @@ annotate(AirbugClientConfiguration).with(
         module("controllerScan")
             .args([
                 arg().ref("carapaceApplication")
+            ]),
+        module("conversationManagerModule")
+            .args([
+                arg("airbugApi").ref("airbugApi")
             ]),
         module("currentUserManagerModule")
             .args([

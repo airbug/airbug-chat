@@ -96,6 +96,29 @@ var ChatMessageController = Class.extend(Obj, {
                     var response    = responder.response("createChatMessageError", data);
                     responder.sendResponse(response);
                 }
+            },
+
+            //NOTE For Dev/Testing purposes
+            retrieveChatMessagesByConversationId: function(){
+                var currentUser = request.getHandshake().user;
+                if(currentUser.isNotAnonymous()){
+                    var data            = request.getData();
+                    var conversationId  = data.conversationId;
+                    _this.chatMessageService.retrieveChatMessagesByConversationId(currentUser, conversationId, function(error, chatMessages){
+                        if(!error && chatMessages){
+                            var data = {chatMessages: chatMessages};
+                            var response = responder.response("retrievedChatMessagesByConversationId", data);
+                        } else {
+                            var data = {error: error};
+                            var response = responder.response("retrieveChatMessagesByConversationIdError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                } else {
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("retrieveChatMessagesByConversationIdError", data);
+                    responder.sendResponse(response);
+                }
             }
         });
 

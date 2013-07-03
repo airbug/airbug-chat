@@ -100,6 +100,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
      */
     getCurrentUser: function(callback) {
         var _this = this;
+        // TODO check cache
         this.airbugApi.getCurrentUser(function(error, currentUser){
             if(!error && currentUser){
                 _this.currentUser = currentUser;

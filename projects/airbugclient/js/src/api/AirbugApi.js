@@ -73,10 +73,11 @@ var AirbugApi = Class.extend(Obj, {
      * @param {string} conversationId
      * @param {function(error, chatMessage)} callback
      */
-    createChatMessage: function(chatMessageBody, conversationId, conversationOwnerId, callback){
+    createChatMessage: function(chatMessageBody, senderUserId, conversationId, conversationOwnerId, callback){
         var requestData = {
             chatMessage: {
                 body: chatMessageBody,
+                senderUserId: senderUserId, //NOTE: used to validate against serverside currentUser
                 conversationId: conversationId,
                 conversationOwnerId: conversationOwnerId
             }
@@ -92,6 +93,20 @@ var AirbugApi = Class.extend(Obj, {
             var error       = data.error();
             var chatMessage = data.chatMessage();
             callback(error, chatMessage);
+        });
+    },
+
+    //NOTE: For Dev/Testing Purposes. Needs refined functions
+    retrieveChatMessagesByConversationId: function(conversationId, callback){
+        var requestData = {
+            conversationId: conversationId
+        };
+        this.bugCallClient.request("retrieveChatMessagesByConversationId", requestData, function(exception, callResponse){
+            var type            = callResponse.getType();
+            var data            = callResponse.getData();
+            var error           = data.error;
+            var chatMessages    = data.chatMessages;
+            callback(error, chatMessages);
         });
     },
 
