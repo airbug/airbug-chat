@@ -37,7 +37,7 @@ var ChatMessageManagerModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi) {
+    _constructor: function(airbugApi, currentUserManagerModule) {
 
         this._super();
 
@@ -50,19 +50,23 @@ var ChatMessageManagerModule = Class.extend(Obj, {
          * @private
          * @type {AirbugApi}
          */
-        this.airbugApi  = airbugApi;
+        this.airbugApi                          = airbugApi;
 
         /**
          * @private
          * @type {Map}
          */
-        this.chatMessagesMap   = new Map();
+        this.chatMessagesMap                    = new Map();
 
         /**
          * @private
          * @type {Map}
          */
-        this.conversationIdToChatMessagesMap = new Map();
+        this.conversationIdToChatMessagesMap    = new Map();
+
+        /**
+         */
+        this.currentUserManagerModule           = currentUserManagerModule;
 
     },
 
@@ -76,29 +80,59 @@ var ChatMessageManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} id
-     * @return {roomObj}
+     * @return {ChatMessage}
      */
     get: function(id){
+        console.log("Inside ChatMessageManangerModule#get");
         return this.chatMessagesMap.get(id);
     },
 
-    getAll: function(){
-        return this.chatMessagesMap.getValueArray();
+    // getAll: function(){
+    //     return this.chatMessagesMap.getValueArray();
+    // },
+
+    getAllByConversationId: function(conversationId){
+        console.log("Inside ChatMessageManangerModule#getAllByConversationId");
+        return this.conversationIdToChatMessagesMap.get(conversationId);
+    },
+
+    putByConversationId: function(conversationId, chatMessage){
+        console.log("Inside ChatMessageManangerModule#putByConversationId");
+        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId);
+        if (storedMessages){
+            storedMessages.push(chatMessage);
+        } else {
+            storedMessages = [chatMessage];
+            this.conversationIdToChatMessagesMap.put(conversationId, storedMessages);
+        }
+    },
+
+    putAllByConversationId: function(conversationId, chatMessages){
+        console.log("Inside ChatMessageManangerModule#putAllByConversationId");
+        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId) || [];
+        storedMessages.concat(chatMessages);
+    },
+
+    removeAllByConversationId: function(conversationId){
+        console.log("Inside ChatMessageManangerModule#removeAllByConversationId");
+        this.conversationIdToChatMessagesMap.remove(conversationId);
     },
 
     /**
      * @param {string} id
-     * @return {roomObj}
+     * @return {ChatMessage}
      */
-    put: function(id, room){
-        this.chatMessagesMap.put(id, room);
+    put: function(id, chatMessage){
+        console.log("Inside ChatMessageManangerModule#put");
+        this.chatMessagesMap.put(id, chatMessage);
     },
 
     /**
      * @param {string} id
-     * @return {roomObj}
+     * @return {ChatMessage}
      */
     remove: function(id){
+        console.log("Inside ChatMessageManangerModule#remove");
         this.chatMessagesMap.remove(id);
     },
 
@@ -116,11 +150,20 @@ var ChatMessageManagerModule = Class.extend(Obj, {
      * @param {function(error, chatMessageObj)} callback
      */
     createChatMessage: function(chatMessageObj, callback){
+        var _this = this;
+        console.log("Inside ChatMessageManangerModule#creatChatMessage");
+        console.log("chatMessageObj:", chatMessageObj);
         var chatMessageBody     = chatMessageObj.body;
         var conversationId      = chatMessageObj.conversationId;
         var conversationOwnerId = chatMessageObj.conversationOwnerId;
         var senderUserId        = this.currentUserManagerModule.currentUser._id; //TODO: Update this
-        this.airbugApi.createChatMessage(chatMessageBody, senderUserId, conversationId, conversationOwnerId, callback);
+        this.airbugApi.createChatMessage(chatMessageBody, senderUserId, conversationId, conversationOwnerId, function(error, chatMessage){
+            if(!error && chatMessage){
+                _this.putByConversationId(conversationId, chatMessage)
+                _this.put(chatMessage._id, chatMessage);
+            }
+            callback(error, chatMessage);
+        });
     },
 
     retrieveChatMessage: function(chatMessageId, callback){
@@ -132,10 +175,12 @@ var ChatMessageManagerModule = Class.extend(Obj, {
     },
 
     retrieveChatMessagesByConversationId: function(conversationId, callback){
+        var _this = this;
         this.airbugApi.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
             if(!error && chatMessageObjs.length > 0){
                 chatMessageObj.forEach(function(chatMessageObj){
-                    this.chatMessagesMap.put(chatMessageObj._id, chatMessageObj);
+                    _this.putByConversationId(chatMessageObj.conversationId, chatMessageObj);
+                    _this.put(chatMessageObj._id, chatMessageObj);
                 });
             }
             callback(error, chatMessageObjs);

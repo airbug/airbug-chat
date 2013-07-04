@@ -4,12 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('LogoutButtonContainer')
+//@Export('ChatWidgetInputFormContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.TextView')
+//@Require('airbug.FormViewEvent')
+//@Require('airbug.ChatWidgetInputFormView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -29,9 +28,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ButtonView              = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var TextView                = bugpack.require('airbug.TextView');
+var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
+var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -53,13 +51,13 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LogoutButtonContainer = Class.extend(CarapaceContainer, {
+var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(conversationModel) {
 
         this._super();
 
@@ -68,20 +66,10 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        this.conversationModel          = conversationModel;
+
         // Modules
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CurrentUserManagerModule}
-         */
-        this.currentUserManagerModule   = null;
-
-        /**
-         * @private
-         * @type {NavigationModule}
-         */
-        this.navigationModule           = null;
 
 
         // Views
@@ -89,15 +77,20 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {ChatWidgetInputFormView}
          */
-        this.buttonView                 = null;
+        this.chatWidgetInputFormView    = null;
     },
 
 
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    activateContainer: function(routerArgs){
+        this._super(routerArgs);
+        this.chatWidgetInputFormView.focus();
+    },
 
     /**
      * @protected
@@ -108,21 +101,16 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "right"})
-                .children([
-                    view(TextView)
-                        .attributes({text: "Logout"})
-                        .appendTo('*[id|="button"]')
-                ])
+        this.chatWidgetInputFormView =
+            view(ChatWidgetInputFormView) //or chatWidgetInputFormView
+                // .attributes({type: "primary", align: "left"})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
+        this.setViewTop(this.chatWidgetInputFormView);
     },
 
     /**
@@ -130,7 +118,6 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -142,32 +129,14 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
-        var _this = this;
-        this.currentUserManagerModule.logoutCurrentUser(function(error){
-            console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logoutCurrentUser");
-            if(!error){
-                _this.navigationModule.navigate("logout", {
-                    trigger: true
-                });
-            } else {
-                //TODO
-            }
-        });
-
+    hearFormSubmittedEvent: function(event) {
+        // See ChatWidgetContainer
     }
 });
-
-annotate(LogoutButtonContainer).with(
-    autowired().properties([
-        property("navigationModule").ref("navigationModule"),
-        property("currentUserManagerModule").ref("currentUserManagerModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LogoutButtonContainer", LogoutButtonContainer);
+bugpack.export("airbug.ChatWidgetInputFormContainer", ChatWidgetInputFormContainer);

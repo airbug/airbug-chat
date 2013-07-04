@@ -624,8 +624,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {ChatMessageManager} chatMessageManager
      * @return {ChatMessageService}
      */
-    chatMessageService: function(chatMessageManager) {
-        this._chatMessageService = new ChatMessageService(chatMessageManager);
+    chatMessageService: function(chatMessageManager, conversationManager, userManager) {
+        this._chatMessageService = new ChatMessageService(chatMessageManager, conversationManager, userManager);
         return this._chatMessageService;
     },
 
@@ -1086,7 +1086,9 @@ annotate(AirbugServerConfiguration).with(
 
         module("chatMessageService")
             .args([
-                arg("chatMessageManager").ref("chatMessageManager")
+                arg("chatMessageManager").ref("chatMessageManager"),
+                arg("conversationManager").ref("conversationManager"),
+                arg("userManager").ref("userManager")
             ]),
         module("callService")
             .args([

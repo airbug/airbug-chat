@@ -34,6 +34,7 @@ var BoxWithHeaderView           = bugpack.require('airbug.BoxWithHeaderView');
 var ChatWidgetContainer         = bugpack.require('airbug.ChatWidgetContainer');
 var ConversationModel           = bugpack.require('airbug.ConversationModel');
 var RoomNamePanelContainer      = bugpack.require('airbug.RoomNamePanelContainer');
+var Annotate                    = bugpack.require('annotate.Annotate');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -68,6 +69,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.conversationManagerModule  = null;
+
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -127,7 +129,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this._super(routerArgs);
         //TODO BRN:
 
-        this.roomModel.bind('change:conversationUuid', this.handleRoomModelChangeConversationUuid, this);
+        this.roomModel.bind('change:conversationId', this.handleRoomModelChangeConversationId, this);
 
 
     },
@@ -142,12 +144,10 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
         // Create Models
         //-------------------------------------------------------------------------------
-        var conversationId = this.roomModel.get("conversationId"); //undefined because the returned room from create room does not have conversationid on it!!
-        this.conversationModel = new ConversationModel({}, conversationId);
-        console.log("conversationModelId:", this.conversationModel.getId());
+        var conversationId      = this.roomModel.get("conversationId"); //undefined because the returned room from create room does not have conversationid on it!!
+        this.conversationModel  = new ConversationModel({}, conversationId);
         this.addModel(this.conversationModel);
         this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationObj){
-            console.log("Inside RoomChatBoxContainer#createContainer inside of callback for conversationManagerModule#retrieveConversation");
             if(!error && conversationObj){
                 _this.conversationModel.set(conversationObj);
             }
@@ -157,7 +157,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxWithHeaderView = view(BoxWithHeaderView).build();
+        this.boxWithHeaderView = 
+            view(BoxWithHeaderView)
+            .build();
 
 
         // Wire Up Views
@@ -171,12 +173,10 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        console.log("Inside of RoomChatBoxContainer#createContainerChildren");
-        console.log("conversationModel:", this.conversationModel);
         this.chatWidgetContainer    = new ChatWidgetContainer(this.conversationModel);
         this.roomNamePanelContainer = new RoomNamePanelContainer(this.roomModel);
-        this.addContainerChild(this.chatWidgetContainer, "#box-body-" + this.boxWithHeaderView.cid);
-        this.addContainerChild(this.roomNamePanelContainer, "#box-header-" + this.boxWithHeaderView.cid);
+        this.addContainerChild(this.chatWidgetContainer,    "#box-body-"    + this.boxWithHeaderView.cid);
+        this.addContainerChild(this.roomNamePanelContainer, "#box-header-"  + this.boxWithHeaderView.cid);
     },
 
     /**
@@ -210,8 +210,8 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    handleRoomModelChangeConversationUuid: function() {
-        this.loadConversationModel(this.roomModel.get('conversationUuid'));
+    handleRoomModelChangeConversationId: function() {
+        this.loadConversationModel(this.roomModel.get('conversationId'));
     }
 });
 

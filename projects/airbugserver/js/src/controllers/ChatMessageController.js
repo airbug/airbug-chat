@@ -85,9 +85,11 @@ var ChatMessageController = Class.extend(Obj, {
                         if(!error && chatMessage){
                             var data = {chatMessage: chatMessage};
                             var response = responder.response("createdChatMessage", data);
-                        } else {
+                        } else if (error){
                             var data = {error: error};
                             var response = responder.response("createChatMessageError", data);
+                        } else {
+                            var response = responder.response("createChatMessageError", {});
                         }
                         responder.sendResponse(response);
                     });
@@ -99,7 +101,7 @@ var ChatMessageController = Class.extend(Obj, {
             },
 
             //NOTE For Dev/Testing purposes
-            retrieveChatMessagesByConversationId: function(){
+            retrieveChatMessagesByConversationId: function(request, responder){
                 var currentUser = request.getHandshake().user;
                 if(currentUser.isNotAnonymous()){
                     var data            = request.getData();

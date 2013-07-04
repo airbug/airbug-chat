@@ -37,7 +37,7 @@ var ChatMessageModel = Class.extend(CarapaceModel, {
 
     defaults: {
         body: "",
-        senderUserId: "",
+        sentBy: "",
         conversationId: "",
         conversationOwnerId: "",
         sentAtUtc: 0

@@ -32,7 +32,7 @@ var ChatMessageSchema = new Schema({
     conversationOwnerId: {type: ObjectId, require: true},
     conversationId: {type: ObjectId, require: true},
     senderUserId: {type: ObjectId, require: true},
-    messageBody: {type: String, require: true},
+    body: {type: String, require: true},
     createdAt: Date,
     updatedAt: Date
 });

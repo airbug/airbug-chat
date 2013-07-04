@@ -4,14 +4,15 @@
 
 //@Package('airbug')
 
-//@Export('RoomMemberListPanelContainer')
+//@Export('ChatMessageContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('airbug.ChatMessageCollection')
+//@Require('airbug.ChatMessageModel')
 //@Require('airbug.ListView')
-//@Require('airbug.PanelWithHeaderView')
-//@Require('airbug.RoomMemberListContainer')
-//@Require('airbug.TextView')
+//@Require('airbug.ListItemView')
+//@Require('airbug.MessageView')
+//@Require('airbug.PanelView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -27,14 +28,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
-var ListView                    = bugpack.require('airbug.ListView');
-var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
-var RoomMemberListContainer     = bugpack.require('airbug.RoomMemberListContainer');
-var TextView                    = bugpack.require('airbug.TextView');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
+var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
+var ListView                        = bugpack.require('airbug.ListView');
+var ListItemView                    = bugpack.require('airbug.ListItemView');
+var MessageView                     = bugpack.require('airbug.MessageView');
+var PanelView                       = bugpack.require('airbug.PanelView');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -48,15 +50,13 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-//TODO BRN: Break this out in to RoomMemberListPanelContainer and RoomMemberListContainer
-
-var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
+var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(roomModel) {
+    _constructor: function(chatMessageModel) {
 
         this._super();
 
@@ -68,43 +68,34 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         // Models
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {RoomModel}
-         */
-        this.roomModel                  = roomModel;
-
+        this.chatMessageModel           = chatMessageModel;
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {ListItemView}
          */
-        this.addRoomMemberButtonView    = null;
+        this.chatMessageView            = null;
 
-        /**
-         * @private
-         * @type {PanelView}
-         */
-        this.panelView                  = null;
+        // Modules
+        //
 
-
-        // Containers
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {RoomMemberListContainer}
-         */
-        this.roomMemberListContainer    = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array<*>} routerArgs
+     */
+    activateContainer: function(routerArgs) {
+        this._super(routerArgs);
+    },
 
     /**
      * @protected
@@ -112,23 +103,21 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
+        // Create Models
+        //-------------------------------------------------------------------------------
+
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelWithHeaderView)
-                .attributes({headerTitle: "Room Members"})
+        this.chatMessageView =
+        var listItemView =
+            view(ListItemView)
+                .model(this.chatMessageModel)
+                .attributes({size: "flex"})
                 .children([
-                    view(ButtonView)
-                        .id("addRoomMemberButtonView")
-                        .attributes({size: ButtonView.Size.SMALL})
-                        .appendTo('*[id|="panel-header-nav"]')
-                        .children([
-                            view(TextView)
-                                .attributes({text: "+"})
-                                .appendTo('*[id|="button"]')
-                        ])
+                    view(MessageView)
+                        .model(this.chatMessageModel)
                 ])
                 .build();
 
@@ -136,18 +125,40 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
-        this.addRoomMemberButtonView = this.findViewById("addRoomMemberButtonView");
+        this.setViewTop(this.chatMessageView);
+    },
+
+    createContainerChildren: function(){
+        this._super();
+
     },
 
     /**
      * @protected
      */
-    createContainerChildren: function() {
+    initializeContainer: function() {
         this._super();
-        this.roomMemberListContainer = new RoomMemberListContainer(this.roomModel);
-        this.addContainerChild(this.roomMemberListContainer, "#panel-body-" + this.panelView.cid);
-    }
+
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+
+
+    //-------------------------------------------------------------------------------
+    // Model Event Handlers
+    //-------------------------------------------------------------------------------
+
+
 });
 
 
@@ -155,4 +166,4 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RoomMemberListPanelContainer", RoomMemberListPanelContainer);
+bugpack.export("airbug.ChatMessageContainer", ChatMessageContainer);

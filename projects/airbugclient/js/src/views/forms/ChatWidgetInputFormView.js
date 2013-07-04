@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('CreateRoomFormView')
+//@Export('ChatWidgetInputFormView')
 
 //@Require('Class')
 //@Require('airbug.FormViewEvent')
@@ -30,25 +30,22 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CreateRoomFormView = Class.extend(MustacheView, {
+var ChatWidgetInputFormView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
     template:
-                    '<div class="form-wrapper">' +
-                        '<div class=""> Create a room' +
-                        '</div>' +
-                        '<form class="form-horizontal">' +
+                        '<form id="chat-widget-input-form-{{cid}}" class="form-horizontal">' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="text" name="name" placeholder="New Room">' +
+                                '<textarea form="chat-widget-input-form-{{cid}}" id="text-area-{{cid}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<button id="submit-button-{{cid}}" type="button" class="btn">Create Room</button>' +
+                                '<button id="submit-button-{{cid}}" type="button" class="btn">Send</button>' +
                             '</div>' +
-                        '</form>' +
-                    '</div>',
+                        '</form>',
+
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions
@@ -59,7 +56,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('#submit-button-' + this.cid).off();
+        this.$el.find('#text-area-' + this.cid).off();
     },
 
     /**
@@ -68,8 +65,12 @@ var CreateRoomFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#submit-button-' + this.cid).on('click', function(event) {
+        this.$el.find('#submit-button-' + this.cid).on('click', function(event){
             _this.handleButtonClick(event);
+        });
+        this.$el.find('#text-area-' + this.cid).on('keypress', function(event) {
+            console.log("hearing keypress");
+            // _this.handleKeyPress(event);
         });
     },
 
@@ -87,10 +88,8 @@ var CreateRoomFormView = Class.extend(MustacheView, {
         // one checkbox.
 
         var formData = {};
-        var formInputs = this.$el.find("form").serializeArray();
-        formInputs.forEach(function(formInput) {
-            formData[formInput.name] = formInput.value;
-        });
+        var value = this.$el.find("textarea").val();
+        formData.body = value;
         return formData;
     },
 
@@ -111,7 +110,14 @@ var CreateRoomFormView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleButtonClick: function(event) {
+    handleKeyPress: function(event) {
+        event.preventDefault();
+        if(event.which === 13 && !event.ctrlKey){
+            this.submitForm();
+        }
+    },
+
+    handleButtonClick: function(event){
         event.preventDefault();
         this.submitForm();
     }
@@ -121,4 +127,4 @@ var CreateRoomFormView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbug.CreateRoomFormView', CreateRoomFormView);
+bugpack.export('airbug.ChatWidgetInputFormView', ChatWidgetInputFormView);
