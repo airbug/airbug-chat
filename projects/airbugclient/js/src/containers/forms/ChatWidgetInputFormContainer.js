@@ -118,6 +118,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.chatWidgetInputFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
     },
 
 
@@ -127,9 +128,9 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
-     * @param {ButtonViewEvent} event
+     * @param {} event
      */
-    hearFormSubmittedEvent: function(event) {
+    handleFormSubmittedEvent: function(event) {
         // See ChatWidgetContainer
     }
 });

@@ -40,7 +40,7 @@ var ChatMessageModel = Class.extend(CarapaceModel, {
         sentBy: "",
         conversationId: "",
         conversationOwnerId: "",
-        sentAtUtc: 0
+        sentAt: 0
     }
 });
 

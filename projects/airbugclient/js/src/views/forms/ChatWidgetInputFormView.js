@@ -100,6 +100,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         var formData = this.getFormData();
         console.log("formData:", formData);
         this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, formData));
+        this.$el.find('#text-area-' + this.cid).val("");
     },
 
     //-------------------------------------------------------------------------------
