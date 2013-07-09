@@ -42,7 +42,10 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
                                 '<textarea form="chat-widget-input-form-{{cid}}" id="text-area-{{cid}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<button id="submit-button-{{cid}}" type="button" class="btn">Send</button>' +
+                                '<button id="submit-button-{{cid}}" type="submit" class="btn">Send</button>' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<input id="submit-on-enter-toggle-{{cid}}" type="checkbox" class="">Press enter to send</button>' +
                             '</div>' +
                         '</form>',
 
@@ -57,6 +60,8 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     deinitializeView: function() {
         this._super();
         this.$el.find('#text-area-' + this.cid).off();
+        this.$el.find('form').off();
+        this.$el.find('#submit-button-' + this.cid).off();
     },
 
     /**
@@ -65,6 +70,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
+        this.$el.find('#text-area-' + this.cid).on('keypress', function(event){
+            _this.handleKeyPress(event);
+        });
         this.$el.find('form').on('submit', function(event){
             event.preventDefault();
             event.stopPropagation();
@@ -110,6 +118,24 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
     // View Event Handlers
     //-------------------------------------------------------------------------------
+
+    handleEnterKeyPress: function(event) {
+        var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.cid).prop("checked");
+        if(submitOnEnter) {
+            this.submitForm();
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+    },
+
+    handleKeyPress: function(event) {
+        var key = event.which;
+        var ctl = event.ctrlKey;
+        if(key === 13 && !ctl){
+            this.handleEnterKeyPress(event);
+        }
+    },
 
     handleSubmit: function(event){
         this.submitForm();

@@ -65,6 +65,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
     deinitializeView: function() {
         this._super();
         this.$el.find('#submit-button-' + this.cid).off();
+        this.$el.find('form').off();
     },
 
     /**

@@ -57,6 +57,7 @@ var LoginFormView = Class.extend(MustacheView, {
     deinitializeView: function() {
         this._super();
         this.$el.find('login-button-' + this.cid).unbind();
+        this.$el.find('form').off();
     },
 
     /**
