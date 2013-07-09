@@ -41,7 +41,7 @@ var LoginFormView = Class.extend(MustacheView, {
                             '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
                         '</div>' +
                         '<div class="control-group">' +
-                            '<button id="login-button-{{cid}}" type="button" class="btn">Login</button>' +
+                            '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
                         '</div>' +
                     '</form>' +
                 '</div>',
@@ -65,8 +65,17 @@ var LoginFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
+        this.$el.find('form').on('submit', function(event){
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
         this.$el.find('#login-button-' + this.cid).bind('click', function(event) {
-            _this.handleLoginButtonClick(event);
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
         });
     },
 
@@ -110,8 +119,7 @@ var LoginFormView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleLoginButtonClick: function(event) {
-        event.preventDefault();
+    handleSubmit: function(event) {
         this.submitForm();
     }
 });

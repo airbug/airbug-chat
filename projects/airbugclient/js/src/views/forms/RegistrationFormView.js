@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
+var Class           = bugpack.require('Class');
 var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
-var MustacheView 	= bugpack.require('airbug.MustacheView');
+var MustacheView    = bugpack.require('airbug.MustacheView');
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -50,7 +50,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
                                 '<input class="input-xxlarge" type="text" name="lastName" placeholder="Last Name">' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<button id="submit-button-{{cid}}" type="button" class="btn">Enter</button>' +
+                                '<button id="submit-button-{{cid}}" type="submit" class="btn">Enter</button>' +
                             '</div>' +
                         '</form>' +
                     '</div>',
@@ -73,8 +73,17 @@ var RegistrationFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
+        this.$el.find('form').on('submit', function(event){
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
         this.$el.find('#submit-button-' + this.cid).on('click', function(event) {
-            _this.handleButtonClick(event);
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
         });
     },
 
@@ -116,8 +125,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
      * @private
      * @param event
      */
-    handleButtonClick: function(event) {
-        event.preventDefault();
+    handleSubmit: function(event) {
         this.submitForm();
     }
 });
