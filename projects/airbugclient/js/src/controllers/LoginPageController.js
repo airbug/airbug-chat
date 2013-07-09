@@ -93,13 +93,14 @@ var LoginPageController = Class.extend(ApplicationController, {
      */
     filterRouting: function(routingRequest) {
         this._super(routingRequest);
-        if(this.currentUserManagerModule.currentUser){
+        if(this.currentUserManagerModule.userIsLoggedIn()){
             routingRequest.forward("home");
         } else {
             routingRequest.accept();
         }
     }
 });
+
 annotate(LoginPageController).with(
     controller().route("login")
 );

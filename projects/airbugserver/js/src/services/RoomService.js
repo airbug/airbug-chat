@@ -86,13 +86,7 @@ var RoomService = Class.extend(Obj, {
             if(!error && room){
                 _this.addUserToRoom(currentUser.id, room.id, function(error, user, room){
                     if(!error && user && room){
-                        _this.roomManager.populate(room, {path: "membersList"}, function(error, room){
-                            if(!error && room){
-                                callback(error, user, room);
-                            } else {
-                                callback(error, user, room);
-                            }
-                        });
+                        callback(error, user, room);
                     } else {
                         callback(error, user, room);
                     }
@@ -117,8 +111,14 @@ var RoomService = Class.extend(Obj, {
             $parallel([
                 $task(function(flow){
                     _this.roomManager.addUserToRoom(userId, roomId, function(error, returnedRoom){
-                        room = returnedRoom;
-                        flow.complete(error);
+                        if(!error && returnedRoom){
+                            _this.roomManager.populate(returnedRoom, {path: "membersList"}, function(error, returnedRoom){
+                                room = returnedRoom
+                                flow.complete(error);
+                            });
+                        } else {
+                            flow.complete(error);
+                        }
                     });
                 }),
                 $task(function(flow){

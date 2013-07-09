@@ -40,10 +40,9 @@ var RoomMemberModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        uuid: "",
-        roomUuid: "",
-        userUuid: "",
-        conversationUuid: ""
+        _id: "",
+        roomId: "",
+        userId: ""
     }
 });
 

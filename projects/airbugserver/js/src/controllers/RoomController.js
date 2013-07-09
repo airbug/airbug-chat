@@ -89,10 +89,8 @@ var RoomController = Class.extend(Obj, {
                 var roomId      = data.roomId;
                 if(currentUser.isNotAnonymous()){
                     _this.roomService.addUserToRoom(userId, roomId, function(error, room){
-                        console.log("************************************************************");
                         console.log("Inside callback for roomService#addUserToRoom");
-                        console.log("Error:", error);
-                        console.log("Room:", room);
+                        console.log("Error:", error, "room", room);
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("addedUserToRoom", data);
@@ -186,7 +184,8 @@ var RoomController = Class.extend(Obj, {
                     var roomId      = data.roomId;
                     _this.roomService.removeUserFromRoom(userId, roomId, function(error, room){
                         if(!error && room){
-                            var data        = {room: room};
+                            // var data        = {room: room};
+                            var data        = {roomId: roomId};
                             var response    = responder.response("leftRoom", data);
                             responder.sendResponse(response);
                         } else {

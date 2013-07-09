@@ -71,6 +71,8 @@ var RoomPageController = Class.extend(ApplicationController, {
          * @type {RoomPageContainer}
          */
         this.roomPageContainer = null;
+
+        this.roomManagerModule = null;
     },
 
 
@@ -92,21 +94,29 @@ var RoomPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+        var _this = this;
         this._super(routingRequest);
         if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("");
+            routingRequest.forward("login");
         } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("");
+            routingRequest.forward("login");
         } else {
+            //Get most current user data
             this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
                 if(!error && currentUser){
                     var roomsList   = currentUser.roomsList;
                     var roomId      = routingRequest.getArgs()[0];
                     console.log("roomsList:", roomsList, "roomId:", roomId);
-                    if(roomsList.indexOf(roomId) > -1){
+                    if(roomsList.indexOf(roomId) > -1 && _this.roomManagerModule.get(roomId)){
                         routingRequest.accept();
                     } else {
-                        routingRequest.reject(); //OR forward to home?
+                        _this.roomManagerModule.joinRoom(roomId, function(error, room){
+                            if(!error && room){
+                                routingRequest.accept();
+                            } else {
+
+                            }
+                        });
                     }
                 } else {
                     routingRequest.reject(); //OR forward to home?
@@ -114,10 +124,16 @@ var RoomPageController = Class.extend(ApplicationController, {
             });
         }
     }
-
 });
+
 annotate(RoomPageController).with(
     controller().route("room/:id")
+);
+
+annotate(RoomPageController).with(
+    autowired().properties([
+        property("roomManagerModule").ref("roomManagerModule")
+    ])
 );
 
 

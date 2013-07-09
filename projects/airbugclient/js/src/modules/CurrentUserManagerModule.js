@@ -68,7 +68,27 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {boolean}
+     */
+    userIsLoggedIn: function(){
+        if(this.currentUser){
+            if(this.currentUser.email){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    },
 
+    /**
+     * @return {boolean}
+     */
+    userIsNotLoggedIn: function(){
+        return !this.userIsLoggedIn();
+    },
 
     //-------------------------------------------------------------------------------
     // Instance Methods

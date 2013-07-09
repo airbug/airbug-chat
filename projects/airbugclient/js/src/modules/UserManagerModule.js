@@ -103,6 +103,7 @@ var UserManagerModule = Class.extend(Obj, {
      * @param {function(error, {*})} callback
      */
     retrieveUser: function(userId, callback) {
+        console.log("Retrieving user:", userId);
         var _this   = this;
         var userObj = this.get(userId);
         if(userObj){

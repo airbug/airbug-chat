@@ -27,14 +27,14 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView');
-var TextView =                  bugpack.require('airbug.TextView');
-var UserModel =                 bugpack.require('airbug.UserModel');
-var UserNameView =              bugpack.require('airbug.UserNameView');
-var UserStatusIndicatorView =   bugpack.require('airbug.UserStatusIndicatorView');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
+var TextView                    = bugpack.require('airbug.TextView');
+var UserModel                   = bugpack.require('airbug.UserModel');
+var UserNameView                = bugpack.require('airbug.UserNameView');
+var UserStatusIndicatorView     = bugpack.require('airbug.UserStatusIndicatorView');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------

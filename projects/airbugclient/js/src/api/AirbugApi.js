@@ -172,17 +172,17 @@ var AirbugApi = Class.extend(Obj, {
             var data    = callResponse.getData();
             var error   = data.error;
             var room    = data.room;
-            var user    = data.user; //TODO: Should this be kept?
+            var user    = data.user; //TODO: Should this be kept here?
+            //
             console.log("AirbugApi#createRoom results: user:", user, "room:", room);
-            console.log("Should the user be kept in here?");
-
+            //
             callback(error, room, user);
         });
     },
 
     /**
      * @param {string} roomId
-     * @param {}
+     * @param {function(error, room)} callback
      */
     joinRoom: function(roomId, callback){
         var requestData = {
@@ -198,8 +198,8 @@ var AirbugApi = Class.extend(Obj, {
     },
 
     /**
-     * @param {}
-     * @param {}
+     * @param {string} roomId
+     * @param {function(error)} callback
      */
     leaveRoom: function(roomId, callback){
         var requestData = {
@@ -209,8 +209,8 @@ var AirbugApi = Class.extend(Obj, {
             var type    = callResponse.getType();
             var data    = callResponse.getData();
             var error   = data.error;
-            var room    = data.room;
-            callback(error, room);
+            var roomId  = data.roomId;
+            callback(error, roomId);
         });
     },
 

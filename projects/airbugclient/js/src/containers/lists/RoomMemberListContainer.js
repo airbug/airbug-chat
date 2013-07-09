@@ -101,6 +101,12 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          */
         this.navigationModule       = null;
 
+        /**
+         * @private
+         * @type {RoomManagModule}
+         */
+        this.roomManagerModule      = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -184,10 +190,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {string} roomId
      */
     loadRoomMemberCollection: function(roomId) {
-        //TODO BRN: This is where we make an apiPublisher call and send both the roomUuid and the roomMemberCollection.
-        // The api call would then be responsible for adding RoomMemberModels to the roomMemberCollection.
         if(!roomId) var roomId = this.roomModel.id;
         var _this = this;
+        // NOTE: this should be a populated list
         var membersList = this.roomModel.get("membersList");
         membersList.forEach(function(roomMember){
             var roomMemberModel = new RoomMemberModel(roomMember, roomMember._id);
@@ -236,7 +241,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 annotate(RoomMemberListContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
-        property("roomManagerModule").ref("roomManagerModule")
+        property("roomManagerModule").ref("roomManagerModule"),
+        property("userManagerModule").ref("userManagerModule")
     ])
 );
 

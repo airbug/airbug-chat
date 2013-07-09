@@ -120,17 +120,37 @@ var RoomManagerModule = Class.extend(Obj, {
         });
     },
 
-    leaveRoom: function(roomId, callback) {
-        //TODO
+    /**
+     * @param {string} roomId
+     * @param {function(error, room)} callback
+     */
+    joinRoom: function(roomId, callback) {
         var _this = this;
-        this.airbugApi.leaveRoom(roomId, function(error, room){
-            console.log("Inside RoomManagerModule#leaveRoom");
+        this.airbugApi.joinRoom(roomId, function(error, room){
+            console.log("Inside RoomManagerModule#joinRoom");
             if(!error && room){
-                console.log("removing room from cache");
-                _this.remove(room._id);
-                callback(null);
+                _this.put(room._id, room);
+                callback(null, room);
             } else {
-                callback(error);
+                callback(error, room);
+            }
+        });
+    },
+
+    /**
+     * @param {string} roomId
+     * @param {function(error, roomId)} callback
+     */
+    leaveRoom: function(roomId, callback) {
+        var _this = this;
+        this.airbugApi.leaveRoom(roomId, function(error, roomId){
+            console.log("Inside RoomManagerModule#leaveRoom");
+            if(!error){
+                console.log("removing room from cache");
+                _this.remove(roomId);
+                callback(null, roomId);
+            } else {
+                callback(error, roomId);
             }
         });
     }

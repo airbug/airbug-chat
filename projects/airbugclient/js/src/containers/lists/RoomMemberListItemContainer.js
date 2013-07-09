@@ -75,6 +75,7 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         var userId  = this.roomMemberModel.get("userId");
         this.userManagerModule.retrieveUser(userId, function(error, userObj){
             if(!error && userObj){
+                //NOTE might want to change this to roomMemberModel later to prevent conflicts with private currentUser information
                 _this.userModel.set(userObj);
             }
         });
