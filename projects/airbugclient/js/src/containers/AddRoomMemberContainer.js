@@ -4,11 +4,14 @@
 
 //@Package('airbug')
 
-//@Export('ChatWidgetInputFormContainer')
+//@Export('AddRoomMemberContainer')
 
 //@Require('Class')
-//@Require('airbug.FormViewEvent')
-//@Require('airbug.ChatWidgetInputFormView')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.DropdownItemView')
+//@Require('airbug.IconView')
+//@Require('airbug.ParagraphView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -28,8 +31,11 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
-var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
+var IconView                = bugpack.require('airbug.IconView');
+var ParagraphView           = bugpack.require('airbug.ParagraphView');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -51,13 +57,13 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
+var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(conversationModel) {
+    _constructor: function(roomModel) {
 
         this._super();
 
@@ -66,10 +72,15 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.conversationModel          = conversationModel;
-
+        this.roomModel          = roomModel;
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
+        this.navigationModule   = null;
 
 
         // Views
@@ -77,20 +88,21 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ChatWidgetInputFormView}
+         * @type {DropdownItemView}
          */
-        this.chatWidgetInputFormView    = null;
+        this.dropdownItemView   = null;
+
+        /**
+         * @private
+         * @type {ButtonView}
+         */
+        this.copyLinkButton     = null;
     },
 
 
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
-
-    activateContainer: function(routerArgs){
-        this._super(routerArgs);
-        this.chatWidgetInputFormView.focus();
-    },
 
     /**
      * @protected
@@ -101,16 +113,36 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetInputFormView =
-            view(ChatWidgetInputFormView) //or chatWidgetInputFormView
-                // .attributes({type: "primary", align: "left"})
-                .build();
+        this.dropdownItemView =
+            view(DropdownItemView)
+                .children([
+                    view(ParagraphView)
+                        .attributes({text: this.roomModel.get("name")}),
+                    view(ParagraphView)
+                        .attributes({text: "Share this room"}),
+                    view(ParagraphView)
+                        .attributes({text: "http://airbug.com/app#room/" + this.roomModel.get("_id")}),
+                    view(ButtonView)
+                        .attributes({text: "Copy Link", type: "primary", align: "left"})
+                ])
+            .build();
+
+
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.chatWidgetInputFormView);
+        this.setViewTop(this.dropdownItemView);
+    },
+
+    /**
+     * @protected
+     */
+    createContainerChildren: function() {
+        this._super();
+        // this.copyLinkButton = new CopyLinkButton("http://airbug.com/app#room/" + this.roomModel.get("_id"));
+        // this.addContainerChild(this.copyLinkButton, "")
     },
 
     /**
@@ -118,7 +150,6 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.chatWidgetInputFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
     },
 
 
@@ -128,16 +159,22 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
-     * @param {FormViewEvent} event
+     * @param {ButtonViewEvent} event
      */
-    handleFormSubmittedEvent: function(event) {
-        // See ChatWidgetContainer
+    hearButtonClickedEvent: function(event) {
+
     }
 });
+
+annotate(AddRoomMemberContainer).with(
+    autowired().properties([
+        property("navigationModule").ref("navigationModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ChatWidgetInputFormContainer", ChatWidgetInputFormContainer);
+bugpack.export("airbug.AddRoomMemberContainer", AddRoomMemberContainer);

@@ -7,6 +7,7 @@
 //@Export('RoomMemberListPanelContainer')
 
 //@Require('Class')
+//@Require('airbug.AddRoomMemberButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ListView')
 //@Require('airbug.PanelWithHeaderView')
@@ -27,14 +28,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
-var ListView                    = bugpack.require('airbug.ListView');
-var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
-var RoomMemberListContainer     = bugpack.require('airbug.RoomMemberListContainer');
-var TextView                    = bugpack.require('airbug.TextView');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var AddRoomMemberButtonContainer    = bugpack.require('airbug.AddRoomMemberButtonContainer');
+var ButtonView                      = bugpack.require('airbug.ButtonView');
+var ListView                        = bugpack.require('airbug.ListView');
+var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
+var RoomMemberListContainer         = bugpack.require('airbug.RoomMemberListContainer');
+var TextView                        = bugpack.require('airbug.TextView');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -82,7 +84,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ButtonView}
          */
-        this.addRoomMemberButtonView    = null;
+        // this.addRoomMemberButtonView    = null;
 
         /**
          * @private
@@ -119,17 +121,6 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this.panelView =
             view(PanelWithHeaderView)
                 .attributes({headerTitle: "Room Members"})
-                .children([
-                    view(ButtonView)
-                        .id("addRoomMemberButtonView")
-                        .attributes({size: ButtonView.Size.SMALL})
-                        .appendTo('*[id|="panel-header-nav"]')
-                        .children([
-                            view(TextView)
-                                .attributes({text: "+"})
-                                .appendTo('*[id|="button"]')
-                        ])
-                ])
                 .build();
 
 
@@ -137,7 +128,6 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.panelView);
-        this.addRoomMemberButtonView = this.findViewById("addRoomMemberButtonView");
     },
 
     /**
@@ -145,8 +135,20 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.roomMemberListContainer = new RoomMemberListContainer(this.roomModel);
-        this.addContainerChild(this.roomMemberListContainer, "#panel-body-" + this.panelView.cid);
+        this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
+        this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
+        this.addContainerChild(this.addRoomMemberButtonContainer,   "#panel-header-nav-" + this.panelView.cid);
+        this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.cid);
+    },
+
+    initializeContainer: function() {
+        this._super();
+        this.addRoomMemberButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearAddRoomMemberButtonClickedEvent, this);
+
+    },
+
+    hearAddRoomMemberButtonClickedEvent: function() {
+
     }
 });
 
