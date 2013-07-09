@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
-var CarapaceView 	= bugpack.require('carapace.CarapaceView');
+var Class           = bugpack.require('Class');
+var CarapaceView    = bugpack.require('carapace.CarapaceView');
 
 
 //-------------------------------------------------------------------------------
