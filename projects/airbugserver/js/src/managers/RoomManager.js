@@ -31,6 +31,7 @@ var BugFlow         = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var $parallel   = BugFlow.$parallel;
 var $series     = BugFlow.$series;
 var $parallel   = BugFlow.$parallel;
 var $task       = BugFlow.$task;
@@ -142,7 +143,7 @@ var RoomManager = Class.extend(MongoManager, {
             if(!error && room){
                 _this.roomMemberManager.create({userId: userId, roomId: roomId}, function(error, roomMember){
                     if(!error && roomMember){
-                        room.membersList.push(roomMember.id); //What happens if I push the entire object instead of just the id???
+                        room.membersList.addToSet(roomMember.id); //What happens if I push the entire object instead of just the id???
                         room.save(callback);
                     } else {
                         callback(error);

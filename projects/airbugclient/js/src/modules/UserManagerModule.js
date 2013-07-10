@@ -69,7 +69,7 @@ var UserManagerModule = Class.extend(Obj, {
      * @param {string} id
      * @return {userObj}
      */
-    get: function(id){
+    get: function(id) {
         return this.usersMap.get(id);
     },
 
@@ -77,7 +77,7 @@ var UserManagerModule = Class.extend(Obj, {
      * @param {string} id
      * @return {userObj}
      */
-    put: function(id, room){
+    put: function(id, room) {
         this.usersMap.put(id, room);
     },
 

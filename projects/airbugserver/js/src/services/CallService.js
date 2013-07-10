@@ -10,7 +10,7 @@
 //@Require('DualMultiSetMap')
 //@Require('Obj')
 //@Require('Set')
-//@Require('bugcall.BugCallServerEvent')
+//@Require('bugcall.CallEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ var bugpack         = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var DualMultiSetMap     = bugpack.require('DualMultiSetMap');
 var Obj                 = bugpack.require('Obj');
-var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
+var CallEvent           = bugpack.require('bugcall.CallEvent');
 
 
 //-------------------------------------------------------------------------------
@@ -102,8 +102,8 @@ var CallService = Class.extend(Obj, {
      * @private
      */
     initialize: function() {
-        this.bugCallServer.on(BugCallServerEvent.CALL_CLOSED, this.hearCallClosed, this);
-        this.bugCallServer.on(BugCallServerEvent.CALL_OPENED, this.hearCallOpened, this);
+        this.bugCallServer.on(CallEvent.CLOSED, this.hearCallClosed, this);
+        this.bugCallServer.on(CallEvent.OPENED, this.hearCallOpened, this);
     },
 
     /**
@@ -121,17 +121,17 @@ var CallService = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {BugCallServerEvent} event
+     * @param {CallEvent} event
      */
     hearCallClosed: function(event) {
         var data            = event.getData();
-        var callManager   = data.callManager;
+        var callManager     = data.callManager;
         this.deregisterCallManager(callManager);
     },
     
     /**
      * @private
-     * @param {BugCallServerEvent} event
+     * @param {CallEvent} event
      */
     hearCallOpened: function(event) {
         var data            = event.getData();
