@@ -106,7 +106,7 @@ var ChatMessageService = Class.extend(Obj, {
                 //TODO
                 // if(currentUser.roomsList.indexOf(conversation.ownerId) > -1){
                     _this.chatMessageManager
-                        .find({_id: conversationId})
+                        .find({id: conversationId})
                         .lean(true)
                         .exec(function(error, chatMessages){
                             callback(error, chatMessages);
