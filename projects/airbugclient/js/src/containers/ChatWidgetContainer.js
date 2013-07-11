@@ -10,6 +10,8 @@
 //@Require('airbug.ChatMessageCollection')
 //@Require('airbug.ChatMessageModel')
 //@Require('airbug.ChatWidgetInputFormContainer')
+//@Require('airbug.ChatWidgetMessagesContainer')
+//@Require('airbug.ChatMessageContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
@@ -34,6 +36,8 @@ var Class                           = bugpack.require('Class');
 var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
 var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
 var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
+var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
+var ChatMessageContainer            = bugpack.require('airbug.ChatMessageContainer');
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
@@ -102,6 +106,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ChatWidgetMessagesContainer}
+         */
+        this.chatWidgetMessagesContainer    = null;
+
+        /**
+         * @private
          * @type {ListView}
          */
         this.messageListView                = null;
@@ -110,8 +120,16 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {ChatMessageManagerModule}
+         */
         this.chatMessageManagerModule       = null;
 
+        /**
+         * @private
+         * @type {UserManagerModule}
+         */
         this.userManagerModule             = null;
 
     },
@@ -127,8 +145,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        // this.textAreaView.focus();
-        // this.loadChatMessageCollection(this.conversationModel.get("_id"));
+        this.loadChatMessageCollection(this.conversationModel.get("_id"));
     },
 
     /**
@@ -149,20 +166,20 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         this.chatWidgetView =
             view(ChatWidgetView)
-                .children([
-                    view(PanelView)
-                        .appendTo('*[id|="chat-widget-messages"]')
-                        .children([
-                            view(ListView)
-                                .id("messageListView")
-                                .appendTo('*[id|="panel-body"]')
-                        ])
+                // .children([
+                //     view(PanelView)
+                //         .appendTo('*[id|="chat-widget-messages"]')
+                //         .children([
+                //             view(ListView)
+                //                 .id("messageListView")
+                //                 .appendTo('*[id|="panel-body"]')
+                //         ])
                     //     ,
                     // view(TextAreaView)
                     //     .id("textAreaView")
                     //     .attributes({rows: 1})
                     //     .appendTo('*[id|="chat-widget-input"]')
-                ])
+                // ])
                 .build();
 
 
@@ -170,7 +187,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.chatWidgetView);
-        this.messageListView    = this.findViewById("messageListView");
+        // this.messageListView    = this.findViewById("messageListView");
         // this.textAreaView       = this.findViewById("textAreaView");
     },
 
@@ -179,7 +196,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.chatWidgetInputFormContainer      = new ChatWidgetInputFormContainer();
+        this.chatWidgetMessagesContainer        = new ChatWidgetMessagesContainer(this.conversationModel);
+        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages-' + this.chatWidgetView.cid);
+        this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer();
         this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input-" + this.chatWidgetView.cid);
     },
 
@@ -232,16 +251,16 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var chatMessage = event.getData();
         console.log("event:", event);
         console.log("chatMessage:", chatMessage);
-        chatMessage.conversationId = this.conversationModel.get("ownerId");
+        chatMessage.conversationId      = this.conversationModel.get("ownerId");
         chatMessage.conversationOwnerId = this.conversationModel.get("_id");
         // event.preventDefault();
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageObj){
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
             console.log("error:", error, "chatMessageObj:", chatMessageObj);
             if(!error && chatMessageObj){
-                var sender = _this.userManagerModule.get(chatMessageObj.senderUserId);
-                chatMessageObj.sentBy = sender.firstName + sender.lastName;
-                chatMessageObj.sentAt = chatMessageObj.createdAt;
+                var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
+                chatMessageObj.sentBy   = sender.firstName + sender.lastName;
+                chatMessageObj.sentAt   = chatMessageObj.createdAt;
                 _this.chatMessageCollection.add(new ChatMessageModel(chatMessageObj, chatMessageObj._id));
             }
         });
@@ -259,19 +278,21 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @param {ChatMessageModel} chatMessageModel
      */
     handleChatMessageCollectionAdd: function(chatMessageModel) {
-        console.log("Inside ChatWidgetContainer#handleChatMessageCollectionAdd");
-        console.log("chatMessageModel:", chatMessageModel);
-        var listItemView =
-            view(ListItemView)
-                .model(chatMessageModel)
-                .attributes({size: "flex"})
-                .children([
-                    view(MessageView)
-                        .model(chatMessageModel)
-                ])
-                .build();
+        var chatMessageContainer = new ChatMessageContainer(chatMessageModel);
+        this.chatWidgetMessagesContainer.addContainerChild(chatMessageContainer, '.list');
+        // console.log("Inside ChatWidgetContainer#handleChatMessageCollectionAdd");
+        // console.log("chatMessageModel:", chatMessageModel);
+        // var listItemView =
+        //     view(ListItemView)
+        //         .model(chatMessageModel)
+        //         .attributes({size: "flex"})
+        //         .children([
+        //             view(MessageView)
+        //                 .model(chatMessageModel)
+        //         ])
+        //         .build();
 
-        this.messageListView.addViewChild(listItemView);
+        // this.messageListView.addViewChild(listItemView);
     }
 });
 

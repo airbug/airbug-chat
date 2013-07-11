@@ -110,7 +110,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        var listItemView =
+        this.chatMessageView =
             view(ListItemView)
                 .model(this.chatMessageModel)
                 .attributes({size: "flex"})

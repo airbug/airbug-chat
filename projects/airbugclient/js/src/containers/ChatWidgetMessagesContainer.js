@@ -128,9 +128,12 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.chatWidgetMessagesView =
-            view(ListView)
-                // .id("messageListView")
-                // .appendTo('*[id|="panel-body"]')
+            view(PanelView)
+                .children([
+                    view(ListView)
+                        .id("messageListView")
+                        .appendTo('*[id|="panel-body"]')
+                ])
                 .build();
 
 
