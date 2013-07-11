@@ -102,6 +102,7 @@ buildProperties({
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/socket-io/js/src",
             "../bugjs/external/underscore/js/src",
+            "../bugjs/external/zeroclipboard/js/src",
             "../bugjs/projects/annotate/js/src",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugflow/js/src",

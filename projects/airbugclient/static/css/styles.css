@@ -533,6 +533,20 @@ html, body {
     height: 300px;
 }
 
+
+/* ZeroClipboard
+*******************************************************************/
+
+  #d_clip_button {
+    width:150px;
+    text-align:center;
+    border:1px solid black;
+    background-color:#ccc;
+    margin:10px; padding:10px;
+  }
+  #d_clip_button.zeroclipboard-is-hover { background-color:#eee; }
+  #d_clip_button.zeroclipboard-is-active { background-color:#aaa; }
+
 /* Twitter Bootstrap Overrides
 *******************************************************************/
 @media (max-width: 979px) {

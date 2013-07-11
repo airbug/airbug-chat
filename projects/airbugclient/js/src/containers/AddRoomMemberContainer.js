@@ -17,6 +17,7 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
+//@Require('zeroclipboard.ZeroClipboard')
 
 
 //-------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+var ZeroClipboard           = bugpack.require('zeroclipboard.ZeroClipboard');
 
 
 //-------------------------------------------------------------------------------
@@ -72,7 +74,18 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {RoomModel}
+         */
         this.roomModel          = roomModel;
+
+        /**
+         * @private
+         * @type {ZeroClipboard}
+         */
+        this.clip               = null;
+
         // Modules
         //-------------------------------------------------------------------------------
 
@@ -117,18 +130,21 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
             view(DropdownItemView)
                 .children([
                     view(ParagraphView)
-                        .attributes({text: this.roomModel.get("name")}),
-                    view(ParagraphView)
-                        .attributes({text: "Share this room"}),
+                        .attributes({text: "Share room " + this.roomModel.get("name")}),
                     view(ParagraphView)
                         .attributes({text: "http://airbug.com/app#room/" + this.roomModel.get("_id")}),
                     view(ButtonView)
-                        .attributes({text: "Copy Link", type: "primary", align: "left"})
+                        .attributes({text: "Copy Link", type: "primary", align: "right", size: ButtonView.Size.NORMAL})
+                        .children([
+                            view(IconView)
+                                .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})
+                                .appendTo('*[id|="button"]'),
+                            view(TextView)
+                                .attributes({text: " Copy Link"})
+                                .appendTo('*[id|="button"]')
+                        ])
                 ])
             .build();
-
-
-
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -146,10 +162,73 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @private
+     */
+    createZeroClipboard: function(){
+        var _this = this;
+        var button      = this.getViewTop().$el.find('.btn')[0];
+        var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
+        var options     = {
+              moviePath: "/zeroclipboard/ZeroClipboard.swf"
+        };
+
+        this.clip        = new ZeroClipboard(button, options);
+        var clip = this.clip;
+
+        clip.on( 'dataRequested',   function(client, args) {
+            clip.setText(copyText);
+        });
+
+        clip.on( 'load',            function(client, args) {
+        });
+
+        clip.on( 'complete',        function(client, args) {
+        });
+
+        clip.on( 'mouseover',       function(client, args) {
+        });
+
+        clip.on( 'mouseout',        function(client, args) {
+        });
+
+        clip.on( 'mousedown',       function(client, args) {
+        });
+
+        clip.on( 'mouseup',         function(client, args) {
+        });
+
+        clip.on( 'noflash',         function(client, args) {
+        });
+
+        clip.on( 'wrongflash',      function(client, args) {
+        });
+
+        // botton.on("resize", function(event){
+        //     clip.reposition();
+        // });
+    },
+
+    /**
+     * @private
+     */
+    destroyZeroClipboard: function(){
+        this.clip = null;
+    },
+
+    /**
      * @protected
      */
     initializeContainer: function() {
         this._super();
+        this.createZeroClipboard();
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.destroyZeroClipboard();
     },
 
 
