@@ -121,6 +121,14 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         this.chatWidgetInputFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
     },
 
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.chatWidgetInputFormView.$el.find("textarea")[0].focus();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners

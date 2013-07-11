@@ -128,6 +128,14 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.createRoomFormView.$el.find("input")[0].focus();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners

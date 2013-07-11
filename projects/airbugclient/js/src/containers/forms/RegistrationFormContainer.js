@@ -128,6 +128,14 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
         this.registrationFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.registrationFormView.$el.find("input")[0].focus();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners
