@@ -90,19 +90,14 @@ var RoomPageController = Class.extend(ApplicationController, {
     },
 
     /**
+     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
         var _this = this;
-        this._super(routingRequest);
-        if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("login");
-        } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("login");
-        } else {
-            //Get most current user data
-            this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
+        this.preFilterRouting(routingRequest, function(error, currentUser, loggedIn){
+            if(loggedIn){
                 if(!error && currentUser){
                     var roomsList   = currentUser.roomsList;
                     var roomId      = routingRequest.getArgs()[0];
@@ -114,15 +109,15 @@ var RoomPageController = Class.extend(ApplicationController, {
                             if(!error && room){
                                 routingRequest.accept();
                             } else {
-
+                                routingRequest.reject(); //OR forward to home?
                             }
                         });
                     }
                 } else {
                     routingRequest.reject(); //OR forward to home?
                 }
-            });
-        }
+            }
+        });
     }
 });
 

@@ -70,7 +70,9 @@ IconView.Color = {
  */
 IconView.Type = {
     CHEVRON_LEFT: "chevron-left",
-    USER: "user"
+    USER: "user",
+    SHARE: "share",
+    PLUS: "plus"
 };
 
 

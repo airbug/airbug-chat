@@ -90,18 +90,18 @@ var SettingsPageController = Class.extend(ApplicationController, {
     },
 
     /**
+     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        this._super(routingRequest);
-        if(!this.currentUserManagerModule.currentUser){
-            routingRequest.forward("");
-        } else if(!this.currentUserManagerModule.currentUser.email){
-            routingRequest.forward("");
-        } else {
-            routingRequest.accept();
-        }
+        this.preFilterRouting(routingRequest, function(error, currentUser, loggedIn){
+            if(!loggedIn){
+                routingRequest.forward("");
+            } else {
+                routingRequest.accept();
+            }
+        });
     }
 
 });

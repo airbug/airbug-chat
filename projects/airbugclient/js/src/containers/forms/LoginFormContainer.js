@@ -143,9 +143,17 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
         this.currentUserManagerModule.loginUser(userObj, function(error, currentUser){
             if(!error){
                 //TODO
-                _this.navigationModule.navigate("home", {
-                    trigger: true
-                });
+                var finalDestination = _this.navigationModule.getFinalDestination();
+                if(finalDestination){
+                    _this.navigationModule.clearFinalDestination();
+                    _this.navigationModule.navigate(finalDestination, {
+                        trigger: true
+                    });
+                } else {
+                    _this.navigationModule.navigate("home", {
+                        trigger: true
+                    });
+                }
             } else {
                 //TODO
                 console.log("currentUserManagerModule#createRoom callback error:", error);

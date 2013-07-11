@@ -58,7 +58,10 @@ var ApplicationController = Class.extend(CarapaceController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.currentUserManagerModule = null;
+        this.currentUserManagerModule   = null;
+
+        this.navigationModule           = null;
+
     },
 
 
@@ -79,16 +82,37 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
+
+    },
+
+    preFilterRouting: function(routingRequest, callback){
+        var _this = this;
         //TODO
+        var route = routingRequest.getRoute().route;
+        var args = routingRequest.getArgs();
+        console.log("****************************************************");
+        console.log("Regex created route:", route.split(/\//)[0] + '/' + args.join("\/"));
+        var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //false
         this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
-            //TODO
+            //TODO //BUGBUG
+            var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //true //BUGBUG user is not being logged out on the server side
+            if(!loggedIn){
+                _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
+                _this.navigationModule.navigate("login", {
+                    trigger: true
+                });
+            }
+            console.log("preFilterRouting: Error:", error, "currentUser:", currentUser, "loggedIn:", loggedIn);
+            callback(error, currentUser, loggedIn);
         });
     }
+
 });
 
 annotate(ApplicationController).with(
     autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("navigationModule").ref("navigationModule")
     ])
 );
 

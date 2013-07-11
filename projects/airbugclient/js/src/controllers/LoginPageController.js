@@ -88,11 +88,11 @@ var LoginPageController = Class.extend(ApplicationController, {
     },
 
     /**
+     * @override
      * @protected
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        this._super(routingRequest);
         if(this.currentUserManagerModule.userIsLoggedIn()){
             routingRequest.forward("home");
         } else {

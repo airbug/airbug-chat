@@ -110,7 +110,6 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatMessageView =
         var listItemView =
             view(ListItemView)
                 .model(this.chatMessageModel)
@@ -139,7 +138,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
 
-    },
+    }
 
 
     //-------------------------------------------------------------------------------

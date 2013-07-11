@@ -114,9 +114,8 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
     /**
      * @protected
      */
-    createContainer: function() {
+    createContainer: function(routingArgs) {
         this._super();
-
 
         // Create Views
         //-------------------------------------------------------------------------------

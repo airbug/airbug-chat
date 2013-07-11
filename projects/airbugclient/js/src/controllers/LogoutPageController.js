@@ -93,7 +93,7 @@ var LogoutPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        if(this.currentUserManagerModule.currentUser){
+        if(this.currentUserManagerModule.userIsLoggedIn()){
             routingRequest.reject();
         } else {
             routingRequest.accept();

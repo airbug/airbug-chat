@@ -141,13 +141,20 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
         var _this       = this;
         var userObj     = event.getData();
         console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
-        console.log("currentUserManagerModule:", this.currentUserManagerModule);
         this.currentUserManagerModule.registerUser(userObj, function(error, currentUser){
             if(!error){
                 //TODO
-                _this.navigationModule.navigate("home", {
-                    trigger: true
-                });
+                var finalDestination = _this.navigationModule.getFinalDestination();
+                if(finalDestination){
+                    _this.navigationModule.clearFinalDestination();
+                    _this.navigationModule.navigate(finalDestination, {
+                        trigger: true
+                    });
+                } else {
+                    _this.navigationModule.navigate("home", {
+                        trigger: true
+                    });
+                }
             } else {
                 //TODO
                 console.log("currentUserManagerModule#registerUser callback error:", error);
