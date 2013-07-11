@@ -143,7 +143,6 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
         console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
         this.currentUserManagerModule.registerUser(userObj, function(error, currentUser){
             if(!error){
-                //TODO
                 var finalDestination = _this.navigationModule.getFinalDestination();
                 if(finalDestination){
                     _this.navigationModule.clearFinalDestination();

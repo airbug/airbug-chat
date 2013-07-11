@@ -87,11 +87,8 @@ var ApplicationController = Class.extend(CarapaceController, {
 
     preFilterRouting: function(routingRequest, callback){
         var _this = this;
-        //TODO
         var route = routingRequest.getRoute().route;
         var args = routingRequest.getArgs();
-        console.log("****************************************************");
-        console.log("Regex created route:", route.split(/\//)[0] + '/' + args.join("\/"));
         var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //false
         this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
             //TODO //BUGBUG
