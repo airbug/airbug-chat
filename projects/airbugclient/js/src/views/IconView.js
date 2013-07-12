@@ -72,7 +72,8 @@ IconView.Type = {
     CHEVRON_LEFT: "chevron-left",
     USER: "user",
     SHARE: "share",
-    PLUS: "plus"
+    PLUS: "plus",
+    EXCLAMATION: "exclamation-sign"
 };
 
 

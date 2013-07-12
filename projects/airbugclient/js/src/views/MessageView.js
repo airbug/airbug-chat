@@ -42,6 +42,7 @@ var MessageView = Class.extend(MustacheView, {
     template:   '<div class="message-wrapper">' +
                     '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
                     '<div id="message-pending-{{cid}}" class="message-pending-{{model.pending}}"><img src="/img/pending.gif"></div>' +
+                    '<div id="message-failed-{{cid}}" class="message-failed-{{model.failed}}"><i class="icon-exclamation-sign"></i></div>' +
                     '<div id="message-sent-at-{{cid}}" class="message-sent-at">{{model.sentAt}}</div>' +
                     '<div id="message-message-{{cid}}" class="message-body">{{model.body}}</div>' +
                 '</div>',

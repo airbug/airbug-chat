@@ -41,7 +41,8 @@ var ChatMessageModel = Class.extend(CarapaceModel, {
         conversationId: "",
         conversationOwnerId: "",
         sentAt: "",
-        pending: true
+        pending: true,
+        failed: false
     }
 });
 
