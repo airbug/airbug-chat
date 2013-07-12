@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CopyToClipboardButtonView')
 //@Require('airbug.DropdownItemView')
 //@Require('airbug.IconView')
 //@Require('airbug.ParagraphView')
@@ -31,18 +32,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ButtonView              = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
-var IconView                = bugpack.require('airbug.IconView');
-var ParagraphView           = bugpack.require('airbug.ParagraphView');
-var Annotate                = bugpack.require('annotate.Annotate');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-var ZeroClipboard           = bugpack.require('zeroclipboard.ZeroClipboard');
+var Class                       = bugpack.require('Class');
+var ButtonView                  = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
+var CopyToClipboardButtonView   = bugpack.require('airbug.CopyToClipboardButtonView');
+var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
+var IconView                    = bugpack.require('airbug.IconView');
+var ParagraphView               = bugpack.require('airbug.ParagraphView');
+var Annotate                    = bugpack.require('annotate.Annotate');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var ZeroClipboard               = bugpack.require('zeroclipboard.ZeroClipboard');
 
 
 //-------------------------------------------------------------------------------
@@ -133,8 +135,8 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
                         .attributes({text: "Share room " + this.roomModel.get("name")}),
                     view(ParagraphView)
                         .attributes({text: "http://airbug.com/app#room/" + this.roomModel.get("_id")}),
-                    view(ButtonView)
-                        .attributes({text: "Copy Link", type: "primary", align: "right", size: ButtonView.Size.NORMAL})
+                    view(CopyToClipboardButtonView)
+                        .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
                         .children([
                             view(IconView)
                                 .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})

@@ -514,6 +514,17 @@ html, body {
     margin: 0;
 }
 
+.message-pending-true {
+    position: absolute;
+    top: 9px;
+    right: 14px;
+    margin: 0;
+}
+
+.message-pending-false {
+    display: none;
+}
+
 .message-body {
     font-size: 15px;
     font-weight: 200;

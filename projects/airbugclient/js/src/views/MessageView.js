@@ -41,6 +41,7 @@ var MessageView = Class.extend(MustacheView, {
 
     template:   '<div class="message-wrapper">' +
                     '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
+                    '<div id="message-pending-{{cid}}" class="message-pending-{{model.pending}}"><img src="/img/pending.gif"></div>' +
                     '<div id="message-sent-at-{{cid}}" class="message-sent-at">{{model.sentAt}}</div>' +
                     '<div id="message-message-{{cid}}" class="message-body">{{model.body}}</div>' +
                 '</div>',
@@ -61,12 +62,14 @@ var MessageView = Class.extend(MustacheView, {
             case "message":
                 this.findElement('#message-message-' + this.cid).text(attributeValue);
                 break;
-            case "sentAtUtc":
-                this.findElement('#message-sent-at-' + this.cid).text(this.renderSentAgo(attributeValue));
+            case "sentAt":
+                this.findElement('#message-sent-at-' + this.cid).text(attributeValue);
                 break;
             case "sentBy":
                 this.findElement('#message-sent-by-' + this.cid).text(attributeValue);
                 break;
+            case "pending":
+                this.findElement('#message-pending-' + this.cid).removeClass("message-pending-false, message-pending-true").addClass("message-pending-" + attributeValue);
         }
     },
 
@@ -83,9 +86,9 @@ var MessageView = Class.extend(MustacheView, {
 
         //TODO BRN: This is a good unit test candidate.
 
-        if (data.model.sentAtUtc) {
-            data.sentAgo = this.renderSentAgo(data.model.sentAtUtc);
-        }
+        // if (data.model.sentAtUtc) {
+        //     data.sentAgo = this.renderSentAgo(data.model.sentAtUtc);
+        // }
         return data;
     },
 

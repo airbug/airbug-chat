@@ -126,11 +126,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          */
         this.chatMessageManagerModule       = null;
 
+        this.currentUserManagerModule       = null;
+
         /**
          * @private
          * @type {UserManagerModule}
          */
-        this.userManagerModule             = null;
+        this.userManagerModule              = null;
 
     },
 
@@ -166,20 +168,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         this.chatWidgetView =
             view(ChatWidgetView)
-                // .children([
-                //     view(PanelView)
-                //         .appendTo('*[id|="chat-widget-messages"]')
-                //         .children([
-                //             view(ListView)
-                //                 .id("messageListView")
-                //                 .appendTo('*[id|="panel-body"]')
-                //         ])
-                    //     ,
-                    // view(TextAreaView)
-                    //     .id("textAreaView")
-                    //     .attributes({rows: 1})
-                    //     .appendTo('*[id|="chat-widget-input"]')
-                // ])
                 .build();
 
 
@@ -187,8 +175,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.chatWidgetView);
-        // this.messageListView    = this.findViewById("messageListView");
-        // this.textAreaView       = this.findViewById("textAreaView");
     },
 
     /**
@@ -249,11 +235,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
         var _this = this;
         var chatMessage = event.getData();
-        console.log("event:", event);
-        console.log("chatMessage:", chatMessage);
         chatMessage.conversationId      = this.conversationModel.get("ownerId");
         chatMessage.conversationOwnerId = this.conversationModel.get("_id");
-        // event.preventDefault();
+
+        var newChatMessageModel = new ChatMessageModel(chatMessage, null);
+        this.chatMessageCollection.add(newChatMessageModel);
+
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageObj){
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
             console.log("error:", error, "chatMessageObj:", chatMessageObj);
@@ -261,7 +248,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
                 chatMessageObj.sentBy   = sender.firstName + sender.lastName;
                 chatMessageObj.sentAt   = chatMessageObj.createdAt;
-                _this.chatMessageCollection.add(new ChatMessageModel(chatMessageObj, chatMessageObj._id));
+                chatMessageObj.pending  = false;
+
+                newChatMessageModel.set(chatMessageObj);
             }
         });
     },
@@ -280,25 +269,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     handleChatMessageCollectionAdd: function(chatMessageModel) {
         var chatMessageContainer = new ChatMessageContainer(chatMessageModel);
         this.chatWidgetMessagesContainer.addContainerChild(chatMessageContainer, '.list');
-        // console.log("Inside ChatWidgetContainer#handleChatMessageCollectionAdd");
-        // console.log("chatMessageModel:", chatMessageModel);
-        // var listItemView =
-        //     view(ListItemView)
-        //         .model(chatMessageModel)
-        //         .attributes({size: "flex"})
-        //         .children([
-        //             view(MessageView)
-        //                 .model(chatMessageModel)
-        //         ])
-        //         .build();
-
-        // this.messageListView.addViewChild(listItemView);
     }
 });
 
 annotate(ChatWidgetContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("userManagerModule").ref("userManagerModule")
     ])
 );

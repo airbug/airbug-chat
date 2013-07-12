@@ -137,6 +137,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        // this.chatMessageModel.bind("change:sentAt", this.chatMessageView.renderView , this);
 
     }
 
