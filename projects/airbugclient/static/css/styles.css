@@ -500,7 +500,7 @@ html, body {
 
 .message-sent-at {
     color: rgb(210, 228, 243);
-    text-align:center;
+    text-align:right;
     line-height: 30px;
 }
 
@@ -536,16 +536,10 @@ html, body {
 
 /* ZeroClipboard
 *******************************************************************/
+/* these ids do not currently exist*/
 
-  #d_clip_button {
-    width:150px;
-    text-align:center;
-    border:1px solid black;
-    background-color:#ccc;
-    margin:10px; padding:10px;
-  }
-  #d_clip_button.zeroclipboard-is-hover { background-color:#eee; }
-  #d_clip_button.zeroclipboard-is-active { background-color:#aaa; }
+    .copy-to-clipboard.zeroclipboard-is-hover { background-color:#eee; }
+    .copy-to-clipboard.zeroclipboard-is-active { background-color:#aaa; }
 
 /* Twitter Bootstrap Overrides
 *******************************************************************/
