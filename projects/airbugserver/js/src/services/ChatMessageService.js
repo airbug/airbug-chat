@@ -80,13 +80,35 @@ var ChatMessageService = Class.extend(Obj, {
             // if(currentUser.roomsList.indexOf(chatMessage.conversationOwnerId) > -1 ){
             //     console.log("Inside ChatMessageService#createChatMessage. currentUser roomslist contains chatMessage.conversationOwnerId");
 
-                this.chatMessageManager.create(chatMessage, function(error, chatMessage){
-                    if(!error && chatMessage){
-                        callback(error, chatMessage)
-                    } else {
-                        callback(error);
-                    }
-                });
+                if(chatMessage.retry){
+                    delete chatMessage.retry;
+                    this.chatMessageManager.findOne(chatMessage, function(error, chatMessage){
+                        if(!error){
+                            if(chatMessage){
+                                callback(error, chatMessage);
+                            } else {
+                                this.chatMessageManager.create(chatMessage, function(error, chatMessage){
+                                    if(!error && chatMessage){
+                                        callback(error, chatMessage)
+                                    } else {
+                                        callback(error);
+                                    }
+                                });
+                            }
+                        } else {
+                            //TODO
+                        }
+                    });
+                } else {
+                    this.chatMessageManager.create(chatMessage, function(error, chatMessage){
+                        if(!error && chatMessage){
+                            callback(error, chatMessage)
+                        } else {
+                            callback(error);
+                        }
+                    });
+                }
+
             // } else {
             //     callback(new Error("Unauthorized Access"), null);
             // }

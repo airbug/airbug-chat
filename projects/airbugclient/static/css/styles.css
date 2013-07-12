@@ -514,26 +514,21 @@ html, body {
     margin: 0;
 }
 
-.message-pending-true {
+.message-pending-true, .message-failed-true  {
     position: absolute;
     top: 9px;
     right: 14px;
     margin: 0;
 }
 
-.message-pending-false {
+.message-pending-false, .message-failed-false {
     display: none;
 }
 
-.message-failed-true {
-    position: absolute;
-    top: 9px;
-    right: 14px;
-    margin: 0;
-}
-
-.message-failed-false {
-    display: none;
+.message-failed-true>button, .message-failed-false>button {
+    border-radius: 15px;
+    line-height: 16px;
+    padding: 1px 2px 1px 2px;
 }
 
 .message-body {

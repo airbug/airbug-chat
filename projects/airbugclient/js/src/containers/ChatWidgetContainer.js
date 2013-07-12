@@ -237,6 +237,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var chatMessage = event.getData();
         chatMessage.conversationId      = this.conversationModel.get("ownerId");
         chatMessage.conversationOwnerId = this.conversationModel.get("_id");
+        chatMessage.sentAt              = new Date().toJSON();
 
         var newChatMessageModel = new ChatMessageModel(chatMessage, null);
         this.chatMessageCollection.add(newChatMessageModel);
@@ -249,7 +250,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 chatMessageObj.sentBy   = sender.firstName + sender.lastName;
                 chatMessageObj.sentAt   = chatMessageObj.createdAt;
                 chatMessageObj.pending  = false;
+                // chatMessageObj.failed   = false;
 
+                newChatMessageModel.set(chatMessageObj);
+            } else if (error && !chatMessageObj){
+                //TEST This
+                chatMessageObj = {failed: true};
                 newChatMessageModel.set(chatMessageObj);
             }
         });

@@ -80,7 +80,19 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         this.chatMessageView            = null;
 
         // Modules
-        //
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ChatMessageManagerModule}
+         */
+        this.chatMessageManagerModule   = null;
+
+        /**
+         * @private
+         * @type {UserManagerModule}
+         */
+        this.userManagerModule          = null;
 
     },
 
@@ -136,10 +148,19 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     initializeContainer: function() {
+        var _this = this;
         this._super();
-        // this.chatMessageModel.bind("change:sentAt", this.chatMessageView.renderView , this);
+        this.chatMessageView.$el.find(".message-failed-false, .message-failed-true")
+            .on("click", function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                console.log("firing chatMessage retry click event");
+                _this.handleChatMessageRetry()
+                // _this.chatMessageView.dispatchEvent(new Event("retry", _this.chatMessageModel.toJSON()));
+                return false;
+            });
 
-    }
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -158,9 +179,41 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     // Model Event Handlers
     //-------------------------------------------------------------------------------
 
+    handleChatMessageRetry: function(){
+        console.log("Inside ChatMessageContainer#handleRetry");
+        var _this = this;
+        var chatMessage     = this.chatMessageModel.toJSON();
+        chatMessage.retry   = true;
+
+        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageObj){
+            console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
+            console.log("error:", error, "chatMessageObj:", chatMessageObj);
+            var chatMessageModel = _this.chatMessageModel;
+
+            if(!error && chatMessageObj){
+                var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
+                chatMessageObj.sentBy   = sender.firstName + sender.lastName;
+                chatMessageObj.sentAt   = chatMessageObj.createdAt;
+                chatMessageObj.pending  = false;
+                chatMessageObj.failed   = false;
+
+                chatMessageModel.set(chatMessageObj);
+            } else {
+                //TEST This
+                chatMessage.failed = true;
+                chatMessageModel.set(chatMessage);
+            }
+        });
+    },
 
 });
 
+annotate(ChatMessageContainer).with(
+    autowired().properties([
+        property("chatMessageManagerModule").ref("chatMessageManagerModule"),
+        property("userManagerModule").ref("userManagerModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports
