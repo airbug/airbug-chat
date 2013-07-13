@@ -178,7 +178,7 @@ var ChatMessageManagerModule = Class.extend(Obj, {
         var _this = this;
         this.airbugApi.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
             if(!error && chatMessageObjs.length > 0){
-                chatMessageObj.forEach(function(chatMessageObj){
+                chatMessageObjs.forEach(function(chatMessageObj){
                     _this.putByConversationId(chatMessageObj.conversationId, chatMessageObj);
                     _this.put(chatMessageObj._id, chatMessageObj);
                 });

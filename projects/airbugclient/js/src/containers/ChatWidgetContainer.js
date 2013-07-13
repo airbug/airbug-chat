@@ -211,10 +211,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     loadChatMessageCollection: function(conversationId) {
         // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding ChatMessageModels to the chatMessageCollection.
-
+        var _this = this;
         this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
             if(!error && chatMessageObjs.length > 0){
                 chatMessageObjs.forEach(function(chatMessageObj){
+                    chatMessageObj.pending  = false;
+                    chatMessageObj.failed   = false;
+                    chatMessageObj.sentAt   = chatMessageObj.createdAt;
                     _this.chatMessageCollection.add(new ChatMessageModel(chatMessageObj, chatMessageObj._id));
                 });
             }
@@ -235,8 +238,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
         var _this = this;
         var chatMessage = event.getData();
-        chatMessage.conversationId      = this.conversationModel.get("ownerId");
-        chatMessage.conversationOwnerId = this.conversationModel.get("_id");
+        chatMessage.conversationId      = this.conversationModel.get("_id");
+        chatMessage.conversationOwnerId = this.conversationModel.get("ownerId");
         chatMessage.sentAt              = new Date().toJSON();
 
         var newChatMessageModel = new ChatMessageModel(chatMessage, null);

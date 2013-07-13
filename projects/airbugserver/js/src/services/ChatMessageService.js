@@ -89,6 +89,17 @@ var ChatMessageService = Class.extend(Obj, {
                             } else {
                                 this.chatMessageManager.create(chatMessage, function(error, chatMessage){
                                     if(!error && chatMessage){
+                                        //TODO
+                                        _this.conversationManager.findById(chatMessage.conversationId, function(error, conversation){
+                                            if(!error && conversation) {
+                                                conversation.chatMessageIdList.push(chatMessage.id);
+                                                conversation.save(function(error, conversation){
+                                                    //TODO
+                                                });
+                                            } else {
+                                                //TODO
+                                            }
+                                        });
                                         callback(error, chatMessage)
                                     } else {
                                         callback(error);
@@ -102,6 +113,17 @@ var ChatMessageService = Class.extend(Obj, {
                 } else {
                     this.chatMessageManager.create(chatMessage, function(error, chatMessage){
                         if(!error && chatMessage){
+                            //TODO
+                            _this.conversationManager.findById(chatMessage.conversationId, function(error, conversation){
+                                if(!error && conversation) {
+                                    conversation.chatMessageIdList.push(chatMessage.id);
+                                    conversation.save(function(error, conversation){
+                                        //TODO
+                                    });
+                                } else {
+                                    //TODO
+                                }
+                            });
                             callback(error, chatMessage)
                         } else {
                             callback(error);
@@ -120,6 +142,9 @@ var ChatMessageService = Class.extend(Obj, {
     retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
         // TODO REFACTOR Reduce db calls
         var _this = this;
+        console.log("conversationId:", conversationId);
+        //TODO
+        //Refactor this so that you only make one call and it returns a populated messageList
         this.conversationManager.findById(conversationId).lean(true).exec(function(error, conversation){
             console.log("Inside ChatMessageService#retrieveChatMessagesByConversationId callback");
             console.log("Error:", error, "Conversation:", conversation);
@@ -128,7 +153,7 @@ var ChatMessageService = Class.extend(Obj, {
                 //TODO
                 // if(currentUser.roomsList.indexOf(conversation.ownerId) > -1){
                     _this.chatMessageManager
-                        .find({id: conversationId})
+                        .find({conversationId: conversationId})
                         .lean(true)
                         .exec(function(error, chatMessages){
                             callback(error, chatMessages);
