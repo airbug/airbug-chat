@@ -43,7 +43,7 @@ var MessageView = Class.extend(MustacheView, {
                     '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
                     '<div id="message-pending-{{cid}}" class="message-pending-{{model.pending}}"><img src="/img/pending-dark-blue.gif"></div>' +
                     '<div id="message-failed-{{cid}}"  class="message-failed-{{model.failed}}"><button class="btn btn-warning btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
-                    '<div id="message-sent-at-{{cid}}" class="message-sent-at">{{model.sentAt}}</div>' +
+                    '<div id="message-created-at-{{cid}}" class="message-created-at">{{model.createdAt}}</div>' +
                     '<div id="message-message-{{cid}}" class="message-body">{{model.body}}</div>' +
                 '</div>',
 
@@ -63,8 +63,8 @@ var MessageView = Class.extend(MustacheView, {
             case "message":
                 this.findElement('#message-message-' + this.cid).text(attributeValue);
                 break;
-            case "sentAt":
-                this.findElement('#message-sent-at-' + this.cid).text(attributeValue);
+            case "createdAt":
+                this.findElement('#message-created-at-' + this.cid).text(attributeValue);
                 break;
             case "sentBy":
                 this.findElement('#message-sent-by-' + this.cid).text(attributeValue);

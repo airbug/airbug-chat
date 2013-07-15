@@ -217,7 +217,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 chatMessageObjs.forEach(function(chatMessageObj){
                     chatMessageObj.pending  = false;
                     chatMessageObj.failed   = false;
-                    chatMessageObj.sentAt   = chatMessageObj.createdAt;
                     _this.chatMessageCollection.add(new ChatMessageModel(chatMessageObj, chatMessageObj._id));
                 });
             }
@@ -253,7 +252,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             if(!error && chatMessageObj){
                 var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
                 chatMessageObj.sentBy   = sender.firstName + sender.lastName;
-                chatMessageObj.sentAt   = chatMessageObj.createdAt;
                 chatMessageObj.pending  = false;
                 // chatMessageObj.failed   = false;
 

@@ -498,7 +498,7 @@ html, body {
     position: relative;
 }
 
-.message-sent-at {
+.message-sent-at, .message-created-at {
     color: rgb(210, 228, 243);
     text-align:right;
     line-height: 30px;
