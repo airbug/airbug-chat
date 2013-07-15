@@ -234,6 +234,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     // Model Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     */
     handleInputFormSubmit: function(event){
         console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
         var _this = this;
@@ -276,8 +278,18 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @param {ChatMessageModel} chatMessageModel
      */
     handleChatMessageCollectionAdd: function(chatMessageModel) {
-        var chatMessageContainer = new ChatMessageContainer(chatMessageModel);
-        this.chatWidgetMessagesContainer.addContainerChild(chatMessageContainer, '.list');
+        this.chatWidgetMessagesContainer.addContainerChild(new ChatMessageContainer(chatMessageModel), '.list');
+        this.animateChatMessageCollectionAdd();
+    },
+
+    /**
+     * @private
+     */
+    animateChatMessageCollectionAdd: function(){
+        var panelBody = this.chatWidgetView.$el.find(".panel-body");
+        panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
+        //TODO:
+        //make the transition time dynamic to fit the length of the message and the speed of incoming messages
     }
 });
 

@@ -154,7 +154,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
 
-    },
+    }
 
 
     //-------------------------------------------------------------------------------
