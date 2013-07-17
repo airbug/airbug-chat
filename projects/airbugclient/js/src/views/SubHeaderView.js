@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('IconView')
+//@Export('SubHeaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,57 +29,36 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var IconView = Class.extend(MustacheView, {
+var SubHeaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<i class="icon-{{attributes.type}} {{iconColorClass}}"></i>',
-
-
-    //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
+    template:   '<div id="{{id}}" class="subheader-wrapper">' +
+                    '<div class="subheader">' +
+                        '<div class="subheader-left">' +
+                        '</div>' +
+                        '<div class="subheader-center">' +
+                        '</div>' +
+                        '<div class="subheader-right">' +
+                        '</div>' +
+                    '</div>' +
+                '</div>',
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this._super();
-        data.iconColorClass = "";
-        switch (this.attributes.color) {
-            case IconView.Color.WHITE:
-                data.iconColorClass += "icon-white";
-                break;
-        }
+        var data    = this._super();
+        data.id     = this.getId();
         return data;
     }
 });
-
-/**
- * @enum {number}
- */
-IconView.Color = {
-    BLACK: 1,
-    WHITE: 2
-};
-
-/**
- * @enum {string}
- */
-IconView.Type = {
-    CHEVRON_LEFT: "chevron-left",
-    USER: "user",
-    SHARE: "share",
-    PLUS: "plus",
-    EXCLAMATION: "exclamation-sign",
-    ALIGN_JUSTIFY: "align-justify"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.IconView", IconView);
+bugpack.export("airbug.SubHeaderView", SubHeaderView);

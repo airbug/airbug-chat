@@ -38,14 +38,11 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
 
     template:
                         '<form id="chat-widget-input-form-{{cid}}" class="form-horizontal">' +
-                            '<div class="control-group">' +
+                            '<div class="control-group control-group-textarea">' +
                                 '<textarea form="chat-widget-input-form-{{cid}}" id="text-area-{{cid}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>' +
                             '</div>' +
-                            '<div class="control-group">' +
-                                '<button id="submit-button-{{cid}}" type="submit" class="btn">Send</button>' +
-                            '</div>' +
-                            '<div class="control-group">' +
-                                '<input id="submit-on-enter-toggle-{{cid}}" type="checkbox" class="">Press enter to send</button>' +
+                            '<div class="control-group control-group-checkbox">' +
+                                '<input id="submit-on-enter-toggle-{{cid}}" type="checkbox" checked="checked" class="checkbox"> Press enter to send</button>' +
                             '</div>' +
                         '</form>',
 
@@ -61,7 +58,6 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         this._super();
         this.$el.find('#text-area-' + this.cid).off();
         this.$el.find('form').off();
-        this.$el.find('#submit-button-' + this.cid).off();
     },
 
     /**
@@ -74,12 +70,6 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
             _this.handleKeyPress(event);
         });
         this.$el.find('form').on('submit', function(event){
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
-        });
-        this.$el.find('#submit-button-' + this.cid).on('click', function(event){
-            _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();
             return false;

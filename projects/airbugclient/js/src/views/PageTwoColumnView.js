@@ -59,6 +59,10 @@ var PageTwoColumnView = Class.extend(MustacheView, {
                 data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";
                 break;
+            case PageTwoColumnView.Configuration.THICK_RIGHT:
+                data.leftColumnSpan = "span3";
+                data.rightColumnSpan = "span9";
+                break;
         }
         return data;
     }
@@ -69,7 +73,8 @@ var PageTwoColumnView = Class.extend(MustacheView, {
  */
 PageTwoColumnView.Configuration = {
     DEFAULT: 1,
-    THIN_RIGHT: 2
+    THIN_RIGHT: 2,
+    THICK_RIGHT: 3
 };
 
 

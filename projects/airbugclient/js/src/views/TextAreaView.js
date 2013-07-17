@@ -50,7 +50,7 @@ var TextAreaView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         if (!TypeUtil.isNumber(data.attributes.rows)) {
-            data.attributes.rows = 3;
+            data.attributes.rows = 2;
         }
         return data;
     }

@@ -42,7 +42,7 @@ html, body {
     left: 0px;
     margin-top: 60px;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: hidden;
     position: absolute;
     right: 0px;
     top: 0px;
@@ -65,6 +65,66 @@ html, body {
     right: 0px;
     top: 0px;
     width: auto;
+}
+
+.page-with-header {
+    top: 40px;
+}
+
+.subheader-row {
+
+}
+
+.subheader-wrapper {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 32px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    height: 40px;
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(196, 196, 196);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px #888888;
+    margin: 2px 4px;
+    overflow: hidden;
+}
+
+.subheader {
+    position: relative;
+}
+
+.subheader-left, .subheader-center, .subheader-right {
+    position: absolute;
+    top: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.subheader-left {
+    width: 40%;
+    left: 0;
+}
+
+.subheader-center {
+    width: 20%;
+    left: 40%;
+    right: 40%;
+    padding-top: 4px;
+    text-align: center;
+}
+
+.subheader-right {
+    width: 40%;
+    right: 0;
+}
+
+.subheader-wrapper .button-wrapper {
+    padding: 2px 11px 0px 11px;
 }
 
 .rightrow {
@@ -171,11 +231,11 @@ html, body {
 }
 
 .box-with-header .box-body {
-    margin-top: 40px;
+    margin-top: 46px;
 }
 
 .box-with-footer .box-body {
-    margin-bottom: 40px;
+    margin-bottom: 46px;
 }
 
 .box-footer {
@@ -452,42 +512,66 @@ html, body {
     width: 100%;
 }
 
+.chat-widget-messages, .chat-widget-input {
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: auto;
+    margin: 0px;
+}
+
 .chat-widget-messages {
+    top: 0px;
     bottom: 0px;
     height: auto;
-    left: 0px;
-    margin-bottom: 80px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-    position: absolute;
-    right: 0px;
-    top: 0px;
     width: auto;
+    margin-bottom: 5.5em;
 }
 
 .chat-widget-input {
-    height: 80px;
-    position: absolute;
-    width: 100%;
-    bottom: 0px;
+    min-height: 5.5em;
+    bottom: 0;
 }
 
 .chat-widget-input textarea {
-    bottom: 0px;
-    /*box-shadow: 2px 2px 10px #888888;*/
-    height: auto;
-    left: 0px;
-    margin-bottom: 2px;
+    height: 3em;
     margin-left: 2px;
     margin-right: 2px;
-    margin-top: 40px;
+    margin-top: 2px;
     position: absolute;
     resize: none;
-    right: 0px;
-    top: 0px;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 30px;
     width: auto;
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(196, 196, 196);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px #888888;
 }
+
+.chat-widget-input .btn {
+    position: absolute;
+    margin: 2px 4px 4px 4px;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 50px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px 2px #888888;
+
+}
+
+.chat-widget-input .control-group-checkbox {
+    position: absolute;
+    top: 3.5em;
+    margin-top: 4px;
+    margin-left: 2px;
+}
+
 
 
 /* Message CSS
@@ -538,6 +622,24 @@ html, body {
     margin-bottom: 10px;
 }
 
+/* Hamburger Panel CSS
+*******************************************************************/
+
+.hamburger-panel-left, .hamburger-panel-right {
+    background-color: rgb(207, 226, 243); /* Old browsers */
+}
+
+.hamburger-panel-hidden {
+    position: absolute;
+}
+
+.hamburger-panel-hidden.hamburger-panel-left {
+    right: 100%;
+}
+
+.hamburger-panel-hidden.hamburger-panel-right {
+    left: 100%;
+}
 
 /* Settings CSS
 *******************************************************************/

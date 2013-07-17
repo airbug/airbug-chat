@@ -126,6 +126,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          */
         this.chatMessageManagerModule       = null;
 
+        /**
+         * @private
+         * @type {CurrentUserManagerModule}
+         */
         this.currentUserManagerModule       = null;
 
         /**

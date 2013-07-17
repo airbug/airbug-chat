@@ -35,7 +35,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, userManagerModule) {
+    _constructor: function(airbugApi, userManagerModule, roomManagerModule) {
 
         this._super();
 
@@ -55,8 +55,12 @@ var CurrentUserManagerModule = Class.extend(Obj, {
          */
         this.currentUser        = null;
 
+        /**
+         * @type {UserManagerModule}
+         */
         this.userManagerModule  = userManagerModule;
 
+        this.roomManagerModule  = roomManagerModule;
     },
 
 
@@ -126,6 +130,13 @@ var CurrentUserManagerModule = Class.extend(Obj, {
                 _this.currentUser = currentUser;
                 _this.userManagerModule.put(currentUser._id, currentUser);
                 console.log("currentUser updated");
+                //TODO:
+                //update rooms
+                // _this.roomManagerModule.updateRooms(currentUser.roomsList, function(error){
+                //     if(!error){
+                //         console.log("rooms updated");
+                //     }
+                // });
             }
             callback(error, currentUser);
         });

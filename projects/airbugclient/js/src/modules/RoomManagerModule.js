@@ -77,7 +77,6 @@ var RoomManagerModule = Class.extend(Obj, {
     },
 
     getAll: function(){
-        console.log("getting all rooms");
         return this.roomsMap.getValueArray();
     },
 
@@ -97,8 +96,19 @@ var RoomManagerModule = Class.extend(Obj, {
         this.roomsMap.remove(id);
     },
 
+    updateRooms: function(roomIds, callback){
+        roomIds.forEach(function(roomId){
+            var room = _this.get(roomId);
+            if(!room) {
+                _this.retrieveRoom(roomId, function(error, room){
+
+                });
+            }
+        });
+    },
+
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Class Instance Methods
     //-------------------------------------------------------------------------------
 
 
@@ -113,10 +123,8 @@ var RoomManagerModule = Class.extend(Obj, {
         this.airbugApi.createRoom(roomObj, function(error, room){
             if(!error && room){
                 _this.put(room._id, room);
-                callback(error, room);
-            } else {
-                callback(error, null);
             }
+            callback(error, room);
         });
     },
 
@@ -127,13 +135,10 @@ var RoomManagerModule = Class.extend(Obj, {
     joinRoom: function(roomId, callback) {
         var _this = this;
         this.airbugApi.joinRoom(roomId, function(error, room){
-            console.log("Inside RoomManagerModule#joinRoom");
             if(!error && room){
                 _this.put(room._id, room);
-                callback(null, room);
-            } else {
-                callback(error, room);
             }
+            callback(error, room);
         });
     },
 
@@ -144,13 +149,31 @@ var RoomManagerModule = Class.extend(Obj, {
     leaveRoom: function(roomId, callback) {
         var _this = this;
         this.airbugApi.leaveRoom(roomId, function(error, roomId){
-            console.log("Inside RoomManagerModule#leaveRoom");
             if(!error){
-                console.log("removing room from cache");
                 _this.remove(roomId);
-                callback(null, roomId);
-            } else {
-                callback(error, roomId);
+            }
+            callback(error, roomId);
+        });
+    },
+
+    retrieveRoom: function(roomId, callback) {
+        var _this = this;
+        this.airbugApi.retrieveRooms(roomId, function(error, room){
+            if(!error && room){
+                _this.put(room._id, room);
+                callback(error, room);
+            }
+        });
+    },
+
+    retrieveRooms: function(roomIds, callback) {
+        var _this = this;
+        this.airbugApi.retrieveRooms(roomIds, function(error, rooms){
+            if(!error && rooms){
+                rooms.forEach(function(room){
+                    _this.put(room._id, room);
+                });
+                callback(error, rooms);
             }
         });
     }

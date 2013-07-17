@@ -7,8 +7,12 @@
 //@Export('ChatWidgetInputFormContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.ChatWidgetInputFormView')
+//@Require('airbug.TextView')
+//@Require('airbug.TwoColumnView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -28,8 +32,12 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var TextView                = bugpack.require('airbug.TextView');
+var TwoColumnView           = bugpack.require('airbug.TwoColumnView');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -77,6 +85,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {TwoColumnView}
+         */
+        this.twoColumnView              = null;
+
+        /**
+         * @private
          * @type {ChatWidgetInputFormView}
          */
         this.chatWidgetInputFormView    = null;
@@ -89,7 +103,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     activateContainer: function(routerArgs){
         this._super(routerArgs);
-        this.chatWidgetInputFormView.focus();
+        this.twoColumnView.$el.find("textarea")[0].focus();
     },
 
     /**
@@ -101,16 +115,31 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetInputFormView =
-            view(ChatWidgetInputFormView) //or chatWidgetInputFormView
-                // .attributes({type: "primary", align: "left"})
+        this.twoColumnView =
+            view(TwoColumnView)
+                .attributes({configuration: TwoColumnView.Configuration.EXTRA_THIN_RIGHT_SMALL})
+                .id("chatWidgetInputRowContainer")
+                .children([
+                    view(ChatWidgetInputFormView)
+                        .id("chatWidgetInputForm")
+                        .appendTo(".column1of2"),
+                    view(ButtonView)
+                        .appendTo(".column2of2")
+                        .children([
+                            view(TextView)
+                                .attributes({text: "Send"})
+                                .appendTo('*[id|="button"]'),
+                        ])
+                ])
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.chatWidgetInputFormView);
+        this.setViewTop(this.twoColumnView);
+
+        this.chatWidgetInputFormView = this.findViewById("chatWidgetInputForm");
     },
 
     /**
@@ -118,15 +147,9 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.chatWidgetInputFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-    },
+        this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
+        this.twoColumnView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
 
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
-        this.chatWidgetInputFormView.$el.find("textarea")[0].focus();
     },
 
 
@@ -140,6 +163,16 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     handleFormSubmittedEvent: function(event) {
         // See ChatWidgetContainer
+    },
+
+    handleButtonClickedEvent: function(event) {
+        this.chatWidgetInputFormView.submitForm();
+        // this.$el.find('#submit-button-' + this.cid).on('click', function(event){
+        //     _this.handleSubmit(event);
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        //     return false;
+        // });
     }
 });
 

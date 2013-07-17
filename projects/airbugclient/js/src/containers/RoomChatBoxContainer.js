@@ -10,7 +10,11 @@
 //@Require('airbug.BoxWithHeaderView')
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
-//@Require('airbug.RoomNamePanelContainer')
+//@Require('airbug.LeaveRoomButtonContainer')
+//@Require('airbug.RoomsHamburgerButtonContainer')
+//@Require('airbug.SubHeaderView')
+//@Require('airbug.TextView')
+//@Require('airbug.TwoColumnView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -29,14 +33,18 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var BoxWithHeaderView           = bugpack.require('airbug.BoxWithHeaderView');
-var ChatWidgetContainer         = bugpack.require('airbug.ChatWidgetContainer');
-var ConversationModel           = bugpack.require('airbug.ConversationModel');
-var RoomNamePanelContainer      = bugpack.require('airbug.RoomNamePanelContainer');
-var Annotate                    = bugpack.require('annotate.Annotate');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer             = bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel               = bugpack.require('airbug.ConversationModel');
+var LeaveRoomButtonContainer        = bugpack.require('airbug.LeaveRoomButtonContainer');
+var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
+var SubHeaderView                   = bugpack.require('airbug.SubHeaderView');
+var TextView                        = bugpack.require('airbug.TextView');
+var TwoColumnView                   = bugpack.require('airbug.TwoColumnView');
+var Annotate                        = bugpack.require('annotate.Annotate');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -77,13 +85,25 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatWidgetContainer}
          */
-        this.chatWidgetContainer        = null;
+        this.chatWidgetContainer            = null;
 
         /**
          * @private
-         * @type {RoomNamePanelContainer}
+         * @type {LeaveRoomButtonContainer}
          */
-        this.roomNamePanelContainer     = null;
+        this.leaveRoomButtonContainer       = null;
+
+        /**
+         * @private
+         * @type {RoomMemberListPanelContainer}
+         */
+        this.roomMemberListPanelContainer   = null;
+
+        /**
+         * @private
+         * @type {RoomsHamburgerButtonContainer}
+         */
+        this.roomsHamburgerButtonContainer  = null;
 
 
         // Models
@@ -109,7 +129,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderView}
          */
-        this.boxWithHeaderView          = null;
+        this.boxWithHeaderView                    = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -159,7 +179,21 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
         this.boxWithHeaderView = 
             view(BoxWithHeaderView)
-            .build();
+                .children([
+                    view(SubHeaderView)
+                    .id("roomChatBoxHeader")
+                    .appendTo(".box-header")
+                    .children([
+                        view(TextView)
+                            .attributes({text: this.roomModel.get("name")})
+                            .appendTo('.subheader-center')
+                    ]),
+                    view(TwoColumnView)
+                        .id("roomChatBoxRowContainer")
+                        .attributes({configuration: TwoColumnView.Configuration.THICK_RIGHT})
+                        .appendTo(".box-body")
+                ])
+                .build();
 
 
         // Wire Up Views
@@ -173,10 +207,18 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.chatWidgetContainer    = new ChatWidgetContainer(this.conversationModel);
-        this.roomNamePanelContainer = new RoomNamePanelContainer(this.roomModel);
-        this.addContainerChild(this.chatWidgetContainer,    "#box-body-"    + this.boxWithHeaderView.cid);
-        this.addContainerChild(this.roomNamePanelContainer, "#box-header-"  + this.boxWithHeaderView.cid);
+
+        console.log("About to create container children inside RoomChatBoxContainer");
+
+        this.leaveRoomButtonContainer               = new LeaveRoomButtonContainer(this.roomModel);
+        this.roomsHamburgerButtonContainer          = new RoomsHamburgerButtonContainer();
+        this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
+        this.chatWidgetContainer                    = new ChatWidgetContainer(this.conversationModel);
+
+        this.addContainerChild(this.leaveRoomButtonContainer,       ".subheader-right");
+        this.addContainerChild(this.roomsHamburgerButtonContainer,  ".subheader-left");
+        this.addContainerChild(this.roomMemberListPanelContainer,   ".column1of2");
+        this.addContainerChild(this.chatWidgetContainer,            ".column2of2");
     },
 
     /**

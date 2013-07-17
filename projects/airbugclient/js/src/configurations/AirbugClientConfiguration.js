@@ -245,8 +245,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {UserManagerModule} userManagerModule
      * @return {CurrentUserManagerModule}
      */
-    currentUserManagerModule: function(airbugApi, userManagerModule){
-        return new CurrentUserManagerModule(airbugApi, userManagerModule);
+    currentUserManagerModule: function(airbugApi, userManagerModule, roomManagerModule){
+        return new CurrentUserManagerModule(airbugApi, userManagerModule, roomManagerModule);
     },
 
     /**
@@ -353,7 +353,8 @@ annotate(AirbugClientConfiguration).with(
         module("currentUserManagerModule")
             .args([
                 arg("airbugApi").ref("airbugApi"),
-                arg("userManagerModule").ref("userManagerModule")
+                arg("userManagerModule").ref("userManagerModule"),
+                arg("roomManagerModule").ref("roomManagerModule")
             ]),
         module("navigationModule")
             .properties([
