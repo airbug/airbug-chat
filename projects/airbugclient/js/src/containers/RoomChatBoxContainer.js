@@ -207,9 +207,6 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-
-        console.log("About to create container children inside RoomChatBoxContainer");
-
         this.leaveRoomButtonContainer               = new LeaveRoomButtonContainer(this.roomModel);
         this.roomsHamburgerButtonContainer          = new RoomsHamburgerButtonContainer();
         this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);

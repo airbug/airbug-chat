@@ -144,7 +144,6 @@ var RoomsHamburgerButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        console.log("Inside RoomsHamburgerButtonContainer#hearButtonClickedEvent");
         this.handleButtonClick();
     },
 
@@ -153,7 +152,6 @@ var RoomsHamburgerButtonContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     handleButtonClick: function(event) {
-        console.log("RoomsHamburgerButtonContainer#handleButtonClick");
         var parentContainer         = this.getContainerParent();
         var parentView              = parentContainer.getViewTop();
         var grandparentContainer    = parentContainer.getContainerParent();
@@ -164,11 +162,6 @@ var RoomsHamburgerButtonContainer = Class.extend(CarapaceContainer, {
         var chatWidget              = parentView.$el.find("#roomChatBoxRowContainer>.column2of2");
         var chatInput               = parentView.$el.find("#chatWidgetInputRowContainer>.column1of2");
         var sendButton              = parentView.$el.find("#chatWidgetInputRowContainer>.column2of2");
-
-        console.log("hamburgerPanel:",  hamburgerPanel);
-        console.log("roomChatBox:",     roomChatBox);
-        console.log("roomMemberList:",  roomMemberList);
-        console.log("chatWidget:",      chatWidget);
 
         chatInput.toggleClass("span7").toggleClass("span5");
         sendButton.toggleClass("span2").toggleClass("span1");

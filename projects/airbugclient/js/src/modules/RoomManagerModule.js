@@ -156,6 +156,7 @@ var RoomManagerModule = Class.extend(Obj, {
         });
     },
 
+    //TODO
     retrieveRoom: function(roomId, callback) {
         var _this = this;
         this.airbugApi.retrieveRooms(roomId, function(error, room){
@@ -166,6 +167,7 @@ var RoomManagerModule = Class.extend(Obj, {
         });
     },
 
+    //TODO
     retrieveRooms: function(roomIds, callback) {
         var _this = this;
         this.airbugApi.retrieveRooms(roomIds, function(error, rooms){

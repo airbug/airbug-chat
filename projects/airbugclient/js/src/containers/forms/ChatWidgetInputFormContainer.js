@@ -167,12 +167,6 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     handleButtonClickedEvent: function(event) {
         this.chatWidgetInputFormView.submitForm();
-        // this.$el.find('#submit-button-' + this.cid).on('click', function(event){
-        //     _this.handleSubmit(event);
-        //     event.preventDefault();
-        //     event.stopPropagation();
-        //     return false;
-        // });
     }
 });
 
