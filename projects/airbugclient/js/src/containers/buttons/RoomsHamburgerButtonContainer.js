@@ -7,10 +7,8 @@
 //@Export('RoomsHamburgerButtonContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonDropdownView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.DropdownItemView')
 //@Require('airbug.IconView')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
@@ -31,10 +29,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ButtonDropdownView      = bugpack.require('airbug.ButtonDropdownView');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
 var IconView                = bugpack.require('airbug.IconView');
 var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
