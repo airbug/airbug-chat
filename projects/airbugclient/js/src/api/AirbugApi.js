@@ -82,18 +82,22 @@ var AirbugApi = Class.extend(Obj, {
                 conversationOwnerId: conversationOwnerId
             }
         };
+
         /**
          * @param {string} requestType
          * @param {{*}} requestData
          * @param {function(Exception, CallResponse)} callback
          */
         this.bugCallClient.request("createChatMessage", requestData, function(exception, callResponse){
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            var chatMessage = data.chatMessage;
-            console.log("Error:", error, "chatMessage:", chatMessage);
-            callback(error, chatMessage);
+            if(!exception){
+                var type        = callResponse.getType();
+                var data        = callResponse.getData();
+                var error       = data.error;
+                var chatMessage = data.chatMessage;
+                callback(error, chatMessage);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -103,11 +107,15 @@ var AirbugApi = Class.extend(Obj, {
             conversationId: conversationId
         };
         this.bugCallClient.request("retrieveChatMessagesByConversationId", requestData, function(exception, callResponse){
-            var type            = callResponse.getType();
-            var data            = callResponse.getData();
-            var error           = data.error;
-            var chatMessages    = data.chatMessages;
-            callback(error, chatMessages);
+            if(!exception){
+                var type            = callResponse.getType();
+                var data            = callResponse.getData();
+                var error           = data.error;
+                var chatMessages    = data.chatMessages;
+                callback(error, chatMessages);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -125,11 +133,15 @@ var AirbugApi = Class.extend(Obj, {
             conversationId: conversationId
         };
         this.bugCallClient.request("retrieveConversation", requestData, function(exception, callResponse){
-            var type            = callResponse.getType();
-            var data            = callResponse.getData();
-            var error           = data.error;
-            var conversation    = data.conversation;
-            callback(error, conversation);
+            if(!exception){
+                var type            = callResponse.getType();
+                var data            = callResponse.getData();
+                var error           = data.error;
+                var conversation    = data.conversation;
+                callback(error, conversation);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -149,11 +161,15 @@ var AirbugApi = Class.extend(Obj, {
             userId: userId
         };
         this.bugCallClient.request("addUserToRoom", requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var room    = data.room;
-            callback(error, room);
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var room    = data.room;
+                callback(error, room);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -168,15 +184,19 @@ var AirbugApi = Class.extend(Obj, {
             }
         };
         this.bugCallClient.request("createRoom", requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var room    = data.room;
-            var user    = data.user; //TODO: Should this be kept here?
-            //
-            console.log("AirbugApi#createRoom results: user:", user, "room:", room);
-            //
-            callback(error, room, user);
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var room    = data.room;
+                var user    = data.user; //TODO: Should this be kept here?
+                //
+                console.log("AirbugApi#createRoom results: user:", user, "room:", room);
+                //
+                callback(error, room, user);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -189,11 +209,15 @@ var AirbugApi = Class.extend(Obj, {
             roomId: roomId
         };
         this.bugCallClient.request("joinRoom", requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var room    = data.room;
-            callback(error, room);
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var room    = data.room;
+                callback(error, room);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -202,16 +226,20 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     leaveRoom: function(roomId, callback){
-        var requestData = {
-            roomId: roomId
-        };
-        this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var roomId  = data.roomId;
-            callback(error, roomId);
-        });
+            var requestData = {
+                roomId: roomId
+            };
+            this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
+                if(!exception){
+                    var type    = callResponse.getType();
+                    var data    = callResponse.getData();
+                    var error   = data.error;
+                    var roomId  = data.roomId;
+                    callback(error, roomId);
+                } else {
+                    callback(exception, null);
+                }
+            });
     },
 
 
@@ -224,13 +252,17 @@ var AirbugApi = Class.extend(Obj, {
      * @param {}
      */
     getCurrentUser: function(callback){
-        this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            var currentUser = data.user;
-            callback(error, currentUser);
-        });
+            this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
+                if(!exception){
+                    var type        = callResponse.getType();
+                    var data        = callResponse.getData();
+                    var error       = data.error;
+                    var currentUser = data.user;
+                    callback(error, currentUser);
+                } else {
+                    callback(exception, null);
+                }
+            });
     },
 
     /**
@@ -238,19 +270,20 @@ var AirbugApi = Class.extend(Obj, {
      * @param {}
      */
     // establishCurrentUser: function(userObj, callback){
-    //     console.log("Inside AirbugApi#establishCurrentUser");
-    //     console.log("userObj:", userObj, "callback:", callback);
-    //     var requestData = {
-    //         user: userObj
-    //     };
-    //     this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
-    //         var type = callResponse.getType();
-    //         var data = callResponse.getData();
-    //         var error = data.error;
-    //         var currentUser = data.user;
-    //         callback(error, currentUser);
-    //     });
-
+    //         var requestData = {
+    //             user: userObj
+    //         };
+    //         this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
+    //             if(!exception){
+    //                 var type = callResponse.getType();
+    //                 var data = callResponse.getData();
+    //                 var error = data.error;
+    //                 var currentUser = data.user;
+    //                 callback(error, currentUser);
+    //             } else {
+    //                 callback(exception, null);
+    //             }
+    //         });
     // },
 
     loginUser: function(userObj, callback){
@@ -261,11 +294,15 @@ var AirbugApi = Class.extend(Obj, {
             }
         };
         this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            var currentUser = data.user;
-            callback(error, currentUser); 
+            if(!exception){
+                var type        = callResponse.getType();
+                var data        = callResponse.getData();
+                var error       = data.error;
+                var currentUser = data.user;
+                callback(error, currentUser);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -274,11 +311,14 @@ var AirbugApi = Class.extend(Obj, {
      */
     logoutCurrentUser: function(callback){
         this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            // var currentUser = data.user;
-            callback(error);
+            if(!exception){
+                var type        = callResponse.getType();
+                var data        = callResponse.getData();
+                var error       = data.error;
+                callback(error);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -291,17 +331,16 @@ var AirbugApi = Class.extend(Obj, {
                 email:      userObj.email
             }
         };
-        console.log(this.bugCallClient);
         this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            console.log("Inside of callback for bugCallClient within AirbugApi#registerUser");
-            var type        = callResponse.getType();
-            var data        = callResponse.getData();
-            var error       = data.error;
-            var currentUser = data.user;
-            console.log("Type:", type, "data:", data);
-            console.log("Error:", error, "currentUser:", currentUser);
-            console.log("callback:", callback);
-            callback(error, currentUser); 
+            if(!exception){
+                var type        = callResponse.getType();
+                var data        = callResponse.getData();
+                var error       = data.error;
+                var currentUser = data.user;
+                callback(error, currentUser); 
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -311,11 +350,15 @@ var AirbugApi = Class.extend(Obj, {
             userId: userId
         };
         this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var user    = data.user;
-            callback(error, user);
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var user    = data.user;
+                callback(error, user);
+            } else {
+                callback(exception, null);
+            }
         });
     },
 
@@ -325,11 +368,15 @@ var AirbugApi = Class.extend(Obj, {
             userIds: userIds
         };
         this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            var type    = callResponse.getType();
-            var data    = callResponse.getData();
-            var error   = data.error;
-            var users   = data.users;
-            callback(error, users);
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var users   = data.users;
+                callback(error, users);
+            } else {
+                callback(exception, null);
+            }
         });
     }
 });
