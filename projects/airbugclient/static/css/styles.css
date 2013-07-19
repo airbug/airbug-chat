@@ -625,7 +625,7 @@ html, body {
 /* Hamburger Panel CSS
 *******************************************************************/
 
-.hamburger-panel-left, .hamburger-panel-right {
+.hamburger-panel-left>div, .hamburger-panel-right>div {
     background-color: rgb(207, 226, 243); /* Old browsers */
 }
 

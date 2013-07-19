@@ -163,10 +163,10 @@ var RoomsHamburgerButtonContainer = Class.extend(CarapaceContainer, {
         var chatInput               = parentView.$el.find("#chatWidgetInputRowContainer>.column1of2");
         var sendButton              = parentView.$el.find("#chatWidgetInputRowContainer>.column2of2");
 
-        chatInput.toggleClass("span7").toggleClass("span5");
-        sendButton.toggleClass("span2").toggleClass("span1");
-        roomChatBox.toggleClass("span12").toggleClass("span9");
-        chatWidget.toggleClass("span9").toggleClass("span6");
+        chatInput.toggleClass("span7 span5");
+        sendButton.toggleClass("span2 span1");
+        roomChatBox.toggleClass("span12 span9");
+        chatWidget.toggleClass("span9 span6");
         hamburgerPanel.toggleClass("hamburger-panel-hidden");
     }
 
