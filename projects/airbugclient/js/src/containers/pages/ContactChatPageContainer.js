@@ -12,7 +12,7 @@
 //@Require('airbug.ContactChatBoxContainer')
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.PageTwoColumnView')
+//@Require('airbug.PageView')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomModel')
@@ -36,7 +36,7 @@ var ApplicationContainer =                  bugpack.require('airbug.ApplicationC
 var ContactChatBoxContainer =               bugpack.require('airbug.ContactChatBoxContainer');
 var ConversationListSlidePanelContainer =   bugpack.require('airbug.ConversationListSlidePanelContainer');
 var HomeButtonContainer =                   bugpack.require('airbug.HomeButtonContainer');
-var PageTwoColumnView =                     bugpack.require('airbug.PageTwoColumnView');
+var PageView =                              bugpack.require('airbug.PageView');
 var RoomChatBoxContainer =                  bugpack.require('airbug.RoomChatBoxContainer');
 var RoomMemberListPanelContainer =          bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomModel =                             bugpack.require('airbug.RoomModel');
@@ -112,9 +112,9 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {PageTwoColumnView}
+         * @type {PageView}
          */
-        this.pageTwoColumnView = null;
+        this.pageView = null;
     },
 
 
@@ -149,8 +149,8 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageTwoColumnView =
-            view(PageTwoColumnView)
+        this.pageView =
+            view(PageView)
                 .attributes({configuration: PageTwoColumnView.Configuration.THIN_RIGHT})
                 .build();
 
@@ -158,7 +158,7 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageTwoColumnView, "#application-" + this.applicationView.cid);
+        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
     },
 
     /**

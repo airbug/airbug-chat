@@ -114,7 +114,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
             view(PageView)
                 .children([
                     view(TwoColumnView)
-                        .attributes({configuration: PageTwoColumnView.Configuration.DEFAULT})
+                        .attributes({configuration: TwoColumnView.Configuration.DEFAULT})
                 ])
                 .build();
 
@@ -123,6 +123,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+
     },
 
     /**

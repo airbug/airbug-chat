@@ -197,10 +197,12 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         this.logoutButtonContainer                  = new LogoutButtonContainer();
         this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
         this.roomListPanelContainer                 = new RoomListPanelContainer();
+        // this.createRoomButtonContainer           = new CreateRoomButtonContainer();
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
         this.addContainerChild(this.roomListPanelContainer,         ".column1of2");
         this.addContainerChild(this.roomChatBoxContainer,           ".column2of2");
+        // this.addContainerChild(this.createRoomButtonContainer, "");
     },
 
 
