@@ -66,7 +66,12 @@ var NavigationModule = Class.extend(Obj, {
          */
         this.lastGoBackId           = 0;
 
-        this.finalDestination      = null;
+        /**
+         * @private
+         * @type {string}
+         */
+        this.finalDestination       = null;
+
     },
 
 
@@ -104,10 +109,15 @@ var NavigationModule = Class.extend(Obj, {
         this.carapaceRouter.navigate(fragment, options);
     },
 
+    /**
+     * @return {string}
+     */
     getFinalDestination: function(){
         return this.finalDestination;
     },
 
+    /**
+     */
     clearFinalDestination: function(){
         this.finalDestination = null;
     },
