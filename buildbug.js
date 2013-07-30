@@ -79,6 +79,7 @@ buildProperties({
             "../bugunit/projects/bugunit/js/scripts"
         ],
         testPaths: [
+            "./projects/airbugserver/js/test",
             // "../bugjs/projects/bugcall/js/test",
             "../bugjs/projects/bugflow/js/test",
             "../bugjs/projects/bugjs/js/test",
@@ -99,6 +100,7 @@ buildProperties({
             "../bugjs/external/bootstrap/js/src",
             "../bugjs/external/bootstrap/static",
             "../bugjs/external/jquery/js/src",
+            "../bugjs/external/jquery-plugins/js/src",
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/socket-io/js/src",
             "../bugjs/external/underscore/js/src",
@@ -115,6 +117,7 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
             "../bugpack/projects/bugpack-client/js/src",
+            "../sonarbug/projects/sonarbugclient/js/src",
             "../syncbug/projects/syncbug/js/src",
             "../syncbug/projects/syncbugclient/js/src"
 
@@ -140,8 +143,8 @@ buildProperties({
             "../bugjs/projects/annotate/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
-            "../bugjs/projects/carapace/js/src"
-
+            "../bugjs/projects/carapace/js/src",
+            "../sonarbug/projects/sonarbugclient/js/src"
         ],
         staticPaths: [
             "./projects/airbugclient/static"

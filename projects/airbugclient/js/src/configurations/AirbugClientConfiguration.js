@@ -17,6 +17,7 @@
 //@Require('airbug.PageStateModule')
 //@Require('airbug.RoomManagerModule')
 //@Require('airbug.SessionModule')
+//@Require('airbug.TrackerModule')
 //@Require('airbug.UserManagerModule')
 //@Require('annotate.Annotate')
 //@Require('bugcall.BugCallClient')
@@ -34,6 +35,7 @@
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
+//@Require('sonarbugclient.SonarBugClient')
 
 
 //-------------------------------------------------------------------------------
@@ -57,6 +59,7 @@ var NavigationModule            = bugpack.require('airbug.NavigationModule');
 var PageStateModule             = bugpack.require('airbug.PageStateModule');
 var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
 var SessionModule               = bugpack.require('airbug.SessionModule');
+var TrackerModule               = bugpack.require('airbug.TrackerModule');
 var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var Annotate                    = bugpack.require('annotate.Annotate');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
@@ -74,6 +77,7 @@ var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
+var SonarBugClient              = bugpack.require('sonarbugclient.SonarBugClient');
 
 
 //-------------------------------------------------------------------------------
@@ -295,6 +299,20 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {SonarBugClient}
+     */
+    sonarBugClient: function() {
+        return new SonarBugClient();
+    },
+
+    /**
+     * @return {TrackerModule}
+     */
+    trackerModule: function(sonarBugClient) {
+        return new TrackerModule(sonarBugClient);
+    },
+
+    /**
      * @param {AirbugApi} airbugApi
      * @return {UserManagerModule}
      */
@@ -378,6 +396,11 @@ annotate(AirbugClientConfiguration).with(
                 arg("socketIoConfig").ref("socketIoConfig")
             ]),
         module("socketIoConfig"),
+        module("sonarBugClient"),
+        module("trackerModule")
+            .args([
+                arg("sonarBugClient").ref("sonarBugClient")
+            ]),
         module("userManagerModule")
             .args([
                 arg("airbugApi").ref("airbugApi")
