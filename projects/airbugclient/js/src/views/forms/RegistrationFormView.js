@@ -74,6 +74,9 @@ var RegistrationFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
+        this.$el.find('form').on('keypress', function(event){
+            this.handleKeypress(event);
+        });
         this.$el.find('form').on('submit', function(event){
             _this.handleSubmit(event);
             event.preventDefault();
@@ -128,6 +131,11 @@ var RegistrationFormView = Class.extend(MustacheView, {
      */
     handleSubmit: function(event) {
         this.submitForm();
+    },
+
+    handleKeypress: function(event) {
+        var formData = this.getFormData();
+        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.KEYPRESS, formData));
     }
 });
 

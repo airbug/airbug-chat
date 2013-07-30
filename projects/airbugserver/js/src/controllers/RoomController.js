@@ -88,7 +88,7 @@ var RoomController = Class.extend(Obj, {
                 var userId      = data.userId;
                 var roomId      = data.roomId;
                 if(currentUser.isNotAnonymous()){
-                    _this.roomService.addUserToRoom(userId, roomId, function(error, room){
+                    _this.roomService.addUserToRoom(userId, roomId, function(error, room, user){
                         console.log("Inside callback for roomService#addUserToRoom");
                         console.log("Error:", error, "room", room);
                         if(!error && room){
@@ -118,7 +118,7 @@ var RoomController = Class.extend(Obj, {
                 var data        = request.getData();
                 var room        = data.room;
                 if(currentUser.isNotAnonymous()){
-                    _this.roomService.createRoom(currentUser, room, function(error, user, room){
+                    _this.roomService.createRoom(currentUser, room, function(error, room, user){
                         if(!error && room){
                             var data        = {
                                 room: room,
@@ -151,19 +151,18 @@ var RoomController = Class.extend(Obj, {
                 var userId      = currentUser.id;
                 var roomId      = data.roomId;
                 if(currentUser.isNotAnonymous()){
-                    _this.roomService.addUserToRoom(userId, roomId, function(error, user, room){
+                    _this.roomService.addUserToRoom(userId, roomId, function(error, room, user){
                         if(!error && room){
                             var data        = {room: room};
                             var response    = responder.response("joinedRoom", data);
-                            responder.sendResponse(response);
                         } else {
                             var data        = {
                                 error: error,
                                 roomId: roomId
                             };
                             var response    = responder.response("joinRoomError", data);
-                            responder.sendResponse(response);
                         }
+                        responder.sendResponse(response);
                     });
                 } else {
                     var data        = {error: new Error("Unauthorized Access")};
@@ -182,24 +181,66 @@ var RoomController = Class.extend(Obj, {
                     var data        = request.getData();
                     var userId      = currentUser.id;
                     var roomId      = data.roomId;
-                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, room){
+                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, room, user){
                         if(!error && room){
-                            // var data        = {room: room};
                             var data        = {roomId: roomId};
                             var response    = responder.response("leftRoom", data);
-                            responder.sendResponse(response);
                         } else {
                             var data        = {
                                 error: error,
                                 roomId: roomId
                             };
                             var response    = responder.response("leaveRoomError", data);
-                            responder.sendResponse(response);
                         }
+                        responder.sendResponse(response);
                     });
                 } else {
                     var data        = {error: new Error("Unauthorized Access")};
                     var response    = responder.response("leaveRoomError", data);
+                    responder.sendResponse(response);
+                }
+            },
+
+            retrieveRoom:   function(request, responder){
+                var currentUser = request.getHandshake().user;
+                if(currentUser.isNotAnonymous()){
+                    var data    = request.getData();
+                    var roomId  = data.roomId;
+                    _this.roomService.retrieveRoom(roomId, function(error, room){
+                        if(!error && room){
+                            var data        = {room: room};
+                            var response    = responder.response("retrievedRoom", data);
+                        } else {
+                            var data        = {error: error};
+                            var response    = responder.response("retrieveRoomError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                } else {
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("retrieveRoomError", data);
+                    responder.sendResponse(response);
+                }
+            },
+
+            retrieveRooms: function(request, responder){
+                var currentUser = request.getHandshake().user;
+                if(currentUser.isNotAnonymous()){
+                    var data    = request.getData();
+                    var roomIds = data.roomIds;
+                    _this.roomService.retrieveRooms(roomIds, function(error, rooms){
+                        if(!error && rooms){
+                            var data        = {rooms: rooms};
+                            var response    = responder.response("retrievedRooms", data);
+                        } else {
+                            var data        = {error: error};
+                            var response    = responder.response("retrieveRoomsError", data);
+                        }
+                        responder.sendResponse(response);
+                    });
+                } else {
+                    var data        = {error: new Error("Unauthorized Access")};
+                    var response    = responder.response("retrieveRoomsError", data);
                     responder.sendResponse(response);
                 }
             }

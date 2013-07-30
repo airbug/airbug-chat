@@ -30,7 +30,7 @@ var Mixed       = mongoose.Schema.Types.Mixed;
 
 var ConversationSchema = new Schema({
     ownerId: {type: ObjectId, require: true}, //NOTE: Room or Dialogue
-    chatMessageIdList: {type: [ObjectId], ref: "ChatMessage"},
+    chatMessageIdList: [{type: ObjectId, ref: "ChatMessage"}],
     // messageList: [Mixed], //type: ChatMessage
     createdAt: Date,
     updatedAt: Date

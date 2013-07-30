@@ -38,8 +38,6 @@ var ChatMessageManager = Class.extend(MongoManager, {
     _constructor: function(model, schema){
 
         this._super(model, schema);
-
-
     },
 
 

@@ -147,6 +147,10 @@ var UserController = Class.extend(Obj, {
                         request.getHandshake().user = user;
                         var data        = {user: user};
                         var response    = responder.response("loggedInUser", data);
+                    } else if (!error && !user){
+                        var error       = new Error("User does not exist");
+                        var data        = {error: error};
+                        var response    = responder.response("logInUserError", data);
                     } else {
                         var data        = {error: error};
                         var response    = responder.response("logInUserError", data);
@@ -161,17 +165,16 @@ var UserController = Class.extend(Obj, {
              */
             logoutCurrentUser:  function(request, responder){
                 //TODO
-                var currentUser = request.getHandshake().user;
-                var connection  = request.getCallConnection();
-                // sessionService
-                // callService
-                userService.logoutUser(currentUser, function(error){
+                var handshake   = request.getHandshake();
+                var currentUser = handshake.user;
+                var sessionId   = handshake.sessionId;
+                userService.logoutUser(currentUser, sessionId, function(error){
                     if(!error){
                         var data        = {error: null};
                         var response    = responder.response("loggedoutCurrentUser", data);
                     } else {
                         var data        = {error: error};
-                        var response    = responder.responde("logoutCurrentUserError", data);
+                        var response    = responder.response("logoutCurrentUserError", data);
                     }
                     responder.sendResponse(response);
                 });

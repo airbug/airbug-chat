@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -170,12 +170,14 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {User} currentUser
+     * @param {string} sessionId
      * @param {function(error)} callback 
      */
-    logoutUser: function(currentUser, callback){
+    logoutUser: function(currentUser, sessionId, callback){
         //TODO
-        //For development purposes only:
-        callback(null);
+        this.sessionManager.removeSessionBySid(sessionId, function(error){
+            callback(error);
+        });
     },
 
     /**
@@ -183,7 +185,15 @@ var UserService = Class.extend(Obj, {
      * @param {function(error, userObj)} callback 
      */
     registerUser: function(userObj, callback){
-        this.userManager.create(userObj, callback)
+        var _this = this;
+        this.userManager.findOne({email: userObj.email}, function(error, user){
+            //TODO what errors exist for this?
+            if(!user){
+                _this.userManager.create(userObj, callback);
+            } else {
+                callback(new Error("User already exists"), null);
+            }
+        });
     },
 
     /**
@@ -191,16 +201,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(error, {*})} callback 
      */
     retrieveUser: function(userId, callback){
-        this.userManager.findById(userId, function(error, user){
-            //TODO make sure to remove any sensitive information
-            if(user){
-                var user = {
-                    _id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email
-                };
-            }
+        this.userManager.findById(userId).select("_id firstName lastName").exec(function(error, user){
             callback(error, user);
         });
     },
@@ -209,9 +210,8 @@ var UserService = Class.extend(Obj, {
      * @param {Array.<string>} userIds
      * @param {function(error, {*})} callback 
      */
-    //NOTE Untested
     retrieveUsers: function(userIds, callback){
-        this.userManager.find("id").in(userIds).exec(callback);
+        this.userManager.where("_id").in(userIds).select("_id firstName lastName").exec(callback);
     }
 });
 

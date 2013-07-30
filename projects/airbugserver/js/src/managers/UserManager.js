@@ -32,6 +32,16 @@ var MongoManager    = bugpack.require('mongo.MongoManager');
 var UserManager = Class.extend(MongoManager, {
 
     //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(model, schema){
+
+        this._super(model, schema);
+    },
+
+
+    //-------------------------------------------------------------------------------
     // MongoManager Extensions/Overrides
     //-------------------------------------------------------------------------------
 
@@ -70,8 +80,8 @@ var UserManager = Class.extend(MongoManager, {
             if (!error && user){
                 user.roomsList.push(roomId);
                 user.save(callback);
-            } else if (!user){
-                callback(new Error("User not found"), user);
+            } else if (!error && !user){
+                callback(new Error("User not found"), null);
             } else {
                 callback(error, user);
             }
@@ -138,7 +148,16 @@ var UserManager = Class.extend(MongoManager, {
      * @param {function(error, user)} callback
      */
     removeRoomFromUser: function(roomId, userId, callback){
-        //TODO
+        this.findById(userId, function(error, user){
+            if (!error && user){
+                user.roomsList.remove(roomId);
+                user.save(callback);
+            } else if (!error && !user){
+                callback(new Error("User not found"), null);
+            } else {
+                callback(error, user);
+            }
+        });
     }
 });
 

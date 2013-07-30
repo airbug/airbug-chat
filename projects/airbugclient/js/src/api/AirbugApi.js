@@ -242,6 +242,43 @@ var AirbugApi = Class.extend(Obj, {
             });
     },
 
+    retrieveRoom: function(roomId, callback){
+        var requestType = "retrieveRoom";
+        var requestData = {
+            roomId: roomId
+        };
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var room    = data.room;
+                callback(error, room);
+            } else {
+                callback(exception, null);
+            }
+        });
+
+    },
+
+    retrieveRooms: function(roomIds, callback){
+        var requestType = "retrieveRooms";
+        var requestData = {
+            roomIds: roomIds
+        };
+        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var rooms   = data.rooms;
+                callback(error, rooms);
+            } else {
+                callback(exception, null);
+            }
+        });
+    },
+
 
     //-------------------------------------------------------------------------------
     // User Related Api Methods
@@ -264,27 +301,6 @@ var AirbugApi = Class.extend(Obj, {
                 }
             });
     },
-
-    /**
-     * @param {}
-     * @param {}
-     */
-    // establishCurrentUser: function(userObj, callback){
-    //         var requestData = {
-    //             user: userObj
-    //         };
-    //         this.bugCallClient.request("establishCurrentUser", requestData, function(exception, callResponse){
-    //             if(!exception){
-    //                 var type = callResponse.getType();
-    //                 var data = callResponse.getData();
-    //                 var error = data.error;
-    //                 var currentUser = data.user;
-    //                 callback(error, currentUser);
-    //             } else {
-    //                 callback(exception, null);
-    //             }
-    //         });
-    // },
 
     loginUser: function(userObj, callback){
         var requestType = "loginUser";

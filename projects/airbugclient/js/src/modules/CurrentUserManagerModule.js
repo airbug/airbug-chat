@@ -60,6 +60,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
          */
         this.userManagerModule  = userManagerModule;
 
+        /**
+         * @type {RoomManagerModule}
+         */
         this.roomManagerModule  = roomManagerModule;
     },
 
@@ -98,47 +101,21 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     // Instance Methods
     //-------------------------------------------------------------------------------
 
-
-    /**
-     * @param {{
-     *      email: string,
-     *      firstName: string,
-     *      lastName: string
-     * }} userObj
-     * @param {function(error, currentUser)} callback
-     */
-    establishCurrentUser: function(userObj, callback) {
-        var _this = this;
-        this.airbugApi.establishCurrentUser(userObj, function(error, currentUser){
-            if(!error && currentUser){
-                _this.currentUser = currentUser;
-                _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated");
-            }
-            callback(error, currentUser);
-        });
-    },
-
     /**
      * @param {function(error, currentUser)} callback
      */
+     //NOTE TODO change to retrieveCurrentUser
     getCurrentUser: function(callback) {
         var _this = this;
         // TODO check cache
         this.airbugApi.getCurrentUser(function(error, currentUser){
             if(!error && currentUser){
-                _this.currentUser = currentUser;
-                _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated");
-                //TODO:
-                //update rooms
-                // _this.roomManagerModule.updateRooms(currentUser.roomsList, function(error){
-                //     if(!error){
-                //         console.log("rooms updated");
-                //     }
-                // });
+                _this.updateCurrentUserAndRoomsList(currentUser, function(){
+                    callback(error, currentUser);
+                });
+            } else {
+                callback(error, currentUser);
             }
-            callback(error, currentUser);
         });
     },
 
@@ -146,11 +123,13 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         var _this = this;
         this.airbugApi.loginUser(userObj, function(error, currentUser){
             if(!error && currentUser){
-                _this.currentUser = currentUser;
-                _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated");
+                _this.updateCurrentUserAndRoomsList(currentUser, function(){
+                    console.log("error:", error, "currentUser:", currentUser);
+                    callback(error, currentUser);
+                });
+            } else {
+                callback(error, currentUser);
             }
-            callback(error, currentUser);
         });
     },
 
@@ -162,10 +141,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
                 //TODO
                 // delete session
                 // Flush cached dataObjs in all modules
-                // redirect to login screen
-                _this.userManagerModule.clearCache();
-                // this.roomManagerModule.clearCache();
                 _this.clearCache();
+                _this.userManagerModule.clearCache();
+                _this.roomManagerModule.clearCache();
                 callback(error);
             } else {
                 callback(error);
@@ -178,12 +156,44 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         var _this = this;
         this.airbugApi.registerUser(userObj, function(error, currentUser){
             if(!error && currentUser){
-                _this.currentUser = currentUser;
-                _this.userManagerModule.put(currentUser._id, currentUser);
-                console.log("currentUser updated");
+                _this.updateCurrentUserAndRoomsList(currentUser, function(){
+                    callback(error, currentUser);
+                });
+            } else {
+                callback(error, currentUser);
             }
-            callback(error, currentUser);
         });
+    },
+
+    /**
+     * @private
+     * @param {} currentUser
+     * @param {function()} callback
+     */
+    updateCurrentUserAndRoomsList: function(currentUser, callback){
+        var _this = this;
+        var roomsList = currentUser.roomsList;
+        var unretrievedRoomsList = [];
+        this.currentUser = currentUser;
+        this.userManagerModule.put(currentUser._id, currentUser);
+        console.log("currentUser updated");
+        roomsList.forEach(function(roomId){
+            if(!_this.roomManagerModule.get(roomId)) unretrievedRoomsList.push(roomId);
+        });
+        if(unretrievedRoomsList.length > 0){
+            this.roomManagerModule.retrieveRooms(unretrievedRoomsList, function(error, rooms){
+                if(!error && rooms){
+                    console.log("RetrievedRooms");
+                } else {
+                    console.log("Could not retrieveRooms");
+                }
+                callback();
+            });
+        } else {
+            console.log("Rooms up to date");
+            callback();
+        }
+
     }
 });
 

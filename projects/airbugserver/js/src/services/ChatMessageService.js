@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -22,6 +23,10 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+
+var $task       = BugFlow.$task;
+var $series     = BugFlow.$series;
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +39,7 @@ var ChatMessageService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(chatMessageManager, conversationManager, userManager){
+    _constructor: function(chatMessageManager, conversationManager){
 
         this._super();
 
@@ -49,9 +54,12 @@ var ChatMessageService = Class.extend(Obj, {
          */
         this.chatMessageManager     = chatMessageManager;
 
+        /**
+         * @private
+         * @type {ConversationManager}
+         */
         this.conversationManager    = conversationManager;
 
-        this.userManager            = userManager; //Temporary
 
     },
 
@@ -72,102 +80,85 @@ var ChatMessageService = Class.extend(Obj, {
      */
     createChatMessage: function(currentUser, chatMessage, callback) {
         var _this = this;
+        var returnedChatMessage;
         console.log("Inside ChatMessageService#createChatMessage");
         if(currentUser.id === chatMessage.senderUserId){
-            console.log("Inside ChatMessageService#createChatMessage. currentUserId matches senderUserId");
-
+            console.log("currentUserId matches senderUserId");
             // TODO: Redo this using syncBugClient
             // if(currentUser.roomsList.indexOf(chatMessage.conversationOwnerId) > -1 ){
             //     console.log("Inside ChatMessageService#createChatMessage. currentUser roomslist contains chatMessage.conversationOwnerId");
-
-                if(chatMessage.retry){
-                    delete chatMessage.retry;
-                    this.chatMessageManager.findOne(chatMessage, function(error, chatMessage){
-                        if(!error){
-                            if(chatMessage){
-                                callback(error, chatMessage);
+            $series([
+                $task(function(flow){
+                    if(chatMessage.retry){
+                        delete chatMessage.retry;
+                        _this.chatMessageManager.findOne(chatMessage, function(error, chatMessage){
+                            if(!error && chatMessage){
+                                flow.error(new Error("chatmessage already exists"));
                             } else {
-                                this.chatMessageManager.create(chatMessage, function(error, chatMessage){
-                                    if(!error && chatMessage){
-                                        //TODO
-                                        _this.conversationManager.findById(chatMessage.conversationId, function(error, conversation){
-                                            if(!error && conversation) {
-                                                conversation.chatMessageIdList.push(chatMessage.id);
-                                                conversation.save(function(error, conversation){
-                                                    //TODO
-                                                });
-                                            } else {
-                                                //TODO
-                                            }
-                                        });
-                                        callback(error, chatMessage)
-                                    } else {
-                                        callback(error);
-                                    }
-                                });
+                                flow.complete(error);
                             }
-                        } else {
-                            //TODO
-                        }
+                        })
+                    } else {
+                        flow.complete();
+                    }
+                }),
+                $task(function(flow){
+                    _this.chatMessageManager.create(chatMessage, function(error, chatMessage){
+                        console.log("error:", error, "chatMessage:", chatMessage);
+                        returnedChatMessage = chatMessage;
+                        flow.complete(error);
                     });
-                } else {
-                    this.chatMessageManager.create(chatMessage, function(error, chatMessage){
-                        if(!error && chatMessage){
-                            //TODO
-                            _this.conversationManager.findById(chatMessage.conversationId, function(error, conversation){
-                                if(!error && conversation) {
-                                    conversation.chatMessageIdList.push(chatMessage.id);
-                                    conversation.save(function(error, conversation){
-                                        //TODO
-                                    });
-                                } else {
-                                    //TODO
-                                }
-                            });
-                            callback(error, chatMessage)
-                        } else {
-                            callback(error);
-                        }
-                    });
-                }
-
-            // } else {
-            //     callback(new Error("Unauthorized Access"), null);
-            // }
+                }),
+                $task(function(flow){
+                    if(returnedChatMessage){
+                        _this.conversationManager.findById(returnedChatMessage.conversationId, function(error, conversation){
+                            if(!error && conversation){
+                                conversation.chatMessageIdList.push(returnedChatMessage.id);
+                                console.log("updated conversation:", conversation);
+                                conversation.save(function(error, conversation){
+                                        console.log("error", error, "conversation:", conversation);
+                                        flow.complete(error);
+                                });
+                            } else {
+                                flow.complete(error);
+                            }
+                        });
+                    } else {
+                        flow.error(new Error("chatMessage could not be created"));
+                    }
+                })
+            ]).execute(function(error){
+                callback(error, returnedChatMessage);
+            });
         } else {
             callback(new Error("Unauthorized Access"), null);
         }
     },
 
+    /**
+     * @param {User} currentUser
+     * @param {string} conversationId
+     * @param {function(Error, ChatMessage)} callback
+     */
     retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
-        // TODO REFACTOR Reduce db calls
         var _this = this;
-        console.log("conversationId:", conversationId);
-        //TODO
-        //Refactor this so that you only make one call and it returns a populated messageList
-        this.conversationManager.findById(conversationId).lean(true).exec(function(error, conversation){
+        this.conversationManager.findById(conversationId).populate("chatMessageIdList").lean(true).exec(function(error, conversation){
             console.log("Inside ChatMessageService#retrieveChatMessagesByConversationId callback");
             console.log("Error:", error, "Conversation:", conversation);
             if(!error && conversation){
-
-                //TODO
-                // if(currentUser.roomsList.indexOf(conversation.ownerId) > -1){
-                    _this.chatMessageManager
-                        .find({conversationId: conversationId})
-                        .lean(true)
-                        .exec(function(error, chatMessages){
-                            callback(error, chatMessages);
-                        });
-                // } else {
-                //     callback(new Error("Unauthorized Access"), null);
-                // }
+                var chatMessages = conversation.chatMessageIdList;
+                callback(error, chatMessages);
             } else {
-                //TODO
-                callback(error, []);
+                callback(error, conversation);
             }
         });
     },
 
+    /**
+     * @param {User} currentUser
+     * @param {string} roomId
+     * @param {function(Error, ChatMessage)} callback
+     */
     retrieveChatMessagesByRoomId: function(currentUser, roomId, callback){
         var _this = this;
         if(currentUser.roomsList.indexOf(roomId) > -1){

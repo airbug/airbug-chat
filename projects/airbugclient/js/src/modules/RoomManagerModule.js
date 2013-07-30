@@ -96,14 +96,26 @@ var RoomManagerModule = Class.extend(Obj, {
         this.roomsMap.remove(id);
     },
 
-    updateRooms: function(roomIds, callback){
-        roomIds.forEach(function(roomId){
-            var room = _this.get(roomId);
-            if(!room) {
-                _this.retrieveRoom(roomId, function(error, room){
+    /**
+     * @param {string} roomId
+     * @param {function(error, room)} callback
+     */
+    updateRoom: function(roomId, callback){
+        this.retrieveRoom(roomId, function(error, room){
+            console.log("Room updated");
+            callback(error, room);
+        });
+    },
 
-                });
-            }
+    /**
+     * @param {Array.<string>} roomIds
+     * @param {function(error, Array.<room>)} callback
+     */
+    updateRooms: function(roomIds, callback){
+        var _this = this;
+        this.retrieveRooms(roomIds, function(error, rooms){
+            console.log("Rooms updated");
+            callback(error, rooms);
         });
     },
 
@@ -137,6 +149,7 @@ var RoomManagerModule = Class.extend(Obj, {
         this.airbugApi.joinRoom(roomId, function(error, room){
             if(!error && room){
                 _this.put(room._id, room);
+                console.log("Joined Room", roomId);
             }
             callback(error, room);
         });
@@ -151,15 +164,19 @@ var RoomManagerModule = Class.extend(Obj, {
         this.airbugApi.leaveRoom(roomId, function(error, roomId){
             if(!error){
                 _this.remove(roomId);
+                console.log("Left Room", roomId);
             }
             callback(error, roomId);
         });
     },
 
-    //TODO
+    /**
+     * @param {string} roomId
+     * @param {function(error, room)} callback
+     */
     retrieveRoom: function(roomId, callback) {
         var _this = this;
-        this.airbugApi.retrieveRooms(roomId, function(error, room){
+        this.airbugApi.retrieveRoom(roomId, function(error, room){
             if(!error && room){
                 _this.put(room._id, room);
                 callback(error, room);
@@ -167,7 +184,10 @@ var RoomManagerModule = Class.extend(Obj, {
         });
     },
 
-    //TODO
+    /**
+     * @param {Array.<string>} roomIds
+     * @param {function(error, Array.<room>)} callback
+     */
     retrieveRooms: function(roomIds, callback) {
         var _this = this;
         this.airbugApi.retrieveRooms(roomIds, function(error, rooms){

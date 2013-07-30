@@ -72,6 +72,10 @@ var RoomPageController = Class.extend(ApplicationController, {
          */
         this.roomPageContainer = null;
 
+        /**
+         * @private
+         * @type {RoomManagerModule}
+         */
         this.roomManagerModule = null;
     },
 
@@ -101,18 +105,24 @@ var RoomPageController = Class.extend(ApplicationController, {
                 if(!error && currentUser){
                     var roomsList   = currentUser.roomsList;
                     var roomId      = routingRequest.getArgs()[0];
-                    console.log("roomsList:", roomsList, "roomId:", roomId);
-                    if(roomsList.indexOf(roomId) > -1 && _this.roomManagerModule.get(roomId)){
-                        routingRequest.accept();
-                    } else {
-                        _this.roomManagerModule.joinRoom(roomId, function(error, room){
-                            if(!error && room){
+                    _this.roomManagerModule.updateRoom(roomId, function(error, room){
+                        if(!error && room){
+                            if(roomsList.indexOf(roomId) > -1 && _this.roomManagerModule.get(roomId)){
                                 routingRequest.accept();
                             } else {
-                                routingRequest.reject(); //OR forward to home?
+                                _this.roomManagerModule.joinRoom(roomId, function(error, room){
+                                    if(!error && room){
+                                        routingRequest.accept();
+                                    } else {
+                                        routingRequest.reject(); //OR forward to home?
+                                    }
+                                });
                             }
-                        });
-                    }
+                        } else {
+                            //TODO:
+                            routingRequest.reject();
+                        }
+                    });
                 } else {
                     routingRequest.reject(); //OR forward to home?
                 }

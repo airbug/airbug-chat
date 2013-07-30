@@ -48,7 +48,7 @@ var HomePageController = Class.extend(Obj, {
          * @private
          * @type {Object}
          */
-        this.config = config;
+        this.config     = config;
 
         /**
          * @private
@@ -69,10 +69,6 @@ var HomePageController = Class.extend(Obj, {
         var _this = this;
 
         this.expressApp.get('/app', function(req, res) {
-            //TEST
-            console.log("Made it!!");
-            console.log("URL Query String:", req.query);
-
             res.render('home', {
                 title: 'airbug',
                 production: _this.config.production
