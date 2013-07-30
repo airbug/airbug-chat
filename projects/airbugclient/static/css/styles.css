@@ -572,6 +572,9 @@ html, body {
     margin-left: 2px;
 }
 
+#roomChatBoxRowContainer .column1of2 .dropdown-menu {
+    background-color: rgb(207, 226, 243); /* Old browsers */
+}
 
 
 /* Message CSS
@@ -659,6 +662,50 @@ html, body {
 
     .copy-to-clipboard.zeroclipboard-is-hover { background-color:#eee; }
     .copy-to-clipboard.zeroclipboard-is-active { background-color:#aaa; }
+
+
+/* AddRoomMemberContainer
+*******************************************************************/
+
+li.add-roommember-container {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.add-roommember-container textarea {
+    display: block;
+}
+
+.faux-textarea {
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textarea;
+    background-color: white;
+    border: 1px solid gray;
+    font: medium -moz-fixed;
+    font: -webkit-small-control;
+    height: 1em;
+    overflow: scroll;
+    padding: 2px;
+    resize: both;
+    width: auto;
+    position: relative;
+    margin-bottom: 1em;
+    right: 0;
+    left: 0;
+}
+
+.faux-input {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: white;
+    background-color: -moz-field;
+    border: 1px solid darkgray;
+    box-shadow: 1px 1px 1px 0 lightgray inset;
+    font: -moz-field;
+    font: -webkit-small-control;
+    margin-top: 5px;
+    padding: 2px 3px;
+    width: 398px;
+}
 
 /* Twitter Bootstrap Overrides
 *******************************************************************/

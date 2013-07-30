@@ -144,6 +144,8 @@ var AddRoomMemberButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.buttonView.$el.find("li:first-child").addClass("add-roommember-container");
+        this.buttonView.$el.find("ul").addClass("span2");
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 

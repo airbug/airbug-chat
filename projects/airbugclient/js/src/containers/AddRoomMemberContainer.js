@@ -7,10 +7,12 @@
 //@Export('AddRoomMemberContainer')
 
 //@Require('Class')
+//@Require('airbug.BoxView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CopyToClipboardButtonView')
 //@Require('airbug.DropdownItemView')
+//@Require('airbug.FauxTextAreaView')
 //@Require('airbug.IconView')
 //@Require('airbug.ParagraphView')
 //@Require('annotate.Annotate')
@@ -33,10 +35,12 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var BoxView                     = bugpack.require('airbug.BoxView');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CopyToClipboardButtonView   = bugpack.require('airbug.CopyToClipboardButtonView');
 var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
+var FauxTextAreaView            = bugpack.require('airbug.FauxTextAreaView');
 var IconView                    = bugpack.require('airbug.IconView');
 var ParagraphView               = bugpack.require('airbug.ParagraphView');
 var Annotate                    = bugpack.require('annotate.Annotate');
@@ -131,19 +135,27 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
         this.dropdownItemView =
             view(DropdownItemView)
                 .children([
-                    view(ParagraphView)
-                        .attributes({text: "Share room " + this.roomModel.get("name")}),
-                    view(ParagraphView)
-                        .attributes({text: "http://airbug.com/app#room/" + this.roomModel.get("_id")}),
-                    view(CopyToClipboardButtonView)
-                        .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
+                    view(BoxView)
                         .children([
-                            view(IconView)
-                                .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})
-                                .appendTo('*[id|="button"]'),
-                            view(TextView)
-                                .attributes({text: " Copy Link"})
-                                .appendTo('*[id|="button"]')
+                            view(ParagraphView)
+                                .attributes({text: "Share room " + this.roomModel.get("name")}),
+                            view(FauxTextAreaView)
+                                .children([
+                                    view(ParagraphView)
+                                    .attributes({
+                                        text: "http://airbug.com/app#room/" + this.roomModel.get("_id")
+                                    })
+                                ]),
+                            view(CopyToClipboardButtonView)
+                                .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
+                                .children([
+                                    view(IconView)
+                                        .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})
+                                        .appendTo('*[id|="button"]'),
+                                    view(TextView)
+                                        .attributes({text: " Copy Link"})
+                                        .appendTo('*[id|="button"]')
+                                ])
                         ])
                 ])
             .build();
@@ -159,8 +171,14 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        // this.copyLinkButton = new CopyLinkButton("http://airbug.com/app#room/" + this.roomModel.get("_id"));
-        // this.addContainerChild(this.copyLinkButton, "")
+        // NOTE: For future refactor (pull out zeroClipboard butons into its own container)
+        // var button      = this.getViewTop().$el.find('.btn')[0];
+        // var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
+        // var options     = {
+        //       moviePath: "/zeroclipboard/ZeroClipboard.swf"
+        // };
+        // this.copyLinkButtonContainer = new CopyLinkButtonContainer(button, options, copyText);
+        // this.addContainerChild(this.copyLinkButtonContainer, "??????")
     },
 
     /**
@@ -223,6 +241,16 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.createZeroClipboard();
+        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
+    },
+
+    activateContainer: function() {
+        var _this = this;
+        this._super();
+        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
+        fauxTextArea.on("click", function(){
+            fauxTextArea.selectText();
+        });
     },
 
     /**
@@ -240,9 +268,9 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
-     * @param {ButtonViewEvent} event
+     * @param {DropdownViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
+    hearDropdownItemClickedEvent: function(event) {
 
     }
 });
