@@ -102,7 +102,7 @@ var LogoutPageController = Class.extend(ApplicationController, {
 });
 
 annotate(LogoutPageController).with(
-    controller().route("logout")
+    controller().route("loggedout")
 );
 
 
