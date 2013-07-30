@@ -149,6 +149,7 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
         var _this       = this;
         var userObj     = event.getData();
         this.currentUserManagerModule.loginUser(userObj, function(error, currentUser){
+            console.log("error:", error, "currentUser", currentUser, "inside LoginFormContainer");
             if(!error){
                 //TODO
                 var finalDestination = _this.navigationModule.getFinalDestination();
@@ -164,7 +165,7 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
                 }
             } else {
                 //TODO
-                console.log("currentUserManagerModule#createRoom callback error:", error);
+                console.log("currentUserManagerModule#loginUser callback error:", error);
             }
         });
     }

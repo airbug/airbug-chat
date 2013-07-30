@@ -110,7 +110,6 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
         this.registrationFormView =
             view(RegistrationFormView)
-                // .attributes({type: "primary", align: "left"})
                 .build();
 
 
@@ -133,7 +132,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function() {
         this._super();
-        this.registrationFormView.$el.find("input")[0].focus();
+        this.registrationFormView.$el.find("input[name='email']").focus();
     },
 
 

@@ -159,16 +159,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         view(PanelWithHeaderView)
             .attributes({headerTitle: "Rooms"})
             .children([
-                // NOTE: Currently redundant and unecessary
-                // view(ButtonView)
-                //     .attributes({size: ButtonView.Size.SMALL})
-                //     .id("addRoomButtonView")
-                //     .appendTo('*[id|="panel-header-nav"]')
-                //     .children([
-                //         view(TextView)
-                //             .attributes({text: "+"})
-                //             .appendTo('*[id|="button"]')
-                //     ]),
                 view(ListView)
                     .id("listView")
                     .appendTo('*[id|="panel-body"]')

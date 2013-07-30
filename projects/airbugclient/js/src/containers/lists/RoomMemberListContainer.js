@@ -173,7 +173,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         console.log("Initializing RoomMemberListContainer");
         this._super();
         this.roomMemberCollection.bind("add", this.handleRoomMemberCollectionAdd, this);
-        this.roomModel.bind('change:uuid', this.handleRoomModelChangeUuid, this);
+        this.roomModel.bind('change:_id', this.handleRoomModelChangeId, this);
         this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
 
         this.loadRoomMemberCollection(roomId);
@@ -190,7 +190,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {string} roomId
      */
     loadRoomMemberCollection: function(roomId) {
-        if(!roomId) var roomId = this.roomModel.id;
+        if(!roomId) var roomId = this.roomModel.get("_id");
         var _this = this;
         // NOTE: this should be a populated list
         var membersList = this.roomModel.get("membersList");
@@ -225,7 +225,6 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {RoomMemberModel} roomMemberModel
      */
     handleRoomMemberCollectionAdd: function(roomMemberModel) {
-        console.log("Inside RoomMemberListContainer#handleRoomMemberCollectionAdd");
         var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
         this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.cid);
     },
@@ -233,8 +232,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    handleRoomModelChangeUuid: function() {
-        this.loadRoomMemberCollection(this.roomModel.get('uuid'));
+    handleRoomModelChangeId: function() {
+        this.loadRoomMemberCollection(this.roomModel.get('_id'));
     }
 });
 

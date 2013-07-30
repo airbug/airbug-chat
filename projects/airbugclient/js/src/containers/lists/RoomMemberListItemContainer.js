@@ -79,7 +79,6 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
                 _this.userModel.set(userObj);
             }
         });
-        console.log("Inside RoomMemberListItemContainer#activateContainer");
     },
 
     /**

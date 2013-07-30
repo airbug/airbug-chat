@@ -203,8 +203,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 chatMessageModel.set(chatMessage);
             }
         });
-    },
-
+    }
 });
 
 annotate(ChatMessageContainer).with(
