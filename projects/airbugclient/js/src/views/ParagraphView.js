@@ -35,7 +35,7 @@ var ParagraphView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<p id="text-{{cid}}" class="text">{{attributes.text}}</p>'
+    template:   '<p id="paragraph-{{cid}}" class="text">{{attributes.text}}</p>'
 });
 
 

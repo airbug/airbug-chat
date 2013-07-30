@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('TextAreaView')
+//@Export('FauxTextAreaView')
 
 //@Require('Class')
 //@Require('TypeUtil')
@@ -31,13 +31,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TextAreaView = Class.extend(MustacheView, {
+var FauxTextAreaView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<textarea id="text-area-{{cid}}" rows="{{attributes.rows}}"" value="{{attributes.value}}">{{attributes.placeholder}}</textarea>',
+    template:   '<div class="faux-textarea" rows="{{attributes.rows}}"></div>',
 
 
     //-------------------------------------------------------------------------------
@@ -61,4 +61,4 @@ var TextAreaView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.TextAreaView", TextAreaView);
+bugpack.export("airbug.FauxTextAreaView", FauxTextAreaView);

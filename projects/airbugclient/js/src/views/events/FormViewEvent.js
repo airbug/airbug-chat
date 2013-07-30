@@ -40,7 +40,8 @@ var FormViewEvent = Class.extend(Event, {});
  * @enum {string}
  */
 FormViewEvent.EventType = {
-    SUBMIT: "FormViewEvent:Submit"
+    SUBMIT: "FormViewEvent:Submit",
+    KEYPRESS: "FormViewEvent:Keypress"
 };
 
 
