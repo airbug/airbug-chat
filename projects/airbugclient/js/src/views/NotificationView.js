@@ -63,7 +63,7 @@ var NotificationView = Class.extend(MustacheView, {
         console.log("NotificationView#flash");
         var _this = this;
         var notificationContainer = $(this.$el[0]);
-        notificationContainer.append(html).show();
+        notificationContainer.prepend(html).show();
         setTimeout(function(){
             notificationContainer.fadeOut(500, function(){
                 notificationContainer.children("div").remove();
