@@ -188,10 +188,14 @@ var UserService = Class.extend(Obj, {
         var _this = this;
         this.userManager.findOne({email: userObj.email}, function(error, user){
             //TODO what errors exist for this?
-            if(!user){
-                _this.userManager.create(userObj, callback);
+            if(!error){
+                if(!user){
+                    _this.userManager.create(userObj, callback);
+                } else {
+                    callback(new Error("User already exists"), null);
+                }
             } else {
-                callback(new Error("User already exists"), null);
+                callback(error, null);
             }
         });
     },
@@ -201,9 +205,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(error, {*})} callback 
      */
     retrieveUser: function(userId, callback){
-        this.userManager.findById(userId).select("_id firstName lastName").exec(function(error, user){
-            callback(error, user);
-        });
+        this.userManager.findById(userId).select("_id firstName lastName").exec(callback);
     },
 
     /**

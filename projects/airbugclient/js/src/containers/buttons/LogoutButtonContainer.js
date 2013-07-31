@@ -152,6 +152,11 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
                 });
             } else {
                 //TODO
+                //Show error
+                var parentContainer     = _this.getContainerParent();
+                var notificationView    = parentContainer.getNotificationView();
+                console.log("error:", error);
+                notificationView.flashError(error);
             }
         });
 

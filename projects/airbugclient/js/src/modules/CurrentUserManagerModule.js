@@ -122,9 +122,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     loginUser: function(userObj, callback){
         var _this = this;
         this.airbugApi.loginUser(userObj, function(error, currentUser){
+            console.log("error:", error, "currentUser:", currentUser);
             if(!error && currentUser){
                 _this.updateCurrentUserAndRoomsList(currentUser, function(){
-                    console.log("error:", error, "currentUser:", currentUser);
                     callback(error, currentUser);
                 });
             } else {

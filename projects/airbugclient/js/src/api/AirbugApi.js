@@ -315,6 +315,7 @@ var AirbugApi = Class.extend(Obj, {
                 var data        = callResponse.getData();
                 var error       = data.error;
                 var currentUser = data.user;
+                console.log("error:", error, "user:", currentUser, "data:", data);
                 callback(error, currentUser);
             } else {
                 callback(exception, null);

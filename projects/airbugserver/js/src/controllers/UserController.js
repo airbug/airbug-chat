@@ -143,15 +143,20 @@ var UserController = Class.extend(Obj, {
                 var data = request.getData()
                 var user = data.user;
                 userService.loginUser(user, function(error, user){
+                    console.log("error:", error, "user:", user);
                     if(!error && user){
                         request.getHandshake().user = user;
                         var data        = {user: user};
                         var response    = responder.response("loggedInUser", data);
                     } else if (!error && !user){
                         var error       = new Error("User does not exist");
-                        var data        = {error: error};
+                        var data        = {error: error.toString()};
+                        console.log("error:", error, "user:", user);
+
                         var response    = responder.response("logInUserError", data);
                     } else {
+                        console.log("error:", error, "user:", user);
+
                         var data        = {error: error};
                         var response    = responder.response("logInUserError", data);
                     }
@@ -190,7 +195,7 @@ var UserController = Class.extend(Obj, {
                         var data        = {user: user};
                         var response    = responder.response("registeredUser", data);
                     } else {
-                        var data        = {error: error};
+                        var data        = {error: error.toString()};
                         var response    = responder.response("registerUserError", data);
                     }
                     responder.sendResponse(response);

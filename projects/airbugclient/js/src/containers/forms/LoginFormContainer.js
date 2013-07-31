@@ -165,6 +165,12 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
                 }
             } else {
                 //TODO
+                var parentContainer     = _this.getContainerParent();
+                var notificationView    = parentContainer.getNotificationView();
+                console.log("parentContainer:", parentContainer);
+                console.log("notificationView:", notificationView);
+                console.log("error:", error);
+                notificationView.flashError(error);
                 console.log("currentUserManagerModule#loginUser callback error:", error);
             }
         });

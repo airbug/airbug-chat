@@ -10,6 +10,7 @@
 //@Require('airbug.ApplicationView')
 //@Require('airbug.BodyView')
 //@Require('airbug.HeaderView')
+//@Require('airbug.NotificationView')
 //@Require('carapace.CarapaceContainer')
 
 
@@ -67,6 +68,12 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
          * @type {HeaderView}
          */
         this.headerView         = null;
+
+        /**
+         * @private
+         * @type {NotificationView}
+         */
+        this.notificationView   = null;
     },
 
 
@@ -93,6 +100,13 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      */
     getHeaderView: function() {
         return this.headerView;
+    },
+
+    /**
+     * return {NotificationView}
+     */
+    getNotificationView: function() {
+        return this.notificationView;
     },
 
 
@@ -127,9 +141,11 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
         this.headerView         = new HeaderView({id: "headerView"});
         this.applicationView    = new ApplicationView({id: "applicationView"});
+        this.notificationView   = new NotificationView();
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);
+        this.bodyView.addViewChild(this.notificationView);
         this.setViewTop(this.bodyView);
     },
 
@@ -139,6 +155,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     destroyContainer: function() {
         this.headerView.dispose();
         this.applicationView.dispose();
+        this.notificationView.dispose();
         this.viewTop = null;
         this.collectionMap.forEach(function(collection) {
             collection.dispose();
