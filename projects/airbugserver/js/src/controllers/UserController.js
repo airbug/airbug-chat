@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,15 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $series     = BugFlow.$series;
+var $task       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -151,13 +161,9 @@ var UserController = Class.extend(Obj, {
                     } else if (!error && !user){
                         var error       = new Error("User does not exist");
                         var data        = {error: error.toString()};
-                        console.log("error:", error, "user:", user);
-
                         var response    = responder.response("logInUserError", data);
                     } else {
-                        console.log("error:", error, "user:", user);
-
-                        var data        = {error: error};
+                        var data        = {error: error.toString()};
                         var response    = responder.response("logInUserError", data);
                     }
                     responder.sendResponse(response);
@@ -172,13 +178,12 @@ var UserController = Class.extend(Obj, {
                 //TODO
                 var handshake   = request.getHandshake();
                 var currentUser = handshake.user;
-                var sessionId   = handshake.sessionId;
-                userService.logoutUser(currentUser, sessionId, function(error){
+                userService.logoutUser(currentUser, handshake, function(error){
                     if(!error){
                         var data        = {error: null};
                         var response    = responder.response("loggedoutCurrentUser", data);
                     } else {
-                        var data        = {error: error};
+                        var data        = {error: error.toString()};
                         var response    = responder.response("logoutCurrentUserError", data);
                     }
                     responder.sendResponse(response);
@@ -186,12 +191,30 @@ var UserController = Class.extend(Obj, {
             },
 
             registerUser:       function(request, responder){
-                //TODO: Check if another user is already logged in and log them out
-                var data = request.getData()
-                var user = data.user;
-                userService.registerUser(user, function(error, user){
-                    if(!error && user){
-                        request.getHandshake().user = user;
+                var handshake   = request.getHandshake();
+                var currentUser = handshake.user;
+                var data        = request.getData()
+                var user        = data.user;
+                var returnedUser;
+                $series([
+                    $task(function(flow){
+                        if(currentUser.isNotAnonymous){
+                            userService.logoutUser(currentUser, handshake, function(error){
+                                flow.complete(error);
+                            });
+                        } else {
+                            flow.complete()
+                        }
+                    }),
+                    $task(function(flow){
+                        userService.registerUser(user, function(error, user){
+                            returnedUser = user;
+                            flow.complete(error);
+                        });
+                    })
+                ]).execute(function(error){
+                    if(!error && returnedUser){
+                        request.getHandshake().user = returnedUser;
                         var data        = {user: user};
                         var response    = responder.response("registeredUser", data);
                     } else {

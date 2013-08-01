@@ -50,14 +50,14 @@ var UserSchema = new Schema({
  * @return {boolean}
  */
 UserSchema.method("isAnonymous", function(){
-	return this.anonymous;
+    return this.anonymous;
 });
 
 /**
  * @return {boolean}
  */
 UserSchema.method("isNotAnonymous", function(){
-	return !this.anonymous;
+    return !this.anonymous;
 });
 
 

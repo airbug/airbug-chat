@@ -170,12 +170,16 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {User} currentUser
-     * @param {string} sessionId
+     * @param {string} handshake
      * @param {function(error)} callback 
      */
-    logoutUser: function(currentUser, sessionId, callback){
+    logoutUser: function(currentUser, handshake, callback){
         //TODO
-        this.sessionManager.removeSessionBySid(sessionId, function(error){
+        delete handshake.session.userId;
+        delete handshake.user;
+        delete handshake.session.data.userId;
+        this.shakeIt(handshake, function(error){
+            console.log("user" + currentUser._id + "loggedout");
             callback(error);
         });
     },

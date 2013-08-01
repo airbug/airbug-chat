@@ -138,9 +138,6 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         var _this = this;
         this.airbugApi.logoutCurrentUser(function(error){
             if(!error){
-                //TODO
-                // delete session
-                // Flush cached dataObjs in all modules
                 _this.clearCache();
                 _this.userManagerModule.clearCache();
                 _this.roomManagerModule.clearCache();
@@ -172,7 +169,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
      */
     updateCurrentUserAndRoomsList: function(currentUser, callback){
         var _this = this;
-        var roomsList = currentUser.roomsList;
+        var roomsList = currentUser.roomsList || [];
         var unretrievedRoomsList = [];
         this.currentUser = currentUser;
         this.userManagerModule.put(currentUser._id, currentUser);
