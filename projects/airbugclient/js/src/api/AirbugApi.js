@@ -258,7 +258,6 @@ var AirbugApi = Class.extend(Obj, {
                 callback(exception, null);
             }
         });
-
     },
 
     retrieveRooms: function(roomIds, callback){
@@ -339,26 +338,9 @@ var AirbugApi = Class.extend(Obj, {
         });
     },
 
-    registerUser: function(userObj, callback){
-        var requestType = "registerUser";
-        var requestData = {
-            user: {
-                firstName:  userObj.firstName,
-                lastName:   userObj.lastName,
-                email:      userObj.email
-            }
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type        = callResponse.getType();
-                var data        = callResponse.getData();
-                var error       = data.error;
-                var currentUser = data.user;
-                callback(error, currentUser); 
-            } else {
-                callback(exception, null);
-            }
-        });
+    registerUser: function(callback){
+        this.bugCallClient.openConnection();
+        callback();
     },
 
     retrieveUser: function(userId, callback){

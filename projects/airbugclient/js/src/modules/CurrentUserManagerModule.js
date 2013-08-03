@@ -151,13 +151,27 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
     registerUser: function(userObj, callback){
         var _this = this;
-        this.airbugApi.registerUser(userObj, function(error, currentUser){
-            if(!error && currentUser){
-                _this.updateCurrentUserAndRoomsList(currentUser, function(){
-                    callback(error, currentUser);
-                });
-            } else {
-                callback(error, currentUser);
+        $.ajax({
+            url: "app/register",
+            type: "POST",
+            dataType: "json",
+            data: userObj,
+            success: function(data, textStatus, req){
+                console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
+                var user = data.user;
+                var error = data.error;
+                if(!error && user){
+                    _this.airbugApi.registerUser(function(){
+                        _this.updateCurrentUserAndRoomsList(user, function(){
+                            callback(error, user);
+                        });
+                    });
+                } else {
+                    callback(error, user);
+                }
+            },
+            error: function(req, textStatus, errorThrown){
+                console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
             }
         });
     },

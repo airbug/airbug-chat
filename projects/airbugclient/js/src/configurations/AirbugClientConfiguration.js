@@ -155,7 +155,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         this._socketIoConfig.setPort(8000);
 
         //TODO BRN: Pass the session id here...
-        this._bugCallClient.openConnection();
+        // this._bugCallClient.openConnection();
 
         this._controllerScan.scan();
         this._carapaceApplication.start(callback);

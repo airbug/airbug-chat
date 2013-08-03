@@ -351,7 +351,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         var config = this._config;
         var secret = 'some secret'; // LOAD FROM CONFIG;
-        var sessionKey = 'express.sid';
+        var sessionKey = 'airbug.sid'; //signedcookie name
 
         this._cookieSigner.setSecret(secret);
 
@@ -886,8 +886,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {UserService} userService
      * @return {UserController}
      */
-    userController: function(bugCallRouter, userService, sessionService, callService) {
-        this._userController = new UserController(bugCallRouter, userService, sessionService, callService);
+    userController: function(config, expressApp, bugCallRouter, userService, sessionService, callService) {
+        this._userController = new UserController(config, expressApp, bugCallRouter, userService, sessionService, callService);
         return this._userController;
     },
 
@@ -1073,6 +1073,8 @@ annotate(AirbugServerConfiguration).with(
             ]),
         module("userController")
             .args([
+                arg("config").ref("config"), 
+                arg("expressApp").ref("expressApp"),
                 arg("bugCallRouter").ref("bugCallRouter"),
                 arg("userService").ref("userService"),
                 arg("sessionService").ref("sessionService"),

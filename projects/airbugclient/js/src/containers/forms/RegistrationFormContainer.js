@@ -147,6 +147,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var userObj     = event.getData();
+
         console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
         this.currentUserManagerModule.registerUser(userObj, function(error, currentUser){
             if(!error){

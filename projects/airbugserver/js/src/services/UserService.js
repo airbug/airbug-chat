@@ -71,15 +71,19 @@ var UserService = Class.extend(Obj, {
     shakeIt: function(handshakeData, callback) {
 
         //TODO BRN (QUESTION): When a session is regenerated, does it automatically rerun the authorization (handshake.shakeIt) call
-
+        console.log("UserService#shakeIt");
         var _this = this;
         if (handshakeData.session) {
             var session = handshakeData.session;
-            if (session.userId) {
+            console.log("session:", session);
+            console.log("cookie.data", session.data.cookie.data);
+            if (session.data.userId) {
                 this.userManager.findUserById(session.data.userId, function(error, user) {
+                    console.log("userManager.findUserById. user:", user);
                     if (!error) {
                         if (user) {
                             handshakeData.user = user;
+                            callback(error);
                         } else {
                             delete session.data.userId;
                             _this.createAnonymousUser(function(error, user) {

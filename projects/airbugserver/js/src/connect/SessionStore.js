@@ -77,7 +77,8 @@ var SessionStore = Class.adapt(connect.session.Store, {
                         ? new Date(session.expires)
                         : session.expires;
                     if (!expires || new Date < expires) {
-                        callback(null, data);
+                        console.log("data:", data);
+                        callback(null, data); // or session
                     } else {
                         _this.destroy(sid, callback);
                     }
@@ -97,7 +98,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
      */
     set: function(sid, data, callback) {
         //TEST
-        console.log("SessionStore.set - sid:" + sid + " data:" + data);
+        console.log("SessionStore.set - sid:" + sid + " data:" + data.toString());
 
         var cookie = data.cookie;
         var expires = new Date(Date.now() + (60 * 60 * 24));
@@ -108,9 +109,10 @@ var SessionStore = Class.adapt(connect.session.Store, {
                 expires = new Date(Date.now() + cookie.maxAge);
             }
         }
+        console.log("cookie:", cookie);
         var session = {
             sid: sid,
-            data: JSON.stringify(data),
+            data: data,
             expires: expires
         };
         this.sessionManager.createOrUpdateSession(session.sid, session, callback);

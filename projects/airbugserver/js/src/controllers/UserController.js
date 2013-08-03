@@ -45,7 +45,7 @@ var UserController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, userService, sessionService, callService){
+    _constructor: function(config, expressApp, bugCallRouter, userService, sessionService, callService){
 
         this._super();
 
@@ -65,6 +65,18 @@ var UserController = Class.extend(Obj, {
          * @type {ConnectionService}
          */
         this.callService        = callService;
+
+        /**
+         * @private
+         * @type {}
+         */
+        this.config             = config;
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp         = expressApp;
 
         /**
          * @private
@@ -92,8 +104,64 @@ var UserController = Class.extend(Obj, {
 
         var _this = this;
         var callService     = this.callService;
+        var expressApp      = this.expressApp;
         var userService     = this.userService;
         var sessionService  = this.sessionService;
+
+        expressApp.post('/app/register', function(req, res){
+            var cookies = req.cookies;
+            var signedCookies = req.signedCookies;
+            var oldSid  = req.sessionID;
+            var session = req.session;
+            var params  = req.params;
+            var query   = req.query;
+            var userObj = req.body;
+            var returnedUser;
+
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObj:", userObj, "params:", params, "query:", query);
+            $series([
+                $task(function(flow){
+                    userService.registerUser(userObj, function(error, user){
+                        console.log("post /app/register");
+                        console.log("error:", error, "user:", user);
+                        returnedUser = user;
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
+                        if(!error){
+                            res.json({error: null, user: returnedUser});
+                        }
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error){
+                if(error){
+                    res.json({error: error.toString(), user: null});
+                }
+            });
+        });
+
+        expressApp.post('/app/login', function(req, res){
+            var session = req.session;
+            var params  = req.params;
+            var query   = req.query;
+            var userObj = req.body;
+            userService.loginUser(userObj, function(error, user){
+
+            });
+        });
+
+        expressApp.post('/app/logout', function(req, res){
+            var session = req.session;
+            var params  = req.params;
+            var query   = req.query;
+            var userObj = req.body;
+            userService.logoutUser(userObj, handshake, function(error){
+
+            });
+        });
 
         this.bugCallRouter.addAll({
 
@@ -190,40 +258,40 @@ var UserController = Class.extend(Obj, {
                 });
             },
 
-            registerUser:       function(request, responder){
-                var handshake   = request.getHandshake();
-                var currentUser = handshake.user;
-                var data        = request.getData()
-                var user        = data.user;
-                var returnedUser;
-                $series([
-                    $task(function(flow){
-                        if(currentUser.isNotAnonymous){
-                            userService.logoutUser(currentUser, handshake, function(error){
-                                flow.complete(error);
-                            });
-                        } else {
-                            flow.complete()
-                        }
-                    }),
-                    $task(function(flow){
-                        userService.registerUser(user, function(error, user){
-                            returnedUser = user;
-                            flow.complete(error);
-                        });
-                    })
-                ]).execute(function(error){
-                    if(!error && returnedUser){
-                        request.getHandshake().user = returnedUser;
-                        var data        = {user: user};
-                        var response    = responder.response("registeredUser", data);
-                    } else {
-                        var data        = {error: error.toString()};
-                        var response    = responder.response("registerUserError", data);
-                    }
-                    responder.sendResponse(response);
-                });
-            },
+            // registerUser:       function(request, responder){
+            //     var handshake   = request.getHandshake();
+            //     var currentUser = handshake.user;
+            //     var data        = request.getData()
+            //     var user        = data.user;
+            //     var returnedUser;
+            //     $series([
+            //         $task(function(flow){
+            //             if(currentUser.isNotAnonymous){
+            //                 userService.logoutUser(currentUser, handshake, function(error){
+            //                     flow.complete(error);
+            //                 });
+            //             } else {
+            //                 flow.complete()
+            //             }
+            //         }),
+            //         $task(function(flow){
+            //             userService.registerUser(user, function(error, user){
+            //                 returnedUser = user;
+            //                 flow.complete(error);
+            //             });
+            //         })
+            //     ]).execute(function(error){
+            //         if(!error && returnedUser){
+            //             request.getHandshake().user = returnedUser;
+            //             var data        = {user: user};
+            //             var response    = responder.response("registeredUser", data);
+            //         } else {
+            //             var data        = {error: error.toString()};
+            //             var response    = responder.response("registerUserError", data);
+            //         }
+            //         responder.sendResponse(response);
+            //     });
+            // },
 
             retrieveUser:       function(request, responder){
                 var currentUser = request.getHandshake().user;
