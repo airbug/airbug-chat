@@ -76,7 +76,6 @@ var UserService = Class.extend(Obj, {
         if (handshakeData.session) {
             var session = handshakeData.session;
             console.log("session:", session);
-            console.log("cookie.data", session.data.cookie.data);
             if (session.data.userId) {
                 this.userManager.findUserById(session.data.userId, function(error, user) {
                     console.log("userManager.findUserById. user:", user);

@@ -78,7 +78,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
                         : session.expires;
                     if (!expires || new Date < expires) {
                         console.log("data:", data);
-                        callback(null, data); // or session
+                        callback(null, data); // or session //clear cookies and retry
                     } else {
                         _this.destroy(sid, callback);
                     }

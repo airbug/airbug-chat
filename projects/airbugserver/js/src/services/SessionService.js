@@ -103,7 +103,7 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow){
                 req.session.regenerate(function(error){
                     if(!error){
-                        req.session.userId = user._id;
+                        if(user._id) req.session.userId = user._id;
                         req.session.save(function(error){
                             flow.complete(error);
                         });

@@ -301,37 +301,30 @@ var AirbugApi = Class.extend(Obj, {
             });
     },
 
-    loginUser: function(userObj, callback){
-        var requestType = "loginUser";
-        var requestData = {
-            user: {
-                email: userObj.email
-            }
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type        = callResponse.getType();
-                var data        = callResponse.getData();
-                var error       = data.error;
-                var currentUser = data.user;
-                console.log("error:", error, "user:", currentUser, "data:", data);
-                callback(error, currentUser);
-            } else {
-                callback(exception, null);
-            }
-        });
+    loginUser: function(callback){
+        // this.bugCallClient.createConnection();
+        this.bugCallClient.openConnection();
+        callback();
     },
 
     /**
      * @param {function(error)} callback
      */
     logoutCurrentUser: function(callback){
+        var _this = this;
         this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
             if(!exception){
                 var type        = callResponse.getType();
                 var data        = callResponse.getData();
                 var error       = data.error;
-                callback(error);
+                console.log("Inside AirbugApi logoutCurrentUser");
+                if(!error){
+                    // console.log("destroying connection");
+                    // _this.bugCallClient.destroyConnection();
+                    callback();
+                } else {
+                    callback(error);
+                }
             } else {
                 callback(exception, null);
             }
@@ -339,6 +332,7 @@ var AirbugApi = Class.extend(Obj, {
     },
 
     registerUser: function(callback){
+        this.bugCallClient.createConnection();
         this.bugCallClient.openConnection();
         callback();
     },

@@ -147,9 +147,10 @@ var LogoutButtonContainer = Class.extend(CarapaceContainer, {
         this.currentUserManagerModule.logoutCurrentUser(function(error){
             console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logoutCurrentUser");
             if(!error){
-                _this.navigationModule.navigate("loggedout", {
-                    trigger: true
-                });
+                // _this.navigationModule.navigate("loggedout", {
+                //     trigger: true
+                // });
+                window.location.replace("http://localhost:8000/app");
             } else {
                 //TODO
                 //Show error

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,16 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel           = BugFlow.$parallel;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -121,14 +132,28 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
     loginUser: function(userObj, callback){
         var _this = this;
-        this.airbugApi.loginUser(userObj, function(error, currentUser){
-            console.log("error:", error, "currentUser:", currentUser);
-            if(!error && currentUser){
-                _this.updateCurrentUserAndRoomsList(currentUser, function(){
-                    callback(error, currentUser);
-                });
-            } else {
-                callback(error, currentUser);
+        $.ajax({
+            url: "/app/login",
+            type: "POST",
+            dataType: "json",
+            data: userObj,
+            success: function(data, textStatus, req){
+                console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
+                var user = data.user;
+                var error = data.error;
+                if(!error && user){
+                    _this.airbugApi.loginUser(function(){
+                        _this.updateCurrentUserAndRoomsList(user, function(){
+                            callback(error, user);
+                        });
+                    });
+                } else {
+                    callback(error, user);
+                }
+            },
+            error: function(req, textStatus, errorThrown){
+                console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
+                callback(errorThrown);
             }
         });
     },
@@ -136,23 +161,46 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     logoutCurrentUser: function(callback){
         //TODO
         var _this = this;
-        this.airbugApi.logoutCurrentUser(function(error){
-            if(!error){
-                _this.clearCache();
-                _this.userManagerModule.clearCache();
-                _this.roomManagerModule.clearCache();
-                callback(error);
-            } else {
-                callback(error);
-            }
+        $series([
+            // $task(function(flow){
+            //     _this.airbugApi.logoutCurrentUser(function(error){
+            //         if(!error){
+            //             _this.clearCache();
+            //             _this.userManagerModule.clearCache();
+            //             _this.roomManagerModule.clearCache();
+            //             flow.complete();
+            //         } else {
+            //             flow.error(error);
+            //         }
+            //     });
+            // }),
+            $task(function(flow){
+                $.ajax({
+                    url: "/app/logout",
+                    type: "POST",
+                    dataType: "json",
+                    data: {},
+                    success: function(data, textStatus, req){
+                        console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
+                        var error = data.error;
+                        flow.complete(error);
+                    },
+                    error: function(req, textStatus, errorThrown){
+                        console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
+                        flow.error(errorThrown);
+                    }
+                });
+            })
+        ]).execute(function(error){
+            if(error) var error = error.toString();
+            callback(error);
         });
-
     },
 
     registerUser: function(userObj, callback){
         var _this = this;
         $.ajax({
-            url: "app/register",
+            url: "/app/register", // should it be "/app/register" ?
             type: "POST",
             dataType: "json",
             data: userObj,
@@ -172,6 +220,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             },
             error: function(req, textStatus, errorThrown){
                 console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
+                callback(errorThrown);
             }
         });
     },
