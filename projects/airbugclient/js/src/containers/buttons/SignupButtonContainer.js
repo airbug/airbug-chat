@@ -10,9 +10,9 @@
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.TextView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -32,7 +32,7 @@ var Class                   = bugpack.require('Class');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var TextView                = bugpack.require('airbug.TextView');
-var Annotate                = bugpack.require('annotate.Annotate');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
@@ -43,8 +43,8 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
 var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -143,7 +143,13 @@ var SignupButtonContainer = Class.extend(CarapaceContainer, {
         });
     }
 });
-annotate(SignupButtonContainer).with(
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SignupButtonContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])

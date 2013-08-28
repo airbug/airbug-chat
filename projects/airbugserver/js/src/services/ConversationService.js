@@ -68,7 +68,7 @@ var ConversationService = Class.extend(Obj, {
      */
     retrieveConversation: function(currentUser, conversationId, callback) {
         var _this = this;
-        console.log("Inside of ConversationService#retrieveConversation")
+        console.log("Inside of ConversationService#retrieveConversation");
         this.conversationManager.findById(conversationId, function(error, conversation){
             console.log("Error:", error);
             console.log("Conversation:", conversation);
@@ -76,7 +76,7 @@ var ConversationService = Class.extend(Obj, {
                 //NOTE This is HACKY. CurrentUser should always be updating itself after any change is made to its corresponding data model
                 _this.userManager.findById(currentUser.id, function(error, returnedUser){
                     if(!error && returnedUser){
-                        if(returnedUser.roomsList.indexOf(conversation.ownerId) > -1){
+                        if (returnedUser.roomsList.indexOf(conversation.ownerId) > -1) {
                             callback(null, conversation);
                         } else {
                             callback(new Error("Unauthorized Access"), null);

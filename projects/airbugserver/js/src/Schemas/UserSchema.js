@@ -42,6 +42,7 @@ var UserSchema = new Schema({
     updatedAt: Date
 });
 
+
 //-------------------------------------------------------------------------------
 // Instance Methods
 //-------------------------------------------------------------------------------
@@ -49,14 +50,14 @@ var UserSchema = new Schema({
 /**
  * @return {boolean}
  */
-UserSchema.method("isAnonymous", function(){
+UserSchema.method("isAnonymous", function() {
     return this.anonymous;
 });
 
 /**
  * @return {boolean}
  */
-UserSchema.method("isNotAnonymous", function(){
+UserSchema.method("isNotAnonymous", function() {
     return !this.anonymous;
 });
 

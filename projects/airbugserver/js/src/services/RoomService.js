@@ -80,9 +80,9 @@ var RoomService = Class.extend(Obj, {
     createRoom: function(currentUser, room, callback) {
         //TODO: SUNG clean this up
         var _this = this;
-        var room = this.roomManager.create(room, function(error, room){
-            if(!error && room){
-                _this.addUserToRoom(currentUser.id, room.id, function(error, room, user){
+        this.roomManager.createRoom(room, function(error, room) {
+            if (!error && room) {
+                _this.addUserToRoom(currentUser.id, room.id, function(error, room, user) {
                     if(!error && user && room){
                         callback(error, room, user);
                     } else {

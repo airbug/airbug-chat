@@ -42,7 +42,7 @@ var HeaderView = Class.extend(MustacheView, {
                             '</div>' +
                             '<div id="header-center">' +
                                 '<div id="logo" class="brand" align="center">' +
-                                    'airbug' +
+                                    '<img id="logo-image" src="img/airbug-small.png"/>' +
                                 '</div>' +
                             '</div>' +
                             '<div id="header-right">' +

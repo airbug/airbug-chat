@@ -13,6 +13,9 @@
 //@Require('airbug.ListItemView')
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -35,6 +38,9 @@ var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -43,7 +49,10 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -206,12 +215,18 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(ChatMessageContainer).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatMessageContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
         property("userManagerModule").ref("userManagerModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

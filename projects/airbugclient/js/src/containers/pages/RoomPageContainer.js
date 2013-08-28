@@ -224,7 +224,7 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
     }
 });
 
-annotate(RoomPageContainer).with(
+bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([
         property("roomManagerModule").ref("roomManagerModule")
     ])

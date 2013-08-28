@@ -9,7 +9,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('annotate.Annotate')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
@@ -17,6 +16,7 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 
@@ -35,7 +35,6 @@ var express     = require('express');
 
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
-var Annotate                    = bugpack.require('annotate.Annotate');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var BugFs                       = bugpack.require('bugfs.BugFs');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
@@ -43,6 +42,7 @@ var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotatio
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var ExpressApp                  = bugpack.require('express.ExpressApp');
 var ExpressServer               = bugpack.require('express.ExpressServer');
 
@@ -51,8 +51,8 @@ var ExpressServer               = bugpack.require('express.ExpressServer');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate        = Annotate.annotate;
 var arg             = ArgAnnotation.arg;
+var bugmeta         = BugMeta.context();
 var configuration   = ConfigurationAnnotation.configuration;
 var module          = ModuleAnnotation.module;
 var property        = PropertyAnnotation.property;
@@ -159,15 +159,15 @@ Class.implement(UserMediaServerConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
-// Annotate
+// BugMeta
 //-------------------------------------------------------------------------------
 
-annotate(UserMediaServerConfiguration).with(
+bugmeta.annotate(UserMediaServerConfiguration).with(
     configuration().modules([
         module("expressApp"),
         module("expressServer")
             .args([
-                arg("expressApp").ref("expressApp")
+                arg().ref("expressApp")
             ])
     ])
 );

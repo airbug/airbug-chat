@@ -43,7 +43,7 @@ var $task       = BugFlow.$task;
 
 var RoomManager = Class.extend(MongoManager, {
 
-    _constructor: function(model, schema, conversationManager, roomMemberManager){
+    _constructor: function(model, schema, conversationManager, roomMemberManager) {
 
         this._super(model, schema);
 
@@ -53,12 +53,14 @@ var RoomManager = Class.extend(MongoManager, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbugserver.ConversationManager}
+         * @private
+         * @type {ConversationManager}
          */
         this.conversationManager    = conversationManager;
 
         /**
-         * @type {airbugserver.RoomMemberManager}
+         * @private
+         * @type {RoomMemberManager}
          */
         this.roomMemberManager      = roomMemberManager;
 
@@ -112,11 +114,48 @@ var RoomManager = Class.extend(MongoManager, {
     },
 
     /**
+     * @param {string} roomId
+     * @param {string} userId
+     * @param {function(error, room)} callback
+     */
+    addUserToRoom: function(userId, roomId, callback) {
+        var _this = this;
+        this.findById(roomId, function(error, room) {
+            if (!error && room) {
+                _this.roomMemberManager.createRoomMember({userId: userId, roomId: roomId}, function(error, roomMember) {
+                    if (!error && roomMember) {
+                        room.membersList.addToSet(roomMember._id); //What happens if I push the entire object instead of just the id???
+                        room.save(function(error, room) {
+                            callback(error, room);
+                        });
+                    } else {
+                        callback(error);
+                    }
+                });
+            } else {
+                callback(error, room);
+            }
+        })
+    },
+
+    /**
+     * @param room
+     * @param callback
+     */
+    createRoom: function(room, callback) {
+        this.create(room, function(error, room) {
+            if (callback) {
+                callback(error, room);
+            }
+        });
+    },
+
+    /**
      * @param {} roomId
      * @param {function(error, membersList)} callback
      */
     getMembersListByRoomId: function(roomId, callback){
-        this.findById(roomId, function(error, room){
+        this.findById(roomId, function(error, room) {
             callback(error, room.membersList);
         });
     },
@@ -130,29 +169,6 @@ var RoomManager = Class.extend(MongoManager, {
         this.findById(roomId).populate("membersList").exec(function(error, room){
             callback(error, room.membersList);
         });   
-    },
-
-    /**
-     * @param {} roomId
-     * @param {} userId
-     * @param {function(error, room)} callback
-     */
-    addUserToRoom: function(userId, roomId, callback){
-        var _this = this;
-        this.findById(roomId, function(error, room){
-            if(!error && room){
-                _this.roomMemberManager.create({userId: userId, roomId: roomId}, function(error, roomMember){
-                    if(!error && roomMember){
-                        room.membersList.addToSet(roomMember.id); //What happens if I push the entire object instead of just the id???
-                        room.save(callback);
-                    } else {
-                        callback(error);
-                    }
-                });
-            } else {
-                callback(error, room);
-            }
-        })
     },
 
     /**

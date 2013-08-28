@@ -12,7 +12,7 @@
 //@Require('airbug.ConversationModel')
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
@@ -36,7 +36,7 @@ var ConversationListItemView =  bugpack.require('airbug.ConversationListItemView
 var ConversationModel =         bugpack.require('airbug.ConversationModel');
 var ListView =                  bugpack.require('airbug.ListView');
 var ListViewEvent =             bugpack.require('airbug.ListViewEvent');
-var Annotate =                  bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
@@ -47,7 +47,7 @@ var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var autowired = AutowiredAnnotation.autowired;
 var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
@@ -228,7 +228,7 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(ConversationListContainer).with(
+bugmeta.annotate(ConversationListContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])

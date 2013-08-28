@@ -441,6 +441,10 @@ html, body {
     text-shadow: 0 1px 0 #222222;
 }
 
+#logo-image {
+    width: 40px;
+}
+
 .user-status-indicator {
     border-width: 1px;
     border-color: rgb(196, 196, 196);

@@ -10,9 +10,9 @@
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -32,9 +32,9 @@ var Class                   = bugpack.require('Class');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var IconView                = bugpack.require('airbug.IconView');
-var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -43,7 +43,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;

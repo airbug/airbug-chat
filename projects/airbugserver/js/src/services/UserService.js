@@ -189,7 +189,7 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {{*}} userObj
-     * @param {function(error, userObj)} callback 
+     * @param {function(error, User)} callback
      */
     registerUser: function(userObj, callback){
         var _this = this;
@@ -209,9 +209,10 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {string} userId
-     * @param {function(error, {*})} callback 
+     * @param {function(error, *)} callback
      */
     retrieveUser: function(userId, callback){
+        //TODO BRN: What does this select() call do here?
         this.userManager.findById(userId).select("_id firstName lastName").exec(callback);
     },
 
@@ -219,7 +220,7 @@ var UserService = Class.extend(Obj, {
      * @param {Array.<string>} userIds
      * @param {function(error, {*})} callback 
      */
-    retrieveUsers: function(userIds, callback){
+    retrieveUsers: function(userIds, callback) {
         this.userManager.where("_id").in(userIds).select("_id firstName lastName").exec(callback);
     }
 });

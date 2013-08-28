@@ -17,6 +17,7 @@
 //@Require('airbug.ListItemView')
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -43,6 +44,7 @@ var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -51,7 +53,8 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var bugmeta = BugMeta.context();
+var view    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -295,7 +298,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(ChatWidgetContainer).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatWidgetContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),

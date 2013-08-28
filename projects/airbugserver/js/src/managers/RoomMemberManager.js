@@ -35,7 +35,7 @@ var RoomMemberManager = Class.extend(MongoManager, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema, roomManager){
+    _constructor: function(model, schema) {
 
         this._super(model, schema);
 
@@ -44,10 +44,6 @@ var RoomMemberManager = Class.extend(MongoManager, {
         // Properties
         //-------------------------------------------------------------------------------
 
-        /**
-         * @type {RoomManager}
-         */
-        this.roomManager = roomManager;
 
     },
 
@@ -59,10 +55,7 @@ var RoomMemberManager = Class.extend(MongoManager, {
      * @override
      * @param {function(error)} callback
      */
-    configure: function(callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-
+    configure: function(callback) {
         this.pre('save', true, function(next, done){
             next();
             if (!this.createdAt) this.createdAt = new Date();
@@ -76,6 +69,18 @@ var RoomMemberManager = Class.extend(MongoManager, {
         });
 
         callback();
+    },
+
+    /**
+     * @param {Object} roomMember
+     * @param {function(Error, RoomMember} callback
+     */
+    createRoomMember: function(roomMember, callback) {
+        this.create(roomMember, function(error, roomMember) {
+            if (callback) {
+                callback(error, roomMember);
+            }
+        });
     }
 });
 

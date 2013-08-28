@@ -9,8 +9,9 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ApplicationContext')
+//@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationScan')
+//@Require('bugioc.IocContext')
 
 
 //-------------------------------------------------------------------------------
@@ -26,8 +27,9 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
-var ApplicationContext  = bugpack.require('bugioc.ApplicationContext');
+var AutowiredScan       = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationScan   = bugpack.require('bugioc.ConfigurationScan');
+var IocContext          = bugpack.require('bugioc.IocContext');
 
 
 //-------------------------------------------------------------------------------
@@ -51,15 +53,21 @@ var AirbugClientApplication = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ApplicationContext}
+         * @type {IocContext}
          */
-        this.applicationContext = new ApplicationContext();
+        this.iocContext         = new IocContext();
+
+        /**
+         * @private
+         * @type {AutowiredScan}
+         */
+        this.autowiredScan      = new AutowiredScan(this.iocContext);
 
         /**
          * @private
          * @type {ConfigurationScan}
          */
-        this.configurationScan = new ConfigurationScan(this.applicationContext);
+        this.configurationScan  = new ConfigurationScan(this.iocContext);
     },
 
 
@@ -71,9 +79,10 @@ var AirbugClientApplication = Class.extend(Obj, {
      *
      */
     start: function(callback) {
+        this.autowiredScan.scan();
         this.configurationScan.scan();
-        this.applicationContext.process();
-        this.applicationContext.initialize(callback);
+        this.iocContext.process();
+        this.iocContext.initialize(callback);
     }
 });
 

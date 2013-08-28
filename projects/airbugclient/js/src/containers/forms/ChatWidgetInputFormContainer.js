@@ -13,9 +13,9 @@
 //@Require('airbug.ChatWidgetInputFormView')
 //@Require('airbug.TextView')
 //@Require('airbug.TwoColumnView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -38,9 +38,9 @@ var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var TextView                = bugpack.require('airbug.TextView');
 var TwoColumnView           = bugpack.require('airbug.TwoColumnView');
-var Annotate                = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -49,8 +49,8 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
 var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 

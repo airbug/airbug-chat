@@ -35,7 +35,7 @@ var TrackerModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sonarBugClient) {
+    _constructor: function(sonarbugClient) {
 
         this._super();
 
@@ -46,9 +46,9 @@ var TrackerModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SonarBugClient}
+         * @type {SonarbugClient}
          */
-        this.sonarBugClient = sonarBugClient;
+        this.sonarbugClient = sonarbugClient;
     },
 
 
@@ -66,7 +66,7 @@ var TrackerModule = Class.extend(Obj, {
         this.trackSB("pageView", {pageId: pageId});
     },
     trackSB: function(eventName, data){
-        this.sonarBugClient.track(eventName, data);
+        this.sonarbugClient.track(eventName, data);
     }
 });
 

@@ -15,9 +15,9 @@
 //@Require('airbug.FauxTextAreaView')
 //@Require('airbug.IconView')
 //@Require('airbug.ParagraphView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 //@Require('zeroclipboard.ZeroClipboard')
@@ -43,9 +43,9 @@ var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
 var FauxTextAreaView            = bugpack.require('airbug.FauxTextAreaView');
 var IconView                    = bugpack.require('airbug.IconView');
 var ParagraphView               = bugpack.require('airbug.ParagraphView');
-var Annotate                    = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 var ZeroClipboard               = bugpack.require('zeroclipboard.ZeroClipboard');
@@ -55,8 +55,8 @@ var ZeroClipboard               = bugpack.require('zeroclipboard.ZeroClipboard')
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
 var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -275,7 +275,12 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(AddRoomMemberContainer).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AddRoomMemberContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])

@@ -13,7 +13,7 @@
 //@Require('airbug.UserEmailSettingsView')
 //@Require('airbug.UserNameSettingsView')
 //@Require('airbug.UserPasswordSettingsView')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
@@ -38,7 +38,7 @@ var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView')
 var UserEmailSettingsView =     bugpack.require('airbug.UserEmailSettingsView');
 var UserNameSettingsView =      bugpack.require('airbug.UserNameSettingsView');
 var UserPasswordSettingsView =  bugpack.require('airbug.UserPasswordSettingsView');
-var Annotate =                  bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
@@ -49,7 +49,7 @@ var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var autowired = AutowiredAnnotation.autowired;
 var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
@@ -247,7 +247,7 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(SettingsPanelContainer).with(
+bugmeta.annotate(SettingsPanelContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("sessionModule").ref("sessionModule")

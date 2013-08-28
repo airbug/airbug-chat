@@ -15,7 +15,7 @@
 //@Require('airbug.RoomNameView')
 //@Require('airbug.SelectableListItemView')
 //@Require('airbug.TextView')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
@@ -42,7 +42,7 @@ var RoomModel                   = bugpack.require('airbug.RoomModel');
 var RoomNameView                = bugpack.require('airbug.RoomNameView');
 var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
 var TextView                    = bugpack.require('airbug.TextView');
-var Annotate                    = bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
@@ -53,7 +53,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
@@ -224,7 +224,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(RoomListPanelContainer).with(
+bugmeta.annotate(RoomListPanelContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")

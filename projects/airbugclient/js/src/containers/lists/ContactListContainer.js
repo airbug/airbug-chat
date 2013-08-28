@@ -15,7 +15,7 @@
 //@Require('airbug.TextView')
 //@Require('airbug.UserNameView')
 //@Require('airbug.UserStatusIndicatorView')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
@@ -42,7 +42,7 @@ var SelectableListItemView =    bugpack.require('airbug.SelectableListItemView')
 var TextView =                  bugpack.require('airbug.TextView');
 var UserNameView =              bugpack.require('airbug.UserNameView');
 var UserStatusIndicatorView =   bugpack.require('airbug.UserStatusIndicatorView');
-var Annotate =                  bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation =       bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation =        bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
@@ -53,7 +53,7 @@ var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var autowired = AutowiredAnnotation.autowired;
 var property = PropertyAnnotation.property;
 var view = ViewBuilder.view;
@@ -196,7 +196,7 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(ContactListContainer).with(
+bugmeta.annotate(ContactListContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])

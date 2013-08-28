@@ -50,7 +50,7 @@ buildProperties({
         },
         sourcePaths: [
             "./js/src",
-            '../../../bugjs/projects/annotate/js/src',
+            '../../../bugjs/projects/bugmeta/js/src',
             '../../../bugjs/projects/bugflow/js/src',
             '../../../bugjs/projects/bugfs/js/src',
             '../../../bugjs/projects/bugioc/js/src',

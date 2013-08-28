@@ -7,7 +7,7 @@
 //@Export('ApplicationController')
 
 //@Require('Class')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
@@ -33,8 +33,7 @@ var CarapaceController  = bugpack.require('carapace.CarapaceController');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate            = Annotate.annotate;
-var annotation          = Annotate.annotation;
+var bugmeta = BugMeta.context();
 var autowired           = AutowiredAnnotation.autowired;
 var controller          = ControllerAnnotation.controller;
 var property            = PropertyAnnotation.property;
@@ -106,12 +105,18 @@ var ApplicationController = Class.extend(CarapaceController, {
 
 });
 
-annotate(ApplicationController).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ApplicationController).with(
     autowired().properties([
         property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("navigationModule").ref("navigationModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

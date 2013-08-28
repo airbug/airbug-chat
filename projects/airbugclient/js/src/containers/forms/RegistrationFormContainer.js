@@ -10,7 +10,7 @@
 //@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
@@ -32,7 +32,7 @@ var Class                   = bugpack.require('Class');
 var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
-var Annotate                = bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
@@ -43,7 +43,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
@@ -175,7 +175,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
         });
     }
 });
-annotate(RegistrationFormContainer).with(
+bugmeta.annotate(RegistrationFormContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule")

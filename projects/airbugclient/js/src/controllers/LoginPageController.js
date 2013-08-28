@@ -10,7 +10,7 @@
 //@Require('Class')
 //@Require('airbug.ApplicationController')
 //@Require('airbug.LoginPageContainer')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
@@ -30,7 +30,7 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
 var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
-var Annotate                = bugpack.require('annotate.Annotate');
+var BugMeta = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
@@ -40,8 +40,7 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
-var annotation  = Annotate.annotation;
+var bugmeta = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
 var property    = PropertyAnnotation.property;
@@ -101,7 +100,7 @@ var LoginPageController = Class.extend(ApplicationController, {
     }
 });
 
-annotate(LoginPageController).with(
+bugmeta.annotate(LoginPageController).with(
     controller().route("login")
 );
 

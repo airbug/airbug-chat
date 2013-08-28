@@ -9,7 +9,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('annotate.Annotate')
 //@Require('bugcall.BugCallServer')
 //@Require('bugcall.CallServer')
 //@Require('bugflow.BugFlow')
@@ -19,6 +18,7 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('bugroutes.BugCallRouter')
 //@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
@@ -75,7 +75,7 @@ var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
 var express                 = require('express');
 var mongoose                = require('mongoose');
-var mu2express              = require("mu2express");
+var mu2express              = require('mu2express');
 var path                    = require('path');
 
 
@@ -85,7 +85,6 @@ var path                    = require('path');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
-var Annotate                = bugpack.require('annotate.Annotate');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
 var CallServer              = bugpack.require('bugcall.CallServer');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -95,6 +94,7 @@ var ConfigurationAnnotation = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter           = bugpack.require('bugroutes.BugCallRouter');
 var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
@@ -112,7 +112,7 @@ var HomePageController      = bugpack.require('airbugserver.HomePageController')
 var RoomController          = bugpack.require('airbugserver.RoomController');
 var UserController          = bugpack.require('airbugserver.UserController');
 
-var CallService             = bugpack.require('airbugserver.CallService')
+var CallService             = bugpack.require('airbugserver.CallService');
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
@@ -147,7 +147,7 @@ var UserSchema              = bugpack.require('airbugserver.UserSchema');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate                = Annotate.annotate;
+var bugmeta                 = BugMeta.context();
 var arg                     = ArgAnnotation.arg;
 var configuration           = ConfigurationAnnotation.configuration;
 var module                  = ModuleAnnotation.module;
@@ -856,6 +856,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         return this._sessionStore;
     },
 
+
     /**
      * @param {SocketIoServerConfig} config
      * @param {ExpressServer} expressServer
@@ -932,8 +933,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * }}
      **/
     loadConfig: function(configPath){
-        var config;
-        var defaults = {
+        var config = {
             port: 8000,
             mongoDbIp: "localhost"
         };
@@ -943,12 +943,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
             } catch(error) {
                 console.log(configPath, "could not be parsed. Invalid JSON.");
-                return defaults;
-            } finally {
-                return config;
             }
+            return config;
         } else {
-            return defaults;
+            return config;
         }
     }
 });
@@ -962,10 +960,10 @@ Class.implement(AirbugServerConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
-// Annotate
+// BugMeta
 //-------------------------------------------------------------------------------
 
-annotate(AirbugServerConfiguration).with(
+bugmeta.annotate(AirbugServerConfiguration).with(
     configuration().modules([
         
         //-------------------------------------------------------------------------------
@@ -976,7 +974,7 @@ annotate(AirbugServerConfiguration).with(
 
 
         //-------------------------------------------------------------------------------
-        // Common Config Object
+        // Config
         //-------------------------------------------------------------------------------
 
         module("config"),
@@ -988,18 +986,18 @@ annotate(AirbugServerConfiguration).with(
 
         module("expressApp")
             .args([
-                arg("config").ref("config")
+                arg().ref("config")
             ])
             .properties([
                 property("sessionStore").ref("sessionStore")
             ]),
         module("expressServer")
             .args([
-                arg("expressApp").ref("expressApp")
+                arg().ref("expressApp")
             ]),
         module("sessionStore")
             .args([
-                arg("sessionManager").ref("sessionManager")
+                arg().ref("sessionManager")
             ]),
 
 
@@ -1017,13 +1015,13 @@ annotate(AirbugServerConfiguration).with(
 
         module("apiAirbugSocketIoManager")
             .args([
-                arg("socketIoServer").ref("socketIoServer")
+                arg().ref("socketIoServer")
             ]),
         module("socketIoServer").
             args([
-                arg("config").ref("socketIoServerConfig"),
-                arg("expressServer").ref("expressServer"),
-                arg("handshaker").ref("handshaker")
+                arg().ref("socketIoServerConfig"),
+                arg().ref("expressServer"),
+                arg().ref("handshaker")
             ]),
         module("socketIoServerConfig"),
 
@@ -1034,16 +1032,17 @@ annotate(AirbugServerConfiguration).with(
 
         module("bugCallRouter")
             .args([
-                arg("eventDispatcher").ref("bugCallServer")
+                arg().ref("bugCallServer")
             ]),
         module("bugCallServer")
             .args([
-                arg("callServer").ref("callServer")
+                arg().ref("callServer")
             ]),
         module("callServer")
             .args([
-                arg("socketIoManager").ref("apiAirbugSocketIoManager")
+                arg().ref("apiAirbugSocketIoManager")
             ]),
+
 
 
         //-------------------------------------------------------------------------------
@@ -1052,33 +1051,33 @@ annotate(AirbugServerConfiguration).with(
 
         module("chatMessageController")
             .args([
-                arg("bugCallRouter").ref("bugCallRouter"),
-                arg("chatMessageService").ref("chatMessageService")
+                arg().ref("bugCallRouter"),
+                arg().ref("chatMessageService")
             ]),
         module("conversationController")
             .args([
-                arg("bugCallRouter").ref("bugCallRouter"),
-                arg("conversationService").ref("conversationService")
+                arg().ref("bugCallRouter"),
+                arg().ref("conversationService")
             ]),
         module("homePageController")
             .args([
-                arg("config").ref("config"),
-                arg("expressApp").ref("expressApp")
+                arg().ref("config"),
+                arg().ref("expressApp")
             ]),
         module("roomController")
             .args([
-                arg("bugCallRouter").ref("bugCallRouter"),
-                arg("roomService").ref("roomService"),
-                arg("callService").ref("callService")
+                arg().ref("bugCallRouter"),
+                arg().ref("roomService"),
+                arg().ref("callService")
             ]),
         module("userController")
             .args([
-                arg("config").ref("config"), 
-                arg("expressApp").ref("expressApp"),
-                arg("bugCallRouter").ref("bugCallRouter"),
-                arg("userService").ref("userService"),
-                arg("sessionService").ref("sessionService"),
-                arg("callService").ref("callService")
+                arg().ref("config"),
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("userService"),
+                arg().ref("sessionService"),
+                arg().ref("callService")
             ]),
 
 
@@ -1088,32 +1087,32 @@ annotate(AirbugServerConfiguration).with(
 
         module("chatMessageService")
             .args([
-                arg("chatMessageManager").ref("chatMessageManager"),
-                arg("conversationManager").ref("conversationManager")
+                arg().ref("chatMessageManager"),
+                arg().ref("conversationManager")
             ]),
         module("callService")
             .args([
-                arg("bugCallServer").ref("bugCallServer")
+                arg().ref("bugCallServer")
             ]),
         module("conversationService")
             .args([
-                arg("conversationManager").ref("conversationManager"),
-                arg("userManager").ref("userManager")
+                arg().ref("conversationManager"),
+                arg().ref("userManager")
             ]),
         module("roomService")
             .args([
-                arg("roomManager").ref("roomManager"),
-                arg("userManager").ref("userManager")
+                arg().ref("roomManager"),
+                arg().ref("userManager")
             ]),
         module("sessionService")
             .args([
-                arg("cookieSigner").ref("cookieSigner"),
-                arg("sessionManager").ref("sessionManager")
+                arg().ref("cookieSigner"),
+                arg().ref("sessionManager")
             ]),
         module("userService")
             .args([
-                arg("sessionManager").ref("sessionManager"),
-                arg("userManager").ref("userManager")
+                arg().ref("sessionManager"),
+                arg().ref("userManager")
             ]),
 
 
@@ -1123,35 +1122,35 @@ annotate(AirbugServerConfiguration).with(
 
         module("chatMessageManager")
             .args([
-                arg("model").ref("chatMessage"),
-                arg("schema").ref("chatMessageSchema")
+                arg().ref("chatMessage"),
+                arg().ref("chatMessageSchema")
             ]),
         module("conversationManager")
             .args([
-                arg("model").ref("conversation"),
-                arg("schema").ref("conversationSchema")
+                arg().ref("conversation"),
+                arg().ref("conversationSchema")
             ]),
         module("roomManager")
             .args([
-                arg("model").ref("room"),
-                arg("schema").ref("roomSchema"),
-                arg("conversationManager").ref("conversationManager"),
-                arg("roomMemberManager").ref("roomMemberManager")
+                arg().ref("room"),
+                arg().ref("roomSchema"),
+                arg().ref("conversationManager"),
+                arg().ref("roomMemberManager")
             ]),
         module("roomMemberManager")
             .args([
-                arg("model").ref("roomMember"),
-                arg("schema").ref("roomMemberSchema")
+                arg().ref("roomMember"),
+                arg().ref("roomMemberSchema")
             ]),
         module("sessionManager")
             .args([
-                arg("model").ref("session"),
-                arg("schema").ref("sessionSchema")
+                arg().ref("session"),
+                arg().ref("sessionSchema")
             ]),
         module("userManager")
             .args([
-                arg("model").ref("user"),
-                arg("schema").ref("userSchema")
+                arg().ref("user"),
+                arg().ref("userSchema")
             ]),
 
 

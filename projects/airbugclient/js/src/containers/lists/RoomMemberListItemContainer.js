@@ -94,7 +94,7 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
     }
 });
 
-annotate(RoomMemberListItemContainer).with(
+bugmeta.annotate(RoomMemberListItemContainer).with(
     autowired().properties([
         property("userManagerModule").ref("userManagerModule")
     ])

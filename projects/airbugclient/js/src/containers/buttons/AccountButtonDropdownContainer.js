@@ -13,9 +13,9 @@
 //@Require('airbug.DropdownViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -38,9 +38,9 @@ var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
 var DropdownViewEvent           = bugpack.require('airbug.DropdownViewEvent');
 var IconView                    = bugpack.require('airbug.IconView');
 var TextView                    = bugpack.require('airbug.TextView');
-var Annotate                    = bugpack.require('annotate.Annotate');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -49,8 +49,8 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
 var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -210,7 +210,12 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(AccountButtonDropdownContainer).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AccountButtonDropdownContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("sessionModule").ref("sessionModule")

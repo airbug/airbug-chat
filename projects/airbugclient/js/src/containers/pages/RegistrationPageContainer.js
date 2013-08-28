@@ -113,7 +113,7 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
     }
 });
 
-// annotate(RegistrationPageContainer).with(
+// bugmeta.annotate(RegistrationPageContainer).with(
 //     autowired().properties([
 //         property("currentUserManagerModule").ref("currentUserManagerModule")
 //     ])

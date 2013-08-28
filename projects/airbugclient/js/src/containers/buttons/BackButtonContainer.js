@@ -10,9 +10,9 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
-//@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -28,25 +28,25 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var ButtonViewEvent =       bugpack.require('airbug.ButtonViewEvent');
-var IconView =              bugpack.require('airbug.IconView');
-var TextView =              bugpack.require('airbug.TextView');
-var Annotate =              bugpack.require('annotate.Annotate');
-var AutowiredAnnotation =   bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation =    bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer =     bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =           bugpack.require('carapace.ViewBuilder');
+var Class               = bugpack.require('Class');
+var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
+var IconView            = bugpack.require('airbug.IconView');
+var TextView            = bugpack.require('airbug.TextView');
+var AutowiredAnnotation = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation  = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var autowired = AutowiredAnnotation.autowired;
-var property = PropertyAnnotation.property;
-var view = ViewBuilder.view;
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -171,7 +171,12 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
     }
 });
 
-annotate(BackButtonContainer).with(
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(BackButtonContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("pageStateModule").ref("pageStateModule")

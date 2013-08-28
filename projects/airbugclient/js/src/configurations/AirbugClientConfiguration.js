@@ -19,7 +19,6 @@
 //@Require('airbug.SessionModule')
 //@Require('airbug.TrackerModule')
 //@Require('airbug.UserManagerModule')
-//@Require('annotate.Annotate')
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
@@ -29,13 +28,14 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
-//@Require('sonarbugclient.SonarBugClient')
+//@Require('sonarbugclient.SonarbugClient')
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,6 @@ var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
 var SessionModule               = bugpack.require('airbug.SessionModule');
 var TrackerModule               = bugpack.require('airbug.TrackerModule');
 var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
-var Annotate                    = bugpack.require('annotate.Annotate');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
 var CallManager                 = bugpack.require('bugcall.CallManager');
@@ -70,6 +69,7 @@ var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
@@ -77,15 +77,15 @@ var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
-var SonarBugClient              = bugpack.require('sonarbugclient.SonarBugClient');
+var SonarbugClient              = bugpack.require('sonarbugclient.SonarbugClient');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate        = Annotate.annotate;
 var arg             = ArgAnnotation.arg;
+var bugmeta         = BugMeta.context();
 var configuration   = ConfigurationAnnotation.configuration;
 var module          = ModuleAnnotation.module;
 var property        = PropertyAnnotation.property;
@@ -299,17 +299,17 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {SonarBugClient}
+     * @return {SonarbugClient}
      */
-    sonarBugClient: function() {
-        return new SonarBugClient();
+    sonarbugClient: function() {
+        return new SonarbugClient();
     },
 
     /**
      * @return {TrackerModule}
      */
-    trackerModule: function(sonarBugClient) {
-        return new TrackerModule(sonarBugClient);
+    trackerModule: function(sonarbugClient) {
+        return new TrackerModule(sonarbugClient);
     },
 
     /**
@@ -330,24 +330,24 @@ Class.implement(AirbugClientConfiguration, IConfiguration);
 
 
 //-------------------------------------------------------------------------------
-// Annotate
+// BugMeta
 //-------------------------------------------------------------------------------
 
-annotate(AirbugClientConfiguration).with(
+bugmeta.annotate(AirbugClientConfiguration).with(
     configuration().modules([
         module("airbugApi")
             .args([
-                arg("bugCallClient").ref("bugCallClient")
+                arg().ref("bugCallClient")
             ]),
         module("browserSocketIoFactory"),
         module("bugCallClient")
             .args([
-                arg("callClient").ref("callClient"),
-                arg("callManager").ref("callManager")
+                arg().ref("callClient"),
+                arg().ref("callManager")
             ]),
         module("callClient")
             .args([
-                arg("socketIoClient").ref("socketIoClient")
+                arg().ref("socketIoClient")
             ]),
         module("callManager"),
         module("carapaceApplication")
@@ -357,8 +357,8 @@ annotate(AirbugClientConfiguration).with(
         module("carapaceRouter"),
         module("chatMessageManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi"),
-                arg("currentUserManagerModule").ref("currentUserManagerModule")
+                arg().ref("airbugApi"),
+                arg().ref("currentUserManagerModule")
             ]),
         module("controllerScan")
             .args([
@@ -366,13 +366,13 @@ annotate(AirbugClientConfiguration).with(
             ]),
         module("conversationManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi")
+                arg().ref("airbugApi")
             ]),
         module("currentUserManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi"),
-                arg("userManagerModule").ref("userManagerModule"),
-                arg("roomManagerModule").ref("roomManagerModule")
+                arg().ref("airbugApi"),
+                arg().ref("userManagerModule"),
+                arg().ref("roomManagerModule")
             ]),
         module("navigationModule")
             .properties([
@@ -384,26 +384,26 @@ annotate(AirbugClientConfiguration).with(
             ]),
         module("roomManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi")
+                arg().ref("airbugApi")
             ]),
         module("sessionModule")
             .args([
-                arg("airbugApi").ref("airbugApi")
+                arg().ref("airbugApi")
             ]),
         module("socketIoClient")
             .args([
-                arg("socketIoFactory").ref("browserSocketIoFactory"),
-                arg("socketIoConfig").ref("socketIoConfig")
+                arg().ref("browserSocketIoFactory"),
+                arg().ref("socketIoConfig")
             ]),
         module("socketIoConfig"),
-        module("sonarBugClient"),
+        module("sonarbugClient"),
         module("trackerModule")
             .args([
-                arg("sonarBugClient").ref("sonarBugClient")
+                arg().ref("sonarbugClient")
             ]),
         module("userManagerModule")
             .args([
-                arg("airbugApi").ref("airbugApi")
+                arg().ref("airbugApi")
             ])
     ])
 );
