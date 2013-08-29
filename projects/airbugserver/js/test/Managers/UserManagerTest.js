@@ -12,15 +12,16 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack 		= require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var BugMeta = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation 	= bugpack.require('bugunit-annotate.TestAnnotation');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
+
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +29,7 @@ var TestAnnotation 	= bugpack.require('bugunit-annotate.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta = BugMeta.context();
-var test 			= TestAnnotation.test;
+var test    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------

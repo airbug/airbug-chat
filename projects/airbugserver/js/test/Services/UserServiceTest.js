@@ -12,7 +12,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack 		= require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -28,9 +28,10 @@ var TestAnnotation 	= bugpack.require('bugunit-annotate.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta = BugMeta.context();
-var test 			= TestAnnotation.test;
+var test    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+

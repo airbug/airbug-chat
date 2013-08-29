@@ -26,8 +26,8 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
-var IocContext          = bugpack.require('bugioc.IocContext');
 var ConfigurationScan   = bugpack.require('bugioc.ConfigurationScan');
+var IocContext          = bugpack.require('bugioc.IocContext');
 
 
 //-------------------------------------------------------------------------------
@@ -49,7 +49,12 @@ var AirbugServerApplication = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {IocContext}
+         */
         this.iocContext = new IocContext();
+
         /**
          * @private
          * @type {ConfigurationScan}
