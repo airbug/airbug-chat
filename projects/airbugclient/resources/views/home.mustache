@@ -12,14 +12,26 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <link rel="stylesheet" href="/css/styles.css" />
     </head>
     <body>
-        <script type="text/javascript" src="/BugPackKey.js"></script>
-        <script type="text/javascript" src="/BugPackPackage.js"></script>
-        <script type="text/javascript" src="/BugPackSource.js"></script>
-        <script type="text/javascript" src="/BugPackRegistryEntry.js"></script>
-        <script type="text/javascript" src="/BugPackRegistry.js"></script>
-        <script type="text/javascript" src="/BugPackRegistryFile.js"></script>
-        <script type="text/javascript" src="/BugPackContext.js"></script>
-        <script type="text/javascript" src="/BugPackApi.js"></script>
+        <script type="text/javascript" src="https://s3.amazonaws.com/airbug/bugpack-0.0.1.js"></script>
         <script type="text/javascript" src="/airbug-application-loader.js"></script>
+        <!-- UserVoice JavaScript SDK (only needed once on a page) -->
+        <script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/EYy2Up2867d0eT7mVPDhDQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
+
+        <!-- A tab to launch the Classic Widget -->
+        <script>
+        UserVoice = window.UserVoice || [];
+        UserVoice.push(['showTab', 'classic_widget', {
+          mode: 'full',
+          primary_color: '#cc6d00',
+          link_color: '#007dbf',
+          default_mode: 'feedback',
+          forum_id: 216715,
+          tab_label: 'Feedback & Support',
+          tab_color: '#cc6d00',
+          tab_position: 'middle-right',
+          tab_inverted: false
+        }]);
+        </script>
     </body>
 </html>
+
