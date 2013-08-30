@@ -7,13 +7,13 @@
 //@Export('LeaveRoomButtonContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -29,13 +29,13 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var TextView                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -53,7 +53,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LeaveRoomButtonContainer = Class.extend(CarapaceContainer, {
+var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -67,6 +67,9 @@ var LeaveRoomButtonContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        this.buttonName                 = "LeaveRoomButton";
+
 
         // Modules
         //-------------------------------------------------------------------------------

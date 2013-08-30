@@ -53,21 +53,95 @@ var TrackerModule = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    //TODO
+    /**
+     *
+     */
+    deinitialize: function(){
+
+    },
+
+    /**
+     *
+     */
+     initialize: function(callback){
+        this.sonarbugClient.startTracking();
+
+        if(callback && typeof callback === "function") callback(null);
+     },
+
+    /**
+     * @param {string} eventName
+     * @param {{*}} data
+     */
     track: function(eventName, data){
         this.trackSB(eventName, data);
     },
+
+    /**
+     *
+     */
     trackAppLoad: function() {
-        this.trackSB("appLoad", null);
+        this.track("appLoad", null);
     },
-    trackGoalComplete: function(goalName) {
-        this.trackSB("goalComplete", {goalName: goalName});
+
+    trackDocumentEvents: function(){
+        this.trackClicksOnDocument();
+        this.trackMousedownsOnDocument();
+        this.trackMouseupsOnDocument();
     },
-    trackPageView: function(pageId) {
-        this.trackSB("pageView", {pageId: pageId});
+
+    //-------------------------------------------------------------------------------
+    // Private Instance Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    trackClicksOnDocument: function(){
+        var _this = this;
+        $(document).on("click", function(event){
+            var $target = $(event.target);
+            var html = $target.html();
+            var nodeName = event.target.nodeName;
+            _this.track("mouseclick", {target: html, nodeName: nodeName});
+        });
     },
+
+    /**
+     * @private
+     */
+    trackMousedownsOnDocument: function(){
+        var _this = this;
+        $(document).on("mousedown", function(event){
+            var $target = $(event.target);
+            var html = $target.html();
+            var nodeName = event.target.nodeName;
+            _this.track("mousedown", {target: html, nodeName: nodeName});
+        });
+    },
+
+    /**
+     * @private
+     */
+    trackMouseupsOnDocument: function(){
+        var _this = this;
+        $(document).on("mouseup", function(event){
+            var $target = $(event.target);
+            var html = $target.html();
+            var nodeName = event.target.nodeName;
+            _this.track("mouseup", {target: html, nodeName: nodeName});
+        });
+    },
+
+    /**
+     * @private
+     * @param {string} eventName
+     * @param {{*}} data
+     */
     trackSB: function(eventName, data){
         this.sonarbugClient.track(eventName, data);
     }

@@ -7,6 +7,7 @@
 //@Export('AccountButtonDropdownContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonDropdownView')
 //@Require('airbug.DropdownItemDividerView')
 //@Require('airbug.DropdownItemView')
@@ -16,7 +17,6 @@
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -32,6 +32,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
 var ButtonDropdownView          = bugpack.require('airbug.ButtonDropdownView');
 var DropdownItemDividerView     = bugpack.require('airbug.DropdownItemDividerView');
 var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
@@ -41,7 +42,6 @@ var TextView                    = bugpack.require('airbug.TextView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -59,7 +59,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
+var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -73,6 +73,9 @@ var AccountButtonDropdownContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        this.buttonName         = "AccountButtonDropdown";
+
 
         // Modules
         //-------------------------------------------------------------------------------

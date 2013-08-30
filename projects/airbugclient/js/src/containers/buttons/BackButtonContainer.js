@@ -7,13 +7,13 @@
 //@Export('BackButtonContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -29,13 +29,13 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
 var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
 var IconView            = bugpack.require('airbug.IconView');
 var TextView            = bugpack.require('airbug.TextView');
 var AutowiredAnnotation = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -53,7 +53,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BackButtonContainer = Class.extend(CarapaceContainer, {
+var BackButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,6 +68,9 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        this.buttonName         = "BackButton";
+
+
         // Modules
         //-------------------------------------------------------------------------------
 
@@ -75,13 +78,13 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule   = null;
 
         /**
          * @private
          * @type {PageStateModule}
          */
-        this.pageStateModule = null;
+        this.pageStateModule    = null;
 
 
         // Views
@@ -91,13 +94,13 @@ var BackButtonContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ButtonView}
          */
-        this.buttonView = null;
+        this.buttonView         = null;
 
         /**
          * @private
          * @type {number}
          */
-        this.goBackId = null;
+        this.goBackId           = null;
     },
 
 

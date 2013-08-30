@@ -22,6 +22,7 @@
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
+//@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
@@ -64,6 +65,7 @@ var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
 var CallManager                 = bugpack.require('bugcall.CallManager');
+var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
@@ -84,6 +86,9 @@ var SonarbugClient              = bugpack.require('sonarbugclient.SonarbugClient
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var $parallel       = BugFlow.$parallel;
+var $series         = BugFlow.$series;
+var $task           = BugFlow.$task;
 var arg             = ArgAnnotation.arg;
 var bugmeta         = BugMeta.context();
 var configuration   = ConfigurationAnnotation.configuration;
@@ -150,30 +155,65 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {function(Error)}
      */
     initializeConfiguration: function(callback) {
-        var _this = this;
+        var _this               = this;
+        var carapaceApplication = this._carapaceApplication;
+        var controllerScan      = this._controllerScan;
+        var socketIoConfig      = this._socketIoConfig;
+        var trackerModule       = this._trackerModule;
 
-        this._socketIoConfig.setHost("http://localhost/api/airbug");
-        this._socketIoConfig.setResource("api/socket");
-        this._socketIoConfig.setPort(8000);
+        socketIoConfig.setHost("http://localhost/api/airbug");
+        socketIoConfig.setResource("api/socket");
+        socketIoConfig.setPort(8000);
 
         //TODO BRN: Pass the session id here...
         // this._bugCallClient.openConnection();
 
-        this._sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error){
-            if (!error) {
-                console.log('SonarBugClient configured');
-            } else {
-                console.error(error);
-            }
-        });
+        controllerScan.scan();
 
-        this._controllerScan.scan();
-        this._carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
-            var data = event.getData();
-            _this._trackerModule.track(data.result, {route: data.route});
-        });
-        this._carapaceApplication.start(callback);
+        $series([
+            $task(function(flow){
+                _this.initializeTracking(function(error){
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow){
+                carapaceApplication.start(function(error){
+                    flow.complete(error);
+                });
+            })
+        ]).execute(callback);
+    },
 
+    initializeTracking: function(callback){
+        var sonarbugClient      = this._sonarbugClient;
+        var trackerModule       = this._trackerModule;
+        var carapaceApplication = this._carapaceApplication;
+
+        $series([
+            $task(function(flow){
+                sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error){
+                    if (!error) console.log('SonarBugClient configured');
+                    flow.complete(error);
+                });
+            }),
+            $parallel([
+                $task(function(flow){
+                    trackerModule.initialize(function(error){
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
+                        var data = event.getData();
+                        trackerModule.track("RoutingRequest.Result", data);
+                    });
+                    flow.complete();
+                })
+            ])
+        ]).execute(function(error){
+            if (!error) console.log("tracking initialized");
+            callback(error);
+        });
     },
 
 
