@@ -150,6 +150,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {function(Error)}
      */
     initializeConfiguration: function(callback) {
+        var _this = this;
+
         this._socketIoConfig.setHost("http://localhost/api/airbug");
         this._socketIoConfig.setResource("api/socket");
         this._socketIoConfig.setPort(8000);
@@ -157,8 +159,21 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         //TODO BRN: Pass the session id here...
         // this._bugCallClient.openConnection();
 
+        this._sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error){
+            if (!error) {
+                console.log('SonarBugClient configured');
+            } else {
+                console.error(error);
+            }
+        });
+
         this._controllerScan.scan();
+        this._carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
+            var data = event.getData();
+            _this._trackerModule.track(data.result, {route: data.route});
+        });
         this._carapaceApplication.start(callback);
+
     },
 
 
@@ -302,14 +317,16 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {SonarbugClient}
      */
     sonarbugClient: function() {
-        return new SonarbugClient();
+        this._sonarbugClient = SonarbugClient.getInstance();
+        return this._sonarbugClient;
     },
 
     /**
      * @return {TrackerModule}
      */
     trackerModule: function(sonarbugClient) {
-        return new TrackerModule(sonarbugClient);
+        this._trackerModule = new TrackerModule(sonarbugClient);
+        return this._trackerModule;
     },
 
     /**

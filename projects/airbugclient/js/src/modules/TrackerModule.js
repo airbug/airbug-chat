@@ -56,11 +56,14 @@ var TrackerModule = Class.extend(Obj, {
     // Class Methods
     //-------------------------------------------------------------------------------
 
+    track: function(eventName, data){
+        this.trackSB(eventName, data);
+    },
     trackAppLoad: function() {
         this.trackSB("appLoad", null);
     },
     trackGoalComplete: function(goalName) {
-        this.trackSB("goalComplete", {goalName: true});
+        this.trackSB("goalComplete", {goalName: goalName});
     },
     trackPageView: function(pageId) {
         this.trackSB("pageView", {pageId: pageId});
