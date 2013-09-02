@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +26,7 @@ var bugpack = require('bugpack').context();
 var Class       = bugpack.require('Class');
 var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
+var Set         = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -60,11 +62,13 @@ var ChatMessageManagerModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map}
+         * @type {Map} // Maps string ids to Sets of ChatMessages
          */
         this.conversationIdToChatMessagesMap    = new Map();
 
         /**
+         * @private
+         * @type {CurrentUserManagerModule}
          */
         this.currentUserManagerModule           = currentUserManagerModule;
 
@@ -80,39 +84,54 @@ var ChatMessageManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} id
-     * @return {ChatMessage}
+     * @return {ChatMessageObj}
      */
     get: function(id){
         console.log("Inside ChatMessageManangerModule#get");
         return this.chatMessagesMap.get(id);
     },
 
-    // getAll: function(){
-    //     return this.chatMessagesMap.getValueArray();
-    // },
-
+    /**
+     * @param {string} conversationId
+     */
     getAllByConversationId: function(conversationId){
         console.log("Inside ChatMessageManangerModule#getAllByConversationId");
         return this.conversationIdToChatMessagesMap.get(conversationId);
     },
 
+    /**
+     * @param {string} conversationId
+     * @param {ChatMessageObj} chatMessage
+     */
     putByConversationId: function(conversationId, chatMessage){
         console.log("Inside ChatMessageManangerModule#putByConversationId");
         var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId);
         if (storedMessages){
-            storedMessages.push(chatMessage);
+            storedMessages.add(chatMessage);
         } else {
-            storedMessages = [chatMessage];
+            storedMessages = new Set([chatMessage]);
             this.conversationIdToChatMessagesMap.put(conversationId, storedMessages);
         }
     },
 
+    /**
+     * @param {string} conversationId
+     * @param {Array.<ChatMessageObj>} chatMessages
+     */
     putAllByConversationId: function(conversationId, chatMessages){
         console.log("Inside ChatMessageManangerModule#putAllByConversationId");
-        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId) || [];
-        storedMessages.concat(chatMessages);
+        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId);
+        if(storedMessages){
+            storedMessages.addAll(chatMessages);
+        } else {
+            storedMessages = new Set(chatMessages);
+            this.conversationIdToChatMessagesMap.put(conversationId, storedMessages);
+        }
     },
 
+    /**
+     * @param {string} conversationId
+     */
     removeAllByConversationId: function(conversationId){
         console.log("Inside ChatMessageManangerModule#removeAllByConversationId");
         this.conversationIdToChatMessagesMap.remove(conversationId);
@@ -120,7 +139,7 @@ var ChatMessageManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} id
-     * @return {ChatMessage}
+     * @return {ChatMessageObj}
      */
     put: function(id, chatMessage){
         console.log("Inside ChatMessageManangerModule#put");
@@ -128,8 +147,18 @@ var ChatMessageManagerModule = Class.extend(Obj, {
     },
 
     /**
+     * @param {Array.<ChatMessageObj>} chatMessages
+     */
+    putAll: function(chatMessages){
+        var _this = this;
+        chatMessages.forEach(function(chatMessage){
+            _this.put(chatMessage._id, chatMessage);
+        });
+    },
+
+    /**
      * @param {string} id
-     * @return {ChatMessage}
+     * @return {ChatMessageObj}
      */
     remove: function(id){
         console.log("Inside ChatMessageManangerModule#remove");
@@ -167,21 +196,23 @@ var ChatMessageManagerModule = Class.extend(Obj, {
     },
 
     retrieveChatMessage: function(chatMessageId, callback){
-
+        //TODO
     },
 
     retrieveChatMessages: function(chatMessageIds, callback){
-
+        //TODO
     },
 
+    /**
+     * @param {string} conversationId
+     * @param {function(Error, Array.<chatMessageObj>)} callback
+     */
     retrieveChatMessagesByConversationId: function(conversationId, callback){
         var _this = this;
         this.airbugApi.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
             if(!error && chatMessageObjs.length > 0){
-                chatMessageObjs.forEach(function(chatMessageObj){
-                    _this.putByConversationId(chatMessageObj.conversationId, chatMessageObj);
-                    _this.put(chatMessageObj._id, chatMessageObj);
-                });
+                _this.putAllByConversationId(conversationId, chatMessageObjs);
+                _this.putAll(chatMessageObjs);
             }
             callback(error, chatMessageObjs);
         });
