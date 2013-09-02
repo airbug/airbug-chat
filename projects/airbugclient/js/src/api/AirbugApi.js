@@ -284,8 +284,7 @@ var AirbugApi = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {}
-     * @param {}
+     * @param {function(Error)} callback
      */
     getCurrentUser: function(callback){
             this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
@@ -301,6 +300,9 @@ var AirbugApi = Class.extend(Obj, {
             });
     },
 
+    /**
+     * @param {function(Error)} callback
+     */
     loginUser: function(callback){
         // this.bugCallClient.createConnection();
         this.bugCallClient.openConnection();
@@ -331,12 +333,19 @@ var AirbugApi = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {function(Error)} callback
+     */
     registerUser: function(callback){
-        this.bugCallClient.createConnection();
+        // this.bugCallClient.createConnection();
         this.bugCallClient.openConnection();
         callback();
     },
 
+    /**
+     * @param {string} userId
+     * @param {function(Error)} callback
+     */
     retrieveUser: function(userId, callback){
         var requestType = "retrieveUser";
         var requestData = {
@@ -355,6 +364,10 @@ var AirbugApi = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {Array.<string>} userIds
+     * @param {function(Error)} callback
+     */
     retrieveUsers: function(userIds, callback){
         var requestType = "retrieveUsers";
         var requestData = {
