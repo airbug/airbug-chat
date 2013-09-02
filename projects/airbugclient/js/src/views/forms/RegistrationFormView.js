@@ -41,13 +41,13 @@ var RegistrationFormView = Class.extend(MustacheView, {
                         '<div class=""> Welcome </div>' +
                         '<form class="form-horizontal">' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
+                                '<input class="input-xxlarge" type="email" name="email" placeholder="Email (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="text" name="firstName" placeholder="First Name">' +
+                                '<input class="input-xxlarge" type="text" name="firstName" placeholder="First Name  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="text" name="lastName" placeholder="Last Name">' +
+                                '<input class="input-xxlarge" type="text" name="lastName" placeholder="Last Name  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
                                 '<button id="submit-button-{{cid}}" type="submit" class="btn">Enter</button>' +
@@ -74,6 +74,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
+        this.$el.find('form').validate();
         this.$el.find('form').on('keypress', function(event){
             _this.handleKeypress(event);
         });
@@ -130,7 +131,9 @@ var RegistrationFormView = Class.extend(MustacheView, {
      * @param event
      */
     handleSubmit: function(event) {
-        this.submitForm();
+        if(this.$el.find('form').valid()){
+            this.submitForm();
+        }
     },
 
     handleKeypress: function(event) {
