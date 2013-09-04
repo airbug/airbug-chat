@@ -65,6 +65,7 @@ var MeldModel = Class.extend(CarapaceModel, {
     initialize: function(attributes, options) {
         this._super(attributes, options);
 
+        this.meldObject.addEventListener(MeldObject.EventTypes.DESTROYED, this.handleDestroyed, this);
         this.meldObject.addEventListener(MeldObject.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
     },
 
@@ -72,6 +73,14 @@ var MeldModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleDestroyed: function(event) {
+        //TODO BRN: Need to clean up this model and remove it from anything collection it may be part of...
+    },
 
     /**
      * @private
