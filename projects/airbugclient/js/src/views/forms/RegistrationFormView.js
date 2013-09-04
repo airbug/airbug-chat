@@ -74,16 +74,20 @@ var RegistrationFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('form').validate();
+
+        this.addFormValidations();
+
         this.$el.find('form').on('keypress', function(event){
             _this.handleKeypress(event);
         });
+
         this.$el.find('form').on('submit', function(event){
             _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();
             return false;
         });
+
         this.$el.find('#submit-button-' + this.cid).on('click', function(event) {
             _this.handleSubmit(event);
             event.preventDefault();
@@ -93,8 +97,29 @@ var RegistrationFormView = Class.extend(MustacheView, {
     },
 
     //-------------------------------------------------------------------------------
-    // Protected Methods
+    // Private and Protected Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    addFormValidations: function(){
+        this.$el.find('form').validate({
+            rules: {
+                email: {
+                    remote: {
+                        url: "app/user-availability-check-email",
+                        type: "post",
+                    }
+                }
+            },
+            messages: {
+                email: {
+                    remote: "User already exists"
+                }
+            }
+        });
+    },
 
     /**
      * @protected

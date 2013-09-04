@@ -108,34 +108,9 @@ var UserController = Class.extend(Obj, {
         var userService     = this.userService;
         var sessionService  = this.sessionService;
 
-        expressApp.post('/app/register', function(req, res){
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var userObj         = req.body;
-            var returnedUser;
-
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObj:", userObj, "params:", params, "query:", query);
-            $series([
-                $task(function(flow){
-                    userService.registerUser(userObj, function(error, user){
-                        returnedUser = user;
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
-                        if(!error) res.json({error: null, user: returnedUser});
-                        flow.complete(error);
-                    });
-                })
-            ]).execute(function(error){
-                if(error) res.json({error: error.toString(), user: null});
-            });
-        });
+        //-------------------------------------------------------------------------------
+        // Express Routes
+        //-------------------------------------------------------------------------------
 
         expressApp.post('/app/login', function(req, res){
             var cookies         = req.cookies;
@@ -189,6 +164,56 @@ var UserController = Class.extend(Obj, {
                 }
             });
         });
+
+        expressApp.post('/app/register', function(req, res){
+            var cookies         = req.cookies;
+            var signedCookies   = req.signedCookies;
+            var oldSid          = req.sessionID;
+            var session         = req.session;
+            var params          = req.params;
+            var query           = req.query;
+            var userObj         = req.body;
+            var returnedUser;
+
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObj:", userObj, "params:", params, "query:", query);
+            $series([
+                $task(function(flow){
+                    userService.registerUser(userObj, function(error, user){
+                        returnedUser = user;
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
+                        if(!error) res.json({error: null, user: returnedUser});
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error){
+                if(error) res.json({error: error.toString(), user: null});
+            });
+        });
+
+        expressApp.post('/app/user-availability-check-email', function(req, res){
+            var email = req.body.email;
+
+            userService.findUserByEmail(email, function(error, user){
+                if(!error){
+                    if(user){
+                        res.send("false");
+                    } else {
+                        res.send("true");
+                    }
+                } else {
+                    res.send(error.toString());
+                }
+            });
+        });
+
+
+        //-------------------------------------------------------------------------------
+        // BugCall Routes
+        //-------------------------------------------------------------------------------
 
         this.bugCallRouter.addAll({
 

@@ -153,6 +153,14 @@ var UserService = Class.extend(Obj, {
     },
 
     /**
+     * @param {string} email
+     * @param {function(Error, User)} callback
+     */
+    findUserByEmail: function(email, callback){
+        this.userManager.findOne({email: email}, callback);
+    },
+
+    /**
      * @param {string} userId
      * @param {function(error, user)} callback
      */
