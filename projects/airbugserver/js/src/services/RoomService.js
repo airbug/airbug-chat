@@ -100,7 +100,7 @@ var RoomService = Class.extend(Obj, {
      * @param {string} roomId
      * @param {function(Error, user, room)} callback
      */
-    addUserToRoom: function(userId, roomId, callback){
+    addUserToRoom: function(userId, roomId, callback) {
         //TODO: change this into a "transaction"
         var _this = this;
         var room;
@@ -111,7 +111,7 @@ var RoomService = Class.extend(Obj, {
                     _this.roomManager.addUserToRoom(userId, roomId, function(error, returnedRoom){
                         if(!error && returnedRoom){
                             _this.roomManager.populate(returnedRoom, {path: "membersList"}, function(error, returnedRoom){
-                                room = returnedRoom
+                                room = returnedRoom;
                                 flow.complete(error);
                             });
                         } else {

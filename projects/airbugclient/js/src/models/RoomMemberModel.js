@@ -7,7 +7,7 @@
 //@Export('RoomMemberModel')
 
 //@Require('Class')
-//@Require('carapace.CarapaceModel')
+//@Require('airbug.MeldModel')
 
 
 //-------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-varCarapaceModel    = bugpack.require('carapace.CarapaceModel');
+var MeldModel       = bugpack.require('airbug.MeldModel');
 
 
 //-------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ varCarapaceModel    = bugpack.require('carapace.CarapaceModel');
 // ourselves a query if all of the room members were contained within the RoomModel record so that we could load
 // all of this info at once. Best to look in to how to do that in MongoDB.
 
-var RoomMemberModel = Class.extend(CarapaceModel, {
+var RoomMemberModel = Class.extend(MeldModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation

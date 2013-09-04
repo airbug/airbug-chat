@@ -226,20 +226,20 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     leaveRoom: function(roomId, callback){
-            var requestData = {
-                roomId: roomId
-            };
-            this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
-                if(!exception){
-                    var type    = callResponse.getType();
-                    var data    = callResponse.getData();
-                    var error   = data.error;
-                    var roomId  = data.roomId;
-                    callback(error, roomId);
-                } else {
-                    callback(exception, null);
-                }
-            });
+        var requestData = {
+            roomId: roomId
+        };
+        this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
+            if(!exception){
+                var type    = callResponse.getType();
+                var data    = callResponse.getData();
+                var error   = data.error;
+                var roomId  = data.roomId;
+                callback(error, roomId);
+            } else {
+                callback(exception, null);
+            }
+        });
     },
 
     retrieveRoom: function(roomId, callback){
@@ -287,17 +287,17 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     getCurrentUser: function(callback){
-            this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
-                if(!exception){
-                    var type        = callResponse.getType();
-                    var data        = callResponse.getData();
-                    var error       = data.error;
-                    var currentUser = data.user;
-                    callback(error, currentUser);
-                } else {
-                    callback(exception, null);
-                }
-            });
+        this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
+            if(!exception){
+                var type        = callResponse.getType();
+                var data        = callResponse.getData();
+                var error       = data.error;
+                var currentUser = data.user;
+                callback(error, currentUser);
+            } else {
+                callback(exception, null);
+            }
+        });
     },
 
     /**

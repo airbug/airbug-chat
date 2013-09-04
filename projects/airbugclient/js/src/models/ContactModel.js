@@ -7,7 +7,7 @@
 //@Export('ContactModel')
 
 //@Require('Class')
-//@Require('carapace.CarapaceModel')
+//@Require('airbug.MeldModel')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +21,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
-var CarapaceModel 	= bugpack.require('carapace.CarapaceModel');
+var Class           = bugpack.require('Class');
+var MeldModel       = bugpack.require('airbug.MeldModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactModel = Class.extend(CarapaceModel, {
+var ContactModel = Class.extend(MeldModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation

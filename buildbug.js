@@ -72,7 +72,9 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
             "../bugunit/projects/bugdouble/js/src",
-            "../bugunit/projects/bugunit/js/src"
+            "../bugunit/projects/bugunit/js/src",
+            "../meldbug/projects/meldbug/js/src",
+            "../meldbug/projects/meldbugserver/js/src"
         ],
         scriptPaths: [
             "./projects/airbugserver/js/scripts",
@@ -119,6 +121,8 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/client/js/src",
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../meldbug/projects/meldbug/js/src",
+            "../meldbug/projects/meldbugclient/js/src",
             "../bugpack/projects/bugpack-client/js/src",
             "../sonarbug/projects/sonarbugclient/js/src",
             "../syncbug/projects/syncbug/js/src",

@@ -30,6 +30,7 @@
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
+//@Require('bugroutes.BugCallRouter')
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
@@ -72,6 +73,7 @@ var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotatio
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var BugCallRouter               = bugpack.require('bugroutes.BugCallRouter');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
@@ -248,6 +250,14 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {BugCallClient} bugCallClient
+     * @return {BugCallRouter}
+     */
+    bugCallRouter: function(bugCallClient) {
+        return new BugCallRouter(bugCallClient);
+    },
+
+    /**
      * @param {SocketIoClient} socketIoClient
      * @return {CallClient}
      */
@@ -401,6 +411,10 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("callClient"),
                 arg().ref("callManager")
+            ]),
+        module("bugCallRouter")
+            .args([
+                arg().ref("bugCallClient")
             ]),
         module("callClient")
             .args([

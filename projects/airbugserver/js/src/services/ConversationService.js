@@ -72,8 +72,10 @@ var ConversationService = Class.extend(Obj, {
         this.conversationManager.findById(conversationId, function(error, conversation){
             console.log("Error:", error);
             console.log("Conversation:", conversation);
-            if(!error && conversation){
+            if (!error && conversation) {
+
                 //NOTE This is HACKY. CurrentUser should always be updating itself after any change is made to its corresponding data model
+
                 _this.userManager.findById(currentUser.id, function(error, returnedUser){
                     if(!error && returnedUser){
                         if (returnedUser.roomsList.indexOf(conversation.ownerId) > -1) {

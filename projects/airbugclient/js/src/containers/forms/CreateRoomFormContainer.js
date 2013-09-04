@@ -151,7 +151,7 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         this.roomManagerModule.createRoom(roomObj, function(error, room){
             console.log("Inside of CreateRoomFormContainer#hearFormSubmittedEvent roomManagerModule#createRoom callback");
             console.log("Error:", error, "roomModel:", room);
-            if(!error && room){
+            if (!error && room) {
                 // _this.roomCollection.add(new RoomModel(room));
                 var roomId = room._id;
                 _this.navigationModule.navigate("room/" + roomId, {
