@@ -7,8 +7,7 @@
 //@Export('RoomManagerModule')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('Obj')
+//@Require('airbug.ManagerModule')
 
 
 //-------------------------------------------------------------------------------
@@ -22,107 +21,45 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomManagerModule = Class.extend(Obj, {
+var RoomManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi) {
+    _constructor: function(airbugApi, meldObjectManagerModule) {
 
-        this._super();
+        this._super(airbugApi, meldObjectManagerModule);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {AirbugApi}
-         */
-        this.airbugApi  = airbugApi;
-
-        /**
-         * @private
-         * @type {Map}
-         */
-        this.roomsMap   = new Map();
-
     },
 
-    clearCache: function(){
-        this.roomsMap.clear();
-    },
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    get: function(id){
-        return this.roomsMap.get(id);
-    },
-
-    getAll: function(){
-        return this.roomsMap.getValueArray();
-    },
-
-    /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    put: function(id, room){
-        this.roomsMap.put(id, room);
-    },
-
-    /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    remove: function(id){
-        this.roomsMap.remove(id);
-    },
-
-    /**
+     * @param {string} userId
      * @param {string} roomId
      * @param {function(error, room)} callback
      */
-    updateRoom: function(roomId, callback){
-        this.retrieveRoom(roomId, function(error, room){
-            console.log("Room updated");
-            callback(error, room);
-        });
+    addUserToRoom: function(userId, roomId, callback){
+        var requestData = {userId: userId, roomId: roomId};
+        this.request("addUserTo", "Room", requestData, callback);
     },
-
-    /**
-     * @param {Array.<string>} roomIds
-     * @param {function(error, Array.<room>)} callback
-     */
-    updateRooms: function(roomIds, callback){
-        var _this = this;
-        this.retrieveRooms(roomIds, function(error, rooms){
-            console.log("Rooms updated");
-            callback(error, rooms);
-        });
-    },
-
-    //-------------------------------------------------------------------------------
-    // Class Instance Methods
-    //-------------------------------------------------------------------------------
-
 
     /**
      * @param {{
@@ -131,13 +68,7 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, room)} callback
      */
     createRoom: function(roomObj, callback) {
-        var _this = this;
-        this.airbugApi.createRoom(roomObj, function(error, room){
-            if(!error && room){
-                _this.put(room._id, room);
-            }
-            callback(error, room);
-        });
+        this.create("Room", roomObj, callback);
     },
 
     /**
@@ -145,29 +76,17 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, room)} callback
      */
     joinRoom: function(roomId, callback) {
-        var _this = this;
-        this.airbugApi.joinRoom(roomId, function(error, room){
-            if(!error && room){
-                _this.put(room._id, room);
-                console.log("Joined Room", roomId);
-            }
-            callback(error, room);
-        });
+        var requestData = {objectId: roomId};
+        this.request("join", "Room", requestData, callback);
     },
 
     /**
      * @param {string} roomId
-     * @param {function(error, roomId)} callback
+     * @param {function(error, string)} callback //roomId
      */
     leaveRoom: function(roomId, callback) {
-        var _this = this;
-        this.airbugApi.leaveRoom(roomId, function(error, roomId){
-            if(!error){
-                _this.remove(roomId);
-                console.log("Left Room", roomId);
-            }
-            callback(error, roomId);
-        });
+        var requestData = {objectId: roomId};
+        this.request("leave", "Room", requestData, callback);
     },
 
     /**
@@ -175,13 +94,7 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, room)} callback
      */
     retrieveRoom: function(roomId, callback) {
-        var _this = this;
-        this.airbugApi.retrieveRoom(roomId, function(error, room){
-            if(!error && room){
-                _this.put(room._id, room);
-                callback(error, room);
-            }
-        });
+        this.retrieve("Room", roomId, callback});
     },
 
     /**
@@ -189,15 +102,7 @@ var RoomManagerModule = Class.extend(Obj, {
      * @param {function(error, Array.<room>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
-        var _this = this;
-        this.airbugApi.retrieveRooms(roomIds, function(error, rooms){
-            if(!error && rooms){
-                rooms.forEach(function(room){
-                    _this.put(room._id, room);
-                });
-                callback(error, rooms);
-            }
-        });
+        this.retrieveEach("Room", roomIds, callback);
     }
 });
 

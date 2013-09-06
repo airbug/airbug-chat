@@ -217,23 +217,6 @@ var UserController = Class.extend(Obj, {
 
         this.bugCallRouter.addAll({
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            getCurrentUser:     function(request, responder){
-                var currentUser = request.getHandshake().user;
-                userService.findUserById(currentUser.id, function(error, user){
-                    if(!error && user){
-                        var data        = {user: user};
-                        var response    = responder.response("gotCurrentUser", data);
-                        responder.sendResponse(response);
-                    } else {
-                        var data        = {error: error};
-                        var response    = responder.response("getCurrentUserError", data);
-                    }
-                });
-            },
 
             /**
              * @param {IncomingRequest} request
@@ -256,6 +239,24 @@ var UserController = Class.extend(Obj, {
                 });
             },
 
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveCurrentUser: function(request, responder){
+                var currentUser = request.getHandshake().user;
+                userService.findUserById(currentUser.id, function(error, user){
+                    if(!error && user){
+                        var data        = {user: user};
+                        var response    = responder.response("gotCurrentUser", data);
+                        responder.sendResponse(response);
+                    } else {
+                        var data        = {error: error};
+                        var response    = responder.response("getCurrentUserError", data);
+                    }
+                });
+            },
+
             retrieveUser:       function(request, responder){
                 var currentUser = request.getHandshake().user;
                 var data    = request.getData();
@@ -273,7 +274,6 @@ var UserController = Class.extend(Obj, {
                 });
             },
 
-            //NOTE: Untested
             retrieveUsers:       function(request, responder){
                 var currentUser = request.getHandshake().user;
                 var data    = request.getData();

@@ -7,7 +7,7 @@
 //@Export('CurrentUserManagerModule')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('airbug.ManagerModule')
 //@Require('bugflow.BugFlow')
 
 
@@ -40,15 +40,15 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CurrentUserManagerModule = Class.extend(Obj, {
+var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, userManagerModule, roomManagerModule) {
+    _constructor: function(airbugApi, meldObjectManagerModule, userManagerModule, roomManagerModule) {
 
-        this._super();
+        this._super(airbugApi, meldObjectManagerModule);
 
 
         //-------------------------------------------------------------------------------
@@ -56,15 +56,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AirbugApi}
+         * @type {string}
          */
-        this.airbugApi          = airbugApi;
-
-        /**
-         * @type {CurrentUser}
-         */
-        this.currentUser        = null;
+        this.currentUserId      = null;
 
         /**
          * @type {UserManagerModule}
@@ -79,19 +73,31 @@ var CurrentUserManagerModule = Class.extend(Obj, {
 
 
     clearCache: function(){
-        this.currentUser = null;
+        this.currentUserId = null;
     },
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    //
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {meldbug.MeldObject || null}
+     */
+    getCurrentUser: function(){
+        if(this.currentUserId){
+            return this.get(this.currentUserId);
+        } else {
+            return null;
+        }
+    },
 
     /**
      * @return {boolean}
      */
     userIsLoggedIn: function(){
-        if(this.currentUser){
-            if(this.currentUser.email){
+        var currentUser = this.getCurrentUser();
+        if(currentUser){
+            if(currentUser.email){
                 return true;
             } else {
                 return false;
@@ -113,23 +119,26 @@ var CurrentUserManagerModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(error, currentUser)} callback
+     * @param {function(error, meldbug.MeldObject)}
      */
-     //NOTE TODO change to retrieveCurrentUser
-    getCurrentUser: function(callback) {
+    retrieveCurrentUser: function(callback){
+        //NOTE: can the cached currentUserId be incorrect??
         var _this = this;
-        // TODO check cache
-        this.airbugApi.getCurrentUser(function(error, currentUser){
-            if(!error && currentUser){
-                _this.updateCurrentUserAndRoomsList(currentUser, function(){
-                    callback(error, currentUser);
-                });
-            } else {
+        var currentUser = this.getCurrentUser();
+        if(currentUser){
+            callback(null, currentUser);
+        } else {
+            this.request("retrieve", "CurrentUser", {}, function(error, currentUser){
+                _this.currentUserId = currentUser._id;
                 callback(error, currentUser);
-            }
-        });
+            });
+        }
     },
 
+    /**
+     * @param {{email: string}} userObj
+     * @param {function(error, {*})} callback
+     */
     loginUser: function(userObj, callback){
         var _this = this;
         $.ajax({
@@ -139,12 +148,12 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             data: userObj,
             success: function(data, textStatus, req){
                 console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                var user = data.user;
-                var error = data.error;
+                var user    = data.user; //TODO Needs updating
+                var error   = data.error;
                 if(!error && user){
-                    _this.airbugApi.loginUser(function(){
-                        _this.updateCurrentUserAndRoomsList(user, function(){
-                            callback(error, user);
+                    _this.airbugApi.loginUser(function(error){
+                        if(!error) _this.roomManagerModule.retrieveRooms(user.roomsList, function(error, rooms){
+                            callback(error, user); //TODO
                         });
                     });
                 } else {
@@ -158,6 +167,9 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {function(error)} callback
+     */
     logoutCurrentUser: function(callback){
         //TODO
         var _this = this;
@@ -165,9 +177,7 @@ var CurrentUserManagerModule = Class.extend(Obj, {
             // $task(function(flow){
             //     _this.airbugApi.logoutCurrentUser(function(error){
             //         if(!error){
-            //             _this.clearCache();
-            //             _this.userManagerModule.clearCache();
-            //             _this.roomManagerModule.clearCache();
+            //             _this.meldObjectManagerModule.clearCache();
             //             flow.complete();
             //         } else {
             //             flow.error(error);
@@ -197,6 +207,14 @@ var CurrentUserManagerModule = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {{
+            email: string,
+            firstName: string,
+            lastName: string}
+        } userObj
+     * @param {function(error, {})} callback
+     */
     registerUser: function(userObj, callback){
         var _this = this;
         $.ajax({
@@ -209,11 +227,8 @@ var CurrentUserManagerModule = Class.extend(Obj, {
                 var user = data.user;
                 var error = data.error;
                 if(!error && user){
-                    _this.airbugApi.registerUser(function(){
-                        _this.updateCurrentUserAndRoomsList(user, function(){
-                            callback(error, user);
-                        });
-                    });
+                    //TODO Update
+                    _this.airbugApi.registerUser(callback);
                 } else {
                     callback(error, user);
                 }
@@ -223,37 +238,6 @@ var CurrentUserManagerModule = Class.extend(Obj, {
                 callback(errorThrown);
             }
         });
-    },
-
-    /**
-     * @private
-     * @param {} currentUser
-     * @param {function()} callback
-     */
-    updateCurrentUserAndRoomsList: function(currentUser, callback){
-        var _this = this;
-        var roomsList = currentUser.roomsList || [];
-        var unretrievedRoomsList = [];
-        this.currentUser = currentUser;
-        this.userManagerModule.put(currentUser._id, currentUser);
-        console.log("currentUser updated");
-        roomsList.forEach(function(roomId){
-            if(!_this.roomManagerModule.get(roomId)) unretrievedRoomsList.push(roomId);
-        });
-        if(unretrievedRoomsList.length > 0){
-            this.roomManagerModule.retrieveRooms(unretrievedRoomsList, function(error, rooms){
-                if(!error && rooms){
-                    console.log("RetrievedRooms");
-                } else {
-                    console.log("Could not retrieveRooms");
-                }
-                callback();
-            });
-        } else {
-            console.log("Rooms up to date");
-            callback();
-        }
-
     }
 });
 

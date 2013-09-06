@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Queue')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ var bugpack = require('bugpack').context();
 
 var Class   = bugpack.require('Class');
 var Obj     = bugpack.require('Obj');
-var Queue   = bugpack.require('Queue');
 
 
 //-------------------------------------------------------------------------------
@@ -58,225 +56,40 @@ var AirbugApi = Class.extend(Obj, {
     // Instance Methods
     //-------------------------------------------------------------------------------
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // ChatMessage Related Api Methods
-    //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} chatMessageBody
-     * @param {string} conversationOwnerId
-     * @param {string} conversationId
-     * @param {function(error, chatMessage)} callback
+     * @param {string} type
+     * @param {string} dataType
+     * @param {{*}} requestData
+     * @param {function(error, {*})} callback
      */
-    createChatMessage: function(chatMessageBody, senderUserId, conversationId, conversationOwnerId, callback){
-        var requestData = {
-            chatMessage: {
-                body: chatMessageBody,
-                senderUserId: senderUserId, //NOTE: used to validate against serverside currentUser
-                conversationId: conversationId,
-                conversationOwnerId: conversationOwnerId
-            }
-        };
-
-        /**
-         * @param {string} requestType
-         * @param {{*}} requestData
-         * @param {function(Exception, CallResponse)} callback
-         */
-        this.bugCallClient.request("createChatMessage", requestData, function(exception, callResponse){
+    request: function(type, dataType, requestData, callback){
+        this.bugCallClient.request(type + dataType, requestData, function(exception, callResponse){
             if(!exception){
                 var type        = callResponse.getType();
                 var data        = callResponse.getData();
                 var error       = data.error;
-                var chatMessage = data.chatMessage;
-                callback(error, chatMessage);
+                callback(error, data);
             } else {
                 callback(exception, null);
             }
         });
     },
 
-    //NOTE: For Dev/Testing Purposes. Needs refined functions
-    retrieveChatMessagesByConversationId: function(conversationId, callback){
-        var requestData = {
-            conversationId: conversationId
-        };
-        this.bugCallClient.request("retrieveChatMessagesByConversationId", requestData, function(exception, callResponse){
-            if(!exception){
-                var type            = callResponse.getType();
-                var data            = callResponse.getData();
-                var error           = data.error;
-                var chatMessages    = data.chatMessages;
-                callback(error, chatMessages);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
+    //-------------------------------------------------------------------------------
+    // ChatMessage Related Api Methods
+    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------
     // Conversation Related Api Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} conversationId
-     * @param {function(error, conversation)} callback
-     */
-    retrieveConversation: function(conversationId, callback){
-        var requestData = {
-            conversationId: conversationId
-        };
-        this.bugCallClient.request("retrieveConversation", requestData, function(exception, callResponse){
-            if(!exception){
-                var type            = callResponse.getType();
-                var data            = callResponse.getData();
-                var error           = data.error;
-                var conversation    = data.conversation;
-                callback(error, conversation);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
 
     //-------------------------------------------------------------------------------
     // Room Related Api Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} userId
-     * @param {string} roomId
-     * @param {function(error, room)} callback
-     */
-    addUserToRoom: function(userId, roomId, callback){
-        var requestData = {
-            roomId: roomId,
-            userId: userId
-        };
-        this.bugCallClient.request("addUserToRoom", requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var room    = data.room;
-                callback(error, room);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    /**
-     * @param {{}} roomObj
-     * @param {function(error, room, user)} callback
-     */
-    createRoom: function(roomObj, callback){
-        var requestData = {
-            room: {
-                name: roomObj.name
-            }
-        };
-        this.bugCallClient.request("createRoom", requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var room    = data.room;
-                var user    = data.user; //TODO: Should this be kept here?
-                //
-                console.log("AirbugApi#createRoom results: user:", user, "room:", room);
-                //
-                callback(error, room, user);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    /**
-     * @param {string} roomId
-     * @param {function(error, room)} callback
-     */
-    joinRoom: function(roomId, callback){
-        var requestData = {
-            roomId: roomId
-        };
-        this.bugCallClient.request("joinRoom", requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var room    = data.room;
-                callback(error, room);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    /**
-     * @param {string} roomId
-     * @param {function(error)} callback
-     */
-    leaveRoom: function(roomId, callback){
-        var requestData = {
-            roomId: roomId
-        };
-        this.bugCallClient.request("leaveRoom", requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var roomId  = data.roomId;
-                callback(error, roomId);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    retrieveRoom: function(roomId, callback){
-        var requestType = "retrieveRoom";
-        var requestData = {
-            roomId: roomId
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var room    = data.room;
-                callback(error, room);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    retrieveRooms: function(roomIds, callback){
-        var requestType = "retrieveRooms";
-        var requestData = {
-            roomIds: roomIds
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var rooms   = data.rooms;
-                callback(error, rooms);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -284,27 +97,9 @@ var AirbugApi = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
-     */
-    getCurrentUser: function(callback){
-        this.bugCallClient.request("getCurrentUser", {}, function(exception, callResponse){
-            if(!exception){
-                var type        = callResponse.getType();
-                var data        = callResponse.getData();
-                var error       = data.error;
-                var currentUser = data.user;
-                callback(error, currentUser);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    /**
-     * @param {function(Error)} callback
+     * @param {function(error)} callback
      */
     loginUser: function(callback){
-        // this.bugCallClient.createConnection();
         this.bugCallClient.openConnection();
         callback();
     },
@@ -314,76 +109,17 @@ var AirbugApi = Class.extend(Obj, {
      */
     logoutCurrentUser: function(callback){
         var _this = this;
-        this.bugCallClient.request("logoutCurrentUser", {}, function(exception, callResponse){
-            if(!exception){
-                var type        = callResponse.getType();
-                var data        = callResponse.getData();
-                var error       = data.error;
-                console.log("Inside AirbugApi logoutCurrentUser");
-                if(!error){
-                    // console.log("destroying connection");
-                    // _this.bugCallClient.destroyConnection();
-                    callback();
-                } else {
-                    callback(error);
-                }
-            } else {
-                callback(exception, null);
-            }
+        this.request("logout", "CurrentUser", {}, function(error){
+            callback(error);
         });
     },
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(error)} callback
      */
     registerUser: function(callback){
-        // this.bugCallClient.createConnection();
         this.bugCallClient.openConnection();
         callback();
-    },
-
-    /**
-     * @param {string} userId
-     * @param {function(Error)} callback
-     */
-    retrieveUser: function(userId, callback){
-        var requestType = "retrieveUser";
-        var requestData = {
-            userId: userId
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var user    = data.user;
-                callback(error, user);
-            } else {
-                callback(exception, null);
-            }
-        });
-    },
-
-    /**
-     * @param {Array.<string>} userIds
-     * @param {function(Error)} callback
-     */
-    retrieveUsers: function(userIds, callback){
-        var requestType = "retrieveUsers";
-        var requestData = {
-            userIds: userIds
-        };
-        this.bugCallClient.request(requestType, requestData, function(exception, callResponse){
-            if(!exception){
-                var type    = callResponse.getType();
-                var data    = callResponse.getData();
-                var error   = data.error;
-                var users   = data.users;
-                callback(error, users);
-            } else {
-                callback(exception, null);
-            }
-        });
     }
 });
 

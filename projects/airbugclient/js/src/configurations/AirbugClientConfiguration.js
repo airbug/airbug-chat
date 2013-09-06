@@ -72,12 +72,12 @@ var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter               = bugpack.require('bugroutes.BugCallRouter');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -288,8 +288,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         return new CarapaceRouter();
     },
 
-    chatMessageManagerModule: function(airbugApi, currentUserManagerModule){
-        return new ChatMessageManagerModule(airbugApi, currentUserManagerModule);
+    chatMessageManagerModule: function(airbugApi, meldObjectManager, currentUserManagerModule){
+        return new ChatMessageManagerModule(airbugApi, meldObjectManager, currentUserManagerModule);
     },
 
     /**
@@ -305,8 +305,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {AirbugApi} airbugApi
      * @return {ConversationManagerModule}
      */
-    conversationManagerModule: function(airbugApi){
-        return new ConversationManagerModule(airbugApi);
+    conversationManagerModule: function(airbugApi, meldObjectManager){
+        return new ConversationManagerModule(airbugApi, meldObjectManager);
     },
 
     /**
@@ -314,8 +314,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {UserManagerModule} userManagerModule
      * @return {CurrentUserManagerModule}
      */
-    currentUserManagerModule: function(airbugApi, userManagerModule, roomManagerModule){
-        return new CurrentUserManagerModule(airbugApi, userManagerModule, roomManagerModule);
+    currentUserManagerModule: function(airbugApi, meldObjectManager, userManagerModule, roomManagerModule){
+        return new CurrentUserManagerModule(airbugApi, meldObjectManager, userManagerModule, roomManagerModule);
     },
 
     /**
@@ -335,15 +335,15 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @return {RoomManagerModule}
      */
-    roomManagerModule: function(airbugApi){
-        return new RoomManagerModule(airbugApi);
+    roomManagerModule: function(airbugApi, meldObjectManager){
+        return new RoomManagerModule(airbugApi, meldObjectManager);
     },
 
     /**
      * @return {SessionModule}
      */
-    sessionModule: function(airbugApi) {
-        return new SessionModule(airbugApi);
+    sessionModule: function(airbugApi, meldObjectManager) {
+        return new SessionModule(airbugApi, meldObjectManager);
     },
 
     /**
@@ -383,8 +383,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {AirbugApi} airbugApi
      * @return {UserManagerModule}
      */
-    userManagerModule: function(airbugApi){
-        return new UserManagerModule(airbugApi);
+    userManagerModule: function(airbugApi, meldObjectManager){
+        return new UserManagerModule(airbugApi, meldObjectManager);
     }
 });
 
@@ -429,6 +429,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("chatMessageManagerModule")
             .args([
                 arg().ref("airbugApi"),
+                arg().ref("meldObjectManager"),
                 arg().ref("currentUserManagerModule")
             ]),
         module("controllerScan")
@@ -437,11 +438,13 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             ]),
         module("conversationManagerModule")
             .args([
-                arg().ref("airbugApi")
+                arg().ref("airbugApi"),
+                arg().ref("meldObjectManager")
             ]),
         module("currentUserManagerModule")
             .args([
                 arg().ref("airbugApi"),
+                arg().ref("meldObjectManager"),
                 arg().ref("userManagerModule"),
                 arg().ref("roomManagerModule")
             ]),
@@ -455,11 +458,13 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             ]),
         module("roomManagerModule")
             .args([
-                arg().ref("airbugApi")
+                arg().ref("airbugApi"),
+                arg().ref("meldObjectManager")
             ]),
         module("sessionModule")
             .args([
-                arg().ref("airbugApi")
+                arg().ref("airbugApi"),
+                arg().ref("meldObjectManager")
             ]),
         module("socketIoClient")
             .args([
@@ -474,7 +479,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             ]),
         module("userManagerModule")
             .args([
-                arg().ref("airbugApi")
+                arg().ref("airbugApi"),
+                arg().ref("meldObjectManager")
             ])
     ])
 );

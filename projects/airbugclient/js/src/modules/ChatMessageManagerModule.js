@@ -7,9 +7,7 @@
 //@Export('ChatMessageManagerModule')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('Obj')
-//@Require('Set')
+//@Require('airbug.ManagerModule')
 
 
 //-------------------------------------------------------------------------------
@@ -23,25 +21,27 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var Set         = bugpack.require('Set');
-
+var Class           = bugpack.require('Class');
+var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageManagerModule = Class.extend(Obj, {
+var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, currentUserManagerModule) {
+    /**
+     * @param {airbug.AirBugApi}                airbugApi
+     * @param {meldbug.MeldObjectManager}       meldObjectManagerModule
+     * @param {airbug.CurrentUserManagerModule} currentUserManagerModule
+     */
+    _constructor: function(airbugApi, meldObjectManagerModule, currentUserManagerModule) {
 
-        this._super();
+        this._super(airbugApi, meldObjectManagerModule);
 
 
         //-------------------------------------------------------------------------------
@@ -50,119 +50,10 @@ var ChatMessageManagerModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {AirbugApi}
-         */
-        this.airbugApi                          = airbugApi;
-
-        /**
-         * @private
-         * @type {Map}
-         */
-        this.chatMessagesMap                    = new Map();
-
-        /**
-         * @private
-         * @type {Map} // Maps string ids to Sets of ChatMessages
-         */
-        this.conversationIdToChatMessagesMap    = new Map();
-
-        /**
-         * @private
          * @type {CurrentUserManagerModule}
          */
         this.currentUserManagerModule           = currentUserManagerModule;
 
-    },
-
-    clearCache: function(){
-        this.chatMessagesMap.clear();
-    },
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} id
-     * @return {ChatMessageObj}
-     */
-    get: function(id){
-        console.log("Inside ChatMessageManangerModule#get");
-        return this.chatMessagesMap.get(id);
-    },
-
-    /**
-     * @param {string} conversationId
-     */
-    getAllByConversationId: function(conversationId){
-        console.log("Inside ChatMessageManangerModule#getAllByConversationId");
-        return this.conversationIdToChatMessagesMap.get(conversationId);
-    },
-
-    /**
-     * @param {string} conversationId
-     * @param {ChatMessageObj} chatMessage
-     */
-    putByConversationId: function(conversationId, chatMessage){
-        console.log("Inside ChatMessageManangerModule#putByConversationId");
-        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId);
-        if (storedMessages){
-            storedMessages.add(chatMessage);
-        } else {
-            storedMessages = new Set([chatMessage]);
-            this.conversationIdToChatMessagesMap.put(conversationId, storedMessages);
-        }
-    },
-
-    /**
-     * @param {string} conversationId
-     * @param {Array.<ChatMessageObj>} chatMessages
-     */
-    putAllByConversationId: function(conversationId, chatMessages){
-        console.log("Inside ChatMessageManangerModule#putAllByConversationId");
-        var storedMessages = this.conversationIdToChatMessagesMap.get(conversationId);
-        if(storedMessages){
-            storedMessages.addAll(chatMessages);
-        } else {
-            storedMessages = new Set(chatMessages);
-            this.conversationIdToChatMessagesMap.put(conversationId, storedMessages);
-        }
-    },
-
-    /**
-     * @param {string} conversationId
-     */
-    removeAllByConversationId: function(conversationId){
-        console.log("Inside ChatMessageManangerModule#removeAllByConversationId");
-        this.conversationIdToChatMessagesMap.remove(conversationId);
-    },
-
-    /**
-     * @param {string} id
-     * @return {ChatMessageObj}
-     */
-    put: function(id, chatMessage){
-        console.log("Inside ChatMessageManangerModule#put");
-        this.chatMessagesMap.put(id, chatMessage);
-    },
-
-    /**
-     * @param {Array.<ChatMessageObj>} chatMessages
-     */
-    putAll: function(chatMessages){
-        var _this = this;
-        chatMessages.forEach(function(chatMessage){
-            _this.put(chatMessage._id, chatMessage);
-        });
-    },
-
-    /**
-     * @param {string} id
-     * @return {ChatMessageObj}
-     */
-    remove: function(id){
-        console.log("Inside ChatMessageManangerModule#remove");
-        this.chatMessagesMap.remove(id);
     },
 
     //-------------------------------------------------------------------------------
@@ -179,43 +70,44 @@ var ChatMessageManagerModule = Class.extend(Obj, {
      * @param {function(error, chatMessageObj)} callback
      */
     createChatMessage: function(chatMessageObj, callback){
-        var _this = this;
-        console.log("Inside ChatMessageManangerModule#creatChatMessage");
-        console.log("chatMessageObj:", chatMessageObj);
-        var chatMessageBody     = chatMessageObj.body;
-        var conversationId      = chatMessageObj.conversationId;
-        var conversationOwnerId = chatMessageObj.conversationOwnerId;
-        var senderUserId        = this.currentUserManagerModule.currentUser._id; //TODO: Update this
-        this.airbugApi.createChatMessage(chatMessageBody, senderUserId, conversationId, conversationOwnerId, function(error, chatMessage){
-            if(!error && chatMessage){
-                _this.putByConversationId(conversationId, chatMessage)
-                _this.put(chatMessage._id, chatMessage);
-            }
-            callback(error, chatMessage);
-        });
+        chatMessageObj.senderUserId    = this.currentUserManagerModule.currentUserId;
+        this.create("ChatMessage", chatMessageObj, callback);
     },
 
+    /**
+     * @param {string} chatMessageId
+     * @param {function(Error, MeldObject)} callback
+     */
     retrieveChatMessage: function(chatMessageId, callback){
-        //TODO
+        this.retrieve("ChatMessage", chatMessageId, callback);
     },
 
+    /**
+     * @param {Array.<string>} chatMessageIds
+     * @param {function(Error, Array.<MeldObject>)} callback
+     */
     retrieveChatMessages: function(chatMessageIds, callback){
-        //TODO
+        this.retrieveEach("ChatMessage", chatMessageIds, callback);
     },
 
     /**
      * @param {string} conversationId
-     * @param {function(Error, Array.<chatMessageObj>)} callback
+     * @param {function(Error, Array.<MeldObject>)} callback
      */
     retrieveChatMessagesByConversationId: function(conversationId, callback){
-        var _this = this;
-        this.airbugApi.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
-            if(!error && chatMessageObjs.length > 0){
-                _this.putAllByConversationId(conversationId, chatMessageObjs);
-                _this.putAll(chatMessageObjs);
-            }
-            callback(error, chatMessageObjs);
-        });
+        var _this           = this;
+        var conversation    = this.meldObjectManagerModule.getMeldObject(conversationId);
+        if(conversation){
+            this.retrieveEach("ChatMessage", conversation.chatMessageIdList, callback);
+        } else {
+            this.retrieve("Conversation", conversationId, function(error, conversationObj){
+                if(!error && conversationObj){
+                    _this.retrieveEach("ChatMessage", conversationobj.chatMessageIdList, callback);
+                } else {
+                    callback(error, null);
+                }
+            });
+        }
     }
 });
 

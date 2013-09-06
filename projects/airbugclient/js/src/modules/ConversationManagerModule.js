@@ -7,93 +7,47 @@
 //@Export('ConversationManagerModule')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('Obj')
+//@Require('airbug.ManagerModule')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManagerModule = Class.extend(Obj, {
+var ConversationManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi) {
+    /**
+     * @param {AirbugApi} airbugApi
+     * @param {MeldObjectManager} meldObjectManagerModule
+     */
+    _constructor: function(airbugApi, meldObjectManagerModule) {
 
-        this._super();
+        this._super(airbugApi, meldObjectManagerModule);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {AirbugApi}
-         */
-        this.airbugApi          = airbugApi;
-
-        /**
-         * @private
-         * @type {Map}
-         */
-        this.conversationsMap   = new Map();
-
-    },
-
-    clearCache: function(){
-        this.conversationsMap.clear();
-    },
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    get: function(id){
-        return this.conversationsMap.get(id);
-    },
-
-    getAll: function(){
-        return this.conversationsMap.getValueArray();
-    },
-
-    /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    put: function(id, room){
-        this.conversationsMap.put(id, room);
-    },
-
-    /**
-     * @param {string} id
-     * @return {roomObj}
-     */
-    remove: function(id){
-        this.conversationsMap.remove(id);
     },
 
     //-------------------------------------------------------------------------------
@@ -102,21 +56,10 @@ var ConversationManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} conversationId
-     * @param {function(error, conversationObj)} callback
+     * @param {function(error, meldbug.MeldObject)} callback
      */
     retrieveConversation: function(conversationId, callback){
-        var _this = this;
-        var conversationObj = this.conversationsMap.get(conversationId);
-        if(conversationObj){
-            callback(null, conversationObj);
-        } else {
-            this.airbugApi.retrieveConversation(conversationId, function(error, conversationObj){
-                if(!error && conversationObj){
-                    _this.put(conversationObj._id, conversationObj);
-                }
-                callback(error, conversationObj);
-            });
-        }
+        this.retrieve("Conversation", conversationId, callback);
     }
 });
 

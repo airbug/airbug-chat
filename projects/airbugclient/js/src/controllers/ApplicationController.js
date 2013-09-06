@@ -89,8 +89,8 @@ var ApplicationController = Class.extend(CarapaceController, {
         var route = routingRequest.getRoute().route;
         var args = routingRequest.getArgs();
         var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //false
-        this.currentUserManagerModule.getCurrentUser(function(error, currentUser){
-            //TODO //BUGBUG
+        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUser){
+            //TODO //BUGBUG //DOUBLE Check this
             var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //true //BUGBUG user is not being logged out on the server side
             if(!loggedIn){
                 _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
