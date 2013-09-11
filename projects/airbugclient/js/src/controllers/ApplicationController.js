@@ -33,7 +33,7 @@ var CarapaceController  = bugpack.require('carapace.CarapaceController');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta             = BugMeta.context();
 var autowired           = AutowiredAnnotation.autowired;
 var controller          = ControllerAnnotation.controller;
 var property            = PropertyAnnotation.property;
@@ -57,8 +57,14 @@ var ApplicationController = Class.extend(CarapaceController, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {airbug.CurrentManagerModule}
+         */
         this.currentUserManagerModule   = null;
 
+        /**
+         * @type {airbug.NavigationModule}
+         */
         this.navigationModule           = null;
 
     },
@@ -78,28 +84,37 @@ var ApplicationController = Class.extend(CarapaceController, {
     /**
      * @Override
      * @protected
-     * @param {RoutingRequest} routingRequest
+     * @param {carapace.RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
 
     },
 
+    /**
+     * @param {carapace.RoutingRequest} routingRequest
+     * @param {function(error, {*}, boolean)} callback
+     */
     preFilterRouting: function(routingRequest, callback){
-        var _this = this;
-        var route = routingRequest.getRoute().route;
-        var args = routingRequest.getArgs();
-        var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //false
-        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUser){
-            //TODO //BUGBUG //DOUBLE Check this
-            var loggedIn = _this.currentUserManagerModule.userIsLoggedIn(); //true //BUGBUG user is not being logged out on the server side
-            if(!loggedIn){
-                _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
-                _this.navigationModule.navigate("login", {
-                    trigger: true
-                });
+        var _this       = this;
+        var route       = routingRequest.getRoute().route;
+        var args        = routingRequest.getArgs();
+        var currentUser = this.currentUserManagerModule.getCurrentUser();
+        // if connected by socket, there will be a currentUser
+
+        this.retrieveCurrentUser(function(error, currentUser, loggedIn){
+            if(!error){
+                if(currentUser && loggedIn){
+                    callback(error, currentUser, loggedIn);
+                } else {
+                    _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
+                    _this.navigationModule.navigate("login", {
+                        trigger: true
+                    });
+                }
+            } else {
+                //TODO Handle error
+                callback(error, currentUser, loggedIn);
             }
-            console.log("preFilterRouting: Error:", error, "currentUser:", currentUser, "loggedIn:", loggedIn);
-            callback(error, currentUser, loggedIn);
         });
     }
 

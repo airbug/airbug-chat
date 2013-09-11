@@ -194,6 +194,24 @@ var UserController = Class.extend(Obj, {
             });
         });
 
+        expressApp.get('/app/retrieveCurrentUser', function(req, res){
+            var sessionID       = req.sessionID;
+            var session         = req.session;
+            var userId          = session.userId;
+
+            userService.findUserById(userId, function(error, user){
+                if(!error){
+                    if(user){
+                        res.json({currentUser: user});
+                    } else {
+                        res.json({error: "User not found"});
+                    }
+                } else {
+                    res.json(error: error.toString());
+                }
+            });
+        });
+
         expressApp.post('/app/user-availability-check-email', function(req, res){
             var email = req.body.email;
 

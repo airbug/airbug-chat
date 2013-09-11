@@ -94,6 +94,14 @@ var SessionService = Class.extend(Obj, {
     },
 
     /**
+     * @param {string} sid
+     * @param {function(error, airbugserver.Session)} callback
+     */
+    findSessionBySid: function(sid, callback){
+        this.sessionManager.findSessionBySid(sid, callback)
+    },
+
+    /**
      * @param(string) sid
      * @param(function(error)) callback
      */

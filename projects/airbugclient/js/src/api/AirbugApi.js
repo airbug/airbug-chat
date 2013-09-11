@@ -100,8 +100,14 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     loginUser: function(callback){
-        this.bugCallClient.openConnection();
-        callback();
+        var error = null;
+        try{
+            this.bugCallClient.openConnection();
+        } catch(e){
+            error = e;
+        } finally {
+            callback(error);
+        }
     },
 
     /**
@@ -118,8 +124,14 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     registerUser: function(callback){
-        this.bugCallClient.openConnection();
-        callback();
+        var error = null;
+        try{
+            this.bugCallClient.openConnection();
+        } catch(e){
+            error = e;
+        } finally {
+            callback(error);
+        }
     }
 });
 
