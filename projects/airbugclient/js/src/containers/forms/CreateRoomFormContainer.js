@@ -148,18 +148,19 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var roomObj     = event.getData();
-        this.roomManagerModule.createRoom(roomObj, function(error, room){
+        this.roomManagerModule.createRoom(roomObj, function(error, roomMeldObj){
             console.log("Inside of CreateRoomFormContainer#hearFormSubmittedEvent roomManagerModule#createRoom callback");
             console.log("Error:", error, "roomModel:", room);
-            if (!error && room) {
-                // _this.roomCollection.add(new RoomModel(room));
-                var roomId = room._id;
+            if (!error && roomMeldObj) {
+                var roomId = roomMeldObj.getProperty("_id");
                 _this.navigationModule.navigate("room/" + roomId, {
                     trigger: true
                 });
             } else {
-                //TODO
+                var parentContainer     = _this.getContainerParent();
+                var notificationView    = parentContainer.getNotificationView();
                 console.log("roomManagerModule#createRoom callback error:", error);
+                notificationView.flashError(error);
             }
         });
     }

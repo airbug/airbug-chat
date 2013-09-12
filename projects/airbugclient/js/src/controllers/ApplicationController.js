@@ -98,8 +98,6 @@ var ApplicationController = Class.extend(CarapaceController, {
         var _this       = this;
         var route       = routingRequest.getRoute().route;
         var args        = routingRequest.getArgs();
-        var currentUser = this.currentUserManagerModule.getCurrentUser();
-        // if connected by socket, there will be a currentUser
 
         this.retrieveCurrentUser(function(error, currentUser, loggedIn){
             if(!error){
@@ -112,7 +110,8 @@ var ApplicationController = Class.extend(CarapaceController, {
                     });
                 }
             } else {
-                //TODO Handle error
+                //TODO error handling
+                //TODO error tracking
                 callback(error, currentUser, loggedIn);
             }
         });

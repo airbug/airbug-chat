@@ -67,7 +67,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      senderUserId: {string},
      *      messageBody: {string}
      * }} chatMessageObj
-     * @param {function(error, chatMessageObj)} callback
+     * @param {function(error, meldbug.MeldObj)} callback
      */
     createChatMessage: function(chatMessageObj, callback){
         chatMessageObj.senderUserId    = this.currentUserManagerModule.currentUserId;
@@ -76,7 +76,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} chatMessageId
-     * @param {function(Error, MeldObject)} callback
+     * @param {function(Error, meldbug.MeldObj)} callback
      */
     retrieveChatMessage: function(chatMessageId, callback){
         this.retrieve("ChatMessage", chatMessageId, callback);
@@ -84,7 +84,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} chatMessageIds
-     * @param {function(Error, Array.<MeldObject>)} callback
+     * @param {function(Error, Array.<meldbug.MeldObj>)} callback
      */
     retrieveChatMessages: function(chatMessageIds, callback){
         this.retrieveEach("ChatMessage", chatMessageIds, callback);
@@ -92,7 +92,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Error, Array.<MeldObject>)} callback
+     * @param {function(Error, Array.<meldbug.MeldObj>)} callback
      */
     retrieveChatMessagesByConversationId: function(conversationId, callback){
         var _this           = this;

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('StringUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -87,7 +88,7 @@ var ManagerModule = Class.extend(Obj, {
     createEach: function(type, objects, callback){
         var _this = this;
         var requestData = {objects: objects};
-        var type = this.pluralize(type);
+        var type = StringUtil.pluralize(type);
         this.airbugApi.request("create", type, requestData, function(error, data){
             var meldObjs = _this.getEach(data.objectIds);
             callback(error, meldObjs);
@@ -128,8 +129,7 @@ var ManagerModule = Class.extend(Obj, {
         } else {
             var requestData = {objectId: meldId};
             _this.airbugApi.request("retrieve", type, requestData, function(error, data){
-                var meldId = data.objectId;
-                if(!error && meldId) meldObj = _this.get(meldId);
+                if(!error && data[meldId]) meldObj = _this.get(meldId);
                 callback(error, meldObj);
             });
         }
@@ -156,24 +156,106 @@ var ManagerModule = Class.extend(Obj, {
 
         if(unretrievedMeldIds.length > 0){
             var requestData = {objectIds: unretrievedMeldIds};
-            var type = this.pluralize(type);
+            var type = StringUtil.pluralize(type);
             this.airbugApi.request("retrieve", type, requestData, function(error, data){
-                var meldIds = data.objectIds;
-                if(!error){
-                    if(meldIds){
-                        retrievedMeldObjects.concat(_this.getEach(meldIds));
-                        callback(null, retrievedMeldObjects);
+                var extentMeldIds       = [];
+                var destroyedMeldIds    = [];
+                meldIds.forEach(function(meldId){
+                    if(data[meldId]){
+                        extentMeldIds.push(meldId);
                     } else {
-                        callback(new Error("MeldIds were not returned on retrieval call to server. Some objects may be missing or may not exist"), retrievedMeldObjects);
+                        destroyedMeldIds.push(meldId);
                     }
-                } else {
-                    if(meldIds) retrievedMeldObjects.concat(_this.getEach(meldIds));
-                    callback(error, retrievedMeldObjects);
-                }
+                });
+                retrievedMeldObjects.concat(_this.getEach(extentMeldIds));
+                callback(error, retrievedMeldObjects);
             })
         } else {
             callback(null, retrievedMeldObjects);
         }
+    },
+
+    /**
+     * @param {string} type
+     * @param {string} meldId
+     * @param {{*}} changeObject
+     * @param {function(error, meldbug.MeldObject)} callback
+     */
+    update: function(type, meldId, changeObject, callback){
+        var requestData = {
+            objectId: meldId,
+            changeObject: changeObject
+        };
+        this.airbugApi.request("update", type, requestData, function(error, data){
+            var objectId = data.objectId;
+            if(objectId) {
+                var obj = _this.get(objectId);
+            } else {
+                var obj = null;
+            }
+            callback(error, obj);
+        });
+    },
+
+    /**
+     * @param {string} type
+     * @param {Array.<string>} meldIds
+     * @param {{meldId: changeObject} changeObjects
+     * @param {function(error, meldbug.MeldObject)} callback
+     */
+    updateEach: function(type, meldIds, changeObjects, callback){
+        var _this = this;
+        var requestData = {
+            objectIds: meldIds,
+            changeObjects: changeObjects
+        };
+        var type = StringUtil.pluralize(type);
+        this.airbugApi.request("updateEach", type, requestData, function(error, data){
+            var extentMeldIds       = [];
+            var destroyedMeldIds    = [];
+            meldIds.forEach(function(meldId){
+                if(data[meldId]){
+                    extentMeldIds.push(meldId);
+                } else {
+                    destroyedMeldIds.push(meldId);
+                }
+            });
+            var updatedMeldObjects = _this.getEach(extentMeldIds);
+            callback(error, updatedMeldObjects);
+        });
+    },
+
+    /**
+     * @param {string} type
+     * @param {string} meldId
+     * @param {function(error)} callback
+     */
+    destroy: function(type, meldId, callback){
+        var requestData = {objectId: meldId};
+        this.airbugApi.request("destroy", type, requestData, callback);
+    },
+
+    /**
+     * @param {string} type
+     * @param {Array.<string>} meldIds
+     * @param {function(error)} callback
+     */
+    destroyEach: function(type, meldIds, callback){
+        var requestData = {objectIds: meldIds};
+        var type = StringUtil.pluralize(type);
+        this.airbugApi.request("destroy", type, requestData, function(error, data){
+            //TODO
+            // var destroyedMeldIds    = [];
+            // var extentMeldIds       = [];
+            // meldIds.forEach(function(meldId){
+            //     if(data[meldId]){
+            //         destroyedMeldIds.push(meldId);
+            //     } else {
+            //         extentMeldIds.push(meldId);
+            //     }
+            // });
+            callback(error);
+        });
     },
 
 
@@ -197,21 +279,6 @@ var ManagerModule = Class.extend(Obj, {
      */
     getEach: function(meldIds){
         return this.meldObjectManagerModule.getMeldObjects(meldIds);
-    },
-
-    /**
-    * @private
-    * @param {string} string
-    * @return {string}
-    */
-    pluralize: function(string){
-        //TODO also add irregular patterns
-        var irregularPlurals = {};
-        if(irregularPlurals[string]){
-            return irregularPlurals[string]
-        } else {
-            return string + "s";
-        }
     }
 });
 

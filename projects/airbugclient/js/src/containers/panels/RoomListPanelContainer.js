@@ -42,7 +42,7 @@ var RoomModel                   = bugpack.require('airbug.RoomModel');
 var RoomNameView                = bugpack.require('airbug.RoomNameView');
 var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
 var TextView                    = bugpack.require('airbug.TextView');
-var BugMeta = bugpack.require('bugmeta.BugMeta');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
@@ -53,7 +53,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
@@ -83,9 +83,9 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {RoomCollection}
+         * @type {airbug.RoomCollection}
          */
-        this.roomCollection = null;
+        this.roomCollection             = null;
 
 
         // Modules
@@ -93,9 +93,21 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {airbug.CurrentUserManagerModule}
          */
-        this.navigationModule = null;
+        this.currentUserManagerModule   = null;
+
+        /**
+         * @private
+         * @type {airbug.NavigationModule}
+         */
+        this.navigationModule           = null;
+
+        /**
+         * @private
+         * @type {airbug.NavigationModule}
+         */
+        this.roomManagerModule          = null;
 
 
         // Views
@@ -103,21 +115,21 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {airbug.ButtonView}
          */
-        this.addRoomButtonView = null;
+        this.addRoomButtonView          = null;
 
         /**
          * @private
-         * @type {ListView}
+         * @type {airbug.ListView}
          */
-        this.listView = null;
+        this.listView                   = null;
 
         /**
          * @private
-         * @type {PanelView}
+         * @type {airbug.PanelView}
          */
-        this.panelView = null;
+        this.panelView                  = null;
     },
 
 
@@ -132,9 +144,31 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         var _this = this;
         this._super(routerArgs);
-        var rooms = this.roomManagerModule.getAll();
-        rooms.forEach(function(roomObj){
-            _this.roomCollection.add(new RoomModel(roomObj, roomObj._id));
+        //NOTE: The adding of rooms will occur asynchronously but should be well handled by backbone
+        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUserMeldObj){
+            if(!error && currentUserMeldObj){
+                var currentUserObj = currentUserMeldObj.generateObject();
+                _this.roomManagerModule.retrieveRooms(currentUserObj.roomsList, function(error, roomMeldObjs){
+                    if(!error && roomMeldObjs){
+                        roomMeldObjs.forEach(function(roomMeldObj){
+                            if(roomMeldObj){ // in case roomMeldObj is null e.g. no longer exists
+                                var roomObj = roomMeldObj.generateObject();
+                                _this.roomCollection.add(roomObj, roomObj._id);
+                            }
+                        });
+                    } else {
+                        //TODO Error handling
+                        //TODO Error tracking
+                        var parentContainer     = _this.getContainerParent();
+                        var notificationView    = parentContainer.getNotificationView();
+                        console.log("error:", error);
+                        notificationView.flashError(error);
+                    }
+                });
+            } else {
+                //TODO
+                //flash error
+            }
         });
     },
 
@@ -194,7 +228,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      */
     hearListViewItemSelectedEvent: function(event) {
         var room    = event.getData();
-        var roomId  = room.id || room._id; //BUGBUG room.id current = "";
+        var roomId  = room.id || room._id; //BUGBUG room.id currently returns "";
         this.navigationModule.navigate("room/" + roomId, {
             trigger: true
         });
@@ -226,6 +260,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(RoomListPanelContainer).with(
     autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
     ])

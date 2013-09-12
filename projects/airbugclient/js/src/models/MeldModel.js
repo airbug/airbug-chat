@@ -40,20 +40,24 @@ var MeldModel = Class.extend(CarapaceModel, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(meldObject) {
-
-        /**
-         * @private
-         * @type {MeldObject}
-         */
-        this.meldObject = meldObject;
-
-        this._super(meldObject.generateObject(), meldObject.getMeldId());
+    _constructor: function(object, id) {
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {MeldObject}
+         */
+        this.meldObject = null;
+
+        if(Class.doesExtend(object, MeldObject){
+            this.meldObject = object;
+            this._super(object.generateObject(), object.getMeldId());
+        } else {
+            this._super(object, id);
+        }
 
     },
 
@@ -65,10 +69,20 @@ var MeldModel = Class.extend(CarapaceModel, {
     initialize: function(attributes, options) {
         this._super(attributes, options);
 
-        this.meldObject.addEventListener(MeldObject.EventTypes.DESTROYED, this.handleDestroyed, this);
-        this.meldObject.addEventListener(MeldObject.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
+        this.addListenersToMeldObject();
     },
 
+    setMeldObject: function(meldObject){
+        this.meldObject = meldObject;
+        this.addListenersToMeldObject();
+    },
+
+    addListenersToMeldObject: function(){
+        if(this.meldObject){
+            this.meldObject.addEventListener(MeldObject.EventTypes.DESTROYED, this.handleDestroyed, this);
+            this.meldObject.addEventListener(MeldObject.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
+        }
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners

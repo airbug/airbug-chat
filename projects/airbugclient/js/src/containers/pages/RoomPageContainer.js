@@ -130,10 +130,15 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {PageView}
          */
-        this.pageView                      = null;
+        this.pageView                               = null;
 
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @type {airbug.NavigationModule}
+         */
+        this.navigationModule                       = null;
 
         /**
          * @type {RoomManagerModule}
@@ -212,21 +217,42 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
 
     /**
      * @private
-     * @param {string} uuid
+     * @param {string} roomId
      */
     loadRoomModel: function(roomId) {
-        // TODO BRN: Load the Room associated with the passed in uuid.
-        // TODO BRN: Send the room uuid and the roomModel to the API. It's the API's responsibility to change the model
         console.log("Loading roomModel inside of RoomPageContainer#loadRoomModel");
-        var roomObj     = this.roomManagerModule.get(roomId);
-        this.roomModel  = new RoomModel(roomObj, roomObj._id);
+        var _this = this;
+        this.roomModel = new RoomModel({}, "");
         this.addModel(this.roomModel);
+        //TODO start loading animation
+        var blackoutLoaderContainer = new BlackoutLoaderContainer();
+        this.addContainerChild(blackoutLoaderContainer);
+
+        this.roomManagerModule.retrieveRoom(roomId, function(error, roomMeldObj){
+            if(!error && roomMeldObj){
+                var roomObj = roomMeldObj.generateObject();
+                if(!roomObj.id) roomObj.id = roomObj._id;
+                _this.roomModel.set(roomObj);
+                //TODO stop loading animation
+            } else {
+                //TODO
+                // retry mechanism
+                var notificationView    = _this.getNotificationView();
+                console.log("error:", error);
+                notificationView.flashError(error);
+                notificationView.flashError("This room is currently unavailable. You will be redirected to your user homepage");
+                setTimeout(function(){
+                    _this.navigationModule.navigate("home", {trigger: true});
+                }, 1500);
+            }
+        });
     }
 });
 
 bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([
-        property("roomManagerModule").ref("roomManagerModule")
+        property("roomManagerModule").ref("roomManagerModule"),
+        property("navigationModule").ref("navigationModule")
     ])
 );
 

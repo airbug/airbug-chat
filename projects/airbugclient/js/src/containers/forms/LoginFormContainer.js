@@ -148,10 +148,9 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var userObj     = event.getData();
-        this.currentUserManagerModule.loginUser(userObj, function(error, currentUser){
-            console.log("error:", error, "currentUser", currentUser, "inside LoginFormContainer");
+        this.currentUserManagerModule.loginUser(userObj, function(error, currentUserMeldObj){
+            console.log("error:", error, "currentUser", currentUserMeldObj, "inside LoginFormContainer");
             if(!error){
-                //TODO
                 var finalDestination = _this.navigationModule.getFinalDestination();
                 if(finalDestination){
                     _this.navigationModule.clearFinalDestination();
@@ -164,12 +163,8 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
                     });
                 }
             } else {
-                //TODO
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("parentContainer:", parentContainer);
-                console.log("notificationView:", notificationView);
-                console.log("error:", error);
                 notificationView.flashError(error);
                 console.log("currentUserManagerModule#loginUser callback error:", error);
             }

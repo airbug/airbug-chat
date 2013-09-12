@@ -33,7 +33,7 @@ var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
 var LoginFormContainer      = bugpack.require('airbug.LoginFormContainer');
 var PageView                = bugpack.require('airbug.PageView');
 var SignupButtonContainer   = bugpack.require('airbug.SignupButtonContainer');
-var BugMeta = bugpack.require('bugmeta.BugMeta');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
@@ -43,7 +43,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;

@@ -78,7 +78,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.conversationManagerModule  = null;
+        this.conversationManagerModule      = null;
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderView}
          */
-        this.boxWithHeaderView                    = null;
+        this.boxWithHeaderView          = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -166,14 +166,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
         // Create Models
         //-------------------------------------------------------------------------------
-        var conversationId      = this.roomModel.get("conversationId"); //undefined because the returned room from create room does not have conversationid on it!!
-        this.conversationModel  = new ConversationModel({}, conversationId);
-        this.addModel(this.conversationModel);
-        this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationObj){
-            if(!error && conversationObj){
-                _this.conversationModel.set(conversationObj);
-            }
-        });
+        this.loadConversationModel(this.roomModel.get("conversationId"));
 
 
         // Create Views
@@ -234,13 +227,20 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {string} conversationUuid
+     * @param {string} conversationId
      */
-    loadConversationModel: function(conversationUuid) {
-        // TODO BRN: Load the Conversation associated with the passed in uuid.
-        // TODO BRN: Send the conversation uuid and the conversationModel to the API. It's the API's responsibility to change the model
-
-
+    loadConversationModel: function(conversationId) {
+        this.conversationModel  = new ConversationModel({}, conversationId);
+        this.addModel(this.conversationModel);
+        this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationMeldObj){
+            if(!error && conversationMeldObj){
+                var conversationObj = conversationMeldObj.generateObject();
+                _this.conversationModel.setMeldObject(conversationMeldObj);
+                _this.conversationModel.set(conversationObj);
+            } else {
+                //TODO
+            }
+        });
     },
 
 

@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
-var MustacheView 	= bugpack.require('airbug.MustacheView');
+var Class           = bugpack.require('Class');
+var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ var ListView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
+    template: '<div id="list-{{cid}}" class="list" data-tracking-id="{{attributes.trackingId}}" data-tracking-classes="list {{attributes.trackingClasses}}"></div>'
 });
 
 

@@ -69,7 +69,7 @@ var TrackerModule = Class.extend(Obj, {
      */
      initialize: function(callback){
         this.sonarbugClient.startTracking();
-
+        this.trackDocumentEvents();
         if(callback && typeof callback === "function") callback(null);
      },
 
@@ -88,6 +88,9 @@ var TrackerModule = Class.extend(Obj, {
         this.track("appLoad", null);
     },
 
+    /**
+     *
+     */
     trackDocumentEvents: function(){
         this.trackClicksOnDocument();
         this.trackMousedownsOnDocument();
@@ -104,10 +107,8 @@ var TrackerModule = Class.extend(Obj, {
     trackClicksOnDocument: function(){
         var _this = this;
         $(document).on("click", function(event){
-            var $target = $(event.target);
-            var html = $target.html();
-            var nodeName = event.target.nodeName;
-            _this.track("mouseclick", {target: html, nodeName: nodeName});
+            var data = _this.parseEventForTracking(event);
+            _this.track("mouseclick", data);
         });
     },
 
@@ -117,10 +118,8 @@ var TrackerModule = Class.extend(Obj, {
     trackMousedownsOnDocument: function(){
         var _this = this;
         $(document).on("mousedown", function(event){
-            var $target = $(event.target);
-            var html = $target.html();
-            var nodeName = event.target.nodeName;
-            _this.track("mousedown", {target: html, nodeName: nodeName});
+            var data = _this.parseEventForTracking(event);
+            _this.track("mousedown", data);
         });
     },
 
@@ -130,11 +129,25 @@ var TrackerModule = Class.extend(Obj, {
     trackMouseupsOnDocument: function(){
         var _this = this;
         $(document).on("mouseup", function(event){
-            var $target = $(event.target);
-            var html = $target.html();
-            var nodeName = event.target.nodeName;
-            _this.track("mouseup", {target: html, nodeName: nodeName});
+            var data = _this.parseEventForTracking(event);
+            _this.track("mouseup", data);
         });
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    parseEventForTracking: function(event){
+        var data    = {};
+        var $target = $(event.target);
+
+        data.trackingId         = $target.data("tracking-id");
+        data.trackingClasses    = $target.data("tracking-classes");
+        data.html               = $target.html();
+        data.nodeName           = event.target.nodeName;
+
+        return data;
     },
 
     /**

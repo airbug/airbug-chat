@@ -219,12 +219,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding ChatMessageModels to the chatMessageCollection.
         var _this = this;
-        this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageObjs){
-            if(!error && chatMessageObjs.length > 0){
-                chatMessageObjs.forEach(function(chatMessageObj){
-                    chatMessageObj.pending  = false;
-                    chatMessageObj.failed   = false;
-                    _this.chatMessageCollection.add(new ChatMessageModel(chatMessageObj, chatMessageObj._id));
+        this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageMeldObjs){
+            if(!error && chatMessageMeldObjs.length > 0){
+                chatMessageObjs.forEach(function(chatMessageMeldObj){
+                    var chatMessageObjModel = new ChatMessageModel(chatMessageMeldObj);
+                    chatMessageObjModel.set({pending: false});
+                    _this.chatMessageCollection.add(chatMessageObjModel);
                 });
             }
         });
@@ -253,20 +253,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var newChatMessageModel = new ChatMessageModel(chatMessage, null);
         this.chatMessageCollection.add(newChatMessageModel);
 
-        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageObj){
+        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageMeldObj){
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
-            console.log("error:", error, "chatMessageObj:", chatMessageObj);
-            if(!error && chatMessageObj){
-                var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
+            console.log("error:", error, "chatMessageObj:", chatMessageMeldObj);
+            if(!error && chatMessageMeldObj){
+                newChatMessageModel.setMeldObject(chatMessageMeldObj);
+                var chatMessageObj      = chatMessageMeldObj.generateObject();
+                var sender              = _this.userManagerModule.get(chatMessageMeldObj.senderUserId);
                 chatMessageObj.sentBy   = sender.firstName + sender.lastName;
                 chatMessageObj.pending  = false;
-                // chatMessageObj.failed   = false;
-
+                chatMessageObj.failed   = false;
                 newChatMessageModel.set(chatMessageObj);
-            } else if (error && !chatMessageObj){
-                //TEST This
-                chatMessageObj = {failed: true};
-                newChatMessageModel.set(chatMessageObj);
+            } else if (error && !chatMessageMeldObj){
+                newChatMessageModel.set({failed: true, pending: false});
             }
         });
     },

@@ -37,7 +37,7 @@ var SelectableListItemView = Class.extend(ListItemView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}} clickable-box">' +
+    template:   '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}} clickable-box" data-trackingClasses={{attributes.trackingClasses}}>' +
                 '</div>',
 
 

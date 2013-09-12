@@ -4,43 +4,41 @@
 
 //@Package('airbug')
 
-//@Export('SessionModule')
+//@Export('RoomMemberManagerModule')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('airbug.CurrentUserModel')
 //@Require('airbug.ManagerModule')
-//@Require('airbug.SessionModel')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
-var ManagerModule       = bugpack.require('airbug.ManagerModule');
-var SessionModel        = bugpack.require('airbug.SessionModel');
+var Class           = bugpack.require('Class');
+var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionModule = Class.extend(ManagerModule, {
+var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {AirbugApi} airbugApi
+     * @param {MeldObjectManager} meldObjectManagerModule
+     */
     _constructor: function(airbugApi, meldObjectManagerModule) {
 
         this._super(airbugApi, meldObjectManagerModule);
@@ -50,62 +48,26 @@ var SessionModule = Class.extend(ManagerModule, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {AirbugApi}
-         */
-        this.airbugApi          = airbugApi;
-
-        /**
-         * @private
-         * @type {UserModel}
-         */
-        this.currentUserModel   = new CurrentUserModel({});
-
-        /**
-         * @private
-         * @type {SessionModel}
-         */
-        this.sessionModel       = new SessionModel({});
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {CurrentUserModel}
-     */
-    getCurrentUserModel: function() {
-        return this.currentUserModel;
-    },
-
-    /**
-     * @return {SessionModel}
-     */
-    getSessionModel: function() {
-        return this.sessionModel;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
-
     /**
-     * @param {string} email
+     * @param {string} roomMemberId
+     * @param {function(error, meldbug.MeldObject)} callback
      */
-    login: function(email) {
-
+    retrieveRoomMember: function(roomMemberId, callback){
+        this.retrieve("RoomMember", roomMemberId, callback);
     },
 
     /**
-     *
+     * @param {Array.<string>} roomMemberIds
+     * @param {function(error, Array.<meldbug.MeldObject>)} callback
      */
-    logout: function() {
-
+    retrieveRoomMembers: function(roomMemberIds, callback){
+        this.retrieveEach("RoomMember", roomMemberIds, callback);
     }
 });
 
@@ -114,4 +76,4 @@ var SessionModule = Class.extend(ManagerModule, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SessionModule", SessionModule);
+bugpack.export("airbug.RoomMemberManagerModule", RoomMemberManagerModule);

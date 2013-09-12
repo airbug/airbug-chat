@@ -155,8 +155,6 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
                 // });
                 window.location.replace("http://localhost:8000/app");
             } else {
-                //TODO
-                //Show error
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
                 console.log("error:", error);

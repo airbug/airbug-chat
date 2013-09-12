@@ -68,7 +68,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.buttonName     = "HomeButton";
+        this.buttonName         = "HomeButton";
 
 
         // Modules
@@ -78,7 +78,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule   = null;
 
 
         // Views
@@ -88,7 +88,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {ButtonView}
          */
-        this.buttonView = null;
+        this.buttonView         = null;
     },
 
 

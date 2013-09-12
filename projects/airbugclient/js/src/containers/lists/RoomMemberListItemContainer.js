@@ -35,6 +35,9 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {airbug.RoomMemberModel} roomMemberModel
+     */
     _constructor: function(roomMemberModel) {
 
         this._super();
@@ -70,13 +73,17 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        //TODO BRN: This is where we would load the user model associated with this contact.
         var _this   = this;
         var userId  = this.roomMemberModel.get("userId");
-        this.userManagerModule.retrieveUser(userId, function(error, userObj){
-            if(!error && userObj){
-                //NOTE might want to change this to roomMemberModel later to prevent conflicts with private currentUser information
+        this.userManagerModule.retrieveUser(userId, function(error, userMeldObj){
+            if(!error && userMeldObj){
+                //NOTE might want to change this to an more fleshed out version of roomMemberModel later to prevent conflicts with private currentUser information
+                var userObj = userMeldObj.generateObject();
                 _this.userModel.set(userObj);
+            } else {
+                //TODO error handling
+                // retry condition
+                // roomMember may no longer exist. If so, destroy container?
             }
         });
     },

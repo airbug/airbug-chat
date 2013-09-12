@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 				= bugpack.require('Class');
-var RoomMemberModel 	= bugpack.require('airbug.RoomMemberModel');
-var CarapaceCollection 	= bugpack.require('carapace.CarapaceCollection');
+var Class               = bugpack.require('Class');
+var RoomMemberModel     = bugpack.require('airbug.RoomMemberModel');
+var CarapaceCollection  = bugpack.require('carapace.CarapaceCollection');
 
 
 //-------------------------------------------------------------------------------

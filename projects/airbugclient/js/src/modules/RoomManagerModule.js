@@ -54,7 +54,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(error, room)} callback
+     * @param {function(error, meldbug.MeldObj)} callback
      */
     addUserToRoom: function(userId, roomId, callback){
         var requestData = {userId: userId, roomId: roomId};
@@ -65,7 +65,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      * @param {{
      *      name: string
      * }} room
-     * @param {function(error, room)} callback
+     * @param {function(error, meldbug.MeldObj)} callback
      */
     createRoom: function(roomObj, callback) {
         this.create("Room", roomObj, callback);
@@ -73,7 +73,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(error, room)} callback
+     * @param {function(error, meldbug.MeldObj)} callback
      */
     joinRoom: function(roomId, callback) {
         var requestData = {objectId: roomId};
@@ -91,7 +91,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(error, room)} callback
+     * @param {function(error, meldbug.MeldObj)} callback
      */
     retrieveRoom: function(roomId, callback) {
         this.retrieve("Room", roomId, callback});
@@ -99,7 +99,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(error, Array.<room>)} callback
+     * @param {function(error, Array.<meldbug.MeldObj>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
         this.retrieveEach("Room", roomIds, callback);

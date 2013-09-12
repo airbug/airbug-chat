@@ -74,7 +74,7 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.buttonName         = "AccountButtonDropdown";
+        this.buttonName                 = "AccountButtonDropdown";
 
 
         // Modules
@@ -84,13 +84,13 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule = null;
+        this.navigationModule           = null;
 
         /**
          * @private
          * @type {SessionModule}
          */
-        this.sessionModule = null;
+        this.sessionModule              = null;
 
 
         // Views
@@ -100,19 +100,19 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {ButtonDropdownView}
          */
-        this.buttonDropdownView = null;
+        this.buttonDropdownView         = null;
 
         /**
          * @private
          * @type {DropdownItemView}
          */
-        this.logoutDropdownItemView = null;
+        this.logoutDropdownItemView     = null;
 
         /**
          * @private
          * @type {DropdownItemView}
          */
-        this.settingsDropdownItemView = null;
+        this.settingsDropdownItemView   = null;
     },
 
 
@@ -162,8 +162,8 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.buttonDropdownView);
-        this.logoutDropdownItemView = this.findViewById("logoutDropdownItemView");
-        this.settingsDropdownItemView = this.findViewById("settingsDropdownItemView");
+        this.logoutDropdownItemView     = this.findViewById("logoutDropdownItemView");
+        this.settingsDropdownItemView   = this.findViewById("settingsDropdownItemView");
     },
 
     /**

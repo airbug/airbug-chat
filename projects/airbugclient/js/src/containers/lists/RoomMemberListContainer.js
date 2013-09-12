@@ -40,7 +40,7 @@ var RoomMemberModel                 = bugpack.require('airbug.RoomMemberModel');
 var TextView                        = bugpack.require('airbug.TextView');
 var UserNameView                    = bugpack.require('airbug.UserNameView');
 var UserStatusIndicatorView         = bugpack.require('airbug.UserStatusIndicatorView');
-var BugMeta = bugpack.require('bugmeta.BugMeta');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
@@ -51,7 +51,7 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
@@ -144,7 +144,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         //NOTE: routingArgs are undefined here
 
         // @type id of roomModel NOTE: Should be the same as _id of roomObj
-        var roomId = this.roomModel.id;
+        var roomId = this.roomModel.get("_id");
 
         // Create Models
         //-------------------------------------------------------------------------------
@@ -156,7 +156,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listView = view(ListView).build();
+        this.listView = view(ListView)
+                            .attributes({trackingId: "roomMemberListContainer", trackingClasses: ["list"]})
+                            .build();
 
 
         // Wire Up Views
@@ -169,7 +171,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     initializeContainer: function() {
-        var roomId = this.roomModel.id;
+        var roomId = this.roomModel.get("id");
         console.log("Initializing RoomMemberListContainer");
         this._super();
         this.roomMemberCollection.bind("add", this.handleRoomMemberCollectionAdd, this);
@@ -192,11 +194,20 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     loadRoomMemberCollection: function(roomId) {
         if(!roomId) var roomId = this.roomModel.get("_id");
         var _this = this;
-        // NOTE: this should be a populated list
+        // NOTE: This should no longer be a populated list
         var membersList = this.roomModel.get("membersList");
-        membersList.forEach(function(roomMember){
-            var roomMemberModel = new RoomMemberModel(roomMember, roomMember._id);
-            _this.roomMemberCollection.add(roomMemberModel);
+        this.retrieveRoomMembers(membersList, function(error, roomMemberMeldObjs){
+            if(!error && roomMemberMeldObjs){
+                roomMemberMeldObjs.forEach(function(roomMemberMeldObj){
+                    var roomMemberObj = roomMemberMeldObj.generateObject();
+                    var roomMemberModel = new RoomMemberModel(roomMemberObj, roomMemberObj._id);
+                    _this.roomMemberCollection.add(roomMemberModel);
+                });
+            } else {
+                //TODO Handle exceptions where a retry would be appropriate
+                console.log("RoomMemberListContainer#loadRoomMemberCollection error");
+                console.log("error:", error, "roomMemberMeldObjs:", roomMemberMeldObjs);
+            }
         });
     },
 

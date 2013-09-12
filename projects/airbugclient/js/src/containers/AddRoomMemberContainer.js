@@ -88,7 +88,7 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ZeroClipboard}
+         * @type {zeroclipboard.ZeroClipboard}
          */
         this.clip               = null;
 
@@ -171,7 +171,8 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        // NOTE: For future refactor (pull out zeroClipboard butons into its own container)
+        //TODO
+        // NOTE: For future refactor (pull out zeroClipboard buttons into its own container)
         // var button      = this.getViewTop().$el.find('.btn')[0];
         // var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
         // var options     = {

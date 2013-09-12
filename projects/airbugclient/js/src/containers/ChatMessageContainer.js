@@ -173,7 +173,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
 
@@ -190,27 +190,34 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
     handleChatMessageRetry: function(){
         console.log("Inside ChatMessageContainer#handleRetry");
-        var _this = this;
-        var chatMessage     = this.chatMessageModel.toJSON();
-        chatMessage.retry   = true;
+        var _this               = this;
+        var chatMessageModel    = this.chatMessageModel;
+        var chatMessage         = chatMessageModel.toJSON();
+        chatMessage.retry       = true;
 
-        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageObj){
-            console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
-            console.log("error:", error, "chatMessageObj:", chatMessageObj);
-            var chatMessageModel = _this.chatMessageModel;
-
-            if(!error && chatMessageObj){
-                var sender              = _this.userManagerModule.get(chatMessageObj.senderUserId);
-                chatMessageObj.sentBy   = sender.firstName + sender.lastName;
+        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageMeldObj){
+            console.log("Inside ChatWidgetContainer#handleChatMessageRetry callback");
+            console.log("error:", error, "chatMessageMeldObj:", chatMessageMeldObj);
+            if(!error && chatMessageMeldObj){
+                chatMessageModel.setMeldObject(chatMessageMeldObj);
+                var chatMessageObj      = chatMessageMeldObj.generateObject();
                 chatMessageObj.pending  = false;
                 chatMessageObj.failed   = false;
-
                 chatMessageModel.set(chatMessageObj);
-            } else {
-                //TEST This
-                chatMessage.failed = true;
-                chatMessageModel.set(chatMessage);
-            }
+                _this.userManagerModule.retrieveUser(chatMessageObj.senderUserId, function(error, senderMeldObj){
+                    if(!error && senderMeldObj){
+                        var sender = senderMeldObj.generateObject();
+                        chatMessageObj.sentBy   = sender.firstName + sender.lastName;
+                        chatMessageModel.set(chatMessageObj);
+                    } else {
+                        //NOTE if this error occurs it is an unforseeable edge case
+                        //TODO error handling
+                        //TODO error tracking
+                        //Retry to get sender information which should be self
+                    }
+                });
+            } else{
+                chatMessageModel.set({failed: true, pending: false});
         });
     }
 });

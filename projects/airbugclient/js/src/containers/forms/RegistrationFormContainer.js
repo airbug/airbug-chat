@@ -43,7 +43,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
@@ -149,7 +149,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
         var userObj     = event.getData();
 
         console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
-        this.currentUserManagerModule.registerUser(userObj, function(error, currentUser){
+        this.currentUserManagerModule.registerUser(userObj, function(error, currentUserMeldObj){
             if(!error){
                 var finalDestination = _this.navigationModule.getFinalDestination();
                 if(finalDestination){
@@ -163,11 +163,8 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
                     });
                 }
             } else {
-                //TODO
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("parentContainer:", parentContainer);
-                console.log("notificationView:", notificationView);
                 console.log("error:", error);
                 notificationView.flashError(error);
                 console.log("currentUserManagerModule#registerUser callback error:", error);

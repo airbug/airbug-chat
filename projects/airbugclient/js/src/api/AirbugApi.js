@@ -118,20 +118,6 @@ var AirbugApi = Class.extend(Obj, {
         this.request("logout", "CurrentUser", {}, function(error){
             callback(error);
         });
-    },
-
-    /**
-     * @param {function(error)} callback
-     */
-    registerUser: function(callback){
-        var error = null;
-        try{
-            this.bugCallClient.openConnection();
-        } catch(e){
-            error = e;
-        } finally {
-            callback(error);
-        }
     }
 });
 
