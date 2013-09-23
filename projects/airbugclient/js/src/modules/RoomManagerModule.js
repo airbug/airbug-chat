@@ -94,7 +94,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      * @param {function(error, meldbug.MeldObj)} callback
      */
     retrieveRoom: function(roomId, callback) {
-        this.retrieve("Room", roomId, callback});
+        this.retrieve("Room", roomId, callback);
     },
 
     /**

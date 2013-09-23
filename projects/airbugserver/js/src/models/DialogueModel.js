@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('Dialogue')
+//@Export('DialogueModel')
 
 //@Require('airbugserver.DialogueSchema')
 
@@ -28,11 +28,11 @@ var DialogueSchema  = bugpack.require('airbugserver.DialogueSchema');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Dialogue = mongoose.model("Dialogue", DialogueSchema);
+var DialogueModel = mongoose.model("Dialogue", DialogueSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Dialogue', Dialogue);
+bugpack.export('airbugserver.DialogueModel', DialogueModel);

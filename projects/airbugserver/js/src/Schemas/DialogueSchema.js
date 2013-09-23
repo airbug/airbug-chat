@@ -11,8 +11,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var mongoose    = require('mongoose');
+var bugpack             = require('bugpack').context();
+var mongoose            = require('mongoose');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var UserPairSchema      = bugpack.require("airbugsever.UserPairSchema");
 
 
 //-------------------------------------------------------------------------------
@@ -29,9 +36,9 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 
 var DialogueSchema = new Schema({
     conversationId: ObjectId,
-    membersList: [ObjectId],
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    userIdPair: UserPairSchema
 });
 
 

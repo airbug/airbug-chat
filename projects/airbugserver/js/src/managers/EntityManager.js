@@ -2,64 +2,64 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugserver')
 
-//@Export('ConversationManagerModule')
+//@Export('EntityManager')
 
 //@Require('Class')
-//@Require('airbug.ManagerModule')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManagerModule = Class.extend(ManagerModule, {
+var EntityManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldStore} meldStore
+     * @constructs
+     * @param {string} entityType
+     * @param {MongoDataStore} mongoDataStore
      */
-    _constructor: function(airbugApi, meldStore) {
+    _constructor: function(entityType, mongoDataStore) {
 
-        this._super(airbugApi, meldStore);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
-    },
+        /**
+         * @private
+         * @type {MongoManager}
+         */
+        this.dataStore      = mongoDataStore.generateManager(entityType);
 
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} conversationId
-     * @param {function(error, meldbug.MeldObject)} callback
-     */
-    retrieveConversation: function(conversationId, callback){
-        this.retrieve("Conversation", conversationId, callback);
+        /**
+         * @private
+         * @type {string}
+         */
+        this.entityType     = entityType;
     }
 });
 
@@ -68,4 +68,4 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationManagerModule", ConversationManagerModule);
+bugpack.export('airbugserver.EntityManager', EntityManager);

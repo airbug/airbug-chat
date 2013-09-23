@@ -24,10 +24,12 @@
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 //@Require('handshaker.Handshaker')
+//@Require('mongo.MongoDataStore')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
 //@Require('socketio:server.SocketIoServerConfig')
 
+//@Require('airbugserver.RequestContextFactory')
 //@Require('airbugserver.SessionStore')
 
 //@Require('airbugserver.ChatMessageController')
@@ -39,6 +41,7 @@
 //@Require('airbugserver.CallService')
 //@Require('airbugserver.ChatMessageService')
 //@Require('airbugserver.ConversationService')
+//@Require('airbugserver.MeldService')
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.SessionService')
 //@Require('airbugserver.UserService')
@@ -49,22 +52,6 @@
 //@Require('airbugserver.RoomMemberManager')
 //@Require('airbugserver.SessionManager')
 //@Require('airbugserver.UserManager')
-
-//@Require('airbugserver.ChatMessage')
-//@Require('airbugserver.Conversation')
-//@Require('airbugserver.Dialogue')
-//@Require('airbugserver.RoomMember')
-//@Require('airbugserver.Room')
-//@Require('airbugserver.Session')
-//@Require('airbugserver.User')
-
-//@Require('airbugserver.ChatMessageSchema')
-//@Require('airbugserver.ConversationSchema')
-//@Require('airbugserver.DialogueSchema')
-//@Require('airbugserver.RoomMemberSchema')
-//@Require('airbugserver.RoomSchema')
-//@Require('airbugserver.SessionSchema')
-//@Require('airbugserver.UserSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -100,10 +87,12 @@ var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
 var Handshaker              = bugpack.require('handshaker.Handshaker');
+var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
 
+var RequestContextFactory   = bugpack.require('airbugserver.RequestContextFactory');
 var SessionStore            = bugpack.require('airbugserver.SessionStore');
 
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
@@ -115,6 +104,7 @@ var UserController          = bugpack.require('airbugserver.UserController');
 var CallService             = bugpack.require('airbugserver.CallService');
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
+var MeldService             = bugpack.require('airbugserver.MeldService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var SessionService          = bugpack.require('airbugserver.SessionService');
 var UserService             = bugpack.require('airbugserver.UserService');
@@ -125,22 +115,6 @@ var RoomManager             = bugpack.require('airbugserver.RoomManager');
 var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
 var SessionManager          = bugpack.require('airbugserver.SessionManager');
 var UserManager             = bugpack.require('airbugserver.UserManager');
-
-var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
-var Conversation            = bugpack.require('airbugserver.Conversation');
-var Dialogue                = bugpack.require('airbugserver.Dialogue');
-var Room                    = bugpack.require('airbugserver.Room');
-var RoomMember              = bugpack.require('airbugserver.RoomMember');
-var Session                 = bugpack.require('airbugserver.Session');
-var User                    = bugpack.require('airbugserver.User');
-
-var ChatMessageSchema       = bugpack.require('airbugserver.ChatMessageSchema');
-var ConversationSchema      = bugpack.require('airbugserver.ConversationSchema');
-var DialogueSchema          = bugpack.require('airbugserver.DialogueSchema');
-var RoomMemberSchema        = bugpack.require('airbugserver.RoomMemberSchema');
-var RoomSchema              = bugpack.require('airbugserver.RoomSchema');
-var SessionSchema           = bugpack.require('airbugserver.SessionSchema');
-var UserSchema              = bugpack.require('airbugserver.UserSchema');
 
 
 //-------------------------------------------------------------------------------
@@ -278,9 +252,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {mongoose}
+         * @type {MongoDataStore}
          */
-        this._mongoose                  = null;
+        this._mongoDataStore            = null;
 
         /**
          * @private
@@ -355,7 +329,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         this._cookieSigner.setSecret(secret);
 
-        this._mongoose.connect('mongodb://' + config.mongoDbIp + '/airbug');
+        this._mongoDataStore.connect('mongodb://' + config.mongoDbIp + '/airbug');
 
         this._expressApp.configure(function(){
             _this._expressApp.engine('mustache', mu2express.engine);
@@ -590,34 +564,24 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         this._callService = new CallService(bugCallServer);
         return this._callService;
     },
-    
-    /**
-     * @return {ChatMessage}
-     */
-    chatMessage: function() {
-        return ChatMessage;
-    },
 
+    /**
+     * @param {BugCallRouter} bugCallRouter
+     * @param {ChatMessageService} chatMessageService
+     * @return {ChatMessageController}
+     */
     chatMessageController: function(bugCallRouter, chatMessageService){
         this._chatMessageController = new ChatMessageController(bugCallRouter, chatMessageService);
         return this._chatMessageController;
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
+     * @param {MongoDataStore} mongoDataStore
      * @return {ChatMessageManager}
      */
-    chatMessageManager: function(model, schema) {
-        this._chatMessageManager = new ChatMessageManager(model, schema);
+    chatMessageManager: function(mongoDataStore) {
+        this._chatMessageManager = new ChatMessageManager(mongoDataStore);
         return this._chatMessageManager;
-    },
-
-    /**
-     * @return {ChatMessageSchema}
-     */
-    chatMessageSchema: function() {
-        return ChatMessageSchema;
     },
 
     /**
@@ -638,15 +602,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {Conversation}
-     */
-    conversation: function() {
-        return Conversation;
-    },
-
-    /**
      * @param {BugCallRouter} bugCallRouter
-     * @param {ConversationManager} converationManager
+     * @param {ConversationService} conversationService
      * @return {ConversationController}
      */
     conversationController: function(bugCallRouter, conversationService) {
@@ -655,12 +612,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
+     * @param {MongoDataStore} mongoDataStore
      * @return {ConversationManager}
      */
-    conversationManager: function(model, schema) {
-        this._conversationManager = new ConversationManager(model, schema);
+    conversationManager: function(mongoDataStore) {
+        this._conversationManager = new ConversationManager(mongoDataStore);
         return this._conversationManager;
     },
 
@@ -674,32 +630,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {ConversationSchema}
-     */
-    conversationSchema: function() {
-        return ConversationSchema;
-    },
-
-    /**
      * @return {CookieSigner}
      */
     cookieSigner: function() {
         this._cookieSigner = new CookieSigner();
         return this._cookieSigner;
-    },
-
-    /**
-     * @return {Dialogue}
-     */
-    dialogue: function() {
-        return Dialogue;
-    },
-
-    /**
-     * @return {DialogueSchema}
-     */
-    dialogueSchema: function() {
-        return DialogueSchema;
     },
 
     /**
@@ -739,52 +674,55 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {MeldManagerFactory} meldManagerFactory
+     * @param {MeldBuilder} meldBuilder
+     * @param {CallService} callService
+     * @return {MeldService}
+     */
+    meldService: function(meldManagerFactory, meldBuilder, callService) {
+        return new MeldService(meldManagerFactory, meldBuilder, callService);
+    },
+
+    /**
      * @return {Mongoose}
      */
     mongoose: function() {
-        this._mongoose = mongoose;
-        return this._mongoose;
+        return mongoose;
     },
 
     /**
-     * @return {Room}
+     * @param {Mongoose} mongoose
+     * @return {MongoDataStore}
      */
-    room: function() {
-        return Room;
+    mongoDataStore: function(mongoose) {
+        this._mongoDataStore = new MongoDataStore(mongoose);
+        return this._mongoDataStore;
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
+     * @return {RequestContextFactory}
+     */
+    requestContextFactory: function() {
+        return new RequestContextFactory();
+    },
+
+    /**
+     * @param {MongoDataStore} mongoDataStore
+     * @param {ConversationManager} conversationManager
      * @return {RoomManager}
      */
-    roomManager: function(model, schema, conversationManager, roomMemberManager) {
-        this._roomManager = new RoomManager(model, schema, conversationManager, roomMemberManager);
+    roomManager: function(mongoDataStore, conversationManager) {
+        this._roomManager = new RoomManager(mongoDataStore, conversationManager);
         return this._roomManager;
     },
 
     /**
-     * @return {RoomMember}
-     */
-    roomMember: function() {
-        return RoomMember;
-    },
-
-    /**
-     * @param {RoomMember} model
-     * @param {RoomMemberSchema} schema
+     * @param {MongoDataStore} mongoDataStore
      * @return {RoomMemberManager}
      */
-    roomMemberManager: function(model, schema) {
-        this._roomMemberManager = new RoomMemberManager(model, schema);
+    roomMemberManager: function(mongoDataStore) {
+        this._roomMemberManager = new RoomMemberManager(mongoDataStore);
         return this._roomMemberManager;
-    },
-
-    /**
-     * @return {RoomMemberSchema}
-     */
-    roomMemberSchema: function() {
-        return RoomMemberSchema;
     },
 
     /**
@@ -798,43 +736,23 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {RoomSchema}
-     */
-    roomSchema: function() {
-        return RoomSchema;
-    },
-
-    /**
      * @param {RoomManager} roomManager
      * @param {UserManager} userManager
+     * @param {RoomMemberManager} roomMemberManager
+     * @param {MeldService} meldService
      * @return {RoomService}
      */
-    roomService: function(roomManager, userManager) {
-        this._roomService = new RoomService(roomManager, userManager);
+    roomService: function(roomManager, userManager, roomMemberManager, meldService) {
+        this._roomService = new RoomService(roomManager, userManager, roomMemberManager, meldService);
         return this._roomService;
     },
 
     /**
-     * @return {Session}
-     */
-    session: function() {
-        return Session;
-    },
-
-    /**
-     * @param {Session} model
-     * @param {SessionSchema} schema
+     * @param {MongoDataStore} mongoDataStore
      * @return {SessionManager}
      */
-    sessionManager: function(model, schema) {
-        return new SessionManager(model, schema);
-    },
-
-    /**
-     * @return {SessionSchema}
-     */
-    sessionSchema: function() {
-        return SessionSchema;
+    sessionManager: function(mongoDataStore) {
+        return new SessionManager(mongoDataStore);
     },
 
     /**
@@ -876,13 +794,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {User}
-     */
-    user: function() {
-        return User;
-    },
-
-    /**
      * @param {SocketRouter} bugCallRouter
      * @param {UserService} userService
      * @return {UserController}
@@ -893,20 +804,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {mongoose.Model} model
-     * @param {mongoose.Schema} schema
+     * @param {MongoDataStore} mongoDataStore
      * @return {UserManager}
      */
-    userManager: function(model, schema) {
-        this._userManager = new UserManager(model, schema);
+    userManager: function(mongoDataStore) {
+        this._userManager = new UserManager(mongoDataStore);
         return this._userManager;
-    },
-
-    /**
-     * @return {UserSchema}
-     */
-    userSchema: function() {
-        return UserSchema;
     },
 
     /**
@@ -971,6 +874,11 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         //-------------------------------------------------------------------------------
 
         module("mongoose"),
+        module("mongoDataStore")
+            .args([
+                arg().ref("mongoose")
+            ]),
+        module("requestContextFactory"),
 
 
         //-------------------------------------------------------------------------------
@@ -1052,12 +960,14 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("chatMessageController")
             .args([
                 arg().ref("bugCallRouter"),
-                arg().ref("chatMessageService")
+                arg().ref("chatMessageService"),
+                arg().ref("requestContextFactory")
             ]),
         module("conversationController")
             .args([
                 arg().ref("bugCallRouter"),
-                arg().ref("conversationService")
+                arg().ref("conversationService"),
+                arg().ref("requestContextFactory")
             ]),
         module("homePageController")
             .args([
@@ -1068,7 +978,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("bugCallRouter"),
                 arg().ref("roomService"),
-                arg().ref("callService")
+                arg().ref("callService"),
+                arg().ref("requestContextFactory")
             ]),
         module("userController")
             .args([
@@ -1077,7 +988,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("bugCallRouter"),
                 arg().ref("userService"),
                 arg().ref("sessionService"),
-                arg().ref("callService")
+                arg().ref("callService"),
+                arg().ref("requestContextFactory")
             ]),
 
 
@@ -1099,10 +1011,18 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("conversationManager"),
                 arg().ref("userManager")
             ]),
+        module("meldService")
+            .args([
+                arg().ref("meldManagerFactory"),
+                arg().ref("meldBuilder"),
+                arg().ref("callService")
+            ]),
         module("roomService")
             .args([
                 arg().ref("roomManager"),
-                arg().ref("userManager")
+                arg().ref("userManager"),
+                arg().ref("roomMemberManager"),
+                arg().ref("meldService")
             ]),
         module("sessionService")
             .args([
@@ -1122,62 +1042,29 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("chatMessageManager")
             .args([
-                arg().ref("chatMessage"),
-                arg().ref("chatMessageSchema")
+                arg().ref("mongoDataStore")
             ]),
         module("conversationManager")
             .args([
-                arg().ref("conversation"),
-                arg().ref("conversationSchema")
+                arg().ref("mongoDataStore")
             ]),
         module("roomManager")
             .args([
-                arg().ref("room"),
-                arg().ref("roomSchema"),
-                arg().ref("conversationManager"),
-                arg().ref("roomMemberManager")
+                arg().ref("mongoDataStore"),
+                arg().ref("conversationManager")
             ]),
         module("roomMemberManager")
             .args([
-                arg().ref("roomMember"),
-                arg().ref("roomMemberSchema")
+                arg().ref("mongoDataStore")
             ]),
         module("sessionManager")
             .args([
-                arg().ref("session"),
-                arg().ref("sessionSchema")
+                arg().ref("mongoDataStore")
             ]),
         module("userManager")
             .args([
-                arg().ref("user"),
-                arg().ref("userSchema")
-            ]),
-
-
-        //-------------------------------------------------------------------------------
-        // Models
-        //-------------------------------------------------------------------------------
-
-        module("chatMessage"),
-        module("conversation"),
-        module("dialogue"),
-        module("room"),
-        module("roomMember"),
-        module("session"),
-        module("user"),
-
-
-        //-------------------------------------------------------------------------------
-        // Schemas
-        //-------------------------------------------------------------------------------
-
-        module("chatMessageSchema"),
-        module("conversationSchema"),
-        module("dialogueSchema"),
-        module("roomMemberSchema"),
-        module("roomSchema"),
-        module("sessionSchema"),
-        module("userSchema")
+                arg().ref("mongoDataStore")
+            ])
     ])
 );
 

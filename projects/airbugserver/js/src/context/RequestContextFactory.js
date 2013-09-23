@@ -2,12 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugserver')
 
-//@Export('ConversationManagerModule')
+//@Export('RequestContextFactory')
 
 //@Require('Class')
-//@Require('airbug.ManagerModule')
+//@Require('Obj')
+//@Require('airbugserver.RequestContext')
 
 
 //-------------------------------------------------------------------------------
@@ -18,48 +19,34 @@ var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Obj             = bugpack.require('Obj');
+var RequestContext  = bugpack.require('airbugserver.RequestContext');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManagerModule = Class.extend(ManagerModule, {
+var RequestContextFactory = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldStore} meldStore
-     */
-    _constructor: function(airbugApi, meldStore) {
-
-        this._super(airbugApi, meldStore);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-    },
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} conversationId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {IncomingRequest} request
+     * @return {RequestContext}
      */
-    retrieveConversation: function(conversationId, callback){
-        this.retrieve("Conversation", conversationId, callback);
+    factoryRequestContext: function(request) {
+        var requestContext = new RequestContext();
+        requestContext.set("currentUser", request.getHandshake().user.clone());
+        requestContext.set("session", request.getHandshake().session.clone());
+        requestContext.set("callManager", request.getCallManager());
+        return requestContext;
     }
 });
 
@@ -68,4 +55,4 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationManagerModule", ConversationManagerModule);
+bugpack.export('airbugserver.RequestContextFactory', RequestContextFactory);

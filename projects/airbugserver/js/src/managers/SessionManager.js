@@ -7,37 +7,48 @@
 //@Export('SessionManager')
 
 //@Require('Class')
-//@Require('mongo.MongoManager')
+//@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MongoManager    = bugpack.require('mongo.MongoManager');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel   = BugFlow.$parallel;
+var $series     = BugFlow.$series;
+var $task       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionManager = Class.extend(MongoManager, {
+var SessionManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema){
+    _constructor: function(mongoDataStore) {
 
-        this._super(model, schema);
+        this._super();
     },
 
 

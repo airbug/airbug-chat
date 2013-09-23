@@ -2,12 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugserver')
 
-//@Export('ConversationManagerModule')
+//@Export('Session')
 
 //@Require('Class')
-//@Require('airbug.ManagerModule')
+//@Require('airbugserver.Entity')
 
 
 //-------------------------------------------------------------------------------
@@ -18,48 +18,78 @@ var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Entity          = bugpack.require('airbugserver.Entity');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManagerModule = Class.extend(ManagerModule, {
+var Session = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldStore} meldStore
-     */
-    _constructor: function(airbugApi, meldStore) {
+    _constructor: function() {
 
-        this._super(airbugApi, meldStore);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
-
     },
 
+
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} conversationId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @return {Object}
      */
-    retrieveConversation: function(conversationId, callback){
-        this.retrieve("Conversation", conversationId, callback);
+    getData: function() {
+        return this.deltaObject.getProperty("data");
+    },
+
+    /**
+     * @param {Object} data
+     */
+    setData: function(data) {
+        this.deltaObject.setProperty("data", data);
+    },
+
+    /**
+     * @return {Date}
+     */
+    getExpires: function() {
+        return this.deltaObject.getProperty("expires");
+    },
+
+    /**
+     * @param {Date} expires
+     */
+    setExpires: function(expires) {
+        this.deltaObject.setProperty("expires", expires);
+    },
+
+    /**
+     * @return {string}
+     */
+    getSid: function() {
+        return this.deltaObject.getProperty("sid");
+    },
+
+    /**
+     * @param {string} sid
+     */
+    setSid: function(sid) {
+        this.deltaObject.setProperty("sid", sid);
     }
 });
 
@@ -68,4 +98,4 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationManagerModule", ConversationManagerModule);
+bugpack.export('airbugserver.Session', Session);

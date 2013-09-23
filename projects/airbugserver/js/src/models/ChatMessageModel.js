@@ -4,9 +4,9 @@
 
 //@Package('airbugserver')
 
-//@Export('Room')
+//@Export('ChatMessageModel')
 
-//@Require('airbugserver.RoomSchema')
+//@Require('airbugserver.ChatMessageSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -21,18 +21,18 @@ var mongoose    = require('mongoose');
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var RoomSchema  = bugpack.require('airbugserver.RoomSchema');
+var ChatMessageSchema  = bugpack.require('airbugserver.ChatMessageSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Room = mongoose.model("Room", RoomSchema);
+var ChatMessageModel = mongoose.model("ChatMessage", ChatMessageSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Room', Room);
+bugpack.export('airbugserver.ChatMessageModel', ChatMessageModel);

@@ -7,36 +7,36 @@
 //@Export('RoomController')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('airbugserver.EntityController')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var EntityController    = bugpack.require('airbugserver.EntityController');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomController = Class.extend(Obj, {
+var RoomController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, roomService, connectionService){
+    _constructor: function(bugCallRouter, roomService, callService, requestContextFactory) {
 
         this._super();
 
@@ -49,19 +49,25 @@ var RoomController = Class.extend(Obj, {
          * @private
          * @type {BugCallRouter}
          */
-        this.bugCallRouter      = bugCallRouter;
+        this.bugCallRouter              = bugCallRouter;
 
         /**
          * @private
-         * @type {ConnectionService}
+         * @type {CallService}
          */
-        this.connectionService  = connectionService;
+        this.callService                = callService;
 
         /**
          * @private
          * @type {RoomService}
          */
-        this.roomService        = roomService;
+        this.roomService                = roomService;
+
+        /**
+         * @private
+         * @type {RequestContextFactory}
+         */
+        this.requestContextFactory      = requestContextFactory;
     },
 
 
@@ -82,63 +88,39 @@ var RoomController = Class.extend(Obj, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            addUserToRoom:  function(request, responder){
-                var currentUser = request.getHandshake().user;
-                var data        = request.getData();
-                var userId      = data.userId;
-                var roomId      = data.roomId;
-                if(currentUser.isNotAnonymous()){
-                    _this.roomService.addUserToRoom(userId, roomId, function(error, room, user){
-                        console.log("Inside callback for roomService#addUserToRoom");
-                        console.log("Error:", error, "room", room);
-                        if(!error && room){
-                            var data        = {room: room};
-                            var response    = responder.response("addedUserToRoom", data);
-                        } else if(error){
-                            console.log(error);
-                        } else {
-                            var data        = {error: error};
-                            var response    = responder.response("addUserToRoomError", data);
-                        }
-                        responder.sendResponse(response);
-                    })
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("addUserToRoomError", data);
-                    responder.sendResponse(response);
-                }
+            addUserToRoom:  function(request, responder) {
+                var data                = request.getData();
+                var userId              = data.userId;
+                var roomId              = data.roomId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.addUserToRoom(requestContext, userId, roomId, function(error, user, room) {
+                    if (!error) {
+                        _this.sendSuccessResponse(responder, {});
+                    } else {
+                        _this.processError(responder, error);
+                    }
+                });
             },
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            createRoom:     function(request, responder){
-                var currentUser = request.getHandshake().user;
-                var data        = request.getData();
-                var room        = data.room;
-                if(currentUser.isNotAnonymous()){
-                    _this.roomService.createRoom(currentUser, room, function(error, room, user){
-                        if(!error && room){
-                            var data        = {
-                                room: room,
-                                user: user
-                            };
-                            var response    = responder.response("createdRoom", data);
-                        } else {
-                            var data        = {
-                                error: error,
-                                roomId: room.id
-                            };
-                            var response    = responder.response("createRoomError", data);
-                        }
-                        responder.sendResponse(response); 
-                    }) 
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")}
-                    var response    = responder.response("createRoomError", data);
-                    responder.sendResponse(response);
-                }
+            createRoom:     function(request, responder) {
+                var data                = request.getData();
+                var roomData            = data.room;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.createRoom(requestContext, roomData, function(error, room) {
+                    if (!error) {
+                        _this.sendSuccessResponse(responder, {
+                            objectId: room.getId()
+                        });
+                    } else {
+                        _this.processError(responder, error);
+                    }
+                });
             },
 
             /**
@@ -146,29 +128,17 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             joinRoom:       function(request, responder){
-                var currentUser = request.getHandshake().user;
-                var data        = request.getData();
-                var userId      = currentUser.id;
-                var roomId      = data.roomId;
-                if(currentUser.isNotAnonymous()){
-                    _this.roomService.addUserToRoom(userId, roomId, function(error, room, user){
-                        if(!error && room){
-                            var data        = {room: room};
-                            var response    = responder.response("joinedRoom", data);
-                        } else {
-                            var data        = {
-                                error: error,
-                                roomId: roomId
-                            };
-                            var response    = responder.response("joinRoomError", data);
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("joinRoomError", data);
-                    responder.sendResponse(response);
-                }
+                var data                = request.getData();
+                var roomId              = data.roomId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.joinRoom(requestContext, roomId, function(error, room) {
+                    if (!error) {
+                        _this.sendSuccessResponse(responder, {});
+                    } else {
+                        _this.processError(responder, error);
+                    }
+                });
             },
 
             /**
@@ -176,71 +146,82 @@ var RoomController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             leaveRoom:      function(request, responder){
-                var currentUser = request.getHandshake().user;
-                if(currentUser.isNotAnonymous()){
-                    var data        = request.getData();
-                    var userId      = currentUser.id;
-                    var roomId      = data.roomId;
-                    _this.roomService.removeUserFromRoom(userId, roomId, function(error, room, user){
-                        if(!error && room){
-                            var data        = {roomId: roomId};
-                            var response    = responder.response("leftRoom", data);
-                        } else {
-                            var data        = {
-                                error: error,
-                                roomId: roomId
-                            };
-                            var response    = responder.response("leaveRoomError", data);
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("leaveRoomError", data);
-                    responder.sendResponse(response);
-                }
+                var data                = request.getData();
+                var roomId              = data.roomId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.leaveRoom(requestContext, roomId, function(error, room) {
+                    if (!error) {
+                        _this.sendSuccessResponse(responder, {});
+                    } else {
+                        _this.processError(responder, error);
+                    }
+                });
             },
 
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
             retrieveRoom:   function(request, responder){
-                var currentUser = request.getHandshake().user;
-                if(currentUser.isNotAnonymous()){
-                    var data    = request.getData();
-                    var roomId  = data.roomId;
-                    _this.roomService.retrieveRoom(roomId, function(error, room){
-                        if(!error && room){
-                            var data        = {room: room};
-                            var response    = responder.response("retrievedRoom", data);
+                var data                = request.getData();
+                var roomId              = data.roomId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.retrieveRoom(requestContext, roomId, function(error, room) {
+                    if (!error) {
+                        data.success = true;
+                        if (room) {
+                            data[roomId] = true;
                         } else {
-                            var data        = {error: error};
-                            var response    = responder.response("retrieveRoomError", data);
+                            data[roomId] = false;
                         }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("retrieveRoomError", data);
-                    responder.sendResponse(response);
-                }
+                        response    = responder.response("retrievedRoom", data);
+                    } else {
+                        response    = responder.response("retrieveRoomError", {
+                            success: false,
+                            error: error
+                        });
+                    }
+                    if (!error) {
+                        var data = {};
+                        _this.sendSuccessResponse(responder, {});
+                    } else {
+                        _this.processError(responder, error);
+                    }
+                });
             },
 
-            retrieveRooms: function(request, responder){
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveRooms: function(request, responder) {
                 var currentUser = request.getHandshake().user;
-                if(currentUser.isNotAnonymous()){
-                    var data    = request.getData();
-                    var roomIds = data.roomIds;
-                    _this.roomService.retrieveRooms(roomIds, function(error, rooms){
-                        if(!error && rooms){
-                            var data        = {rooms: rooms};
-                            var response    = responder.response("retrievedRooms", data);
+                var data        = request.getData();
+                var roomIds     = data.roomIds;
+                var response    = undefined;
+                if (currentUser.isNotAnonymous()) {
+                    _this.roomService.retrieveRooms(roomIds, function(error, roomList) {
+                        var roomsData = [];
+                        roomList.forEach(function(room) {
+                            roomsData.push(room.getId())
+                        });
+                        if (!error) {
+                            response        = responder.response("retrievedRooms", {
+                                rooms: roomsData
+                            });
                         } else {
-                            var data        = {error: error};
-                            var response    = responder.response("retrieveRoomsError", data);
+                            response        = responder.response("retrieveRoomsError", {
+                                error: error
+                            });
                         }
                         responder.sendResponse(response);
                     });
                 } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("retrieveRoomsError", data);
+                    response    = responder.response("retrieveRoomsError", {
+                        error: new Error("Unauthorized Access")
+                    });
                     responder.sendResponse(response);
                 }
             }

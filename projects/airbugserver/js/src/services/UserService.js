@@ -128,28 +128,10 @@ var UserService = Class.extend(Obj, {
      * @param {function(Error, User)} callback
      */
     createAnonymousUser: function(callback) {
-        var user = {anonymous: true};
-        this.userManager.createUser(user, callback);
-    },
-
-    /**
-     * @param {{
-     *      firstName: string,
-     *      lastName: string,
-     *      email: string
-     * }} user
-     * @param {function(Error, User)} callback
-     */
-    establishUser: function(userObj, callback) {
-        //NOTE: This is be called on the initial http request
-        var _this = this;
-        this.userManager.findOrCreateUser(userObj, function(error, user) {
-            if (!error) {
-                callback(null, user);
-            } else {
-                callback(error, user);
-            }
+        var user = this.userManager.generateUser({
+            anonymous: true
         });
+        this.userManager.createUser(user, callback);
     },
 
     /**

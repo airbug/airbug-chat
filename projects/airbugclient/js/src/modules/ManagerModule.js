@@ -7,6 +7,7 @@
 //@Export('ManagerModule')
 
 //@Require('Class')
+//@Require('List')
 //@Require('Obj')
 //@Require('StringUtil')
 
@@ -23,7 +24,9 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var List        = bugpack.require('List');
 var Obj         = bugpack.require('Obj');
+var StringUtil  = bugpack.require('StringUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -37,10 +40,11 @@ var ManagerModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {airbug.AirBugApi}                airbugApi
-     * @param {meldbug.MeldObjectManager}       meldObjectManagerModule
+     * @param {AirbugApi}       airbugApi
+     * @param {MeldStore}       meldStore
+     * @param {MeldBuilder}     meldBuilder
      */
-    _constructor: function(airbugApi, meldObjectManagerModule) {
+    _constructor: function(airbugApi, meldStore, meldBuilder) {
 
         this._super();
 
@@ -51,15 +55,21 @@ var ManagerModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {airbug.AirbugApi}
+         * @type {AirbugApi}
          */
-        this.airbugApi                          = airbugApi;
+        this.airbugApi              = airbugApi;
 
         /**
          * @private
-         * @type {meldbug.MeldObjectManager}
+         * @type {MeldBuilder}
          */
-        this.meldObjectManagerModule            = meldObjectManagerModule;
+        this.meldBuilder            = meldBuilder;
+
+        /**
+         * @private
+         * @type {MeldStore}
+         */
+        this.meldStore              = meldStore;
 
     },
 
@@ -70,12 +80,14 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {{*}} object
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {function(error, Meld)} callback
      */
     create: function(type, object, callback){
+        var _this = this;
         var requestData = {object: object};
         this.airbugApi.request("create", type, requestData, function(error, data){
-            var meldObj = _this.get(data.objectId);
+            var meldKey = _this.meldBuilder.generateMeldKeyFromObject(data.meldKey);
+            var meldObj = _this.get(meldKey);
             callback(error, meldObj);
         });
     },
@@ -83,12 +95,12 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<{*}>} objects
-     * @param {function(error, Array.<meldbug.MeldObject>)} callback
+     * @param {function(error, Array.<Meld>)} callback
      */
     createEach: function(type, objects, callback){
         var _this = this;
         var requestData = {objects: objects};
-        var type = StringUtil.pluralize(type);
+        type = StringUtil.pluralize(type);
         this.airbugApi.request("create", type, requestData, function(error, data){
             var meldObjs = _this.getEach(data.objectIds);
             callback(error, meldObjs);
@@ -99,50 +111,60 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} requestType
      * @param {string} objectType
      * @param {{*}} requestData
-     * @param {function(error, meldbug.MeldObject || Array.<meldbug.MeldObject>)} callback
+     * @param {function(Error, meldbug.MeldObject || Array.<meldbug.MeldObject>)} callback
      */
     request: function(requestType, objectType, requestData, callback){
         var _this = this;
-        this.airbugApi.request(requestType, objectType, requestData, function(error, data){
-            var objectId    = data.objectId;
-            var objectIds   = data.objectIds;
-            var returnData  = null;
-            if(objectId){
-                returnData = _this.get(data.objectId);
-            } else if(objectIds){
-                returnData = _this.getEach(data.objectIds);
+        this.airbugApi.request(requestType, objectType, requestData, function(error, callResponse) {
+            if (!error) {
+                var objectId    = data.objectId;
+                var objectIds   = data.objectIds;
+                var returnData  = null;
+                if(objectId){
+                    returnData = _this.get(data.objectId);
+                } else if(objectIds){
+                    returnData = _this.getEach(data.objectIds);
+                }
+            }  else {
+                callback(error);
             }
-            callback(error, returnData);
         });
     },
 
     /**
      * @param {string} type
-     * @param {string} meldId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {string} id
+     * @param {function(error, Meld)} callback
      */
-    retrieve: function(type, meldId, callback){
-        var = _this = this;
-        var meldObj = this.get(meldId);
-        if(meldObj){
+    retrieve: function(type, id, filter, callback){
+        var _this       = this;
+        var meldKey     = this.meldBuilder.generateMeldKey(type, id, filter);
+        var meldObj     = this.get(meldKey);
+        if (meldObj) {
             callback(null, meldObj);
         } else {
-            var requestData = {objectId: meldId};
-            _this.airbugApi.request("retrieve", type, requestData, function(error, data){
-                if(!error && data[meldId]) meldObj = _this.get(meldId);
-                callback(error, meldObj);
+            var requestData = {objectId: id};
+            _this.airbugApi.request("retrieve", type, requestData, function(error, data) {
+                if (!error)  {
+                    var returnedMeldKey = _this.meldBuilder.generateMeldKeyFromObject(data.meldKey);
+                    meldObj = _this.get(returnedMeldKey);
+                    callback(undefined, meldObj);
+                } else {
+                    callback(error);
+                }
             });
         }
     },
 
     /**
      * @param {string} type
-     * @param {Array.<string>} meldIds
+     * @param {Array.<string>} meldKeys
+     * @param {string} filter
      * @param {function(error, Array.<meldbug.MeldObject>)} callback
      */
     retrieveEach: function(type, meldIds, callback){
         var _this                   = this;
-        var retrievedMeldObjects    = [];
+        var retrievedMeldObjects    = new List();
         var unretrievedMeldIds      = [];
 
         meldIds.forEach(function(meldId){
@@ -154,7 +176,7 @@ var ManagerModule = Class.extend(Obj, {
             }
         });
 
-        if(unretrievedMeldIds.length > 0){
+        if (unretrievedMeldIds.length > 0) {
             var requestData = {objectIds: unretrievedMeldIds};
             var type = StringUtil.pluralize(type);
             this.airbugApi.request("retrieve", type, requestData, function(error, data){
@@ -265,20 +287,20 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {string} meldId
-     * @return {meldbug.MeldObject}
+     * @param {MeldKey} meldKey
+     * @return {Meld}
      */
-    get: function(meldId){
-        return this.meldObjectManagerModule.getMeldObject(meldId);
+    get: function(meldKey){
+        return this.meldStore.getMeld(meldKey);
     },
 
     /**
      * @private
-     * @param {Array.<string>} meldIds
-     * @return {meldbug.MeldObject}
+     * @param {Array.<string>} meldKeys
+     * @return {List.<Meld>}}
      */
-    getEach: function(meldIds){
-        return this.meldObjectManagerModule.getMeldObjects(meldIds);
+    getEach: function(meldKeys){
+        return this.meldStore.getEachMeld(meldKeys);
     }
 });
 

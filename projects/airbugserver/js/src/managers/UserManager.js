@@ -7,7 +7,8 @@
 //@Export('UserManager')
 
 //@Require('Class')
-//@Require('mongo.MongoManager')
+//@Require('Obj')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -21,72 +22,50 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MongoManager    = bugpack.require('mongo.MongoManager');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel   = BugFlow.$parallel;
+var $series     = BugFlow.$series;
+var $task       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserManager = Class.extend(MongoManager, {
+var UserManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema){
+    _constructor: function(mongoDataStore) {
 
-        this._super(model, schema);
-    },
+        this._super(mongoDataStore);
 
 
-    //-------------------------------------------------------------------------------
-    // MongoManager Extensions/Overrides
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Properties
+        //-------------------------------------------------------------------------------
 
-    configure: function(callback) {
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-        this.pre('save', function (next){
-            if (!this.createdAt) this.createdAt = new Date();
-            next();
-        });
-
-        this.pre('save', function(next){
-            this.updatedAt = new Date();
-            next();
-        });
-
-        this.post('save', function(user){
-
-        });
-
-        callback();
+        /**
+         * @private
+         * @type {MongoManager}
+         */
+        this.dataStore              = mongoDataStore.generateManager("User");
     },
 
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @param {} userId
-     * @param {} roomId
-     * @param {function(Error, User)} callback
-     */
-    addRoomToUser: function(roomId, userId, callback){
-        this.findById(userId, function(error, user){
-            if (!error && user){
-                user.roomsList.push(roomId);
-                user.save(callback);
-            } else if (!error && !user){
-                callback(new Error("User not found"), null);
-            } else {
-                callback(error, user);
-            }
-        });
-    },
 
     /**
      * @param {{
@@ -158,6 +137,21 @@ var UserManager = Class.extend(MongoManager, {
                 callback(error, user);
             }
         });
+    },
+
+    /**
+     * @param {User} user
+     * @param {function(Error, User)} callback
+     */
+    saveUser: function(user, callback) {
+        if (!user.getCreatedAt()) {
+            user.setCreatedAt(new Date());
+        }
+        user.setUpdatedAt(new Date());
+        //TODO BRN:
+
+        user.roomsList.push(roomId);
+        user.save(callback);
     }
 });
 

@@ -35,13 +35,13 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {airbug.AirBugApi}                airbugApi
-     * @param {meldbug.MeldObjectManager}       meldObjectManagerModule
-     * @param {airbug.CurrentUserManagerModule} currentUserManagerModule
+     * @param {AirbugApi}                   airbugApi
+     * @param {MeldStore}                   meldStore
+     * @param {CurrentUserManagerModule}    currentUserManagerModule
      */
-    _constructor: function(airbugApi, meldObjectManagerModule, currentUserManagerModule) {
+    _constructor: function(airbugApi, meldStore, currentUserManagerModule) {
 
-        this._super(airbugApi, meldObjectManagerModule);
+        this._super(airbugApi, meldStore);
 
 
         //-------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      */
     retrieveChatMessagesByConversationId: function(conversationId, callback){
         var _this           = this;
-        var conversation    = this.meldObjectManagerModule.getMeldObject(conversationId);
+        var conversation    = this.meldStore.getMeld(conversationId);
         if(conversation){
             this.retrieveEach("ChatMessage", conversation.chatMessageIdList, callback);
         } else {

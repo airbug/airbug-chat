@@ -4,41 +4,35 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomSchema')
+//@Export('ConversationModel')
 
-//@Require('airbugserver.RoomMemberSchema')
+//@Require('airbugserver.ConversationSchema')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var mongoose    = require('mongoose');
+var bugpack             = require('bugpack').context();
+var mongoose            = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
-// Simplify References
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Schema      = mongoose.Schema;
-var ObjectId    = mongoose.Schema.Types.ObjectId;
+var ConversationSchema  = bugpack.require('airbugserver.ConversationSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomSchema = new Schema({
-    conversationId: ObjectId,
-    createdAt: Date,
-    name: String,
-    roomMemberIdList: [{ type: ObjectId, ref: 'RoomMember' }], //Sung propose change to roomMemberIdList and roomMemberList
-    updatedAt: Date
-});
+var ConversationModel = mongoose.model("Conversation", ConversationSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomSchema', RoomSchema);
+bugpack.export('airbugserver.ConversationModel', ConversationModel);

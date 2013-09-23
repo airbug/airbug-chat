@@ -4,9 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('User')
-
-//@Require('airbugserver.UserSchema')
+//@Export('UserPairSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -18,21 +16,25 @@ var mongoose    = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
-// Bugpack Modules
+// Simplify References
 //-------------------------------------------------------------------------------
 
-var UserSchema  = bugpack.require('airbugserver.UserSchema');
+var Schema      = mongoose.Schema;
+var ObjectId    = mongoose.Schema.Types.ObjectId;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var User = mongoose.model("User", UserSchema);
+var UserPairSchema = new Schema({
+    a: {type: ObjectId, ref: 'User', index: true},
+    b: {type: ObjectId, ref: 'User', index: true}
+});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.User', User);
+bugpack.export('airbugserver.UserPairSchema', UserPairSchema);

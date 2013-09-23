@@ -7,9 +7,9 @@
 //@Export('MeldModel')
 
 //@Require('Class')
+//@Require('bugdelta.PropertyChange')
 //@Require('carapace.CarapaceModel')
 //@Require('meldbug.MeldObject')
-//@Require('meldbug.PropertyChange')
 
 
 //-------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var PropertyChange  = bugpack.require('bugdelta.PropertyChange');
 var CarapaceModel   = bugpack.require('carapace.CarapaceModel');
 var MeldObject      = bugpack.require('meldbug.MeldObject');
-var PropertyChange  = bugpack.require('meldbug.PropertyChange');
 
 
 //-------------------------------------------------------------------------------

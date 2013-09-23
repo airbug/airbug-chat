@@ -59,6 +59,7 @@ buildProperties({
             "./projects/airbugserver/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugcall/js/src",
+            "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
@@ -110,6 +111,7 @@ buildProperties({
             "../bugjs/external/zeroclipboard/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugcall/js/src",
+            "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
@@ -124,10 +126,7 @@ buildProperties({
             "../meldbug/projects/meldbug/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../bugpack/projects/bugpack-client/js/src",
-            "../sonarbug/projects/sonarbugclient/js/src",
-            "../syncbug/projects/syncbug/js/src",
-            "../syncbug/projects/syncbugclient/js/src"
-
+            "../sonarbug/projects/sonarbugclient/js/src"
         ]
     },
     client: {

@@ -7,7 +7,7 @@
 //@Export('UserController')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
 
 
@@ -22,9 +22,9 @@ var bugpack     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class               = bugpack.require('Class');
+var EntityController    = bugpack.require('airbugserver.EntityController');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ var $task       = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserController = Class.extend(Obj, {
+var UserController = Class.extend(EntityController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -62,7 +62,7 @@ var UserController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ConnectionService}
+         * @type {CallService}
          */
         this.callService        = callService;
 
@@ -80,7 +80,7 @@ var UserController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {UserService}
+         * @type {SessionService}
          */
         this.sessionService     = sessionService;
 
@@ -234,7 +234,6 @@ var UserController = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         this.bugCallRouter.addAll({
-
 
             /**
              * @param {IncomingRequest} request

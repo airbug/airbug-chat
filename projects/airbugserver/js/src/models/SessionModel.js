@@ -4,35 +4,35 @@
 
 //@Package('airbugserver')
 
-//@Export('Conversation')
+//@Export('SessionModel')
 
-//@Require('airbugserver.ConversationSchema')
+//@Require('airbugserver.SessionSchema')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-var mongoose            = require('mongoose');
+var bugpack     = require('bugpack').context();
+var mongoose    = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var ConversationSchema  = bugpack.require('airbugserver.ConversationSchema');
+var SessionSchema  = bugpack.require('airbugserver.SessionSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Conversation = mongoose.model("Conversation", ConversationSchema);
+var SessionModel = mongoose.model("Session", SessionSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Conversation', Conversation);
+bugpack.export('airbugserver.SessionModel', SessionModel);

@@ -7,14 +7,15 @@
 //@Export('ChatMessageManager')
 
 //@Require('Class')
-//@Require('mongo.MongoManager')
+//@Require('airbugserver.EntityManager')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -22,50 +23,41 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MongoManager    = bugpack.require('mongo.MongoManager');
+var EntityManager   = bugpack.require('airbugserver.EntityManager');
+var BugFlow         = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel       = BugFlow.$parallel;
+var $series         = BugFlow.$series;
+var $task           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageManager = Class.extend(MongoManager, {
+var ChatMessageManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema){
+    _constructor: function(mongoDataStore) {
 
-        this._super(model, schema);
+        this._super("ChatMessage", mongoDataStore);
+
     },
 
 
     //-------------------------------------------------------------------------------
-    // MongoManager Extensions/Overrides
+    // MongoManager
     //-------------------------------------------------------------------------------
 
-    /**
-     * @override
-     */
-    configure: function(callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-
-        this.pre('save', true, function(next, done){
-            next();
-            if (!this.createdAt) this.createdAt = new Date();
-            done();
-        });
-
-        this.pre('save', true, function(next, done){
-            next();
-            this.updatedAt = new Date();
-            done();
-        });
-
-        callback();
-    }
+    createChatMessage: function()
 });
 
 

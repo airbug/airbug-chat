@@ -21,7 +21,6 @@ var mongoose    = require('mongoose');
 
 var Schema      = mongoose.Schema;
 var ObjectId    = mongoose.Schema.Types.ObjectId;
-var Mixed       = mongoose.Schema.Types.Mixed;
 
 
 //-------------------------------------------------------------------------------
@@ -29,12 +28,12 @@ var Mixed       = mongoose.Schema.Types.Mixed;
 //-------------------------------------------------------------------------------
 
 var ChatMessageSchema = new Schema({
-    conversationOwnerId: {type: ObjectId, require: true},
-    conversationId: {type: ObjectId, require: true},
-    senderUserId: {type: ObjectId, require: true},
     body: {type: String, require: true},
-    sentAt: Date,
+    conversationId: {type: ObjectId, require: true},
+    conversationOwnerId: {type: ObjectId, require: true},
     createdAt: Date,
+    senderUserId: {type: ObjectId, require: true},
+    sentAt: Date,
     updatedAt: Date
 });
 

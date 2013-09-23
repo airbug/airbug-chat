@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomMember')
+//@Export('RoomMemberModel')
 
 //@Require('airbugserver.RoomMemberSchema')
 
@@ -28,11 +28,11 @@ var RoomMemberSchema    = bugpack.require('airbugserver.RoomMemberSchema');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMember = mongoose.model("RoomMember", RoomMemberSchema);
+var RoomMemberModel = mongoose.model("RoomMember", RoomMemberSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomMember', RoomMember);
+bugpack.export('airbugserver.RoomMemberModel', RoomMemberModel);

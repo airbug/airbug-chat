@@ -21,7 +21,6 @@ var mongoose    = require('mongoose');
 
 var Schema      = mongoose.Schema;
 var ObjectId    = mongoose.Schema.Types.ObjectId;
-var Mixed       = mongoose.Schema.Types.Mixed;
 
 
 //-------------------------------------------------------------------------------
@@ -29,10 +28,9 @@ var Mixed       = mongoose.Schema.Types.Mixed;
 //-------------------------------------------------------------------------------
 
 var ConversationSchema = new Schema({
-    ownerId: {type: ObjectId, require: true}, //NOTE: Room or Dialogue
     chatMessageIdList: [{type: ObjectId, ref: "ChatMessage"}],
-    // messageList: [Mixed], //type: ChatMessage
     createdAt: Date,
+    ownerId: {type: ObjectId, require: true}, //NOTE: Room or Dialogue
     updatedAt: Date
 });
 

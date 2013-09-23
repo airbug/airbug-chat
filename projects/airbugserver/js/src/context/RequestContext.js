@@ -2,12 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugserver')
 
-//@Export('ConversationManagerModule')
+//@Export('RequestContext')
 
 //@Require('Class')
-//@Require('airbug.ManagerModule')
+//@Require('Map')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -18,48 +19,57 @@ var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Map             = bugpack.require('Map');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationManagerModule = Class.extend(ManagerModule, {
+var RequestContext = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldStore} meldStore
-     */
-    _constructor: function(airbugApi, meldStore) {
+    _constructor: function() {
 
-        this._super(airbugApi, meldStore);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {Map.<string, *>}
+         */
+        this.contextMap = new Map();
     },
 
+
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} conversationId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {string} key
      */
-    retrieveConversation: function(conversationId, callback){
-        this.retrieve("Conversation", conversationId, callback);
+    get: function(key) {
+        return this.contextMap.get(key);
+    },
+
+    /**
+     *
+     */
+    set: function(key, value) {
+        this.contextMap.put(key, value);
     }
 });
 
@@ -68,4 +78,4 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationManagerModule", ConversationManagerModule);
+bugpack.export('airbugserver.RequestContext', RequestContext);
