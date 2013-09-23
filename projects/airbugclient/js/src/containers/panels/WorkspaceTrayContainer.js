@@ -4,17 +4,13 @@
 
 //@Package('airbug')
 
-//@Export('ChatWidgetMessagesContainer')
+//@Export('WorkspaceTrayContainer')
 
 //@Require('Class')
-//@Require('airbug.ChatMessageCollection')
-//@Require('airbug.ChatMessageModel')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.ListView')
-//@Require('airbug.ListItemView')
-//@Require('airbug.MessageView')
-//@Require('airbug.PanelView')
-//@Require('airbug.TextAreaView')
-//@Require('bugmeta.BugMeta')
+//@Require('airbug.ListViewEvent')
+//@Require('airbug.PanelWithHeaderView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -31,15 +27,11 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
-var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
-var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
-var ListView                        = bugpack.require('airbug.ListView');
+var ButtonViewEvent                 = bugpack.require('ButtonViewEvent');
+var CodeEditorTrayButtonContainer   = bugpack.require('airbug.CodeEditorTrayButtonContainer');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
-var MessageView                     = bugpack.require('airbug.MessageView');
-var PanelView                       = bugpack.require('airbug.PanelView');
-var TextAreaView                    = bugpack.require('airbug.TextAreaView');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var ListView                        = bugpack.require('airbug.ListView');
+var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -48,21 +40,20 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var view    = ViewBuilder.view;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
+var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(conversationModel) {
+    _constructor: function() {
 
         this._super();
 
@@ -74,17 +65,10 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         // Models
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {airbug.ConversationModel}
-         */
-        this.conversationModel              = conversationModel;
 
-        /**
-         * @private
-         * @type {airbug.ChatMessageCollection}
-         */
-        this.chatMessageCollection          = null;
+        // Modules
+        //-------------------------------------------------------------------------------
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -93,20 +77,24 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {airbug.ListView}
          */
-        this.chatWidgetMessagesView         = null;
+        this.listView                   = null;
 
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /** 
-         * @type {airbug.ChatMessageManagerModule}
+        /**
+         * @private
+         * @type {airbug.ListItemView}
          */
-        this.chatMessageManagerModule       = null;
+        this.listItemViewOne            = null;
+
+        /**
+         * @private
+         * @type {airbug.PanelWithHeaderView}
+         */
+        this.panelView                  = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -123,22 +111,27 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
+
         // Create Models
         //-------------------------------------------------------------------------------
-
-        this.chatMessageCollection = new ChatMessageCollection([], "chatMessageCollection");
-        this.addCollection(this.chatMessageCollection);
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetMessagesView =
-            view(PanelView)
+        this.panelView =
+            view(PanelWithHeaderView)
+                .attributes({headerTitle: "Workspace Tray"})
                 .children([
                     view(ListView)
-                        .id("messageListView")
+                        .id("listView")
                         .appendTo('*[id|="panel-body"]')
+                        .children([
+                            view(ListItemView)
+                                .id("list-item-code-editor")
+                            // ,view(ListItemView)
+                            //     .id("")
+                        ])
                 ])
                 .build();
 
@@ -146,12 +139,18 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.chatWidgetMessagesView);
+        this.setViewTop(this.panelView);
+        this.listView           = this.findViewById("listView");
+        this.listItemViewOne    = this.findViewById("list-item-code-editor");
     },
 
-    createContainerChildren: function(){
-        this._super();
-
+    /**
+     *
+     */
+    createContainerChildren: function() {
+        this.super();
+        this.codeEditorTrayButtonContainer = new CodeEditorTrayButtonContainer();
+        this.addContainerChild(this.codeEditorTrayButtonContainer, "#list-item-" + this.listItemViewOne.cid);
     },
 
     /**
@@ -159,43 +158,29 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-
-    }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
+        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearTrayButtonClickedEvent , this);
+    },
 
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-
-
-    //-------------------------------------------------------------------------------
-    // Model Event Handlers
-    //-------------------------------------------------------------------------------
-
-
+    /**
+     * @private
+     * @param {airbug.ButtonViewEvent} event
+     * NOTE: event.data @type {{buttonName: string}}
+     */
+    hearTrayButtonClickedEvent: function(event){
+        this.panelView.dispatchEvent(event);
+        var parentContainer = this.getContainerParent(); //workspaceWidget
+        var grandparentContainer = parentContainer.getContainerParent();
+    }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ChatWidgetMessagesContainer).with(
-    autowired().properties([
-        property("chatMessageManagerModule").ref("chatMessageManagerModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ChatWidgetMessagesContainer", ChatWidgetMessagesContainer);
+bugpack.export("airbug.WorkspaceTrayContainer", WorkspaceTrayContainer);

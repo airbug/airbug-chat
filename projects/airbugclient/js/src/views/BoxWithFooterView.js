@@ -35,12 +35,21 @@ var BoxWithFooterView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="box box-with-footer">' +
+    template:   '<div id="{{id}}" class="box box-with-footer">' +
                     '<div id="box-body-{{cid}}" class="box-body">' +
                     '</div>' +
                     '<div id="box-footer-{{cid}}" class="box-footer">' +
                     '</div>' +
-                '</div>'
+                '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "box-" + this.cid;
+        return data;
+    }
 });
 
 

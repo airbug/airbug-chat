@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ListView')
+//@Export('ApplicationHeaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,13 +29,27 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ListView = Class.extend(MustacheView, {
+var ApplicationHeaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
+    template:   '<div id="application-header-wrapper" class="navbar navbar-fixed-top">' +
+                    '<div class="container">' +
+                        '<div class="header">' +
+                            '<div id="header-left">' +
+                            '</div>' +
+                            '<div id="header-center">' +
+                                '<div id="logo" class="brand" align="center">' +
+                                    '<img id="logo-image" src="img/airbug-small.png"/>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div id="header-right">' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
 });
 
 
@@ -43,4 +57,4 @@ var ListView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ListView", ListView);
+bugpack.export("airbug.ApplicationHeaderView", ApplicationHeaderView);

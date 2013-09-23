@@ -37,7 +37,7 @@ var TextAreaView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<textarea id="text-area-{{cid}}" rows="{{attributes.rows}}"" value="{{attributes.value}}">{{attributes.placeholder}}</textarea>',
+    template:   '<textarea id="{{id}}" rows="{{attributes.rows}}"" value="{{attributes.value}}">{{attributes.placeholder}}</textarea>',
 
 
     //-------------------------------------------------------------------------------
@@ -49,6 +49,7 @@ var TextAreaView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
+        data.id = this.getId() || "text-area-" + this.cid;
         if (!TypeUtil.isNumber(data.attributes.rows)) {
             data.attributes.rows = 2;
         }

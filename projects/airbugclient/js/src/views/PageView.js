@@ -35,8 +35,14 @@ var PageView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="page-{{cid}}" class="page">' +
-                '</div>'
+    template:   '<div id="{{id}}" class="page">' +
+                '</div>',
+
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "page-" + this.cid;
+        return data;
+    }
 });
 
 

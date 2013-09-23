@@ -35,7 +35,7 @@ var TwoColumnView = Class.extend(MustacheView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:       '<div id={{id}} class="row column 2column-container">' +
+    template:       '<div id={{id}} class="{{rowStyle}} column 2column-container">' +
                         '<div class="{{leftColumnSpan}} {{leftHamburger}} column leftrow column1of2"></div>' +
                         '<div class="{{rightColumnSpan}} {{rightHamburger}} column rightrow column2of2"></div>' +
                     '</div>',
@@ -51,9 +51,16 @@ var TwoColumnView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "two-column-row-container-" + this.cid;
-        data.leftColumnSpan = "span6";
-        data.rightColumnSpan = "span6";
+        data.leftColumnSpan     = "span6";
+        data.rightColumnSpan    = "span6";
+        data.rowStyle           = "row";
         switch (this.attributes.configuration) {
+            case TwoColumnView.Configuration.HIDE_RIGHT:
+                data.leftColumnSpan = "span12";
+                data.rightColumnSpan = "span0";
+            case TwoColumnView.Configuration.HIDE_LEFT:
+                data.leftColumnSpan = "span0";
+                data.rightColumnSpan = "span12";
             case TwoColumnView.Configuration.THIN_RIGHT:
                 data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";
@@ -91,6 +98,11 @@ var TwoColumnView = Class.extend(MustacheView, {
                 data.rightColumnSpan = "span3";
                 break;
         }
+        switch(this.attributes.rowStyle){
+            case TwoColumnView.RowStyle.FLUID:
+                data.rowStyle = "row-fluid";
+                break;
+        }
         return data;
     }
 });
@@ -115,6 +127,12 @@ TwoColumnView.Configuration = {
     EXTRA_THIN_LEFT_SMALL: 9,
     EXTRA_THICK_LEFT_SMALL: 8
 };
+
+TwoColumnView.RowStyle = {
+    DEFAULT: 1,
+    FIXED: 1,
+    FLUID: 2
+}
 
 
 //-------------------------------------------------------------------------------

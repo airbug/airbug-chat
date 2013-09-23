@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ListView')
+//@Export('BlackoutLoaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,13 +29,18 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ListView = Class.extend(MustacheView, {
+var BlackoutLoaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
+    template:   '<div id="blackout-loader-wrapper-{{cid}}" class="blackout-loader-wrapper">' +
+                    '<div id="blackout-loader-{{cid}}" class="blackout-loader"> ' +
+                        '<img src="img/ajax-loader.gif">' +
+                        '</img>' +
+                    '</div>' +
+                '</div>'
 });
 
 
@@ -43,4 +48,4 @@ var ListView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ListView", ListView);
+bugpack.export("airbug.BlackoutLoaderView", BlackoutLoaderView);

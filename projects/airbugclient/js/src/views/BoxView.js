@@ -35,8 +35,17 @@ var BoxView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="box {{attributes.classes}}">' +
-                '</div>'
+    template:   '<div id="{{id}}" class="box {{attributes.classes}}">' +
+                '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "box-" + this.cid;
+        return data;
+    }
 });
 
 

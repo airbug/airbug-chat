@@ -35,7 +35,16 @@ var TextInputView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<input id="text-input-{{cid}}" type="text" placeholder="{{attributes.placeholder}}">'
+    template:   '<input id="{{id}}" type="text" placeholder="{{attributes.placeholder}}">',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "text-input-" + this.cid;
+        return data;
+    }
 });
 
 

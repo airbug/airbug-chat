@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('HeaderView')
+//@Export('ImageView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,32 +29,37 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HeaderView = Class.extend(MustacheView, {
+var ImageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="header-wrapper" class="navbar navbar-fixed-top">' +
-                    '<div class="container">' +
-                        '<div class="header">' +
-                            '<div id="header-left">' +
-                            '</div>' +
-                            '<div id="header-center">' +
-                                '<div id="logo" class="brand" align="center">' +
-                                    '<img id="logo-image" src="img/airbug-small.png"/>' +
-                                '</div>' +
-                            '</div>' +
-                            '<div id="header-right">' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>'
+    template:   '<img class="{{attributes.size}}" src={{attributes.source}}></img>',
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        this.super();
+    }
 });
+
+/**
+ * @enum {string}
+ */
+ImageView.size = {
+
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.HeaderView", HeaderView);
+bugpack.export("airbug.ImageView", ImageView);

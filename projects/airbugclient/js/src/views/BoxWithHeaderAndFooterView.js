@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ListView')
+//@Export('BoxWithHeaderAndFooterView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,13 +29,29 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ListView = Class.extend(MustacheView, {
+var BoxWithHeaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
+    template:   '<div id="{{id}}" class="box box-with-header">' +
+                    '<div id="box-header-{{cid}}" class="box-header">' +
+                    '</div>' +
+                    '<div id="box-body-{{cid}}" class="box-body">' +
+                    '</div>' +
+                    '<div id="box-footer-{{cid}}" class="box-footer">' +
+                    '</div>' +
+                '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "box-" + this.cid;
+        return data;
+    }
 });
 
 
@@ -43,4 +59,4 @@ var ListView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ListView", ListView);
+bugpack.export("airbug.BoxWithHeaderAndFooterView", BoxWithHeaderAndFooterView);

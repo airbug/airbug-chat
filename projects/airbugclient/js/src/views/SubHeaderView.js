@@ -51,7 +51,7 @@ var SubHeaderView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId();
+        data.id     = this.getId() || "subheader-" + this.cid;
         return data;
     }
 });

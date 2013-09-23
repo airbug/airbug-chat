@@ -51,7 +51,7 @@ var ThreeColumnView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId();
+        data.id     = this.getId() || "three-column-row-container-" + this.cid;
         data.leftColumnSpan = "span4";
         data.centerColumnSpan = "span4"
         data.rightColumnSpan = "span4";

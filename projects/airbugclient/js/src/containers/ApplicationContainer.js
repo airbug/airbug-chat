@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('airbug.ApplicationView')
 //@Require('airbug.BodyView')
-//@Require('airbug.HeaderView')
+//@Require('airbug.ApplicationHeaderView')
 //@Require('airbug.NotificationView')
 //@Require('carapace.CarapaceContainer')
 
@@ -25,11 +25,12 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var ApplicationView     = bugpack.require('airbug.ApplicationView');
-var BodyView            = bugpack.require('airbug.BodyView');
-var HeaderView          = bugpack.require('airbug.HeaderView');
-var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
+var Class                   = bugpack.require('Class');
+var ApplicationView         = bugpack.require('airbug.ApplicationView');
+var BodyView                = bugpack.require('airbug.BodyView');
+var ApplicationHeaderView   = bugpack.require('airbug.ApplicationHeaderView');
+var NotificationView        = bugpack.require('airbug.NotificationView');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -53,25 +54,25 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ApplicationView}
+         * @type {airbug.ApplicationView}
          */
         this.applicationView    = null;
 
         /**
          * @private
-         * @type {BodyView}
+         * @type {airbug.BodyView}
          */
         this.bodyView           = null;
 
         /**
          * @private
-         * @type {HeaderView}
+         * @type {airbug.ApplicationHeaderView}
          */
         this.headerView         = null;
 
         /**
          * @private
-         * @type {NotificationView}
+         * @type {airbug.NotificationView}
          */
         this.notificationView   = null;
     },
@@ -82,28 +83,28 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {ApplicationView}
+     * @return {airbug.ApplicationView}
      */
     getApplicationView: function() {
         return this.applicationView;
     },
 
     /**
-     * @return {BodyView}
+     * @return {airbug.BodyView}
      */
     getBodyView: function() {
         return this.bodyView;
     },
 
     /**
-     * return {HeaderView}
+     * return {airbug.ApplicationHeaderView}
      */
     getHeaderView: function() {
         return this.headerView;
     },
 
     /**
-     * return {NotificationView}
+     * return {airbug.NotificationView}
      */
     getNotificationView: function() {
         return this.notificationView;
@@ -139,18 +140,23 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.headerView         = new HeaderView({id: "headerView"});
+        this.headerView         = new HeaderView({id: "applicationHeaderView"});
         this.applicationView    = new ApplicationView({id: "applicationView"});
-        this.notificationView   = new NotificationView();
+        this.notificationView   = new NotificationView({id: "notificationView"});
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);
         this.bodyView.addViewChild(this.notificationView);
+
         this.setViewTop(this.bodyView);
     },
 
+    createContainerChildren: function() {
+        this.super();
+    },
+
     /**
-     * @proetected
+     * @protected
      */
     destroyContainer: function() {
         this.headerView.dispose();
