@@ -7,7 +7,7 @@
 //@Export('TwoColumnView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.MultiColumnView')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +21,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class               = bugpack.require('Class');
+var MultiColumnView     = bugpack.require('airbug.MultiColumnView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TwoColumnView = Class.extend(MustacheView, {
+var TwoColumnView = Class.extend(MultiColumnView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
@@ -53,7 +53,6 @@ var TwoColumnView = Class.extend(MustacheView, {
         data.id     = this.getId() || "two-column-row-container-" + this.cid;
         data.leftColumnSpan     = "span6";
         data.rightColumnSpan    = "span6";
-        data.rowStyle           = "row";
         switch (this.attributes.configuration) {
             case TwoColumnView.Configuration.HIDE_RIGHT:
                 data.leftColumnSpan = "span12";
@@ -98,14 +97,15 @@ var TwoColumnView = Class.extend(MustacheView, {
                 data.rightColumnSpan = "span3";
                 break;
         }
-        switch(this.attributes.rowStyle){
-            case TwoColumnView.RowStyle.FLUID:
-                data.rowStyle = "row-fluid";
-                break;
-        }
+        
         return data;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properites
+//-------------------------------------------------------------------------------
 
 /**
  * @enum {number}
@@ -127,12 +127,6 @@ TwoColumnView.Configuration = {
     EXTRA_THIN_LEFT_SMALL: 9,
     EXTRA_THICK_LEFT_SMALL: 8
 };
-
-TwoColumnView.RowStyle = {
-    DEFAULT: 1,
-    FIXED: 1,
-    FLUID: 2
-}
 
 
 //-------------------------------------------------------------------------------

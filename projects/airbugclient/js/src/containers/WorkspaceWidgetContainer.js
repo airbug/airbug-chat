@@ -132,7 +132,7 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
                 .children([
                     view(TwoColumnView)
                     .attributes({
-                        rowStyle:       TwoColumnView.RowStyle.FLUID,
+                        rowStyle:       MultiColumnView.RowStyle.FLUID,
                         configuration:  TwoColumnView.Configuration.HIDE_LEFT})
                 ])
                 .build();

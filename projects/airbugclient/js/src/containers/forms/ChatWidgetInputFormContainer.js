@@ -12,7 +12,7 @@
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.ChatWidgetInputFormView')
 //@Require('airbug.TextView')
-//@Require('airbug.TwoColumnView')
+//@Require('airbug.ThreeColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -37,7 +37,7 @@ var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var TextView                = bugpack.require('airbug.TextView');
-var TwoColumnView           = bugpack.require('airbug.TwoColumnView');
+var ThreeColumnView         = bugpack.require('airbug.ThreeColumnView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -85,9 +85,9 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {TwoColumnView}
+         * @type {ThreeColumnView}
          */
-        this.twoColumnView              = null;
+        this.threeColumnView              = null;
 
         /**
          * @private
@@ -103,7 +103,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     activateContainer: function(routerArgs){
         this._super(routerArgs);
-        this.twoColumnView.$el.find("textarea")[0].focus();
+        this.threeColumnView.$el.find("textarea")[0].focus();
     },
 
     /**
@@ -115,16 +115,18 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.twoColumnView =
-            view(TwoColumnView)
-                .attributes({configuration: TwoColumnView.Configuration.EXTRA_THIN_RIGHT_SMALL})
+        this.threeColumnView =
+            view(ThreeColumnView)
+                .attributes({configuration: ThreeColumnView.Configuration.CHAT_WIDGET_INPUT_CONTAINER})
                 .id("chatWidgetInputRowContainer")
                 .children([
                     view(ChatWidgetInputFormView)
                         .id("chatWidgetInputForm")
-                        .appendTo(".column1of2"),
+                        .appendTo(".column1of3"),
+                    
+                    //TODO MW: add image button in column 2
                     view(ButtonView)
-                        .appendTo(".column2of2")
+                        .appendTo(".column3of3")
                         .children([
                             view(TextView)
                                 .attributes({text: "Send"})
@@ -137,7 +139,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.twoColumnView);
+        this.setViewTop(this.threeColumnView);
 
         this.chatWidgetInputFormView = this.findViewById("chatWidgetInputForm");
     },
@@ -147,8 +149,8 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-        this.twoColumnView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
+        this.threeColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
+        this.threeColumnView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
 
     },
 

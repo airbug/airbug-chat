@@ -124,13 +124,6 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
         this.panelView =
             view(PanelView)
-                .children([
-                    view(TwoColumnView)
-                        .attributes({
-                            rowStyle: TwoColumnView.RowStyle.FLUID,
-                            configuration: TwoColumnView.Configuration.HIDE_RIGHT
-                        })
-                ])
                 .build();
 
 
@@ -143,7 +136,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this.super();
         this.codeEditorWidgetContainer      = new CodeEditorWidgetContainer();
-        this.addContainerChild(this.codeEditorWidgetContainer,  ".column1of2");
+        this.addContainerChild(this.codeEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
         //TODO
         // this.pictureEditorWidgetContainer   = new PictureEditorWidgetContainer();
         // this.addContainerChild(this.pictureEditorWidgetContainer, ".column2of2");
