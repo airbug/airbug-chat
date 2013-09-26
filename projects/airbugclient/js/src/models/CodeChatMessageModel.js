@@ -4,46 +4,40 @@
 
 //@Package('airbug')
 
-//@Export('ChatMessageModel')
+//@Export('CodeChatMessageModel')
 
 //@Require('Class')
-//@Require('airbug.MeldModel')
+//@Require('airbug.ChatMessageModel')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MeldModel       = bugpack.require('airbug.MeldModel');
+var Class                   = bugpack.require('Class');
+var ChatMessageModel        = bugpack.require('airbug.ChatMessageModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageModel = Class.extend(MeldModel, {
+var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceModel Implementation
+    // Constructor
     //-------------------------------------------------------------------------------
 
-    defaults: {
-        sentBy: "",
-        conversationId: "",
-        conversationOwnerId: "",
-        sentAt: "",
-        pending: true,
-        failed: false,
-        retry: false,
-        type: ""
+    _constructor: function(object, options) {
+        this.defaults.code = "";
+        this._super(object, options);
     }
 });
 
@@ -52,4 +46,4 @@ var ChatMessageModel = Class.extend(MeldModel, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ChatMessageModel", ChatMessageModel);
+bugpack.export("airbug.CodeChatMessageModel", CodeChatMessageModel);

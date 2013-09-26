@@ -39,8 +39,8 @@ var MultiColumnView     = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function(){
-        var data  =this._super();
-        data.rowStyle           = "row";
+        var data      = this._super();
+        data.rowStyle = "row";
 
         switch(this.attributes.rowStyle){
             case MultiColumnView.RowStyle.FLUID:

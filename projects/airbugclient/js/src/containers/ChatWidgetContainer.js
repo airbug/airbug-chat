@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('airbug.ChatMessageCollection')
-//@Require('airbug.ChatMessageModel')
 //@Require('airbug.ChatWidgetInputFormContainer')
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatMessageContainer')
@@ -17,6 +16,7 @@
 //@Require('airbug.ListItemView')
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
+//@Require('airbug.TextChatMessageModel')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -33,20 +33,20 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                           = bugpack.require('Class');
-var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
-var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
-var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
-var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
-var ChatMessageContainer            = bugpack.require('airbug.ChatMessageContainer');
-var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
-var ListView                        = bugpack.require('airbug.ListView');
-var ListItemView                    = bugpack.require('airbug.ListItemView');
-var MessageView                     = bugpack.require('airbug.MessageView');
-var PanelView                       = bugpack.require('airbug.PanelView');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var ChatMessageCollection               = bugpack.require('airbug.ChatMessageCollection');
+var ChatMessageContainer                = bugpack.require('airbug.ChatMessageContainer');
+var ChatWidgetInputFormContainer        = bugpack.require('airbug.ChatWidgetInputFormContainer');
+var ChatWidgetMessagesContainer         = bugpack.require('airbug.ChatWidgetMessagesContainer');
+var ChatWidgetView                      = bugpack.require('airbug.ChatWidgetView');
+var ListView                            = bugpack.require('airbug.ListView');
+var ListItemView                        = bugpack.require('airbug.ListItemView');
+var MessageView                         = bugpack.require('airbug.MessageView');
+var PanelView                           = bugpack.require('airbug.PanelView');
+var TextChatMessageModel                = bugpack.require('airbug.TextChatMessageModel');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         chatMessage.conversationOwnerId = this.conversationModel.get("ownerId");
         chatMessage.sentAt              = new Date().toJSON();
 
-        var newChatMessageModel = new ChatMessageModel(chatMessage, null);
+        var newChatMessageModel = new TextChatMessageModel(chatMessage, null);
         this.chatMessageCollection.add(newChatMessageModel);
 
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageMeldObj){
