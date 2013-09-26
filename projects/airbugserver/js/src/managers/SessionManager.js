@@ -7,7 +7,8 @@
 //@Export('SessionManager')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('airbugserver.EntityManager')
+//@Require('airbugserver.Session')
 //@Require('bugflow.BugFlow')
 
 
@@ -15,16 +16,17 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class               = bugpack.require('Class');
+var EntityManager       = bugpack.require('airbugserver.EntityManager');
+var Session             = bugpack.require('airbugserver.Session');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -40,15 +42,18 @@ var $task       = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SessionManager = Class.extend(Obj, {
+var SessionManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {MongoDataStore} mongoDataStore
+     */
     _constructor: function(mongoDataStore) {
-
-        this._super();
+        this._super("Session", mongoDataStore);
     },
 
 
@@ -57,88 +62,114 @@ var SessionManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error, number)} callback
+     * @param {function(Throwable, number)} callback
      */
     countAllSessions: function(callback) {
-         this.count({}, function(error, count) {
+         this.count({}, function(throwable, count) {
              if (callback) {
-                 callback(error, count);
+                 callback(throwable, count);
              }
          });
     },
 
     /**
-     * @param {string} sid
-     * @param {Object} values
-     * @param {function(Error)=} callback
+     * @param {Session} session
+     * @param {function(Throwable)=} callback
      */
     createOrUpdateSession: function(sid, values, callback) {
-        this.update({sid: sid}, values, {upsert: true}, function(error, numberAffected, raw) {
+        this.update({sid: sid}, values, {upsert: true}, function(throwable, numberAffected, raw) {
             if (callback) {
-                callback(error);
+                callback(throwable);
             }
         });
     },
 
     /**
-     * @param {Object} session
-     * @param {function(Error, Session)=} callback
+     * @param {Session} session
+     * @param {function(Throwable, Room)} callback
      */
     createSession: function(session, callback) {
-        this.create(session, function(error, session) {
-            if (callback) {
-                callback(error, session);
+        session.setCreatedAt(new Date());
+        session.setUpdatedAt(new Date());
+        this.dataStore.create(session.toObject(), function(throwable, dbSession) {
+            if (!throwable) {
+                session.setId(dbSession.id);
+                callback(undefined, session);
+            } else {
+                callback(throwable);
             }
         });
     },
 
     /**
-     * @param {function(Error, Array.<Session>} callback
+     * @param {{
+     *      createdAt: Date,
+     *      data: Object,
+     *      expires: Date,
+     *      id: string,
+     *      sid: string,
+     *      updatedAt: Date
+     * }} data
+     * @return {Session}
      */
-    findAllSessions: function(callback) {
+    generateSession: function(requestContext, data) {
+        var session = new Session();
+        session.setCreatedAt(data.createdAt);
+        session.setData(data.data);
+        session.setExpires(data.expires);
+        session.setId(data.id);
+        session.setSid(data.sid);
+        session.setUpdatedAt(data.updatedAt);
+        return session;
+    },
+    
+    /**
+     * @param {function(Throwable)=} callback
+     */
+    removeAllSessions: function(callback) {
+        this.remove({}, function (throwable) {
+            if (callback) {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {string} sid
+     * @param {function(Throwable)=} callback
+     */
+    removeSessionBySid: function(sid, callback) {
+        this.remove({sid: sid}, function(throwable) {
+            if (callback) {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {function(Throwable, Array.<Session>} callback
+     */
+    retrieveAllSessions: function(callback) {
         this.find({}, callback);
     },
 
     /**
      * @param {string} sid
-     * @param {function(Error, Session)}
-     */
-    findSessionBySid: function(sid, callback) {
-        this.findOne({sid: sid}, callback);
+     * @param {function(Throwable, Session)}
+        */
+    retrieveSessionBySid: function(sid, callback) {
+        this.dataStore.findOne({sid: sid}, callback);
     },
-
-    /**
-     * @param {function(Error)=} callback
-     */
-    removeAllSessions: function(callback) {
-        this.remove({}, function (error) {
-            if (callback) {
-                callback(error);
-            }
-        });
-    },
-
-    /**
-     * @param {string} sid
-     * @param {function(Error)=} callback
-     */
-    removeSessionBySid: function(sid, callback) {
-        this.remove({sid: sid}, function(error) {
-            if (callback) {
-                callback(error);
-            }
-        });
-    },
-
+    
     /**
      * @param {string} sid
      * @param {{*}} updates //NOTE: Cannot be a Session instance, only generic objects
-     * @param {function(Error)=} callback
+     * @param {function(Throwable)=} callback
      */
     updateSessionBySid: function(sid, updates, callback) {
-        this.update({sid: sid}, updates, function(error) {
+        this.update({sid: sid}, updates, function(throwable) {
             if (callback) {
-                callback(error);
+                callback(throwable);
             }
         });
     }

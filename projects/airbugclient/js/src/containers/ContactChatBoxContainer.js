@@ -10,6 +10,7 @@
 //@Require('airbug.BoxWithHeaderView')
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
+//@Require('airbug.UserModel')
 //@Require('airbug.UserNamePanelContainer')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -19,20 +20,21 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                     bugpack.require('Class');
-var BoxWithHeaderView =         bugpack.require('airbug.BoxWithHeaderView');
-var ChatWidgetContainer =       bugpack.require('airbug.ChatWidgetContainer');
-var ConversationModel =         bugpack.require('airbug.ConversationModel');
-var UserNamePanelContainer =    bugpack.require('airbug.UserNamePanelContainer');
-var CarapaceContainer =         bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder =               bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var BoxWithHeaderView       = bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer     = bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel       = bugpack.require('airbug.ConversationModel');
+var UserModel               = bugpack.require('airbug.UserModel');
+var UserNamePanelContainer  = bugpack.require('airbug.UserNamePanelContainer');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -135,10 +137,10 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel = new ConversationModel({}, "conversationModel");
-        this.userModel = new UserModel({}, "userModel");
-        this.addModel(this.conversationModel);
-        this.addModel(this.userModel);
+        this.conversationModel = new ConversationModel({});
+        this.userModel = new UserModel({});
+        this.addModel("conversationModel", this.conversationModel);
+        this.addModel("userModel", this.userModel);
 
 
         // Create Views

@@ -7,7 +7,7 @@
 //@Export('Room')
 
 //@Require('Class')
-//@require('List')
+//@require('Set')
 //@Require('airbugserver.Entity')
 //@Require('bugdelta.DeltaObject')
 
@@ -24,7 +24,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var List            = bugpack.require('List');
+var Set             = bugpack.require('Set');
 var Entity          = bugpack.require('airbugserver.Entity');
 var DeltaObject     = bugpack.require('bugdelta.DeltaObject');
 
@@ -56,9 +56,9 @@ var Room = Class.extend(Entity, {
 
         /**
          * @private
-         * @type {List.<RoomMember>}
+         * @type {Set.<RoomMember>}
          */
-        this.roomMemberList     = undefined;
+        this.roomMemberSet     = undefined;
     },
 
 
@@ -109,31 +109,31 @@ var Room = Class.extend(Entity, {
     },
 
     /**
-     * @return {List.<string>}
+     * @return {Set.<string>}
      */
-    getRoomMemberIdList: function() {
-        return this.deltaObject.getProperty("roomMemberIdList");
+    getRoomMemberIdSet: function() {
+        return this.deltaObject.getProperty("roomMemberIdSet");
     },
 
     /**
-     * @param {List.<string>} roomMemberIdList
+     * @param {Set.<string>} roomMemberIdSet
      */
-    setRoomMemberIdList: function(roomMemberIdList) {
-        this.deltaObject.setProperty("roomMemberIdList", roomMemberIdList);
+    setRoomMemberIdSet: function(roomMemberIdSet) {
+        this.deltaObject.setProperty("roomMemberIdSet", roomMemberIdSet);
     },
 
     /**
-     * @return {List.<RoomMember>}
+     * @return {Set.<RoomMember>}
      */
-    getRoomMemberList: function() {
-        return this.roomMemberList;
+    getRoomMemberSet: function() {
+        return this.roomMemberSet;
     },
 
     /**
-     * @param {List.<RoomMember>} roomMemberList
+     * @param {Set.<RoomMember>} roomMemberSet
      */
-    setRoomMemberList: function(roomMemberList) {
-        this.roomMemberList = roomMemberList;
+    setRoomMemberSet: function(roomMemberSet) {
+        this.roomMemberSet = roomMemberSet;
     },
 
 

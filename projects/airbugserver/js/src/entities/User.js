@@ -48,9 +48,9 @@ var User = Class.extend(Entity, {
 
         /**
          * @private
-         * @type {List.<Room>}
+         * @type {Set.<Room>}
          */
-        this.roomList = undefined;
+        this.roomSet = undefined;
     },
 
 
@@ -115,31 +115,31 @@ var User = Class.extend(Entity, {
     },
 
     /**
-     * @return {List.<string>}
+     * @return {Set.<string>}
      */
-    getRoomIdList: function() {
-        return this.deltaObject.getProperty("roomIdList");
+    getRoomIdSet: function() {
+        return this.deltaObject.getProperty("roomIdSet");
     },
 
     /**
-     * @param {List.<string>} roomIdList
+     * @param {Set.<string>} roomIdSet
      */
-    setRoomIdList: function(roomIdList) {
-        this.deltaObject.setProperty("roomIdList", roomIdList);
+    setRoomIdSet: function(roomIdSet) {
+        this.deltaObject.setProperty("roomIdSet", roomIdSet);
     },
 
     /**
-     * @return {List.<Room>}
+     * @return {Set.<Room>}
      */
-    getRoomList: function() {
-        return this.roomList;
+    getRoomSet: function() {
+        return this.roomSet;
     },
 
     /**
-     * @param {List.<Room>} roomList
+     * @param {Set.<Room>} roomSet
      */
-    setRoomList: function(roomList) {
-        this.roomList = roomList;
+    setRoomSet: function(roomSet) {
+        this.roomSet = roomSet;
     },
 
 

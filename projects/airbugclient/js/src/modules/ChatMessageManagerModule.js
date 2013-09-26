@@ -98,11 +98,11 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         var _this           = this;
         var conversation    = this.meldStore.getMeld(conversationId);
         if(conversation){
-            this.retrieveEach("ChatMessage", conversation.chatMessageIdList, callback);
+            this.retrieveEach("ChatMessage", conversation.chatMessageIdSet, callback);
         } else {
             this.retrieve("Conversation", conversationId, function(error, conversationObj){
                 if(!error && conversationObj){
-                    _this.retrieveEach("ChatMessage", conversationobj.chatMessageIdList, callback);
+                    _this.retrieveEach("ChatMessage", conversationobj.chatMessageIdSet, callback);
                 } else {
                     callback(error, null);
                 }

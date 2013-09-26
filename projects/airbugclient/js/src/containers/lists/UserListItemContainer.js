@@ -98,8 +98,8 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.userModel = new UserModel({}, "userModel");
-        this.addModel(this.userModel);
+        this.userModel = new UserModel({});
+        this.addModel("userModel", this.userModel);
 
 
         // Create Views

@@ -94,9 +94,10 @@ var SessionStore = Class.adapt(connect.session.Store, {
     /**
      * @param {string} sid
      * @param {Object} data
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     set: function(sid, data, callback) {
+
         //TEST
         console.log("SessionStore.set - sid:" + sid + " data:" + data.toString());
 
@@ -110,12 +111,12 @@ var SessionStore = Class.adapt(connect.session.Store, {
             }
         }
         console.log("cookie:", cookie);
-        var session = {
+        var session = this.sessionManager.generateSession({
             sid: sid,
             data: data,
             expires: expires
-        };
-        this.sessionManager.createOrUpdateSession(session.sid, session, callback);
+        });
+        this.sessionManager.createOrUpdateSession(session, callback);
     },
 
     /**

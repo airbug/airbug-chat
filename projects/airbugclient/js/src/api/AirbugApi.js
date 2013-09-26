@@ -105,16 +105,6 @@ var AirbugApi = Class.extend(Obj, {
         } finally {
             callback(error);
         }
-    },
-
-    /**
-     * @param {function(error)} callback
-     */
-    logoutCurrentUser: function(callback){
-        var _this = this;
-        this.request("logout", "CurrentUser", {}, function(error){
-            callback(error);
-        });
     }
 });
 

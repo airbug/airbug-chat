@@ -28,7 +28,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 //-------------------------------------------------------------------------------
 
 var ConversationSchema = new Schema({
-    chatMessageIdList: [{type: ObjectId, ref: "ChatMessage"}],
+    chatMessageIdSet: [{type: ObjectId, ref: "ChatMessage"}],
     createdAt: Date,
     ownerId: {type: ObjectId, require: true}, //NOTE: Room or Dialogue
     updatedAt: Date

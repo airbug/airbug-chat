@@ -113,7 +113,7 @@ var ChatMessageService = Class.extend(Obj, {
                     if(returnedChatMessage){
                         _this.conversationManager.findById(returnedChatMessage.conversationId, function(error, conversation){
                             if(!error && conversation){
-                                conversation.chatMessageIdList.push(returnedChatMessage.id);
+                                conversation.chatMessageIdSet.push(returnedChatMessage.id);
                                 console.log("updated conversation:", conversation);
                                 conversation.save(function(error, conversation){
                                         console.log("error", error, "conversation:", conversation);
@@ -142,11 +142,11 @@ var ChatMessageService = Class.extend(Obj, {
      */
     retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
         var _this = this;
-        this.conversationManager.findById(conversationId).populate("chatMessageIdList").lean(true).exec(function(error, conversation){
+        this.conversationManager.findById(conversationId).populate("chatMessageIdSet").lean(true).exec(function(error, conversation){
             console.log("Inside ChatMessageService#retrieveChatMessagesByConversationId callback");
             console.log("Error:", error, "Conversation:", conversation);
             if(!error && conversation){
-                var chatMessages = conversation.chatMessageIdList;
+                var chatMessages = conversation.chatMessageIdSet;
                 callback(error, chatMessages);
             } else {
                 callback(error, conversation);

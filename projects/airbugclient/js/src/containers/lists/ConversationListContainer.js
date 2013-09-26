@@ -160,8 +160,8 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationCollection = new ConversationCollection([], "conversationCollection");
-        this.addCollection(this.conversationCollection);
+        this.conversationCollection = new ConversationCollection([]);
+        this.addCollection("conversationCollection", this.conversationCollection);
 
 
         // Create Views

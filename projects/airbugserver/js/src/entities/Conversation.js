@@ -46,9 +46,9 @@ var Conversation = Class.extend(Entity, {
 
         /**
          * @private
-         * @type {List.<ChatMessage>}
+         * @type {Set.<ChatMessage>}
          */
-        this.chatMessageList    = undefined;
+        this.chatMessageSet     = undefined;
 
         /**
          * @private
@@ -63,31 +63,31 @@ var Conversation = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {Set.<string>}
      */
-    getChatMessageIdList: function() {
-        return this.deltaObject.getProperty("chatMessageIdList");
+    getChatMessageIdSet: function() {
+        return this.deltaObject.getProperty("chatMessageIdSet");
     },
 
     /**
-     * @param {string} chatMessageIdList
+     * @param {Set.<string>} chatMessageIdSet
      */
-    setChatMessageIdList: function(chatMessageIdList) {
-        this.deltaObject.setProperty("chatMessageIdList", chatMessageIdList);
+    setChatMessageIdSet: function(chatMessageIdSet) {
+        this.deltaObject.setProperty("chatMessageIdSet", chatMessageIdSet);
     },
 
     /**
-     * @return {List.<ChatMessage>}
+     * @return {Set.<ChatMessage>}
      */
-    getChatMessageList: function() {
-        return this.chatMessageList;
+    getChatMessageSet: function() {
+        return this.chatMessageSet;
     },
 
     /**
-     * @param {List.<ChatMessage>} chatMessageList
+     * @param {Set.<ChatMessage>} chatMessageSet
      */
-    setChatMessageList: function(chatMessageList) {
-        this.chatMessageList = chatMessageList;
+    setChatMessageSet: function(chatMessageSet) {
+        this.chatMessageSet = chatMessageSet;
     },
 
     /**
@@ -101,7 +101,8 @@ var Conversation = Class.extend(Entity, {
      * @param {(Dialogue | Room)} owner
      */
     setOwner: function(owner) {
-        //TODO BRN
+        this.owner = owner;
+       // this.
     },
 
     /**
@@ -116,6 +117,25 @@ var Conversation = Class.extend(Entity, {
      */
     setOwnerId: function(ownerId) {
         this.deltaObject.setProperty("ownerId", ownerId);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {ChatMessage} chatMessage
+     */
+    addChatMessage: function(chatMessage) {
+
+    },
+
+    /**
+     * @param {ChatMessage} chatMessage
+     */
+    removeChatMessage: function(chatMessage) {
+
     }
 });
 

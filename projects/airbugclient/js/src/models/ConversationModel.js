@@ -38,7 +38,7 @@ var ConversationModel = Class.extend(MeldModel, {
     defaults: {
         _id: "",
         ownerId: "",
-        chatMessageIdList: []
+        chatMessageIdSet: []
     }
 });
 

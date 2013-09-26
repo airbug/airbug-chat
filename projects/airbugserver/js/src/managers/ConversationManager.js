@@ -7,7 +7,7 @@
 //@Export('ConversationManager')
 
 //@Require('Class')
-//@Require('List')
+//@Require('Set')
 //@Require('TypeUtil')
 //@Require('airbugserver.Conversation')
 //@Require('airbugserver.EntityManager')
@@ -26,7 +26,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
+var Set                 = bugpack.require('Set');
 var TypeUtil            = bugpack.require('TypeUtil');
 var Conversation        = bugpack.require('airbugserver.Conversation');
 var EntityManager       = bugpack.require('airbugserver.EntityManager');
@@ -65,7 +65,7 @@ var ConversationManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
-     *      chatMessageIdList: (Array.<string> | List.<string>),
+     *      chatMessageIdSet: (Array.<string> | List.<string>),
      *      createdAt: Date,
      *      id: string,
      *      ownerId: string,
@@ -75,8 +75,8 @@ var ConversationManager = Class.extend(EntityManager, {
      */
     generateConversation: function(requestContext, data) {
         var conversation = new Conversation();
-        if (!TypeUtil.isUndefined(data.chatMessageIdList)) {
-            conversation.setChatMessageIdList(new List(data.chatMessageIdList));
+        if (!TypeUtil.isUndefined(data.chatMessageIdSet)) {
+            conversation.setChatMessageIdList(new Set(data.chatMessageIdSet));
         }
         if (TypeUtil.isUndefined(data.createdAt)) {
             conversation.setCreatedAt(data.createdAt);

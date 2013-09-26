@@ -222,8 +222,8 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
     loadRoomModel: function(roomId) {
         console.log("Loading roomModel inside of RoomPageContainer#loadRoomModel");
         var _this = this;
-        this.roomModel = new RoomModel({}, "");
-        this.addModel(this.roomModel);
+        this.roomModel = new RoomModel({});
+        this.addModel(roomId, this.roomModel);
         //TODO start loading animation
         var blackoutLoaderContainer = new BlackoutLoaderContainer();
         this.addContainerChild(blackoutLoaderContainer);

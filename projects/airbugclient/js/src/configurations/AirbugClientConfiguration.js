@@ -88,7 +88,6 @@ var SonarbugClient              = bugpack.require('sonarbugclient.SonarbugClient
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $parallel       = BugFlow.$parallel;
 var $series         = BugFlow.$series;
 var $task           = BugFlow.$task;
 var arg             = ArgAnnotation.arg;
@@ -191,6 +190,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         var trackerModule       = this._trackerModule;
         var carapaceApplication = this._carapaceApplication;
 
+        carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
+            var data = event.getData();
+            trackerModule.track("RoutingRequest.Result", data);
+        });
+
         $series([
             $task(function(flow){
                 sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error){
@@ -198,20 +202,15 @@ var AirbugClientConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
-            $parallel([
                 $task(function(flow){
                     trackerModule.initialize(function(error){
                         flow.complete(error);
                     });
                 }),
                 $task(function(flow){
-                    carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
-                        var data = event.getData();
-                        trackerModule.track("RoutingRequest.Result", data);
-                    });
+
                     flow.complete();
                 })
-            ])
         ]).execute(function(error){
             if (!error) console.log("tracking initialized");
             callback(error);

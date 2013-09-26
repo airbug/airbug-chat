@@ -43,7 +43,8 @@ var ChatMessageModel = Class.extend(MeldModel, {
         sentAt: "",
         pending: true,
         failed: false,
-        retry: false
+        retry: false,
+        type: ""
     }
 });
 

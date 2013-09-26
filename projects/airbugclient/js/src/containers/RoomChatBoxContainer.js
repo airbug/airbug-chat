@@ -230,8 +230,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      * @param {string} conversationId
      */
     loadConversationModel: function(conversationId) {
-        this.conversationModel  = new ConversationModel({}, conversationId);
-        this.addModel(this.conversationModel);
+        var _this = this;
+        this.conversationModel  = new ConversationModel({});
+        this.addModel(conversationId, this.conversationModel);
         this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationMeldObj){
             if(!error && conversationMeldObj){
                 var conversationObj = conversationMeldObj.generateObject();

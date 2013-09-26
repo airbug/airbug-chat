@@ -126,8 +126,8 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.chatMessageCollection = new ChatMessageCollection([], "chatMessageCollection");
-        this.addCollection(this.chatMessageCollection);
+        this.chatMessageCollection = new ChatMessageCollection([]);
+        this.addCollection("chatMessageCollection", this.chatMessageCollection);
 
 
         // Create Views

@@ -32,7 +32,7 @@ var RoomSchema = new Schema({
     conversationId: ObjectId,
     createdAt: Date,
     name: String,
-    roomMemberIdList: [{ type: ObjectId, ref: 'RoomMember' }], //Sung propose change to roomMemberIdList and roomMemberList
+    roomMemberIdSet: [{ type: ObjectId, ref: 'RoomMember' }],
     updatedAt: Date
 });
 

@@ -45,6 +45,10 @@ var RequestContextFactory = Class.extend(Obj, {
         var requestContext = new RequestContext();
         requestContext.set("currentUser", request.getHandshake().user.clone());
         requestContext.set("session", request.getHandshake().session.clone());
+
+        //TODO BRN: I don't think that these values need to be cloned since they are not related to a database and therefore can be acted upon all at one time instead of broken up async.
+
+        requestContext.set("handshake", request.getHandshake());
         requestContext.set("callManager", request.getCallManager());
         return requestContext;
     }

@@ -57,7 +57,9 @@ var ChatMessageManager = Class.extend(EntityManager, {
     // MongoManager
     //-------------------------------------------------------------------------------
 
-    createChatMessage: function()
+    createChatMessage: function() {
+
+    }
 });
 
 

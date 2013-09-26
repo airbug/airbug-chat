@@ -40,7 +40,7 @@ var MeldModel = Class.extend(CarapaceModel, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(object, id) {
+    _constructor: function(object, options) {
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -52,13 +52,15 @@ var MeldModel = Class.extend(CarapaceModel, {
          */
         this.meldObject = null;
 
-        if(Class.doesExtend(object, MeldObject){
-            this.meldObject = object;
-            this._super(object.generateObject(), object.getMeldId());
-        } else {
-            this._super(object, id);
-        }
+        // NOTE BRN: When we receive a MeldObject, we should convert it into a basic object and store the MeldObject.
+        // Otherwise, we should just pass it through
 
+        if (Class.doesExtend(object, MeldObject)) {
+            this.meldObject = object;
+            this._super(object.generateObject(), options);
+        } else {
+            this._super(object, options);
+        }
     },
 
 

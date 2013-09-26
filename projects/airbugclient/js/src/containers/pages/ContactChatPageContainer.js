@@ -10,6 +10,7 @@
 //@Require('airbug.AccountButtonDropdownContainer')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.ContactChatBoxContainer')
+//@Require('airbug.ContactModel')
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.PageView')
@@ -30,17 +31,18 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                                 bugpack.require('Class');
-var AccountButtonDropdownContainer =        bugpack.require('airbug.AccountButtonDropdownContainer');
-var ApplicationContainer =                  bugpack.require('airbug.ApplicationContainer');
-var ContactChatBoxContainer =               bugpack.require('airbug.ContactChatBoxContainer');
-var ConversationListSlidePanelContainer =   bugpack.require('airbug.ConversationListSlidePanelContainer');
-var HomeButtonContainer =                   bugpack.require('airbug.HomeButtonContainer');
-var PageView =                              bugpack.require('airbug.PageView');
-var RoomChatBoxContainer =                  bugpack.require('airbug.RoomChatBoxContainer');
-var RoomMemberListPanelContainer =          bugpack.require('airbug.RoomMemberListPanelContainer');
-var RoomModel =                             bugpack.require('airbug.RoomModel');
-var ViewBuilder =                           bugpack.require('carapace.ViewBuilder');
+var Class                                   = bugpack.require('Class');
+var AccountButtonDropdownContainer          = bugpack.require('airbug.AccountButtonDropdownContainer');
+var ApplicationContainer                    = bugpack.require('airbug.ApplicationContainer');
+var ContactChatBoxContainer                 = bugpack.require('airbug.ContactChatBoxContainer');
+var ContactModel                            = bugpack.require('airbug.ContactModel');
+var ConversationListSlidePanelContainer     = bugpack.require('airbug.ConversationListSlidePanelContainer');
+var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
+var PageView                                = bugpack.require('airbug.PageView');
+var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
+var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
+var RoomModel                               = bugpack.require('airbug.RoomModel');
+var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -142,8 +144,8 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.contactModel = new ContactModel({}, "contactModel");
-        this.addModel(this.contactModel);
+        this.contactModel = new ContactModel({});
+        this.addModel("contactModel", this.contactModel);
 
 
         // Create Views

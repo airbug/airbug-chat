@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -57,9 +57,11 @@ var TwoColumnView = Class.extend(MultiColumnView, {
             case TwoColumnView.Configuration.HIDE_RIGHT:
                 data.leftColumnSpan = "span12";
                 data.rightColumnSpan = "span0";
+                break;
             case TwoColumnView.Configuration.HIDE_LEFT:
                 data.leftColumnSpan = "span0";
                 data.rightColumnSpan = "span12";
+                break;
             case TwoColumnView.Configuration.THIN_RIGHT:
                 data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";
@@ -104,7 +106,7 @@ var TwoColumnView = Class.extend(MultiColumnView, {
 
 
 //-------------------------------------------------------------------------------
-// Static Properites
+// Static Properties
 //-------------------------------------------------------------------------------
 
 /**
@@ -125,7 +127,9 @@ TwoColumnView.Configuration = {
     EXTRA_THIN_RIGHT_SMALL: 8,
     EXTRA_THICK_RIGHT_SMALL: 9,
     EXTRA_THIN_LEFT_SMALL: 9,
-    EXTRA_THICK_LEFT_SMALL: 8
+    EXTRA_THICK_LEFT_SMALL: 8,
+    HIDE_RIGHT: 10,
+    HIDE_LEFT: 11
 };
 
 

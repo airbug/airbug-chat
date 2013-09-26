@@ -36,7 +36,7 @@ var RoomController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, roomService, callService, requestContextFactory) {
+    _constructor: function(bugCallRouter, roomService, requestContextFactory) {
 
         this._super();
 
@@ -50,12 +50,6 @@ var RoomController = Class.extend(EntityController, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter              = bugCallRouter;
-
-        /**
-         * @private
-         * @type {CallService}
-         */
-        this.callService                = callService;
 
         /**
          * @private
@@ -94,11 +88,11 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.roomId;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
-                _this.roomService.addUserToRoom(requestContext, userId, roomId, function(error, user, room) {
-                    if (!error) {
+                _this.roomService.addUserToRoom(requestContext, userId, roomId, function(throwable, user, room) {
+                    if (!throwable) {
                         _this.sendSuccessResponse(responder, {});
                     } else {
-                        _this.processError(responder, error);
+                        _this.processThrowable(responder, throwable);
                     }
                 });
             },
@@ -112,13 +106,13 @@ var RoomController = Class.extend(EntityController, {
                 var roomData            = data.room;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
-                _this.roomService.createRoom(requestContext, roomData, function(error, room) {
-                    if (!error) {
+                _this.roomService.createRoom(requestContext, roomData, function(throwable, room) {
+                    if (!throwable) {
                         _this.sendSuccessResponse(responder, {
                             objectId: room.getId()
                         });
                     } else {
-                        _this.processError(responder, error);
+                        _this.processThrowable(responder, throwable);
                     }
                 });
             },
@@ -127,16 +121,16 @@ var RoomController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            joinRoom:       function(request, responder){
+            joinRoom:       function(request, responder) {
                 var data                = request.getData();
                 var roomId              = data.roomId;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
-                _this.roomService.joinRoom(requestContext, roomId, function(error, room) {
-                    if (!error) {
+                _this.roomService.joinRoom(requestContext, roomId, function(throwable, room) {
+                    if (!throwable) {
                         _this.sendSuccessResponse(responder, {});
                     } else {
-                        _this.processError(responder, error);
+                        _this.processThrowable(responder, throwable);
                     }
                 });
             },
@@ -145,16 +139,16 @@ var RoomController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            leaveRoom:      function(request, responder){
+            leaveRoom:      function(request, responder) {
                 var data                = request.getData();
                 var roomId              = data.roomId;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
-                _this.roomService.leaveRoom(requestContext, roomId, function(error, room) {
-                    if (!error) {
+                _this.roomService.leaveRoom(requestContext, roomId, function(throwable, room) {
+                    if (!throwable) {
                         _this.sendSuccessResponse(responder, {});
                     } else {
-                        _this.processError(responder, error);
+                        _this.processThrowable(responder, throwable);
                     }
                 });
             },
@@ -163,31 +157,16 @@ var RoomController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            retrieveRoom:   function(request, responder){
+            retrieveRoom:   function(request, responder) {
                 var data                = request.getData();
                 var roomId              = data.roomId;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
-                _this.roomService.retrieveRoom(requestContext, roomId, function(error, room) {
-                    if (!error) {
-                        data.success = true;
-                        if (room) {
-                            data[roomId] = true;
-                        } else {
-                            data[roomId] = false;
-                        }
-                        response    = responder.response("retrievedRoom", data);
-                    } else {
-                        response    = responder.response("retrieveRoomError", {
-                            success: false,
-                            error: error
-                        });
-                    }
-                    if (!error) {
-                        var data = {};
+                _this.roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
+                    if (!throwable) {
                         _this.sendSuccessResponse(responder, {});
                     } else {
-                        _this.processError(responder, error);
+                        _this.processThrowable(responder, throwable);
                     }
                 });
             },
@@ -197,33 +176,28 @@ var RoomController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              */
             retrieveRooms: function(request, responder) {
-                var currentUser = request.getHandshake().user;
-                var data        = request.getData();
-                var roomIds     = data.roomIds;
-                var response    = undefined;
-                if (currentUser.isNotAnonymous()) {
-                    _this.roomService.retrieveRooms(roomIds, function(error, roomList) {
-                        var roomsData = [];
-                        roomList.forEach(function(room) {
+                var data                = request.getData();
+                var roomIds             = data.roomIds;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.roomService.retrieveRooms(roomIds, function(throwable, roomMap) {
+                    var roomsData = {};
+                    if (roomMap) {
+                        roomMap.forEach(function(room) {
                             roomsData.push(room.getId())
                         });
-                        if (!error) {
-                            response        = responder.response("retrievedRooms", {
-                                rooms: roomsData
-                            });
-                        } else {
-                            response        = responder.response("retrieveRoomsError", {
-                                error: error
-                            });
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    response    = responder.response("retrieveRoomsError", {
-                        error: new Error("Unauthorized Access")
-                    });
+                    }
+                    if (!throwable) {
+                        response        = responder.response("retrievedRooms", {
+                            rooms: roomsData
+                        });
+                    } else {
+                        response        = responder.response("retrieveRoomsError", {
+                            throwable: throwable
+                        });
+                    }
                     responder.sendResponse(response);
-                }
+                });
             }
         });
 

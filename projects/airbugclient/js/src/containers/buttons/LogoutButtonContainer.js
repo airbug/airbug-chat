@@ -147,8 +147,8 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
      */
     hearButtonClickedEvent: function(event) {
         var _this = this;
-        this.currentUserManagerModule.logoutCurrentUser(function(error){
-            console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logoutCurrentUser");
+        this.currentUserManagerModule.logout(function(error){
+            console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logout");
             if(!error){
                 // _this.navigationModule.navigate("loggedout", {
                 //     trigger: true

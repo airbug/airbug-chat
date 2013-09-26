@@ -38,7 +38,7 @@ var UserSchema = new Schema({
     email: {type: String, index: true, unique: false},
     firstName: String,
     lastName: String,
-    roomIdList: [{type: ObjectId, ref: 'Room'}],
+    roomIdSet: [{type: ObjectId, ref: 'Room'}],
     updatedAt: Date
 });
 

@@ -39,13 +39,13 @@ var EntityController = Class.extend(Obj, {
 
     /**
      * @param {CallResponder} responder
-     * @param {(Error | Exception)} error
+     * @param {Throwable} throwable
      */
-    processError: function(responder, error) {
-        if (Class.doesExtend(error, Exception)) {
-            this.sendExceptionResponse(responder, error);
+    processThrowable: function(responder, throwable) {
+        if (Class.doesExtend(throwable, Exception)) {
+            this.sendExceptionResponse(responder, throwable);
         } else {
-            this.sendErrorResponse(responder, error);
+            this.sendErrorResponse(responder, throwable);
         }
     },
 
@@ -54,6 +54,10 @@ var EntityController = Class.extend(Obj, {
      * @param {Error} error
      */
     sendErrorResponse: function(responder, error) {
+
+        //TODO BRN: If we are in production mode, we should not send across a full Error. Instead, we should simply
+        // send an error response that the client should have a generic reaction to
+
         var response = responder.response("Error", {
             error: error
         });
@@ -65,6 +69,9 @@ var EntityController = Class.extend(Obj, {
      * @param {Exception} exception
      */
     sendExceptionResponse: function(responder, exception) {
+
+        //TODO BRN: If we are in production mode, we should not send across a full Exception.
+
         var response = responder.response("Exception", {
             exception: exception.toObject()
         });

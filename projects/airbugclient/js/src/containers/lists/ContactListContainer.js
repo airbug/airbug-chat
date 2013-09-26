@@ -141,8 +141,8 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.contactCollection = new ContactCollection([], "contactCollection");
-        this.addCollection(this.contactCollection);
+        this.contactCollection = new ContactCollection([]);
+        this.addCollection("contactCollection", this.contactCollection);
 
 
         // Create Views

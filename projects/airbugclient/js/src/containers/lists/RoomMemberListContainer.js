@@ -149,8 +149,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomMemberCollection = new RoomMemberCollection([], roomId);
-        this.addCollection(this.roomMemberCollection);
+        this.roomMemberCollection = new RoomMemberCollection([]);
+        this.addCollection(roomId, this.roomMemberCollection);
 
 
         // Create Views

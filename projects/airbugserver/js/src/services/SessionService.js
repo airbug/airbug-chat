@@ -93,6 +93,19 @@ var SessionService = Class.extend(Obj, {
         }
     },
 
+
+    destroySession: function(sid) {
+
+        //TODO
+        delete handshake.session.userId;
+        delete handshake.user;
+        delete handshake.session.data.userId;
+        this.shakeIt(handshake, function(error){
+            console.log("user" + currentUser._id + "loggedout");
+            callback(error);
+        });
+    },
+
     /**
      * @param {string} sid
      * @param {function(error, airbugserver.Session)} callback

@@ -7,8 +7,8 @@
 //@Export('RoomManager')
 
 //@Require('Class')
-//@Require('List')
-//@Require('Obj')
+//@Require('Set')
+//@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Room')
 //@Require('bugflow.BugFlow')
 
@@ -25,8 +25,8 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
+var Set                 = bugpack.require('Set');
+var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Room                = bugpack.require('airbugserver.Room');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -46,7 +46,7 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomManager = Class.extend(Obj, {
+var RoomManager = Class.extend(EntityManager, {
 
     /**
      * @constructs
@@ -74,7 +74,6 @@ var RoomManager = Class.extend(Obj, {
          * @type {RoomMemberManager}
          */
         this.roomMemberManager      = roomMemberManager;
-
     },
 
 
@@ -84,17 +83,17 @@ var RoomManager = Class.extend(Obj, {
 
     /**
      * @param {Room} room
-     * @param callback
+     * @param {function(Throwable, Room)} callback
      */
     createRoom: function(room, callback) {
         room.setCreatedAt(new Date());
         room.setUpdatedAt(new Date());
-        this.dataStore.create(room.toObject(), function(error, dbRoom) {
-            if (!error) {
+        this.dataStore.create(room.toObject(), function(throwable, dbRoom) {
+            if (!throwable) {
                 room.setId(dbRoom.id);
                 callback(undefined, room);
             } else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
@@ -106,25 +105,25 @@ var RoomManager = Class.extend(Obj, {
      *      id: string,
      *      name: string,
      *      updatedAt: Date,
-     *      roomMemberIdList: (Array.<string> | List.<string>)
+     *      roomMemberIdSet: (Array.<string> | List.<string>)
      * }} data
      * @return {Room}
      */
-    generateRoom: function(requestContext, data) {
+    generateRoom: function(data) {
         var room = new Room();
         room.setConversationId(data.conversationId);
         room.setId(data.id);
         room.setCreatedAt(data.createdAt);
         room.setName(data.name);
         room.setUpdatedAt(data.updatedAt);
-        room.setRoomMemberIdList(new List(data.roomMemberIdList));
+        room.setRoomMemberIdSet(new Set(data.roomMemberIdSet));
         return room;
     },
 
     /**
      * @param {Room} room
      * @param {Array.<string>} properties
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     populateRoom: function(room, properties, callback) {
         var _this = this;
@@ -134,11 +133,11 @@ var RoomManager = Class.extend(Obj, {
                     var conversationId = room.getConversationId();
                     if (conversationId) {
                         if (!room.getConversation() || room.getConversation().getId() !== conversationId) {
-                            _this.conversationManager.retrieveConversation(conversationId, function(error, retrievedConversation) {
-                                if (!error) {
+                            _this.conversationManager.retrieveConversation(conversationId, function(throwable, retrievedConversation) {
+                                if (!throwable) {
                                     room.setConversation(retrievedConversation);
                                 }
-                                flow.complete(error);
+                                flow.complete(throwable);
                             })
                         } else {
                             flow.complete();
@@ -147,28 +146,37 @@ var RoomManager = Class.extend(Obj, {
                         flow.complete();
                     }
                     break;
-                case "roomMemberList":
-                    var roomMemberIdList = room.getRoomMemberIdList();
-                    var roomMemberList = room.getRoomMemberList();
-                    var roomMemberLookups = [];
-                    if (!roomMemberList) {
-                        roomMemberList = new List();
+                case "roomMemberSet":
+                    var roomMemberIdSet = room.getRoomMemberIdSet();
+                    var roomMemberSet = room.getRoomMemberSet();
+                    if (!roomMemberSet) {
+                        roomMemberSet = new List();
                     }
-                    roomMemberList.
+                    var lookupRoomMemberIdSet = roomMemberIdSet.clone();
 
+                    // NOTE BRN: If the roomMember's id does not exist in the roomMemberIdSet, it means it's been removed
+                    // If the roomMember's id is contained in the
 
-                    $forEachParallel(roomMemberLookups, function(flow, roomMemberId) {
-                        _this.roomMemberManager.retrieveRoomMember(roomMemberId, function(error, roomMember) {
-                            if (!error) {
-                                roomMemberList.add(roomMember);
-                            }
-                            flow.complete(error);
-                        });
-                    }).execute(function(error) {
-                        if (!error) {
-                            roomMemberList.setRoomMemberList(roomMemberList);
+                    roomMemberSet.clone().forEach(function(roomMember) {
+                        if (roomMemberIdSet.contains(roomMember.getId())) {
+                            lookupRoomMemberIdSet.remove(roomMember.getId());
+                        } else {
+                            roomMemberSet.remove(roomMember);
                         }
-                        flow.complete(error);
+                    });
+
+                    $iterableParallel(lookupRoomMemberIdSet, function(flow, roomMemberId) {
+                        _this.roomMemberManager.retrieveRoomMember(roomMemberId, function(throwable, roomMember) {
+                            if (!throwable) {
+                                roomMemberSet.add(roomMember);
+                            }
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable) {
+                        if (!throwable) {
+                            roomMemberSet.setRoomMemberSet(roomMemberSet);
+                        }
+                        flow.complete(throwable);
                     });
                     break;
             }
@@ -177,15 +185,15 @@ var RoomManager = Class.extend(Obj, {
 
     /**
      * @param {string} roomId
-     * @param {function(Error, Room)} callback
+     * @param {function(Throwable, Room)} callback
      */
     retrieveRoom: function(roomId, callback) {
         var _this = this;
 
         //TODO BRN: Look at using the "lean" option for retrieval to prevent from having to call .toObject on th dbRoom
 
-        this.dataStore.findById(roomId, function(error, dbRoom) {
-            if (!error) {
+        this.dataStore.findById(roomId, function(throwable, dbRoom) {
+            if (!throwable) {
                 var room = undefined;
                 if (dbRoom) {
                     room = _this.generateRoom(dbRoom.toObject());
@@ -193,35 +201,43 @@ var RoomManager = Class.extend(Obj, {
                 }
                 callback(undefined, room);
             } else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(Error, room)} callback
+     * @param {function(Throwable, room)} callback
      */
     retrieveRooms: function(roomIds, callback) {
-        this.dataStore.where("_id").in(roomIds).exec(function(error, results) {
+        this.dataStore.where("_id").in(roomIds).exec(function(throwable, results) {
             //TEST
             console.log("RetrieveRooms results", results);
         });
     },
 
-    saveRoom: function(room, callback) {
+    /**
+     * @param {Room} room
+     * @param {function(Throwable, Room)} callback
+     */
+    updateRoom: function(room, callback) {
 
         //TODO BRN:
         room.membersList.addToSet(roomMember._id);
-        room.save(function(error, room) {
-            callback(error, room);
+        room.save(function(throwable, room) {
+            callback(throwable, room);
         });
 
 
-        _this.dataStore.populate(returnedRoom, {path: "membersList"}, function(error, returnedRoom){
+        _this.dataStore.populate(returnedRoom, {path: "membersList"}, function(throwable, returnedRoom){
             room = returnedRoom;
-            flow.complete(error);
+            flow.complete(throwable);
         });
+
+
+
+        this.dataStore.update({id: })
     }
 });
 

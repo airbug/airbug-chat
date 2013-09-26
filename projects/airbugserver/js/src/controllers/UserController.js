@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,8 +31,8 @@ var BugFlow             = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $series     = BugFlow.$series;
-var $task       = BugFlow.$task;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, bugCallRouter, userService, sessionService, callService){
+    _constructor: function(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory) {
 
         this._super();
 
@@ -58,37 +58,37 @@ var UserController = Class.extend(EntityController, {
          * @private
          * @type {BugCallRouter}
          */
-        this.bugCallRouter      = bugCallRouter;
-
-        /**
-         * @private
-         * @type {CallService}
-         */
-        this.callService        = callService;
+        this.bugCallRouter          = bugCallRouter;
 
         /**
          * @private
          * @type {}
          */
-        this.config             = config;
+        this.config                 = config;
 
         /**
          * @private
          * @type {ExpressApp}
          */
-        this.expressApp         = expressApp;
+        this.expressApp             = expressApp;
+
+        /**
+         * @private
+         * @type {RequestContextFactory}
+         */
+        this.requestContextFactory  = requestContextFactory;
 
         /**
          * @private
          * @type {SessionService}
          */
-        this.sessionService     = sessionService;
+        this.sessionService         = sessionService;
 
         /**
          * @private
          * @type {UserService}
          */
-        this.userService        = userService;
+        this.userService            = userService;
     },
 
 
@@ -103,7 +103,6 @@ var UserController = Class.extend(EntityController, {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this = this;
-        var callService     = this.callService;
         var expressApp      = this.expressApp;
         var userService     = this.userService;
         var sessionService  = this.sessionService;
@@ -127,7 +126,7 @@ var UserController = Class.extend(EntityController, {
                 $task(function(flow){
                     userService.loginUser(userObj, function(error, user){
                         returnedUser = user;
-                        if(!error && !user){
+                        if (!error && !user) {
                             flow.error(new Error("User does not exist"))
                         } else {
                             flow.complete(error);
@@ -234,27 +233,6 @@ var UserController = Class.extend(EntityController, {
         //-------------------------------------------------------------------------------
 
         this.bugCallRouter.addAll({
-
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            logoutCurrentUser:  function(request, responder){
-                var handshake   = request.getHandshake();
-                var currentUser = handshake.user;
-                userService.logoutUser(currentUser, handshake, function(error){
-                    if(!error){
-                        var data        = {error: null};
-                        var response    = responder.response("loggedoutCurrentUser", data);
-                    } else {
-                        var data        = {error: error.toString()};
-                        var response    = responder.response("logoutCurrentUserError", data);
-                    }
-                    responder.sendResponse(response);
-                    //
-                    // responder.callManager.disconnect();
-                });
-            },
 
             /**
              * @param {IncomingRequest} request

@@ -182,7 +182,6 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
         column2.toggleClass("span12 span3");
         column1.toggleClass("span0 span9");
         var workspacePanel  = this.workspaceContainer.getViewTop();
-        var 
         switch(buttonName){
             case "":
                 break;

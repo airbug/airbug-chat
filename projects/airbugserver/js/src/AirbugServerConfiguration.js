@@ -728,10 +728,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
+     * @param {RequestContextFactory} requestContextFactory
      * @return {RoomController}
      */
-    roomController: function(bugCallRouter, roomService, callService) {
-        this._roomController = new RoomController(bugCallRouter, roomService, callService);
+    roomController: function(bugCallRouter, roomService, requestContextFactory) {
+        this._roomController = new RoomController(bugCallRouter, roomService, requestContextFactory);
         return this._roomController;
     },
 
@@ -794,12 +795,16 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {Object} config
+     * @param {ExpressApp} expressApp
      * @param {SocketRouter} bugCallRouter
      * @param {UserService} userService
+     * @param {SessionService} sessionService
+     * @param {RequestContextFactory} requestContextFactory
      * @return {UserController}
      */
-    userController: function(config, expressApp, bugCallRouter, userService, sessionService, callService) {
-        this._userController = new UserController(config, expressApp, bugCallRouter, userService, sessionService, callService);
+    userController: function(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory) {
+        this._userController = new UserController(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory);
         return this._userController;
     },
 
@@ -978,7 +983,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("bugCallRouter"),
                 arg().ref("roomService"),
-                arg().ref("callService"),
                 arg().ref("requestContextFactory")
             ]),
         module("userController")
@@ -988,7 +992,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("bugCallRouter"),
                 arg().ref("userService"),
                 arg().ref("sessionService"),
-                arg().ref("callService"),
                 arg().ref("requestContextFactory")
             ]),
 

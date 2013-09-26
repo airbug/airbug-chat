@@ -137,7 +137,7 @@ var Entity = Class.extend(Obj, {
      *
      */
     commitProperties: function() {
-        this.deltaObject.commitPropertyChanges();
+        this.deltaObject.commitChanges();
     }
 });
 

@@ -37,13 +37,10 @@ var SessionSchema = new Schema({
     sid: {
         type: String,
         require: true,
+        index: true,
         unique: true
     },
     updatedAt: Date
-});
-
-SessionSchema.index({
-    sid: 1
 });
 
 

@@ -33,7 +33,6 @@ var BugFlow             = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $parallel           = BugFlow.$parallel;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -256,21 +255,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {function(error)} callback
      */
-    logoutCurrentUser: function(callback){
+    logout: function(callback) {
         //TODO
         var _this = this;
         $series([
-            // $task(function(flow){
-            //     _this.airbugApi.logoutCurrentUser(function(error){
-            //         if(!error){
-            //             _this.meldObjectManagerModule.clearCache();
-            //             _this.clearCache();
-            //             flow.complete();
-            //         } else {
-            //             flow.error(error);
-            //         }
-            //     });
-            // }),
             $task(function(flow){
                 $.ajax({
                     url: "/app/logout",
