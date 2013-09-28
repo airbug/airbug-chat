@@ -709,10 +709,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {MongoDataStore} mongoDataStore
      * @param {ConversationManager} conversationManager
+     * @param {RoomMemberManager} roomMemberManager
      * @return {RoomManager}
      */
-    roomManager: function(mongoDataStore, conversationManager) {
-        this._roomManager = new RoomManager(mongoDataStore, conversationManager);
+    roomManager: function(mongoDataStore, conversationManager, roomMemberManager) {
+        this._roomManager = new RoomManager(mongoDataStore, conversationManager, roomMemberManager);
         return this._roomManager;
     },
 
@@ -1054,7 +1055,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("roomManager")
             .args([
                 arg().ref("mongoDataStore"),
-                arg().ref("conversationManager")
+                arg().ref("conversationManager"),
+                arg().ref("roomMemberManager")
             ]),
         module("roomMemberManager")
             .args([

@@ -7,6 +7,7 @@
 //@Export('RoomManager')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Set')
 //@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Room')
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
 var Set                 = bugpack.require('Set');
 var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Room                = bugpack.require('airbugserver.Room');
@@ -105,19 +107,13 @@ var RoomManager = Class.extend(EntityManager, {
      *      id: string,
      *      name: string,
      *      updatedAt: Date,
-     *      roomMemberIdSet: (Array.<string> | List.<string>)
+     *      roomMemberIdSet: (Array.<string> | Set.<string>)
      * }} data
      * @return {Room}
      */
     generateRoom: function(data) {
-        var room = new Room();
-        room.setConversationId(data.conversationId);
-        room.setId(data.id);
-        room.setCreatedAt(data.createdAt);
-        room.setName(data.name);
-        room.setUpdatedAt(data.updatedAt);
-        room.setRoomMemberIdSet(new Set(data.roomMemberIdSet));
-        return room;
+        data.roomMemberIdSet = new Set(data.roomMemberIdSet);
+        return new Room(data);
     },
 
     /**
@@ -150,7 +146,7 @@ var RoomManager = Class.extend(EntityManager, {
                     var roomMemberIdSet = room.getRoomMemberIdSet();
                     var roomMemberSet = room.getRoomMemberSet();
                     if (!roomMemberSet) {
-                        roomMemberSet = new List();
+                        roomMemberSet = new Set();
                     }
                     var lookupRoomMemberIdSet = roomMemberIdSet.clone();
 
@@ -194,7 +190,7 @@ var RoomManager = Class.extend(EntityManager, {
 
         this.dataStore.findById(roomId, function(throwable, dbRoom) {
             if (!throwable) {
-                var room = undefined;
+                var room = null;
                 if (dbRoom) {
                     room = _this.generateRoom(dbRoom.toObject());
                     room.commitProperties();
@@ -208,12 +204,26 @@ var RoomManager = Class.extend(EntityManager, {
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(Throwable, room)} callback
+     * @param {function(Throwable, Map.<string, Room>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
+        var _this = this;
         this.dataStore.where("_id").in(roomIds).exec(function(throwable, results) {
-            //TEST
-            console.log("RetrieveRooms results", results);
+            if (!throwable) {
+                var roomMap = new Map();
+                results.forEach(function(result) {
+                    var room = _this.generateRoom(result);
+                    roomMap.put(room.getId(), room);
+                });
+                roomIds.forEach(function(roomId) {
+                    if (!roomMap.containsKey(roomId)) {
+                        roomMap.put(roomId, null);
+                    }
+                });
+                callback(undefined, roomMap);
+            } else {
+                callback(throwable);
+            }
         });
     },
 
@@ -224,6 +234,7 @@ var RoomManager = Class.extend(EntityManager, {
     updateRoom: function(room, callback) {
 
         //TODO BRN:
+
         room.membersList.addToSet(roomMember._id);
         room.save(function(throwable, room) {
             callback(throwable, room);
@@ -237,7 +248,7 @@ var RoomManager = Class.extend(EntityManager, {
 
 
 
-        this.dataStore.update({id: })
+        //this.dataStore.update({id: })
     }
 });
 

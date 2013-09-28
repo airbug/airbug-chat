@@ -9,7 +9,6 @@
 //@Require('Class')
 //@require('Set')
 //@Require('airbugserver.Entity')
-//@Require('bugdelta.DeltaObject')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +25,6 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Set             = bugpack.require('Set');
 var Entity          = bugpack.require('airbugserver.Entity');
-var DeltaObject     = bugpack.require('bugdelta.DeltaObject');
 
 
 //-------------------------------------------------------------------------------
@@ -39,9 +37,9 @@ var Room = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -58,7 +56,7 @@ var Room = Class.extend(Entity, {
          * @private
          * @type {Set.<RoomMember>}
          */
-        this.roomMemberSet     = undefined;
+        this.roomMemberSet      = new Set();
     },
 
 

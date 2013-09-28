@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('airbugserver.Entity')
-//@Require('bugdelta.DeltaObject')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +23,6 @@ var bugpack         = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Entity          = bugpack.require('airbugserver.Entity');
-var DeltaObject     = bugpack.require('bugdelta.DeltaObject');
 
 
 //-------------------------------------------------------------------------------
