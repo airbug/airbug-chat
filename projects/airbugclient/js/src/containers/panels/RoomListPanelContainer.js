@@ -148,12 +148,11 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUserMeldObj){
             if(!error && currentUserMeldObj){
                 var currentUserObj = currentUserMeldObj.generateObject();
-                _this.roomManagerModule.retrieveRooms(currentUserObj.roomsList, function(error, roomMeldObjs){
+                _this.roomManagerModule.retrieveRooms(currentUserObj.roomIdSet, function(error, roomMeldObjs){
                     if(!error && roomMeldObjs){
                         roomMeldObjs.forEach(function(roomMeldObj){
                             if(roomMeldObj){ // in case roomMeldObj is null e.g. no longer exists
-                                var roomObj = roomMeldObj.generateObject();
-                                _this.roomCollection.add(roomObj, roomObj._id);
+                                _this.roomCollection.add(roomMeldObj);
                             }
                         });
                     } else {

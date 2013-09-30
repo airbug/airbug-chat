@@ -82,42 +82,42 @@ var Room = Class.extend(Entity, {
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaObject.getProperty("conversationId");
+        return this.deltaDocument.getCurrentData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaObject.setProperty("conversationId", conversationId);
+        this.deltaDocument.getCurrentData().conversationId = conversationId;
     },
 
     /**
      * @return {string}
      */
     getName: function() {
-        return this.deltaObject.getProperty("name");
+        return this.deltaDocument.getCurrentData().name;
     },
 
     /**
      * @param {string} name
      */
     setName: function(name) {
-        this.deltaObject.setProperty("name", name);
+        this.deltaDocument.getCurrentData().name = name;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomMemberIdSet: function() {
-        return this.deltaObject.getProperty("roomMemberIdSet");
+        return this.deltaDocument.getCurrentData().roomMemberIdSet;
     },
 
     /**
      * @param {Set.<string>} roomMemberIdSet
      */
     setRoomMemberIdSet: function(roomMemberIdSet) {
-        this.deltaObject.setProperty("roomMemberIdSet", roomMemberIdSet);
+        this.deltaDocument.getCurrentData().roomMemberIdSet = roomMemberIdSet;
     },
 
     /**
@@ -127,18 +127,23 @@ var Room = Class.extend(Entity, {
         return this.roomMemberSet;
     },
 
-    /**
-     * @param {Set.<RoomMember>} roomMemberSet
-     */
-    setRoomMemberSet: function(roomMemberSet) {
-        this.roomMemberSet = roomMemberSet;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} roomMemberId
+     */
+    addRoomMemberId: function(roomMemberId) {
+        var roomMemberIdSet = this.getRoomMemberIdSet();
+        if (!roomMemberIdSet) {
+            roomMemberIdSet = new Set();
+            this.setRoomMemberIdSet(roomMemberIdSet);
+        }
+        roomMemberIdSet.add(roomMemberId);
+    },
+    
     /**
      * @param {RoomMember} roomMember
      */

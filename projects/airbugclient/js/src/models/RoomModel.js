@@ -39,7 +39,7 @@ var RoomModel = Class.extend(MeldModel, {
         _id: "",
         name: "",
         conversationId: "",
-        membersList: [],
+        memberIdSet: ,
         createdAt: "",
         updatedAt: ""
     }

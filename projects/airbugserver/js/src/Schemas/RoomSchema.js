@@ -32,7 +32,7 @@ var RoomSchema = new Schema({
     conversationId: ObjectId,
     createdAt: Date,
     name: String,
-    roomMemberIdSet: [{ type: ObjectId, ref: 'RoomMember' }],
+    roomMemberIdSet: [{ type: ObjectId, ref: 'RoomMember'}],
     updatedAt: Date
 });
 

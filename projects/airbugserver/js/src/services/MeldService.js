@@ -100,11 +100,11 @@ var MeldService = Class.extend(Obj, {
         var meldKey = this.generateMeldKey(type, entity.getId(), filter);
         var meldObject = undefined;
         if (!meldManager.containsMeldByKey(meldKey)) {
-            entity.commitProperties();
+            entity.commitDelta();
             meldObject = this.meldBuilder.generateMeldObjectFromObject(entity.toObject());
             meldManager.addMeld(meldObject);
         } else {
-            entity.getDeltaObject().getPropertyChangeMap().forEach(function(propertyChange) {
+            entity.generateDelta().forEach(function(deltaChange) {
                 switch (propertyChange.getChangeType()) {
                     case PropertyChange.ChangeTypes.PROPERTY_REMOVED:
                         meldObject.unmeldProperty(propertyChange.getPropertyName());
@@ -114,7 +114,7 @@ var MeldService = Class.extend(Obj, {
                         break;
                 }
             });
-            entity.commitProperties();
+            entity.commitDelta();
         }
     },
 

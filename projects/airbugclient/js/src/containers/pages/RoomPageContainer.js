@@ -215,9 +215,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
         this.roomManagerModule.retrieveRoom(roomId, function(error, roomMeldObj){
             if(!error && roomMeldObj){
-                var roomObj = roomMeldObj.generateObject();
-                if(!roomObj.id) roomObj.id = roomObj._id;
-                _this.roomModel.set(roomObj);
+                _this.roomModel.setMeldObject(roomMeldObj);
                 //TODO stop loading animation
             } else {
                 //TODO

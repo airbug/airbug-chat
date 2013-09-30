@@ -101,7 +101,7 @@ var ConversationManager = Class.extend(EntityManager, {
                 var conversation = undefined;
                 if (dbConversation) {
                     conversation = _this.generateConversation(dbConversation.toObject());
-                    conversation.commitChanges();
+                    conversation.commitDelta();
                 }
                 callback(undefined, conversation);
             } else {

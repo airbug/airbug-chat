@@ -147,9 +147,6 @@ var RoomManager = Class.extend(EntityManager, {
                 case "roomMemberSet":
                     var roomMemberIdSet = room.getRoomMemberIdSet();
                     var roomMemberSet = room.getRoomMemberSet();
-                    if (!roomMemberSet) {
-                        roomMemberSet = new Set();
-                    }
                     var lookupRoomMemberIdSet = roomMemberIdSet.clone();
 
                     // NOTE BRN: If the roomMember's id does not exist in the roomMemberIdSet, it means it's been removed
@@ -171,12 +168,11 @@ var RoomManager = Class.extend(EntityManager, {
                             flow.complete(throwable);
                         });
                     }).execute(function(throwable) {
-                        if (!throwable) {
-                            roomMemberSet.setRoomMemberSet(roomMemberSet);
-                        }
                         flow.complete(throwable);
                     });
                     break;
+                default:
+                    flow.complete(new Error("Unknown property '" + property + "'"));
             }
         }).execute(callback);
     },
@@ -195,7 +191,7 @@ var RoomManager = Class.extend(EntityManager, {
                 var room = null;
                 if (dbRoom) {
                     room = _this.generateRoom(dbRoom.toObject());
-                    room.commitProperties();
+                    room.commitDelta();
                 }
                 callback(undefined, room);
             } else {
@@ -215,7 +211,7 @@ var RoomManager = Class.extend(EntityManager, {
                 var roomMap = new Map();
                 results.forEach(function(result) {
                     var room = _this.generateRoom(result);
-                    room.commitProperties();
+                    room.commitDelta();
                     roomMap.put(room.getId(), room);
                 });
                 roomIds.forEach(function(roomId) {
