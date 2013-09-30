@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('IObjectable')
 //@Require('Obj')
-//@Require('bugdelta.DeltaObject')
+//@Require('bugdelta.DeltaDocument')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
-var DeltaObject     = bugpack.require('bugdelta.DeltaObject');
+var DeltaDocument     = bugpack.require('bugdelta.DeltaDocument');
 
 
 //-------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ var Entity = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
         this._super();
 
@@ -50,9 +50,9 @@ var Entity = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {DeltaObject}
+         * @type {DeltaDocument}
          */
-        this.deltaObject        = new DeltaObject();
+        this.deltaDocument        = new DeltaDocument(data);
     },
 
 
@@ -64,7 +64,7 @@ var Entity = Class.extend(Obj, {
      * @return {Date}
      */
     getCreatedAt: function() {
-        return this.deltaObject.getProperty("createdAt");
+        return this.deltaDocument.getCurrentData().createdAt;
     },
 
     /**
@@ -136,7 +136,7 @@ var Entity = Class.extend(Obj, {
     /**
      *
      */
-    commitProperties: function() {
+    commitChanges: function() {
         this.deltaObject.commitChanges();
     }
 });

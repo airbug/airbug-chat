@@ -54,14 +54,14 @@ var ChatMessage = Class.extend(Entity, {
      * @return {string}
      */
     getBody: function() {
-        return this.deltaObject.getProperty("body");
+        return this.deltaDocument.getCurrentData().body;
     },
 
     /**
      * @param {string} body
      */
     setBody: function(body) {
-        this.deltaObject.setProperty("body", body);
+        this.deltaDocument.getCurrentData().body = body;
     },
 
     /**

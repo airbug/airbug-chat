@@ -112,7 +112,9 @@ var RoomManager = Class.extend(EntityManager, {
      * @return {Room}
      */
     generateRoom: function(data) {
-        data.roomMemberIdSet = new Set(data.roomMemberIdSet);
+        if (!Class.doesExtend(data.roomMemberIdSet, Set)) {
+            data.roomMemberIdSet = new Set(data.roomMemberIdSet);
+        }
         return new Room(data);
     },
 
@@ -213,6 +215,7 @@ var RoomManager = Class.extend(EntityManager, {
                 var roomMap = new Map();
                 results.forEach(function(result) {
                     var room = _this.generateRoom(result);
+                    room.commitProperties();
                     roomMap.put(room.getId(), room);
                 });
                 roomIds.forEach(function(roomId) {
