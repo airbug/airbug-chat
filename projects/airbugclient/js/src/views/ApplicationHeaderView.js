@@ -35,8 +35,8 @@ var ApplicationHeaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="application-header-wrapper" class="navbar navbar-fixed-top">' +
-                    '<div class="container">' +
+    template:   '<div id="{{id}}-wrapper" class="navbar navbar-fixed-top">' +
+                    '<div id="{{id}}" class="container">' +
                         '<div class="header">' +
                             '<div id="header-left">' +
                             '</div>' +
@@ -49,7 +49,16 @@ var ApplicationHeaderView = Class.extend(MustacheView, {
                             '</div>' +
                         '</div>' +
                     '</div>' +
-                '</div>'
+                '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "application-header";
+        return data;
+    }
 });
 
 

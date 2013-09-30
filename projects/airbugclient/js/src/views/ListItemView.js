@@ -35,8 +35,17 @@ var ListItemView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}}">' +
+    template: '<div id="{{id}}" class="list-item list-item-{{attributes.size}}">' +
               '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "list-item-" + this.cid;
+        return data;
+    }
 
 
     //-------------------------------------------------------------------------------

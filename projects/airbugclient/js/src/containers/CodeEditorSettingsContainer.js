@@ -89,7 +89,6 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
      * @param {Array<*>} routerArgs
      */
     activateContainer: function(routerArgs) {
-        var _this = this;
         this._super(routerArgs);
 
     },
@@ -110,6 +109,7 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
 
         this.codeEditorSettingsView =
             view(CodeEditorSettingsView)
+                .id("code-editor-settings")
                 .build();
 
 
@@ -128,7 +128,7 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-    },
+    }
 
     //-------------------------------------------------------------------------------
     // Event Listeners

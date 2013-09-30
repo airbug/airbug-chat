@@ -4,13 +4,18 @@
 
 //@Package('airbug')
 
-//@Export('CodeEditorWidgetContainer')
+//@Export('CodeEditorContainer')
 
 //@Require('Class')
-//@Require('airbug.CodeEditorContainer')
-//@Require('airbug.CodeEditorSettingsContainer')
+//@Require('ace.Ace')
+//@Require('ace.KitchenSink')
+//@Require('airbug.CodeEditorSettingsButtonContainer')
+//@Require('airbug.BoxWithHeaderAndFooterView')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.PanelView')
+//@Require('aribug.IconView')
+//@Require('airbug.TextView')
 //@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -31,10 +36,15 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
-var CodeEditorContainer                 = bugpack.require('airbug.CodeEditorContainer');
-var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
+var Ace                                 = bugpack.require('ace.Ace');
+var AceModes                            = bugpack.require('ace.AceModes');
+var KitchenSink                         = bugpack.require('ace.KitchenSink');
+var ButtonView                          = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
-var PanelView                           = bugpack.require('airbug.PanelView');
+var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
+var TextView                            = bugpack.require('airbug.TextView');
 var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
@@ -47,7 +57,10 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -55,7 +68,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
+var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -70,9 +83,19 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {ace.Ace}
+         */
+        this.aceEditor                  = null;
+
         // Models
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {airbug.CommandModule}
+         */
+        this.commandModule              = null;
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -83,25 +106,14 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.PanelView}
+         * @type {airbug.BoxWithHeaderAndFooterView}
          */
-        this.panelView                      = null;
+        this.boxView                   = null;
 
 
         // Containers
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {airbug.CodeEditorContainer}
-         */
-        this.codeEditorContainer            = null;
-
-        /**
-         * @private
-         * @type {airbug.CodeEditorSettingsContainer}
-         */
-        this.codeEditorSettingsContainer    = null;
 
     },
 
@@ -133,24 +145,35 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView = 
-            view(PanelView)
-                .id("code-editor-widget")
-                .attributes({classes: "workspace-widget"})
+        this.boxView =
+            view(BoxWithHeaderAndFooterView)
+                .id("code-editor-container")
+                .children([
+                    view(TextView)
+                        .attributes({text: "Code Editor"})
+                        .appendTo(".box-header"),
+                    view(ButtonView)
+                        .id("embedButtonView")
+                        .attributes({
+                            type: "default",
+                            size: ButtonView.Size.LARGE
+                        })
+                        .appendTo(".box-footer")
+                ])
                 .build();
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxView);
+        this.embedButtonView = this.findViewById("embedButtonView");
     },
 
     createContainerChildren: function() {
         this.super();
-        this.codeEditorContainer            = new CodeEditorContainer();
-        this.codeEditorSettingsContainer    = new CodeEditorSettingsContainer();
-        this.addContainerChild(this.codeEditorContainer,            "#code-editor-widget");
-        this.addContainerChild(this.codeEditorSettingsContainer,    "#code-editor-widget");
+        this.settingsButton     = new CodeEditorSettingsButtonContainer();
+        this.addContainerChild(this.settingsButton, ".box-header");
     },
 
     /**
@@ -158,21 +181,33 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
-        this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
     },
-
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     *
+     */
+    initializeEventListeners: function() {
+        this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+    },
+
+    /**
+     *
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+    },
 
+    /**
+     * @param {airbug.ButtonViewEvent} event
+     */
+    hearEmbedButtonClickedEvent: function(event){
+        this.handleEmbedButtonClickedEvent(event);
     },
 
     //-------------------------------------------------------------------------------
@@ -180,18 +215,77 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {PublisherMessage} message
+     * @type {PublisherMessage} message
      */
-    handleToggleCodeEditorSettingsCommand: function(message){
-        var codeEditor          = this.viewTop.$el.find("#code-editor-container");
-        var codeEditorSettings  = this.viewTop.$el.find("#code-editor-settings-wrapper");
+    handleDisplayCodeCommand: function(message){
+        var code = message.getData().code;
+        this.setEditorText(code);
+    },
 
-        if(codeEditor.is(":hidden")){
-            codeEditor.show();
-            codeEditorSettings.hide();
+    /**
+     * @param {airbug.ButtonViewEvent} event
+     */
+    handleEmbedButtonClickedEvent: function(event){
+        var code            = this.getEditorText();
+        var codeLanguage    = this.getEditorLanguage();
+        var chatMessageObj = {
+            code: text,
+            type: "code",
+            codeLanguage: codeLanguage
+        };
+
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHATMESSAGE, chatMessageObj);
+        event.stopPropagation();
+    },
+
+    //-------------------------------------------------------------------------------
+    // Ace Config and Helper Methods
+    //-------------------------------------------------------------------------------
+
+    configureAceEditor: function(){
+        this.aceEditor  = Ace.edit("box-body-" + this.boxView.cid);
+        var aceModes    = new AceModes();
+        KitchenSink.load();
+        aceModes.loadTopTen();
+
+        aceEditor.setTheme("ace/theme/textmate");
+        aceEditor.getSession().setMode("ace/mode/javascript");
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorLanguage: function(){
+        var mode = this.aceEditor.getSession().getMode().$id;
+        return mode.substring(mode.lastIndexOf("/"));
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorText: function(){
+        if(this.aceEditor){
+            return this.aceEditor.getValue();
         } else {
-            codeEditorSettings.show();
-            codeEditor.hide();
+            return "";
+        }
+    },
+
+    /**
+     * @param {string} value
+     */
+    setEditorText: function(value){
+        if(this.aceEditor){
+            this.aceEditor.setValue(value);
+        }
+    },
+
+    /**
+     *
+     */
+    setEditorToReadOnly: function(){
+        if(this.aceEditor){
+            this.aceEditor.setReadOnly(true);
         }
     }
 });
@@ -201,15 +295,14 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CodeEditorWidgetContainer).with(
+bugmeta.annotate(CodeEditorContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
     ])
 );
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CodeEditorWidgetContainer", CodeEditorWidgetContainer);
+bugpack.export("airbug.CodeEditorContainer", CodeEditorContainer);

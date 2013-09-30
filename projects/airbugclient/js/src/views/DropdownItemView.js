@@ -37,7 +37,7 @@ var DropdownItemView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<li><a id ="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
+    template:   '<li><a id="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
 
 
     //-------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ var DropdownItemView = Class.extend(MustacheView, {
 
     /**
      * @private
-     * @param event
+     * @param {jQuery.Event}
      */
     handleDropdownItemClick: function(event) {
         event.preventDefault();

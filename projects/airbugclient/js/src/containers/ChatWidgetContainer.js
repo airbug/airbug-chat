@@ -12,11 +12,13 @@
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatMessageContainer')
 //@Require('airbug.ChatWidgetView')
-//@Require('airbug.ListView')
-//@Require('airbug.ListItemView')
+//@Require('airbug.CodeChatMessageModel')
+//@Require('airbug.CommandModule')
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
 //@Require('airbug.TextChatMessageModel')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -33,28 +35,34 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                               = bugpack.require('Class');
-var ChatMessageCollection               = bugpack.require('airbug.ChatMessageCollection');
-var ChatMessageContainer                = bugpack.require('airbug.ChatMessageContainer');
-var ChatWidgetInputFormContainer        = bugpack.require('airbug.ChatWidgetInputFormContainer');
-var ChatWidgetMessagesContainer         = bugpack.require('airbug.ChatWidgetMessagesContainer');
-var ChatWidgetView                      = bugpack.require('airbug.ChatWidgetView');
-var ListView                            = bugpack.require('airbug.ListView');
-var ListItemView                        = bugpack.require('airbug.ListItemView');
-var MessageView                         = bugpack.require('airbug.MessageView');
-var PanelView                           = bugpack.require('airbug.PanelView');
-var TextChatMessageModel                = bugpack.require('airbug.TextChatMessageModel');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+
+var Class                           = bugpack.require('Class');
+var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
+var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
+var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
+var ChatMessageContainer            = bugpack.require('airbug.ChatMessageContainer');
+var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
+var CodeChatMessageModel            = bugpack.require('airbug.CodeChatMessageModel');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
+var MessageView                     = bugpack.require('airbug.MessageView');
+var PanelView                       = bugpack.require('airbug.PanelView');
+var TextChatMessageModel            = bugpack.require('airbug.TextChatMessageModel');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var view    = ViewBuilder.view;
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -67,6 +75,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {airbug.ConversationModel} conversationModel
+     */
     _constructor: function(conversationModel) {
 
         this._super();
@@ -83,13 +94,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationModel}
          */
-        this.conversationModel      = conversationModel;
+        this.conversationModel              = conversationModel;
 
         /**
          * @private
          * @type {ChatMessageCollection}
          */
-        this.chatMessageCollection  = null;
+        this.chatMessageCollection          = null;
 
 
         // Views
@@ -113,12 +124,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          */
         this.chatWidgetMessagesContainer    = null;
 
-        /**
-         * @private
-         * @type {ListView}
-         */
-        this.messageListView                = null;
-
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -128,6 +133,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {ChatMessageManagerModule}
          */
         this.chatMessageManagerModule       = null;
+
+        /**
+         * @private
+         * @type {airbug.CommandModule}
+         */
+         this.commandModule                 = null;
 
         /**
          * @private
@@ -203,7 +214,23 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.conversationModel.bind('change:_id', this.handleConversationModelChangeId, this);
         this.chatMessageCollection.bind('add', this.handleChatMessageCollectionAdd, this);
 
-        this.chatWidgetInputFormContainer.getViewTop().addEventListener(FormViewEvent.EventType.SUBMIT, this.handleInputFormSubmit, this);
+        this.initializeCommandSubscriptions();
+        // this.chatWidgetInputFormContainer.getViewTop().addEventListener(FormViewEvent.EventType.SUBMIT, this.hearInputFormSubmit, this);
+    },
+
+    /**
+     * 
+     */
+    initializeCommandSubscriptions: function() {
+        this.commandModule.subscribe(CommandType.SUBMIT.CHATMESSAGE, this.handleSubmitChatMessageCommand, this);
+    },
+
+    /**
+     * @param {PublisherMessage} message
+     */
+    handleSubmitChatMessageCommand: function(message) {
+        var chatMessageObj = message.getData();
+        this.handleInputFormSubmit(chatMessageObj);
     },
 
 
@@ -241,19 +268,33 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @type {airbug.FormViewEvent} event 
      */
-    handleInputFormSubmit: function(event){
-        console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
-        var _this = this;
-        var chatMessage = event.getData();
-        chatMessage.conversationId      = this.conversationModel.get("_id");
-        chatMessage.conversationOwnerId = this.conversationModel.get("ownerId");
-        chatMessage.sentAt              = new Date().toJSON();
+    // hearInputFormSubmit: function(event){
+    //     console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
+    //     var chatMessageObj = event.getData();
+    //     this.handleInputFormSubmit(chatMessageObj);
+    // },
 
-        var newChatMessageModel = new TextChatMessageModel(chatMessage, null);
+    /**
+     * @param {{*}}
+     */
+    handleInputFormSubmit: function(chatMessageObj) {
+        var chatMessageObjType = chatMessageObj.type;
+
+        chatMessageObj.conversationId      = this.conversationModel.get("_id");
+        chatMessageObj.conversationOwnerId = this.conversationModel.get("ownerId");
+        chatMessageObj.sentAt              = new Date().toJSON();
+
+        if(chatMessageObjType === ""){
+            var newChatMessageModel = new TextChatMessageModel(chatMessage, null);
+        } else if(chatMessageObjType === "code"){
+            var newChatMessageModel = new CodeChatMessageModel(chatMessageObj, null);
+        }
+
         this.chatMessageCollection.add(newChatMessageModel);
 
-        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageMeldObj){
+        this.chatMessageManagerModule.createChatMessage(chatMessageObj, function(error, chatMessageMeldObj){
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
             console.log("error:", error, "chatMessageObj:", chatMessageMeldObj);
             if(!error && chatMessageMeldObj){
@@ -305,6 +346,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ChatWidgetContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
+        property("commandModule").ref("commandModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("userManagerModule").ref("userManagerModule")
     ])

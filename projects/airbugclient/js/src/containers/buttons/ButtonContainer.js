@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -28,6 +29,7 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -86,7 +88,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.trackButtonClickedEvent, this);
+        this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
     },
 
 
@@ -94,8 +96,8 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    trackButtonClickedEvent: function(event){
-        this.trackerModule.track(ButtonViewEvent.EventType.CLICKED, {buttonName: this.buttonName});
+    handleButtonClickedEvent: function(event){
+        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
     }
 });
 
@@ -106,7 +108,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ButtonContainer).with(
     autowired().properties([
-        property("trackerModule").ref("trackerModule")
+        property("commandModule").ref("commandModule")
     ])
 );
 

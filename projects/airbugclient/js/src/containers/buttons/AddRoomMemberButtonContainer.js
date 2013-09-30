@@ -78,8 +78,14 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {string}
+         */
         this.buttonName         = "AddRoomMemberButton";
 
+        /**
+         * @type {airbug.RoomModel}
+         */
         this.roomModel          = roomModel;
 
 

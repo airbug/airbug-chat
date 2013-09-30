@@ -37,6 +37,7 @@ var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
 
     _constructor: function(object, options) {
         this.defaults.code = "";
+        this.defaults.codeLanguage = "";
         this._super(object, options);
     }
 });

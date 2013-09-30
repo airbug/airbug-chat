@@ -68,6 +68,9 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {string}
+         */
         this.buttonName         = "BackButton";
 
 

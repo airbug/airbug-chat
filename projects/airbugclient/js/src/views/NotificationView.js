@@ -42,8 +42,17 @@ var NotificationView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="notification-container" class="notification-container {{attributes.classes}}">' +
+    template:   '<div id="{{id}}" class="notification-container {{attributes.classes}}">' +
                 '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "notification-container";
+        return data;
+    },
 
     /**
      * @param (string) message

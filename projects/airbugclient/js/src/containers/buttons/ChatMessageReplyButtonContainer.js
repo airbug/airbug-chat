@@ -4,18 +4,16 @@
 
 //@Package('airbug')
 
-//@Export('CodeEditorTrayButtonContainer')
+//@Export('ChatMessageReplyButtonContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationPublisherModule')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.CommandModule')
-//@Require('airbug.ImageView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -30,23 +28,24 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ApplicationPublisherModule  = bugpack.require('airbug.ApplicationPublisherModule');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
-var CommandModule               = bugpack.require('airbug.CommandModule');
-var ImageView                   = bugpack.require('airbug.ImageView');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
+var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var TextView                = bugpack.require('airbug.TextView');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -54,7 +53,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
+var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -72,44 +71,33 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
         /**
          * @type {string}
          */
-        this.buttonName                 = "CodeEditorTrayButton";
-
-        // Models
-        //-------------------------------------------------------------------------------
+        this.buttonName         = "ChatMessageReplyButton";
 
 
         // Modules
         //-------------------------------------------------------------------------------
 
         /**
+         * @private
          * @type {airbug.CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule   = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {airbug.ButtonView}
+         * @type {ButtonView}
          */
-        this.buttonView                 = null;
-
+        this.buttonView         = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-    },
 
     /**
      * @protected
@@ -117,22 +105,19 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = 
+        this.buttonView =
             view(ButtonView)
-                .attributes({})
+                .attributes({type: "link", align: "right"})
                 .children([
-                    view(ImageView)
-                        .attributes({source: "img/"}) //TODO
+                    view(TextView)
+                        .attributes({text: "reply"})
+                        .appendTo('*[id|="button"]')
                 ])
                 .build();
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -141,18 +126,11 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
-     */
-    createContainerChildren: function() {
-        this.super();
-    },
-
-    /**
      * @protected
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this)
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 
@@ -165,18 +143,23 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        event.stopPropagation();
-        this.commandModule.relayCommand(CommandModule.CommandType.DISPLAY.CODE_EDITOR, {});
-        this.commandModule.relayCommand(CommandModule.CommandType.TOGGLE.WORKSPACE, {});
-    }
+        this.handleButtonClickedEvent();
+    },
 
+    /**
+     * @private
+     */
+    handleButtonClickedEvent: function(){
+        // Handled by ChatMessageContainer
+    }
 });
+
 
 //-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CodeEditorTrayButtonContainer).with(
+bugmeta.annotate(ChatMessageReplyButtonContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule")
     ])
@@ -187,4 +170,4 @@ bugmeta.annotate(CodeEditorTrayButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CodeEditorTrayButtonContainer", CodeEditorTrayButtonContainer);
+bugpack.export("airbug.ChatMessageReplyButtonContainer", ChatMessageReplyButtonContainer);

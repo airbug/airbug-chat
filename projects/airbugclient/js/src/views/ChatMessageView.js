@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('MessageView')
+//@Export('ChatMessageView')
 
 //@Require('Class')
 //@Require('DateUtil')
@@ -34,18 +34,22 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 //-------------------------------------------------------------------------------
 
 //TODO Update this to ChatMessageView
-var MessageView = Class.extend(MustacheView, {
+var ChatMessageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="message-wrapper">' +
-                    '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
-                    '<div id="message-pending-{{cid}}" class="message-pending-{{model.pending}}"><img src="/img/pending-dark-blue.gif"></div>' +
-                    '<div id="message-failed-{{cid}}"  class="message-failed-{{model.failed}}"><button class="btn btn-warning btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
-                    '<div id="message-created-at-{{cid}}" class="message-created-at">{{model.createdAt}}</div>' +
-                    '<div id="message-message-{{cid}}" class="message-body">{{model.body}}</div>' +
+    template:   '<div id="chat-message-{{cid}}" class="message-wrapper">' +
+                    // SUNG Are the inner ids necessary?
+                    '<div id="message-sent-by-{{cid}}"      class="message-sent-by">{{model.sentBy}}</div>' +
+                    '<div id="message-pending-{{cid}}"      class="message-pending-{{model.pending}}"><img src="/img/pending-dark-blue.gif"></div>' +
+                    '<div id="message-failed-{{cid}}"       class="message-failed-{{model.failed}}"><button class="btn btn-warning btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
+                    '<div id="message-created-at-{{cid}}"   class="message-created-at">{{model.createdAt}}</div>' +
+                    '<div id="message-message-{{cid}}"      class="message-body">{{model.body}}</div>' +
+                    '<div id="message-code-{{cid}}"         class="message-code">' +
+                        '<pre><code class="{{model.codeLanguage}}">{{model.code}}</code></pre></div>' +
+                    '<div id="message-controls-{{cid}}"     class="message-controls"></div>' +
                 '</div>',
 
 
@@ -160,4 +164,4 @@ var MessageView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.MessageView", MessageView);
+bugpack.export("airbug.ChatMessageView", ChatMessageView);

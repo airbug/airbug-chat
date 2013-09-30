@@ -8,9 +8,13 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
+//@Require('airbug.CommandModule')
 //@Require('airbug.PageView')
 //@Require('airbug.FourColumnView')
 //@Require('airbug.WorkspaceWidgetContainer')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -27,9 +31,13 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
+var CommandModule               = bugpack.require('airbug.CommandModule');
 var FourColumnView              = bugpack.require('airbug.FourColumnView');
 var PageView                    = bugpack.require('airbug.PageView');
 var WorkspaceWidgetContainer    = bugpack.require('airbug.WorkspaceContainer');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -37,7 +45,11 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -59,6 +71,13 @@ var PageContainer = Class.extend(ApplicationContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @type {airbug.CommandModule}
+         */
+        this.commandModule      = null;
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -87,8 +106,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
     /**
      * @protected
      */
-    createContainer: function() {
-        this._super();
+    createContainer: function(routingArgs) {
+        this._super(routingArgs);
 
         // Create Views
         //-------------------------------------------------------------------------------
@@ -97,7 +116,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
             view(PageView)
                 .children([
                     view(FourColumnView)
-                        .attributes({configuration: FourColumnView.Configuration.EXTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT})
+                        .id("page-row-container")
+                        .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT})
                 ])
                 .build();
 
@@ -114,6 +134,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.workspaceContainer, ".column3of4");
     },
 
+    /**
+     * @protected
+     */
     activateContainer: function(routingArgs){
         this._super(routingArgs);
     },
@@ -123,17 +146,122 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.workspaceWidgetContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearWorkspaceTrayButtonClick, this);
+        this.initializeCommandSubscriptions();
+    },
+
+    //-------------------------------------------------------------------------------
+    // Private Instance Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    initializeCommandSubscriptions: function(){
+        this.commandModule.subscribe(CommandTypes.TOGGLE.WORKSPACE,      this.handleToggleWorkspaceCommand,      this);
+        this.commandModule.subscribe(CommandTypes.TOGGLE.HAMBURGER_LEFT, this.handleToggleHamburgerLeftCommand,  this);
     },
 
     /**
-     * @param {airbug.ButtonViewEvent} event
+     * @private
+     * @param {PublisherMessage} message
      */
-    hearWorkspaceTrayButtonClick: function(event){
-        
+    handleToggleWorkspaceCommand: function(message){
+        // var topic           = message.getTopic();
+        // var data            = message.getData();
+        var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+
+        workspace.toggleClass("workspace-open");
+        this.updateColumnSpans();
+    },
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
+    handleToggleHamburgerLeftCommand: function(message){
+        // var topic           = message.getTopic();
+        // var data            = message.getData();
+        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
+
+        hamburgerLeft.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
+    },
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
+    handleToggleHamburgerRightCommand: function(message){
+        // var topic           = message.getTopic();
+        // var data            = message.getData();
+        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
+
+        hamburgerRight.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
+    },
+
+    /**
+     * @private
+     */
+    updateColumnSpans: function(){
+        var hamburgerLeft           = this.viewTop.$el.find("#page-row-container>.column1of4");
+        var roomspace               = this.viewTop.$el.find("#page-row-container>.column2of4");
+        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+        var hamburgerRight          = this.viewTop.$el.find("#page-row-container>.column4of4");
+        var hamburgerLeftIsOpen     = !hamburgerLeft.hasClass("hamburger-panel-hidden");
+        var hamburgerRightIsOpen    = !hamburgerRight.hasClass("hamburger-panel-hidden");
+        var workspaceIsOpen         = workspace.hasClass("workspace-open");
+
+        if(hamburgerLeftIsOpen && hamburgerRightIsOpen){
+            if(workspaceIsOpen){
+                roomspace.removeClass("span11 span8 span5");
+                roomspace.addClass("span3");
+                workspace.removeClass("span4 span1");
+                workspace.addClass("span3");
+            } else {
+                roomspace.removeClass("span11 span8 span3");
+                roomspace.addClass("span5");
+                workspace.removeClass("span4 span3");
+                workspace.addClass("span1")
+            }
+        } else if(hamburgerLeftIsOpen || hamburgerRightIsOpen){
+            if(workspaceIsOpen){
+                roomspace.removeClass("span11 span8 span3");
+                roomspace.addClass("span5");
+                workspace.removeClass("span3 span1");
+                workspace.addClass("span4");
+            } else {
+                roomspace.removeClass("span11 span8 span3");
+                roomspace.addClass("span5");
+                workspace.removeClass("span4 span3");
+                workspace.addClass("span1");
+            }
+        } else {
+            if(workspaceIsOpen){
+                roomspace.removeClass("span11 span5 span3");
+                roomspace.addClass("span8");
+                workspace.removeClass("span3 span1");
+                workspace.addClass("span 4");
+            } else {
+                roomspace.removeClass("span8 span5 span3");
+                roomspace.addClass("span11");
+                workspace.removeClass("span4 span3");
+                workspace.addClass("span1");
+            }
+        }
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(PageContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

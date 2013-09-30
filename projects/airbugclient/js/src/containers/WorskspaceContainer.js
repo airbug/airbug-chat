@@ -7,8 +7,12 @@
 //@Export('WorkspaceContainer')
 
 //@Require('Class')
+//@Require('airbug.CodeEditorWidgetContainer')
+//@Require('airbug.CommandModule')
 //@Require('airbug.PanelView')
-//@Require('airbug.TwoColumnView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -26,8 +30,11 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var CodeEditorWidgetContainer   = bugpack.require('airbug.CodeEditorWidgetContainer');
+var CommandModule               = bugpack.require('airbug.CommandModule');
 var PanelView                   = bugpack.require('airbug.PanelView');
-var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -36,6 +43,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var CommandType = CommandModule.CommandType;
 var view        = ViewBuilder.view;
 
 
@@ -65,6 +73,11 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {airbug.CommandModule}
+         */
+        this.commandModule                  = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -74,7 +87,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {airbug.PanelView}
          */
-        this.panelView                  = null;
+        this.panelView                      = null;
 
 
         // Containers
@@ -84,13 +97,13 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {airbug.CodeEditorWidgetContainer}
          */
-        this.codeEditorWidgetContainer    = null;
+        this.codeEditorWidgetContainer      = null;
 
         /**
          * @private
          * @type {airbug.PictureEditorWidgetContainer}
          */
-        this.pictureEditorWidgetContainer = null;
+        this.pictureEditorWidgetContainer   = null;
 
     },
 
@@ -124,6 +137,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
         this.panelView =
             view(PanelView)
+                .id("workspace-container")
                 .build();
 
 
@@ -139,7 +153,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.codeEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
         //TODO
         // this.pictureEditorWidgetContainer   = new PictureEditorWidgetContainer();
-        // this.addContainerChild(this.pictureEditorWidgetContainer, ".column2of2");
+        // this.addContainerChild(this.pictureEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
     },
 
     /**
@@ -154,14 +168,58 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
+    initializeCommandSubscriptions: function(){
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
+        // this.commandModule.subscribe(CommandType.DISPLAY.PICTURE_EDITOR, this.handleDisplayPictureEditorCommand, this);
+
+    },
 
     //-------------------------------------------------------------------------------
-    // Model Event Handlers
+    // Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {PublisherMessage} message
+     */
+    handleDisplayCodeEditorCommand: function(message){
+        // var topic               = message.getTopic();
+        // var data                = message.getMessage();
+
+        this.handleDisplayCommand("#code-editor-widget");
+    },
+
+    /**
+     * @param {PublisherMessage} message
+     */
+    handleDisplayPictureEditorCommand: function(message){
+        // var topic               = message.getTopic();
+        // var data                = message.getMessage();
+
+        this.handleDisplayCommand("#picture-editor-widget");
+    },
+
+    /**
+     * @param {string} widgetId //in CSS format
+     */
+    handleDisplayCommand: function(widgetId){
+        var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
+        var codeEditorWidget    = this.viewTop.$el.find("#code-editor-widget");
+
+        codeEditorWidget.show();
+        workspaceWidgets.not(widgetId).hide();
+    }
 
 });
 
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(WorkspaceContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

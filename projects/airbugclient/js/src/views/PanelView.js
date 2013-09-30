@@ -37,7 +37,7 @@ var PanelView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="panel-wrapper">' +
+    template:   '<div id="{{id}}-wrapper" class="panel-wrapper {{attributes.classes}}">' +
                     '<div id="{{id}}" class="panel">' +
                         '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
                         '</div>' +
@@ -47,6 +47,7 @@ var PanelView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "panel-" + this.cid;
+
         return data;
     }
 });

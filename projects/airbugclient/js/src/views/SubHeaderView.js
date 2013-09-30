@@ -35,8 +35,8 @@ var SubHeaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="subheader-wrapper">' +
-                    '<div class="subheader">' +
+    template:   '<div id="{{id}}-wrapper" class="subheader-wrapper">' +
+                    '<div id="{{id}}" class="subheader">' +
                         '<div class="subheader-left">' +
                         '</div>' +
                         '<div class="subheader-center">' +

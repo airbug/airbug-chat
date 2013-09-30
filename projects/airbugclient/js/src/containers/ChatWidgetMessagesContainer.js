@@ -13,6 +13,8 @@
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
 //@Require('airbug.TextAreaView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -37,6 +39,8 @@ var ListItemView                    = bugpack.require('airbug.ListItemView');
 var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var TextAreaView                    = bugpack.require('airbug.TextAreaView');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
@@ -60,6 +64,9 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {airbug.ConversationModel}
+     */
     _constructor: function(conversationModel) {
 
         this._super();

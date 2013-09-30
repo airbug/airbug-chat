@@ -7,7 +7,7 @@
 //@Export('FourColumnView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.MultiColumnView')
 
 
 //-------------------------------------------------------------------------------
@@ -29,13 +29,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var FourColumnView = Class.extend(MustacheView, {
+var FourColumnView = Class.extend(MultiColumnView, {
 
     //-------------------------------------------------------------------------------
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:       '<div id={{id}} class="row column 3column-container">' +
+    template:       '<div id={{id}} class="{{rowStyle}} column 3column-container">' +
                         '<div class="{{leftColumnSpan}}  {{leftHamburger}}  column   column1of4"></div>' +
                         '<div class="{{centerLeftColumnSpan}}               column   column2of4"></div>' +
                         '<div class="{{centerRightColumnSpan}}              column   column3of4"></div>' +
@@ -98,6 +98,14 @@ var FourColumnView = Class.extend(MustacheView, {
                 data.centerRightColumnSpan  = "span2";
                 data.rightColumnSpan        = "span3";
                 break;
+            case FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT:
+                data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
+                data.rightHamburger = "hamburger-panel-right hamburger-panel-hidden";
+                data.leftColumnSpan         = "span3";
+                data.centerLeftColumnSpan   = "span11";
+                data.centerRightColumnSpan  = "span1";
+                data.rightColumnSpan        = "span3";
+                break;
         }
         return data;
     }
@@ -112,7 +120,8 @@ FourColumnView.Configuration = {
     HAMBURGER_RIGHT: 3,
     HAMBURGER_LEFT_AND_RIGHT: 4
     THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 5,
-    EXTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 6
+    EXTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 6,
+    ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 7
 };
 
 

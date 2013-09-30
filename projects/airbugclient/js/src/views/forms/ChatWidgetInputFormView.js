@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -109,6 +109,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     // View Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {jQuery.Event} event
+     */
     handleEnterKeyPress: function(event) {
         var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.cid).prop("checked");
         if(submitOnEnter) {
@@ -119,6 +122,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         }
     },
 
+    /**
+     * @param {jQuery.Event} event
+     */
     handleKeyPress: function(event) {
         var key = event.which;
         var ctl = event.ctrlKey;
@@ -127,6 +133,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         }
     },
 
+    /**
+     * @param {jQuery.Event} event
+     */
     handleSubmit: function(event){
         this.submitForm();
     }

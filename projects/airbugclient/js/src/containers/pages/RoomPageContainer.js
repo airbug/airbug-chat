@@ -7,10 +7,9 @@
 //@Export('RoomPageContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationContainer')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
-//@Require('airbug.PageView')
+//@Require('airbug.PageContainer')
 //@Require('airbug.TwoColumnView')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
@@ -30,10 +29,9 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                                   = bugpack.require('Class');
-var ApplicationContainer                    = bugpack.require('airbug.ApplicationContainer');
 var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
 var LogoutButtonContainer                   = bugpack.require('airbug.LogoutButtonContainer');
-var PageView                                = bugpack.require('airbug.PageView');
+var PageContainer                           = bugpack.require('airbug.PageContainer');
 var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
 var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
 var RoomListPanelContainer                  = bugpack.require('airbug.RoomListPanelContainer');
@@ -52,7 +50,7 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomPageContainer = Class.extend(ApplicationContainer, {
+var RoomPageContainer = Class.extend(PageContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -126,11 +124,6 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         // Views
         //-------------------------------------------------------------------------------
 
-        /**
-         * @protected
-         * @type {PageView}
-         */
-        this.pageView                               = null;
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -177,20 +170,12 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(TwoColumnView)
-                    .id("roomPageRowContainer")
-                    .attributes({configuration: TwoColumnView.Configuration.HAMBURGER_LEFT})
-                    .appendTo(".page")
-                ])
-                .build();
+            // Done by PageContainer
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+            // Done by PageContainer
     },
 
     /**
@@ -205,8 +190,8 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         // this.createRoomButtonContainer           = new CreateRoomButtonContainer();
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
-        this.addContainerChild(this.roomListPanelContainer,         ".column1of2");
-        this.addContainerChild(this.roomChatBoxContainer,           ".column2of2");
+        this.addContainerChild(this.roomListPanelContainer,         ".column1of4");
+        this.addContainerChild(this.roomChatBoxContainer,           ".column2of4");
         // this.addContainerChild(this.createRoomButtonContainer, "");
     },
 
@@ -225,8 +210,8 @@ var RoomPageContainer = Class.extend(ApplicationContainer, {
         this.roomModel = new RoomModel({});
         this.addModel(roomId, this.roomModel);
         //TODO start loading animation
-        var blackoutLoaderContainer = new BlackoutLoaderContainer();
-        this.addContainerChild(blackoutLoaderContainer);
+        // var blackoutLoaderContainer = new BlackoutLoaderContainer();
+        // this.addContainerChild(blackoutLoaderContainer);
 
         this.roomManagerModule.retrieveRoom(roomId, function(error, roomMeldObj){
             if(!error && roomMeldObj){

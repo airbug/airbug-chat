@@ -37,8 +37,8 @@ var ButtonView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="button-wrapper {{buttonWrapperClasses}}">' +
-                    '<button id="button-{{cid}}" class="btn {{buttonClasses}}"></button>' +
+    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
+                    '<button id="{{id}}" class="btn {{buttonClasses}}"></button>' +
                 '</div>',
 
 
@@ -76,6 +76,7 @@ var ButtonView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         data.buttonClasses = "";
+        data.id = this.getId() || "button-" + this.cid;
         switch (this.attributes.size) {
             case ButtonView.Size.LARGE:
                 data.buttonClasses += " btn-large";
@@ -88,6 +89,8 @@ var ButtonView = Class.extend(MustacheView, {
                 break;
         }
         switch (this.attributes.type) {
+            case "default"
+                break;
             case "primary":
                 data.buttonClasses += " btn-primary";
                 break;

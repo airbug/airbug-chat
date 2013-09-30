@@ -35,12 +35,21 @@ var ChatWidgetView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="chat-widget" class="chat-widget">' +
+    template:   '<div id="{{id}}" class="chat-widget">' +
                     '<div id="chat-widget-messages" class="chat-widget-messages">' +
                     '</div>' +
                     '<div id="chat-widget-input" class="chat-widget-input">' +
                     '</div>' +
-                '</div>'
+                '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "chat-widget";
+        return data;
+    }
 });
 
 

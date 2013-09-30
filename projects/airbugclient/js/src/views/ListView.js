@@ -35,7 +35,16 @@ var ListView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="list-{{cid}}" class="list"></div>'
+    template: '<div id="{{id}}" class="list"></div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "list-" + this.cid;
+        return data;
+    }
 });
 
 

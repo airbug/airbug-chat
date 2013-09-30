@@ -11,6 +11,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.ChatWidgetInputFormView')
+//@Require('airbug.CommandModule')
 //@Require('airbug.TextView')
 //@Require('airbug.ThreeColumnView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -35,6 +36,7 @@ var Class                   = bugpack.require('Class');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var TextView                = bugpack.require('airbug.TextView');
 var ThreeColumnView         = bugpack.require('airbug.ThreeColumnView');
@@ -51,6 +53,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 var autowired   = AutowiredAnnotation.autowired;
 var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -74,7 +77,11 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.conversationModel          = conversationModel;
+        /**
+         * @type {airbug.ConversationModel}
+         */
+        this.conversationModel              = conversationModel;
+
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -87,13 +94,13 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ThreeColumnView}
          */
-        this.threeColumnView              = null;
+        this.threeColumnView                = null;
 
         /**
          * @private
          * @type {ChatWidgetInputFormView}
          */
-        this.chatWidgetInputFormView    = null;
+        this.chatWidgetInputFormView        = null;
     },
 
 
@@ -123,7 +130,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                     view(ChatWidgetInputFormView)
                         .id("chatWidgetInputForm")
                         .appendTo(".column1of3"),
-                    
+
                     //TODO MW: add image button in column 2
                     view(ButtonView)
                         .appendTo(".column3of3")
@@ -164,13 +171,33 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @param {FormViewEvent} event
      */
     handleFormSubmittedEvent: function(event) {
-        // See ChatWidgetContainer
+        //NOTE: See ChatWidgetContainer
+        var chatMessageObj = event.getData();
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObj);
     },
 
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
     handleButtonClickedEvent: function(event) {
+        // fires off FormViewEvent.EventType.SUBMIT
+        // gets picked up by the handleFormSubmittedEvent event listener function
+        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: "ChatWidgetInputFormSendButton"});
         this.chatWidgetInputFormView.submitForm();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CodeEditorContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule"),
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

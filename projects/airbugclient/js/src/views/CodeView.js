@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ImageView')
+//@Export('CodeView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,13 +29,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageView = Class.extend(MustacheView, {
+var CodeView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<img id="{{id}}" class="{{attributes.size}}" src={{attributes.source}}></img>',
+    template:   '<pre><code class="{{attributes.codeLanguage}}">{{attributes.code}}</code></pre>',
 
 
     //-------------------------------------------------------------------------------
@@ -46,22 +46,13 @@ var ImageView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this.super();
-        data.id = this.getId() || "";
-        return data;
+        this.super();
     }
 });
-
-/**
- * @enum {string}
- */
-ImageView.size = {
-
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageView", ImageView);
+bugpack.export("airbug.CodeView", CodeView);

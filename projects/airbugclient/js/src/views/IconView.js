@@ -35,7 +35,7 @@ var IconView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<i class="icon-{{attributes.type}} {{iconColorClass}}"></i>',
+    template:   '<i id="{{id}}" class="icon-{{attributes.type}} {{iconColorClass}}"></i>',
 
 
     //-------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ var IconView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
+        data.id = this.getId() || "";
         data.iconColorClass = "";
         switch (this.attributes.color) {
             case IconView.Color.WHITE:
@@ -69,12 +70,14 @@ IconView.Color = {
  * @enum {string}
  */
 IconView.Type = {
+    ALIGN_JUSTIFY: "align-justify",
+    ASTERISK: "asterisk"
     CHEVRON_LEFT: "chevron-left",
-    USER: "user",
-    SHARE: "share",
-    PLUS: "plus",
     EXCLAMATION: "exclamation-sign",
-    ALIGN_JUSTIFY: "align-justify"
+    PLUS: "plus",
+    SHARE: "share",
+    USER: "user",
+    WRENCH: "wrench"
 };
 
 

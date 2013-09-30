@@ -10,6 +10,7 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -32,6 +33,7 @@ var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var IconView                = bugpack.require('airbug.IconView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -43,8 +45,9 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -74,6 +77,10 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {airbug.CommandModule}
+         */
+        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -133,6 +140,9 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
 
     },
 
+    /**
+     * @protected
+     */
     activateContainer: function() {
         this._super();
     },
@@ -146,34 +156,35 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        this.handleButtonClick();
+        this.handleButtonClick(event);
     },
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     * @param {airbug.ButtonViewEvent} event
+     */
     handleButtonClick: function(event) {
-        var parentContainer         = this.getContainerParent();
-        var parentView              = parentContainer.getViewTop();
-        var grandparentContainer    = parentContainer.getContainerParent();
-        var grandparentView         = grandparentContainer.getViewTop();
-        var hamburgerPanel          = grandparentView.$el.find("#roomPageRowContainer>.column1of2");
-        var roomChatBox             = grandparentView.$el.find("#roomPageRowContainer>.column2of2");
-        var roomMemberList          = parentView.$el.find("#roomChatBoxRowContainer>.column1of2");
-        var chatWidget              = parentView.$el.find("#roomChatBoxRowContainer>.column2of2");
-        var chatInput               = parentView.$el.find("#chatWidgetInputRowContainer>.column1of2");
-        var sendButton              = parentView.$el.find("#chatWidgetInputRowContainer>.column2of2");
-
-        chatInput.toggleClass("span7 span5");
-        sendButton.toggleClass("span2 span1");
-        roomChatBox.toggleClass("span12 span9");
-        chatWidget.toggleClass("span9 span6");
-        hamburgerPanel.toggleClass("hamburger-panel-hidden");
+        var data = event.getData;
+        this.commandModule.relayCommand(CommandType.TOGGLE.HAMBURGER_LEFT,      {});
+        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICK, data);
     }
 
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomsHamburgerButtonContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

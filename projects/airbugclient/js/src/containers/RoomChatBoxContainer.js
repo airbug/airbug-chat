@@ -11,6 +11,7 @@
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
 //@Require('airbug.LeaveRoomButtonContainer')
+//@Require('airbug.MultiColumnView')
 //@Require('airbug.RoomsHamburgerButtonContainer')
 //@Require('airbug.SubHeaderView')
 //@Require('airbug.TextView')
@@ -38,6 +39,7 @@ var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView'
 var ChatWidgetContainer             = bugpack.require('airbug.ChatWidgetContainer');
 var ConversationModel               = bugpack.require('airbug.ConversationModel');
 var LeaveRoomButtonContainer        = bugpack.require('airbug.LeaveRoomButtonContainer');
+var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
 var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
 var SubHeaderView                   = bugpack.require('airbug.SubHeaderView');
 var TextView                        = bugpack.require('airbug.TextView');
@@ -78,6 +80,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         *
+         */
         this.conversationManagerModule      = null;
 
         // Containers
@@ -176,7 +181,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
             view(BoxWithHeaderView)
                 .children([
                     view(SubHeaderView)
-                    .id("roomChatBoxHeader")
+                    .id("room-chatbox-header")
                     .appendTo(".box-header")
                     .children([
                         view(TextView)
@@ -184,8 +189,11 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
                             .appendTo('.subheader-center')
                     ]),
                     view(TwoColumnView)
-                        .id("roomChatBoxRowContainer")
-                        .attributes({configuration: TwoColumnView.Configuration.THICK_RIGHT})
+                        .id("room-chatbox-row-container")
+                        .attributes({
+                            rowStyle: MultiColumnView.RowStyle.FLUID,
+                            configuration: TwoColumnView.Configuration.THICK_RIGHT
+                        })
                         .appendTo(".box-body")
                 ])
                 .build();

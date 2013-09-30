@@ -8,9 +8,8 @@
 
 //@Require('Class')
 //@Require('airbug.ChatMessageCollection')
-//@Require('airbug.ListView')
+//@Require('airbug.ChatMessageView')
 //@Require('airbug.ListItemView')
-//@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -32,9 +31,8 @@ var bugpack = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
-var ListView                        = bugpack.require('airbug.ListView');
+var ChatMessageView                 = bugpack.require('airbug.ChatMessageView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
-var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
@@ -49,6 +47,7 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 var autowired   = AutowiredAnnotation.autowired;
 var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -75,6 +74,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Models
         //-------------------------------------------------------------------------------
 
+        /**
+         * @type {airbug.ChatMessageModel}
+         */
         this.chatMessageModel           = chatMessageModel;
 
         // Views
@@ -82,7 +84,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ListItemView}
+         * @type {airbug.ListItemView}
          */
         this.chatMessageView            = null;
 
@@ -91,13 +93,19 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ChatMessageManagerModule}
+         * @type {airbug.ChatMessageManagerModule}
          */
         this.chatMessageManagerModule   = null;
 
         /**
          * @private
-         * @type {UserManagerModule}
+         * @type {airbug.CommandModule}
+         */
+        this.commandModule              = null;
+
+        /**
+         * @private
+         * @type {airbug.UserManagerModule}
          */
         this.userManagerModule          = null;
 
@@ -134,11 +142,10 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 .model(this.chatMessageModel)
                 .attributes({size: "flex"})
                 .children([
-                    view(MessageView)
+                    view(ChatMessageView)
                         .model(this.chatMessageModel)
                 ])
                 .build();
-
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -146,6 +153,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.chatMessageView);
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function(){
         this._super();
 
@@ -166,7 +176,18 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 // _this.chatMessageView.dispatchEvent(new Event("retry", _this.chatMessageModel.toJSON()));
                 return false;
             });
+        this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageReply, this);
+    },
 
+    /**
+     * @protected
+     */
+    createContainerChildren: function(){
+        var type = this.chatMessageModel.get("type");
+        if(type === "code"){
+            this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
+            this.addContainerChild(this.chatMessageReplyButton, ".message-controls")
+        }
     },
 
 
@@ -186,6 +207,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     // Model Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     */
     handleChatMessageRetry: function(){
         console.log("Inside ChatMessageContainer#handleRetry");
         var _this               = this;
@@ -217,6 +241,23 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
             } else{
                 chatMessageModel.set({failed: true, pending: false});
         });
+    },
+
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
+    handleChatMessageReply: function(event){
+        var chatMessageId = this.chatMessageModel.get("_id");
+        if(this.chatMessageModel.get("type") === code){
+            var code = chatMessageModel.get("code");
+            this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
+            this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
+            //TODO Future Feature Figure out a way to remember the reference to the original chatMessage
+            //Diplay Code command will overwrite whatever is currently inside the ace editor
+            //May want to provide a warning or option to create a new code editor tab/workspace
+            //Or at least explain it in the demo video
+        }
     }
 });
 
@@ -228,7 +269,8 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ChatMessageContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
-        property("userManagerModule").ref("userManagerModule")
+        property("userManagerModule").ref("userManagerModule"),
+        property("commandModule").ref("commandModule")
     ])
 );
 

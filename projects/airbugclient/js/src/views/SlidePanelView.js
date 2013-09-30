@@ -37,7 +37,7 @@ var SlidePanelView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="panel-wrapper slide-left">' +
+    template:   '<div id="{{id}}-wrapper" class="panel-wrapper slide-left">' +
                     '<div id="{{id}}" class="panel">' +
                         '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
                         '</div>' +

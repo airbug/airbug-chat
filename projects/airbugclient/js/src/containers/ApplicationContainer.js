@@ -140,9 +140,9 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.headerView         = new HeaderView({id: "applicationHeaderView"});
-        this.applicationView    = new ApplicationView({id: "applicationView"});
-        this.notificationView   = new NotificationView({id: "notificationView"});
+        this.headerView         = new HeaderView({id: "application-header"});
+        this.applicationView    = new ApplicationView({id: "application"});
+        this.notificationView   = new NotificationView({id: "notification-container"});
 
         this.bodyView.addViewChild(this.headerView);
         this.bodyView.addViewChild(this.applicationView);

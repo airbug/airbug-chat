@@ -37,8 +37,8 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
 
     // table id was controls and more-controls
     template:
-        '<div id="code-editor-settings-wrapper" class="">\
-            <table id="code-editor-settings">\
+        '<div id="{{id}}-wrapper" class="">\
+            <table id="{{id}}">\
                 <tr>\
                   <td>\
                     <label for="doc">Document</label>\
@@ -258,7 +258,16 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
                     </table>\
                 </td></tr>\
             </table>\
-        </div>'
+        </div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "code-editor-settings";
+        return data;
+    }
 });
 
 

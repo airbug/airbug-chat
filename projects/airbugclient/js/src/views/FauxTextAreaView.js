@@ -37,7 +37,7 @@ var FauxTextAreaView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="faux-textarea" rows="{{attributes.rows}}"></div>',
+    template:   '<div id="{{id}}" class="faux-textarea" rows="{{attributes.rows}}"></div>',
 
 
     //-------------------------------------------------------------------------------
@@ -49,6 +49,7 @@ var FauxTextAreaView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
+        data.id = this.getId() || "";
         if (!TypeUtil.isNumber(data.attributes.rows)) {
             data.attributes.rows = 2;
         }

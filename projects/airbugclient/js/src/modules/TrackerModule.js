@@ -8,7 +8,10 @@
 
 //@Require('Class')
 //@Require('Obj')
-
+//@Require('airbug.CommandModule')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,9 +24,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var property    = PropertyAnnotation.property;
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -43,6 +56,8 @@ var TrackerModule = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        this.commandModule  = null;
 
         /**
          * @private
@@ -70,6 +85,7 @@ var TrackerModule = Class.extend(Obj, {
      initialize: function(callback){
         this.sonarbugClient.startTracking();
         this.trackDocumentEvents();
+        this.initializeMessageSubscriptions();
         if(callback && typeof callback === "function") callback(null);
      },
 
@@ -100,6 +116,36 @@ var TrackerModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Private Instance Methods
     //-------------------------------------------------------------------------------
+
+    initializeMessageSubscriptions: function(){
+        this.commandModule.subscribe(CommandModule.MessageType.BUTTON_CLICKED, this.handleButtonClickedMessage, this);
+    },
+
+    /**
+     * @param {PublisherMessage}
+     */
+    handleButtonClickedMessage: function(message){
+        var topic   = message.getTopic();
+        /** @type {buttonName: string} */
+        var data    = message.getData();
+        this.track("buttonclick", data);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    parseEventForTracking: function(event){
+        var data    = {};
+        var $target = $(event.target);
+
+        data.trackingId         = $target.data("tracking-id");
+        data.trackingClasses    = $target.data("tracking-classes");
+        data.html               = $target.html();
+        data.nodeName           = event.target.nodeName;
+
+        return data;
+    },
 
     /**
      * @private
@@ -136,22 +182,6 @@ var TrackerModule = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {Event} event
-     */
-    parseEventForTracking: function(event){
-        var data    = {};
-        var $target = $(event.target);
-
-        data.trackingId         = $target.data("tracking-id");
-        data.trackingClasses    = $target.data("tracking-classes");
-        data.html               = $target.html();
-        data.nodeName           = event.target.nodeName;
-
-        return data;
-    },
-
-    /**
-     * @private
      * @param {string} eventName
      * @param {{*}} data
      */
@@ -160,6 +190,15 @@ var TrackerModule = Class.extend(Obj, {
     }
 });
 
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(TrackerModule).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

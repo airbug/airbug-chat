@@ -35,7 +35,16 @@ var TextView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="text-{{cid}}" class="text">{{attributes.text}}</span>'
+    template:   '<span id="{{id}}" class="text">{{attributes.text}}</span>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "text-" + this.cid;
+        return data;
+    }
 });
 
 
