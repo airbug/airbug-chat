@@ -127,7 +127,7 @@ var Entity = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[BugJar]" + Obj.hashCode(this.getId()));
+            this._hashCode = Obj.hashCode("[Entity]" + Obj.hashCode(this.getId()));
         }
         return this._hashCode;
     },

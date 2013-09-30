@@ -72,13 +72,6 @@ var Room = Class.extend(Entity, {
     },
 
     /**
-     * @param {Conversation} conversation
-     */
-    setConversation: function(conversation) {
-        //TODO BRN
-    },
-
-    /**
      * @return {string}
      */
     getConversationId: function() {
@@ -143,19 +136,53 @@ var Room = Class.extend(Entity, {
         }
         roomMemberIdSet.add(roomMemberId);
     },
-    
+
+    /**
+     * @param {string} roomMemberId
+     */
+    removeRoomMemberId: function(roomMemberId) {
+        var roomMemberIdSet = this.getRoomMemberIdSet();
+        if (!roomMemberIdSet) {
+            roomMemberIdSet = new Set();
+            this.setRoomMemberIdSet(roomMemberIdSet);
+        }
+        roomMemberIdSet.remove(roomMemberId);
+    },
+
     /**
      * @param {RoomMember} roomMember
      */
     addRoomMember: function(roomMember) {
-        //TODO BRN:
+        if (roomMember.getId()) {
+            this.roomMemberSet.add(roomMember);
+            this.addRoomMemberId(roomMember.getId());
+        } else {
+            throw new Error("RoomMember must have an id before it can be added");
+        }
     },
 
     /**
      * @param {RoomMember} roomMember
      */
     removeRoomMember: function(roomMember) {
-        //TODO BRN:
+        if (roomMember.getId()) {
+            this.roomMemberSet.remove(roomMember);
+            this.removeRoomMemberId(roomMember.getId());
+        } else {
+            throw new Error("RoomMember must have an id before it can be removed");
+        }
+    },
+
+    /**
+     * @param {Conversation} conversation
+     */
+    setConversation: function(conversation) {
+        if (conversation.getId()) {
+            this.conversation = conversation;
+            this.setConversationId(conversation.getId());
+        } else {
+            throw new Error("Conversation must have an id first");
+        }
     }
 });
 
