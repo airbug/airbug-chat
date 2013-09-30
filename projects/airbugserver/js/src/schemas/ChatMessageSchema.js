@@ -4,9 +4,8 @@
 
 //@Package('airbugserver')
 
-//@Export('RoomSchema')
+//@Export('ChatMessageSchema')
 
-//@Require('airbugserver.RoomMemberSchema')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -28,11 +27,15 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomSchema = new Schema({
-    conversationId: ObjectId,
+var ChatMessageSchema = new Schema({
+    body: {type: String, require: false},
+    code: {type: String},
+    codeLanguage: {type: String},
+    conversationId: {type: ObjectId, require: true},
     createdAt: Date,
-    name: String,
-    roomMemberIdSet: [{ type: ObjectId, ref: 'RoomMember'}],
+    senderUserId: {type: ObjectId, require: true},
+    sentAt: Date,
+    type: {type: String},
     updatedAt: Date
 });
 
@@ -41,4 +44,4 @@ var RoomSchema = new Schema({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.RoomSchema', RoomSchema);
+bugpack.export('airbugserver.ChatMessageSchema', ChatMessageSchema);

@@ -61,6 +61,12 @@ var RoomService = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {}
+         */
+        this.conversationManager    = conversationManager;
+
+        /**
+         * @private
          * @type {MeldService}
          */
         this.meldService            = meldService;

@@ -4,22 +4,15 @@
 
 //@Package('airbugserver')
 
-//@Export('DialogueSchema')
+//@Export('ConversationSchema')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-var mongoose            = require('mongoose');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var UserPairSchema      = bugpack.require("airbugsever.UserPairSchema");
+var bugpack     = require('bugpack').context();
+var mongoose    = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
@@ -34,11 +27,11 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DialogueSchema = new Schema({
-    conversationId: ObjectId,
+var ConversationSchema = new Schema({
+    chatMessageIdSet: [{type: ObjectId, ref: "ChatMessage"}],
     createdAt: Date,
-    updatedAt: Date,
-    userIdPair: UserPairSchema
+    ownerId: {type: ObjectId, require: true, index: true, unique: true},
+    updatedAt: Date
 });
 
 
@@ -46,4 +39,4 @@ var DialogueSchema = new Schema({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.DialogueSchema', DialogueSchema);
+bugpack.export('airbugserver.ConversationSchema', ConversationSchema);
