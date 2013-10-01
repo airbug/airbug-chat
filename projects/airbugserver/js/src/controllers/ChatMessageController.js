@@ -80,7 +80,7 @@ var ChatMessageController = Class.extend(Obj, {
                 var currentUser = request.getHandshake().user;
                 if(currentUser.isNotAnonymous()){
                     var data        = request.getData();
-                    var chatMessage = data.chatMessage;
+                    var chatMessage = data.object;
                     _this.chatMessageService.createChatMessage(currentUser, chatMessage, function(error, chatMessage){
                         if(!error && chatMessage){
                             var data = {chatMessage: chatMessage};

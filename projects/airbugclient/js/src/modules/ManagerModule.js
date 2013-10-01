@@ -10,23 +10,27 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('StringUtil')
+//@Require('TypeUtil')
+//@Require('airbug.EntityDefines')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var List        = bugpack.require('List');
-var Obj         = bugpack.require('Obj');
-var StringUtil  = bugpack.require('StringUtil');
+var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
+var StringUtil          = bugpack.require('StringUtil');
+var TypeUtil            = bugpack.require('TypeUtil');
+var EntityDefines       = bugpack.require('airbug.EntityDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -80,30 +84,74 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {{*}} object
-     * @param {function(error, Meld)} callback
+     * @param {string=} filter
+     * @param {function(Throwable, Meld)=} callback
      */
-    create: function(type, object, callback){
+    create: function(type, object, filter, callback) {
         var _this = this;
         var requestData = {object: object};
-        this.airbugApi.request("create", type, requestData, function(error, data){
-            var meldKey = _this.meldBuilder.generateMeldKeyFromObject(data.meldKey);
-            var meldObj = _this.get(meldKey);
-            callback(error, meldObj);
+        if (TypeUtil.isFunction(filter)) {
+            callback = filter;
+            filter = "basic";
+        }
+        this.airbugApi.request("create", type, requestData, function(throwable, callResponse) {
+            if (!throwable) {
+                if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
+                    var data        = callResponse.getData();
+                    var objectId    = data.objectId;
+                    var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                    var meldObj     = _this.get(meldKey);
+                    callback(undefined, meldObj);
+                } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
+                    //TODO BRN: Handle common exceptions
+                } else if (callResponse.getType() === EntityDefines.Responses.ERROR) {
+                    //TODO BRN: Handle common errors
+                } else {
+                    callback(undefined, callResponse);
+                }
+            } else {
+
+                //TODO BRN: Handle common Throwables. These throwables should only come from
+
+                callback(throwable);
+            }
         });
     },
 
     /**
      * @param {string} type
-     * @param {Array.<{*}>} objects
-     * @param {function(error, Array.<Meld>)} callback
+     * @param {Array.<*>} objects
+     * @param {string=} filter
+     * @param {function(Throwable, Set.<Meld>)=} callback
      */
-    createEach: function(type, objects, callback){
+    createEach: function(type, objects, filter, callback){
         var _this = this;
         var requestData = {objects: objects};
+        if (TypeUtil.isFunction(filter)) {
+            callback = filter;
+            filter = "basic";
+        }
         type = StringUtil.pluralize(type);
-        this.airbugApi.request("create", type, requestData, function(error, data){
-            var meldObjs = _this.getEach(data.objectIds);
-            callback(error, meldObjs);
+        this.airbugApi.request("create", type, requestData, function(error, callResponse) {
+            if (!throwable) {
+                if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
+                    var data        = callResponse.getData();
+                    var objectIds   = data.objectIds;
+                    var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                    var meldObj     = _this.get(meldKey);
+                    callback(undefined, meldObj);
+                } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
+                    //TODO BRN: Handle common exceptions
+                } else if (callResponse.getType() === EntityDefines.Responses.ERROR) {
+                    //TODO BRN: Handle common errors
+                } else {
+                    callback(undefined, callResponse);
+                }
+                var meldObjs = _this.getEach(type, data.objectIds, filter);
+                callback(error, meldObjs);
+            } else {
+                callback(throwable);
+            }
         });    
     },
 
@@ -111,22 +159,15 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} requestType
      * @param {string} objectType
      * @param {{*}} requestData
-     * @param {function(Error, meldbug.MeldObject || Array.<meldbug.MeldObject>)} callback
+     * @param {function(Throwable, CallResponse} callback
      */
     request: function(requestType, objectType, requestData, callback){
         var _this = this;
-        this.airbugApi.request(requestType, objectType, requestData, function(error, callResponse) {
-            if (!error) {
-                var objectId    = data.objectId;
-                var objectIds   = data.objectIds;
-                var returnData  = null;
-                if(objectId){
-                    returnData = _this.get(data.objectId);
-                } else if(objectIds){
-                    returnData = _this.getEach(data.objectIds);
-                }
+        this.airbugApi.request(requestType, objectType, requestData, function(throwable, callResponse) {
+            if (!throwable) {
+                callback(undefined, callResponse);
             }  else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
@@ -134,10 +175,15 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {string} id
+     * @param {string} filter
      * @param {function(error, Meld)} callback
      */
     retrieve: function(type, id, filter, callback){
         var _this       = this;
+        if (TypeUtil.isFunction(filter)) {
+            callback = filter;
+            filter = "basic";
+        }
         var meldKey     = this.meldBuilder.generateMeldKey(type, id, filter);
         var meldObj     = this.get(meldKey);
         if (meldObj) {
@@ -146,7 +192,7 @@ var ManagerModule = Class.extend(Obj, {
             var requestData = {objectId: id};
             _this.airbugApi.request("retrieve", type, requestData, function(error, data) {
                 if (!error)  {
-                    var returnedMeldKey = _this.meldBuilder.generateMeldKeyFromObject(data.meldKey);
+                    var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, id, filter);
                     meldObj = _this.get(returnedMeldKey);
                     callback(undefined, meldObj);
                 } else {
@@ -158,16 +204,18 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {Array.<string>} meldKeys
+     * @param {Array.<string>} ids
      * @param {string} filter
      * @param {function(error, Array.<meldbug.MeldObject>)} callback
      */
-    retrieveEach: function(type, meldIds, callback){
+    retrieveEach: function(type, ids, filter, callback){
         var _this                   = this;
         var retrievedMeldObjects    = new List();
         var unretrievedMeldIds      = [];
+        var meldKeys                = [];
 
-        meldIds.forEach(function(meldId){
+        ids.forEach(function(id) {
+
             var meldObj = _this.get(meldId);
             if(meldObj){
                 retrievedMeldObjects.push(meldObj);

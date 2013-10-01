@@ -103,7 +103,7 @@ var RoomController = Class.extend(EntityController, {
              */
             createRoom:     function(request, responder) {
                 var data                = request.getData();
-                var roomData            = data.room;
+                var roomData            = data.object;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
                 _this.roomService.createRoom(requestContext, roomData, function(throwable, room) {

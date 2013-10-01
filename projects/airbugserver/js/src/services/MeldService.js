@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugdelta.PropertyChange')
+//@Require('bugdelta.ObjectChange')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack         = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Obj             = bugpack.require('Obj');
-var PropertyChange  = bugpack.require('bugdelta.PropertyChange');
+var ObjectChange  = bugpack.require('bugdelta.ObjectChange');
 
 
 //-------------------------------------------------------------------------------
@@ -106,10 +106,10 @@ var MeldService = Class.extend(Obj, {
         } else {
             entity.generateDelta().forEach(function(deltaChange) {
                 switch (propertyChange.getChangeType()) {
-                    case PropertyChange.ChangeTypes.PROPERTY_REMOVED:
+                    case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
                         meldObject.unmeldProperty(propertyChange.getPropertyName());
                         break;
-                    case PropertyChange.ChangeTypes.PROPERTY_SET:
+                    case ObjectChange.ChangeTypes.PROPERTY_SET:
                         meldObject.meldProperty(propertyChange.getPropertyName(),  propertyChange.getPropertyValue());
                         break;
                 }

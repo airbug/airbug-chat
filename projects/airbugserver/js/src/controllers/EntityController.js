@@ -9,22 +9,24 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('airbug.EntityDefines')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Exception   = bugpack.require('Exception');
-var Obj         = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var Exception       = bugpack.require('Exception');
+var Obj             = bugpack.require('Obj');
+var EntityDefines   = bugpack.require('airbug.EntityDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -58,7 +60,7 @@ var EntityController = Class.extend(Obj, {
         //TODO BRN: If we are in production mode, we should not send across a full Error. Instead, we should simply
         // send an error response that the client should have a generic reaction to
 
-        var response = responder.response("Error", {
+        var response = responder.response(EntityDefines.Responses.ERROR, {
             error: error
         });
         responder.sendResponse(response);
@@ -72,7 +74,7 @@ var EntityController = Class.extend(Obj, {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
 
-        var response = responder.response("Exception", {
+        var response = responder.response(EntityDefines.Responses.EXCEPTION, {
             exception: exception.toObject()
         });
         responder.sendResponse(response);
@@ -83,7 +85,7 @@ var EntityController = Class.extend(Obj, {
      * @param {Object} data
      */
     sendSuccessResponse: function(responder, data) {
-        var response = responder.response("Success", data);
+        var response = responder.response(EntityDefines.Responses.SUCCESS, data);
         responder.sendResponse(response);
     }
 });

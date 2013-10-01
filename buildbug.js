@@ -56,6 +56,7 @@ buildProperties({
             }
         },
         sourcePaths: [
+            "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/acemodes/js/src",
@@ -100,6 +101,7 @@ buildProperties({
             "./projects/airbugclient/resources"
         ],
         staticPaths: [
+            "./projects/airbug/js/src",
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
             "../bugjs/external/backbone/js/src",

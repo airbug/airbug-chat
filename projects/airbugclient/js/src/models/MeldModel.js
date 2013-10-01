@@ -7,7 +7,7 @@
 //@Export('MeldModel')
 
 //@Require('Class')
-//@Require('bugdelta.PropertyChange')
+//@Require('bugdelta.ObjectChange')
 //@Require('carapace.CarapaceModel')
 //@Require('meldbug.MeldObject')
 
@@ -24,7 +24,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var PropertyChange  = bugpack.require('bugdelta.PropertyChange');
+var ObjectChange  = bugpack.require('bugdelta.ObjectChange');
 var CarapaceModel   = bugpack.require('carapace.CarapaceModel');
 var MeldObject      = bugpack.require('meldbug.MeldObject');
 
@@ -133,12 +133,12 @@ var MeldModel = Class.extend(CarapaceModel, {
         var set = false;
         delta.getChangeList().forEach(function(deltaChange) {
             switch(deltaChange.getChangeType()) {
-                case PropertyChange.ChangeTypes.PROPERTY_REMOVED:
+                case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
                     var propertyName = deltaChange.getPropertyName();
                     var propertyValue = deltaChange.getPropertyValue();
                     _this.unset(propertyName);
                     break;
-                case PropertyChange.ChangeTypes.PROPERTY_SET:
+                case ObjectChange.ChangeTypes.PROPERTY_SET:
                     var propertyName = deltaChange.getPropertyName();
                     var propertyValue = deltaChange.getPropertyValue();
                     set = true;
