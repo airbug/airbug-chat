@@ -84,12 +84,14 @@ var RoomManager = Class.extend(EntityManager, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Room} room
+     * @param {Room} room //entity
      * @param {function(Throwable, Room)} callback
      */
     createRoom: function(room, callback) {
-        room.setCreatedAt(new Date());
-        room.setUpdatedAt(new Date());
+        if(!room.getCreatedAt()){
+            room.setCreatedAt(new Date());
+            room.setUpdatedAt(new Date());
+        }
         this.dataStore.create(room.toObject(), function(throwable, dbRoom) {
             if (!throwable) {
                 room.setId(dbRoom.id);
@@ -101,6 +103,13 @@ var RoomManager = Class.extend(EntityManager, {
     },
 
     /**
+     *
+     */
+    deleteRoom: function(room, callback){
+        //TODO
+    },
+
+    /**
      * @param {{
      *      conversationId: string,
      *      createdAt: Date,
@@ -109,12 +118,10 @@ var RoomManager = Class.extend(EntityManager, {
      *      updatedAt: Date,
      *      roomMemberIdSet: (Array.<string> | Set.<string>)
      * }} data
-     * @return {Room}
+     * @return {Room} //entity
      */
     generateRoom: function(data) {
-        if (!Class.doesExtend(data.roomMemberIdSet, Set)) {
-            data.roomMemberIdSet = new Set(data.roomMemberIdSet);
-        }
+        data.roomMemberIdSet = new Set(data.roomMemberIdSet);
         return new Room(data);
     },
 
@@ -183,14 +190,11 @@ var RoomManager = Class.extend(EntityManager, {
      */
     retrieveRoom: function(roomId, callback) {
         var _this = this;
-
-        //TODO BRN: Look at using the "lean" option for retrieval to prevent from having to call .toObject on th dbRoom
-
-        this.dataStore.findById(roomId, function(throwable, dbRoom) {
+        this.dataStore.findById(roomId).lean(true).exec(function(throwable, dbRoomJson) {
             if (!throwable) {
                 var room = null;
-                if (dbRoom) {
-                    room = _this.generateRoom(dbRoom.toObject());
+                if (dbRoomJson) {
+                    room = _this.generateRoom(dbRoomJson);
                     room.commitDelta();
                 }
                 callback(undefined, room);
@@ -206,7 +210,7 @@ var RoomManager = Class.extend(EntityManager, {
      */
     retrieveRooms: function(roomIds, callback) {
         var _this = this;
-        this.dataStore.where("_id").in(roomIds).exec(function(throwable, results) {
+        this.dataStore.where("_id").in(roomIds).lean(true).exec(function(throwable, results) {
             if (!throwable) {
                 var roomMap = new Map();
                 results.forEach(function(result) {

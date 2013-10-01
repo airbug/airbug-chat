@@ -38,7 +38,7 @@ var EntityManager = Class.extend(Obj, {
     /**
      * @constructs
      * @param {string} entityType
-     * @param {MongoDataStore} mongoDataStore
+     * @param {mongo.MongoDataStore} mongoDataStore
      */
     _constructor: function(entityType, mongoDataStore) {
 

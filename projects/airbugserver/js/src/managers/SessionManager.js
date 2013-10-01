@@ -65,7 +65,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, number)} callback
      */
     countAllSessions: function(callback) {
-         this.count({}, function(throwable, count) {
+         this.dataStore.count({}, function(throwable, count) {
              if (callback) {
                  callback(throwable, count);
              }
@@ -73,11 +73,12 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {Session} session
+     * @param {string} sid
+     * @param {{*}} values
      * @param {function(Throwable)=} callback
      */
     createOrUpdateSession: function(sid, values, callback) {
-        this.update({sid: sid}, values, {upsert: true}, function(throwable, numberAffected, raw) {
+        this.dataStore.update({sid: sid}, values, {upsert: true}, function(throwable, numberAffected, raw) {
             if (callback) {
                 callback(throwable);
             }
@@ -89,13 +90,44 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     createSession: function(session, callback) {
-        session.setCreatedAt(new Date());
-        session.setUpdatedAt(new Date());
+        if(!session.getCreatedAt()){
+            session.setCreatedAt(new Date());
+            session.setUpdatedAt(new Date());
+        }
         this.dataStore.create(session.toObject(), function(throwable, dbSession) {
             if (!throwable) {
                 session.setId(dbSession.id);
                 callback(undefined, session);
             } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     *
+     */
+    deleteAllSessions: function(callback){
+        this.dataStore.remove({}, function (throwable) {
+            if (callback) {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     *
+     */
+    deleteSession: function(){
+        //TODO
+    },
+
+    /**
+     *
+     */
+    deleteSessionBySid: function(sid, callback){
+        this.dataStore.remove({sid: sid}, function(throwable) {
+            if (callback) {
                 callback(throwable);
             }
         });
@@ -112,22 +144,16 @@ var SessionManager = Class.extend(EntityManager, {
      * }} data
      * @return {Session}
      */
-    generateSession: function(requestContext, data) {
-        var session = new Session();
-        session.setCreatedAt(data.createdAt);
-        session.setData(data.data);
-        session.setExpires(data.expires);
-        session.setId(data.id);
-        session.setSid(data.sid);
-        session.setUpdatedAt(data.updatedAt);
-        return session;
+    generateSession: function(data) {
+        return new Session(data);
     },
     
     /**
      * @param {function(Throwable)=} callback
      */
     removeAllSessions: function(callback) {
-        this.remove({}, function (throwable) {
+        //TODO replace with deleteAllSessions
+        this.dataStore.remove({}, function (throwable) {
             if (callback) {
                 callback(throwable);
             }
@@ -139,7 +165,8 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable)=} callback
      */
     removeSessionBySid: function(sid, callback) {
-        this.remove({sid: sid}, function(throwable) {
+        //TODO replace with deleteSessionBySid
+        this.dataStore.remove({sid: sid}, function(throwable) {
             if (callback) {
                 callback(throwable);
             }
@@ -150,7 +177,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Array.<Session>} callback
      */
     retrieveAllSessions: function(callback) {
-        this.find({}, callback);
+        this.datStore.find({}, callback);
     },
 
     /**

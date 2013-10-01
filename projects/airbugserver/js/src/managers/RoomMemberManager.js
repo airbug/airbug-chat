@@ -7,7 +7,9 @@
 //@Export('RoomMemberManager')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
+//@Require('airbugserver.RoomMember')
 //@Require('bugflow.BugFlow')
 
 
@@ -23,7 +25,9 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
+var RoomMember  = bugpack.require('airbugserver.RoomMember');
 var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
@@ -63,21 +67,39 @@ var RoomMemberManager = Class.extend(Obj, {
      * @param {function(Error, RoomMember} callback
      */
     createRoomMember: function(roomMember, callback) {
-        this.create(roomMember, function(error, roomMember) {
-            if (callback) {
-                callback(error, roomMember);
+        if(!roomMember.getCreatedAt()){
+            roomMember.setCreatedAt(new Date());
+            roomMember.setUpdatedAt(new Date());
+        }
+        this.dataStore.create(roomMember.toObject(), function(throwable, dbRoomMember) {
+            if (!throwable) {
+                roomMember.setId(dbRoomMember.id);
+                callback(undefined, roomMember);
+            } else {
+                callback(throwable);
             }
         });
     },
 
     /**
-     * @param {{
      *
-     * }} roomMemberData
+     */
+    deleteRoomMember: function(roomMember, callback){
+        //TODO
+    },
+
+    /**
+     * @param {{
+     *      createdAt: Date,
+     *      memberType: string,
+     *      roomId: string,
+     *      updatedAt: Date,
+     *      userId: string
+     * }} data
      * @return {
      */
-    generateRoomMember: function(roomMemberData) {
-
+    generateRoomMember: function(data) {
+        return new RoomMember(data)
     },
 
     /**
@@ -85,6 +107,7 @@ var RoomMemberManager = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     removeRoomMember: function(roomMember, callback) {
+        //TODO replace with deleteRoomMember
         $parallel([
         ])
 
@@ -104,9 +127,44 @@ var RoomMemberManager = Class.extend(Obj, {
      * @param {function(Error, RoomMember)} callback
      */
     retrieveRoomMember: function(roomMemberId, callback) {
+        var _this = this;
+        this.dataStore.findById(roomMemberId).lean(true).exec(function(error, dbRoomMemberJson){
+            if (!throwable) {
+                var roomMember = null;
+                if (dbRoomMemberJson) {
+                    roomMember = _this.generateRoomMember(dbRoomMemberJson);
+                    roomMember.commitDelta();
+                }
+                callback(undefined, roomMember);
+            } else {
+                callback(throwable);
+            }        
+        });
+    },
 
-        this.dataStore.findById(roomMemberId, function(error, returnedRoomMember){
-
+    /**
+     * @param {Array.<string>} roomMemberIds
+     * @param {function(Throwable, Map.<string, RoomMember>)} callback
+     */
+    retrieveRoomMembers: function(roomMemberIds, callback){
+        var _this = this;
+        this.dataStore.where("_id").in(roomMemberIds).lean(true).exec(function(throwable, results) {
+            if(!throwable){
+                var roomMemberMap = new Map();
+                results.forEach(function(result) {
+                    var roomMember = _this.generateRoomMember(result);
+                    roomMember.commitDelta();
+                    roomMemberMap.put(roomMember.getId(), roomMember);
+                });
+                roomMemberIds.forEach(function(roomMemberId) {
+                    if (!roomMemberMap.containsKey(roomMemberId)) {
+                        roomMemberMap.put(roomMemberId, null);
+                    }
+                });
+                callback(undefined, roomMemberMap);
+            } else {
+                callback(throwable);
+            }
         });
     },
 
@@ -134,10 +192,15 @@ var RoomMemberManager = Class.extend(Obj, {
      * @param {function(Error, RoomMember} callback
      */
     saveRoomMember: function(roomMember, callback) {
+        //TODO
         if (!roomMember.getCreatedAt()) {
             roomMember.setCreatedAt(new Date());
         }
         roomMember.setUpdatedAt(new Date());
+    },
+
+    updateRoomMember: function(){
+        //TODO
     }
 });
 

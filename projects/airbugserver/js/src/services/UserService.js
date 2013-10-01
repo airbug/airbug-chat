@@ -77,7 +77,7 @@ var UserService = Class.extend(Obj, {
             var session = handshakeData.session;
             console.log("session:", session);
             if (session.data.userId) {
-                this.userManager.findUserById(session.data.userId, function(error, user) {
+                this.userManager.retrieveUser(session.data.userId, function(error, user) {
                     console.log("userManager.findUserById. user:", user);
                     if (!error) {
                         if (user) {
@@ -143,14 +143,6 @@ var UserService = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} userId
-     * @param {function(error, user)} callback
-     */
-    findUserById: function(userId, callback){
-        this.userManager.findById(userId, callback);
-    },
-
-    /**
      * @param {} userObj
      * @param {function(error, user)} callback
      */
@@ -186,8 +178,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(error, *)} callback
      */
     retrieveUser: function(userId, callback){
-        //TODO BRN: What does this select() call do here?
-        this.userManager.findById(userId).select("_id firstName lastName").exec(callback);
+        this.userManager.retrieveUser(userId, callback);
     },
 
     /**
@@ -195,7 +186,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(error, {*})} callback 
      */
     retrieveUsers: function(userIds, callback) {
-        this.userManager.where("_id").in(userIds).select("_id firstName lastName").exec(callback);
+        this.userManager.retrieveUsers(userIds, callback);
     }
 });
 
