@@ -68,18 +68,7 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Conversation)} callback
      */
     createConversation: function(conversation, callback) {
-        if(!conversation.getCreatedAt()){
-            conversation.setCreatedAt(new Date());
-            conversation.setUpdatedAt(new Date());
-        }
-        this.dataStore.create(conversation.toObject(), function(throwable, dbConversation) {
-            if (!throwable) {
-                conversation.setId(dbConversation.id);
-                callback(undefined, conversation);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.create(conversation, callback);
     },
 
     /**
@@ -109,19 +98,7 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Conversation)} callback
      */
     retrieveConversation: function(conversationId, callback) {
-        var _this = this;
-        this.dataStore.findById(conversationId).lean(true).exec(function(error, dbConversationJson) {
-            if (!error) {
-                var conversation = undefined;
-                if (dbConversationJson) {
-                    conversation = _this.generateConversation(dbConversationJson);
-                    conversation.commitDelta();
-                }
-                callback(undefined, conversation);
-            } else {
-                callback(error);
-            }
-        });
+        this.retrieve(conversationId, callback);
     },
 
     /**
@@ -129,25 +106,7 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Map.<string, Conversation>)} callback
      */
     retrieveConversations: function(conversationIds, callback){
-        var _this = this;
-        this.dataStore.where("_id").in(conversationIds).lean(true).exec(function(throwable, results) {
-            if(!throwable){
-                var conversationMap = new Map();
-                results.forEach(function(result) {
-                    var conversation = _this.generateConversation(result);
-                    conversation.commitDelta();
-                    conversationMap.put(conversation.getId(), conversation);
-                });
-                conversationIds.forEach(function(conversationId) {
-                    if (!conversationMap.containsKey(conversationId)) {
-                        conversationMap.put(conversationId, null);
-                    }
-                });
-                callback(undefined, conversationMap);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieveEach(conversationIds, callback);
     },
 
     /**

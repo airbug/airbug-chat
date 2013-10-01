@@ -66,18 +66,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable, ChatMessage)} callback
      */
     createChatMessage: function(chatMessage, callback) {
-        if(!chatMessage.getCreatedAt()){
-            chatMessage.setCreatedAt(new Date());
-            chatMessage.setUpdatedAt(new Date());
-        }
-        this.dataStore.create(chatMessage.toObject(), function(throwable, dbChatMessage) {
-            if (!throwable) {
-                chatMessage.setId(dbChatMessage.id);
-                callback(undefined, chatMessage);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.create(chatMessage, callback);
     },
 
     /**
@@ -112,19 +101,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable, ChatMessage)} callback
      */
     retrieveChatMessage: function(chatMessageId, callback) {
-        var _this = this;
-        this.dataStore.findById(chatMessageId).lean(true).exec(function(throwable, dbChatMessageJson) {
-            if (!throwable) {
-                var chatMessage = null;
-                if (dbChatMessageJson) {
-                    chatMessage = _this.generateChatMessage(dbChatMessageJson);
-                    chatMessage.commitDelta();
-                }
-                callback(undefined, chatMessage);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieve(chatMessageId, callback);
     },
 
     /**
@@ -132,25 +109,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Map.<string, ChatMessage>)} callback
      */
     retrieveChatMessages: function(chatMessageIds, callback) {
-        var _this = this;
-        this.dataStore.where("_id").in(chatMessageIds).lean(true).exec(function(throwable, results) {
-            if(!throwable){
-                var chatMessageMap = new Map();
-                results.forEach(function(result) {
-                    var chatMessage = _this.generateChatMessage(result);
-                    chatMessage.commitDelta();
-                    chatMessageMap.put(chatMessage.getId(), chatMessage);
-                });
-                chatMessageIds.forEach(function(chatMessageId) {
-                    if (!chatMessageMap.containsKey(chatMessageId)) {
-                        chatMessageMap.put(chatMessageId, null);
-                    }
-                });
-                callback(undefined, chatMessageMap);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieveEach(chatMessageIds, callback);
     },
 
     /**

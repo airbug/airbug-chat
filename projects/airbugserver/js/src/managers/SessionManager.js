@@ -90,18 +90,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     createSession: function(session, callback) {
-        if(!session.getCreatedAt()){
-            session.setCreatedAt(new Date());
-            session.setUpdatedAt(new Date());
-        }
-        this.dataStore.create(session.toObject(), function(throwable, dbSession) {
-            if (!throwable) {
-                session.setId(dbSession.id);
-                callback(undefined, session);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.create(session, callback);
     },
 
     /**
@@ -178,6 +167,22 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveAllSessions: function(callback) {
         this.datStore.find({}, callback);
+    },
+
+    /**
+     * @param {Array.<string>} sessionId
+     * @param {function(Throwable, Session)} callback
+     */
+    retrieveSession: function(sessionId, callback){
+        this.retrieve(sessionId, callback);
+    },
+
+    /**
+     * @param {string} sessionIds
+     * @param {function(Throwable, Map.<string, Session>)} callback
+     */
+    retrieveSessions: function(sessionIds, callback){
+        this.retrieveEach(sessionIds, callback);
     },
 
     /**

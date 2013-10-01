@@ -88,18 +88,7 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     createRoom: function(room, callback) {
-        if(!room.getCreatedAt()){
-            room.setCreatedAt(new Date());
-            room.setUpdatedAt(new Date());
-        }
-        this.dataStore.create(room.toObject(), function(throwable, dbRoom) {
-            if (!throwable) {
-                room.setId(dbRoom.id);
-                callback(undefined, room);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.create(room, callback);
     },
 
     /**
@@ -189,19 +178,7 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     retrieveRoom: function(roomId, callback) {
-        var _this = this;
-        this.dataStore.findById(roomId).lean(true).exec(function(throwable, dbRoomJson) {
-            if (!throwable) {
-                var room = null;
-                if (dbRoomJson) {
-                    room = _this.generateRoom(dbRoomJson);
-                    room.commitDelta();
-                }
-                callback(undefined, room);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieve(roomId, callback);
     },
 
     /**
@@ -209,25 +186,7 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Map.<string, Room>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
-        var _this = this;
-        this.dataStore.where("_id").in(roomIds).lean(true).exec(function(throwable, results) {
-            if (!throwable) {
-                var roomMap = new Map();
-                results.forEach(function(result) {
-                    var room = _this.generateRoom(result);
-                    room.commitDelta();
-                    roomMap.put(room.getId(), room);
-                });
-                roomIds.forEach(function(roomId) {
-                    if (!roomMap.containsKey(roomId)) {
-                        roomMap.put(roomId, null);
-                    }
-                });
-                callback(undefined, roomMap);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieveEach(roomIds, callback);
     },
 
     /**

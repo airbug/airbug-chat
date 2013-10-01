@@ -78,18 +78,7 @@ var UserManager = Class.extend(Obj, {
      * @param {function(Error, User)=} callback
      */
     createUser: function(user, callback) {
-        if(!user.getCreatedAt()){
-            user.setCreatedAt(new Date());
-            user.setUpdatedAt(new Date());
-        }
-        this.dataStore.create(user.toObject(), function(throwable, dbUser) {
-            if (!throwable) {
-                user.setId(dbUser.id);
-                callback(undefined, user);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.create(user, callback);
     },
 
     /**
@@ -144,11 +133,52 @@ var UserManager = Class.extend(Obj, {
     },
 
     /**
+     * @param {User} user
+     * @param {Array.<string>} properties
+     * @param {function(Throwable)} callback
+     */
+    populateUser: function(user, properties, callback){
+        var _this = this;
+        $forEachParallel(properties, function(flow, property) {
+            switch (property) {
+                case "roomSet":
+                    var roomIdSet       = user.getRoomIdSet();
+                    var roomSet         = room.getRoomSet();
+                    var lookupRoomIdSet = roomIdSet.clone();
+
+                    roomSet.clone().forEach(function(room) {
+                        //NOTE if room is already in the roomSet, there is no need to look it up again
+                        //     else if it is no long in the idSet, it should be removed from the set
+                        if (roomIdSet.contains(room.getId())) {
+                            lookupRoomIdSet.remove(room.getId());
+                        } else {
+                            roomSet.remove(room);
+                        }
+                    });
+                    //NOTE process look ups
+                    $iterableParallel(lookupRoomIdSet, function(flow, roomId) {
+                        _this.roomManager.retrieveRoom(roomId, function(throwable, room) {
+                            if (!throwable) {
+                                roomSet.add(room);
+                            }
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                    break;
+                default:
+                    flow.complete(new Error("Unknown property '" + property + "'"));
+            }
+        }).execute(callback);    },
+
+    /**
      * @param {string} userId
      * @param {string} roomId
      * @param {function(error, user)} callback
      */
     removeRoomFromUser: function(roomId, userId, callback){
+        //TODO
         this.findById(userId, function(error, user){
             if (!error && user){
                 user.roomsList.remove(roomId);
@@ -166,19 +196,7 @@ var UserManager = Class.extend(Obj, {
      * @param {function(Throwable, User)} callback
      */
     retrieveUser: function(userId, callback){
-        var _this = this;
-        this.dataStore.findById(userId).lean(true).exec(function(throwable, dbUserJson) {
-            if (!throwable) {
-                var user = null;
-                if (dbUserJson) {
-                    user = _this.generateUser(dbUserJson);
-                    user.commitDelta();
-                }
-                callback(undefined, user);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieve(userId, callback);
     },
 
     /**
@@ -206,25 +224,7 @@ var UserManager = Class.extend(Obj, {
      * @param {function(Throwable, Map.<string, User>)} callback
      */
     retrieveUsers: function(userIds, callback){
-        var _this = this;
-        this.dataStore.where("_id").in(userIds).lean(true).exec(function(throwable, results) {
-            if(!throwable){
-                var userMap = new Map();
-                results.forEach(function(result) {
-                    var user = _this.generateUser(result);
-                    user.commitDelta();
-                    userMap.put(user.getId(), user);
-                });
-                userIds.forEach(function(userId) {
-                    if (!userMap.containsKey(userId)) {
-                        userMap.put(userId, null);
-                    }
-                });
-                callback(undefined, userMap);
-            } else {
-                callback(throwable);
-            }
-        });
+        this.retrieveEach(userIds, callback);
     },
 
     /**
@@ -233,6 +233,7 @@ var UserManager = Class.extend(Obj, {
      */
      //NOTE updateOrCreate (upsert) equivalent
     saveUser: function(user, callback) {
+        //TODO
         if (!user.getCreatedAt()) {
             user.setCreatedAt(new Date());
         }
