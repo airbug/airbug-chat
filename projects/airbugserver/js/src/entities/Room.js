@@ -147,7 +147,6 @@ var Room = Class.extend(Entity, {
         }
     },
 
-
     /**
      * @return {Set.<RoomMember>}
      */

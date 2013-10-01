@@ -128,7 +128,7 @@ var RoomManager = Class.extend(EntityManager, {
     /**
      * @param {Room} room
      * @param {Array.<string>} properties
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable, Room)} callback
      */
     populateRoom: function(room, properties, callback) {
         var _this = this;
@@ -163,14 +163,14 @@ var RoomManager = Class.extend(EntityManager, {
                         if (roomMemberIdSet.contains(roomMember.getId())) {
                             lookupRoomMemberIdSet.remove(roomMember.getId());
                         } else {
-                            roomMemberSet.remove(roomMember);
+                            room.removeRoomMember(roomMember);
                         }
                     });
 
                     $iterableParallel(lookupRoomMemberIdSet, function(flow, roomMemberId) {
                         _this.roomMemberManager.retrieveRoomMember(roomMemberId, function(throwable, roomMember) {
                             if (!throwable) {
-                                roomMemberSet.add(roomMember);
+                                room.addRoomMember(roomMember);
                             }
                             flow.complete(throwable);
                         });
