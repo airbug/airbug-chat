@@ -42,19 +42,7 @@ var RoomMemberManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     _constructor: function(mongoDataStore) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {MongoManager}
-         */
-        this.dataStore              = mongoDataStore.generateManager("RoomMember");
+        this._super("RoomMember", mongoDataStore);
     },
 
 

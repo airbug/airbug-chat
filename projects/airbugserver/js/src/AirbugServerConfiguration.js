@@ -1050,7 +1050,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("conversationManager")
             .args([
-                arg().ref("mongoDataStore")
+                arg().ref("mongoDataStore"),
+                arg().ref("chatMessageManager")
             ]),
         module("roomManager")
             .args([
@@ -1068,7 +1069,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("userManager")
             .args([
-                arg().ref("mongoDataStore")
+                arg().ref("mongoDataStore"),
+                arg().ref("roomManager")
             ])
     ])
 );

@@ -37,9 +37,11 @@ var BugFlow     = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $parallel   = BugFlow.$parallel;
-var $series     = BugFlow.$series;
-var $task       = BugFlow.$task;
+var $forEachParallel    = BugFlow.$forEachParallel;
+var $iterableParallel   = BugFlow.$iterableParallel;
+var $parallel           = BugFlow.$parallel;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -52,9 +54,9 @@ var UserManager = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(mongoDataStore) {
+    _constructor: function(mongoDataStore, roomManager) {
 
-        this._super(mongoDataStore);
+        this._super("User", mongoDataStore);
 
 
         //-------------------------------------------------------------------------------
@@ -63,9 +65,9 @@ var UserManager = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {MongoManager}
+         * @type {RoomManager}
          */
-        this.dataStore              = mongoDataStore.generateManager("User");
+        this.roomManager    = roomManager;
     },
 
 
@@ -170,7 +172,8 @@ var UserManager = Class.extend(Obj, {
                 default:
                     flow.complete(new Error("Unknown property '" + property + "'"));
             }
-        }).execute(callback);    },
+        }).execute(callback);
+    },
 
     /**
      * @param {string} userId
