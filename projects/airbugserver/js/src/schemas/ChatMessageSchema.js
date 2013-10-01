@@ -31,9 +31,9 @@ var ChatMessageSchema = new Schema({
     body: {type: String, require: false},
     code: {type: String},
     codeLanguage: {type: String},
-    conversationId: {type: ObjectId, require: true},
+    conversationId: {type: ObjectId, required: true},
     createdAt: Date,
-    senderUserId: {type: ObjectId, require: true},
+    senderUserId: {type: ObjectId, required: true},
     sentAt: Date,
     type: {type: String},
     updatedAt: Date

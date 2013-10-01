@@ -7,6 +7,7 @@
 //@Export('User')
 
 //@Require('Class')
+//@Require('Set')
 //@Require('airbugserver.Entity')
 
 
@@ -22,6 +23,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var Set             = bugpack.require('Set');
 var Entity          = bugpack.require('airbugserver.Entity');
 
 
@@ -35,9 +37,9 @@ var User = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -48,7 +50,7 @@ var User = Class.extend(Entity, {
          * @private
          * @type {Set.<Room>}
          */
-        this.roomSet = undefined;
+        this.roomSet    = new Set();
     },
 
 
@@ -60,70 +62,119 @@ var User = Class.extend(Entity, {
      * @return {boolean}
      */
     getAnonymous: function() {
-        return this.deltaObject.getProperty("anonymous");
+        return this.deltaDocument.getCurrentData().anonymous;
     },
 
     /**
      * @param {boolean} anonymous
      */
     setAnonymous: function(anonymous) {
-        this.deltaObject.setProperty("anonymous" ,anonymous);
+        this.deltaDocument.getCurrentData().anonymous = anonymous;
     },
 
     /**
      * @return {*}
      */
     getEmail: function() {
-        return this.deltaObject.getProperty("email");
+        return this.deltaDocument.getCurrentData().email;
     },
 
     /**
      * @param {string} email
      */
     setEmail: function(email) {
-        this.deltaObject.setProperty("email", email);
+        this.deltaDocument.getCurrentData().email = email;
     },
 
     /**
      * @return {string}
      */
     getFirstName: function() {
-        return this.deltaObject.getProperty("firstName");
+        return this.deltaDocument.getCurrentData().firstName;
     },
 
     /**
      * @param {string} firstName
      */
     setFirstName: function(firstName) {
-        this.deltaObject.setProperty("firstName", firstName);
+        this.deltaDocument.getCurrentData().firstName = firstName;
     },
 
     /**
      * @return {string}
      */
     getLastName: function() {
-        return this.deltaObject.getProperty("lastName");
+        return this.deltaDocument.getCurrentData().lastName;
     },
 
     /**
      * @param {string} lastName
      */
     setLastName: function(lastName) {
-        this.deltaObject.setProperty("lastName", lastName);
+        this.deltaDocument.getCurrentData().lastName = lastName;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomIdSet: function() {
-        return this.deltaObject.getProperty("roomIdSet");
+        return this.deltaDocument.getCurrentData().roomIdSet;
     },
 
     /**
      * @param {Set.<string>} roomIdSet
      */
     setRoomIdSet: function(roomIdSet) {
-        this.deltaObject.setProperty("roomIdSet", roomIdSet);
+        this.deltaDocument.getCurrentData().roomIdSet = roomIdSet;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} roomId
+     */
+    addRoomId: function(roomId) {
+        var roomIdSet = this.getRoomIdSet();
+        if (!roomIdSet) {
+            roomIdSet = new Set();
+            this.setRoomIdSet(roomIdSet);
+        }
+        roomIdSet.add(roomId);
+    },
+
+    /**
+     * @param {string} roomId
+     */
+    removeRoomId: function(roomId) {
+        var roomIdSet = this.getRoomIdSet();
+        if (!roomIdSet) {
+            roomIdSet = new Set();
+            this.setRoomIdSet(roomIdSet);
+        }
+        roomIdSet.remove(roomId);
+    },
+
+    /**
+     * @param {Room} room
+     */
+    addRoom: function(room) {
+        if (room.getId()) {
+            this.roomSet.add(room);
+            this.addRoomId(room.getId());
+        } else {
+            throw new Error("room must have an id before it can be added");
+        }
+    },
+
+    /**
+     * @param {Room} room
+     * @return {boolean}
+     */
+    containsRoom: function(room) {
+        return this.roomIdSet.contains(room.getId());
     },
 
     /**
@@ -134,24 +185,17 @@ var User = Class.extend(Entity, {
     },
 
     /**
-     * @param {Set.<Room>} roomSet
+     * @param {Room} room
      */
-    setRoomSet: function(roomSet) {
-        this.roomSet = roomSet;
+    removeRoom: function(room) {
+        if (room.getId()) {
+            this.roomSet.remove(room);
+            this.removeRoomId(room.getId());
+        } else {
+            throw new Error("room must have an id before it can be removed");
+        }
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    addRoom: function(room) {
-        //TODO
-    },
-
-    containsRoom: function(room) {
-        //TODO
-    },
 
     /**
      * @return {boolean}
@@ -165,10 +209,6 @@ var User = Class.extend(Entity, {
      */
     isNotAnonymous: function() {
         return !this.getAnonymous();
-    },
-
-    removeRoom: function(room) {
-        //TODO
     }
 });
 

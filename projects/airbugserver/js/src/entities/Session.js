@@ -35,9 +35,9 @@ var Session = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -54,42 +54,42 @@ var Session = Class.extend(Entity, {
      * @return {Object}
      */
     getData: function() {
-        return this.deltaObject.getProperty("data");
+        return this.deltaDocument.getCurrentData().data;
     },
 
     /**
      * @param {Object} data
      */
     setData: function(data) {
-        this.deltaObject.setProperty("data", data);
+        this.deltaDocument.getCurrentData().data = data;
     },
 
     /**
      * @return {Date}
      */
     getExpires: function() {
-        return this.deltaObject.getProperty("expires");
+        return this.deltaDocument.getCurrentData().expires;
     },
 
     /**
      * @param {Date} expires
      */
     setExpires: function(expires) {
-        this.deltaObject.setProperty("expires", expires);
+        this.deltaDocument.getCurrentData().expires = expires;
     },
 
     /**
      * @return {string}
      */
     getSid: function() {
-        return this.deltaObject.getProperty("sid");
+        return this.deltaDocument.getCurrentData().sid;
     },
 
     /**
      * @param {string} sid
      */
     setSid: function(sid) {
-        this.deltaObject.setProperty("sid", sid);
+        this.deltaDocument.getCurrentData().sid = sid;
     }
 });
 

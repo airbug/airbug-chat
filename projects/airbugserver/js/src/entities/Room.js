@@ -65,13 +65,6 @@ var Room = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Conversation}
-     */
-    getConversation: function() {
-        return this.conversation;
-    },
-
-    /**
      * @return {string}
      */
     getConversationId: function() {
@@ -111,13 +104,6 @@ var Room = Class.extend(Entity, {
      */
     setRoomMemberIdSet: function(roomMemberIdSet) {
         this.deltaDocument.getCurrentData().roomMemberIdSet = roomMemberIdSet;
-    },
-
-    /**
-     * @return {Set.<RoomMember>}
-     */
-    getRoomMemberSet: function() {
-        return this.roomMemberSet;
     },
 
 
@@ -161,6 +147,14 @@ var Room = Class.extend(Entity, {
         }
     },
 
+
+    /**
+     * @return {Set.<RoomMember>}
+     */
+    getRoomMemberSet: function() {
+        return this.roomMemberSet;
+    },
+
     /**
      * @param {RoomMember} roomMember
      */
@@ -171,6 +165,13 @@ var Room = Class.extend(Entity, {
         } else {
             throw new Error("RoomMember must have an id before it can be removed");
         }
+    },
+
+    /**
+     * @return {Conversation}
+     */
+    getConversation: function() {
+        return this.conversation;
     },
 
     /**

@@ -37,9 +37,9 @@ var Dialogue = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -72,38 +72,31 @@ var Dialogue = Class.extend(Entity, {
     },
 
     /**
-     * @param {Conversation} conversation
-     */
-    setConversation: function(conversation) {
-        //TODO BRN
-    },
-
-    /**
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaObject.getProperty("conversationId");
+        return this.deltaDocument.getCurrentData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaObject.setProperty("conversationId", conversationId);
+        this.deltaDocument.getCurrentData().conversationId = conversationId;
     },
 
     /**
      * @return {Pair.<string, string>}
      */
     getUserIdPair: function() {
-        return this.deltaObject.getProperty("userIdPair");
+        return this.deltaDocument.getCurrentData().userIdPair;
     },
 
     /**
      * @param {Pair.<string, string>} userIdPair
      */
     setUserIdPair: function(userIdPair) {
-        this.deltaObject.setProperty("userIdPair", userIdPair);
+        this.deltaDocument.getCurrentData().userIdPair = userIdPair;
     },
 
     /**
@@ -113,11 +106,29 @@ var Dialogue = Class.extend(Entity, {
         return this.userPair;
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Conversation} conversation
+     */
+    setConversation: function(conversation) {
+        if (conversation.getId()) {
+            this.conversation = conversation;
+            this.setConversationId(conversation.getId());
+        } else {
+            throw new Error("Conversation must have an id first");
+        }
+    },
+
     /**
      * @param {Pair.<User, User>} userPair
      */
     setUserPair: function(userPair) {
         this.userPair = userPair;
+        //TODO BRN:
     }
 });
 

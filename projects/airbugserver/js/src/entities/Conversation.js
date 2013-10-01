@@ -7,6 +7,7 @@
 //@Export('Conversation')
 
 //@Require('Class')
+//@Require('Set')
 //@Require('airbugserver.Entity')
 
 
@@ -22,6 +23,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var Set             = bugpack.require('Set');
 var Entity          = bugpack.require('airbugserver.Entity');
 
 
@@ -35,9 +37,9 @@ var Conversation = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -48,7 +50,7 @@ var Conversation = Class.extend(Entity, {
          * @private
          * @type {Set.<ChatMessage>}
          */
-        this.chatMessageSet     = undefined;
+        this.chatMessageSet     = new Set();
 
         /**
          * @private
@@ -66,14 +68,69 @@ var Conversation = Class.extend(Entity, {
      * @return {Set.<string>}
      */
     getChatMessageIdSet: function() {
-        return this.deltaObject.getProperty("chatMessageIdSet");
+        return this.deltaDocument.getCurrentData().chatMessageIdSet;
     },
 
     /**
      * @param {Set.<string>} chatMessageIdSet
      */
     setChatMessageIdSet: function(chatMessageIdSet) {
-        this.deltaObject.setProperty("chatMessageIdSet", chatMessageIdSet);
+        this.deltaDocument.getCurrentData().chatMessageIdSet = chatMessageIdSet;
+    },
+
+    /**
+     * @return {string}
+     */
+    getOwnerId: function() {
+        return this.deltaDocument.getCurrentData().ownerId;
+    },
+
+    /**
+     * @param {string} ownerId
+     */
+    setOwnerId: function(ownerId) {
+        this.deltaDocument.getCurrentData().ownerId = ownerId;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} chatMessageId
+     */
+    addChatMessageId: function(chatMessageId) {
+        var chatMessageIdSet = this.getChatMessageIdSet();
+        if (!chatMessageIdSet) {
+            chatMessageIdSet = new Set();
+            this.setChatMessageIdSet(chatMessageIdSet);
+        }
+        chatMessageIdSet.add(chatMessageId);
+    },
+
+    /**
+     * @param {string} chatMessageId
+     */
+    removeChatMessageId: function(chatMessageId) {
+        var chatMessageIdSet = this.getChatMessageIdSet();
+        if (!chatMessageIdSet) {
+            chatMessageIdSet = new Set();
+            this.setChatMessageIdSet(chatMessageIdSet);
+        }
+        chatMessageIdSet.remove(chatMessageId);
+    },
+
+    /**
+     * @param {ChatMessage} chatMessage
+     */
+    addChatMessage: function(chatMessage) {
+        if (chatMessage.getId()) {
+            this.chatMessageSet.add(chatMessage);
+            this.addChatMessageId(chatMessage.getId());
+        } else {
+            throw new Error("chatMessage must have an id before it can be added");
+        }
     },
 
     /**
@@ -84,10 +141,15 @@ var Conversation = Class.extend(Entity, {
     },
 
     /**
-     * @param {Set.<ChatMessage>} chatMessageSet
+     * @param {ChatMessage} chatMessage
      */
-    setChatMessageSet: function(chatMessageSet) {
-        this.chatMessageSet = chatMessageSet;
+    removeChatMessage: function(chatMessage) {
+        if (chatMessage.getId()) {
+            this.chatMessageSet.remove(chatMessage);
+            this.removeChatMessageId(chatMessage.getId());
+        } else {
+            throw new Error("chatMessage must have an id before it can be removed");
+        }
     },
 
     /**
@@ -101,41 +163,12 @@ var Conversation = Class.extend(Entity, {
      * @param {(Dialogue | Room)} owner
      */
     setOwner: function(owner) {
-        this.owner = owner;
-       // this.
-    },
-
-    /**
-     * @return {string}
-     */
-    getOwnerId: function() {
-        return this.deltaObject.getProperty("ownerId");
-    },
-
-    /**
-     * @param {string} ownerId
-     */
-    setOwnerId: function(ownerId) {
-        this.deltaObject.setProperty("ownerId", ownerId);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {ChatMessage} chatMessage
-     */
-    addChatMessage: function(chatMessage) {
-
-    },
-
-    /**
-     * @param {ChatMessage} chatMessage
-     */
-    removeChatMessage: function(chatMessage) {
-
+        if (owner.getId()) {
+            this.owner = owner;
+            this.setOwnerId(owner.getId());
+        } else {
+            throw new Error("owner must have an id first");
+        }
     }
 });
 

@@ -29,17 +29,9 @@ var Schema      = mongoose.Schema;
 
 var SessionSchema = new Schema({
     createdAt: Date,
-    data: {
-        type: Mixed,
-        required: true
-    },
+    data: {type: Mixed, required: true},
     expires: Date,
-    sid: {
-        type: String,
-        require: true,
-        index: true,
-        unique: true
-    },
+    sid: {type: String, required: true, index: true, unique: true},
     updatedAt: Date
 });
 

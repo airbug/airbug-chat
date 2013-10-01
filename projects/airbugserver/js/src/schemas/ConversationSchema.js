@@ -30,7 +30,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var ConversationSchema = new Schema({
     chatMessageIdSet: [{type: ObjectId, ref: "ChatMessage"}],
     createdAt: Date,
-    ownerId: {type: ObjectId, require: true, index: true, unique: true},
+    ownerId: {type: ObjectId, required: true, index: true, unique: true},
     updatedAt: Date
 });
 

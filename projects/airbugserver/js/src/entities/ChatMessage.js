@@ -52,12 +52,6 @@ var ChatMessage = Class.extend(Entity, {
 
         /**
          * @private
-         * @type {(Dialouge | Room)}
-         */
-        this.conversationOwner      = undefined;
-
-        /**
-         * @private
          * @type {User}
          */
         this.senderUser             = undefined;
@@ -83,13 +77,6 @@ var ChatMessage = Class.extend(Entity, {
     },
 
     /**
-     * @return {Conversation}
-     */
-    getConversation: function() {
-        return this.conversation;
-    },
-
-    /**
      * @return {string}
      */
     getConversationId: function() {
@@ -101,27 +88,6 @@ var ChatMessage = Class.extend(Entity, {
      */
     setConversationId: function(conversationId) {
         this.deltaDocument.getCurrentData().conversationId = conversationId;
-    },
-
-    /**
-     * @return {(User | )}
-     */
-    getConversationOwner: function() {
-        return this.conversationOwner;
-    },
-
-    /**
-     * @return {string}
-     */
-    getConversationOwnerId: function() {
-        return this.deltaDocument.getCurrentData().conversationOwnerId;
-    },
-
-    /**
-     * @param {string} conversationOwnerId
-     */
-    setConversationOwnerId: function(conversationOwnerId) {
-        this.deltaDocument.getCurrentData().conversationOwnerId = conversationOwnerId;
     },
 
     /**
@@ -158,51 +124,10 @@ var ChatMessage = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} roomMemberId
+     * @return {Conversation}
      */
-    addRoomMemberId: function(roomMemberId) {
-        var roomMemberIdSet = this.getRoomMemberIdSet();
-        if (!roomMemberIdSet) {
-            roomMemberIdSet = new Set();
-            this.setRoomMemberIdSet(roomMemberIdSet);
-        }
-        roomMemberIdSet.add(roomMemberId);
-    },
-
-    /**
-     * @param {string} roomMemberId
-     */
-    removeRoomMemberId: function(roomMemberId) {
-        var roomMemberIdSet = this.getRoomMemberIdSet();
-        if (!roomMemberIdSet) {
-            roomMemberIdSet = new Set();
-            this.setRoomMemberIdSet(roomMemberIdSet);
-        }
-        roomMemberIdSet.remove(roomMemberId);
-    },
-
-    /**
-     * @param {RoomMember} roomMember
-     */
-    addRoomMember: function(roomMember) {
-        if (roomMember.getId()) {
-            this.roomMemberSet.add(roomMember);
-            this.addRoomMemberId(roomMember.getId());
-        } else {
-            throw new Error("RoomMember must have an id before it can be added");
-        }
-    },
-
-    /**
-     * @param {RoomMember} roomMember
-     */
-    removeRoomMember: function(roomMember) {
-        if (roomMember.getId()) {
-            this.roomMemberSet.remove(roomMember);
-            this.removeRoomMemberId(roomMember.getId());
-        } else {
-            throw new Error("RoomMember must have an id before it can be removed");
-        }
+    getConversation: function() {
+        return this.conversation;
     },
 
     /**
@@ -214,6 +139,25 @@ var ChatMessage = Class.extend(Entity, {
             this.setConversationId(conversation.getId());
         } else {
             throw new Error("Conversation must have an id first");
+        }
+    },
+
+    /**
+     * @return {User}
+     */
+    getSenderUser: function() {
+        return this.senderUser;
+    },
+
+    /**
+     * @param {User} senderUser
+     */
+    setSenderUser: function(senderUser) {
+        if (senderUser.getId()) {
+            this.senderUser = senderUser;
+            this.setSenderUserId(senderUser.getId());
+        } else {
+            throw new Error("senderUser must have an id first");
         }
     }
 });

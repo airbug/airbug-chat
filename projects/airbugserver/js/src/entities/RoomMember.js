@@ -35,19 +35,26 @@ var RoomMember = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
-        this._super();
+    _constructor: function(data) {
+
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
         // Properties
         //-------------------------------------------------------------------------------
 
-        //TODO BRN
-        this.user = undefined;
+        /**
+         * @private
+         * @type {User}
+         */
+        this.user   = undefined;
 
-        //TODO BRN
-        this.room = undefined;
+        /**
+         * @private
+         * @type {Room}
+         */
+        this.room   = undefined;
     },
 
 
@@ -59,53 +66,86 @@ var RoomMember = Class.extend(Entity, {
      * @return {string}
      */
     getMemberType: function() {
-        return this.deltaObject.getProperty("memberType");
+        return this.deltaDocument.getCurrentData().memberType;
     },
 
     /**
      * @param {string} memberType
      */
     setMemberType: function(memberType) {
-        this.deltaObject.setProperty("memberType", memberType);
+        this.deltaDocument.getCurrentData().memberType = memberType;
     },
 
     /**
-     *
-     * @return {*}
+     * @return {string}
      */
     getRoomId: function() {
-        return this.deltaObject.getProperty("roomId");
+        return this.deltaDocument.getCurrentData().roomId;
     },
 
     /**
      * @param {string} roomId
      */
     setRoomId: function(roomId) {
-        this.deltaObject.setProperty("roomId", roomId);
-        this.room = undefined;
+        this.deltaDocument.getCurrentData().roomId = roomId;
     },
 
     /**
-     *
-     * @return {*}
+     * @return {string}
      */
     getUserId: function() {
-        return this.deltaObject.getProperty("userId");
+        return this.deltaDocument.getCurrentData().userId;
     },
 
     /**
      * @param {string} userId
      */
     setUserId: function(userId) {
-        this.deltaObject.setProperty("userId", userId);
-        this.user = undefined;
-    }
+        this.deltaDocument.getCurrentData().userId = userId;
+    },
 
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {Room}
+     */
+    getRoom: function() {
+        return this.room;
+    },
+
+    /**
+     * @param {Room} room
+     */
+    setRoom: function(room) {
+        if (room.getId()) {
+            this.room = room;
+            this.setRoomId(room.getId());
+        } else {
+            throw new Error("room must have an id first");
+        }
+    },
+
+    /**
+     * @return {User}
+     */
+    getUser: function() {
+        return this.user;
+    },
+
+    /**
+     * @param {User} user
+     */
+    setUser: function(user) {
+        if (user.getId()) {
+            this.user = user;
+            this.setUserId(user.getId());
+        } else {
+            throw new Error("user must have an id first");
+        }
+    }
 });
 
 

@@ -30,7 +30,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var RoomMemberSchema = new Schema({
     createdAt: Date,
     memberType: String,
-    roomId: ObjectId,
+    roomId: {type: ObjectId, index: true, required: true},
     updatedAt: Date,
     userId: ObjectId
 });
