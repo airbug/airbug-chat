@@ -68,28 +68,28 @@ var Conversation = Class.extend(Entity, {
      * @return {Set.<string>}
      */
     getChatMessageIdSet: function() {
-        return this.deltaDocument.getCurrentData().chatMessageIdSet;
+        return this.deltaDocument.getData().chatMessageIdSet;
     },
 
     /**
      * @param {Set.<string>} chatMessageIdSet
      */
     setChatMessageIdSet: function(chatMessageIdSet) {
-        this.deltaDocument.getCurrentData().chatMessageIdSet = chatMessageIdSet;
+        this.deltaDocument.getData().chatMessageIdSet = chatMessageIdSet;
     },
 
     /**
      * @return {string}
      */
     getOwnerId: function() {
-        return this.deltaDocument.getCurrentData().ownerId;
+        return this.deltaDocument.getData().ownerId;
     },
 
     /**
      * @param {string} ownerId
      */
     setOwnerId: function(ownerId) {
-        this.deltaDocument.getCurrentData().ownerId = ownerId;
+        this.deltaDocument.getData().ownerId = ownerId;
     },
 
 

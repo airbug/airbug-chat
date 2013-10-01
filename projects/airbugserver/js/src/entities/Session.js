@@ -54,42 +54,42 @@ var Session = Class.extend(Entity, {
      * @return {Object}
      */
     getData: function() {
-        return this.deltaDocument.getCurrentData().data;
+        return this.deltaDocument.getData().data;
     },
 
     /**
      * @param {Object} data
      */
     setData: function(data) {
-        this.deltaDocument.getCurrentData().data = data;
+        this.deltaDocument.getData().data = data;
     },
 
     /**
      * @return {Date}
      */
     getExpires: function() {
-        return this.deltaDocument.getCurrentData().expires;
+        return this.deltaDocument.getData().expires;
     },
 
     /**
      * @param {Date} expires
      */
     setExpires: function(expires) {
-        this.deltaDocument.getCurrentData().expires = expires;
+        this.deltaDocument.getData().expires = expires;
     },
 
     /**
      * @return {string}
      */
     getSid: function() {
-        return this.deltaDocument.getCurrentData().sid;
+        return this.deltaDocument.getData().sid;
     },
 
     /**
      * @param {string} sid
      */
     setSid: function(sid) {
-        this.deltaDocument.getCurrentData().sid = sid;
+        this.deltaDocument.getData().sid = sid;
     }
 });
 

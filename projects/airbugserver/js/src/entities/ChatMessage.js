@@ -66,56 +66,56 @@ var ChatMessage = Class.extend(Entity, {
      * @return {string}
      */
     getBody: function() {
-        return this.deltaDocument.getCurrentData().body;
+        return this.deltaDocument.getData().body;
     },
 
     /**
      * @param {string} body
      */
     setBody: function(body) {
-        this.deltaDocument.getCurrentData().body = body;
+        this.deltaDocument.getData().body = body;
     },
 
     /**
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaDocument.getCurrentData().conversationId;
+        return this.deltaDocument.getData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaDocument.getCurrentData().conversationId = conversationId;
+        this.deltaDocument.getData().conversationId = conversationId;
     },
 
     /**
      * @return {string}
      */
     getSenderUserId: function() {
-        return this.deltaDocument.getCurrentData().senderUserId;
+        return this.deltaDocument.getData().senderUserId;
     },
 
     /**
      * @param {string} senderUserId
      */
     setSenderUserId: function(senderUserId) {
-        this.deltaDocument.getCurrentData().senderUserId = senderUserId;
+        this.deltaDocument.getData().senderUserId = senderUserId;
     },
 
     /**
      * @return {Date}
      */
     getSentAt: function() {
-        return this.deltaDocument.getCurrentData().sentAt;
+        return this.deltaDocument.getData().sentAt;
     },
 
     /**
      * @param {Date} sentAt
      */
     setSentAt: function(sentAt) {
-        this.deltaDocument.getCurrentData().sentAt = sentAt;
+        this.deltaDocument.getData().sentAt = sentAt;
     },
 
 

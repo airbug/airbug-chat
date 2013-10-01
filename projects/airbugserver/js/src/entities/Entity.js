@@ -68,42 +68,42 @@ var Entity = Class.extend(Obj, {
      * @return {Date}
      */
     getCreatedAt: function() {
-        return this.deltaDocument.getCurrentData().createdAt;
+        return this.deltaDocument.getData().createdAt;
     },
 
     /**
      * @param {Date} createdAt
      */
     setCreatedAt: function(createdAt) {
-        this.deltaDocument.getCurrentData().createdAt = createdAt;
+        this.deltaDocument.getData().createdAt = createdAt;
     },
 
     /**
      * @return {string}
      */
     getId: function() {
-        return this.deltaDocument.getCurrentData().id;
+        return this.deltaDocument.getData().id;
     },
 
     /**
      * @param {string} id
      */
     setId: function(id) {
-        this.deltaDocument.getCurrentData().id = id;
+        this.deltaDocument.getData().id = id;
     },
 
     /**
      * @return {Date}
      */
     getUpdatedAt: function() {
-        return this.deltaDocument.getCurrentData().updatedAt;
+        return this.deltaDocument.getData().updatedAt;
     },
 
     /**
      * @param {Date} updatedAt
      */
     setUpdatedAt: function(updatedAt) {
-        this.deltaDocument.getCurrentData().updatedAt = updatedAt;
+        this.deltaDocument.getData().updatedAt = updatedAt;
     },
 
 
@@ -160,7 +160,7 @@ var Entity = Class.extend(Obj, {
      * @return {Object}
      */
     toObject: function() {
-        return LiteralUtil.convertToLiteral(this.deltaDocument.getCurrentData());
+        return LiteralUtil.convertToLiteral(this.deltaDocument.getData());
     }
 });
 

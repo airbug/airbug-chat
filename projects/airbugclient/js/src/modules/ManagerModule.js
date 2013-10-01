@@ -94,7 +94,7 @@ var ManagerModule = Class.extend(Obj, {
             callback = filter;
             filter = "basic";
         }
-        this.airbugApi.request("create", type, requestData, function(throwable, callResponse) {
+        this.request("create", type, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
                     var data        = callResponse.getData();

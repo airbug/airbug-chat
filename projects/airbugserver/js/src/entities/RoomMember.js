@@ -68,42 +68,42 @@ var RoomMember = Class.extend(Entity, {
      * @return {string}
      */
     getMemberType: function() {
-        return this.deltaDocument.getCurrentData().memberType;
+        return this.deltaDocument.getData().memberType;
     },
 
     /**
      * @param {string} memberType
      */
     setMemberType: function(memberType) {
-        this.deltaDocument.getCurrentData().memberType = memberType;
+        this.deltaDocument.getData().memberType = memberType;
     },
 
     /**
      * @return {string}
      */
     getRoomId: function() {
-        return this.deltaDocument.getCurrentData().roomId;
+        return this.deltaDocument.getData().roomId;
     },
 
     /**
      * @param {string} roomId
      */
     setRoomId: function(roomId) {
-        this.deltaDocument.getCurrentData().roomId = roomId;
+        this.deltaDocument.getData().roomId = roomId;
     },
 
     /**
      * @return {string}
      */
     getUserId: function() {
-        return this.deltaDocument.getCurrentData().userId;
+        return this.deltaDocument.getData().userId;
     },
 
     /**
      * @param {string} userId
      */
     setUserId: function(userId) {
-        this.deltaDocument.getCurrentData().userId = userId;
+        this.deltaDocument.getData().userId = userId;
     },
 
 

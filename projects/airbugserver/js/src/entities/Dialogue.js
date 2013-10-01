@@ -75,28 +75,28 @@ var Dialogue = Class.extend(Entity, {
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaDocument.getCurrentData().conversationId;
+        return this.deltaDocument.getData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaDocument.getCurrentData().conversationId = conversationId;
+        this.deltaDocument.getData().conversationId = conversationId;
     },
 
     /**
      * @return {Pair.<string, string>}
      */
     getUserIdPair: function() {
-        return this.deltaDocument.getCurrentData().userIdPair;
+        return this.deltaDocument.getData().userIdPair;
     },
 
     /**
      * @param {Pair.<string, string>} userIdPair
      */
     setUserIdPair: function(userIdPair) {
-        this.deltaDocument.getCurrentData().userIdPair = userIdPair;
+        this.deltaDocument.getData().userIdPair = userIdPair;
     },
 
     /**

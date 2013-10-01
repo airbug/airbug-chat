@@ -62,70 +62,70 @@ var User = Class.extend(Entity, {
      * @return {boolean}
      */
     getAnonymous: function() {
-        return this.deltaDocument.getCurrentData().anonymous;
+        return this.deltaDocument.getData().anonymous;
     },
 
     /**
      * @param {boolean} anonymous
      */
     setAnonymous: function(anonymous) {
-        this.deltaDocument.getCurrentData().anonymous = anonymous;
+        this.deltaDocument.getData().anonymous = anonymous;
     },
 
     /**
      * @return {*}
      */
     getEmail: function() {
-        return this.deltaDocument.getCurrentData().email;
+        return this.deltaDocument.getData().email;
     },
 
     /**
      * @param {string} email
      */
     setEmail: function(email) {
-        this.deltaDocument.getCurrentData().email = email;
+        this.deltaDocument.getData().email = email;
     },
 
     /**
      * @return {string}
      */
     getFirstName: function() {
-        return this.deltaDocument.getCurrentData().firstName;
+        return this.deltaDocument.getData().firstName;
     },
 
     /**
      * @param {string} firstName
      */
     setFirstName: function(firstName) {
-        this.deltaDocument.getCurrentData().firstName = firstName;
+        this.deltaDocument.getData().firstName = firstName;
     },
 
     /**
      * @return {string}
      */
     getLastName: function() {
-        return this.deltaDocument.getCurrentData().lastName;
+        return this.deltaDocument.getData().lastName;
     },
 
     /**
      * @param {string} lastName
      */
     setLastName: function(lastName) {
-        this.deltaDocument.getCurrentData().lastName = lastName;
+        this.deltaDocument.getData().lastName = lastName;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomIdSet: function() {
-        return this.deltaDocument.getCurrentData().roomIdSet;
+        return this.deltaDocument.getData().roomIdSet;
     },
 
     /**
      * @param {Set.<string>} roomIdSet
      */
     setRoomIdSet: function(roomIdSet) {
-        this.deltaDocument.getCurrentData().roomIdSet = roomIdSet;
+        this.deltaDocument.getData().roomIdSet = roomIdSet;
     },
 
 
