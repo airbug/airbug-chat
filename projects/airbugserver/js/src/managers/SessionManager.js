@@ -136,7 +136,11 @@ var SessionManager = Class.extend(EntityManager, {
     generateSession: function(data) {
         return new Session(data);
     },
-    
+
+    populateSession: function(session, properties, callback){
+        //TODO
+    },
+
     /**
      * @param {function(Throwable)=} callback
      */

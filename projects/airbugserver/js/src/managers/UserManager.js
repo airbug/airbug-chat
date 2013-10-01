@@ -140,39 +140,11 @@ var UserManager = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     populateUser: function(user, properties, callback){
-        var _this = this;
-        $forEachParallel(properties, function(flow, property) {
-            switch (property) {
-                case "roomSet":
-                    var roomIdSet       = user.getRoomIdSet();
-                    var roomSet         = room.getRoomSet();
-                    var lookupRoomIdSet = roomIdSet.clone();
-
-                    roomSet.clone().forEach(function(room) {
-                        //NOTE if room is already in the roomSet, there is no need to look it up again
-                        //     else if it is no long in the idSet, it should be removed from the set
-                        if (roomIdSet.contains(room.getId())) {
-                            lookupRoomIdSet.remove(room.getId());
-                        } else {
-                            roomSet.remove(room);
-                        }
-                    });
-                    //NOTE process look ups
-                    $iterableParallel(lookupRoomIdSet, function(flow, roomId) {
-                        _this.roomManager.retrieveRoom(roomId, function(throwable, room) {
-                            if (!throwable) {
-                                roomSet.add(room);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                    break;
-                default:
-                    flow.complete(new Error("Unknown property '" + property + "'"));
-            }
-        }).execute(callback);
+        var options = {
+            propertyNames:  ["roomSet"],
+            entityTypes:    ["Room"]
+        };
+        this.populate(options, user, properties, callback);
     },
 
     /**

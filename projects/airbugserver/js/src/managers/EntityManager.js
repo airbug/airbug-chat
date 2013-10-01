@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('StringUtil')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +25,19 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var StringUtil  = bugpack.require('StringUtil');
+var BugFlow     = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $forEachParallel    = BugFlow.$forEachParallel;
+var $iterableParallel   = BugFlow.$iterableParallel;
+var $parallel           = BugFlow.$parallel;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -79,6 +94,72 @@ var EntityManager = Class.extend(Obj, {
                 callback(throwable);
             }
         });
+    },
+
+    //TODO SUNG
+    /**
+     * @param {{
+     *      propertyNames: Array.<string> //uncapitalized
+     *      entityTypes: Array.<string>
+     * }} options
+     * @param {Entity} entityInstance
+     * @param {Array.<string>} properties
+     * @param {function(Throwable)} callback
+     */
+    populate: function(options, entityInstance, properties, callback){
+        var _this = this;
+        $forEachParallel(properties, function(flow, property) {
+            var propIndex = options.propertyNames.indexOf(property);
+            if( propIndex > -1){
+                if(property.substring(property.length - 3) === "Set"){
+                    var prop            = property.substring(0, property.length -3);
+                    var propCapitalized = StringUtil.capitalize(property);
+                    var idSet           = entityInstance["get" + propCapitalized + "IdSet"]();
+                    var set             = entityInstance["get" + property]();
+                    var lookupIdSet     = idSet.clone();
+
+                    set.clone().forEach(function(ent) {
+                        if (idSet.contains(ent.getId())) {
+                            lookupIdSet.remove(ent.getId());
+                        } else {
+                            set.remove(ent);
+                        }
+                    });
+
+                    $iterableParallel(lookupIdSet, function(flow, entId) {
+                        _this[prop + "Manager"]["retrieve" + propCapitalized](entId, function(throwable, returnEnt) {
+                            if (!throwable) {
+                                set.add(returnEnt);
+                            }
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                } else {
+                        var entityType              = StringUtil.uncapitalize(options.entityTypes[propIndex]);
+                        var entityTypeCapitalized   = StringUtil.capitalize(entityType);
+                        var propertyCapitalized     = StringUtil.capitalize(property);
+                        var id                      = entityInstance["get" + propertyCapitalized + "id"]();
+                        if (id) {
+                            if (!entityInstance["get" + propertyCapitalized]() || entityInstance["get" + propertyCapitalized]().getId() !== id) {
+                                _this[entityType + "Manager"]["retrieve" + entityTypeCapitalized](id, function(throwable, retrievedEntity) {
+                                    if (!throwable) {
+                                        entityInstance["set" + propertyCapitalized](retrievedEntity);
+                                    }
+                                    flow.complete(throwable);
+                                })
+                            } else {
+                                flow.complete();
+                            }
+                        } else {
+                            flow.complete();
+                        }
+                }
+            } else {
+                flow.error(new Error("Unknown property '" + property + "'"));
+            }
+        }).execute(callback);
     },
 
     /**

@@ -79,6 +79,14 @@ var RoomMemberManager = Class.extend(Obj, {
         return new RoomMember(data)
     },
 
+    populateRoomMember: function(roomMember, properties, callback){
+        var options = {
+            propertyNames:  ["room", "user"],
+            entityTypes:    ["Room", "User"]
+        };
+        this.populate(options, roomMember, properties, callback);
+    },
+
     /**
      * @param {RoomMember} roomMember
      * @param {function(Error)} callback

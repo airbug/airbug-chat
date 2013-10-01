@@ -50,10 +50,25 @@ var ChatMessageManager = Class.extend(EntityManager, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(mongoDataStore) {
+    _constructor: function(mongoDataStore, conversationManager, userManager) {
 
         this._super("ChatMessage", mongoDataStore);
 
+        //-------------------------------------------------------------------------------
+        // Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ConversationManager}
+         */
+        this.conversationManager    = conversationManager;
+
+        /**
+         * @private
+         * @type {UserManager}
+         */
+        this.userManager            = userManager;
     },
 
 
@@ -94,6 +109,14 @@ var ChatMessageManager = Class.extend(EntityManager, {
      */
     generateChatMessage: function(data) {
         return new ChatMessage(data);
+    },
+
+    populateChatMessage: function(chatMessage, properties, callback){
+        var options = {
+            propertyNames:  ["conversation", "senderUser"],
+            entityTypes:    ["Conversation", "User"]
+        };
+        this.populate(options, chatMessage, properties, callback);
     },
 
     /**

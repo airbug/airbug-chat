@@ -579,8 +579,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {MongoDataStore} mongoDataStore
      * @return {ChatMessageManager}
      */
-    chatMessageManager: function(mongoDataStore) {
-        this._chatMessageManager = new ChatMessageManager(mongoDataStore);
+    chatMessageManager: function(mongoDataStore, conversationManager, userManager) {
+        this._chatMessageManager = new ChatMessageManager(mongoDataStore, conversationManager, userManager);
         return this._chatMessageManager;
     },
 
@@ -615,8 +615,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {MongoDataStore} mongoDataStore
      * @return {ConversationManager}
      */
-    conversationManager: function(mongoDataStore) {
-        this._conversationManager = new ConversationManager(mongoDataStore);
+    conversationManager: function(mongoDataStore, chatMessageManager) {
+        this._conversationManager = new ConversationManager(mongoDataStore, chatMessageManager);
         return this._conversationManager;
     },
 
@@ -721,8 +721,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {MongoDataStore} mongoDataStore
      * @return {RoomMemberManager}
      */
-    roomMemberManager: function(mongoDataStore) {
-        this._roomMemberManager = new RoomMemberManager(mongoDataStore);
+    roomMemberManager: function(mongoDataStore, roomManager, userManager) {
+        this._roomMemberManager = new RoomMemberManager(mongoDataStore, roomManager, userManager);
         return this._roomMemberManager;
     },
 
@@ -813,8 +813,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {MongoDataStore} mongoDataStore
      * @return {UserManager}
      */
-    userManager: function(mongoDataStore) {
-        this._userManager = new UserManager(mongoDataStore);
+    userManager: function(mongoDataStore, roomManager) {
+        this._userManager = new UserManager(mongoDataStore, roomManager);
         return this._userManager;
     },
 
@@ -1046,7 +1046,9 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("chatMessageManager")
             .args([
-                arg().ref("mongoDataStore")
+                arg().ref("mongoDataStore"),
+                arg().ref("conversationManager"),
+                arg().ref("userManager")
             ]),
         module("conversationManager")
             .args([
@@ -1061,7 +1063,9 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("roomMemberManager")
             .args([
-                arg().ref("mongoDataStore")
+                arg().ref("mongoDataStore"),
+                arg().ref("roomManager"),
+                arg().ref("userManager")
             ]),
         module("sessionManager")
             .args([

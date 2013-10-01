@@ -120,57 +120,11 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     populateRoom: function(room, properties, callback) {
-        var _this = this;
-        $forEachParallel(properties, function(flow, property) {
-            switch (property) {
-                case "conversation":
-                    var conversationId = room.getConversationId();
-                    if (conversationId) {
-                        if (!room.getConversation() || room.getConversation().getId() !== conversationId) {
-                            _this.conversationManager.retrieveConversation(conversationId, function(throwable, retrievedConversation) {
-                                if (!throwable) {
-                                    room.setConversation(retrievedConversation);
-                                }
-                                flow.complete(throwable);
-                            })
-                        } else {
-                            flow.complete();
-                        }
-                    } else {
-                        flow.complete();
-                    }
-                    break;
-                case "roomMemberSet":
-                    var roomMemberIdSet = room.getRoomMemberIdSet();
-                    var roomMemberSet = room.getRoomMemberSet();
-                    var lookupRoomMemberIdSet = roomMemberIdSet.clone();
-
-                    // NOTE BRN: If the roomMember's id does not exist in the roomMemberIdSet, it means it's been removed
-                    // If the roomMember's id is contained in the
-
-                    roomMemberSet.clone().forEach(function(roomMember) {
-                        if (roomMemberIdSet.contains(roomMember.getId())) {
-                            lookupRoomMemberIdSet.remove(roomMember.getId());
-                        } else {
-                            room.removeRoomMember(roomMember);
-                        }
-                    });
-
-                    $iterableParallel(lookupRoomMemberIdSet, function(flow, roomMemberId) {
-                        _this.roomMemberManager.retrieveRoomMember(roomMemberId, function(throwable, roomMember) {
-                            if (!throwable) {
-                                room.addRoomMember(roomMember);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                    break;
-                default:
-                    flow.complete(new Error("Unknown property '" + property + "'"));
-            }
-        }).execute(callback);
+        var options = {
+            propertyNames:  ["conversation", "roomMemberSet"],
+            entityTypes:    ["Conversation", "RoomMember"]
+        };
+        this.populate(options, room, properties, callback);
     },
 
     /**

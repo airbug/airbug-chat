@@ -46,15 +46,17 @@ var RoomMember = Class.extend(Entity, {
 
         /**
          * @private
+         * @type {Room}
+         */
+        this.room   = undefined;
+
+        /**
+         * @private
          * @type {User}
          */
         this.user   = undefined;
 
-        /**
-         * @private
-         * @type {Room}
-         */
-        this.room   = undefined;
+
     },
 
 
