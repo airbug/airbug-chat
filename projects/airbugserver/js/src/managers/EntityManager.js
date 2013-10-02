@@ -120,7 +120,7 @@ var EntityManager = Class.extend(Obj, {
             if( propIndex > -1){
                 var returnedProperty = propertyKeys.getter.call(entityInstance);
                 switch(type){
-                    case: "Set"
+                    case "Set":
                         var idSet           = propertyKeys.idGetter.call(entityInstance);
                         var set             = returnedProperty;
                         var lookupIdSet     = idSet.clone();
