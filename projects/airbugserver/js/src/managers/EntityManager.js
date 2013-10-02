@@ -96,11 +96,17 @@ var EntityManager = Class.extend(Obj, {
         });
     },
 
-    //TODO SUNG
     /**
      * @param {{
      *      propertyNames: Array.<string> //uncapitalized
-     *      entityTypes: Array.<string>
+     *      propertyKeys: {
+     *                idGetter: function,
+     *                idSetter: function,
+     *                getter: function,
+     *                setter: function,
+     *                manager: EntityManager,
+     *                retriever: function
+     * }
      * }} options
      * @param {Entity} entityInstance
      * @param {Array.<string>} properties
@@ -108,44 +114,43 @@ var EntityManager = Class.extend(Obj, {
      */
     populate: function(options, entityInstance, properties, callback){
         var _this = this;
+        var propertyKeys = options.propertyKeys;
         $forEachParallel(properties, function(flow, property) {
             var propIndex = options.propertyNames.indexOf(property);
             if( propIndex > -1){
-                if(property.substring(property.length - 3) === "Set"){
-                    var prop            = property.substring(0, property.length -3);
-                    var propCapitalized = StringUtil.capitalize(property);
-                    var idSet           = entityInstance["get" + propCapitalized + "IdSet"]();
-                    var set             = entityInstance["get" + property]();
-                    var lookupIdSet     = idSet.clone();
+                var returnedProperty = propertyKeys.getter.call(entityInstance);
+                switch(type){
+                    case: "Set"
+                        var idSet           = propertyKeys.idGetter.call(entityInstance);
+                        var set             = returnedProperty;
+                        var lookupIdSet     = idSet.clone();
 
-                    set.clone().forEach(function(ent) {
-                        if (idSet.contains(ent.getId())) {
-                            lookupIdSet.remove(ent.getId());
-                        } else {
-                            set.remove(ent);
+                        set.clone().forEach(function(ent) {
+                            if (idSet.contains(ent.getId())) {
+                                lookupIdSet.remove(ent.getId());
+                            } else {
+                                set.remove(ent);
                         }
-                    });
 
-                    $iterableParallel(lookupIdSet, function(flow, entId) {
-                        _this[prop + "Manager"]["retrieve" + propCapitalized](entId, function(throwable, returnEnt) {
-                            if (!throwable) {
-                                set.add(returnEnt);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                } else {
-                        var entityType              = StringUtil.uncapitalize(options.entityTypes[propIndex]);
-                        var entityTypeCapitalized   = StringUtil.capitalize(entityType);
-                        var propertyCapitalized     = StringUtil.capitalize(property);
-                        var id                      = entityInstance["get" + propertyCapitalized + "id"]();
-                        if (id) {
-                            if (!entityInstance["get" + propertyCapitalized]() || entityInstance["get" + propertyCapitalized]().getId() !== id) {
-                                _this[entityType + "Manager"]["retrieve" + entityTypeCapitalized](id, function(throwable, retrievedEntity) {
+                        $iterableParallel(lookupIdSet, function(flow, entId) {
+                            propertyKeys.retriever.call(propertyKeys.manager, entId, function(throwable, returnEnt) {
                                     if (!throwable) {
-                                        entityInstance["set" + propertyCapitalized](retrievedEntity);
+                                        set.add(returnEnt);
+                                    }
+                                    flow.complete(throwable);
+                                });
+                            }).execute(function(throwable) {
+                                flow.complete(throwable);
+                            });
+                        });
+                        break;
+                    default:
+                        var id  = propertyKeys.idGetter.call(entityInstance);
+                        if (id) {
+                            if (!returnedProperty || returnedProperty.getId() !== id) {
+                                propertyKeys.retriever.call(propertyKeys.manager, id, function(throwable, retrievedEntity) {
+                                    if (!throwable) {
+                                        propertyKeys.setter.call(entityInstance, retrievedEntity);
                                     }
                                     flow.complete(throwable);
                                 })
@@ -155,6 +160,7 @@ var EntityManager = Class.extend(Obj, {
                         } else {
                             flow.complete();
                         }
+                        break;
                 }
             } else {
                 flow.error(new Error("Unknown property '" + property + "'"));

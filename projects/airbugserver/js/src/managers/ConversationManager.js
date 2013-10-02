@@ -107,8 +107,26 @@ var ConversationManager = Class.extend(EntityManager, {
 
     populateConversation: function(conversation, properties, callback){
         var options = {
-            propertyNames:  ["chatMessageSet", "owner"],    //NOTE owner may also be a Dialogue in the future
-            entityTypes:    ["ChatMessage", "Room"]         // Maybe we can have Dialogue extend Room or 2 different conversationManagers or introduce an owner type?
+            propertyNames: ["chatMessageSet", "owner"],
+            propertyKeys: {
+                chatMessageSet: {
+                    type:       "Set",
+                    idGetter:   conversation.getChatMessageIdSet,
+                    idSetter:   conversation.setChatMessageIdSet,
+                    getter:     conversation.getChatMessageSet,
+                    setter:     conversation.setChatMessageSet,
+                    manager:    _this.chatMessageManager,
+                    retriever:  _this.chatMessageManager.retrieveChatMessage
+                },
+                owner: {
+                    idGetter:   conversation.getOwnerId,
+                    idSetter:   conversation.setOwnerId,
+                    getter:     conversation.getOwner,
+                    setter:     conversation.setOwner,
+                    manager:    _this.roomManager,
+                    retriever:  _this.roomManager.retrieveRoom
+                }
+            }
         };
         this.populate(options, conversation, properties, callback);
     },

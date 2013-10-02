@@ -112,9 +112,27 @@ var ChatMessageManager = Class.extend(EntityManager, {
     },
 
     populateChatMessage: function(chatMessage, properties, callback){
+        var _this = this;
         var options = {
-            propertyNames:  ["conversation", "senderUser"],
-            entityTypes:    ["Conversation", "User"]
+            propertyNames: ["conversation", "senderUser"],
+            propertyKeys: {
+                conversation: {
+                    idGetter:   chatMessage.getConversationId,
+                    idSetter:   chatMessage.setConversationId,
+                    getter:     chatMessage.getConversation,
+                    setter:     chatMessage.setConversation,
+                    manager:    _this.conversationManager,
+                    retriever:  _this.conversationManager.retrieveConversation
+                },
+                senderUser: {
+                    idGetter:   chatMessage.getSenderUserId,
+                    idSetter:   chatMessage.setSenderUserId,
+                    getter:     chatMessage.getSenderUser,
+                    setter:     chatMessage.setSenderUser,
+                    manager:    _this.userManager,
+                    retriever:  _this.userManager.retrieveUser
+                }
+            }
         };
         this.populate(options, chatMessage, properties, callback);
     },
@@ -136,10 +154,20 @@ var ChatMessageManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {}
+     * @param {ChatMessage} chatMessage
      */
-    updateChatMessage: function() {
+    updateChatMessage: function(chatMessage, updates, callback) {
         //TODO
+        // var delta = chatMessage.generateDelta();
+        // delta.getDeltaChangeList().forEach(function(deltaChange) {
+        //     switch (deltaChange.getType()) {
+        //         case SetChange.ChangeTypes.VALUE_ADDED:
+        //             var setValue = deltaChange.getSetValue();
+        //             break;
+        //         case SetChange.ChangeTypes.VALUE_REMOVED:
+        //             break;
+        //     }
+        // });
     }
 });
 

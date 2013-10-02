@@ -141,8 +141,18 @@ var UserManager = Class.extend(Obj, {
      */
     populateUser: function(user, properties, callback){
         var options = {
-            propertyNames:  ["roomSet"],
-            entityTypes:    ["Room"]
+            propertyNames: ["roomSet"],
+            propertyKeys: {
+                roomSet: {
+                    type:       "Set",
+                    idGetter:   user.getRoomIdSet,
+                    idSetter:   user.setRoomIdSet,
+                    getter:     user.getRoomSet,
+                    setter:     user.setRoomSet,
+                    manager:    _this.roomManager,
+                    retriever:  _this.roomManager.retrieveRoom
+                }
+            }
         };
         this.populate(options, user, properties, callback);
     },
