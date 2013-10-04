@@ -10,7 +10,6 @@
 //@Require('Map')
 //@Require('airbugserver.ChatMessage')
 //@Require('airbugserver.EntityManager')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -28,16 +27,6 @@ var Class           = bugpack.require('Class');
 var Map             = bugpack.require('Map');
 var ChatMessage     = bugpack.require('airbugserver.ChatMessage');
 var EntityManager   = bugpack.require('airbugserver.EntityManager');
-var BugFlow         = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $parallel       = BugFlow.$parallel;
-var $series         = BugFlow.$series;
-var $task           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -89,7 +78,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable)} callback
      */
     deleteChatMessage: function(chatMessage, callback){
-        //TODO
+        this.delete(chatMessage, callback);
     },
 
     /**
@@ -134,7 +123,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
                 }
             }
         };
-        this.populate(options, chatMessage, properties, callback);
+        this.populate(chatMessage, options, properties, callback);
     },
 
     /**
@@ -155,22 +144,12 @@ var ChatMessageManager = Class.extend(EntityManager, {
 
     /**
      * @param {ChatMessage} chatMessage
+     * @param {function(Throwable, ChatMessage)} callback
      */
-    updateChatMessage: function(chatMessage, updates, callback) {
-        //TODO
-        // var delta = chatMessage.generateDelta();
-        // delta.getDeltaChangeList().forEach(function(deltaChange) {
-        //     switch (deltaChange.getType()) {
-        //         case SetChange.ChangeTypes.VALUE_ADDED:
-        //             var setValue = deltaChange.getSetValue();
-        //             break;
-        //         case SetChange.ChangeTypes.VALUE_REMOVED:
-        //             break;
-        //     }
-        // });
+    updateChatMessage: function(chatMessage, callback) {
+        this.update(chatMessage, callback);
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports

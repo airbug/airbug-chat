@@ -9,7 +9,6 @@
 //@Require('Class')
 //@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Session')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -26,16 +25,6 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Session             = bugpack.require('airbugserver.Session');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $parallel   = BugFlow.$parallel;
-var $series     = BugFlow.$series;
-var $task       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -105,10 +94,11 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     *
+     * @param {Session} session
+     * @param {function(Throwable)} 
      */
-    deleteSession: function(){
-        //TODO
+    deleteSession: function(session, callback){
+        this.delete(session, callback);
     },
 
     /**
@@ -196,14 +186,22 @@ var SessionManager = Class.extend(EntityManager, {
     retrieveSessionBySid: function(sid, callback) {
         this.dataStore.findOne({sid: sid}, callback);
     },
-    
+
+    /**
+     * @param {Session} session
+     * @param {function(Throwable, Session)} callback
+     */
+    updateSession: function(session, callback){
+        this.update(session, callback);
+    },
+
     /**
      * @param {string} sid
      * @param {{*}} updates //NOTE: Cannot be a Session instance, only generic objects
      * @param {function(Throwable)=} callback
      */
     updateSessionBySid: function(sid, updates, callback) {
-        this.update({sid: sid}, updates, function(throwable) {
+        this.dataStore.update({sid: sid}, updates, function(throwable) {
             if (callback) {
                 callback(throwable);
             }

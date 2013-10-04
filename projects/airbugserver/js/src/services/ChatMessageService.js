@@ -142,6 +142,10 @@ var ChatMessageService = Class.extend(Obj, {
      */
     retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
         var _this = this;
+        // Alternative
+        // this.chatMessageManager.where({conversationId: conversationId}).exec(function(){
+        //
+        // });
         this.conversationManager.findById(conversationId).populate("chatMessageIdSet").lean(true).exec(function(error, conversation){
             console.log("Inside ChatMessageService#retrieveChatMessagesByConversationId callback");
             console.log("Error:", error, "Conversation:", conversation);

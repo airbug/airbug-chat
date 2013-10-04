@@ -10,7 +10,6 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('airbugserver.RoomMember')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +27,6 @@ var Class       = bugpack.require('Class');
 var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
 var RoomMember  = bugpack.require('airbugserver.RoomMember');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -59,10 +57,11 @@ var RoomMemberManager = Class.extend(Obj, {
     },
 
     /**
-     *
+     * @param {RoomMember} roomMember
+     * @param {function(Throwable)} callback
      */
     deleteRoomMember: function(roomMember, callback){
-        //TODO
+        this.delete(roomMember, callback);
     },
 
     /**
@@ -101,7 +100,7 @@ var RoomMemberManager = Class.extend(Obj, {
                 }
             }
         };
-        this.populate(options, roomMember, properties, callback);
+        this.populate(roomMember, options, properties, callback);
     },
 
     /**
@@ -171,8 +170,12 @@ var RoomMemberManager = Class.extend(Obj, {
         roomMember.setUpdatedAt(new Date());
     },
 
-    updateRoomMember: function(){
-        //TODO
+    /**
+     * @param {RoomMember} roomMember 
+     * @param {function(Throwable, RoomMember)} callback
+     */
+    updateRoomMember: function(roomMember, callback){
+        this.update(roomMember, callback);
     }
 });
 

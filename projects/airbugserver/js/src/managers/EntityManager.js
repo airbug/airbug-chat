@@ -78,21 +78,42 @@ var EntityManager = Class.extend(Obj, {
     },
 
     /**
-     * @param {Entity} entityInstance
+     * @param {Entity} entity
      * @param {function(Throwable, Entity)} callback
      */
-    create: function(entityInstance, callback){
-        if(!entityInstance.getCreatedAt()){
-            entityInstance.setCreatedAt(new Date());
-            entityInstance.setUpdatedAt(new Date());
+    create: function(entity, callback){
+        if(!entity.getCreatedAt()){
+            entity.setCreatedAt(new Date());
+            entity.setUpdatedAt(new Date());
         }
-        this.dataStore.create(entityInstance.toObject(), function(throwable, dbObject) {
+        this.dataStore.create(entity.toObject(), function(throwable, dbObject) {
             if (!throwable) {
-                entityInstance.setId(dbObject.id);
-                callback(undefined, entityInstance);
+                entity.setId(dbObject.id);
+                callback(undefined, entity);
             } else {
                 callback(throwable);
             }
+        });
+    },
+
+    /**
+     * @param {Entity} entity
+     * @param {function(Throwable)} callback
+     */
+    delete: function(entity, callback){
+        var id = entity.getId();
+        this.dataStore.findByIdAndRemove(id, function(error, dbObject){
+            callback(error);
+        });
+    },
+
+    /**
+     * @param {string} id
+     * @param {function(error)} callback
+     */
+    deleteById: function(id, callback){
+        this.dataStore.findByIdAndRemove(id, function(error, dbObject){
+            callback(error);
         });
     },
 
@@ -108,20 +129,31 @@ var EntityManager = Class.extend(Obj, {
      *                retriever: function
      * }
      * }} options
-     * @param {Entity} entityInstance
+     * @param {Entity} entity
+     * @param {{
+     *      propertyNames: Array,
+     *      propertyName: {
+     *          idGetter:   function(),
+     *          idSetter:   function(),
+     *          getter:     function(),
+     *          setter:     function(),
+     *          manager:    EntityManager,
+     *          retriever:  function()
+     *      }
+     * }} options
      * @param {Array.<string>} properties
      * @param {function(Throwable)} callback
      */
-    populate: function(options, entityInstance, properties, callback){
+    populate: function(entity, options, properties, callback){
         var _this = this;
         var propertyKeys = options.propertyKeys;
         $forEachParallel(properties, function(flow, property) {
             var propIndex = options.propertyNames.indexOf(property);
             if( propIndex > -1){
-                var returnedProperty = propertyKeys.getter.call(entityInstance);
+                var returnedProperty = propertyKeys.getter.call(entity);
                 switch(type){
                     case "Set":
-                        var idSet           = propertyKeys.idGetter.call(entityInstance);
+                        var idSet           = propertyKeys.idGetter.call(entity);
                         var set             = returnedProperty;
                         var lookupIdSet     = idSet.clone();
 
@@ -145,12 +177,12 @@ var EntityManager = Class.extend(Obj, {
                         });
                         break;
                     default:
-                        var id  = propertyKeys.idGetter.call(entityInstance);
+                        var id  = propertyKeys.idGetter.call(entity);
                         if (id) {
                             if (!returnedProperty || returnedProperty.getId() !== id) {
                                 propertyKeys.retriever.call(propertyKeys.manager, id, function(throwable, retrievedEntity) {
                                     if (!throwable) {
-                                        propertyKeys.setter.call(entityInstance, retrievedEntity);
+                                        propertyKeys.setter.call(entity, retrievedEntity);
                                     }
                                     flow.complete(throwable);
                                 })
@@ -166,6 +198,86 @@ var EntityManager = Class.extend(Obj, {
                 flow.error(new Error("Unknown property '" + property + "'"));
             }
         }).execute(callback);
+    },
+
+    /**
+     * @param {Entity} entity
+     * @param {{
+     *      unsetters: {*}
+     * }=} options
+     * @param {function(error, Entity)} callback
+     */
+    update: function(entity, options, callback){
+        var dataStore   = this.dataStore;
+        var delta       = entity.generateDelta();
+        var id          = entity.getId();
+        var updates     = {
+            $set: {},
+            $unset: {},
+            $addToSet: {},
+            $pull: {},
+        };
+
+        if(TypeUtil.isFunction(options)){
+            var callback = options;
+            var options  = {
+                unsetters = entity.toObject();
+            };
+            delete options.unsetters.id;
+            delete options.unsetters._id;
+            delete options.unsetters.createdAt;
+            delete options.unsetters.updatedAt;
+        }
+
+        delta.getDeltaChangeList().forEach(function(deltaChange){
+            switch (deltaChange.getType()) {
+                case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                    var setters            = deltaChange.getData();
+                    for(var opt in options.unsetters){
+                        updates.$unset[opt] = "";
+                    }
+                    for(var opt in setters){
+                        updates.$set[opt] = setters[opt];
+                    }
+                    break;
+                case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
+                    var propertyName    = deltaChange.getPropertyName();
+                    var propertyValue   = deltaChange.getPropertyValue();
+                    updates.$unset[propertyName] = "";
+                    break;
+                case ObjectChange.ChangeTypes.PROPERTY_SET:
+                    var propertyName    = deltaChange.getPropertyName();
+                    var propertyValue   = deltaChange.getPropertyValue();
+                    updates.$set[propertyName] = propertyValue;
+                    break;
+                case SetChange.ChangeTypes.VALUE_ADDED:
+                    var path            = deltaChange.getPath(); //TODO Parse Path
+                    var setValue        = deltaChange.getSetValue();
+                    if(updates.$addToSet[path]){
+                        updates.$addToSet[path].$each.push(setValue);
+                    } else {
+                        updates.$addToSet[path] = {$each: [setValue]};
+                    }
+                    break;
+                case SetChange.ChangeTypes.VALUE_REMOVED:
+                    var path            = deltaChange.getPath(); //TODO Parse Path
+                    var setValue        = deltaChange.getSetValue();
+                    if(updates.$pull[path]){
+                        updates.$pull[path].$each.push(setValue);
+                    } else {
+                        updates.$pull[path] = {$each: [setValue]};
+                    }
+                    break;
+            }
+        });
+
+        dataStore.findByIdAndUpdate(id, updates, function(error, dbObject){
+            if(!error){
+                callback(null, entity);
+            } else {
+                callback(error, entity);
+            }
+        };
     },
 
     /**

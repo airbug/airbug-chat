@@ -11,7 +11,6 @@
 //@Require('Set')
 //@Require('airbugserver.Conversation')
 //@Require('airbugserver.EntityManager')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +29,6 @@ var Map                 = bugpack.require('Map');
 var Set                 = bugpack.require('Set');
 var Conversation        = bugpack.require('airbugserver.Conversation');
 var EntityManager       = bugpack.require('airbugserver.EntityManager');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -41,7 +39,6 @@ var $forEachParallel    = BugFlow.$forEachParallel;
 var $iterableParallel   = BugFlow.$iterableParallel;
 var $parallel           = BugFlow.$parallel;
 var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -84,10 +81,11 @@ var ConversationManager = Class.extend(EntityManager, {
     },
 
     /**
-     *
+     * @param {Conversation} conversation
+     * @param {function(Throwable)} callback
      */
     deleteConversation: function(conversation, callback){
-        //TODO
+        this.delete(conversation, callback);
     },
 
     /**
@@ -128,7 +126,7 @@ var ConversationManager = Class.extend(EntityManager, {
                 }
             }
         };
-        this.populate(options, conversation, properties, callback);
+        this.populate(conversation, options, properties, callback);
     },
 
     /**
@@ -148,10 +146,11 @@ var ConversationManager = Class.extend(EntityManager, {
     },
 
     /**
-     *
+     * @param {Conversation} conversation 
+     * @param {function(Throwable, Conversation)} callback
      */
-    updateConversation: function(){
-        //TODO
+    updateConversation: function(conversation, callback){
+        this.update(conversation, callback);
     }
 });
 

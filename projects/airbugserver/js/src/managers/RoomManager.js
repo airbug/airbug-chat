@@ -11,7 +11,6 @@
 //@Require('Set')
 //@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Room')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -30,18 +29,6 @@ var Map                 = bugpack.require('Map');
 var Set                 = bugpack.require('Set');
 var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Room                = bugpack.require('airbugserver.Room');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $forEachParallel    = BugFlow.$forEachParallel;
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -92,10 +79,11 @@ var RoomManager = Class.extend(EntityManager, {
     },
 
     /**
-     *
+     * @param {Room} room
+     * @param {function(Throwable)} callback
      */
     deleteRoom: function(room, callback){
-        //TODO
+        this.delete(room, callback);
     },
 
     /**
@@ -142,7 +130,7 @@ var RoomManager = Class.extend(EntityManager, {
                 }
             }
         };
-        this.populate(options, room, properties, callback);
+        this.populate(room, options, properties, callback);
     },
 
     /**
@@ -166,23 +154,7 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)} callback
      */
     updateRoom: function(room, callback) {
-
-        //TODO BRN:
-
-        room.membersList.addToSet(roomMember._id);
-        room.save(function(throwable, room) {
-            callback(throwable, room);
-        });
-
-
-        _this.dataStore.populate(returnedRoom, {path: "membersList"}, function(throwable, returnedRoom){
-            room = returnedRoom;
-            flow.complete(throwable);
-        });
-
-
-
-        //this.dataStore.update({id: })
+        this.update(room, callback);
     }
 });
 

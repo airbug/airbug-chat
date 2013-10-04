@@ -11,7 +11,6 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('airbugserver.User')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -30,18 +29,6 @@ var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
 var Set         = bugpack.require('Set');
 var User        = bugpack.require('airbugserver.User');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $forEachParallel    = BugFlow.$forEachParallel;
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -84,10 +71,11 @@ var UserManager = Class.extend(Obj, {
     },
 
     /**
-     *
+     * @param {User} user
+     * @param {function(Throwable)} callback
      */
     deleteUser: function(user, callback){
-        //TODO
+        this.delete(user, callback);
     },
 
     /**
@@ -154,7 +142,7 @@ var UserManager = Class.extend(Obj, {
                 }
             }
         };
-        this.populate(options, user, properties, callback);
+        this.populate(user, options, properties, callback);
     },
 
     /**
@@ -230,10 +218,11 @@ var UserManager = Class.extend(Obj, {
     },
 
     /**
-     *
+     * @param {User} user 
+     * @param {function(Throwable, User)} callback
      */
-    updateUser: function(){
-        //TODO
+    updateUser: function(user, callback){
+        this.update(user, callback);
     }
 });
 
