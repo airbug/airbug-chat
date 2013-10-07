@@ -7,7 +7,6 @@
 //@Export('SessionModule')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('airbug.CurrentUserModel')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.SessionModel')
@@ -25,7 +24,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
 var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
 var ManagerModule       = bugpack.require('airbug.ManagerModule');
 var SessionModel        = bugpack.require('airbug.SessionModel');
@@ -41,20 +39,17 @@ var SessionModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldObjectManagerModule) {
+    _constructor: function(airbugApi, meldStore) {
 
-        this._super(airbugApi, meldObjectManagerModule);
+        this._super(airbugApi, meldStore);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {AirbugApi}
-         */
-        this.airbugApi          = airbugApi;
+        //TODO BRN: These modules shouldn't be accessing Models. Instead they should be loading MeldDocuments and
+        // then allowing the UI to wrap the meldDocuments in Models when needed
 
         /**
          * @private

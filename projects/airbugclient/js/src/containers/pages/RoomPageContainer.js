@@ -14,6 +14,9 @@
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.RoomModel')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ViewBuilder')
 
 
@@ -21,29 +24,35 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                                   = bugpack.require('Class');
-var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
-var LogoutButtonContainer                   = bugpack.require('airbug.LogoutButtonContainer');
-var PageContainer                           = bugpack.require('airbug.PageContainer');
-var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
-var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
-var RoomListPanelContainer                  = bugpack.require('airbug.RoomListPanelContainer');
-var RoomModel                               = bugpack.require('airbug.RoomModel');
-var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var HomeButtonContainer         = bugpack.require('airbug.HomeButtonContainer');
+var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
+var PageContainer               = bugpack.require('airbug.PageContainer');
+var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
+var RoomChatBoxContainer        = bugpack.require('airbug.RoomChatBoxContainer');
+var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
+var RoomModel                   = bugpack.require('airbug.RoomModel');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var bugmeta                     = BugMeta.context();
+var autowired                   = AutowiredAnnotation.autowired;
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -213,16 +222,16 @@ var RoomPageContainer = Class.extend(PageContainer, {
         // var blackoutLoaderContainer = new BlackoutLoaderContainer();
         // this.addContainerChild(blackoutLoaderContainer);
 
-        this.roomManagerModule.retrieveRoom(roomId, function(error, roomMeldObj){
-            if(!error && roomMeldObj){
-                _this.roomModel.setMeldObject(roomMeldObj);
+        this.roomManagerModule.retrieveRoom(roomId, function(throwable, roomMeldDocument) {
+            if (!throwable) {
+                _this.roomModel.setMeldDocument(roomMeldDocument);
                 //TODO stop loading animation
             } else {
                 //TODO
                 // retry mechanism
                 var notificationView    = _this.getNotificationView();
-                console.log("error:", error);
-                notificationView.flashError(error);
+                console.log("throwable:", throwable);
+                notificationView.flashError(throwable);
                 notificationView.flashError("This room is currently unavailable. You will be redirected to your user homepage");
                 setTimeout(function(){
                     _this.navigationModule.navigate("home", {trigger: true});
@@ -231,6 +240,11 @@ var RoomPageContainer = Class.extend(PageContainer, {
         });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([

@@ -13,6 +13,7 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
+
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
@@ -38,11 +40,13 @@ var autowired   = AutowiredAnnotation.autowired;
 var bugmeta     = BugMeta.context();
 var property    = PropertyAnnotation.property;
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
 var TrackerModule = Class.extend(Obj, {
+
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,7 +72,7 @@ var TrackerModule = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     //TODO
@@ -113,8 +117,9 @@ var TrackerModule = Class.extend(Obj, {
         this.trackMouseupsOnDocument();
     },
 
+
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     initializeMessageSubscriptions: function(){
@@ -190,6 +195,7 @@ var TrackerModule = Class.extend(Obj, {
     }
 });
 
+
 //-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
@@ -199,6 +205,7 @@ bugmeta.annotate(TrackerModule).with(
         property("commandModule").ref("commandModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

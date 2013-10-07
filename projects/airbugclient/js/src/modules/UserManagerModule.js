@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ var bugpack = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
@@ -31,33 +32,12 @@ var ManagerModule   = bugpack.require('airbug.ManagerModule');
 var UserManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Public Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @param {airbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldObjectManager} meldObjectManagerModule
-     */
-    _constructor: function(airbugApi, meldObjectManagerModule) {
-
-        this._super(airbugApi, meldObjectManagerModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-
-    },
-
-    //-------------------------------------------------------------------------------
-    // Instance Methods
-    //-------------------------------------------------------------------------------
-
 
     /**
      * @param {string} userId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     retrieveUser: function(userId, callback) {
         this.retrieve("User", userId, callback);
@@ -65,9 +45,9 @@ var UserManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} userIds
-     * @param {function(error, Array.<meldbug.MeldObject>)} callback
+     * @param {function(Throwable, Map.<meldbug.MeldDocument>)} callback
      */
-    retrieveUsers: function(userIds, callback){
+    retrieveUsers: function(userIds, callback) {
         this.retrieveEach("User", userIds, callback);
     }
 });

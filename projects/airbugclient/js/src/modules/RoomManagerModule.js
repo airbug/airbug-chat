@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,32 +31,17 @@ var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 var RoomManagerModule = Class.extend(ManagerModule, {
 
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(airbugApi, meldObjectManagerModule) {
-
-        this._super(airbugApi, meldObjectManagerModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-    },
-
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(error, meldbug.MeldObj)} callback
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
-    addUserToRoom: function(userId, roomId, callback){
+    addUserToRoom: function(userId, roomId, callback) {
         var requestData = {userId: userId, roomId: roomId};
         this.request("addUserTo", "Room", requestData, callback);
     },
@@ -64,16 +49,16 @@ var RoomManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {{
      *      name: string
-     * }} room
-     * @param {function(error, meldbug.MeldObj)} callback
+     * }} roomObject
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
-    createRoom: function(roomObj, callback) {
-        this.create("Room", roomObj, callback);
+    createRoom: function(roomObject, callback) {
+        this.create("Room", roomObject, callback);
     },
 
     /**
      * @param {string} roomId
-     * @param {function(error, meldbug.MeldObj)} callback
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     joinRoom: function(roomId, callback) {
         var requestData = {objectId: roomId};
@@ -82,7 +67,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(error, string)} callback //roomId
+     * @param {function(Throwable, string)} callback
      */
     leaveRoom: function(roomId, callback) {
         var requestData = {objectId: roomId};
@@ -91,7 +76,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(error, meldbug.MeldObj)} callback
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     retrieveRoom: function(roomId, callback) {
         this.retrieve("Room", roomId, callback);
@@ -99,7 +84,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(error, Array.<meldbug.MeldObj>)} callback
+     * @param {function(Throwable, Array.<meldbug.MeldDocument>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
         this.retrieveEach("Room", roomIds, callback);

@@ -38,7 +38,6 @@ var ChatMessageModel = Class.extend(MeldModel, {
     defaults: {
         sentBy: "",
         conversationId: "",
-        conversationOwnerId: "",
         sentAt: "",
         pending: true,
         failed: false,

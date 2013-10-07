@@ -9,6 +9,10 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('StringUtil')
+//@Require('TypeUtil')
+//@Require('bugdelta.DeltaDocumentChange')
+//@Require('bugdelta.ObjectChange')
+//@Require('bugdelta.SetChange')
 //@Require('bugflow.BugFlow')
 
 
@@ -16,28 +20,32 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var StringUtil  = bugpack.require('StringUtil');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var StringUtil              = bugpack.require('StringUtil');
+var TypeUtil                = bugpack.require('TypeUtil');
+var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
+var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
+var SetChange               = bugpack.require('bugdelta.SetChange');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $forEachParallel    = BugFlow.$forEachParallel;
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
+var $forEachParallel        = BugFlow.$forEachParallel;
+var $iterableParallel       = BugFlow.$iterableParallel;
+var $parallel               = BugFlow.$parallel;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -76,6 +84,11 @@ var EntityManager = Class.extend(Obj, {
          */
         this.entityType     = entityType;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @param {Entity} entity
@@ -215,13 +228,13 @@ var EntityManager = Class.extend(Obj, {
             $set: {},
             $unset: {},
             $addToSet: {},
-            $pull: {},
+            $pull: {}
         };
 
-        if(TypeUtil.isFunction(options)){
-            var callback = options;
-            var options  = {
-                unsetters = entity.toObject();
+        if (TypeUtil.isFunction(options)) {
+            callback = options;
+            options  = {
+                unsetters: entity.toObject()
             };
             delete options.unsetters.id;
             delete options.unsetters._id;
@@ -242,7 +255,6 @@ var EntityManager = Class.extend(Obj, {
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
                     var propertyName    = deltaChange.getPropertyName();
-                    var propertyValue   = deltaChange.getPropertyValue();
                     updates.$unset[propertyName] = "";
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_SET:
@@ -250,7 +262,7 @@ var EntityManager = Class.extend(Obj, {
                     var propertyValue   = deltaChange.getPropertyValue();
                     updates.$set[propertyName] = propertyValue;
                     break;
-                case SetChange.ChangeTypes.VALUE_ADDED:
+                case SetChange.ChangeTypes.ADDED_TO_SET:
                     var path            = deltaChange.getPath(); //TODO Parse Path
                     var setValue        = deltaChange.getSetValue();
                     if(updates.$addToSet[path]){
@@ -259,7 +271,7 @@ var EntityManager = Class.extend(Obj, {
                         updates.$addToSet[path] = {$each: [setValue]};
                     }
                     break;
-                case SetChange.ChangeTypes.VALUE_REMOVED:
+                case SetChange.ChangeTypes.REMOVED_FROM_SET:
                     var path            = deltaChange.getPath(); //TODO Parse Path
                     var setValue        = deltaChange.getSetValue();
                     if(updates.$pull[path]){
@@ -271,13 +283,13 @@ var EntityManager = Class.extend(Obj, {
             }
         });
 
-        dataStore.findByIdAndUpdate(id, updates, function(error, dbObject){
-            if(!error){
+        dataStore.findByIdAndUpdate(id, updates, function(error, dbObject) {
+            if (!error) {
                 callback(null, entity);
             } else {
                 callback(error, entity);
             }
-        };
+        });
     },
 
     /**

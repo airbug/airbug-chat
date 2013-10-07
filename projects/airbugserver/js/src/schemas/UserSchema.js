@@ -39,6 +39,7 @@ var UserSchema = new Schema({
     firstName: String,
     lastName: String,
     roomIdSet: [{type: ObjectId, ref: 'Room'}],
+    status: String,
     updatedAt: Date
 });
 

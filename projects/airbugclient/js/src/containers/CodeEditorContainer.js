@@ -185,6 +185,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         this.initializeCommandSubscriptions();
     },
 
+
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
@@ -210,6 +211,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         this.handleEmbedButtonClickedEvent(event);
     },
 
+
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
@@ -228,15 +230,16 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     handleEmbedButtonClickedEvent: function(event){
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
-        var chatMessageObj = {
-            code: text,
+        var chatMessageObject = {
+            code: code,
             type: "code",
             codeLanguage: codeLanguage
         };
 
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHATMESSAGE, chatMessageObj);
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
         event.stopPropagation();
     },
+
 
     //-------------------------------------------------------------------------------
     // Ace Config and Helper Methods
@@ -300,6 +303,7 @@ bugmeta.annotate(CodeEditorContainer).with(
         property("commandModule").ref("commandModule"),
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

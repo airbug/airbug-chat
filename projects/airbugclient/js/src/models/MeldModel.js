@@ -7,26 +7,34 @@
 //@Export('MeldModel')
 
 //@Require('Class')
+//@Require('Set')
+//@Require('bugdelta.DeltaDocumentChange')
 //@Require('bugdelta.ObjectChange')
+//@Require('bugdelta.SetChange')
+//@Require('carapace.CarapaceCollection')
 //@Require('carapace.CarapaceModel')
-//@Require('meldbug.MeldObject')
+//@Require('meldbug.MeldDocument')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ObjectChange  = bugpack.require('bugdelta.ObjectChange');
-var CarapaceModel   = bugpack.require('carapace.CarapaceModel');
-var MeldObject      = bugpack.require('meldbug.MeldObject');
+var Class                   = bugpack.require('Class');
+var Set                     = bugpack.require('Set');
+var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
+var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
+var SetChange               = bugpack.require('bugdelta.SetChange');
+var CarapaceCollection      = bugpack.require('carapace.CarapaceCollection');
+var CarapaceModel           = bugpack.require('carapace.CarapaceModel');
+var MeldDocument            = bugpack.require('meldbug.MeldDocument');
 
 
 //-------------------------------------------------------------------------------
@@ -48,15 +56,15 @@ var MeldModel = Class.extend(CarapaceModel, {
 
         /**
          * @private
-         * @type {MeldObject}
+         * @type {MeldDocument}
          */
-        this.meldObject = null;
+        this.meldDocument = null;
 
-        // NOTE BRN: When we receive a MeldObject, we should convert it into a basic object and store the MeldObject.
+        // NOTE BRN: When we receive a MeldDocument, we should convert it into a basic object and store the MeldDocument.
         // Otherwise, we should just pass it through
 
-        if (Class.doesExtend(object, MeldObject)) {
-            this.meldObject = object;
+        if (Class.doesExtend(object, MeldDocument)) {
+            this.meldDocument = object;
             this._super(object.generateObject(), options);
         } else {
             this._super(object, options);
@@ -74,7 +82,7 @@ var MeldModel = Class.extend(CarapaceModel, {
      */
     initialize: function(attributes, options) {
         this._super(attributes, options);
-        this.addListenersToMeldObject();
+        this.addListenersToMeldDocument();
     },
 
 
@@ -83,15 +91,15 @@ var MeldModel = Class.extend(CarapaceModel, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {MeldObject} meldObject
+     * @param {MeldDocument} meldDocument
      */
-    setMeldObject: function(meldObject){
-        this.meldObject = meldObject;
+    setMeldDocument: function(meldDocument){
+        this.meldDocument = meldDocument;
 
         //TODO BRN: Do we need to clear out past values?
 
-        this.set(meldObject.generateObject());
-        this.addListenersToMeldObject();
+        this.set(meldDocument.generateObject());
+        this.addListenersToMeldDocument();
     },
 
 
@@ -102,10 +110,10 @@ var MeldModel = Class.extend(CarapaceModel, {
     /**
      * @private
      */
-    addListenersToMeldObject: function(){
-        if(this.meldObject){
-            this.meldObject.addEventListener(MeldObject.EventTypes.DESTROYED, this.handleDestroyed, this);
-            this.meldObject.addEventListener(MeldObject.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
+    addListenersToMeldDocument: function(){
+        if(this.meldDocument){
+            this.meldDocument.addEventListener(MeldDocument.EventTypes.DESTROYED, this.handleDestroyed, this);
+            this.meldDocument.addEventListener(MeldDocument.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
         }
     },
 
@@ -133,38 +141,59 @@ var MeldModel = Class.extend(CarapaceModel, {
         var set = false;
         delta.getChangeList().forEach(function(deltaChange) {
             switch(deltaChange.getChangeType()) {
+                case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                    setAttributes = deltaChange.getData();
+                    set = true;
+                    break;
                 case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
-                    var propertyName = deltaChange.getPropertyName();
-                    var propertyValue = deltaChange.getPropertyValue();
-                    _this.unset(propertyName);
+                    _this.unset(deltaChange.getPropertyName());
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_SET:
-                    var propertyName = deltaChange.getPropertyName();
-                    var propertyValue = deltaChange.getPropertyValue();
                     set = true;
-                    setAttributes[propertyName] = propertyValue;
+                    setAttributes[deltaChange.getPropertyName()] = deltaChange.getPropertyValue();
                     break;
-                case SetChange.ChangeTypes.ADD_TO_SET:
-                    var value =  deltaChange.getValue();
+                case SetChange.ChangeTypes.ADDED_TO_SET:
+                    var value =  deltaChange.getSetValue();
                     var path = deltaChange.getPath();
                     var currentValue = _this.get(path);
                     if (currentValue) {
                         if (Class.doesExtend(currentValue, CarapaceCollection)) {
                             currentValue.add(value);
                         } else {
-
-                            //Assume array
-
-                            currentValue.push(value);
-                            setAttributes[path] = currentValue;
+                            if (Class.doesExtend(currentValue, Set)) {
+                                currentValue.add(value);
+                                //TODO BRN: How can we trigger a change notification in Backbone?
+                            } else {
+                                throw new Error("Unsupported type found in backbone model - currentValue:", currentValue);
+                            }
                         }
                     } else {
-                        setAttributes[path] = [value];
+                        setAttributes[path] = new Set([value]);
+                        set = true;
+                    }
+                    break;
+                case SetChange.ChangeTypes.REMOVED_FROM_SET:
+                    var value =  deltaChange.getSetValue();
+                    var path = deltaChange.getPath();
+                    var currentValue = _this.get(path);
+                    if (currentValue) {
+                        if (Class.doesExtend(currentValue, CarapaceCollection)) {
+                            currentValue.remove(value);
+                        } else {
+                            if (Class.doesExtend(currentValue, Set)) {
+                                currentValue.remove(value);
+                                //TODO BRN: How can we trigger a change notification in Backbone?
+                            } else {
+                                throw new Error("Unsupported type found in backbone model - currentValue:", currentValue);
+                            }
+                        }
                     }
                     break;
             }
         });
-        this.set(setAttributes);
+        if (set) {
+            this.set(setAttributes);
+        }
     }
 });
 

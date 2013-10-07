@@ -36,7 +36,11 @@ var EntityDefines = {};
 EntityDefines.Responses = {
     ERROR: "Error",
     EXCEPTION: "Exception",
-    SUCCESS: "Success"
+    MAPPED_EXCEPTION: "MappedException",
+    MAPPED_SUCCESS: "MappedSuccess",
+    MAPPED_SUCCESS_WITH_EXCEPTION: "MappedSuccessWithException",
+    SUCCESS: "Success",
+    SUCCESS_WITH_EXCEPTION: "SuccessWithException"
 };
 
 

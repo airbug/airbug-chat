@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugflow.BugFlow')
 //@Require('handshaker.IHand')
 
 
@@ -22,9 +23,20 @@ var bugpack = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var IHand   = bugpack.require('handshaker.IHand');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+var IHand               = bugpack.require('handshaker.IHand');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $parallel           = BugFlow.$parallel;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
+var $iterableParallel   = BugFlow.$iterableParallel;
 
 
 //-------------------------------------------------------------------------------
@@ -77,40 +89,40 @@ var UserService = Class.extend(Obj, {
             var session = handshakeData.session;
             console.log("session:", session);
             if (session.data.userId) {
-                this.userManager.retrieveUser(session.data.userId, function(error, user) {
+                this.userManager.retrieveUser(session.data.userId, function(throwable, user) {
                     console.log("userManager.findUserById. user:", user);
-                    if (!error) {
+                    if (!throwable) {
                         if (user) {
                             handshakeData.user = user;
-                            callback(error);
+                            callback(throwable);
                         } else {
                             delete session.data.userId;
-                            _this.createAnonymousUser(function(error, user) {
-                                if (!error) {
+                            _this.createAnonymousUser(function(throwable, user) {
+                                if (!throwable) {
                                     handshakeData.user = user;
                                     session.data.userId = user.id;
-                                    session.save(function(error, session){
-                                        callback(error);
+                                    session.save(function(throwable, session){
+                                        callback(throwable);
                                     });
                                 } else {
-                                    callback(error);
+                                    callback(throwable);
                                 }
                             });
                         }
                     } else {
-                        callback(error);
+                        callback(throwable);
                     }
                 });
             } else {
-                this.createAnonymousUser(function(error, user) {
-                    if (!error) {
+                this.createAnonymousUser(function(throwable, user) {
+                    if (!throwable) {
                         handshakeData.user = user;
                         session.data.userId = user.id;
-                        session.save(function(error, user){
-                            callback(error);
+                        session.save(function(throwable, user){
+                            callback(throwable);
                         });
                     } else {
-                        callback(error);
+                        callback(throwable);
                     }
                 });
             }
@@ -143,39 +155,47 @@ var UserService = Class.extend(Obj, {
     },
 
     /**
-     * @param {} userObj
-     * @param {function(error, user)} callback
+     * @param {} userObject
+     * @param {function(Throwable, User)} callback
      */
-    loginUser: function(userObj, callback){
+    loginUser: function(userObject, callback){
         var conditions = {
-            email: userObj.email
+            email: userObject.email
         };
         this.userManager.findOne(conditions, callback);
     },
 
     /**
-     * @param {{*}} userObj
-     * @param {function(error, User)} callback
+     * @param {{*}} userObject
+     * @param {function(throwable, User)} callback
      */
-    registerUser: function(userObj, callback){
+    registerUser: function(userObject, callback) {
         var _this = this;
-        this.userManager.findOne({email: userObj.email}, function(error, user){
-            //TODO what errors exist for this?
-            if(!error){
-                if(!user){
-                    _this.userManager.create(userObj, callback);
+        this.userManager.findOne({email: userObject.email}, function(throwable, user) {
+            //TODO what throwables exist for this?
+            if (!throwable) {
+                if (!user) {
+                    _this.userManager.create(userObject, callback);
                 } else {
-                    callback(new Error("User already exists"), null);
+                    callback(new Error("User already exists"));
                 }
             } else {
-                callback(error, null);
+                callback(throwable);
             }
         });
     },
 
     /**
+     * @param {RequestContext} requestContext
+     * @param {function(callback
+     */
+    retrieveCurrentUser: function(requestContext, callback) {
+        //TODO BRN:
+    },
+
+    /**
      * @param {string} userId
-     * @param {function(error, *)} callback
+     * @param {function(Throwable, *)} callback
      */
     retrieveUser: function(userId, callback){
         this.userManager.retrieveUser(userId, callback);
@@ -183,7 +203,7 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {Array.<string>} userIds
-     * @param {function(error, {*})} callback 
+     * @param {function(Throwable, {*})} callback
      */
     retrieveUsers: function(userIds, callback) {
         this.userManager.retrieveUsers(userIds, callback);

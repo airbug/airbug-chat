@@ -118,13 +118,13 @@ var UserController = Class.extend(EntityController, {
             var session         = req.session;
             var params          = req.params;
             var query           = req.query;
-            var userObj         = req.body;
+            var userObject      = req.body;
             var returnedUser;
 
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObj:", userObj, "params:", params, "query:", query);
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
             $series([
                 $task(function(flow){
-                    userService.loginUser(userObj, function(error, user){
+                    userService.loginUser(userObject, function(error, user){
                         returnedUser = user;
                         if (!error && !user) {
                             flow.error(new Error("User does not exist"))
@@ -164,32 +164,36 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/register', function(req, res){
+        expressApp.post('/app/register', function(req, res) {
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
             var oldSid          = req.sessionID;
             var session         = req.session;
             var params          = req.params;
             var query           = req.query;
-            var userObj         = req.body;
+            var userObject      = req.body;
             var returnedUser;
 
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObj:", userObj, "params:", params, "query:", query);
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
             $series([
                 $task(function(flow){
-                    userService.registerUser(userObj, function(error, user){
+                    userService.registerUser(userObject, function(throwable, user) {
                         returnedUser = user;
-                        flow.complete(error);
+                        flow.complete(throwable);
                     });
                 }),
                 $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
-                        if(!error) res.json({error: null, user: returnedUser});
-                        flow.complete(error);
+                    sessionService.regenerateSession(oldSid, req, returnedUser, function(throwable) {
+                        if (!throwable) {
+                            res.json({error: null, user: returnedUser});
+                        }
+                        flow.complete(throwable);
                     });
                 })
-            ]).execute(function(error){
-                if(error) res.json({error: error.toString(), user: null});
+            ]).execute(function(throwable){
+                if (throwable) {
+                    res.json({error: throwable.toString(), user: null});
+                }
             });
         });
 
@@ -198,15 +202,15 @@ var UserController = Class.extend(EntityController, {
             var session         = req.session;
             var userId          = session.userId;
 
-            userService.findUserById(userId, function(error, user){
-                if(!error){
-                    if(user){
-                        res.json({currentUser: user});
+            userService.findUserById(userId, function(throwable, user) {
+                if (!throwable) {
+                    if (user ){
+                        res.json({currentUser: user.toObject()});
                     } else {
                         res.json({error: "User not found"});
                     }
                 } else {
-                    res.json(error: error.toString());
+                    res.json({error: throwable.toString()});
                 }
             });
         });
@@ -214,15 +218,15 @@ var UserController = Class.extend(EntityController, {
         expressApp.post('/app/user-availability-check-email', function(req, res){
             var email = req.body.email;
 
-            userService.findUserByEmail(email, function(error, user){
-                if(!error){
-                    if(user){
+            userService.findUserByEmail(email, function(throwable, user){
+                if (!throwable) {
+                    if (user) {
                         res.send("false");
                     } else {
                         res.send("true");
                     }
                 } else {
-                    res.send(error.toString());
+                    res.send(throwable.toString());
                 }
             });
         });
@@ -238,16 +242,18 @@ var UserController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            retrieveCurrentUser: function(request, responder){
+            retrieveCurrentUser: function(request, responder) {
                 var currentUser = request.getHandshake().user;
-                userService.findUserById(currentUser.id, function(error, user){
-                    if(!error && user){
-                        var data        = {user: user};
-                        var response    = responder.response("gotCurrentUser", data);
+                userService.findUserById(currentUser.id, function(throwable, user) {
+                    var data        = undefined;
+                    var response    = undefined;
+                    if (!error){
+                        data        = {user: user};
+                        response    = responder.response("gotCurrentUser", data);
                         responder.sendResponse(response);
                     } else {
-                        var data        = {error: error};
-                        var response    = responder.response("getCurrentUserError", data);
+                        data        = {error: error};
+                        response    = responder.response("getCurrentUserError", data);
                     }
                 });
             },

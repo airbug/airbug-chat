@@ -117,16 +117,16 @@ var RoomManager = Class.extend(EntityManager, {
                     idSetter:   room.setRoomMemberIdSet,
                     getter:     room.getRoomMemberSet,
                     setter:     room.setRoomMemberSet,
-                    manager:    _this.roomMemberManager,
-                    retriever:  _this.roomMemberManager.retrieveRoomMember
+                    manager:    this.roomMemberManager,
+                    retriever:  this.roomMemberManager.retrieveRoomMember
                 },
                 conversation: {
                     idGetter:   room.getConversationId,
                     idSetter:   room.setConversationId,
                     getter:     room.getConversation,
                     setter:     room.setConversation,
-                    manager:    _this.conversationManager,
-                    retriever:  _this.conversationManager.retrieveConversation
+                    manager:    this.conversationManager,
+                    retriever:  this.conversationManager.retrieveConversation
                 }
             }
         };

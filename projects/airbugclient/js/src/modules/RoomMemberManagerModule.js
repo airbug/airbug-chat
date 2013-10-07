@@ -31,32 +31,14 @@ var ManagerModule   = bugpack.require('airbug.ManagerModule');
 
 var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldObjectManager} meldObjectManagerModule
-     */
-    _constructor: function(airbugApi, meldObjectManagerModule) {
-
-        this._super(airbugApi, meldObjectManagerModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-    },
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {string} roomMemberId
-     * @param {function(error, meldbug.MeldObject)} callback
+     * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     retrieveRoomMember: function(roomMemberId, callback){
         this.retrieve("RoomMember", roomMemberId, callback);
@@ -64,7 +46,7 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomMemberIds
-     * @param {function(error, Array.<meldbug.MeldObject>)} callback
+     * @param {function(Throwable, Array.<meldbug.MeldDocument>)} callback
      */
     retrieveRoomMembers: function(roomMemberIds, callback){
         this.retrieveEach("RoomMember", roomMemberIds, callback);

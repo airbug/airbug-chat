@@ -21,8 +21,8 @@ var bugpack         = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Publisher   = bugpack.require('Publisher');
+var Class           = bugpack.require('Class');
+var Publisher       = bugpack.require('Publisher');
 
 
 //-------------------------------------------------------------------------------
@@ -36,31 +36,47 @@ var CommandModule = Class.extend(Publisher, {
     //-------------------------------------------------------------------------------
 
     /**
+     *
      */
     _constructor: function() {
+
         this._super();
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-
     },
 
+
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} topic
+     * @param {*} data
+     */
     relayCommand: function(topic, data){
         this.publish(topic, data);
     },
 
+    /**
+     * @param {string} topic
+     * @param {*} data
+     */
     relayMessage: function(topic, data){
         this.publish(topic, data);
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
 /**
+ * @static
  * @enum {string}
  */
 CommandModule.CommandType = {
@@ -76,16 +92,18 @@ CommandModule.CommandType = {
         PICTURE_EDITOR:         "CommandModuleCommand::display::pictureEditor"
     },
     SUBMIT: {
-        CHATMESSAGE:            "CommandmoduleCommand::submit::chatMessage"
+        CHAT_MESSAGE:            "CommandmoduleCommand::submit::chatMessage"
     }
 };
 
 /**
+ * @static
  * @enum {string}
  */
 CommandModule.MessgeType = {
     BUTTON_CLICKED:             "CommandModuleMessage::ButtonClicked"
 };
+
 
 //-------------------------------------------------------------------------------
 // Exports

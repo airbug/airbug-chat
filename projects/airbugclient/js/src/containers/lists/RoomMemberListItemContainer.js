@@ -8,21 +8,39 @@
 
 //@Require('Class')
 //@Require('airbug.UserListItemContainer')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.ViewBuilder')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var UserListItemContainer   = bugpack.require('airbug.UserListItemContainer');
+var Class                       = bugpack.require('Class');
+var UserListItemContainer       = bugpack.require('airbug.UserListItemContainer');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var autowired                   = AutowiredAnnotation.autowired;
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +70,7 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
 
         this.userManagerModule  = null;
 
+
         // Models
         //-------------------------------------------------------------------------------
 
@@ -75,11 +94,9 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         this._super(routerArgs);
         var _this   = this;
         var userId  = this.roomMemberModel.get("userId");
-        this.userManagerModule.retrieveUser(userId, function(error, userMeldObj){
-            if(!error && userMeldObj){
-                //NOTE might want to change this to an more fleshed out version of roomMemberModel later to prevent conflicts with private currentUser information
-                var userObj = userMeldObj.generateObject();
-                _this.userModel.set(userObj);
+        this.userManagerModule.retrieveUser(userId, function(throwable, userMeldDocument) {
+            if (!throwable) {
+                _this.userModel.setMeldDocument(userMeldDocument);
             } else {
                 //TODO error handling
                 // retry condition
@@ -100,6 +117,11 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         this.selectableListItemView.model = this.roomMemberModel;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomMemberListItemContainer).with(
     autowired().properties([

@@ -16,6 +16,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
+//@Require('airbug.RequestFailedException')
 //@Require('airbug.TextChatMessageModel')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -46,6 +47,7 @@ var CodeChatMessageModel            = bugpack.require('airbug.CodeChatMessageMod
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
+var RequestFailedException          = bugpack.require('airbug.RequestFailedException');
 var TextChatMessageModel            = bugpack.require('airbug.TextChatMessageModel');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
@@ -165,7 +167,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        this.loadChatMessageCollection(this.conversationModel.get("_id"));
+        this.loadChatMessageCollection(this.conversationModel.get("id"));
     },
 
     /**
@@ -211,7 +213,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.conversationModel.bind('change:_id', this.handleConversationModelChangeId, this);
+        this.conversationModel.bind('change:id', this.handleConversationModelChangeId, this);
         this.chatMessageCollection.bind('add', this.handleChatMessageCollectionAdd, this);
 
         this.initializeCommandSubscriptions();
@@ -222,15 +224,15 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * 
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.SUBMIT.CHATMESSAGE, this.handleSubmitChatMessageCommand, this);
+        this.commandModule.subscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
     },
 
     /**
      * @param {PublisherMessage} message
      */
     handleSubmitChatMessageCommand: function(message) {
-        var chatMessageObj = message.getData();
-        this.handleInputFormSubmit(chatMessageObj);
+        var chatMessageObject = message.getData();
+        this.handleInputFormSubmit(chatMessageObject);
     },
 
 
@@ -240,18 +242,23 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {string} conversationUuid
+     * @param {string} conversationId
      */
     loadChatMessageCollection: function(conversationId) {
+
         // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding ChatMessageModels to the chatMessageCollection.
+
         var _this = this;
-        this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(error, chatMessageMeldObjs){
-            if(!error && chatMessageMeldObjs.length > 0){
-                chatMessageObjs.forEach(function(chatMessageMeldObj){
-                    var chatMessageObjModel = new ChatMessageModel(chatMessageMeldObj);
-                    chatMessageObjModel.set({pending: false});
-                    _this.chatMessageCollection.add(chatMessageObjModel);
+        this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(throwable, chatMessageMeldDocuments) {
+            if (!throwable) {
+                chatMessageMeldDocuments.forEach(function(chatMessageMeldDocument) {
+                    var chatMessageModel = new TextChatMessageModel(chatMessageMeldDocument);
+                    chatMessageModel.set({
+                        pending: false,
+                        failed: false
+                    });
+                    _this.chatMessageCollection.add(chatMessageModel);
                 });
             }
         });
@@ -272,41 +279,63 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     // hearInputFormSubmit: function(event){
     //     console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
-    //     var chatMessageObj = event.getData();
-    //     this.handleInputFormSubmit(chatMessageObj);
+    //     var chatMessageObject = event.getData();
+    //     this.handleInputFormSubmit(chatMessageObject);
     // },
 
     /**
      * @param {{*}}
      */
-    handleInputFormSubmit: function(chatMessageObj) {
-        var chatMessageObjType = chatMessageObj.type;
+    handleInputFormSubmit: function(chatMessageObject) {
+        var _this = this;
+        var chatMessageType = chatMessageObject.type;
 
-        chatMessageObj.conversationId      = this.conversationModel.get("_id");
-        chatMessageObj.conversationOwnerId = this.conversationModel.get("ownerId");
-        chatMessageObj.sentAt              = new Date().toJSON();
+        chatMessageObject.conversationId      = this.conversationModel.get("id");
+        chatMessageObject.sentAt              = new Date().toJSON();
 
-        if(chatMessageObjType === ""){
-            var newChatMessageModel = new TextChatMessageModel(chatMessage, null);
-        } else if(chatMessageObjType === "code"){
-            var newChatMessageModel = new CodeChatMessageModel(chatMessageObj, null);
+        var newChatMessageModel = undefined;
+        if (chatMessageType === "text") {
+            newChatMessageModel = new TextChatMessageModel(chatMessageObject);
+        } else if (chatMessageType === "code") {
+            newChatMessageModel = new CodeChatMessageModel(chatMessageObject);
         }
 
         this.chatMessageCollection.add(newChatMessageModel);
 
-        this.chatMessageManagerModule.createChatMessage(chatMessageObj, function(error, chatMessageMeldObj){
+        this.chatMessageManagerModule.createChatMessage(chatMessageObject, function(throwable, chatMessageMeldDocument) {
+
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
-            console.log("error:", error, "chatMessageObj:", chatMessageMeldObj);
-            if(!error && chatMessageMeldObj){
-                newChatMessageModel.setMeldObject(chatMessageMeldObj);
-                var chatMessageObj      = chatMessageMeldObj.generateObject();
-                var sender              = _this.userManagerModule.get(chatMessageMeldObj.senderUserId);
-                chatMessageObj.sentBy   = sender.firstName + sender.lastName;
-                chatMessageObj.pending  = false;
-                chatMessageObj.failed   = false;
-                newChatMessageModel.set(chatMessageObj);
-            } else if (error && !chatMessageMeldObj){
-                newChatMessageModel.set({failed: true, pending: false});
+            console.log("throwable:", throwable, " chatMessageMeldDocument:", chatMessageMeldDocument);
+
+            if (!throwable) {
+                _this.userManagerModule.retrieveUser(chatMessageMeldDocument.getData().senderUserId, function(throwable, senderUserMeldDocument) {
+                    if (!throwable) {
+                        newChatMessageModel.setMeldDocument(chatMessageMeldDocument);
+                        newChatMessageModel.set({
+                            sentBy: senderUserMeldDocument.getData().firstName + senderUserMeldDocument.getData().lastName,
+                            pending: false,
+                            failed: false
+                        });
+                    } else {
+                        if (Class.doesExtend(throwable, RequestFailedException)) {
+                            newChatMessageModel.set({
+                                failed: true,
+                                pending: false
+                            });
+                        } else {
+                            console.log("ERROR - unhandled throwable:", throwable);
+                        }
+                    }
+                });
+            } else {
+                if (Class.doesExtend(throwable, RequestFailedException)) {
+                    newChatMessageModel.set({
+                        failed: true,
+                        pending: false
+                    });
+                } else {
+                    console.log("ERROR - unhandled throwable:", throwable);
+                }
             }
         });
     },
@@ -315,7 +344,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     handleConversationModelChangeId: function() {
-        this.loadChatMessageCollection(this.conversationModel.get('_id'));
+        this.loadChatMessageCollection(this.conversationModel.get('id'));
     },
 
     /**

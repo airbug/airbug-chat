@@ -146,13 +146,14 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
      */
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
-        var userObj     = event.getData();
+        var formData    = event.getData().formData;
 
         console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
-        this.currentUserManagerModule.registerUser(userObj, function(error, currentUserMeldObj){
-            if(!error){
+
+        this.currentUserManagerModule.registerUser(formData, function(throwable, currentUserMeldDocument) {
+            if (!throwable) {
                 var finalDestination = _this.navigationModule.getFinalDestination();
-                if(finalDestination){
+                if (finalDestination) {
                     _this.navigationModule.clearFinalDestination();
                     _this.navigationModule.navigate(finalDestination, {
                         trigger: true
@@ -165,13 +166,19 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
             } else {
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("error:", error);
-                notificationView.flashError(error);
-                console.log("currentUserManagerModule#registerUser callback error:", error);
+                console.log("throwable:", throwable);
+                notificationView.flashError(throwable);
+                console.log("currentUserManagerModule#registerUser callback throwable:", throwable);
             }
         });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
 bugmeta.annotate(RegistrationFormContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),

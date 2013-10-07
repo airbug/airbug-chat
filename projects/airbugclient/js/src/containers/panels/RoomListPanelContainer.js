@@ -144,29 +144,33 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         var _this = this;
         this._super(routerArgs);
-        //NOTE: The adding of rooms will occur asynchronously but should be well handled by backbone
-        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUserMeldObj){
-            if(!error && currentUserMeldObj){
-                var currentUserObj = currentUserMeldObj.generateObject();
-                _this.roomManagerModule.retrieveRooms(currentUserObj.roomIdSet, function(error, roomMeldObjs){
-                    if(!error && roomMeldObjs){
-                        roomMeldObjs.forEach(function(roomMeldObj){
-                            if(roomMeldObj){ // in case roomMeldObj is null e.g. no longer exists
-                                _this.roomCollection.add(roomMeldObj);
+
+        //NOTE SC: The adding of rooms will occur asynchronously but should be well handled by backbone
+
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUserMeldDocument) {
+            if (!throwable) {
+                _this.roomManagerModule.retrieveRooms(currentUserMeldDocument.getData().roomIdSet, function(throwable, roomMeldDocumentMap) {
+                    if (!throwable) {
+                        roomMeldDocumentMap.forEach(function(roomMeldDocument) {
+                            if (roomMeldDocument) { // in case roomMeldDocument is null e.g. no longer exists
+                                _this.roomCollection.add(new RoomModel(roomMeldDocument));
                             }
                         });
                     } else {
                         //TODO Error handling
                         //TODO Error tracking
+                        //TODO BRN: If we have a partial response, we should add the room models to the collection that
+                        // successfully came back and then figure out what to do with the ones that failed
+
                         var parentContainer     = _this.getContainerParent();
                         var notificationView    = parentContainer.getNotificationView();
-                        console.log("error:", error);
-                        notificationView.flashError(error);
+                        console.log("throwable:", throwable);
+                        notificationView.flashError(throwable);
                     }
                 });
             } else {
                 //TODO
-                //flash error
+                //flash throwable
             }
         });
     },
@@ -256,6 +260,11 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         this.listView.addViewChild(selectableListItemView);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomListPanelContainer).with(
     autowired().properties([

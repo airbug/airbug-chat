@@ -7,6 +7,8 @@
 //@Export('RoomController')
 
 //@Require('Class')
+//@Require('Map')
+//@Require('TypeUtil')
 //@Require('airbugserver.EntityController')
 
 
@@ -22,6 +24,8 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var TypeUtil            = bugpack.require('TypeUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 
 
@@ -70,10 +74,12 @@ var RoomController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     configure: function(callback) {
-        if(!callback || typeof callback !== 'function') var callback = function(){};
+        if (!callback || typeof callback !== 'function') {
+            callback = function(){};
+        }
 
         var _this               = this;
         this.bugCallRouter.addAll({
@@ -159,7 +165,7 @@ var RoomController = Class.extend(EntityController, {
              */
             retrieveRoom:   function(request, responder) {
                 var data                = request.getData();
-                var roomId              = data.roomId;
+                var roomId              = data.objectId;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
                 _this.roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
@@ -177,26 +183,20 @@ var RoomController = Class.extend(EntityController, {
              */
             retrieveRooms: function(request, responder) {
                 var data                = request.getData();
-                var roomIds             = data.roomIds;
+                var roomIds             = data.objectIds;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var dataMap             = new Map();
 
-                _this.roomService.retrieveRooms(roomIds, function(throwable, roomMap) {
-                    var roomsData = {};
-                    if (roomMap) {
-                        roomMap.forEach(function(room) {
-                            roomsData.push(room.getId())
-                        });
-                    }
-                    if (!throwable) {
-                        response        = responder.response("retrievedRooms", {
-                            rooms: roomsData
-                        });
-                    } else {
-                        response        = responder.response("retrieveRoomsError", {
-                            throwable: throwable
-                        });
-                    }
-                    responder.sendResponse(response);
+                _this.roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
+                    roomIds.forEach(function(roomId) {
+                        var room = roomMap.get(roomId);
+                        if (!TypeUtil.isNull(room) && !TypeUtil.isUndefined(room)) {
+                            dataMap.put(roomId, true);
+                        } else {
+                            dataMap.put(roomId, false);
+                        }
+                    });
+                    _this.processMappedResponse(responder, throwable, dataMap);
                 });
             }
         });

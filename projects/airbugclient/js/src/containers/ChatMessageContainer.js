@@ -11,6 +11,7 @@
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.ListItemView')
 //@Require('airbug.PanelView')
+//@Require('bugcall.RequestFailedException')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -34,6 +35,7 @@ var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollect
 var ChatMessageView                 = bugpack.require('airbug.ChatMessageView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var PanelView                       = bugpack.require('airbug.PanelView');
+var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -45,11 +47,11 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
+var CommandType                     = CommandModule.CommandType;
+var property                        = PropertyAnnotation.property;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -157,8 +159,11 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainerChildren: function(){
-        this._super();
-
+        var type = this.chatMessageModel.get("type");
+        if (type === "code") {
+            this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
+            this.addContainerChild(this.chatMessageReplyButton, ".message-controls")
+        }
     },
 
     /**
@@ -172,35 +177,12 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 event.preventDefault();
                 event.stopPropagation();
                 console.log("firing chatMessage retry click event");
-                _this.handleChatMessageRetry()
+                _this.handleChatMessageRetry();
                 // _this.chatMessageView.dispatchEvent(new Event("retry", _this.chatMessageModel.toJSON()));
                 return false;
             });
         this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageReply, this);
     },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function(){
-        var type = this.chatMessageModel.get("type");
-        if(type === "code"){
-            this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
-            this.addContainerChild(this.chatMessageReplyButton, ".message-controls")
-        }
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Instance Methods
-    //-------------------------------------------------------------------------------
-
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
 
 
     //-------------------------------------------------------------------------------
@@ -210,27 +192,26 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    handleChatMessageRetry: function(){
+    handleChatMessageRetry: function() {
         console.log("Inside ChatMessageContainer#handleRetry");
         var _this               = this;
         var chatMessageModel    = this.chatMessageModel;
         var chatMessage         = chatMessageModel.toJSON();
         chatMessage.retry       = true;
 
-        this.chatMessageManagerModule.createChatMessage(chatMessage, function(error, chatMessageMeldObj){
+        this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
             console.log("Inside ChatWidgetContainer#handleChatMessageRetry callback");
-            console.log("error:", error, "chatMessageMeldObj:", chatMessageMeldObj);
-            if(!error && chatMessageMeldObj){
-                chatMessageModel.setMeldObject(chatMessageMeldObj);
-                var chatMessageObj      = chatMessageMeldObj.generateObject();
-                chatMessageObj.pending  = false;
-                chatMessageObj.failed   = false;
-                chatMessageModel.set(chatMessageObj);
-                _this.userManagerModule.retrieveUser(chatMessageObj.senderUserId, function(error, senderMeldObj){
-                    if(!error && senderMeldObj){
-                        var sender = senderMeldObj.generateObject();
-                        chatMessageObj.sentBy   = sender.firstName + sender.lastName;
-                        chatMessageModel.set(chatMessageObj);
+            console.log("throwable:", throwable, "chatMessageMeldDocument:", chatMessageMeldDocument);
+            if (!throwable) {
+                chatMessageModel.setMeldDocument(chatMessageMeldDocument);
+                chatMessageModel.set({
+                    pending: false,
+                    failed: false
+                });
+                _this.userManagerModule.retrieveUser(chatMessageModel.get("senderUserId"), function(throwable, userMeldDocument) {
+                    if (!throwable) {
+                        var sender = userMeldDocument.generateObject();
+                        chatMessageModel.set("sentBy", sender.firstName + " " + sender.lastName);
                     } else {
                         //NOTE if this error occurs it is an unforseeable edge case
                         //TODO error handling
@@ -238,8 +219,13 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                         //Retry to get sender information which should be self
                     }
                 });
-            } else{
-                chatMessageModel.set({failed: true, pending: false});
+            } else {
+                if (Class.doesExtend(throwable, RequestFailedException)) {
+                    chatMessageModel.set({failed: true, pending: false});
+                } else {
+
+                }
+            }
         });
     },
 
@@ -247,10 +233,10 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    handleChatMessageReply: function(event){
-        var chatMessageId = this.chatMessageModel.get("_id");
-        if(this.chatMessageModel.get("type") === code){
-            var code = chatMessageModel.get("code");
+    handleChatMessageReply: function(event) {
+        var chatMessageId = this.chatMessageModel.get("id");
+        if (this.chatMessageModel.get("type") === code) {
+            var code = this.chatMessageModel.get("code");
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
             //TODO Future Feature Figure out a way to remember the reference to the original chatMessage

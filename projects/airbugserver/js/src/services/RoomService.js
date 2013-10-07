@@ -29,7 +29,6 @@ var Obj         = bugpack.require('Obj');
 var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
-
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
@@ -142,7 +141,7 @@ var RoomService = Class.extend(Obj, {
                     //  * A MeldMirror should contain the list of meldKeys that the call manager is associated with
                     // map those callmanagers to the meldKeys in the MeldMirrorManager
 
-                    // Ensure that the room is currently in the MeldStore, if not add it to the MeldStore. Get back the MeldObject for that me
+                    // Ensure that the room is currently in the MeldStore, if not add it to the MeldStore. Get back the MeldDocument for that me
                     // Ensure that the user is currently in the MeldStore, if not add it to the MeldStore so that a meldKey is generated for it
                     // Add the new RoomMember to the meldStore
 
@@ -585,10 +584,10 @@ var RoomService = Class.extend(Obj, {
             roomMeldKey
         ];
         room.getRoomMemberSet().forEach(function(roomMember) {
-            var roomMemberMeldKey = _this.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberMeldKey = _this.meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
             meldKeys.push(roomMemberMeldKey);
             if (roomMember.getUser()) {
-                var userMeldKey = _this.generateMeldKey("User", roomMember.getUser().getId(), "basic");
+                var userMeldKey = _this.meldService.generateMeldKey("User", roomMember.getUser().getId(), "basic");
                 meldKeys.push(userMeldKey);
             }
         });

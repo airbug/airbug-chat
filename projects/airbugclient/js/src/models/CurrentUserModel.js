@@ -36,7 +36,7 @@ var CurrentUserModel = Class.extend(MeldModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        uuid: "",
+        id: "",
         email: "",
         emailSet: [],
         firstName: "",

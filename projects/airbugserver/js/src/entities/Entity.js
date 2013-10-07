@@ -79,6 +79,13 @@ var Entity = Class.extend(Obj, {
     },
 
     /**
+     * @return {DeltaDocument}
+     */
+    getDeltaDocument: function() {
+        return this.deltaDocument;
+    },
+
+    /**
      * @return {string}
      */
     getId: function() {

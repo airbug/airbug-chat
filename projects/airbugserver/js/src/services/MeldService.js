@@ -8,23 +8,27 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugdelta.DeltaDocumentChange')
 //@Require('bugdelta.ObjectChange')
+//@Require('bugdelta.SetChange')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var ObjectChange  = bugpack.require('bugdelta.ObjectChange');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
+var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
+var SetChange               = bugpack.require('bugdelta.SetChange');
 
 
 //-------------------------------------------------------------------------------
@@ -98,19 +102,35 @@ var MeldService = Class.extend(Obj, {
      */
     meldEntity: function(meldManager, type, filter, entity) {
         var meldKey = this.generateMeldKey(type, entity.getId(), filter);
-        var meldObject = undefined;
+        var meldDocument = undefined;
         if (!meldManager.containsMeldByKey(meldKey)) {
             entity.commitDelta();
-            meldObject = this.meldBuilder.generateMeldObjectFromObject(entity.toObject());
-            meldManager.addMeld(meldObject);
+            meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
+            meldManager.meldMeld(meldDocument);
+            meldDocument.meldData(Obj.clone(entity.getDeltaDocument().getData(), true));
         } else {
-            entity.generateDelta().forEach(function(deltaChange) {
-                switch (propertyChange.getChangeType()) {
+            meldDocument = meldManager.getMeld(meldKey);
+
+            // TODO BRN: MUST write a unit test that ensures that the operation for this meld generates the meld at
+            // this point in time and NOT with all of the additional property changes that will come after it.
+
+            meldManager.meldMeld(meldDocument);
+            entity.generateDelta().getDeltaChangeList().forEach(function(deltaChange) {
+                switch (deltaChange.getChangeType()) {
+                    case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                        meldDocument.meldData(Obj.clone(deltaChange.getData(), true));
+                        break;
                     case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
-                        meldObject.unmeldProperty(propertyChange.getPropertyName());
+                        meldDocument.unmeldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName());
                         break;
                     case ObjectChange.ChangeTypes.PROPERTY_SET:
-                        meldObject.meldProperty(propertyChange.getPropertyName(),  propertyChange.getPropertyValue());
+                        meldDocument.meldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName(), Obj.clone(deltaChange.getPropertyValue(), true));
+                        break;
+                    case SetChange.ChangeTypes.ADDED_TO_SET:
+                        meldDocument.meldToSet(deltaChange.getPath(), deltaChange.getSetValue());
+                        break;
+                    case SetChange.ChangeTypes.REMOVED_FROM_SET:
+                        meldDocument.unmeldFromSet(deltaChange.getPath(), deltaChange.getSetValue());
                         break;
                 }
             });

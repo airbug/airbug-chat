@@ -12,6 +12,7 @@
 //@Require('airbug.ConversationModel')
 //@Require('airbug.LeaveRoomButtonContainer')
 //@Require('airbug.MultiColumnView')
+//@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomsHamburgerButtonContainer')
 //@Require('airbug.SubHeaderView')
 //@Require('airbug.TextView')
@@ -40,6 +41,7 @@ var ChatWidgetContainer             = bugpack.require('airbug.ChatWidgetContaine
 var ConversationModel               = bugpack.require('airbug.ConversationModel');
 var LeaveRoomButtonContainer        = bugpack.require('airbug.LeaveRoomButtonContainer');
 var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
+var RoomMemberListPanelContainer    = bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
 var SubHeaderView                   = bugpack.require('airbug.SubHeaderView');
 var TextView                        = bugpack.require('airbug.TextView');
@@ -154,11 +156,10 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        //TODO BRN:
-
         this.roomModel.bind('change:conversationId', this.handleRoomModelChangeConversationId, this);
-
-
+        if (this.roomModel.get("conversationId")) {
+            this.loadConversationModel(this.roomModel.get("conversationId"));
+        }
     },
 
     /**
@@ -171,7 +172,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
         // Create Models
         //-------------------------------------------------------------------------------
-        this.loadConversationModel(this.roomModel.get("conversationId"));
+
+        this.conversationModel  = new ConversationModel({});
+        this.addModel("conversation", this.conversationModel);
 
 
         // Create Views
@@ -239,15 +242,11 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     loadConversationModel: function(conversationId) {
         var _this = this;
-        this.conversationModel  = new ConversationModel({});
-        this.addModel(conversationId, this.conversationModel);
-        this.conversationManagerModule.retrieveConversation(conversationId, function(error, conversationMeldObj){
-            if(!error && conversationMeldObj){
-                var conversationObj = conversationMeldObj.generateObject();
-                _this.conversationModel.setMeldObject(conversationMeldObj);
-                _this.conversationModel.set(conversationObj);
+        this.conversationManagerModule.retrieveConversation(conversationId, function(throwable, conversationMeldDocument) {
+            if (!throwable) {
+                _this.conversationModel.setMeldDocument(conversationMeldDocument);
             } else {
-                //TODO
+                //TODO: Either show an error panel or automatically retry the call
             }
         });
     },

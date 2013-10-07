@@ -36,7 +36,7 @@ var UserModel = Class.extend(MeldModel, {
     //-------------------------------------------------------------------------------
 
     defaults: {
-        uuid:"",
+        id:"",
         firstName: "",
         lastName: "",
         status: ""

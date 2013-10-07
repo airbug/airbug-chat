@@ -147,12 +147,14 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
      */
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
-        var userObj     = event.getData();
-        this.currentUserManagerModule.loginUser(userObj, function(error, currentUserMeldObj){
-            console.log("error:", error, "currentUser", currentUserMeldObj, "inside LoginFormContainer");
-            if(!error){
+        var formData    = event.getData().formData;
+        this.currentUserManagerModule.loginUser(formData, function(throwable, currentUserMeldDocument) {
+
+            console.log("throwable:", throwable, " currentUserMeldDocument:", currentUserMeldDocument, " inside LoginFormContainer");
+
+            if (!throwable) {
                 var finalDestination = _this.navigationModule.getFinalDestination();
-                if(finalDestination){
+                if (finalDestination) {
                     _this.navigationModule.clearFinalDestination();
                     _this.navigationModule.navigate(finalDestination, {
                         trigger: true
@@ -165,12 +167,18 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
             } else {
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                notificationView.flashError(error);
-                console.log("currentUserManagerModule#loginUser callback error:", error);
+                notificationView.flashError(throwable);
+                console.log("currentUserManagerModule#loginUser callback throwable:", throwable);
             }
         });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
 bugmeta.annotate(LoginFormContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),

@@ -171,9 +171,11 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @param {FormViewEvent} event
      */
     handleFormSubmittedEvent: function(event) {
-        //NOTE: See ChatWidgetContainer
-        var chatMessageObj = event.getData();
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObj);
+
+        //NOTE SC: See ChatWidgetContainer
+
+        var formData = event.getData().formData;
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, formData);
     },
 
     /**
