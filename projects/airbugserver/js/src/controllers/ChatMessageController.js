@@ -36,9 +36,9 @@ var ChatMessageController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, chatMessageService){
+    _constructor: function(bugCallRouter, chatMessageService, requestContextFactory) {
 
-        this._super();
+        this._super(requestContextFactory);
 
 
         //-------------------------------------------------------------------------------
@@ -77,55 +77,31 @@ var ChatMessageController = Class.extend(Obj, {
              * @param {CallResponder} responder
              */
             createChatMessage: function(request, responder){
-                var currentUser = request.getHandshake().user;
-                if(currentUser.isNotAnonymous()){
-                    var data        = request.getData();
-                    var chatMessage = data.object;
-                    _this.chatMessageService.createChatMessage(currentUser, chatMessage, function(error, chatMessage){
-                        if(!error && chatMessage){
-                            var data = {chatMessage: chatMessage};
-                            var response = responder.response("createdChatMessage", data);
-                        } else if (error){
-                            var data = {error: error};
-                            var response = responder.response("createChatMessageError", data);
-                        } else {
-                            var response = responder.response("createChatMessageError", {});
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("createChatMessageError", data);
-                    responder.sendResponse(response);
-                }
+                var data                = request.getData();
+                var chatMessageData     = data.object;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.chatMessageService.createChatMessage(requestContext, chatMessageData, function(throwable, chatMessage) {
+                    _this.processCreateResponse(responder, throwable, chatMessage);
+                });
             },
 
-            //NOTE For Dev/Testing purposes
-            retrieveChatMessagesByConversationId: function(request, responder){
-                var currentUser = request.getHandshake().user;
-                if(currentUser.isNotAnonymous()){
-                    var data            = request.getData();
-                    var conversationId  = data.conversationId;
-                    _this.chatMessageService.retrieveChatMessagesByConversationId(currentUser, conversationId, function(error, chatMessages){
-                        if(!error && chatMessages){
-                            var data = {chatMessages: chatMessages};
-                            var response = responder.response("retrievedChatMessagesByConversationId", data);
-                        } else {
-                            var data = {error: error};
-                            var response = responder.response("retrieveChatMessagesByConversationIdError", data);
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("retrieveChatMessagesByConversationIdError", data);
-                    responder.sendResponse(response);
-                }
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveChatMessagesByConversationId: function(request, responder) {
+                var data                = request.getData();
+                var conversationId      = data.conversationId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
+                    _this.processRetrieveEachResponse(responder, throwable, chatMessageMap.getKeyArray(), chatMessageMap);
+                });
             }
         });
 
         callback();
-
     }
 });
 

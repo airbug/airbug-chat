@@ -7,8 +7,6 @@
 //@Export('RoomController')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('TypeUtil')
 //@Require('airbugserver.EntityController')
 
 
@@ -24,8 +22,6 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var TypeUtil            = bugpack.require('TypeUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 
 
@@ -42,7 +38,7 @@ var RoomController = Class.extend(EntityController, {
 
     _constructor: function(bugCallRouter, roomService, requestContextFactory) {
 
-        this._super();
+        this._super(requestContextFactory);
 
 
         //-------------------------------------------------------------------------------
@@ -60,12 +56,6 @@ var RoomController = Class.extend(EntityController, {
          * @type {RoomService}
          */
         this.roomService                = roomService;
-
-        /**
-         * @private
-         * @type {RequestContextFactory}
-         */
-        this.requestContextFactory      = requestContextFactory;
     },
 
 
@@ -113,13 +103,7 @@ var RoomController = Class.extend(EntityController, {
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
                 _this.roomService.createRoom(requestContext, roomData, function(throwable, room) {
-                    if (!throwable) {
-                        _this.sendSuccessResponse(responder, {
-                            objectId: room.getId()
-                        });
-                    } else {
-                        _this.processThrowable(responder, throwable);
-                    }
+                    _this.processCreateResponse(responder, throwable, room);
                 });
             },
 
@@ -169,11 +153,7 @@ var RoomController = Class.extend(EntityController, {
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
 
                 _this.roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
-                    if (!throwable) {
-                        _this.sendSuccessResponse(responder, {});
-                    } else {
-                        _this.processThrowable(responder, throwable);
-                    }
+                    _this.processRetrieveResponse(responder, throwable);
                 });
             },
 
@@ -185,18 +165,9 @@ var RoomController = Class.extend(EntityController, {
                 var data                = request.getData();
                 var roomIds             = data.objectIds;
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-                var dataMap             = new Map();
 
                 _this.roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
-                    roomIds.forEach(function(roomId) {
-                        var room = roomMap.get(roomId);
-                        if (!TypeUtil.isNull(room) && !TypeUtil.isUndefined(room)) {
-                            dataMap.put(roomId, true);
-                        } else {
-                            dataMap.put(roomId, false);
-                        }
-                    });
-                    _this.processMappedResponse(responder, throwable, dataMap);
+                    _this.processRetrieveEachResponse(responder, throwable, roomIds, roomMap);
                 });
             }
         });

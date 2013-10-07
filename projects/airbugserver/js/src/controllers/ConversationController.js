@@ -36,9 +36,9 @@ var ConversationController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, conversationService){
+    _constructor: function(bugCallRouter, conversationService, requestContextFactory) {
 
-        this._super();
+        this._super(requestContextFactory);
 
 
         //-------------------------------------------------------------------------------
@@ -71,35 +71,23 @@ var ConversationController = Class.extend(Obj, {
 
         var _this               = this;
         this.bugCallRouter.addAll({
-            retrieveConversation: function(request, responder){
-                console.log("Inside of ConversationController bugCallRouter retrieveConversation");
-                var currentUser = request.getHandshake().user;
-                console.log("currentUser:", currentUser);
-                if(currentUser.isNotAnonymous()){
-                    var data = request.getData();
-                    var conversationId = data.conversationId;
-                    _this.conversationService.retrieveConversation(currentUser, conversationId, function(error, conversation){
-                        console.log("Error:", error);
-                        console.log("Conversation:", conversation);
-                        if(!error && conversation){
-                            var data = {conversation: conversation};
-                            var response = responder.response("retrievedConversation", data);
-                        } else {
-                            var data = {error: error};
-                            var response = responder.response("retrieveConversationError", data);
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data        = {error: new Error("Unauthorized Access")};
-                    var response    = responder.response("retrieveConversationError", data);
-                    responder.sendResponse(response);
-                }
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveConversation: function(request, responder) {
+                var data                = request.getData();
+                var conversationId      = data.objectId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.conversationService.retrieveConversation(requestContext, conversationId, function(throwable, conversation) {
+                    _this.processRetrieveResponse(responder, throwable);
+                });
             }
         });
 
         callback();
-
     }
 });
 

@@ -8,8 +8,10 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Map')
 //@Require('MappedException')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('airbug.EntityDefines')
 
 
@@ -26,8 +28,10 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
+var Map                 = bugpack.require('Map');
 var MappedException     = bugpack.require('MappedException');
 var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 var EntityDefines       = bugpack.require('airbug.EntityDefines');
 
 
@@ -37,9 +41,46 @@ var EntityDefines       = bugpack.require('airbug.EntityDefines');
 
 var EntityController = Class.extend(Obj, {
 
+
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Constructor
     //-------------------------------------------------------------------------------
+
+    _constructor: function(requestContextFactory) {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {RequestContextFactory}
+         */
+        this.requestContextFactory      = requestContextFactory;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {Entity} entity
+     */
+    processCreateResponse: function(responder, throwable, entity) {
+        if (!throwable) {
+            this.sendSuccessResponse(responder, {
+                objectId: entity.getId()
+            });
+        } else {
+            this.processThrowable(responder, throwable);
+        }
+    },
 
     /**
      * @param {CallResponder} responder
@@ -59,6 +100,36 @@ var EntityController = Class.extend(Obj, {
             }
         } else {
             this.sendMappedSuccessResponse(responder, map);
+        }
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {Map.<string, Entity>} entityMap
+     */
+    processRetrieveEachResponse: function(responder, throwable, entityIds, entityMap) {
+        var dataMap             = new Map();
+        entityIds.forEach(function(entityId) {
+            var entity = entityMap.get(entityId);
+            if (!TypeUtil.isNull(entity) && !TypeUtil.isUndefined(entity)) {
+                dataMap.put(entityId, true);
+            } else {
+                dataMap.put(entityId, false);
+            }
+        });
+        this.processMappedResponse(responder, throwable, dataMap);
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     */
+    processRetrieveResponse: function(responder, throwable) {
+        if (!throwable) {
+            this.sendSuccessResponse(responder, {});
+        } else {
+            this.processThrowable(responder, throwable);
         }
     },
 

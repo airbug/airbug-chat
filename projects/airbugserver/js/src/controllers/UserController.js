@@ -47,7 +47,7 @@ var UserController = Class.extend(EntityController, {
 
     _constructor: function(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory) {
 
-        this._super();
+        this._super(requestContextFactory);
 
 
         //-------------------------------------------------------------------------------
@@ -71,12 +71,6 @@ var UserController = Class.extend(EntityController, {
          * @type {ExpressApp}
          */
         this.expressApp             = expressApp;
-
-        /**
-         * @private
-         * @type {RequestContextFactory}
-         */
-        this.requestContextFactory  = requestContextFactory;
 
         /**
          * @private
@@ -243,58 +237,39 @@ var UserController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              */
             retrieveCurrentUser: function(request, responder) {
-                var currentUser = request.getHandshake().user;
-                userService.findUserById(currentUser.id, function(throwable, user) {
-                    var data        = undefined;
-                    var response    = undefined;
-                    if (!error){
-                        data        = {user: user};
-                        response    = responder.response("gotCurrentUser", data);
-                        responder.sendResponse(response);
-                    } else {
-                        data        = {error: error};
-                        response    = responder.response("getCurrentUserError", data);
-                    }
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.userService.retrieveCurrentUser(requestContext, function(throwable, user) {
+                    _this.processRetrieveResponse(responder, throwable)
                 });
             },
 
-            retrieveUser:       function(request, responder){
-                var currentUser = request.getHandshake().user;
-                var data    = request.getData();
-                var userId  = data.userId;
-                userService.retrieveUser(userId, function(error, user) {
-                    if (!error) {
-                        var userResponse = user.toObject();
-                        var data = {user: userResponse};
-                        var response = responder.response("retrievedUser", data);
-                    } else {
-                        var data = {error: error};
-                        var response = responder.response("retrieveUserError", data);
-                    }
-                    responder.sendResponse(response);
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveUser: function(request, responder) {
+                var data                = request.getData();
+                var userId              = data.userId;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.userService.retrieveUser(requestContext, userId, function(error, throwable) {
+                    _this.processRetrieveResponse(responder, throwable);
                 });
             },
 
-            retrieveUsers:       function(request, responder){
-                var currentUser = request.getHandshake().user;
-                var data    = request.getData();
-                var userIds  = data.userIds;
-                if(currentUser.isNotAnonymous()){
-                    userService.retrieveUsers(userIds, function(error, users){
-                        if(!error && users){
-                            var data = {users: users};
-                            var response = responder.response("retrievedUser", data);
-                        } else {
-                            var data = {error: error};
-                            var response = responder.response("retrieveUserError", data);
-                        }
-                        responder.sendResponse(response);
-                    });
-                } else {
-                    var data = {};
-                    var response = responder.response("retrieveUserError", data);
-                    responder.sendResponse(response);
-                }
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            retrieveUsers: function(request, responder) {
+                var data                = request.getData();
+                var userIds             = data.objectIds;
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+
+                _this.userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
+                    _this.processRetrieveEachResponse(responder, throwable, userIds, userMap);
+                });
             }
         });
 
