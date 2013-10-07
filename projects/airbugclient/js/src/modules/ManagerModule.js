@@ -282,23 +282,40 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {string} meldId
+     * @param {string} id
      * @param {{*}} changeObject
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {string=} filter
+     * @param {function(Throwable, meldbug.MeldDocument)=} callback
      */
-    update: function(type, meldId, changeObject, callback){
+    update: function(type, id, changeObject, filter, callback) {
+        var _this = this;
+        if (TypeUtil.isFunction(filter)) {
+            callback = filter;
+            filter = "basic";
+        }
         var requestData = {
-            objectId: meldId,
+            objectId: id,
             changeObject: changeObject
         };
-        this.airbugApi.request("update", type, requestData, function(throwable, data){
-            var objectId = data.objectId;
-            if(objectId) {
-                var obj = _this.get(objectId);
+        this.airbugApi.request("update", type, requestData, function(throwable, callResponse) {
+            if (!throwable)  {
+                var data = callResponse.getData();
+                if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
+                    var returnedMeldKey     = _this.meldBuilder.generateMeldKey(type, id, filter);
+                    var meldDocument        = _this.get(returnedMeldKey);
+                    callback(undefined);
+                } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
+                    //TODO BRN: Handle common exceptions
+                    callback(new Exception(data.exception));
+                } else if (callResponse.getType() === EntityDefines.Responses.ERROR) {
+                    //TODO BRN: Handle common errors
+                    callback(new Error(data.error));
+                } else {
+                    callback(undefined, callResponse);
+                }
             } else {
-                var obj = null;
+                callback(throwable);
             }
-            callback(throwable, obj);
         });
     },
 

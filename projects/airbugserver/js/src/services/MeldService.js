@@ -87,10 +87,13 @@ var MeldService = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {string} id
-     * @param {string} filter
+     * @param {string=} filter
      * @return {MeldKey}
      */
     generateMeldKey: function(type, id, filter) {
+        if (!filter) {
+            filter = "basic";
+        }
         return this.meldBuilder.generateMeldKey(type, id, filter);
     },
 
@@ -163,6 +166,20 @@ var MeldService = Class.extend(Obj, {
         if (meldManager.containsMeldByKey(meldKey)) {
             meldManager.removeMeld(meldKey);
         }
+    },
+
+    /**
+     * @param {MeldManager} meldManager
+     * @param {User} user
+     * @param {(Array.<MeldKey> | Collection.<MeldKey>)} meldKeys
+     */
+    unmeldUserWithKeys: function(meldManager, user, meldKeys) {
+        var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
+        callManagerSet.forEach(function(callManager) {
+            meldKeys.forEach(function(meldKey) {
+                meldManager.unmeldCallManagerWithKey(callManager, meldKey);
+            });
+        });
     }
 });
 

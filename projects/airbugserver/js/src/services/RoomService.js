@@ -589,27 +589,27 @@ var RoomService = Class.extend(Obj, {
     meldUserWithRoom: function(meldManager, user, room) {
         var _this                   = this;
         var meldService             = this.meldService;
-        var roomMeldKey             = this.meldService.generateMeldKey("Room", room.getId(), "basic");
-        var selfUserMeldKey         = this.meldService.generateMeldKey("User", user.getId(), "basic");
+        var roomMeldKey             = this.meldService.generateMeldKey("Room", room.getId());
+        var selfUserMeldKey         = this.meldService.generateMeldKey("User", user.getId());
         var selfRoomMemberMeldKey   = undefined;
         var meldKeys                = [roomMeldKey];
 
         $series([
             $task(function(flow){
-                this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(user.getId(), room.getId(), function(throwable, roomMember){
-                    selfRoomMemberMeldKey = this.meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+                _this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(user.getId(), room.getId(), function(throwable, roomMember){
+                    selfRoomMemberMeldKey = meldService.generateMeldKey("RoomMember", roomMember.getId());
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow){
                 room.getRoomMemberSet().forEach(function(roomMember) {
-                    var roomMemberMeldKey = _this.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                    var user = roomMember.getUser();
+                    var roomMemberMeldKey = meldService.generateMeldKey("RoomMember", roomMember.getId());
+                    var roomMemberUser = roomMember.getUser();
                     meldKeys.push(roomMemberMeldKey);
-                    if (user) {
-                        var userMeldKey = _this.generateMeldKey("User", user.getId(), "basic");
+                    if (roomMemberUser) {
+                        var userMeldKey = meldService.generateMeldKey("User", user.getId());
                         meldKeys.push(userMeldKey);
-                        meldService.meldUserWithKeys(user, [selfUserMeldKey, selfRoomMemberMeldKey]);
+                        meldService.meldUserWithKeys(roomMemberUser, [selfUserMeldKey, selfRoomMemberMeldKey]);
                     }
                 });
                 flow.complete();

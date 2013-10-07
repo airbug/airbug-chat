@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Map')
-//@Require('MappedException')
+//@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('airbug.EntityDefines')
@@ -29,7 +29,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Map                 = bugpack.require('Map');
-var MappedException     = bugpack.require('MappedException');
+var MappedThrowable     = bugpack.require('MappedThrowable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 var EntityDefines       = bugpack.require('airbug.EntityDefines');
@@ -89,7 +89,7 @@ var EntityController = Class.extend(Obj, {
      */
     processMappedResponse: function(responder, throwable, map) {
         if (throwable) {
-            if (Class.doesExtend(MappedException)) {
+            if (Class.doesExtend(throwable, MappedThrowable)) {
                 if (map) {
                     this.sendMappedSuccessWithExceptionResponse(responder, throwable, map);
                 } else {
@@ -176,14 +176,14 @@ var EntityController = Class.extend(Obj, {
 
     /**
      * @param {CallResponder} responder
-     * @param {MappedException} mappedException
+     * @param {MappedThrowable} mappedThrowable
      */
-    sendMappedException: function(responder, mappedException) {
+    sendMappedException: function(responder, mappedThrowable) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
 
         var response = responder.response(EntityDefines.Responses.EXCEPTION, {
-            mappedException: mappedException.toObject()
+            mappedException: mappedThrowable.toObject()
         });
         responder.sendResponse(response);
     },
@@ -201,12 +201,12 @@ var EntityController = Class.extend(Obj, {
 
     /**
      * @param {CallResponder} responder
-     * @param {MappedException} mappedException
+     * @param {MappedThrowable} mappedThrowable
      * @param {Map.<string, *>} map
      */
-    sendMappedSuccessWithExceptionResponse: function(responder, mappedException, map) {
+    sendMappedSuccessWithExceptionResponse: function(responder, mappedThrowable, map) {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION, {
-            mappedException: mappedException.toObject(),
+            mappedException: mappedThrowable.toObject(),
             map: map.toObject()
         });
         responder.sendResponse(response);
