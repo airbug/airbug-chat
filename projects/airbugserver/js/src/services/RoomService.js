@@ -116,10 +116,13 @@ var RoomService = Class.extend(Obj, {
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    _this.dbRetrieveAddUserToRoom(userId, roomId, function(throwable, returnedUser, returnedRoom, returnedRoomMember) {
-                        room        = returnedRoom;
-                        roomMember  = returnedRoomMember;
-                        user        = returnedUser;
+                    _this.dbRetrieveAndAddUserToRoom(userId, roomId, function(throwable, returnedUser, returnedRoom, returnedRoomMember) {
+                        if (!throwable) {
+                            room        = returnedRoom;
+                            roomMember  = returnedRoomMember;
+                            user        = returnedUser;
+                        }
+                        flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
@@ -150,7 +153,7 @@ var RoomService = Class.extend(Obj, {
                         flow.complete(throwable);
                     })
                 })
-            ]).execute(function(throwable){
+            ]).execute(function(throwable) {
                 console.log("RoomService#addUserToRoom results: Throwable:", throwable, "user:", user, "room:", room);
                 if (!throwable) {
                     callback(undefined, room, user);
