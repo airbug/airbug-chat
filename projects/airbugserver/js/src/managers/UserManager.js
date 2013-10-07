@@ -148,18 +148,20 @@ var UserManager = Class.extend(Obj, {
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(error, user)} callback
+     * @param {function(error)} callback
      */
     removeRoomFromUser: function(roomId, userId, callback){
-        //TODO
-        this.findById(userId, function(error, user){
-            if (!error && user){
-                user.roomsList.remove(roomId);
-                user.save(callback);
-            } else if (!error && !user){
-                callback(new Error("User not found"), null);
+        var update = {
+            $pull: {
+                roomIdSet: roomId
+            }
+        };
+        //TODO SUNG should this also return an Entity. What if there are more than one instance of the same entity created at once?
+        this.dataStore.findByIdAndUpdate(userId, update, function(error, dbUser){
+            if (!error && !dbUser){
+                callback(new Error("User not found"));
             } else {
-                callback(error, user);
+                callback(error);
             }
         });
     },
@@ -198,23 +200,6 @@ var UserManager = Class.extend(Obj, {
      */
     retrieveUsers: function(userIds, callback){
         this.retrieveEach(userIds, callback);
-    },
-
-    /**
-     * @param {User} user
-     * @param {function(Error, User)} callback
-     */
-     //NOTE updateOrCreate (upsert) equivalent
-    saveUser: function(user, callback) {
-        //TODO
-        if (!user.getCreatedAt()) {
-            user.setCreatedAt(new Date());
-        }
-        user.setUpdatedAt(new Date());
-        //TODO BRN:
-
-        user.roomsList.push(roomId);
-        user.save(callback);
     },
 
     /**
