@@ -104,7 +104,7 @@ var EntityManager = Class.extend(Obj, {
                 entity.setId(dbObject.id);
                 callback(undefined, entity);
             } else {
-                callback(throwable);
+                callback(throwable, entity);
             }
         });
     },
@@ -218,7 +218,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {{
      *      unsetters: {*}
      * }=} options
-     * @param {function(error, Entity)} callback
+     * @param {function(Throwable, Entity)} callback
      */
     update: function(entity, options, callback){
         var dataStore   = this.dataStore;
@@ -307,7 +307,7 @@ var EntityManager = Class.extend(Obj, {
                 }
                 callback(undefined, entityObject);
             } else {
-                callback(throwable);
+                callback(throwable, null);
             }
         });
     },
@@ -333,7 +333,7 @@ var EntityManager = Class.extend(Obj, {
                 });
                 callback(undefined, newMap);
             } else {
-                callback(throwable);
+                callback(throwable, null);
             }
         });
     }
