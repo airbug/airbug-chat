@@ -573,7 +573,7 @@ var RoomService = Class.extend(Obj, {
         roomMemberSet.forEach(function(roomMember){
             var user = roomMember.getUser();
             meldService.meldEntity(meldManager, "RoomMember", "basic", roomMember);
-            if(user) meldService.meldEntity(meldManager, "User", "basic", user);
+            meldService.meldEntity(meldManager, "User", "basic", user);
         });
     },
 
@@ -593,37 +593,33 @@ var RoomService = Class.extend(Obj, {
         var roomMeldKey                     = this.meldService.generateMeldKey("Room", room.getId(), "basic");
         var selfUserMeldKey                 = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var selfRoomMemberMeldKey           = undefined;
+        var userId                          = user.getId();
 
-        $series([
-            $task(function(flow){
-                _this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(user.getId(), room.getId(), function(throwable, roomMember){
-                    if(!throwable && roomMember){
-                        meldUserWithRoomMembersSwitch   = true;
-                        selfRoomMemberMeldKey           = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow){
-                room.getRoomMemberSet().forEach(function(roomMember) {
-                    var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                    var roomMemberUser      = roomMember.getUser();
-                    meldKeys.push(roomMemberMeldKey);
-                    if (roomMemberUser) {
-                        var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
-                        meldKeys.push(userMeldKey);
-                        if(meldUserWithRoomMembersSwitch) meldService.meldUserWithKeysAndReason(roomMemberUser, [selfUserMeldKey, selfRoomMemberMeldKey], reason);
-                    }
-                });
-                flow.complete();
-            })
-        ]).execute(function(throwable){
-            if(!throwable) {
-                meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
-            } else {
-                throw throwable;
+
+        room.getRoomMemberSet().forEach(function(roomMember) {
+            var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberUser          = roomMember.getUser();
+            var roomMemberUserMeldKey   = meldService.generateMeldKey("User", roomMemberUser.getId(), "basic");
+
+            meldKeys.push(roomMemberMeldKey);
+            meldKeys.push(roomMemberUserMeldKey);
+
+            if(!meldUserWithRoomMembersSwitch){
+                if (roomMember.getUserId() === userId) {
+                    meldUserWithRoomMembersSwitch = true;
+                    selfRoomMemberMeldKey = roomMemberMeldKey;
+                }
             }
         });
+
+        if(meldUserWithRoomMembersSwitch) {
+            room.getRoomMemberSet().forEach(function(roomMember) {
+                var roomMemberUser      = roomMember.getUser();
+                meldService.meldUserWithKeysAndReason(meldManager, roomMemberUser, [selfUserMeldKey, selfRoomMemberMeldKey], reason);
+            });
+        }
+
+        meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     },
 
     /**
