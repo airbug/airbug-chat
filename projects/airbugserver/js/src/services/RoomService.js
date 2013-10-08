@@ -60,12 +60,6 @@ var RoomService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {}
-         */
-        this.conversationManager    = conversationManager;
-
-        /**
-         * @private
          * @type {MeldService}
          */
         this.meldService            = meldService;
@@ -126,13 +120,10 @@ var RoomService = Class.extend(Obj, {
                 }),
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, user, room);
+                    _this.meldRoom(meldManager, room);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
-                }),
-                $task(function(flow){
-                    _this.meldRoom(meldManager, room);
-                    flow.complete();
                 })
             ]).execute(function(throwable) {
                 console.log("RoomService#addUserToRoom results: Throwable:", throwable, "user:", user, "room:", room);
@@ -158,7 +149,7 @@ var RoomService = Class.extend(Obj, {
         var _this           = this;
         var room            = this.roomManager.generateRoom(roomData);
         var currentUser     = requestContext.get("currentUser");
-        var meldManager     = this.meldManagerFactory.factoryManager();
+        var meldManager     = this.meldService.factoryManager();
         var meldService     = this.meldService;
         if (currentUser.isNotAnonymous()) {
             $series([
@@ -174,14 +165,10 @@ var RoomService = Class.extend(Obj, {
                 }),
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, currentUser, room);
-                    meldService.meldEntity(meldManager, "Room", "basic", room);
+                    _this.meldRoom(meldManager, room);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
-                }),
-                $task(function(flow){
-                    _this.meldRoom(meldManager, room);
-                    flow.complete();
                 })
             ]).execute(function(throwable) {
                     if (!throwable) {
@@ -222,20 +209,17 @@ var RoomService = Class.extend(Obj, {
      */
     removeUserFromRoom: function(requestContext, userId, roomId, callback){
         var _this               = this;
-        var meldManager         = this.meldManagerFactory.factoryManager();
+        var meldManager         = this.meldService.factoryManager();
         var meldService         = this.meldService;
         var room                = undefined;
-        var roomManager         = this.roomManager;
         var user                = undefined;
-        var userManager         = this.userManager;
         var roomMember          = undefined;
-        var roomMemberManager   = this.roomMemberManager;
 
         $series([
             //retrieves
             $task(function(flow) {
                 _this.dbRetrieveUserRoomAndRoomMember(userId, roomId, function(throwable, returnedUser, returnedRoom, returnedRoomMember){
-                    if(!throwable){
+                    if (!throwable) {
                         room        = returnedRoom;
                         roomMember  = returnedRoomMember;
                         user        = returnedUser;
@@ -260,7 +244,7 @@ var RoomService = Class.extend(Obj, {
                 _this.meldRoom(meldManager, room);
                 flow.complete();
             })
-        ]).execute(function(throwable){
+        ]).execute(function(throwable) {
             console.log("RoomService#removeUserFromRoom results: throwable:", throwable, " user:", user, " room:", room);
             callback(throwable, room, user);
         });
@@ -274,7 +258,7 @@ var RoomService = Class.extend(Obj, {
     retrieveRoom: function(requestContext, roomId, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
-        var meldManager = this.meldManagerFactory.factoryManager();
+        var meldManager = this.meldService.factoryManager();
         var room        = undefined;
         var roomManager = this.roomManager;
 
@@ -286,13 +270,10 @@ var RoomService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 _this.meldUserWithRoom(meldManager, currentUser, room);
+                _this.meldRoom(meldManager, room);
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
-            }),
-            $task(function(flow){
-                _this.meldRoom(meldManager, room);
-                flow.complete();
             })
         ]).execute(function(throwable) {
             if (!throwable) {
@@ -312,7 +293,7 @@ var RoomService = Class.extend(Obj, {
         /** @type {Map.<string, Room>} */
         var roomMap     = undefined;
         var currentUser = requestContext.get("currentUser");
-        var meldManager = this.meldManagerFactory.factoryManager();
+        var meldManager = this.meldService.factoryManager();
         var roomManager = this.roomManager;
 
         $series([
@@ -337,13 +318,10 @@ var RoomService = Class.extend(Obj, {
                         }),
                         $task(function(flow){
                             _this.meldUserWithRoom(meldManager, currentUser, room);
+                            _this.meldRoom(meldManager, room);
                             meldManager.commitTransaction(function(throwable) {
                                 flow.complete(throwable);
                             });
-                        }),
-                        $task(function(flow){
-                            _this.meldRoom(meldManager, room);
-                            flow.complete();
                         })
                     ]).execute(function(throwable){
                         flow.complete(throwable);
@@ -366,8 +344,8 @@ var RoomService = Class.extend(Obj, {
     // Private Methods
     //-------------------------------------------------------------------------------
 
-        // Convenience Retrieve Methods
-        //-------------------------------------------------------------------------------
+    // Convenience Retrieve Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private
@@ -495,8 +473,9 @@ var RoomService = Class.extend(Obj, {
         });
     },
 
-        // Convenience And and Remove Methods
-        //-------------------------------------------------------------------------------
+
+    // Convenience And and Remove Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private
@@ -580,12 +559,12 @@ var RoomService = Class.extend(Obj, {
         });
     },
 
-        // Convenience Meld Methods
-        //-------------------------------------------------------------------------------
 
-    meldRoom: function(meldManager, room){
+    // Convenience Meld Methods
+    //-------------------------------------------------------------------------------
+
+    meldRoom: function(meldManager, room) {
         var _this                   = this;
-        var meldManager             = this.meldManagerFactory.factoryManager();
         var meldService             = this.meldService;
         var roomMeldKey             = this.meldService.generateMeldKey("Room", room.getId(), "basic");
         var roomMemberSet           = room.getRoomMemberSet();
@@ -659,20 +638,13 @@ var RoomService = Class.extend(Obj, {
         var reason      = room.getId();
         var roomMeldKey = meldService.generateMeldKey("Room", room.getId(), "basic");
 
-            room.getRoomMemberSet().forEach(function(roomMember) {
-                var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                var roomMemberUser      = roomMember.getUser();
-                meldKeys.push(roomMemberMeldKey);
-                if (roomMemberUser) {
-                    var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
-                    meldKeys.push(userMeldKey);
-                }
-            });
-        }).execute(function(throwable){
-            if(!throwable) {
-                meldService.unmeldUserWithKeysAndReason(user, meldKeys, reason);
-            } else {
-                throw throwable;
+        room.getRoomMemberSet().forEach(function(roomMember) {
+            var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberUser      = roomMember.getUser();
+            meldKeys.push(roomMemberMeldKey);
+            if (roomMemberUser) {
+                var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
+                meldKeys.push(userMeldKey);
             }
         });
         this.meldService.unmeldUserWithKeysAndReason(user, meldKeys, reason);
