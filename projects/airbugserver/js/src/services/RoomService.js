@@ -238,13 +238,10 @@ var RoomService = Class.extend(Obj, {
                 //melds
                 $task(function(flow) {
                     meldService.unmeldEntity(meldManager, "RoomMember", "basic", roomMember);
+                    _this.meldRoom(meldManager, room);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
-                }),
-                $task(function(flow){
-                    _this.meldRoom(meldManager, room);
-                    flow.complete();
                 })
             ]).execute(function(throwable) {
                 console.log("RoomService#removeUserFromRoom results: throwable:", throwable, " user:", user, " room:", room);
