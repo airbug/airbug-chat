@@ -118,6 +118,20 @@ var ChatMessage = Class.extend(Entity, {
         this.deltaDocument.getData().sentAt = sentAt;
     },
 
+    /**
+     * @return {string}
+     */
+    getTryUuid: function() {
+        return this.deltaDocument.getData().tryUuid;
+    },
+
+    /**
+     * @param {string} tryUuid
+     */
+    setTryUuid: function(tryUuid) {
+        this.deltaDocument.getData().tryUuid = tryUuid;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Public Methods

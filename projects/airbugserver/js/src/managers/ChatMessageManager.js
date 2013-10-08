@@ -83,16 +83,17 @@ var ChatMessageManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
-        * body: string,
-        * code: string,
-        * codeLanguage: string,
-        * conversationId: string,
-        * conversationOwnerId: string,
-        * createdAt: Date,
-        * senderUserId: string,
-        * sentAt: Date,
-        * type: string,
-        * updatedAt: Date
+     *      body: string,
+     *      code: string,
+     *      codeLanguage: string,
+     *      conversationId: string,
+     *      conversationOwnerId: string,
+     *      createdAt: Date,
+     *      senderUserId: string,
+     *      sentAt: Date,
+     *      tryUuid: string,
+     *      type: string,
+     *      updatedAt: Date
      * }} data
      * @return {ChatMessage}
      */
@@ -100,7 +101,12 @@ var ChatMessageManager = Class.extend(EntityManager, {
         return new ChatMessage(data);
     },
 
-    populateChatMessage: function(chatMessage, properties, callback){
+    /**
+     * @param {ChatMessage} chatMessage
+     * @param {Array.<string>} properties
+     * @param {function(Throwable, ChatMessage)} callback
+     */
+    populateChatMessage: function(chatMessage, properties, callback) {
         var _this = this;
         var options = {
             propertyNames: ["conversation", "senderUser"],
@@ -140,6 +146,32 @@ var ChatMessageManager = Class.extend(EntityManager, {
      */
     retrieveChatMessages: function(chatMessageIds, callback) {
         this.retrieveEach(chatMessageIds, callback);
+    },
+
+    /**
+     * @param {string} senderUserId
+     * @param {string} conversationId
+     * @param {string} tryUuid
+     * @param {function(Throwable, ChatMessage)}callback
+     */
+    retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid: function(senderUserId, conversationId, tryUuid, callback) {
+        this.dataStore
+            .where("senderUserId", senderUserId)
+            .where("conversationId", conversationId)
+            .where("tryUuid", tryUuid)
+            .lean(true).exec(function(throwable, dbJson) {
+
+                if (!throwable) {
+                    var entityObject = null;
+                    if (dbJson) {
+                        entityObject = _this["generate" + _this.entityType](dbJson);
+                        entityObject.commitDelta();
+                    }
+                    callback(undefined, entityObject);
+                } else {
+                    callback(throwable);
+                }
+            });
     },
 
     /**

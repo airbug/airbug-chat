@@ -38,6 +38,7 @@ $parallel   = BugFlow.$parallel;
 $series     = BugFlow.$series;
 $task       = BugFlow.$task;
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
@@ -115,8 +116,8 @@ var SessionService = Class.extend(Obj, {
     },
 
     /**
-     * @param(string) sid
-     * @param(function(error)) callback
+     * @param {string} sid
+     * @param {function(Throwable)} callback
      */
     regenerateSession: function(sid, req, user, callback){
         var _this = this;

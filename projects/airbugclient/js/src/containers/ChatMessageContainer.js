@@ -193,23 +193,28 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     handleChatMessageRetry: function() {
-        console.log("Inside ChatMessageContainer#handleRetry");
+
+        //TODO BRN: This retry needs to be fixed. Doesn't seem like a good idea to store the data we want to send in the model.
+
         var _this               = this;
         var chatMessageModel    = this.chatMessageModel;
-        var chatMessage         = chatMessageModel.toJSON();
-        chatMessage.retry       = true;
+
+        //TODO BRN: This needs to figure out the type of chat message
+
+        var chatMessage         = this.chatMessageManagerModule.generateTextChatMessage(chatMessageModel.toJSON());
 
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
-            console.log("Inside ChatWidgetContainer#handleChatMessageRetry callback");
-            console.log("throwable:", throwable, "chatMessageMeldDocument:", chatMessageMeldDocument);
             if (!throwable) {
-                chatMessageModel.setMeldDocument(chatMessageMeldDocument);
                 chatMessageModel.set({
                     pending: false,
                     failed: false
                 });
                 _this.userManagerModule.retrieveUser(chatMessageModel.get("senderUserId"), function(throwable, userMeldDocument) {
                     if (!throwable) {
+
+                        //NOTE BRN: We want to set both of these at the same time so that we don't do a partial update of the message display
+
+                        chatMessageModel.setMeldDocument(chatMessageMeldDocument);
                         var sender = userMeldDocument.generateObject();
                         chatMessageModel.set("sentBy", sender.firstName + " " + sender.lastName);
                     } else {

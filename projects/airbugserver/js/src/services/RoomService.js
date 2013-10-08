@@ -209,45 +209,50 @@ var RoomService = Class.extend(Obj, {
      */
     removeUserFromRoom: function(requestContext, userId, roomId, callback){
         var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
         var meldService         = this.meldService;
         var room                = undefined;
         var user                = undefined;
         var roomMember          = undefined;
 
-        $series([
-            //retrieves
-            $task(function(flow) {
-                _this.dbRetrieveUserRoomAndRoomMember(userId, roomId, function(throwable, returnedUser, returnedRoom, returnedRoomMember){
-                    if (!throwable) {
-                        room        = returnedRoom;
-                        roomMember  = returnedRoomMember;
-                        user        = returnedUser;
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            //deletes and removes
-            $task(function(flow){
-                _this.dbRemoveUserFromRoom(user, room, function(throwable){
-                    flow.complete(throwable);
-                });
-            }),
-            //melds
-            $task(function(flow) {
-                meldService.unmeldEntity(meldManager, "RoomMember", "basic", roomMember);
-                meldManager.commitTransaction(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow){
-                _this.meldRoom(meldManager, room);
-                flow.complete();
-            })
-        ]).execute(function(throwable) {
-            console.log("RoomService#removeUserFromRoom results: throwable:", throwable, " user:", user, " room:", room);
-            callback(throwable, room, user);
-        });
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                //retrieves
+                $task(function(flow) {
+                    _this.dbRetrieveUserRoomAndRoomMember(userId, roomId, function(throwable, returnedUser, returnedRoom, returnedRoomMember){
+                        if (!throwable) {
+                            room        = returnedRoom;
+                            roomMember  = returnedRoomMember;
+                            user        = returnedUser;
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                //deletes and removes
+                $task(function(flow){
+                    _this.dbRemoveUserFromRoom(user, room, function(throwable){
+                        flow.complete(throwable);
+                    });
+                }),
+                //melds
+                $task(function(flow) {
+                    meldService.unmeldEntity(meldManager, "RoomMember", "basic", roomMember);
+                    meldManager.commitTransaction(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow){
+                    _this.meldRoom(meldManager, room);
+                    flow.complete();
+                })
+            ]).execute(function(throwable) {
+                console.log("RoomService#removeUserFromRoom results: throwable:", throwable, " user:", user, " room:", room);
+                callback(throwable, room, user);
+            });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
     },
 
     /**
@@ -262,26 +267,30 @@ var RoomService = Class.extend(Obj, {
         var room        = undefined;
         var roomManager = this.roomManager;
 
-        $series([
-            $task(function(flow){
-                _this.dbRetrievePopulatedRoom(roomId, function(throwable, returnedRoom){
-                    room = returnedRoom;
-                });
-            }),
-            $task(function(flow) {
-                _this.meldUserWithRoom(meldManager, currentUser, room);
-                _this.meldRoom(meldManager, room);
-                meldManager.commitTransaction(function(throwable) {
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
-            if (!throwable) {
-                callback(undefined, room);
-            } else {
-                callback(throwable);
-            }
-        });
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow){
+                    _this.dbRetrievePopulatedRoom(roomId, function(throwable, returnedRoom){
+                        room = returnedRoom;
+                    });
+                }),
+                $task(function(flow) {
+                    _this.meldUserWithRoom(meldManager, currentUser, room);
+                    _this.meldRoom(meldManager, room);
+                    meldManager.commitTransaction(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(undefined, room);
+                } else {
+                    callback(throwable);
+                }
+            });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
     },
 
     /**
@@ -296,47 +305,51 @@ var RoomService = Class.extend(Obj, {
         var meldManager = this.meldService.factoryManager();
         var roomManager = this.roomManager;
 
-        $series([
-            $task(function(flow) {
-                roomManager.retrieveRooms(roomIds, function(throwable, returnedRoomMap) {
-                    if (!throwable) {
-                        roomMap = returnedRoomMap;
-                        if (!roomMap) {
-                            throwable = new Exception(""); //TODO
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    roomManager.retrieveRooms(roomIds, function(throwable, returnedRoomMap) {
+                        if (!throwable) {
+                            roomMap = returnedRoomMap;
+                            if (!roomMap) {
+                                throwable = new Exception(""); //TODO
+                            }
                         }
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                $iterableParallel(roomMap.getValueCollection(), function(flow, room) {
-                    $series([
-                        $task(function(flow){
-                            roomManager.populateRoom(room, function(throwable) {
-                                flow.complete(throwable);
-                            });
-                        }),
-                        $task(function(flow){
-                            _this.meldUserWithRoom(meldManager, currentUser, room);
-                            _this.meldRoom(meldManager, room);
-                            meldManager.commitTransaction(function(throwable) {
-                                flow.complete(throwable);
-                            });
-                        })
-                    ]).execute(function(throwable){
                         flow.complete(throwable);
                     });
-                }).execute(function(throwable) {
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
-            if (!throwable) {
-                callback(undefined, roomMap);
-            } else {
-                callback(throwable);
-            }
-        });
+                }),
+                $task(function(flow) {
+                    $iterableParallel(roomMap.getValueCollection(), function(flow, room) {
+                        $series([
+                            $task(function(flow){
+                                _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
+                                    flow.complete(throwable);
+                                });
+                            }),
+                            $task(function(flow){
+                                _this.meldUserWithRoom(meldManager, currentUser, room);
+                                _this.meldRoom(meldManager, room);
+                                meldManager.commitTransaction(function(throwable) {
+                                    flow.complete(throwable);
+                                });
+                            })
+                        ]).execute(function(throwable){
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(undefined, roomMap);
+                } else {
+                    callback(throwable);
+                }
+            });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
     },
 
 
@@ -348,12 +361,37 @@ var RoomService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @param {Room} room
+     * @param {function(Throwable, Room)} callback
+     */
+    dbPopulateRoomAndRoomMembers: function(room, callback) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.roomManager.populateRoom(room, ["roomMemberSet"], function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $iterableParallel(room.getRoomMemberSet(), function(flow, roomMember) {
+                _this.roomMemberManager.populateRoomMember(roomMember, ["user"], function(throwable) {
+                    flow.complete(throwable);
+                })
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(undefined, room);
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
      * @param {string} roomId
      * @param {function(Throwable, Room)} callback
      */
     dbRetrievePopulatedRoom: function(roomId, callback) {
-        var _this;
+        var _this       = this;
         var room        = undefined;
         var roomManager = this.roomManager;
         $series([
@@ -370,14 +408,9 @@ var RoomService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                roomManager.populateRoom(room, function(throwable) {
+                _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
                     flow.complete(throwable);
                 });
-            }),
-            $iterableParallel(room.getRoomMemberSet(), function(flow, roomMember) {
-                _this.roomMemberManager.populateRoomMember(roomMember, function(throwable) {
-                    flow.complete(throwable);
-                })
             })
         ]).execute(function(throwable) {
             if (!throwable) {
@@ -563,14 +596,16 @@ var RoomService = Class.extend(Obj, {
     // Convenience Meld Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {MeldManager} meldManager
+     * @param {Room} room
+     */
     meldRoom: function(meldManager, room) {
-        var _this                   = this;
         var meldService             = this.meldService;
-        var roomMeldKey             = this.meldService.generateMeldKey("Room", room.getId(), "basic");
         var roomMemberSet           = room.getRoomMemberSet();
 
         meldService.meldEntity(meldManager, "Room", "basic", room);
-        roomMemberSet.forEach(function(roomMember){
+        roomMemberSet.forEach(function(roomMember) {
             var user = roomMember.getUser();
             meldService.meldEntity(meldManager, "RoomMember", "basic", roomMember);
             meldService.meldEntity(meldManager, "User", "basic", user);
@@ -578,7 +613,6 @@ var RoomService = Class.extend(Obj, {
     },
 
     /**
-     * @private
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {Room} room
@@ -623,7 +657,6 @@ var RoomService = Class.extend(Obj, {
     },
 
     /**
-     * @private
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {Room} room

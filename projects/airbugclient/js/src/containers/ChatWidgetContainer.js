@@ -7,6 +7,7 @@
 //@Export('ChatWidgetContainer')
 
 //@Require('Class')
+//@Require('Obj')
 //@Require('airbug.ChatMessageCollection')
 //@Require('airbug.ChatWidgetInputFormContainer')
 //@Require('airbug.ChatWidgetMessagesContainer')
@@ -38,6 +39,7 @@ var bugpack = require('bugpack').context();
 
 
 var Class                           = bugpack.require('Class');
+var Obj                             = bugpack.require('Obj');
 var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
 var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
 var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
@@ -217,28 +219,29 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.chatMessageCollection.bind('add', this.handleChatMessageCollectionAdd, this);
 
         this.initializeCommandSubscriptions();
-        // this.chatWidgetInputFormContainer.getViewTop().addEventListener(FormViewEvent.EventType.SUBMIT, this.hearInputFormSubmit, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    animateChatMessageCollectionAdd: function(){
+        var panelBody = this.chatWidgetView.$el.find(".panel-body");
+        panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
+        //TODO:
+        //make the transition time dynamic to fit the length of the message and the speed of incoming messages
     },
 
     /**
-     * 
+     * @protected
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
     },
-
-    /**
-     * @param {PublisherMessage} message
-     */
-    handleSubmitChatMessageCommand: function(message) {
-        var chatMessageObject = message.getData();
-        this.handleInputFormSubmit(chatMessageObject);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 
     /**
      * @protected
@@ -264,45 +267,25 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         });
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Model Event Handlers
-    //-------------------------------------------------------------------------------
-
     /**
-     * @type {airbug.FormViewEvent} event 
+     * @protected
+     * @param {{*}} chatMessageData
      */
-    // hearInputFormSubmit: function(event){
-    //     console.log("Inside ChatWidgetContainer#handleInputFormSubmit");
-    //     var chatMessageObject = event.getData();
-    //     this.handleInputFormSubmit(chatMessageObject);
-    // },
-
-    /**
-     * @param {{*}}
-     */
-    handleInputFormSubmit: function(chatMessageObject) {
+    sendChatMessage: function(chatMessageData) {
         var _this = this;
-        var chatMessageType = chatMessageObject.type;
-
-        chatMessageObject.conversationId      = this.conversationModel.get("id");
-        chatMessageObject.sentAt              = new Date().toJSON();
-
+        var chatMessage = this.chatMessageManagerModule.generateChatMessage(Obj.merge(chatMessageData, {
+            conversationId: this.conversationModel.get("id"),
+            sentAt: new Date().toString()
+        }));
         var newChatMessageModel = undefined;
-        if (chatMessageType === "text") {
-            newChatMessageModel = new TextChatMessageModel(chatMessageObject);
-        } else if (chatMessageType === "code") {
-            newChatMessageModel = new CodeChatMessageModel(chatMessageObject);
+        if (chatMessage.type === "text") {
+            newChatMessageModel = new TextChatMessageModel(chatMessage);
+        } else if (chatMessage.type === "code") {
+            newChatMessageModel = new CodeChatMessageModel(chatMessage);
         }
 
         this.chatMessageCollection.add(newChatMessageModel);
-
-        this.chatMessageManagerModule.createChatMessage(chatMessageObject, function(throwable, chatMessageMeldDocument) {
+        this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
 
             console.log("Inside ChatWidgetContainer#handleInputFormSubmit callback");
             console.log("throwable:", throwable, " chatMessageMeldDocument:", chatMessageMeldDocument);
@@ -312,7 +295,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                     if (!throwable) {
                         newChatMessageModel.setMeldDocument(chatMessageMeldDocument);
                         newChatMessageModel.set({
-                            sentBy: senderUserMeldDocument.getData().firstName + senderUserMeldDocument.getData().lastName,
+                            sentBy: senderUserMeldDocument.getData().firstName + " " + senderUserMeldDocument.getData().lastName,
                             pending: false,
                             failed: false
                         });
@@ -340,6 +323,24 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         });
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Message Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {PublisherMessage} message
+     */
+    handleSubmitChatMessageCommand: function(message) {
+        var chatMessageObject = message.getData();
+        this.sendChatMessage(chatMessageObject);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Model Event Handlers
+    //-------------------------------------------------------------------------------
+
     /**
      * @private
      */
@@ -354,16 +355,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     handleChatMessageCollectionAdd: function(chatMessageModel) {
         this.chatWidgetMessagesContainer.addContainerChild(new ChatMessageContainer(chatMessageModel), '.list');
         this.animateChatMessageCollectionAdd();
-    },
-
-    /**
-     * @private
-     */
-    animateChatMessageCollectionAdd: function(){
-        var panelBody = this.chatWidgetView.$el.find(".panel-body");
-        panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
-        //TODO:
-        //make the transition time dynamic to fit the length of the message and the speed of incoming messages
     }
 });
 

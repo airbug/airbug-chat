@@ -86,6 +86,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule                  = null;
+
 
         // Views
         //-------------------------------------------------------------------------------

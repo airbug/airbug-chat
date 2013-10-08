@@ -31,11 +31,12 @@ var ChatMessageSchema = new Schema({
     body: {type: String, require: false},
     code: {type: String},
     codeLanguage: {type: String},
-    conversationId: {type: ObjectId, required: true},
+    conversationId: {type: ObjectId, index: true, required: true},
     createdAt: Date,
-    senderUserId: {type: ObjectId, required: true},
+    senderUserId: {type: ObjectId, index: true, required: true},
     sentAt: Date,
-    type: {type: String},
+    tryUuid: {type: String, index: true, required: true},
+    type: {type: String, required: true},
     updatedAt: Date
 });
 

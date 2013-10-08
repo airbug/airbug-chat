@@ -64,7 +64,6 @@ var ConversationManager = Class.extend(EntityManager, {
          * @type {ChatMessageManager}
          */
         this.chatMessageManager    = chatMessageManager;
-
     },
 
 
@@ -103,6 +102,11 @@ var ConversationManager = Class.extend(EntityManager, {
         return new Conversation(data);
     },
 
+    /**
+     * @param {Conversation} conversation
+     * @param {Array.<string>} properties
+     * @param {function(Throwable, Conversation)} callback
+     */
     populateConversation: function(conversation, properties, callback){
         var options = {
             propertyNames: ["chatMessageSet", "owner"],
@@ -113,16 +117,16 @@ var ConversationManager = Class.extend(EntityManager, {
                     idSetter:   conversation.setChatMessageIdSet,
                     getter:     conversation.getChatMessageSet,
                     setter:     conversation.setChatMessageSet,
-                    manager:    _this.chatMessageManager,
-                    retriever:  _this.chatMessageManager.retrieveChatMessage
+                    manager:    this.chatMessageManager,
+                    retriever:  this.chatMessageManager.retrieveChatMessage
                 },
                 owner: {
                     idGetter:   conversation.getOwnerId,
                     idSetter:   conversation.setOwnerId,
                     getter:     conversation.getOwner,
                     setter:     conversation.setOwner,
-                    manager:    _this.roomManager,
-                    retriever:  _this.roomManager.retrieveRoom
+                    manager:    this.roomManager,
+                    retriever:  this.roomManager.retrieveRoom
                 }
             }
         };

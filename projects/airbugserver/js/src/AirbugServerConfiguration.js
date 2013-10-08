@@ -586,10 +586,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
     /**
      * @param {ChatMessageManager} chatMessageManager
+     * @param {ConversationManager} conversationManager
+     * @param {MeldService} meldService
+     * @param {ConversationService} conversationService
+     * @param {RoomService} roomService
      * @return {ChatMessageService}
      */
-    chatMessageService: function(chatMessageManager, conversationManager) {
-        this._chatMessageService = new ChatMessageService(chatMessageManager, conversationManager);
+    chatMessageService: function(chatMessageManager, conversationManager, meldService, conversationService, roomService) {
+        this._chatMessageService = new ChatMessageService(chatMessageManager, conversationManager, meldService, conversationService, roomService);
         return this._chatMessageService;
     },
 
@@ -622,10 +626,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
     /**
      * @param {ConversationManager} conversationManager
+     * @param {MeldService} meldService
      * @return {ConversationService}
      */
-    conversationService: function(conversationManager, userManager){
-        this._conversationService = new ConversationService(conversationManager, userManager);
+    conversationService: function(conversationManager, meldService) {
+        this._conversationService = new ConversationService(conversationManager, meldService);
         return this._conversationService;
     },
 
@@ -1004,7 +1009,10 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("chatMessageService")
             .args([
                 arg().ref("chatMessageManager"),
-                arg().ref("conversationManager")
+                arg().ref("conversationManager"),
+                arg().ref("meldService"),
+                arg().ref("conversationService"),
+                arg().ref("roomService")
             ]),
         module("callService")
             .args([
@@ -1013,7 +1021,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("conversationService")
             .args([
                 arg().ref("conversationManager"),
-                arg().ref("userManager")
+                arg().ref("meldService")
             ]),
         module("meldService")
             .args([
