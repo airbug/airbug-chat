@@ -344,23 +344,17 @@ var RoomService = Class.extend(Obj, {
                 }),
                 $task(function(flow) {
                     $iterableParallel(roomMap.getValueCollection(), function(flow, room) {
-                        $series([
-                            $task(function(flow){
-                                _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
-                                    flow.complete(throwable);
-                                });
-                            }),
-                            $task(function(flow){
-                                _this.meldUserWithRoom(meldManager, currentUser, room);
-                                _this.meldRoom(meldManager, room);
-                                meldManager.commitTransaction(function(throwable) {
-                                    flow.complete(throwable);
-                                });
-                            })
-                        ]).execute(function(throwable){
+                        _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
+                            _this.meldUserWithRoom(meldManager, currentUser, room);
+                            _this.meldRoom(meldManager, room);
                             flow.complete(throwable);
                         });
                     }).execute(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow){
+                    meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
                 })
