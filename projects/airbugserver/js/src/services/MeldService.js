@@ -145,12 +145,13 @@ var MeldService = Class.extend(Obj, {
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {(Array.<MeldKey> | Collection.<MeldKey>)} meldKeys
+     * @param {string} reason
      */
-    meldUserWithKeys: function(meldManager, user, meldKeys) {
+    meldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
         callManagerSet.forEach(function(callManager) {
             meldKeys.forEach(function(meldKey) {
-                meldManager.meldCallManagerWithKey(callManager, meldKey);
+                meldManager.meldCallManagerWithKeyAndReason(callManager, meldKey, reason);
             });
         });
     },
@@ -172,12 +173,13 @@ var MeldService = Class.extend(Obj, {
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {(Array.<MeldKey> | Collection.<MeldKey>)} meldKeys
+     * @param {string} reason
      */
-    unmeldUserWithKeys: function(meldManager, user, meldKeys) {
+    unmeldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
         callManagerSet.forEach(function(callManager) {
             meldKeys.forEach(function(meldKey) {
-                meldManager.unmeldCallManagerWithKey(callManager, meldKey);
+                meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
             });
         });
     }
