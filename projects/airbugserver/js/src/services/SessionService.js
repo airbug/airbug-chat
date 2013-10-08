@@ -16,8 +16,8 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var cookie      = require('cookie');
+var bugpack = require('bugpack').context();
+var cookie  = require('cookie');
 
 
 //-------------------------------------------------------------------------------
@@ -66,6 +66,12 @@ var SessionService = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {MeldService}
+         */
+        this.meldService    = meldService;
+
+        /**
+         * @private
          * @type {SessionManager}
          */
         this.sessionManager = sessionManager;
@@ -76,14 +82,17 @@ var SessionService = Class.extend(Obj, {
     // IHand Implementation
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     shakeIt: function(handshakeData, callback) {
         if (handshakeData.headers.cookie) {
             handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
             handshakeData.sessionId = this.cookieSigner.unsign(handshakeData.cookie['airbug.sid']);
 
-            this.sessionManager.findSessionBySid(handshakeData.sessionId, function(error, session) {
+            this.sessionManager.findSessionBySid(handshakeData.sessionId, function(throwable, session) {
                 if (error || !session) {
-                    callback(error, false);
+                    callback(throwable, false);
                 } else {
                     handshakeData.session = session;
                     callback(null, true);
@@ -94,28 +103,12 @@ var SessionService = Class.extend(Obj, {
         }
     },
 
-
-    destroySession: function(sid) {
-
-        //TODO
-        delete handshake.session.userId;
-        delete handshake.user;
-        delete handshake.session.data.userId;
-        this.shakeIt(handshake, function(error){
-            console.log("user" + currentUser._id + "loggedout");
-            callback(error);
-        });
-    },
+    //-------------------------------------------------------------------------------
+    // Public Instance Methods
+    //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} sid
-     * @param {function(error, airbugserver.Session)} callback
-     */
-    findSessionBySid: function(sid, callback){
-        this.sessionManager.findSessionBySid(sid, callback)
-    },
-
-    /**
+     * @param {RequestContext} requestContext
      * @param {string} sid
      * @param {function(Throwable)} callback
      */
@@ -135,7 +128,7 @@ var SessionService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow){
-                _this.sessionManager.removeSessionBySid(sid, function(error){
+                _this.sessionManager.deleteSessionBySid(sid, function(error){
                     flow.complete(error);
                 });
             })
