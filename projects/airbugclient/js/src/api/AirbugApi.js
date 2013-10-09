@@ -56,6 +56,26 @@ var AirbugApi = Class.extend(Obj, {
     // Instance Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
+    connect: function(){
+        this.bugCallClient.openConnection();
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isConnected: function(){
+        return this.bugCallClient.isConnected();
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isNotConnected: function(){
+        return !this.bugCallClient.isConnected();
+    },
 
     /**
      * @param {string} type
@@ -71,40 +91,6 @@ var AirbugApi = Class.extend(Obj, {
                 callback(exception, null);
             }
         });
-    },
-
-    //-------------------------------------------------------------------------------
-    // ChatMessage Related Api Methods
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Conversation Related Api Methods
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Room Related Api Methods
-    //-------------------------------------------------------------------------------
-
-
-
-    //-------------------------------------------------------------------------------
-    // User Related Api Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {function(error)} callback
-     */
-    loginUser: function(callback){
-        var error = null;
-        try{
-            this.bugCallClient.openConnection();
-        } catch(e){
-            error = e;
-        } finally {
-            callback(error);
-        }
     }
 });
 

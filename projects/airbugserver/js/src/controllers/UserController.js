@@ -105,39 +105,6 @@ var UserController = Class.extend(EntityController, {
         // Express Routes
         //-------------------------------------------------------------------------------
 
-        expressApp.post('/app/login', function(req, res){
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var userObject      = req.body;
-            var returnedUser;
-
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
-            $series([
-                $task(function(flow){
-                    userService.loginUser(userObject, function(error, user){
-                        returnedUser = user;
-                        if (!error && !user) {
-                            flow.error(new Error("User does not exist"))
-                        } else {
-                            flow.complete(error);
-                        }
-                    });
-                }),
-                $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
-                        if(!error) res.json({error: null, user: returnedUser});
-                        flow.complete(error);
-                    });
-                })
-            ]).execute(function(error){
-                if(error) res.json({error: error.toString(), user: null});
-            });
-        });
-
         expressApp.post('/app/logout', function(req, res){
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
@@ -158,55 +125,13 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/register', function(req, res) {
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var userObject      = req.body;
-            var returnedUser;
-
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
-            $series([
-                $task(function(flow){
-                    userService.registerUser(userObject, function(throwable, user) {
-                        returnedUser = user;
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(throwable) {
-                        if (!throwable) {
-                            res.json({error: null, user: returnedUser});
-                        }
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable){
-                if (throwable) {
-                    res.json({error: throwable.toString(), user: null});
-                }
-            });
-        });
-
+        //TODO: SUNG Improve and rename
         expressApp.get('/app/retrieveCurrentUser', function(req, res){
             var sessionID       = req.sessionID;
             var session         = req.session;
             var userId          = session.userId;
 
-            userService.findUserById(userId, function(throwable, user) {
-                if (!throwable) {
-                    if (user ){
-                        res.json({currentUser: user.toObject()});
-                    } else {
-                        res.json({error: "User not found"});
-                    }
-                } else {
-                    res.json({error: throwable.toString()});
-                }
-            });
+            res.json({});
         });
 
         expressApp.post('/app/user-availability-check-email', function(req, res){
@@ -231,6 +156,34 @@ var UserController = Class.extend(EntityController, {
         //-------------------------------------------------------------------------------
 
         this.bugCallRouter.addAll({
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            loginUser: function(request, responder){
+                var data                = request.getData();
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var formData            = data.formData;
+
+                _this.userService.loginUser(requestContext, request, formData, function(throwable, user) {
+                    _this.processRetrieveResponse(responder, throwable)
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            registerUser:function(request, responder){
+                var data                = request.getData();
+                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var formData            = data.formData;
+
+                _this.userService.registerUser(requestContext, request, formData, function(throwable, user) {
+                    _this.processRetrieveResponse(responder, throwable)
+                });
+            },
 
             /**
              * @param {IncomingRequest} request

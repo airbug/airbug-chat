@@ -30,7 +30,7 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
 var RoomPageContainer       = bugpack.require('airbug.RoomPageContainer');
-var BugMeta = bugpack.require('bugmeta.BugMeta');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
@@ -40,7 +40,7 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
 var property    = PropertyAnnotation.property;
@@ -102,11 +102,11 @@ var RoomPageController = Class.extend(ApplicationController, {
         this.preFilterRouting(routingRequest, function(error, currentUser, loggedIn){
             if(loggedIn){
                 if(!error && currentUser){
-                    var roomsList   = currentUser.roomsList;
+                    var roomIdSet   = currentUser.roomIdSet;
                     var roomId      = routingRequest.getArgs()[0];
                     _this.roomManagerModule.updateRoom(roomId, function(error, room){
                         if(!error && room){
-                            if(roomsList.indexOf(roomId) > -1 && _this.roomManagerModule.get(roomId)){
+                            if(roomIdSet.contains(roomId) && _this.roomManagerModule.get(roomId)){
                                 routingRequest.accept();
                             } else {
                                 _this.roomManagerModule.joinRoom(roomId, function(error, room){

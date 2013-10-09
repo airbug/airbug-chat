@@ -32,7 +32,7 @@ var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
 var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
 var SettingsPageContainer   = bugpack.require('airbug.SettingsPageContainer');
-var BugMeta = bugpack.require('bugmeta.BugMeta');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
@@ -42,7 +42,7 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
 var property    = PropertyAnnotation.property;

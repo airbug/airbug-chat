@@ -99,7 +99,7 @@ var ApplicationController = Class.extend(CarapaceController, {
         var route       = routingRequest.getRoute().route;
         var args        = routingRequest.getArgs();
 
-        this.retrieveCurrentUser(function(error, currentUser, loggedIn){
+        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUser, loggedIn){
             if(!error){
                 if(currentUser && loggedIn){
                     callback(error, currentUser, loggedIn);

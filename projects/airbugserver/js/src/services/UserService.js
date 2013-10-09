@@ -96,7 +96,7 @@ var UserService = Class.extend(Obj, {
             console.log("session:", session);
             if (session.data.userId) {
                 this.userManager.retrieveUser(session.data.userId, function(throwable, user) {
-                    console.log("userManager.findUserById. user:", user);
+                    console.log("userManager.retrieveUser. user:", user);
                     if (!throwable) {
                         if (user) {
                             handshakeData.user = user;
@@ -143,27 +143,39 @@ var UserService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {RequestContext} requestContext
      * @param {string} email
      * @param {function(Throwable, User)} callback
      */
-    findUserByEmail: function(requestContext, email, callback){
+    findUserByEmail: function(email, callback){
         this.userManager.retrieveUserByEmail(email, callback);
         //NOTE: This call does not require melding
     },
 
     /**
-     * @param {RequestContext} requestContext
-     * @param {{}} userObject
+     * @param {string} id
      * @param {function(Throwable, User)} callback
      */
-    loginUser: function(requestContext, userObject, callback){
+    findUserById: function(id, callback){
+        this.userManager.retrieveUser(id, callback);
+        //NOTE: This call does not require melding
+    },
+
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {{
+     *      email: string
+     * }} formData     * @param {function(Throwable, User)} callback
+     */
+     //TODO SUNG: If possible, refactor so that req does not need to be passed in here
+    loginUser: function(requestContext, req, formData, callback){
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
+        var session             = requestContext.get("session");
         var user                = undefined;
         var userManager         = this.userManager;
-        var userEmail           = userObject.email;
+        var userEmail           = formData.email;
 
         $series([
             $task(function(flow){
@@ -192,6 +204,11 @@ var UserService = Class.extend(Obj, {
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
+            }),
+            $task(function(flow){
+                _this.sessionService.regenerateSession(session.getId(), req, user, function(throwable){
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable){
             callback(throwable, user);
@@ -200,15 +217,21 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {{*}} userObject
+     * @param {{
+     *      email: string
+     *      firstName: string
+     *      lastName: string
+     * }} formData
      * @param {function(Throwable, User)} callback
      */
-    registerUser: function(requestContext, userObject, callback) {
+     //TODO SUNG: If possible, refactor so that req does not need to be passed in here
+    registerUser: function(requestContext, req, formData, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
         var meldManager = this.meldService.factoryManager();
+        var session     = requestContext.get("session");
         var user        = undefined;
-        var userEmail   = userObject.email;
+        var userEmail   = formData.email;
 
         $series([
             $task(function(flow){
@@ -235,6 +258,11 @@ var UserService = Class.extend(Obj, {
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
                 meldManager.commitTransaction(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow){
+                _this.sessionService.regenerateSession(session.getId(), req, user, function(throwable){
                     flow.complete(throwable);
                 });
             })

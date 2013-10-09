@@ -108,10 +108,11 @@ var SessionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {RequestContext} requestContext
      * @param {string} sid
      * @param {function(Throwable)} callback
      */
+     //TODO SUNG Refactor this to take session instead or req.
+     //NOTE This may require the actual request session and not the clone stored in the RequestContext
     regenerateSession: function(sid, req, user, callback){
         var _this = this;
         $parallel([

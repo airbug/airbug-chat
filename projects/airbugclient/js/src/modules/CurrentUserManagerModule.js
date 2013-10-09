@@ -147,18 +147,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable, meldbug.MeldDocument, boolean)} callback
      */
     retrieveCurrentUser: function(callback) {
-        // TODO refactor this so that currentUserManagerModule checks for socket RequestFailedException
-        if (this.currentUserId) {
-            this.retrieveCurrentUserDefault(callback);
-        } else {
-            this.retrieveCurrentUserWithAjax(callback);
-        }
-    },
-
-    /**
-     * @param {function(Throwable, meldbug.MeldDocument, boolean)} callback
-     */
-    retrieveCurrentUserDefault: function(callback) {
+        //TODO refactor this so that currentUserManagerModule checks for socket RequestFailedException
         //NOTE: can the cached currentUserId be incorrect??
         var _this       = this;
         var currentUser = this.getCurrentUser();
@@ -179,8 +168,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {function(Throwable, {*}, boolean)} callback
+     * @param {function(Throwable)} callback
      */
+     //TODO SUNG Clean this up and rename
     retrieveCurrentUserWithAjax: function(callback){
         var _this = this;
         $.ajax({
@@ -190,28 +180,8 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             data: {},
             success: function(data, textStatus, req){
                 console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                var currentUser = data.currentUser;
                 var error       = data.error;
-                if (!error) {
-                    if(currentUser){
-                        if(_this.userIsLoggedIn(currentUser)){
-                            _this.airbugApi.loginUser(function(throwable){ //connects socket
-                                if (!throwable) { //connected
-                                    _this.retrieveCurrentUserDefault(callback);
-                                } else { //not connected
-                                    callback(undefined, currentUser, true);
-                                }
-                            });
-                        } else {
-                            callback(null, currentUser, false);
-                        }
-                    } else {
-                            callback(null, null, false)
-                    }
-                } else {
-                    //TODO
-                    callback(error, currentUser, _this.userIsLoggedIn(currentUser));
-                }
+                callback(error);
             },
             error: function(req, textStatus, errorThrown){
                 console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
@@ -221,35 +191,33 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {{email: string}} userObject
+     * @param {{email: string}} formData
      * @param {function(Throwable, {*})} callback
      */
-    loginUser: function(userObject, callback){
-        var _this = this;
-        $.ajax({
-            url: "/app/login",
-            type: "POST",
-            dataType: "json",
-            data: userObject,
-            success: function(data, textStatus, req){
-                console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                var user    = data.user;
-                var error   = data.error;
-                if (!error && user) {
-                    _this.airbugApi.loginUser(function(throwable){
-                        if (!throwable) {
-                            _this.retrieveCurrentUserAndRooms(callback);
-                        } else {
-                            callback(throwable, user);
-                        }
-                    });
-                } else {
-                    callback(error, user);
-                }
-            },
-            error: function(req, textStatus, errorThrown){
-                console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
-                callback(errorThrown);
+    loginUser: function(formData, callback){
+        var _this                   = this;
+        var currentUserMeldDocument = undefined;
+        this.request("login", "User", {formData: formData}, function(throwable, data){
+            if (!throwable) {
+                var currentUserId   = data.objectId;
+                $series([
+                    $task(function(flow){
+                        //NOTE: TODO: SUNG Regenerate Cookie here with ajax
+                        _this.retrieveCurrentUserWithAjax(function(error){
+                            flow.complete(error);
+                        });
+                    }),
+                    $task(function(flow){
+                        _this.retrieve("User", currentUserId, function(throwable, returnedCurrentUserMeldDocument) {
+                            if(!throwable) currentUserMeldDocument = returnedCurrentUserMeldDocument;
+                            flow.complete(throwable);
+                        });
+                    })
+                ]).execute(function(throwable){
+                    callback(throwable, currentUserMeldDocument, _this.userIsLoggedIn(currentUserMeldDocument));
+                });
+            } else {
+                callback(throwable);
             }
         });
     },
@@ -259,6 +227,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      */
     logout: function(callback) {
         //TODO
+        // Keep this as ajax for now
         var _this = this;
         $series([
             $task(function(flow){
@@ -291,35 +260,33 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             email: string,
             firstName: string,
             lastName: string}
-        } userObject
+        } formData
      * @param {function(Throwable, {*})} callback
      */
-    registerUser: function(userObject, callback){
-        var _this = this;
-        $.ajax({
-            url: "/app/register",
-            type: "POST",
-            dataType: "json",
-            data: userObject,
-            success: function(data, textStatus, req){
-                console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                var user    = data.user;
-                var error   = data.error;
-                if (!error && user) {
-                    _this.airbugApi.loginUser(function(throwable){
-                        if (!throwable) {
-                            _this.retrieveCurrentUserAndRooms(callback);
-                        } else {
-                            callback(throwable, user);
-                        }
-                    });
-                } else {
-                    callback(error, user);
-                }
-            },
-            error: function(req, textStatus, errorThrown){
-                console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
-                callback(errorThrown);
+    registerUser: function(formData, callback){
+        var _this                   = this;
+        var currentUserMeldDocument = undefined;
+        this.request("register", "User", {formData: formData}, function(throwable, data){
+            if (!throwable) {
+                var currentUserId   = data.objectId;
+                $series([
+                    $task(function(flow){
+                        //NOTE: TODO: SUNG Regenerate Cookie here with ajax
+                        _this.retrieveCurrentUserWithAjax(function(error){
+                            flow.complete(error);
+                        });
+                    }),
+                    $task(function(flow){
+                        _this.retrieve("User", currentUserId, function(throwable, returnedCurrentUserMeldDocument) {
+                            if(!throwable) currentUserMeldDocument = returnedCurrentUserMeldDocument;
+                            flow.complete(throwable);
+                        });
+                    })
+                ]).execute(function(throwable){
+                    callback(throwable, currentUserMeldDocument, _this.userIsLoggedIn(currentUserMeldDocument));
+                });
+            } else {
+                callback(throwable);
             }
         });
     }

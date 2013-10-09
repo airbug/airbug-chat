@@ -40,7 +40,7 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
+var bugmeta     = BugMeta.context();
 var autowired   = AutowiredAnnotation.autowired;
 var controller  = ControllerAnnotation.controller;
 var property    = PropertyAnnotation.property;
