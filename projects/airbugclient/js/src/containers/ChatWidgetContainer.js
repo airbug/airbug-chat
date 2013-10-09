@@ -216,6 +216,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.conversationModel.bind('change:id', this.handleConversationModelChangeId, this);
+
+        //TODO BRN: Add listener to conversationModel for new id added to chatMessageIdSet
+
         this.chatMessageCollection.bind('add', this.handleChatMessageCollectionAdd, this);
 
         this.initializeCommandSubscriptions();

@@ -694,7 +694,7 @@ var RoomService = Class.extend(Obj, {
             meldKeys.push(roomMemberMeldKey);
             meldKeys.push(roomMemberUserMeldKey);
 
-            if(!meldUserWithRoomMembersSwitch){
+            if (!meldUserWithRoomMembersSwitch) {
                 if (roomMember.getUserId() === userId) {
                     meldUserWithRoomMembersSwitch = true;
                     selfRoomMemberMeldKey = roomMemberMeldKey;

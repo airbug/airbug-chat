@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 
@@ -16,25 +17,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Exception   = bugpack.require('Exception');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
+var MappedThrowable     = bugpack.require('MappedThrowable');
+var Obj                 = bugpack.require('Obj');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $task       = BugFlow.$task;
-var $series     = BugFlow.$series;
+var $task               = BugFlow.$task;
+var $series             = BugFlow.$series;
 
 
 //-------------------------------------------------------------------------------
@@ -106,7 +108,6 @@ var ChatMessageService = Class.extend(Obj, {
         var chatMessage     = this.chatMessageManager.generateChatMessage(chatMessageObject);
         var currentUser     = requestContext.get("currentUser");
         var meldManager     = this.meldService.factoryManager();
-        var meldService     = this.meldService;
 
         if (currentUser.isNotAnonymous() && currentUser.getId() === chatMessage.getSenderUserId()) {
 
@@ -189,44 +190,73 @@ var ChatMessageService = Class.extend(Obj, {
     },
 
     /**
-     * @param {User} currentUser
+     * @param {RequestContext} requestContext
      * @param {string} conversationId
      * @param {function(Throwable, ChatMessage)} callback
      */
-    retrieveChatMessagesByConversationId: function(currentUser, conversationId, callback){
+    retrieveChatMessagesByConversationId: function(requestContext, conversationId, callback) {
         var _this = this;
-        // Alternative
-        // this.chatMessageManager.where({conversationId: conversationId}).exec(function(){
-        //
-        // });
-        this.conversationManager.findById(conversationId).populate("chatMessageIdSet").lean(true).exec(function(error, conversation){
-            console.log("Inside ChatMessageService#retrieveChatMessagesByConversationId callback");
-            console.log("Error:", error, "Conversation:", conversation);
-            if(!error && conversation){
-                var chatMessages = conversation.chatMessageIdSet;
-                callback(error, chatMessages);
-            } else {
-                callback(error, conversation);
-            }
-        });
-    },
+        var currentUser     = requestContext.get("currentUser");
+        var meldManager     = this.meldService.factoryManager();
 
-    /**
-     * @param {User} currentUser
-     * @param {string} roomId
-     * @param {function(Error, ChatMessage)} callback
-     */
-    retrieveChatMessagesByRoomId: function(currentUser, roomId, callback){
-        var _this = this;
-        if(currentUser.roomsList.indexOf(roomId) > -1){
-            this.chatMessageManager
-                .find({conversationOwnerId: roomId})
-                .lean(true)
-                .exec(function(error, chatMessages){
-                    callback(error, chatMessages);
-                });
+        if (currentUser.isNotAnonymous()) {
+
+            var chatMessageMap  = undefined;
+            var conversation    = undefined;
+            var mappedException = undefined;
+
+            $series([
+                $task(function(flow) {
+                    _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
+                        if (!throwable) {
+
+                            //NOTE BRN: Validate that the user is a member of this room
+
+                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                conversation = returnedConversation;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("UnauthorizedAccess"));
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.chatMessageManager.retrieveChatMessages(conversation.getChatMessageIdSet(), function(throwable, returnedChatMessageMap) {
+                        if (!throwable) {
+                            chatMessageMap = returnedChatMessageMap;
+                            chatMessageMap.forEach(function(chatMessage, key) {
+                                if (chatMessage === null) {
+                                    if (!mappedException) {
+                                        mappedException = new MappedThrowable(MappedThrowable.MAPPED);
+                                    }
+                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
+                                }
+                            });
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    chatMessageMap.forEach(function(chatMessage) {
+                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
+                        _this.meldChatMessage(meldManager, chatMessage);
+                        meldManager.commitTransaction(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(mappedException, chatMessageMap);
+                } else {
+                    callback(throwable);
+                }
+            });
         } else {
-            callback(new Error("Unauthorized Access"), null);
+            callback(new Exception("UnauthorizedAccess"));
         }
     },
 
@@ -246,71 +276,28 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {ChatMessage} chatMessage
+     * @param {string=} reason
      */
-    meldUserWithChatMessage: function(meldManager, user, chatMessage) {
-        var _this                           = this;
-        var meldKeys                        = [roomMeldKey];
-        var meldManager                     = this.meldManagerFactory.factoryManager();
-        var meldUserWithRoomMembersSwitch   = false;
-        var meldService                     = this.meldService;
-        var reason                          = room.getId();
-        var roomMeldKey                     = this.meldService.generateMeldKey("Room", room.getId(), "basic");
-        var selfUserMeldKey                 = this.meldService.generateMeldKey("User", user.getId(), "basic");
-        var selfRoomMemberMeldKey           = undefined;
+    meldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
+        var chatMessageMeldKey      = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
+        var meldKeys                = [chatMessageMeldKey];
+        reason                      = reason ? reason : chatMessage.getId();
 
-        $series([
-            $task(function(flow){
-                _this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(user.getId(), room.getId(), function(throwable, roomMember){
-                    if(!throwable && roomMember){
-                        meldUserWithRoomMembersSwitch   = true;
-                        selfRoomMemberMeldKey           = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow){
-                room.getRoomMemberSet().forEach(function(roomMember) {
-                    var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-                    var roomMemberUser      = roomMember.getUser();
-                    meldKeys.push(roomMemberMeldKey);
-                    if (roomMemberUser) {
-                        var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
-                        meldKeys.push(userMeldKey);
-                        if(meldUserWithRoomMembersSwitch) meldService.meldUserWithKeysAndReason(roomMemberUser, [selfUserMeldKey, selfRoomMemberMeldKey], reason);
-                    }
-                });
-                flow.complete();
-            })
-        ]).execute(function(throwable){
-                if(!throwable) {
-                    meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
-                } else {
-                    throw throwable;
-                }
-            });
+        this.meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     },
 
     /**
      * @param {MeldManager} meldManager
      * @param {User} user
-     * @param {Room} room
+     * @param {ChatMessage} chatMessage
+     * @param {string=} reason
      */
-    unmeldUserWithRoom: function(meldManager, user, room){
-        var meldService = this.meldService;
-        var meldKeys    = [roomMeldKey];
-        var reason      = room.getId();
-        var roomMeldKey = meldService.generateMeldKey("Room", room.getId(), "basic");
+    unmeldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
+        var conversationMeldKey     = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
+        var meldKeys                = [conversationMeldKey];
+        reason                      = reason ? reason : conversation.getId();
 
-        room.getRoomMemberSet().forEach(function(roomMember) {
-            var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-            var roomMemberUser      = roomMember.getUser();
-            meldKeys.push(roomMemberMeldKey);
-            if (roomMemberUser) {
-                var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
-                meldKeys.push(userMeldKey);
-            }
-        });
-        this.meldService.unmeldUserWithKeysAndReason(user, meldKeys, reason);
+        this.meldService.unmeldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     }
 });
 

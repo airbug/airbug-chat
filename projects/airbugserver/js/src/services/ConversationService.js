@@ -77,7 +77,7 @@ var ConversationService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
-     * @param {function(Error, Conversation)} callback
+     * @param {function(Throwable, Conversation)} callback
      */
     retrieveConversation: function(requestContext, conversationId, callback) {
         var _this               = this;
@@ -108,7 +108,7 @@ var ConversationService = Class.extend(Obj, {
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(undefined, room);
+                    callback(undefined, conversation);
                 } else {
                     callback(throwable);
                 }
@@ -194,11 +194,12 @@ var ConversationService = Class.extend(Obj, {
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {Conversation} conversation
+     * @param {string=} reason
      */
-    meldUserWithConversation: function(meldManager, user, conversation) {
+    meldUserWithConversation: function(meldManager, user, conversation, reason) {
         var conversationMeldKey     = this.meldService.generateMeldKey("Conversation", conversation.getId(), "basic");
         var meldKeys                = [conversationMeldKey];
-        var reason                  = conversation.getId();
+        reason                      = reason ? reason : conversation.getId();
 
         this.meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     },
@@ -207,11 +208,12 @@ var ConversationService = Class.extend(Obj, {
      * @param {MeldManager} meldManager
      * @param {User} user
      * @param {Conversation} conversation
+     * @param {string=} reason
      */
-    unmeldUserWithRoom: function(meldManager, user, conversation) {
+    unmeldUserWithConversation: function(meldManager, user, conversation, reason) {
         var conversationMeldKey     = this.meldService.generateMeldKey("Conversation", conversation.getId(), "basic");
         var meldKeys                = [conversationMeldKey];
-        var reason                  = conversation.getId();
+        reason                      = reason ? reason : conversation.getId();
 
         this.meldService.unmeldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     }

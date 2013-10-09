@@ -7,6 +7,7 @@
 //@Export('EntityManager')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
 //@Require('StringUtil')
 //@Require('TypeUtil')
@@ -28,6 +29,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
 var StringUtil              = bugpack.require('StringUtil');
 var TypeUtil                = bugpack.require('TypeUtil');
@@ -316,7 +318,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {Array.<string>} ids
      * @param {function(Throwable, Map.<string, Entity>)} callback
      */
-    retrieveEach: function(ids, callback){
+    retrieveEach: function(ids, callback) {
         var _this = this;
         this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, results) {
             if(!throwable){
