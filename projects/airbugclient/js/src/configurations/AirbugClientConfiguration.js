@@ -132,6 +132,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {BugCallRouter}
+         */
+        this._bugCallRouter         = null;
+
+        /**
+         * @private
          * @type {CarapaceApplication}
          */
         this._carapaceApplication   = null;
@@ -158,11 +164,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {function(Error)}
      */
     initializeConfiguration: function(callback) {
-        var _this               = this;
-        var carapaceApplication = this._carapaceApplication;
-        var controllerScan      = this._controllerScan;
-        var socketIoConfig      = this._socketIoConfig;
-        var trackerModule       = this._trackerModule;
+        var _this                       = this;
+        var carapaceApplication         = this._carapaceApplication;
+        var controllerScan              = this._controllerScan;
+        var currentUserManagerModule    = this._currentUserManagerModule;
+        var socketIoConfig              = this._socketIoConfig;
+        var trackerModule               = this._trackerModule;
 
         socketIoConfig.setHost("http://localhost/api/airbug");
         socketIoConfig.setResource("api/socket");
@@ -172,6 +179,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         // this._bugCallClient.openConnection();
 
         controllerScan.scan();
+
+        currentUserManagerModule.configure();
 
         $series([
             $task(function(flow){
@@ -204,15 +213,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
-                $task(function(flow){
-                    trackerModule.initialize(function(error){
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow){
-
-                    flow.complete();
-                })
+            $task(function(flow){
+                trackerModule.initialize(function(error){
+                    flow.complete(error);
+                });
+            })
         ]).execute(function(error){
             if (!error) console.log("tracking initialized");
             callback(error);
@@ -251,11 +256,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {bugcall.BugCallClient} bugCallClient
+     * @param {bugcall.BugCallClient} bugCallRequestEventDispatcher
      * @return {bugroutes.BugCallRouter}
      */
-    bugCallRouter: function(bugCallClient) {
-        return new BugCallRouter(bugCallClient);
+    bugCallRouter: function(bugCallRequestEventDispatcher) {
+        this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);
+        return this._bugCallRouter;
     },
 
     /**
@@ -332,7 +338,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {airbug.CurrentUserManagerModule}
      */
     currentUserManagerModule: function(airbugApi, meldStore, userManagerModule) {
-        return new CurrentUserManagerModule(airbugApi, meldStore, userManagerModule);
+        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, userManagerModule);
+        return this._currentUserManagerModule;
     },
 
     /**

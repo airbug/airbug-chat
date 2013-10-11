@@ -36,6 +36,7 @@
 //@Require('airbugserver.ConversationController')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.RoomController')
+//@Require('airbugserver.SessionController')
 //@Require('airbugserver.UserController')
 
 //@Require('airbugserver.CallService')
@@ -99,6 +100,7 @@ var ChatMessageController   = bugpack.require('airbugserver.ChatMessageControlle
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var RoomController          = bugpack.require('airbugserver.RoomController');
+var SessionController       = bugpack.require('airbugserver.SessionController');
 var UserController          = bugpack.require('airbugserver.UserController');
 
 var CallService             = bugpack.require('airbugserver.CallService');
@@ -451,47 +453,18 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             // Controllers
             //-------------------------------------------------------------------------------
 
-            $parallel([
-                $task(function(flow){
-                    _this._chatMessageController.configure(function(error){
-                        if(!error){
-                            console.log("chatMessageController configured");
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow){
-                    _this._conversationController.configure(function(error){
-                        if(!error){
-                            console.log("conversationController configured");
-                        }
-                        flow.complete(error);
-                    })
-                }),
-                $task(function(flow) {
-                    _this._homePageController.configure(function(error) {
-                        if (!error) {
-                            console.log("homePageController configured");
-                        }
-                        flow.complete(error);
-                    })
-                }),
-                $task(function(flow) {
-                    _this._roomController.configure(function(error) {
-                        if (!error) {
-                            console.log("roomController configured");
-                        }
-                        flow.complete(error);
-                    })
-                }),
-                $task(function(flow) {
-                    _this._userController.configure(function(error) {
-                        if (!error) {
-                            console.log("userController configured");
-                        }
-                        flow.complete(error);
-                    })
-                })
+            $task([
+                _this._chatMessageController.configure();
+                console.log("chatMessageController configured");
+                _this._conversationController.configure();
+                console.log("conversationController configured");
+                _this._homePageController.configure();
+                console.log("homePageController configured");
+                _this._roomController.configure();
+                console.log("roomController configured");
+                _this._userController.configure();
+                console.log("userController configured");
+                flow.complete();
             ]),
 
 
@@ -531,11 +504,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {EventDispatcher} eventDispatcher
+     * @param {BugCallServer} bugCallRequestEventDispatcher
      * @return {BugCallRouter}
      */
-    bugCallRouter: function(eventDispatcher) {
-        this._bugCallRouter = new BugCallRouter(eventDispatcher);
+    bugCallRouter: function(bugCallRequestEventDispatcher) {
+        this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);
         return this._bugCallRouter;
     },
 
@@ -755,6 +728,17 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
+     * @param {SocketRouter} bugCallRouter
+     * @param {SessionService} sessionService
+     * @param {RequestContextFactory} requestContextFactory
+     * @return {UserController}
+     */
+    sessionController: function(expressApp, bugCallRouter, sessionService, requestContextFactory){
+        return new SessionController(config, expressApp, bugCallRouter, sessionService, requestContextFactory);
+    };
+
+    /**
      * @param {MongoDataStore} mongoDataStore
      * @return {SessionManager}
      */
@@ -780,7 +764,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         this._sessionStore = new SessionStore(sessionManager);
         return this._sessionStore;
     },
-
 
     /**
      * @param {SocketIoServerConfig} config
@@ -809,8 +792,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {RequestContextFactory} requestContextFactory
      * @return {UserController}
      */
-    userController: function(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory) {
-        this._userController = new UserController(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory);
+    userController: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory) {
+        this._userController = new UserController(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory);
         return this._userController;
     },
 
@@ -991,10 +974,18 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("roomService"),
                 arg().ref("requestContextFactory")
             ]),
+        module("sessionController")
+            .args([
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("sessionService"),
+                arg().ref("requestContextFactory")
+            ]),
         module("userController")
             .args([
                 arg().ref("config"),
                 arg().ref("expressApp"),
+                arg().ref("bugCallServer"),
                 arg().ref("bugCallRouter"),
                 arg().ref("userService"),
                 arg().ref("sessionService"),

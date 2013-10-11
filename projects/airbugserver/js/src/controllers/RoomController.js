@@ -64,13 +64,9 @@ var RoomController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable)} callback
+     *
      */
-    configure: function(callback) {
-        if (!callback || typeof callback !== 'function') {
-            callback = function(){};
-        }
-
+    configure: function() {
         var _this               = this;
         this.bugCallRouter.addAll({
 
@@ -171,9 +167,6 @@ var RoomController = Class.extend(EntityController, {
                 });
             }
         });
-
-        callback();
-
     }
 });
 

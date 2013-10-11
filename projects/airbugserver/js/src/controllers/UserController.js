@@ -45,7 +45,7 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, bugCallRouter, userService, sessionService, requestContextFactory) {
+    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory) {
 
         this._super(requestContextFactory);
 
@@ -59,6 +59,12 @@ var UserController = Class.extend(EntityController, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter          = bugCallRouter;
+
+        /**
+         * @private
+         * @type {BugCallServer}
+         */
+        this.bugCallServer          = bugCallServer;
 
         /**
          * @private
@@ -91,12 +97,10 @@ var UserController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     *
      */
-    configure: function(callback){
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
-        var _this = this;
+    configure: function(){
+        var _this           = this;
         var expressApp      = this.expressApp;
         var userService     = this.userService;
         var sessionService  = this.sessionService;
@@ -104,6 +108,53 @@ var UserController = Class.extend(EntityController, {
         //-------------------------------------------------------------------------------
         // Express Routes
         //-------------------------------------------------------------------------------
+
+        expressApp.post('/app/login', function(req, res){
+            var cookies         = req.cookies;
+            var signedCookies   = req.signedCookies;
+            var oldSid          = req.sessionID;
+            var session         = req.session;
+            var params          = req.params;
+            var query           = req.query;
+            var userObject      = req.body;
+            var returnedUser;
+
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
+            $series([
+                $task(function(flow){
+                    userService.loginUser(userObject, function(error, user){
+                        returnedUser = user;
+                        if (!error && !user) {
+                            flow.error(new Error("User does not exist"))
+                        } else {
+                            flow.complete(error);
+                        }
+                    });
+                }),
+                $task(function(flow){
+                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
+                        if(!error) res.json({error: null, user: returnedUser});
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow){
+                    var callManagerSet = _this.bugCallServer.getCallManagerSetForSessionSid(oldSid);
+
+                    callManagerSet.forEach(function(callManager){
+                        var callRequest         = callManager.request("refreshConnectionForLogin", {});
+                        var callResponseHandler = new CallResponseHandler(requestCallback);
+                        callManager.sendRequest(callRequest, callResponseHandler);
+                    });
+
+                    flow.complete();
+                })
+            ]).execute(function(error){
+                if(error) res.json({error: error.toString(), user: null});
+            });
+
+            // find all callconnections related to the oldSid and send them a refreshConnectionForLogin request
+            // Make sure there are no issues with client-side initiated disconnect.
+        });
 
         expressApp.post('/app/logout', function(req, res){
             var cookies         = req.cookies;
@@ -123,15 +174,45 @@ var UserController = Class.extend(EntityController, {
                     res.json({error: null});
                 }
             });
+
+            // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
+
         });
 
-        //TODO: SUNG Improve and rename
-        expressApp.get('/app/retrieveCurrentUser', function(req, res){
-            var sessionID       = req.sessionID;
+        expressApp.post('/app/register', function(req, res) {
+            var cookies         = req.cookies;
+            var signedCookies   = req.signedCookies;
+            var oldSid          = req.sessionID;
             var session         = req.session;
-            var userId          = session.userId;
+            var params          = req.params;
+            var query           = req.query;
+            var userObject      = req.body;
+            var returnedUser;
 
-            res.json({});
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
+            $series([
+                $task(function(flow){
+                    userService.registerUser(userObject, function(throwable, user) {
+                        returnedUser = user;
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow){
+                    sessionService.regenerateSession(oldSid, req, returnedUser, function(throwable) {
+                        if (!throwable) {
+                            res.json({error: null, user: returnedUser});
+                        }
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable){
+                if (throwable) {
+                    res.json({error: throwable.toString(), user: null});
+                }
+            });
+
+            // find all callconnections related to the oldSid and send them a refreshConnectionForRegister request
+
         });
 
         expressApp.post('/app/user-availability-check-email', function(req, res){
@@ -150,7 +231,6 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-
         //-------------------------------------------------------------------------------
         // BugCall Routes
         //-------------------------------------------------------------------------------
@@ -166,7 +246,7 @@ var UserController = Class.extend(EntityController, {
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
                 var formData            = data.formData;
 
-                _this.userService.loginUser(requestContext, request, formData, function(throwable, user) {
+                _this.userService.loginUser(requestContext, formData, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable)
                 });
             },
@@ -180,7 +260,7 @@ var UserController = Class.extend(EntityController, {
                 var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
                 var formData            = data.formData;
 
-                _this.userService.registerUser(requestContext, request, formData, function(throwable, user) {
+                _this.userService.registerUser(requestContext, formData, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable)
                 });
             },
@@ -225,8 +305,6 @@ var UserController = Class.extend(EntityController, {
                 });
             }
         });
-
-        callback();
     }
 });
 

@@ -187,7 +187,7 @@ var ManagerModule = Class.extend(Obj, {
                 callback(throwable);
             }
         });
-        //NOTE if unable to connect a FailedRequestException will be passed through
+        //NOTE if unable to connect a bugcall.RequestFailedException will be passed through
     },
 
     /**

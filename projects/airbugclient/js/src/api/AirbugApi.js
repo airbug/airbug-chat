@@ -64,6 +64,13 @@ var AirbugApi = Class.extend(Obj, {
     },
 
     /**
+     *
+     */
+    disconnect: function(){
+
+    },
+
+    /**
      * @return {boolean}
      */
     isConnected: function(){
@@ -75,6 +82,14 @@ var AirbugApi = Class.extend(Obj, {
      */
     isNotConnected: function(){
         return !this.bugCallClient.isConnected();
+    },
+
+    /**
+     *
+     */
+    refreshConnection: function(){
+        this.disconnect();
+        this.connect();
     },
 
     /**

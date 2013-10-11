@@ -65,7 +65,7 @@ var HomePageController = Class.extend(Obj, {
     /**
      *
      */
-    configure: function(callback) {
+    configure: function() {
         var _this = this;
 
         this.expressApp.get('/app', function(req, res) {
@@ -82,7 +82,6 @@ var HomePageController = Class.extend(Obj, {
                 }
             });
         });
-        callback();
     }
 });
 

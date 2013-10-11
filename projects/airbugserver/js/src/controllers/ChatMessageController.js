@@ -64,11 +64,9 @@ var ChatMessageController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     *
      */
-    configure: function(callback) {
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
+    configure: function() {
         var _this               = this;
         this.bugCallRouter.addAll({
 
@@ -100,8 +98,6 @@ var ChatMessageController = Class.extend(Obj, {
                 });
             }
         });
-
-        callback();
     }
 });
 

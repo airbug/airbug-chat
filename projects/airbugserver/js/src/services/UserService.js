@@ -83,7 +83,16 @@ var UserService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {} handshakeData
+     * @param {
+     *    headers: req.headers       // <Object> the headers of the request
+     *  , time: (new Date) +''       // <String> date time of the connection
+     *  , address: socket.address()  // <Object> remoteAddress and remotePort object
+     *  , xdomain: !!headers.origin  // <Boolean> was it a cross domain request?
+     *  , secure: socket.secure      // <Boolean> https connection
+     *  , issued: +date              // <Number> EPOCH of when the handshake was created
+     *  , url: request.url           // <String> the entrance path of the request
+     *  , query: data.query          // <Object> the result of url.parse().query or a empty object
+     * } handshakeData
      * @param {function(Error, boolean)} callback
      */
     shakeIt: function(handshakeData, callback) {
@@ -167,15 +176,15 @@ var UserService = Class.extend(Obj, {
      *      email: string
      * }} formData     * @param {function(Throwable, User)} callback
      */
-     //TODO SUNG: If possible, refactor so that req does not need to be passed in here
-    loginUser: function(requestContext, req, formData, callback){
-        var _this               = this;
-        var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
-        var session             = requestContext.get("session");
-        var user                = undefined;
-        var userManager         = this.userManager;
-        var userEmail           = formData.email;
+    loginUser: function(requestContext, formData, callback){
+        var _this       = this;
+        var currentUser = requestContext.get("currentUser");
+        var handshake   = requestContext.get("handshake");
+        var meldManager = this.meldService.factoryManager();
+        var session     = requestContext.get("session");
+        var user        = undefined;
+        var userManager = this.userManager;
+        var userEmail   = formData.email;
 
         $series([
             $task(function(flow){
@@ -204,11 +213,6 @@ var UserService = Class.extend(Obj, {
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
-            }),
-            $task(function(flow){
-                _this.sessionService.regenerateSession(session.getId(), req, user, function(throwable){
-                    flow.complete(throwable);
-                });
             })
         ]).execute(function(throwable){
             callback(throwable, user);
@@ -224,10 +228,10 @@ var UserService = Class.extend(Obj, {
      * }} formData
      * @param {function(Throwable, User)} callback
      */
-     //TODO SUNG: If possible, refactor so that req does not need to be passed in here
-    registerUser: function(requestContext, req, formData, callback) {
+    registerUser: function(requestContext, formData, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
+        var handshake   = requestContext.get("handshake");
         var meldManager = this.meldService.factoryManager();
         var session     = requestContext.get("session");
         var user        = undefined;
@@ -258,11 +262,6 @@ var UserService = Class.extend(Obj, {
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
                 meldManager.commitTransaction(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow){
-                _this.sessionService.regenerateSession(session.getId(), req, user, function(throwable){
                     flow.complete(throwable);
                 });
             })

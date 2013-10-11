@@ -64,9 +64,9 @@ var ConversationController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     *
      */
-    configure: function(callback) {
+    configure: function() {
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this               = this;
@@ -86,8 +86,6 @@ var ConversationController = Class.extend(Obj, {
                 });
             }
         });
-
-        callback();
     }
 });
 
