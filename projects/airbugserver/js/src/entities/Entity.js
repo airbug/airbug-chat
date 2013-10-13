@@ -10,6 +10,7 @@
 //@Require('IObjectable')
 //@Require('LiteralUtil')
 //@Require('Obj')
+//@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.DeltaDocument')
 //@Require('bugdelta.IDelta')
 
@@ -29,6 +30,7 @@ var Class           = bugpack.require('Class');
 var IObjectable     = bugpack.require('IObjectable');
 var LiteralUtil     = bugpack.require('LiteralUtil');
 var Obj             = bugpack.require('Obj');
+var DeltaBuilder    = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocument   = bugpack.require('bugdelta.DeltaDocument');
 var IDelta          = bugpack.require('bugdelta.IDelta');
 
@@ -54,9 +56,15 @@ var Entity = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {DeltaBuilder}
+         */
+        this.deltaBuilder           = new DeltaBuilder();
+
+        /**
+         * @private
          * @type {DeltaDocument}
          */
-        this.deltaDocument        = new DeltaDocument(data);
+        this.deltaDocument          = new DeltaDocument(data);
     },
 
 
@@ -152,10 +160,10 @@ var Entity = Class.extend(Obj, {
     },
 
     /**
-     * @return {List.<DeltaChange>}
+     * @return {Delta}
      */
     generateDelta: function() {
-        return this.deltaDocument.generateDelta();
+        return this.deltaBuilder.buildDelta(this.deltaDocument, this.deltaDocument.getPreviousDocument());
     },
     
     
