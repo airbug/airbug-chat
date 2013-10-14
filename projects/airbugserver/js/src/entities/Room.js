@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@require('Set')
-//@Require('airbugserver.Entity')
+//@Require('bugentity.Entity')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack         = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Set             = bugpack.require('Set');
-var Entity          = bugpack.require('airbugserver.Entity');
+var Entity          = bugpack.require('bugentity.Entity');
 
 
 //-------------------------------------------------------------------------------

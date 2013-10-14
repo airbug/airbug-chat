@@ -8,9 +8,9 @@
 
 //@Require('Class')
 //@Require('Map')
-//@Require('Obj')
 //@Require('Set')
 //@Require('airbugserver.User')
+//@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugmeta.BugMeta')
 
@@ -28,9 +28,9 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Map                         = bugpack.require('Map');
-var Obj                         = bugpack.require('Obj');
 var Set                         = bugpack.require('Set');
 var User                        = bugpack.require('airbugserver.User');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
@@ -47,7 +47,7 @@ var entityManager           = EntityManagerAnnotation.entityManager;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserManager = Class.extend(Obj, {
+var UserManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Constructor

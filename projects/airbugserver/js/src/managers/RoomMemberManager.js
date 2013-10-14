@@ -8,32 +8,32 @@
 
 //@Require('Class')
 //@Require('Map')
-//@Require('Obj')
 //@Require('airbugserver.RoomMember')
+//@Require('bugentity.EntityManger')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var RoomMember  = bugpack.require('airbugserver.RoomMember');
+var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var RoomMember          = bugpack.require('airbugserver.RoomMember');
+var EntityManager       = bugpack.require('bugentity.EntityManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMemberManager = Class.extend(Obj, {
+var RoomMemberManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Constructor

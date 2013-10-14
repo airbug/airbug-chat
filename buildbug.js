@@ -63,6 +63,7 @@ buildProperties({
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugdelta/js/src",
+            "../bugjs/projects/bugentity/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",

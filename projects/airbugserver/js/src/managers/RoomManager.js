@@ -9,8 +9,8 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Set')
-//@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Room')
+//@Require('bugentity.EntityManager')
 
 
 //-------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Set                 = bugpack.require('Set');
-var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Room                = bugpack.require('airbugserver.Room');
+var EntityManager       = bugpack.require('bugentity.EntityManager');
 
 
 //-------------------------------------------------------------------------------

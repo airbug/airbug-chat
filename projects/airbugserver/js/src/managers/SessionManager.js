@@ -7,8 +7,8 @@
 //@Export('SessionManager')
 
 //@Require('Class')
-//@Require('airbugserver.EntityManager')
 //@Require('airbugserver.Session')
+//@Require('bugentity.EntityManager')
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var EntityManager       = bugpack.require('airbugserver.EntityManager');
 var Session             = bugpack.require('airbugserver.Session');
+var EntityManager       = bugpack.require('bugentity.EntityManager');
 
 
 //-------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 //@Export('ChatMessage')
 
 //@Require('Class')
-//@Require('airbugserver.Entity')
+//@Require('bugentity.Entity')
 
 
 //-------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Entity          = bugpack.require('airbugserver.Entity');
+var Entity          = bugpack.require('bugentity.Entity');
 
 
 //-------------------------------------------------------------------------------

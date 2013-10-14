@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('airbugserver.ChatMessage')
-//@Require('airbugserver.EntityManager')
+//@Require('bugentity.EntityManager')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Map             = bugpack.require('Map');
 var ChatMessage     = bugpack.require('airbugserver.ChatMessage');
-var EntityManager   = bugpack.require('airbugserver.EntityManager');
+var EntityManager   = bugpack.require('bugentity.EntityManager');
 
 
 //-------------------------------------------------------------------------------
