@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageModel')
+//@Autoload
 
 //@Require('airbugserver.ChatMessageSchema')
 

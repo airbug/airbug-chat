@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('DialogueModel')
+//@Autoload
 
 //@Require('airbugserver.DialogueSchema')
 

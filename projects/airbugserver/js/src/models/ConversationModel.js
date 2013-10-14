@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ConversationModel')
+//@Autoload
 
 //@Require('airbugserver.ConversationSchema')
 

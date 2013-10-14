@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserModel')
+//@Autoload
 
 //@Require('airbugserver.UserSchema')
 

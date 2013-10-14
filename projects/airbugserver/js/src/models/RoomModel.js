@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('RoomModel')
+//@Autoload
 
 //@Require('airbugserver.RoomSchema')
 

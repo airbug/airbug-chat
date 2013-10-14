@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('RoomMemberModel')
+//@Autoload
 
 //@Require('airbugserver.RoomMemberSchema')
 

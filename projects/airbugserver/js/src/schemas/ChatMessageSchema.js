@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageSchema')
+//@Autoload
 
 
 //-------------------------------------------------------------------------------

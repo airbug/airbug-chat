@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('SessionModel')
+//@Autoload
 
 //@Require('airbugserver.SessionSchema')
 
