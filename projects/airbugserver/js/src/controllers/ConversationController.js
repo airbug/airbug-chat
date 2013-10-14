@@ -67,8 +67,6 @@ var ConversationController = Class.extend(Obj, {
      *
      */
     configure: function() {
-        if(!callback || typeof callback !== 'function') var callback = function(){};
-
         var _this               = this;
         this.bugCallRouter.addAll({
 

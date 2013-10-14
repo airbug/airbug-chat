@@ -453,7 +453,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             // Controllers
             //-------------------------------------------------------------------------------
 
-            $task([
+            $task(function(flow) {
                 _this._chatMessageController.configure();
                 console.log("chatMessageController configured");
                 _this._conversationController.configure();
@@ -465,7 +465,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 _this._userController.configure();
                 console.log("userController configured");
                 flow.complete();
-            ]),
+            }),
 
 
             //-------------------------------------------------------------------------------
@@ -735,8 +735,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {UserController}
      */
     sessionController: function(expressApp, bugCallRouter, sessionService, requestContextFactory){
-        return new SessionController(config, expressApp, bugCallRouter, sessionService, requestContextFactory);
-    };
+        return new SessionController(expressApp, bugCallRouter, sessionService, requestContextFactory);
+    },
 
     /**
      * @param {MongoDataStore} mongoDataStore

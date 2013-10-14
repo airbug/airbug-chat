@@ -32,16 +32,6 @@ var EntityManager       = bugpack.require('airbugserver.EntityManager');
 
 
 //-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $forEachParallel    = BugFlow.$forEachParallel;
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-
-
-//-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 

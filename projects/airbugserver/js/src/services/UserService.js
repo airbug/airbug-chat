@@ -480,7 +480,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} user
      * @param {User} currentUser
      */
-    meldUserWithCurrentUser: function(meldManager, user, currentUser){
+    meldUserWithCurrentUser: function(meldManager, user, currentUser) {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
@@ -492,7 +492,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} user
      * @param {User} currentUser
      */
-    meldCurrentUserWithCurrentUser: function(meldManager, currentUser){
+    meldCurrentUserWithCurrentUser: function(meldManager, currentUser) {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
         var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
@@ -504,7 +504,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} user
      * @param {User} currentUser
      */
-    unmeldUserFromCurrentUser: function(meldManager, user, currentUser){
+    unmeldUserFromCurrentUser: function(meldManager, user, currentUser) {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var reason = ""; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
@@ -516,7 +516,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} user
      * @param {User} currentUser
      */
-    unmeldCurrentUserFromCurrentUser: function(meldManager, user currentUser){
+    unmeldCurrentUserFromCurrentUser: function(meldManager, user, currentUser) {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
         var reason = ""; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);    }
