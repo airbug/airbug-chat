@@ -11,24 +11,36 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('airbugserver.User')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var Set         = bugpack.require('Set');
-var User        = bugpack.require('airbugserver.User');
+var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
+var Obj                         = bugpack.require('Obj');
+var Set                         = bugpack.require('Set');
+var User                        = bugpack.require('airbugserver.User');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                 = BugMeta.context();
+var entityManager           = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -41,7 +53,7 @@ var UserManager = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(mongoDataStore, roomManager) {
+    _constructor: function(mongoDataStore) {
 
         this._super("User", mongoDataStore);
 
@@ -50,11 +62,6 @@ var UserManager = Class.extend(Obj, {
         // Properties
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {RoomManager}
-         */
-        this.roomManager    = roomManager;
     },
 
 
@@ -210,6 +217,15 @@ var UserManager = Class.extend(Obj, {
         this.update(user, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserManager).with(
+    entityManager("User")
+);
 
 
 //-------------------------------------------------------------------------------
