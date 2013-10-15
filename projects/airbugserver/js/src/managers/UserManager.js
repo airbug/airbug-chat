@@ -50,22 +50,6 @@ var entityManager           = EntityManagerAnnotation.entityManager;
 var UserManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(mongoDataStore) {
-
-        this._super("User", mongoDataStore);
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-    },
-
-
-    //-------------------------------------------------------------------------------
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
@@ -143,9 +127,7 @@ var UserManager = Class.extend(EntityManager, {
                     idGetter:   user.getRoomIdSet,
                     idSetter:   user.setRoomIdSet,
                     getter:     user.getRoomSet,
-                    setter:     user.setRoomSet,
-                    manager:    _this.roomManager,
-                    retriever:  _this.roomManager.retrieveRoom
+                    setter:     user.setRoomSet
                 }
             }
         };

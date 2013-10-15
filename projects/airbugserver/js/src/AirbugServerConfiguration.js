@@ -798,11 +798,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SchemaManager} schemaManager
      * @param {MongoDataStore} mongoDataStore
      * @return {UserManager}
      */
-    userManager: function(mongoDataStore, roomManager) {
-        this._userManager = new UserManager(mongoDataStore, roomManager);
+    userManager: function(schemaManager, mongoDataStore) {
+        this._userManager = new UserManager(schemaManager, mongoDataStore);
         return this._userManager;
     },
 
@@ -1072,8 +1073,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("userManager")
             .args([
-                arg().ref("mongoDataStore"),
-                arg().ref("roomManager")
+                arg().ref("schemaManager"),
+                arg().ref("mongoDataStore")
             ])
     ])
 );

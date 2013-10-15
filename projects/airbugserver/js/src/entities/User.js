@@ -8,23 +8,41 @@
 
 //@Require('Class')
 //@Require('Set')
+//@Require('bugentity.CollectionAnnotation')
 //@Require('bugentity.Entity')
+//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Set             = bugpack.require('Set');
-var Entity          = bugpack.require('bugentity.Entity');
+var Class                   = bugpack.require('Class');
+var Set                     = bugpack.require('Set');
+var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
+var Entity                  = bugpack.require('bugentity.Entity');
+var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                 = BugMeta.context();
+var collection              = CollectionAnnotation.collection;
+var entity                  = EntityAnnotation.entity;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -211,6 +229,25 @@ var User = Class.extend(Entity, {
         return !this.getAnonymous();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(User).with(
+    entity("User").properties([
+        property("anonymous").type("boolean"),
+        property("createdAt").type("date"),
+        property("email").type("string"),
+        property("firstName").type("string"),
+        property("lastName").type("string"),
+        property("roomIdSet").type(collection().type("Set").of("string")),
+        property("roomSet").type(collection().type("Set").of("Room")),
+        property("status").type("string"),
+        property("updatedAt").type("date")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------
