@@ -132,22 +132,23 @@ var UserController = Class.extend(EntityController, {
                     });
                 }),
                 $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(error){
-                        if(!error) res.json({error: null, user: returnedUser});
+                    sessionService.regenerateSession(oldSid, req, returnedUser.getId(), function(error){
+                        if(!error) res.json({error: null});
                         flow.complete(error);
                     });
-                }),
-                $task(function(flow){
-                    var callManagerSet = _this.bugCallServer.getCallManagerSetForSessionSid(oldSid);
-
-                    callManagerSet.forEach(function(callManager){
-                        var callRequest         = callManager.request("refreshConnectionForLogin", {});
-                        var callResponseHandler = new CallResponseHandler(requestCallback);
-                        callManager.sendRequest(callRequest, callResponseHandler);
-                    });
-
-                    flow.complete();
                 })
+                // ,
+                // $task(function(flow){
+                //     var callManagerSet = _this.bugCallServer.getCallManagerSetForSessionSid(oldSid);
+
+                //     callManagerSet.forEach(function(callManager){
+                //         var callRequest         = callManager.request("refreshConnectionForLogin", {});
+                //         var callResponseHandler = new CallResponseHandler(requestCallback);
+                //         callManager.sendRequest(callRequest, callResponseHandler);
+                //     });
+
+                //     flow.complete();
+                // })
             ]).execute(function(error){
                 if(error) res.json({error: error.toString(), user: null});
             });
@@ -198,21 +199,22 @@ var UserController = Class.extend(EntityController, {
                     });
                 }),
                 $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser, function(throwable) {
+                    sessionService.regenerateSession(oldSid, req, returnedUser.getId(), function(throwable) {
                         if (!throwable) {
-                            res.json({error: null, user: returnedUser});
+                            res.json({error: null});
                         }
                         flow.complete(throwable);
                     });
                 })
+                // ,
+                // $task(function(flow){
+                // find all callconnections related to the oldSid and send them a refreshConnectionForRegister request
+                // })
             ]).execute(function(throwable){
                 if (throwable) {
                     res.json({error: throwable.toString(), user: null});
                 }
             });
-
-            // find all callconnections related to the oldSid and send them a refreshConnectionForRegister request
-
         });
 
         expressApp.post('/app/user-availability-check-email', function(req, res){
@@ -241,29 +243,29 @@ var UserController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            loginUser: function(request, responder){
-                var data                = request.getData();
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-                var formData            = data.formData;
+            // loginUser: function(request, responder){
+            //     var data                = request.getData();
+            //     var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+            //     var formData            = data.formData;
 
-                _this.userService.loginUser(requestContext, formData, function(throwable, user) {
-                    _this.processRetrieveResponse(responder, throwable)
-                });
-            },
+            //     _this.userService.loginUser(requestContext, formData, function(throwable, user) {
+            //         _this.processRetrieveResponse(responder, throwable)
+            //     });
+            // },
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            registerUser:function(request, responder){
-                var data                = request.getData();
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-                var formData            = data.formData;
+            // registerUser:function(request, responder){
+            //     var data                = request.getData();
+            //     var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+            //     var formData            = data.formData;
 
-                _this.userService.registerUser(requestContext, formData, function(throwable, user) {
-                    _this.processRetrieveResponse(responder, throwable)
-                });
-            },
+            //     _this.userService.registerUser(requestContext, formData, function(throwable, user) {
+            //         _this.processRetrieveResponse(responder, throwable)
+            //     });
+            // },
 
             /**
              * @param {IncomingRequest} request

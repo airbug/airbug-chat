@@ -107,6 +107,16 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 var data                = request.getData();
                 airbugApi.resetConnection();
                 responder.response();
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             */
+            refreshConnectionForRegister: function(request, responder) {
+                var data                = request.getData();
+                airbugApi.resetConnection();
+                responder.response();
             }
         });
     },
@@ -129,7 +139,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     /**
      * @return {string}
      */
-    getCurrentUserId: function() {
+    getCurrentUserId: function() { //needs to be changed to meldKey
         return this.currentUserId;
     },
 
@@ -146,15 +156,15 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {?{*}=} userMeldDocument
+     * @param {?{*}=} user
      * @return {boolean}
      */
-    userIsLoggedIn: function(userMeldDocument) {
+    userIsLoggedIn: function(user) {
         var currentUser = undefined;
         if (!userMeldDocument) {
             currentUser = this.getCurrentUser();
         } else {
-            currentUser = userMeldDocument;
+            currentUser = user;
         }
         if (currentUser) {
             return this.userIsNotAnonymous(currentUser);
@@ -210,7 +220,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 if (!throwable) {
                     var currentUserId   = data.objectId;
                     _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
-                        callback(throwable, currentUserMeldDocument, _this.userIsLoggedIn(currentUserMeldDocument));
+                        callback(throwable, currentUserMeldDocument, _this.userIsLoggedIn(currentUserMeldDocument.generateObject()));
                     });
                 } else {
                     callback(throwable);
@@ -285,10 +295,27 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(errorThrown);
                     }
                 });
+            })
+            // ,
+            // $task(function(flow){
+            //     _this.airbugApi.refreshConnection();
+            //     flow.complete();
+            // })
+            ,
+            $task(function(flow){
+                _this.airbugApi.connect();
+                flow.complete();
             }),
             $task(function(flow){
-                _this.airbugApi.refreshConnection();
-                flow.complete();
+                _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
+                    if(meldDocument){
+                        var user = meldDocument.generateObject();
+                        //TODO Refactor this so that the meldkey is passed through the retrieve callback
+                        var meldKey = _this.meldBuilder.generateMeldKey("User", user.id, "owner");
+                        _this.currentUserId = meldKey;
+                    }
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable){
             callback(throwable);
@@ -355,10 +382,27 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(errorThrown);
                     }
                 });
+            })
+            // ,
+            // $task(function(flow){
+            //     _this.airbugApi.refreshConnection();
+            //     flow.complete();
+            // })
+            ,
+            $task(function(flow){
+                _this.airbugApi.connect();
+                flow.complete();
             }),
             $task(function(flow){
-                _this.airbugApi.refreshConnection();
-                flow.complete();
+                _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
+                    if(meldDocument){
+                        var user = meldDocument.generateObject();
+                        //TODO Refactor this so that the meldkey is passed through the retrieve callback
+                        var meldKey = _this.meldBuilder.generateMeldKey("User", user.id, "owner");
+                        _this.currentUserId = meldKey;
+                    }
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable){
             callback(throwable);
