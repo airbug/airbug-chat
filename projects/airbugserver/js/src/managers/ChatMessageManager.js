@@ -9,6 +9,8 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('airbugserver.ChatMessage')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('bugentity.EntityManager')
 
 
@@ -16,17 +18,27 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Map             = bugpack.require('Map');
-var ChatMessage     = bugpack.require('airbugserver.ChatMessage');
+var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
+var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation')
+var BugMeta                     = bugpack.require('bugmeta.BugMeta')
 var EntityManager   = bugpack.require('bugentity.EntityManager');
+
+
+//------------------------------------------------------------------------------- 
+// Simplify References
+//------------------------------------------------------------------------------- 
+
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -34,32 +46,6 @@ var EntityManager   = bugpack.require('bugentity.EntityManager');
 //-------------------------------------------------------------------------------
 
 var ChatMessageManager = Class.extend(EntityManager, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(mongoDataStore, conversationManager, userManager) {
-
-        this._super("ChatMessage", mongoDataStore);
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ConversationManager}
-         */
-        this.conversationManager    = conversationManager;
-
-        /**
-         * @private
-         * @type {UserManager}
-         */
-        this.userManager            = userManager;
-    },
-
 
     //-------------------------------------------------------------------------------
     // MongoManager
@@ -115,17 +101,13 @@ var ChatMessageManager = Class.extend(EntityManager, {
                     idGetter:   chatMessage.getConversationId,
                     idSetter:   chatMessage.setConversationId,
                     getter:     chatMessage.getConversation,
-                    setter:     chatMessage.setConversation,
-                    manager:    _this.conversationManager,
-                    retriever:  _this.conversationManager.retrieveConversation
+                    setter:     chatMessage.setConversation
                 },
                 senderUser: {
                     idGetter:   chatMessage.getSenderUserId,
                     idSetter:   chatMessage.setSenderUserId,
                     getter:     chatMessage.getSenderUser,
-                    setter:     chatMessage.setSenderUser,
-                    manager:    _this.userManager,
-                    retriever:  _this.userManager.retrieveUser
+                    setter:     chatMessage.setSenderUser
                 }
             }
         };
@@ -183,6 +165,10 @@ var ChatMessageManager = Class.extend(EntityManager, {
     }
 });
 
+bugmeta.annotate(ChatMessageManager).with(
+    entityManager("ChatMessage")
+);
+    
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------

@@ -10,23 +10,35 @@
 //@Require('Map')
 //@Require('airbugserver.RoomMember')
 //@Require('bugentity.EntityManger')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var RoomMember          = bugpack.require('airbugserver.RoomMember');
-var EntityManager       = bugpack.require('bugentity.EntityManager');
+var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
+var RoomMember                  = bugpack.require('airbugserver.RoomMember');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -34,15 +46,6 @@ var EntityManager       = bugpack.require('bugentity.EntityManager');
 //-------------------------------------------------------------------------------
 
 var RoomMemberManager = Class.extend(EntityManager, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(mongoDataStore) {
-        this._super("RoomMember", mongoDataStore);
-    },
-
 
     //-------------------------------------------------------------------------------
     // Instance Methods
@@ -86,17 +89,13 @@ var RoomMemberManager = Class.extend(EntityManager, {
                     idGetter:   roomMember.getRoomId,
                     idSetter:   roomMember.setRoomId,
                     getter:     roomMember.getRoom,
-                    setter:     roomMember.setRoom,
-                    manager:    _this.roomManager,
-                    retriever:  _this.roomManager.retrieveRoom
+                    setter:     roomMember.setRoom
                 },
                 user: {
                     idGetter:   roomMember.getUserId,
                     idSetter:   roomMember.setUserId,
                     getter:     roomMember.getUser,
-                    setter:     roomMember.setUser,
-                    manager:    _this.userManager,
-                    retriever:  _this.userManager.retrieveUser
+                    setter:     roomMember.setUser
                 }
             }
         };
@@ -178,6 +177,16 @@ var RoomMemberManager = Class.extend(EntityManager, {
         this.update(roomMember, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomMemberManager).with(
+    entityManager("RoomMember")
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

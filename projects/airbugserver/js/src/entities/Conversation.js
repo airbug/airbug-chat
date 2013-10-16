@@ -8,23 +8,41 @@
 
 //@Require('Class')
 //@Require('Set')
+//@Require('bugentity.CollectionAnnotation') 
 //@Require('bugentity.Entity')
+//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Set             = bugpack.require('Set');
-var Entity          = bugpack.require('bugentity.Entity');
+var Class                   = bugpack.require('Class');
+var Set                     = bugpack.require('Set');
+var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
+var Entity                  = bugpack.require('bugentity.Entity');
+var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                 = BugMeta.context();
+var collection              = CollectionAnnotation.collection;
+var entity                  = EntityAnnotation.entity;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -171,6 +189,22 @@ var Conversation = Class.extend(Entity, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Conversation).with(
+    entity("Conversation").properties([
+        property("chatMessageIdSet").type(collection().type("Set").of("string")),
+        property("chatMessageSet").type(collection().type("Set").of("ChatMessage")),
+        property("createdAt").type("date"),
+        property("ownerId").type("string"),
+        property("owner").type("User"),
+        property("updatedAt").type("date")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

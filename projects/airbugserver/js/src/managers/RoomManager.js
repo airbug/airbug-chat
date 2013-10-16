@@ -11,24 +11,36 @@
 //@Require('Set')
 //@Require('airbugserver.Room')
 //@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var Set                 = bugpack.require('Set');
-var Room                = bugpack.require('airbugserver.Room');
-var EntityManager       = bugpack.require('bugentity.EntityManager');
+var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
+var Set                         = bugpack.require('Set');
+var Room                        = bugpack.require('airbugserver.Room');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -36,34 +48,6 @@ var EntityManager       = bugpack.require('bugentity.EntityManager');
 //-------------------------------------------------------------------------------
 
 var RoomManager = Class.extend(EntityManager, {
-
-    /**
-     * @constructs
-     * @param {MongoDataStore} mongoDataStore
-     * @param {ConversationManager} conversationManager
-     * @param {RoomMemberManager} roomMemberManager
-     */
-    _constructor: function(mongoDataStore, conversationManager, roomMemberManager) {
-
-        this._super("Room", mongoDataStore);
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ConversationManager}
-         */
-        this.conversationManager    = conversationManager;
-
-        /**
-         * @private
-         * @type {RoomMemberManager}
-         */
-        this.roomMemberManager      = roomMemberManager;
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -116,17 +100,13 @@ var RoomManager = Class.extend(EntityManager, {
                     idGetter:   room.getRoomMemberIdSet,
                     idSetter:   room.setRoomMemberIdSet,
                     getter:     room.getRoomMemberSet,
-                    setter:     room.setRoomMemberSet,
-                    manager:    this.roomMemberManager,
-                    retriever:  this.roomMemberManager.retrieveRoomMember
+                    setter:     room.setRoomMemberSet
                 },
                 conversation: {
                     idGetter:   room.getConversationId,
                     idSetter:   room.setConversationId,
                     getter:     room.getConversation,
-                    setter:     room.setConversation,
-                    manager:    this.conversationManager,
-                    retriever:  this.conversationManager.retrieveConversation
+                    setter:     room.setConversation
                 }
             }
         };
@@ -157,6 +137,16 @@ var RoomManager = Class.extend(EntityManager, {
         this.update(room, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomManager).with(
+    entityManager("Room")
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

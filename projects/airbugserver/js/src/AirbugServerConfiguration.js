@@ -549,11 +549,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SchemaManager} schemaManager
      * @param {MongoDataStore} mongoDataStore
      * @return {ChatMessageManager}
      */
-    chatMessageManager: function(mongoDataStore, conversationManager, userManager) {
-        this._chatMessageManager = new ChatMessageManager(mongoDataStore, conversationManager, userManager);
+    chatMessageManager: function(schemaManager, mongoDataStore) {
+        this._chatMessageManager = new ChatMessageManager(schemaManager, mongoDataStore);
         return this._chatMessageManager;
     },
 
@@ -589,11 +590,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SchemaManager} schemaManager 
      * @param {MongoDataStore} mongoDataStore
      * @return {ConversationManager}
      */
-    conversationManager: function(mongoDataStore, chatMessageManager) {
-        this._conversationManager = new ConversationManager(mongoDataStore, chatMessageManager);
+    conversationManager: function(schemaManager, mongoDataStore) {
+        this._conversationManager = new ConversationManager(schemaManager, mongoDataStore);
         return this._conversationManager;
     },
 
@@ -685,21 +687,21 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SchemaManager} schemaManager
      * @param {MongoDataStore} mongoDataStore
-     * @param {ConversationManager} conversationManager
-     * @param {RoomMemberManager} roomMemberManager
      * @return {RoomManager}
      */
-    roomManager: function(mongoDataStore, conversationManager, roomMemberManager) {
-        this._roomManager = new RoomManager(mongoDataStore, conversationManager, roomMemberManager);
+    roomManager: function(schemaManager, mongoDataStore) {
+        this._roomManager = new RoomManager(schemaManager, mongoDataStore);
         return this._roomManager;
     },
 
     /**
+     * @param {SchemaManager} schemaManager
      * @param {MongoDataStore} mongoDataStore
      * @return {RoomMemberManager}
      */
-    roomMemberManager: function(mongoDataStore, roomManager, userManager) {
+    roomMemberManager: function(schemaManager, mongoDataStore) {
         this._roomMemberManager = new RoomMemberManager(mongoDataStore, roomManager, userManager);
         return this._roomMemberManager;
     },
@@ -739,11 +741,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SchemaManager} schemaManager
      * @param {MongoDataStore} mongoDataStore
      * @return {SessionManager}
      */
-    sessionManager: function(mongoDataStore) {
-        return new SessionManager(mongoDataStore);
+    sessionManager: function(schemaManager, mongoDataStore) {
+        return new SessionManager(schemaManager, mongoDataStore);
     },
 
     /**
@@ -1046,29 +1049,27 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("chatMessageManager")
             .args([
-                arg().ref("mongoDataStore"),
-                arg().ref("conversationManager"),
-                arg().ref("userManager")
+                arg().ref("schemaManager"),
+                arg().ref("mongoDataStore")
             ]),
         module("conversationManager")
             .args([
-                arg().ref("mongoDataStore"),
-                arg().ref("chatMessageManager")
+                arg().ref("schemaManager"),
+                arg().ref("mongoDataStore")
             ]),
         module("roomManager")
             .args([
-                arg().ref("mongoDataStore"),
-                arg().ref("conversationManager"),
-                arg().ref("roomMemberManager")
+                arg().ref("schemaManager"),
+                arg().ref("mongoDataStore")
             ]),
         module("roomMemberManager")
             .args([
-                arg().ref("mongoDataStore"),
-                arg().ref("roomManager"),
-                arg().ref("userManager")
+                arg().ref("schemaManager"),
+                arg().ref("mongoDataStore")
             ]),
         module("sessionManager")
             .args([
+                arg().ref("schemaManager"),
                 arg().ref("mongoDataStore")
             ]),
         module("userManager")

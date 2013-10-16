@@ -8,23 +8,41 @@
 
 //@Require('Class')
 //@require('Set')
+//@Require('bugentity.CollectionAnnotation')
 //@Require('bugentity.Entity')
+//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Set             = bugpack.require('Set');
-var Entity          = bugpack.require('bugentity.Entity');
+var Class                   = bugpack.require('Class');
+var Set                     = bugpack.require('Set');
+var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
+var Entity                  = bugpack.require('bugentity.Entity');
+var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                 = BugMeta.context();
+var collection              = CollectionAnnotation.collection;
+var entity                  = EntityAnnotation.entity;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -186,6 +204,22 @@ var Room = Class.extend(Entity, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Room).with(
+    entity("Room").properties([
+        property("conversationId").type("string"),
+        property("conversation").type("Conversation"),
+        property("createdAt").type("date"),
+        property("name").type("string"),
+        property("roomMemberIdSet").type(collection().type("Set").of("string")),
+        property("roomMemberSet").type(collection().type("Set").of("RoomMember")),
+        property("updatedAt").type("date")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

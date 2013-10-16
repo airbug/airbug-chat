@@ -9,6 +9,9 @@
 //@Require('Class')
 //@Require('Pair')
 //@Require('bugentity.Entity')
+//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +28,19 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Pair            = bugpack.require('Pair');
 var Entity          = bugpack.require('bugentity.Entity');
+var Entity                  = bugpack.require('bugentity.Entity');
+var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                 = BugMeta.context();
+var entity                  = EntityAnnotation.entity;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -132,6 +148,20 @@ var Dialogue = Class.extend(Entity, {
     }
 });
 
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Dialogue).with(
+    entity("Dialogue").properties([
+        property("conversationId").type("string"),
+        property("conversation").type("Conversation"),
+        property("createdAt").type("date"),
+        property("updatedAt").type("date"),
+        property("userPairId").type("string"),
+        property("userPair").type("UserPair")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

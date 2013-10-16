@@ -11,24 +11,36 @@
 //@Require('Set')
 //@Require('airbugserver.Conversation')
 //@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta') 
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var Set                 = bugpack.require('Set');
-var Conversation        = bugpack.require('airbugserver.Conversation');
-var EntityManager       = bugpack.require('bugentity.EntityManager');
+var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
+var Set                         = bugpack.require('Set');
+var Conversation                = bugpack.require('airbugserver.Conversation');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -36,25 +48,6 @@ var EntityManager       = bugpack.require('bugentity.EntityManager');
 //-------------------------------------------------------------------------------
 
 var ConversationManager = Class.extend(EntityManager, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(mongoDataStore, chatMessageManager) {
-
-        this._super("Conversation", mongoDataStore);
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ChatMessageManager}
-         */
-        this.chatMessageManager    = chatMessageManager;
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -106,17 +99,13 @@ var ConversationManager = Class.extend(EntityManager, {
                     idGetter:   conversation.getChatMessageIdSet,
                     idSetter:   conversation.setChatMessageIdSet,
                     getter:     conversation.getChatMessageSet,
-                    setter:     conversation.setChatMessageSet,
-                    manager:    this.chatMessageManager,
-                    retriever:  this.chatMessageManager.retrieveChatMessage
+                    setter:     conversation.setChatMessageSet
                 },
                 owner: {
                     idGetter:   conversation.getOwnerId,
                     idSetter:   conversation.setOwnerId,
                     getter:     conversation.getOwner,
-                    setter:     conversation.setOwner,
-                    manager:    this.roomManager,
-                    retriever:  this.roomManager.retrieveRoom
+                    setter:     conversation.setOwner
                 }
             }
         };
@@ -147,6 +136,15 @@ var ConversationManager = Class.extend(EntityManager, {
         this.update(conversation, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ConversationManager).with(
+    entityManager("Conversation")
+);
 
 
 //-------------------------------------------------------------------------------

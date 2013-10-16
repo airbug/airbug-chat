@@ -9,22 +9,34 @@
 //@Require('Class')
 //@Require('airbugserver.Session')
 //@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Session             = bugpack.require('airbugserver.Session');
-var EntityManager       = bugpack.require('bugentity.EntityManager');
+var Class                       = bugpack.require('Class');
+var Session                     = bugpack.require('airbugserver.Session');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -32,18 +44,6 @@ var EntityManager       = bugpack.require('bugentity.EntityManager');
 //-------------------------------------------------------------------------------
 
 var SessionManager = Class.extend(EntityManager, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @constructs
-     * @param {MongoDataStore} mongoDataStore
-     */
-    _constructor: function(mongoDataStore) {
-        this._super("Session", mongoDataStore);
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -208,6 +208,14 @@ var SessionManager = Class.extend(EntityManager, {
         });
     }
 });
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SessionManager).with(
+    entityManager("Session")
+);
 
 
 //-------------------------------------------------------------------------------
