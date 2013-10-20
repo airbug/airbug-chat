@@ -4,13 +4,14 @@
 
 //@TestFile
 
+//@Require('airbugserver.Room')
+//@Require('airbugserver.RoomManager')
+//@Require('bugentity.EntityManagerStore')
+//@Require('bugentity.SchemaManager')
+//@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 //@Require('mongo.MongoDataStore')
-//@Require('airbugserver.ChatMessageManager')
-//@Require('airbugserver.ConversationManager')
-//@Require('airbugserver.RoomManager')
-//@Require('airbugserver.RoomMemberManager')
 
 
 //-------------------------------------------------------------------------------
@@ -25,13 +26,14 @@ var mongoose                = require('mongoose');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Room                    = bugpack.require('airbugserver.Room');
+var RoomManager             = bugpack.require('airbugserver.RoomManager');
+var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
+var SchemaManager           = bugpack.require('bugentity.SchemaManager');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
-var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
-var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
-var RoomManager             = bugpack.require('airbugserver.RoomManager');
-var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
 
 
 //-------------------------------------------------------------------------------
@@ -40,6 +42,8 @@ var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
 
 var bugmeta                 = BugMeta.context();
 var test                    = TestAnnotation.test;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -56,16 +60,15 @@ var createRoomTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        var _this               = this;
 
         //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
-        mongoose.connect('mongodb://localhost/airbugtest');
 
+        mongoose.connect('mongodb://localhost/airbugtest');
+        this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
-        this.chatMessageManager     = new ChatMessageManager
-        this.conversationManager    = new ConversationManager();
-        this.roomMemberManager      = new RoomMemberManager(RoomMember, RoomMemberSchema);
-        this.roomManager            = new RoomManager(Room, RoomSchema, this.conversationManager, this.roomMemberManager);
+        this.schemaManager          = new SchemaManager();
+        this.roomManager            = new RoomManager(this .entityManagerStore, this.schemaManager, this.mongoDataStore);
+        this.roomManager.setEntityType("Room");
         this.testRoom               = this.roomManager.generateRoom({name: 'testRoom'});
     },
 
@@ -76,18 +79,35 @@ var createRoomTest = {
 
     test: function(test) {
         var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.schemaManager.initializeModule(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.roomManager.initializeModule(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
+                    if (!throwable) {
+                        test.assertTrue(!!_this.testRoom.getId(),
+                            "Assert created room has an id");
+                    }
+                    flow.complete(throwable);
+                });
 
-        _this.roomManager.createRoom(_this.testRoom, function(error, room) {
-            if (!error) {
-                test.assertTrue(!!_this.testRoom.getId(),
-                    "Assert created room has an id");
-            } else {
-                test.error(error);
-            }
+            })
+        ]).execute(function(throwable) {
             mongoose.connection.close();
-            test.complete();
+            if (!throwable) {
+                test.complete();
+            } else {
+                test.error(throwable);
+            }
         });
-
     }
 };
 
