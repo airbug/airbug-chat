@@ -38,7 +38,6 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var collection              = CollectionAnnotation.collection;
 var entity                  = EntityAnnotation.entity;
 var property                = PropertyAnnotation.property;
 
