@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugentity.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,7 +27,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
