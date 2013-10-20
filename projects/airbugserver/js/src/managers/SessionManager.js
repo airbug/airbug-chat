@@ -10,6 +10,7 @@
 //@Require('airbugserver.Session')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,6 +29,7 @@ var Class                       = bugpack.require('Class');
 var Session                     = bugpack.require('airbugserver.Session');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -35,6 +37,7 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
 var entityManager               = EntityManagerAnnotation.entityManager;
 
@@ -214,7 +217,13 @@ var SessionManager = Class.extend(EntityManager, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(SessionManager).with(
-    entityManager("Session")
+    entityManager("sessionManager")
+        .ofType("Session")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
 
 

@@ -8,10 +8,9 @@
 
 //@Require('Class')
 //@Require('Set')
-//@Require('bugentity.CollectionAnnotation') 
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,10 +27,9 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
-var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -40,7 +38,6 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var collection              = CollectionAnnotation.collection;
 var entity                  = EntityAnnotation.entity;
 var property                = PropertyAnnotation.property;
 
@@ -197,12 +194,22 @@ var Conversation = Class.extend(Entity, {
 
 bugmeta.annotate(Conversation).with(
     entity("Conversation").properties([
-        property("chatMessageIdSet").type(collection().type("Set").of("string")),
-        property("chatMessageSet").type(collection().type("Set").of("ChatMessage")),
-        property("createdAt").type("date"),
-        property("ownerId").type("string"),
-        property("owner").type("User"),
-        property("updatedAt").type("date")
+        property("chatMessageIdSet")
+            .type("Set")
+            .collectionOf("string"),
+        property("chatMessageSet")
+            .type("Set")
+            .collectionOf("ChatMessage")
+            .populates(true),
+        property("createdAt")
+            .type("date"),
+        property("ownerId")
+            .type("string"),
+        property("owner")
+            .type("Room")
+            .populates(true),
+        property("updatedAt")
+            .type("date")
     ])
 );
 

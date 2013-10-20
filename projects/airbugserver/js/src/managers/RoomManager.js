@@ -7,11 +7,11 @@
 //@Export('RoomManager')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('Set')
 //@Require('airbugserver.Room')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,11 +27,11 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
 var Set                         = bugpack.require('Set');
 var Room                        = bugpack.require('airbugserver.Room');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -39,6 +39,7 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
 var entityManager               = EntityManagerAnnotation.entityManager;
 
@@ -93,21 +94,17 @@ var RoomManager = Class.extend(EntityManager, {
      */
     populateRoom: function(room, properties, callback) {
         var options = {
-            propertyNames: ["conversation", "roomMemberSet"],
-            propertyKeys: {
-                roomMemberSet: {
-                    type:       "Set",
-                    idGetter:   room.getRoomMemberIdSet,
-                    idSetter:   room.setRoomMemberIdSet,
-                    getter:     room.getRoomMemberSet,
-                    setter:     room.setRoomMemberSet
-                },
-                conversation: {
-                    idGetter:   room.getConversationId,
-                    idSetter:   room.setConversationId,
-                    getter:     room.getConversation,
-                    setter:     room.setConversation
-                }
+            roomMemberSet: {
+                idGetter:   room.getRoomMemberIdSet,
+                idSetter:   room.setRoomMemberIdSet,
+                getter:     room.getRoomMemberSet,
+                setter:     room.setRoomMemberSet
+            },
+            conversation: {
+                idGetter:   room.getConversationId,
+                idSetter:   room.setConversationId,
+                getter:     room.getConversation,
+                setter:     room.setConversation
             }
         };
         this.populate(room, options, properties, callback);
@@ -144,7 +141,13 @@ var RoomManager = Class.extend(EntityManager, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomManager).with(
-    entityManager("Room")
+    entityManager("roomManager")
+        .ofType("Room")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
 
 

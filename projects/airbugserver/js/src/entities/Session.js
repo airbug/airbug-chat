@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,7 +27,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -115,13 +115,19 @@ var Session = Class.extend(Entity, {
 
 bugmeta.annotate(Session).with(
     entity("Session").properties([
-        property("createdAt").type("date"),
-        property("data").type("string"),
-        property("expires").type("date"),
-        property("sid").type("string"),
-        property("updatedAt").type("date")
+        property("createdAt")
+            .type("date"),
+        property("data")
+            .type("string"),
+        property("expires")
+            .type("date"),
+        property("sid")
+            .type("string"),
+        property("updatedAt")
+            .type("date")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

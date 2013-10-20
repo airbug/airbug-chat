@@ -10,7 +10,7 @@
 //@Require('Pair')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -18,19 +18,18 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Pair            = bugpack.require('Pair');
-var Entity          = bugpack.require('bugentity.Entity');
+var Class                   = bugpack.require('Class');
+var Pair                    = bugpack.require('Pair');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -154,12 +153,20 @@ var Dialogue = Class.extend(Entity, {
 
 bugmeta.annotate(Dialogue).with(
     entity("Dialogue").properties([
-        property("conversationId").type("string"),
-        property("conversation").type("Conversation"),
-        property("createdAt").type("date"),
-        property("updatedAt").type("date"),
-        property("userPairId").type("string"),
-        property("userPair").type("UserPair")
+        property("conversation")
+            .type("Conversation")
+            .populates(true),
+        property("conversationId")
+            .type("string"),
+        property("createdAt")
+            .type("date"),
+        property("updatedAt")
+            .type("date"),
+        property("userPairId")
+            .type("string"),
+        property("userPair")
+            .type("UserPair")
+            .populates(true)
     ])
 );
 

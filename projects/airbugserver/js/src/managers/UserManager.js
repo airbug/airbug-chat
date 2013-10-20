@@ -7,11 +7,11 @@
 //@Export('UserManager')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('Set')
 //@Require('airbugserver.User')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,11 +27,11 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
 var Set                         = bugpack.require('Set');
 var User                        = bugpack.require('airbugserver.User');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -39,8 +39,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                 = BugMeta.context();
-var entityManager           = EntityManagerAnnotation.entityManager;
+var arg                         = ArgAnnotation.arg;
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -120,15 +121,11 @@ var UserManager = Class.extend(EntityManager, {
      */
     populateUser: function(user, properties, callback){
         var options = {
-            propertyNames: ["roomSet"],
-            propertyKeys: {
-                roomSet: {
-                    type:       "Set",
-                    idGetter:   user.getRoomIdSet,
-                    idSetter:   user.setRoomIdSet,
-                    getter:     user.getRoomSet,
-                    setter:     user.setRoomSet
-                }
+            roomSet: {
+                idGetter:   user.getRoomIdSet,
+                idSetter:   user.setRoomIdSet,
+                getter:     user.getRoomSet,
+                setter:     user.setRoomSet
             }
         };
         this.populate(user, options, properties, callback);
@@ -146,7 +143,7 @@ var UserManager = Class.extend(EntityManager, {
             }
         };
         //TODO SUNG should this also return an Entity. What if there are more than one instance of the same entity created at once?
-        this.dataStore.findByIdAndUpdate(userId, update, function(error, dbUser){
+        this.dataStore.findByIdAndUpdate(userId, update, function(error, dbUser) {
             if (!error && !dbUser){
                 callback(new Error("User not found"));
             } else {
@@ -206,7 +203,13 @@ var UserManager = Class.extend(EntityManager, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(UserManager).with(
-    entityManager("User")
+    entityManager("userManager")
+        .ofType("User")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
 
 

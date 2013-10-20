@@ -7,10 +7,10 @@
 //@Export('RoomMemberManager')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('airbugserver.RoomMember')
 //@Require('bugentity.EntityManger')
 //@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -26,10 +26,10 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
 var RoomMember                  = bugpack.require('airbugserver.RoomMember');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -37,6 +37,7 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
 var entityManager               = EntityManagerAnnotation.entityManager;
 
@@ -83,43 +84,20 @@ var RoomMemberManager = Class.extend(EntityManager, {
 
     populateRoomMember: function(roomMember, properties, callback){
         var options = {
-            propertyNames: ["room", "user"],
-            propertyKeys: {
-                room: {
-                    idGetter:   roomMember.getRoomId,
-                    idSetter:   roomMember.setRoomId,
-                    getter:     roomMember.getRoom,
-                    setter:     roomMember.setRoom
-                },
-                user: {
-                    idGetter:   roomMember.getUserId,
-                    idSetter:   roomMember.setUserId,
-                    getter:     roomMember.getUser,
-                    setter:     roomMember.setUser
-                }
+            room: {
+                idGetter:   roomMember.getRoomId,
+                idSetter:   roomMember.setRoomId,
+                getter:     roomMember.getRoom,
+                setter:     roomMember.setRoom
+            },
+            user: {
+                idGetter:   roomMember.getUserId,
+                idSetter:   roomMember.setUserId,
+                getter:     roomMember.getUser,
+                setter:     roomMember.setUser
             }
         };
         this.populate(roomMember, options, properties, callback);
-    },
-
-    /**
-     * @param {RoomMember} roomMember
-     * @param {function(Error)} callback
-     */
-    removeRoomMember: function(roomMember, callback) {
-        //TODO replace with deleteRoomMember
-        $parallel([
-        ])
-
-        console.log("Error:", error, "returnedRoomMember:", returnedRoomMember);
-        roomMember = returnedRoomMember;
-        if (!error && returnedRoomMember) {
-            returnedRoomMember.remove(function(error){
-                flow.complete(error);
-            });
-        } else {
-            flow.complete(error);
-        }
     },
 
     /**
@@ -144,15 +122,17 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @param {function(Error, RoomMember)} callback
      */
     retrieveRoomMemberByUserIdAndRoomId: function(userId, roomId, callback) {
-        this.dataStore.findOne({roomId: roomId, userId: userId}, function(error, returnedroomMember){
-            console.log("Error:", error, "returnedroomMember:", returnedroomMember);
-            roomMember = returnedroomMember;
-            if(!error && returnedroomMember) {
-                returnedroomMember.remove(function(error){
-                    flow.complete(error);
-                });
+        var _this = this;
+        this.dataStore.findOne({roomId: roomId, userId: userId}).lean(true).exec(function(throwable, dbJson) {
+            if (!throwable) {
+                var entityObject = null;
+                if (dbJson) {
+                    entityObject = _this["generate" + _this.entityType](dbJson);
+                    entityObject.commitDelta();
+                }
+                callback(undefined, entityObject);
             } else {
-                flow.complete(error);
+                callback(throwable);
             }
         });
     },
@@ -184,7 +164,13 @@ var RoomMemberManager = Class.extend(EntityManager, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomMemberManager).with(
-    entityManager("RoomMember")
+    entityManager("roomMemberManager")
+        .ofType("RoomMember")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
 
 

@@ -8,10 +8,9 @@
 
 //@Require('Class')
 //@Require('Set')
-//@Require('bugentity.CollectionAnnotation')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,10 +27,9 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
-var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -40,7 +38,6 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var collection              = CollectionAnnotation.collection;
 var entity                  = EntityAnnotation.entity;
 var property                = PropertyAnnotation.property;
 
@@ -214,7 +211,6 @@ var User = Class.extend(Entity, {
         }
     },
 
-
     /**
      * @return {boolean}
      */
@@ -237,15 +233,27 @@ var User = Class.extend(Entity, {
 
 bugmeta.annotate(User).with(
     entity("User").properties([
-        property("anonymous").type("boolean"),
-        property("createdAt").type("date"),
-        property("email").type("string"),
-        property("firstName").type("string"),
-        property("lastName").type("string"),
-        property("roomIdSet").type(collection().type("Set").of("string")),
-        property("roomSet").type(collection().type("Set").of("Room")),
-        property("status").type("string"),
-        property("updatedAt").type("date")
+        property("anonymous")
+            .type("boolean"),
+        property("createdAt")
+            .type("date"),
+        property("email")
+            .type("string"),
+        property("firstName")
+            .type("string"),
+        property("lastName")
+            .type("string"),
+        property("roomIdSet")
+            .type("Set")
+            .collectionOf("string"),
+        property("roomSet")
+            .type("Set")
+            .collectionOf("Room")
+            .populates(true),
+        property("status")
+            .type("string"),
+        property("updatedAt")
+            .type("date")
     ])
 );
 

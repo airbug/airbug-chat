@@ -8,10 +8,9 @@
 
 //@Require('Class')
 //@require('Set')
-//@Require('bugentity.CollectionAnnotation')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,10 +27,9 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
-var CollectionAnnotation    = bugpack.require('bugentity.CollectionAnnotation');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -211,15 +209,27 @@ var Room = Class.extend(Entity, {
 
 bugmeta.annotate(Room).with(
     entity("Room").properties([
-        property("conversationId").type("string"),
-        property("conversation").type("Conversation"),
-        property("createdAt").type("date"),
-        property("name").type("string"),
-        property("roomMemberIdSet").type(collection().type("Set").of("string")),
-        property("roomMemberSet").type(collection().type("Set").of("RoomMember")),
-        property("updatedAt").type("date")
+        property("conversation")
+            .type("Conversation")
+            .populates(true),
+        property("conversationId")
+            .type("string"),
+        property("createdAt")
+            .type("date"),
+        property("name")
+            .type("string"),
+        property("roomMemberIdSet")
+            .type("Set")
+            .collectionOf("string"),
+        property("roomMemberSet")
+            .type("Set")
+            .collectionOf("RoomMember")
+            .populates(true),
+        property("updatedAt")
+            .type("date")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

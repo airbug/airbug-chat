@@ -7,11 +7,12 @@
 //@Export('ChatMessageManager')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('airbugserver.ChatMessage')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugmeta.BugMeta')
 //@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -26,17 +27,18 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
 var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation')
-var BugMeta                     = bugpack.require('bugmeta.BugMeta')
-var EntityManager   = bugpack.require('bugentity.EntityManager');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
 //------------------------------------------------------------------------------- 
 // Simplify References
 //------------------------------------------------------------------------------- 
 
+var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
 var entityManager               = EntityManagerAnnotation.entityManager;
 
@@ -93,22 +95,18 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable, ChatMessage)} callback
      */
     populateChatMessage: function(chatMessage, properties, callback) {
-        var _this = this;
         var options = {
-            propertyNames: ["conversation", "senderUser"],
-            propertyKeys: {
-                conversation: {
-                    idGetter:   chatMessage.getConversationId,
-                    idSetter:   chatMessage.setConversationId,
-                    getter:     chatMessage.getConversation,
-                    setter:     chatMessage.setConversation
-                },
-                senderUser: {
-                    idGetter:   chatMessage.getSenderUserId,
-                    idSetter:   chatMessage.setSenderUserId,
-                    getter:     chatMessage.getSenderUser,
-                    setter:     chatMessage.setSenderUser
-                }
+            conversation: {
+                idGetter:   chatMessage.getConversationId,
+                idSetter:   chatMessage.setConversationId,
+                getter:     chatMessage.getConversation,
+                setter:     chatMessage.setConversation
+            },
+            senderUser: {
+                idGetter:   chatMessage.getSenderUserId,
+                idSetter:   chatMessage.setSenderUserId,
+                getter:     chatMessage.getSenderUser,
+                setter:     chatMessage.setSenderUser
             }
         };
         this.populate(chatMessage, options, properties, callback);
@@ -137,11 +135,13 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {function(Throwable, ChatMessage)}callback
      */
     retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid: function(senderUserId, conversationId, tryUuid, callback) {
+        var _this = this;
         this.dataStore
             .where("senderUserId", senderUserId)
             .where("conversationId", conversationId)
             .where("tryUuid", tryUuid)
-            .lean(true).exec(function(throwable, dbJson) {
+            .lean(true)
+            .exec(function(throwable, dbJson) {
 
                 if (!throwable) {
                     var entityObject = null;
@@ -165,10 +165,22 @@ var ChatMessageManager = Class.extend(EntityManager, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
 bugmeta.annotate(ChatMessageManager).with(
-    entityManager("ChatMessage")
+    entityManager("chatMessageManager")
+        .ofType("ChatMessage")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
-    
+
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------

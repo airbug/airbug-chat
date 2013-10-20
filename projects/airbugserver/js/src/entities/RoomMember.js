@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,7 +27,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -172,11 +172,22 @@ var RoomMember = Class.extend(Entity, {
 
 bugmeta.annotate(RoomMember).with(
     entity("RoomMember").properties([
-        property("createdAt").type("date"),
-        property("memberType").type("string"),
-        property("roomId").type("string"),
-        property("updatedAt").type("date"),
-        property("userId").type("string")
+        property("createdAt")
+            .type("date"),
+        property("memberType")
+            .type("string"),
+        property("room")
+            .type("Room")
+            .populates(true),
+        property("roomId")
+            .type("string"),
+        property("updatedAt")
+            .type("date"),
+        property("user")
+            .type("User")
+            .populates(true),
+        property("userId")
+            .type("string")
     ])
 );
 

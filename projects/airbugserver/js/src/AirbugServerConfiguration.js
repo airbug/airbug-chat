@@ -47,13 +47,6 @@
 //@Require('airbugserver.SessionService')
 //@Require('airbugserver.UserService')
 
-//@Require('airbugserver.ChatMessageManager')
-//@Require('airbugserver.ConversationManager')
-//@Require('airbugserver.RoomManager')
-//@Require('airbugserver.RoomMemberManager')
-//@Require('airbugserver.SessionManager')
-//@Require('airbugserver.UserManager')
-
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -110,13 +103,6 @@ var MeldService             = bugpack.require('airbugserver.MeldService');
 var RoomService             = bugpack.require('airbugserver.RoomService');
 var SessionService          = bugpack.require('airbugserver.SessionService');
 var UserService             = bugpack.require('airbugserver.UserService');
-
-var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
-var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
-var RoomManager             = bugpack.require('airbugserver.RoomManager');
-var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
-var SessionManager          = bugpack.require('airbugserver.SessionManager');
-var UserManager             = bugpack.require('airbugserver.UserManager');
 
 
 //-------------------------------------------------------------------------------
@@ -179,12 +165,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ChatMessageManager}
-         */
-        this._chatMessageManager        = null;
-
-        /**
-         * @private
          * @type {ChatMessageService}
          */
         this._chatMessageService        = null;
@@ -209,12 +189,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {ConversationController}
          */
         this._conversationController    = null;
-
-        /**
-         * @private
-         * @type {ConversationManager}
-         */
-        this._conversationManager       = null;
 
         /**
          * @private
@@ -260,21 +234,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {RoomManager}
-         */
-        this._roomManager               = null;
-
-        /**
-         * @private
          * @type {RoomService}
          */
         this._roomService               = null;
-
-        /**
-         * @private
-         * @type {RoomMemberManager}
-         */
-        this._roomMemberManager         = null;
 
         /**
          * @private
@@ -299,12 +261,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {UserController}
          */
         this._userController            = null;
-
-        /**
-         * @private
-         * @type {UserManager}
-         */
-        this._userManager               = null;
 
         /**
          * @private
@@ -383,57 +339,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
-
-            //-------------------------------------------------------------------------------
-            // Model Managers
-            //-------------------------------------------------------------------------------
-
-            $parallel([
-                $task(function(flow) {
-                    _this._chatMessageManager.configure(function(error) {
-                        if (!error) {
-                            console.log("chatMessageManager configured");
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow) {
-                    _this._conversationManager.configure(function(error) {
-                        if (!error) {
-                            console.log("conversationManager configured");
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow) {
-                    _this._roomManager.configure(function(error) {
-                        if (!error) {
-                            console.log("roomManager configured");
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow) {
-                    _this._roomMemberManager.configure(function(error) {
-                        if (!error) {
-                            console.log("roomMemberManager configured");
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow) {
-                    _this._userManager.configure(function(error) {
-                        if (!error) {
-                            console.log("userManager configured");
-                        }
-                        flow.complete(error);
-                    });
-                })
-            ]),
-
-            //-------------------------------------------------------------------------------
-            // BugCall
-            //-------------------------------------------------------------------------------
 
 
             //-------------------------------------------------------------------------------
@@ -549,16 +454,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
-     * @return {ChatMessageManager}
-     */
-    chatMessageManager: function(schemaManager, mongoDataStore) {
-        this._chatMessageManager = new ChatMessageManager(schemaManager, mongoDataStore);
-        return this._chatMessageManager;
-    },
-
-    /**
      * @param {ChatMessageManager} chatMessageManager
      * @param {ConversationManager} conversationManager
      * @param {MeldService} meldService
@@ -587,16 +482,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     conversationController: function(bugCallRouter, conversationService) {
         this._conversationController = new ConversationController(bugCallRouter, conversationService);
         return this._conversationController;
-    },
-
-    /**
-     * @param {SchemaManager} schemaManager 
-     * @param {MongoDataStore} mongoDataStore
-     * @return {ConversationManager}
-     */
-    conversationManager: function(schemaManager, mongoDataStore) {
-        this._conversationManager = new ConversationManager(schemaManager, mongoDataStore);
-        return this._conversationManager;
     },
 
     /**
@@ -687,26 +572,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
-     * @return {RoomManager}
-     */
-    roomManager: function(schemaManager, mongoDataStore) {
-        this._roomManager = new RoomManager(schemaManager, mongoDataStore);
-        return this._roomManager;
-    },
-
-    /**
-     * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
-     * @return {RoomMemberManager}
-     */
-    roomMemberManager: function(schemaManager, mongoDataStore) {
-        this._roomMemberManager = new RoomMemberManager(mongoDataStore, roomManager, userManager);
-        return this._roomMemberManager;
-    },
-
-    /**
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
      * @param {RequestContextFactory} requestContextFactory
@@ -738,15 +603,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      */
     sessionController: function(expressApp, bugCallRouter, sessionService, requestContextFactory){
         return new SessionController(expressApp, bugCallRouter, sessionService, requestContextFactory);
-    },
-
-    /**
-     * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
-     * @return {SessionManager}
-     */
-    sessionManager: function(schemaManager, mongoDataStore) {
-        return new SessionManager(schemaManager, mongoDataStore);
     },
 
     /**
@@ -798,16 +654,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     userController: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory) {
         this._userController = new UserController(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory);
         return this._userController;
-    },
-
-    /**
-     * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
-     * @return {UserManager}
-     */
-    userManager: function(schemaManager, mongoDataStore) {
-        this._userManager = new UserManager(schemaManager, mongoDataStore);
-        return this._userManager;
     },
 
     /**
@@ -1040,42 +886,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("sessionManager"),
                 arg().ref("userManager")
-            ]),
-
-
-        //-------------------------------------------------------------------------------
-        // ModelManagers
-        //-------------------------------------------------------------------------------
-
-        module("chatMessageManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
-            ]),
-        module("conversationManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
-            ]),
-        module("roomManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
-            ]),
-        module("roomMemberManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
-            ]),
-        module("sessionManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
-            ]),
-        module("userManager")
-            .args([
-                arg().ref("schemaManager"),
-                arg().ref("mongoDataStore")
             ])
     ])
 );

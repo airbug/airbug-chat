@@ -7,12 +7,12 @@
 //@Export('ConversationManager')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('Set')
 //@Require('airbugserver.Conversation')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugmeta.BugMeta') 
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -27,11 +27,11 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
 var Set                         = bugpack.require('Set');
 var Conversation                = bugpack.require('airbugserver.Conversation');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -39,6 +39,7 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
 var entityManager               = EntityManagerAnnotation.entityManager;
 
@@ -92,21 +93,17 @@ var ConversationManager = Class.extend(EntityManager, {
      */
     populateConversation: function(conversation, properties, callback){
         var options = {
-            propertyNames: ["chatMessageSet", "owner"],
-            propertyKeys: {
-                chatMessageSet: {
-                    type:       "Set",
-                    idGetter:   conversation.getChatMessageIdSet,
-                    idSetter:   conversation.setChatMessageIdSet,
-                    getter:     conversation.getChatMessageSet,
-                    setter:     conversation.setChatMessageSet
-                },
-                owner: {
-                    idGetter:   conversation.getOwnerId,
-                    idSetter:   conversation.setOwnerId,
-                    getter:     conversation.getOwner,
-                    setter:     conversation.setOwner
-                }
+            chatMessageSet: {
+                idGetter:   conversation.getChatMessageIdSet,
+                idSetter:   conversation.setChatMessageIdSet,
+                getter:     conversation.getChatMessageSet,
+                setter:     conversation.setChatMessageSet
+            },
+            owner: {
+                idGetter:   conversation.getOwnerId,
+                idSetter:   conversation.setOwnerId,
+                getter:     conversation.getOwner,
+                setter:     conversation.setOwner
             }
         };
         this.populate(conversation, options, properties, callback);
@@ -143,7 +140,13 @@ var ConversationManager = Class.extend(EntityManager, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(ConversationManager).with(
-    entityManager("Conversation")
+    entityManager("conversationManager")
+        .ofType("Conversation")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
 );
 
 
