@@ -17,13 +17,6 @@ var mongoose            = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var UserPairSchema      = bugpack.require("airbugsever.UserPairSchema");
-
-
-//-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
@@ -39,7 +32,10 @@ var DialogueSchema = new Schema({
     conversationId: {type: ObjectId, index: true},
     createdAt: Date,
     updatedAt: Date,
-    userIdPair: UserPairSchema
+    userIdPair: {
+        a: {type: ObjectId, ref: 'User', index: true},
+        b: {type: ObjectId, ref: 'User', index: true}
+    }
 });
 
 
