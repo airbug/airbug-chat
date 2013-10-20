@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ConversationManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')

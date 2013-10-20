@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('RoomManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')

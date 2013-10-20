@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('SessionManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbugserver.Session')

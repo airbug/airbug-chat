@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbugserver.ChatMessage')

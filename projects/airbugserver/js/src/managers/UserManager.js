@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')
