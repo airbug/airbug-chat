@@ -161,7 +161,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      */
     userIsLoggedIn: function(user) {
         var currentUser = undefined;
-        if (!userMeldDocument) {
+        if (!user) {
             currentUser = this.getCurrentUser();
         } else {
             currentUser = user;
