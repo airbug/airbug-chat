@@ -11,7 +11,6 @@
 //@Require('airbug.CommandModule')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -28,18 +27,6 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var CommandModule           = bugpack.require('airbug.CommandModule');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -53,7 +40,7 @@ var TrackerModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sonarbugClient) {
+    _constructor: function(sonarbugClient, commandModule) {
 
         this._super();
 
@@ -62,7 +49,11 @@ var TrackerModule = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.commandModule  = null;
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule  = commandModule;
 
         /**
          * @private
@@ -195,17 +186,6 @@ var TrackerModule = Class.extend(Obj, {
         this.sonarbugClient.track(eventName, data);
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(TrackerModule).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

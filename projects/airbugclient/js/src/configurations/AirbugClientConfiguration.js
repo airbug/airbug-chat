@@ -404,10 +404,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
     /**
      * @param {sonarbugclient.SonarBugClient} sonarbugClient
+     * @param {CommandModule} commandModule
      * @return {airbug.TrackerModule}
      */
-    trackerModule: function(sonarbugClient) {
-        this._trackerModule = new TrackerModule(sonarbugClient);
+    trackerModule: function(sonarbugClient, commandModule) {
+        this._trackerModule = new TrackerModule(sonarbugClient, commandModule);
         return this._trackerModule;
     },
 
@@ -510,7 +511,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("sonarbugClient"),
         module("trackerModule")
             .args([
-                arg().ref("sonarbugClient")
+                arg().ref("sonarbugClient"),
+                arg().ref("commandModule")
             ]),
         module("userManagerModule")
             .args([
