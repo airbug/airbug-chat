@@ -201,7 +201,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CodeEditorContainer).with(
+bugmeta.annotate(ChatWidgetInputFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
     ])

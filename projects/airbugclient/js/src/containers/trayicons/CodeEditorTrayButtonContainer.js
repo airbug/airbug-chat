@@ -7,7 +7,6 @@
 //@Export('CodeEditorTrayButtonContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationPublisherModule')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
@@ -23,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +30,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var ApplicationPublisherModule  = bugpack.require('airbug.ApplicationPublisherModule');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule               = bugpack.require('airbug.CommandModule');
@@ -47,7 +45,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view        = ViewBuilder.view;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------

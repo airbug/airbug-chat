@@ -100,7 +100,7 @@ CommandModule.CommandType = {
  * @static
  * @enum {string}
  */
-CommandModule.MessgeType = {
+CommandModule.MessageType = {
     BUTTON_CLICKED:             "CommandModuleMessage::ButtonClicked"
 };
 

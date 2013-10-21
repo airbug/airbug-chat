@@ -35,7 +35,7 @@ var MultiColumnView     = Class.extend(MustacheView, {
     // MustacheView Implementation
     //-------------------------------------------------------------------------------
     
-   /**
+    /**
      * @return {Object}
      */
     generateTemplateData: function(){
@@ -59,9 +59,15 @@ var MultiColumnView     = Class.extend(MustacheView, {
 /**
  * @enum {number}
  */
- MultiColumnView.RowStyle = {
+MultiColumnView.RowStyle = {
     DEFAULT: 1,
     FIXED: 1,
     FLUID: 2
 };
 
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export("airbug.MultiColumnView", MultiColumnView);

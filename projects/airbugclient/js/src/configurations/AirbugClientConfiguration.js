@@ -35,6 +35,7 @@
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
+//@Require('carapace.RoutingRequest')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
@@ -80,6 +81,7 @@ var BugCallRouter               = bugpack.require('bugroutes.BugCallRouter');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
+var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -183,12 +185,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         currentUserManagerModule.configure();
 
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 _this.initializeTracking(function(error){
                     flow.complete(error);
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 carapaceApplication.start(function(error){
                     flow.complete(error);
                 });
@@ -201,7 +203,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         var trackerModule       = this._trackerModule;
         var carapaceApplication = this._carapaceApplication;
 
-        carapaceApplication.addEventListener("RoutingRequest.Result", function(event){
+        carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event){
             var data = event.getData();
             trackerModule.track("RoutingRequest.Result", data);
         });
@@ -335,10 +337,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {airbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
      * @param {airbug.UserManagerModule} userManagerModule
+     * @param {BugCallRouter} bugCallRouter
      * @return {airbug.CurrentUserManagerModule}
      */
-    currentUserManagerModule: function(airbugApi, meldStore, userManagerModule) {
-        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, userManagerModule);
+    currentUserManagerModule: function(airbugApi, meldStore, userManagerModule, bugCallRouter) {
+        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, userManagerModule, bugCallRouter);
         return this._currentUserManagerModule;
     },
 
@@ -477,7 +480,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),
-                arg().ref("userManagerModule")
+                arg().ref("userManagerModule"),
+                arg().ref("bugCallRouter")
             ]),
         module("navigationModule")
             .properties([

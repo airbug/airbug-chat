@@ -8,8 +8,9 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorTrayButtonContainer')
+//@Require('airbug.ListItemView')
 //@Require('airbug.ListView')
-//@Require('airbug.ListViewEvent')
 //@Require('airbug.PanelWithHeaderView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -19,7 +20,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view        = ViewBuilder.view;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
