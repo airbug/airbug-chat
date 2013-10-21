@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Map')
 //@Require('airbugserver.Session')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -27,6 +28,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var Map                         = bugpack.require('Map');
 var Session                     = bugpack.require('airbugserver.Session');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -66,21 +68,20 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {string} sid
-     * @param {{*}} values
-     * @param {function(Throwable)=} callback
+     * @param {Session} session
+     * @param {function(Throwable, Session)=} callback
      */
-    createOrUpdateSession: function(sid, values, callback) {
-        this.dataStore.update({sid: sid}, values, {upsert: true}, function(throwable, numberAffected, raw) {
-            if (callback) {
-                callback(throwable);
-            }
-        });
+    createOrUpdateSession: function(session, callback) {
+        if (session.getId()) {
+            this.updateSession(session, callback);
+        } else {
+            this.createSession(session, callback);
+        }
     },
 
     /**
      * @param {Session} session
-     * @param {function(Throwable, Room)} callback
+     * @param {function(Throwable, Session)} callback
      */
     createSession: function(session, callback) {
         this.create(session, callback);
@@ -89,8 +90,8 @@ var SessionManager = Class.extend(EntityManager, {
     /**
      *
      */
-    deleteAllSessions: function(callback){
-        this.dataStore.remove({}, function (throwable) {
+    deleteAllSessions: function(callback) {
+        this.dataStore.remove({}, function(throwable) {
             if (callback) {
                 callback(throwable);
             }
@@ -136,35 +137,23 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {function(Throwable)=} callback
-     */
-    removeAllSessions: function(callback) {
-        //TODO replace with deleteAllSessions
-        this.dataStore.remove({}, function (throwable) {
-            if (callback) {
-                callback(throwable);
-            }
-        });
-    },
-
-    /**
-     * @param {string} sid
-     * @param {function(Throwable)=} callback
-     */
-    removeSessionBySid: function(sid, callback) {
-        //TODO replace with deleteSessionBySid
-        this.dataStore.remove({sid: sid}, function(throwable) {
-            if (callback) {
-                callback(throwable);
-            }
-        });
-    },
-
-    /**
      * @param {function(Throwable, Array.<Session>} callback
      */
     retrieveAllSessions: function(callback) {
-        this.datStore.find({}, callback);
+        var _this = this;
+        this.datStore.find({}).lean(true).exec(function(throwable, results) {
+            if (!throwable) {
+                var newMap = new Map();
+                results.forEach(function(result) {
+                    var entityObject = _this["generate" + _this.entityType](result);
+                    entityObject.commitDelta();
+                    newMap.put(entityObject.getId(), entityObject);
+                });
+                callback(undefined, newMap);
+            } else {
+                callback(throwable, null);
+            }
+        });
     },
 
     /**
@@ -188,7 +177,19 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Session)}
         */
     retrieveSessionBySid: function(sid, callback) {
-        this.dataStore.findOne({sid: sid}, callback);
+        var _this = this;
+        this.dataStore.findOne({sid: sid}).lean(true).exec(function(throwable, dbJson) {
+            if (!throwable) {
+                var entityObject = null;
+                if (dbJson) {
+                    entityObject = _this["generate" + _this.entityType](dbJson);
+                    entityObject.commitDelta();
+                }
+                callback(undefined, entityObject);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**
@@ -197,19 +198,6 @@ var SessionManager = Class.extend(EntityManager, {
      */
     updateSession: function(session, callback){
         this.update(session, callback);
-    },
-
-    /**
-     * @param {string} sid
-     * @param {{*}} updates //NOTE: Cannot be a Session instance, only generic objects
-     * @param {function(Throwable)=} callback
-     */
-    updateSessionBySid: function(sid, updates, callback) {
-        this.dataStore.update({sid: sid}, updates, function(throwable) {
-            if (callback) {
-                callback(throwable);
-            }
-        });
     }
 });
 

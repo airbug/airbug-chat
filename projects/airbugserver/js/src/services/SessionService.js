@@ -94,7 +94,7 @@ var SessionService = Class.extend(Obj, {
             handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
             handshakeData.sessionId = this.cookieSigner.unsign(handshakeData.cookie['airbug.sid']);
 
-            this.sessionManager.findSessionBySid(handshakeData.sessionId, function(throwable, session) {
+            this.sessionManager.retrieveSessionBySid(handshakeData.sessionId, function(throwable, session) {
                 if (error || !session) {
                     callback(throwable, false);
                 } else {
@@ -138,9 +138,7 @@ var SessionService = Class.extend(Obj, {
                 });
             })
         ]).execute(callback);
-    },
-
-
+    }
 });
 
 

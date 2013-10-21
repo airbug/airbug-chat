@@ -62,31 +62,39 @@ var SessionStore = Class.adapt(connect.session.Store, {
 
     /**
      * @param {string} sid
-     * @param {function(Error, Session)} callback
+     * @param {function(Throwable, Session)} callback
      */
     get: function(sid, callback) {
+
+        //TEST
+        console.log("SessionStore.get - sid:" + sid);
+
         var _this = this;
-        this.sessionManager.findSessionBySid(sid, function(error, session) {
-            if (!error && session) {
-                var data = session.data;
-                try {
-                    if (typeof data === 'string') {
-                        data = JSON.parse(data);
+        this.sessionManager.retrieveSessionBySid(sid, function(throwable, session) {
+            if (!throwable) {
+                if (session) {
+                    var data = session.getData();
+                    try {
+                        if (typeof data === 'string') {
+                            data = JSON.parse(data);
+                        }
+                        var expires = TypeUtil.isString(session.getExpires())
+                            ? new Date(session.getExpires())
+                            : session.getExpires();
+                        if (!expires || new Date < expires) {
+                            console.log("data:", data);
+                            callback(undefined, data); // or session //clear cookies and retry
+                        } else {
+                            _this.destroy(sid, callback);
+                        }
+                    } catch (throwable) {
+                        callback(throwable);
                     }
-                    var expires = TypeUtil.isString(session.expires)
-                        ? new Date(session.expires)
-                        : session.expires;
-                    if (!expires || new Date < expires) {
-                        console.log("data:", data);
-                        callback(null, data); // or session //clear cookies and retry
-                    } else {
-                        _this.destroy(sid, callback);
-                    }
-                } catch (error) {
-                    callback(error);
+                } else {
+                    callback();
                 }
             } else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
@@ -97,6 +105,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
      * @param {function(Throwable)} callback
      */
     set: function(sid, data, callback) {
+        var _this = this;
 
         //TEST
         console.log("SessionStore.set - sid:" + sid + " data:" + data.toString());
@@ -111,38 +120,57 @@ var SessionStore = Class.adapt(connect.session.Store, {
             }
         }
         console.log("cookie:", cookie);
-        var session = this.sessionManager.generateSession({
-            sid: sid,
-            data: data,
-            expires: expires
+
+        this.sessionManager.retrieveSessionBySid(sid, function(throwable, session) {
+            if (!throwable) {
+                if (session) {
+                    session.setData(data);
+                    session.setExpires(expires);
+                    _this.sessionManager.updateSession(session, callback);
+                } else {
+                    session = _this.sessionManager.generateSession({
+                        sid: sid,
+                        data: data,
+                        expires: expires
+                    });
+                    _this.sessionManager.createSession(session, callback);
+                }
+            } else {
+                callback(throwable);
+            }
         });
-        this.sessionManager.createOrUpdateSession(session, callback);
     },
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     all: function(callback) {
-        this.sessionManager.findAllSessions(callback);
+        this.sessionManager.retrieveAllSessions(function(throwable, sessionMap) {
+            if (!throwable) {
+                callback(undefined, sessionMap.getValueArray());
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     clear: function(callback) {
-        this.sessionManager.removeAllSessions(callback);
+        this.sessionManager.deleteAllSessions(callback);
     },
 
     /**
      * @param {string} sid
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     destroy: function(sid, callback) {
-        this.sessionManager.removeSessionBySid(sid, callback);
+        this.sessionManager.deleteSessionBySid(sid, callback);
     },
 
     /**
-     * @param {function(Error, number)} callback
+     * @param {function(Throwable, number)} callback
      */
     length: function(callback) {
         this.sessionManager.countAllSessions(callback);
