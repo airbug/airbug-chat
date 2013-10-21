@@ -56,25 +56,25 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {airbug.ApplicationView}
          */
-        this.applicationView    = null;
+        this.applicationView        = null;
 
         /**
          * @private
          * @type {airbug.BodyView}
          */
-        this.bodyView           = null;
+        this.bodyView               = null;
 
         /**
          * @private
          * @type {airbug.ApplicationHeaderView}
          */
-        this.headerView         = null;
+        this.applicationHeaderView  = null;
 
         /**
          * @private
          * @type {airbug.NotificationView}
          */
-        this.notificationView   = null;
+        this.notificationView       = null;
     },
 
 
@@ -99,8 +99,8 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     /**
      * return {airbug.ApplicationHeaderView}
      */
-    getHeaderView: function() {
-        return this.headerView;
+    getApplicationHeaderView: function() {
+        return this.applicationHeaderView;
     },
 
     /**
@@ -140,11 +140,11 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.headerView         = new HeaderView({id: "application-header"});
-        this.applicationView    = new ApplicationView({id: "application"});
-        this.notificationView   = new NotificationView({id: "notification-container"});
+        this.applicationHeaderView  = new ApplicationHeaderView({id: "application-header"});
+        this.applicationView        = new ApplicationView({id: "application"});
+        this.notificationView       = new NotificationView({id: "notification-container"});
 
-        this.bodyView.addViewChild(this.headerView);
+        this.bodyView.addViewChild(this.applicationHeaderView);
         this.bodyView.addViewChild(this.applicationView);
         this.bodyView.addViewChild(this.notificationView);
 
@@ -159,7 +159,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     destroyContainer: function() {
-        this.headerView.dispose();
+        this.applicationHeaderView.dispose();
         this.applicationView.dispose();
         this.notificationView.dispose();
         this.viewTop = null;
