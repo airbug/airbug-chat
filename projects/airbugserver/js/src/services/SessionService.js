@@ -66,12 +66,6 @@ var SessionService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {MeldService}
-         */
-        this.meldService    = meldService;
-
-        /**
-         * @private
          * @type {SessionManager}
          */
         this.sessionManager = sessionManager;

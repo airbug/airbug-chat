@@ -49,7 +49,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager, userManager) {
+    _constructor: function(sessionManager, userManager, meldService) {
 
         this._super();
 
