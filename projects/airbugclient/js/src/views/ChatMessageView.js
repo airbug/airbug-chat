@@ -33,7 +33,6 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-//TODO Update this to ChatMessageView
 var ChatMessageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------

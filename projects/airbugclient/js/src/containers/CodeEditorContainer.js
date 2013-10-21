@@ -8,15 +8,14 @@
 
 //@Require('Class')
 //@Require('ace.Ace')
+//@Require('ace.AceModes')
 //@Require('ace.KitchenSink')
-//@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CommandModule')
-//@Require('aribug.IconView')
 //@Require('airbug.TextView')
-//@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -39,13 +38,12 @@ var Class                               = bugpack.require('Class');
 var Ace                                 = bugpack.require('ace.Ace');
 var AceModes                            = bugpack.require('ace.AceModes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
+var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
-var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var TextView                            = bugpack.require('airbug.TextView');
-var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');

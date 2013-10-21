@@ -71,7 +71,7 @@ IconView.Color = {
  */
 IconView.Type = {
     ALIGN_JUSTIFY: "align-justify",
-    ASTERISK: "asterisk"
+    ASTERISK: "asterisk",
     CHEVRON_LEFT: "chevron-left",
     EXCLAMATION: "exclamation-sign",
     PLUS: "plus",

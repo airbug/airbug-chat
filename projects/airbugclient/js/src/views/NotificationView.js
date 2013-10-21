@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,14 +23,7 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var MustacheView    = bugpack.require('airbug.MustacheView');
-var ViewBuilder     = bugpack.require('carapace.ViewBuilder');
 
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var view        = ViewBuilder.view;
 
 //-------------------------------------------------------------------------------
 // Declare Class

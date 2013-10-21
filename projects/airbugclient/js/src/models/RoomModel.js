@@ -7,7 +7,7 @@
 //@Export('RoomModel')
 
 //@Require('Class')
-//@Require('airbug.CarapaceModel')
+//@Require('airbug.MeldModel')
 
 
 //-------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ var RoomModel = Class.extend(MeldModel, {
         _id: "",
         name: "",
         conversationId: "",
-        memberIdSet: ,
+        memberIdSet: [],
         createdAt: "",
         updatedAt: ""
     }

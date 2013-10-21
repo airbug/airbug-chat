@@ -89,7 +89,7 @@ var ButtonView = Class.extend(MustacheView, {
                 break;
         }
         switch (this.attributes.type) {
-            case "default"
+            case "default":
                 break;
             case "primary":
                 data.buttonClasses += " btn-primary";

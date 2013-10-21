@@ -10,7 +10,6 @@
 //@Require('airbug.ChatMessageCollection')
 //@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
-//@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
 //@Require('airbug.TextAreaView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -36,7 +35,6 @@ var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollect
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
-var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var TextAreaView                    = bugpack.require('airbug.TextAreaView');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');

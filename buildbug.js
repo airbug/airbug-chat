@@ -58,8 +58,6 @@ buildProperties({
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
-            "../bugjs/external/ace/js/src",
-            "../bugjs/external/acemodes/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugdelta/js/src",
@@ -107,6 +105,8 @@ buildProperties({
             "./projects/airbug/js/src",
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
+            "../bugjs/external/ace/js/src",
+            "../bugjs/external/acemodes/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/bootstrap2/static",

@@ -45,7 +45,7 @@ var ListItemView = Class.extend(MustacheView, {
         var data    = this._super();
         data.id     = this.getId() || "list-item-" + this.cid;
         return data;
-    }
+    },
 
 
     //-------------------------------------------------------------------------------

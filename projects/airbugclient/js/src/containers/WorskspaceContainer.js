@@ -43,8 +43,11 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
+var autowired                   = AutowiredAnnotation.autowired;
+var bugmeta                     = BugMeta.context();
+var CommandType                 = CommandModule.CommandType;
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -161,7 +164,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-    }
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -211,6 +214,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
 });
 
+
 //-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
@@ -220,6 +224,7 @@ bugmeta.annotate(WorkspaceContainer).with(
         property("commandModule").ref("commandModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

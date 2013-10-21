@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.AddRoomMemberButtonContainer')
 //@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.ListView')
 //@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.RoomMemberListContainer')
@@ -31,6 +32,7 @@ var bugpack = require('bugpack').context();
 var Class                           = bugpack.require('Class');
 var AddRoomMemberButtonContainer    = bugpack.require('airbug.AddRoomMemberButtonContainer');
 var ButtonView                      = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var ListView                        = bugpack.require('airbug.ListView');
 var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
 var RoomMemberListContainer         = bugpack.require('airbug.RoomMemberListContainer');

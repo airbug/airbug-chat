@@ -29,7 +29,7 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxWithHeaderView = Class.extend(MustacheView, {
+var BoxWithHeaderAndFooterView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template

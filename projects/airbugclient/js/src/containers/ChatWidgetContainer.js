@@ -15,10 +15,9 @@
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CodeChatMessageModel')
 //@Require('airbug.CommandModule')
-//@Require('airbug.MessageView')
 //@Require('airbug.PanelView')
-//@Require('airbug.RequestFailedException')
 //@Require('airbug.TextChatMessageModel')
+//@Require('bugcall.RequestFailedException')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -47,10 +46,9 @@ var ChatMessageContainer            = bugpack.require('airbug.ChatMessageContain
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var CodeChatMessageModel            = bugpack.require('airbug.CodeChatMessageModel');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
-var MessageView                     = bugpack.require('airbug.MessageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
-var RequestFailedException          = bugpack.require('airbug.RequestFailedException');
 var TextChatMessageModel            = bugpack.require('airbug.TextChatMessageModel');
+var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');

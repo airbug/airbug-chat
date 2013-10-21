@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class               = bugpack.require('Class');
+var MultiColumnView     = bugpack.require('airbug.MultiColumnView');
 
 
 //-------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ FourColumnView.Configuration = {
     DEFAULT: 1,
     HAMBURGER_LEFT: 2,
     HAMBURGER_RIGHT: 3,
-    HAMBURGER_LEFT_AND_RIGHT: 4
+    HAMBURGER_LEFT_AND_RIGHT: 4,
     THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 5,
     EXTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 6,
     ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 7

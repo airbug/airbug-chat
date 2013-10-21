@@ -27,7 +27,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var ButtonViewEvent                 = bugpack.require('ButtonViewEvent');
+var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorTrayButtonContainer   = bugpack.require('airbug.CodeEditorTrayButtonContainer');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var ListView                        = bugpack.require('airbug.ListView');
