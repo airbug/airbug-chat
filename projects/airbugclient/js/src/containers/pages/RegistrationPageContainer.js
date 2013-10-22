@@ -7,6 +7,7 @@
 //@Export('RegistrationPageContainer')
 
 //@Require('Class')
+//@Require('airbug.ApplicationContainer')
 //@Require('airbug.LoginButtonContainer')
 //@Require('airbug.PageView')
 //@Require('airbug.RegistrationFormContainer')
@@ -25,6 +26,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
 var PageView                    = bugpack.require('airbug.PageView');
 var LoginButtonContainer        = bugpack.require('airbug.LoginButtonContainer');
 var RegistrationFormContainer   = bugpack.require('airbug.RegistrationFormContainer');
@@ -113,15 +115,9 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
     }
 });
 
-// bugmeta.annotate(RegistrationPageContainer).with(
-//     autowired().properties([
-//         property("currentUserManagerModule").ref("currentUserManagerModule")
-//     ])
-// );
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
 bugpack.export("airbug.RegistrationPageContainer", RegistrationPageContainer);
-
