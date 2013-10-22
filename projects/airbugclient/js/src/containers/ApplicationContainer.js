@@ -152,7 +152,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     },
 
     createContainerChildren: function() {
-        this.super();
+        this._super();
     },
 
     /**
