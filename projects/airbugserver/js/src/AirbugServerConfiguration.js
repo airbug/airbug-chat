@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugcall.BugCallServer')
 //@Require('bugcall.CallServer')
 //@Require('bugflow.BugFlow')
@@ -66,6 +67,7 @@ var path                    = require('path');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var BugCallRequestProcessor = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
 var CallServer              = bugpack.require('bugcall.CallServer');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -138,6 +140,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {BugCallRequestProcessor}
+         */
+        this._bugCallRequestProcessor   = null;
 
         /**
          * @private
@@ -413,6 +421,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {BugCallRequestProcessor}
+     */
+    bugCallRequestProcessor: function() {
+        return new BugCallRequestProcessor();
+    },
+
+    /**
      * @param {BugCallServer} bugCallRequestEventDispatcher
      * @return {BugCallRouter}
      */
@@ -423,9 +438,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
     /**
      * @param {CallServer} callServer
+     * @param {BugCallRequestProcessor} requestProcessor
      * @return {BugCallServer}
      */
-    bugCallServer: function(callServer) {
+    bugCallServer: function(callServer, requestProcessor) {
         this._bugCallServer = new BugCallServer(callServer);
         return this._bugCallServer;
     },
@@ -787,13 +803,15 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // BugCall
         //-------------------------------------------------------------------------------
 
+        module("bugCallRequestProcessor")
         module("bugCallRouter")
             .args([
                 arg().ref("bugCallServer")
             ]),
         module("bugCallServer")
             .args([
-                arg().ref("callServer")
+                arg().ref("callServer"),
+                arg().ref("bugCallRequestProcessor")
             ]),
         module("callServer")
             .args([
