@@ -7,6 +7,7 @@
 //@Export('UserService')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 //@Require('handshaker.IHand')
@@ -24,6 +25,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var Obj                 = bugpack.require('Obj');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var IHand               = bugpack.require('handshaker.IHand');
@@ -68,13 +70,13 @@ var UserService = Class.extend(Obj, {
          * @private
          * @type {SessionManager}
          */
-        this.sessionManager = sessionManager;
+        this.sessionManager         = sessionManager;
 
         /**
          * @private
          * @type {UserManager}
          */
-        this.userManager    = userManager;
+        this.userManager            = userManager;
     },
 
 
@@ -116,7 +118,7 @@ var UserService = Class.extend(Obj, {
                                 if (!throwable) {
                                     handshakeData.user = user;
                                     session.data.userId = user.id;
-                                    session.save(function(throwable, session){
+                                    session.save(function(throwable, session) {
                                         callback(throwable);
                                     });
                                 } else {
@@ -172,38 +174,34 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {{
-     *      email: string
-     * }} formData     * @param {function(Throwable, User)} callback
+     * @param {string} email
+     * @param {function(Throwable, User)} callback
      */
-    loginUser: function(requestContext, formData, callback){
+    loginUser: function(requestContext, email, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
-        var handshake   = requestContext.get("handshake");
         var meldManager = this.meldService.factoryManager();
-        var session     = requestContext.get("session");
         var user        = undefined;
         var userManager = this.userManager;
-        var userEmail   = formData.email;
 
         $series([
             $task(function(flow){
-                _this.dbRetrieveUserByEmail(userEmail, function(throwable, returnedUser){
-                    if(!throwable){
-                        if(returnedUser){
+                _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
+                    if (!throwable) {
+                        if (returnedUser) {
                             user = returnedUser;
-                            userManager.populateUser(user, function(throwable){
+                            userManager.populateUser(user, function(throwable) {
                                 flow.complete(throwable);
                             });
                         } else {
-                            flow.complete(new Error("User does not exists"));
+                            flow.complete(new Exception("NotFound"));
                         }
                     } else {
                         flow.complete(throwable);
                     }
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
@@ -214,8 +212,12 @@ var UserService = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable){
-            callback(throwable, user);
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(throwable);
+            } else {
+                callback(undefined, user);
+            }
         });
     },
 
@@ -231,9 +233,7 @@ var UserService = Class.extend(Obj, {
     registerUser: function(requestContext, formData, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
-        var handshake   = requestContext.get("handshake");
         var meldManager = this.meldService.factoryManager();
-        var session     = requestContext.get("session");
         var user        = undefined;
         var userEmail   = formData.email;
 
@@ -431,7 +431,7 @@ var UserService = Class.extend(Obj, {
      * @param {Array.<string>} userIds
      * @param {function(Throwable, User)} callback
      */
-    dbRetrieveUser: function(userIds, callback){
+    dbRetrieveUsers: function(userIds, callback){
         this.userManager.retrieveUsers(userIds, callback);
     },
 
@@ -519,7 +519,8 @@ var UserService = Class.extend(Obj, {
     unmeldCurrentUserFromCurrentUser: function(meldManager, user, currentUser) {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
         var reason = ""; //TODO
-        this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);    }
+        this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
+    }
 });
 
 

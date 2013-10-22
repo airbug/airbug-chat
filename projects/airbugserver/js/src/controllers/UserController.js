@@ -7,6 +7,7 @@
 //@Export('UserController')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
 
@@ -23,6 +24,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -93,13 +95,13 @@ var UserController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    configure: function(){
+    configure: function() {
         var _this           = this;
         var expressApp      = this.expressApp;
         var userService     = this.userService;
@@ -109,48 +111,40 @@ var UserController = Class.extend(EntityController, {
         // Express Routes
         //-------------------------------------------------------------------------------
 
-        expressApp.post('/app/login', function(req, res){
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var userObject      = req.body;
+        expressApp.post('/app/login', function(request, response) {
+            var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+            var cookies             = request.cookies;
+            var signedCookies       = request.signedCookies;
+            var oldSid              = request.sessionID;
+            var session             = request.session;
+            var params              = request.params;
+            var query               = request.query;
+            var data                = request.body;
             var returnedUser;
 
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
+            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "data:", data, "params:", params, "query:", query);
             $series([
-                $task(function(flow){
-                    userService.loginUser(userObject, function(error, user){
-                        returnedUser = user;
-                        if (!error && !user) {
-                            flow.error(new Error("User does not exist"))
+                $task(function(flow) {
+                    userService.loginUser(requestContext, data.email, function(throwable, user) {
+                        if (!throwable) {
+                            returnedUser = user;
+                            flow.complete();
                         } else {
-                            flow.complete(error);
+                            flow.error(throwable);
                         }
                     });
                 }),
-                $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser.getId(), function(error){
-                        if(!error) res.json({error: null});
-                        flow.complete(error);
+                $task(function(flow) {
+                    sessionService.regenerateSession(oldSid, request, returnedUser.getId(), function(throwable) {
+                        flow.complete(throwable);
                     });
                 })
-                // ,
-                // $task(function(flow){
-                //     var callManagerSet = _this.bugCallServer.getCallManagerSetForSessionSid(oldSid);
-
-                //     callManagerSet.forEach(function(callManager){
-                //         var callRequest         = callManager.request("refreshConnectionForLogin", {});
-                //         var callResponseHandler = new CallResponseHandler(requestCallback);
-                //         callManager.sendRequest(callRequest, callResponseHandler);
-                //     });
-
-                //     flow.complete();
-                // })
-            ]).execute(function(error){
-                if(error) res.json({error: error.toString(), user: null});
+            ]).execute(function(throwable) {
+                if (throwable) {
+                   _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
+                }
             });
 
             // find all callconnections related to the oldSid and send them a refreshConnectionForLogin request
@@ -210,7 +204,7 @@ var UserController = Class.extend(EntityController, {
                 // $task(function(flow){
                 // find all callconnections related to the oldSid and send them a refreshConnectionForRegister request
                 // })
-            ]).execute(function(throwable){
+            ]).execute(function(throwable) {
                 if (throwable) {
                     res.json({error: throwable.toString(), user: null});
                 }
@@ -307,6 +301,56 @@ var UserController = Class.extend(EntityController, {
                 });
             }
         });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Throwable} throwable
+     * @param {Response} response
+     */
+    processAjaxThrowable: function(throwable, response) {
+        if (Class.doesExtend(throwable, Exception)) {
+            if (throwable.getType() === "NotFound") {
+                this.sendAjaxNotFoundResponse(response);
+            } else {
+                this.sendAjaxErrorResponse(throwable, response);
+                console.error(throwable);
+            }
+        } else {
+            this.sendAjaxErrorResponse(throwable, response);
+        }
+    },
+
+    /**
+     * @private
+     * @param {Error} error
+     * @param {Response} response
+     */
+    sendAjaxErrorResponse: function(error, response) {
+        response.status(500);
+        response.json({error: error.toString()});
+    },
+
+    /**
+     * @private
+     * @param {Response} response
+     */
+    sendAjaxNotFoundResponse: function(response) {
+        response.status(404);
+        response.json({exception: new Exception("NotFound")});
+    },
+
+    /**
+     * @private
+     * @param {Response} response
+     */
+    sendAjaxSuccessResponse: function(response) {
+        response.json({success: true});
     }
 });
 

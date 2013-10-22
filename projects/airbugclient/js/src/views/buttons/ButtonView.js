@@ -37,7 +37,7 @@ var ButtonView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
+    template:   '<div id="wrapper-{{id}}"class="button-wrapper {{buttonWrapperClasses}}">' +
                     '<button id="{{id}}" class="btn {{buttonClasses}}"></button>' +
                 '</div>',
 

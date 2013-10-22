@@ -272,10 +272,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // },
 
     /**
-     * @param {{email: string}} userObject
+     * @param {string} email
      * @param {function(Throwable, {*})} callback
      */
-    loginUser: function(userObject, callback){
+    loginUser: function(email, callback){
         var _this = this;
         $series([
             $task(function(flow){
@@ -283,12 +283,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     url: "/app/login",
                     type: "POST",
                     dataType: "json",
-                    data: userObject,
-                    success: function(data, textStatus, req){
+                    data: {email: email},
+                    success: function(data, textStatus, req) {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                        // var user    = data.user;
-                        var error   = data.error;
-                        flow.complete(error);
+                        flow.complete();
                     },
                     error: function(req, textStatus, errorThrown){
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);

@@ -305,6 +305,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 secret: secret,
                 key: sessionKey
             }));
+            _this._expressApp.use(function(req, res, next) {
+
+                next();
+            });
             _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
             _this._expressApp.use(express.logger('dev'));
             _this._expressApp.use(express.bodyParser());
