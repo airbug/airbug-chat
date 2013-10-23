@@ -297,6 +297,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         this._mongoDataStore.connect('mongodb://' + config.mongoDbIp + '/airbug');
 
+
         this._expressApp.configure(function(){
             _this._expressApp.engine('mustache', mu2express.engine);
             _this._expressApp.set('view engine', 'mustache');
@@ -304,6 +305,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
             _this._expressApp.set('port', config.port);
 
+            _this._expressApp.use(express.logger('dev'));
             _this._expressApp.use(express.cookieParser(secret));
             _this._expressApp.use(express.session({
                 cookie: {
@@ -314,11 +316,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 key: sessionKey
             }));
             _this._expressApp.use(function(req, res, next) {
-
-                next();
+                if(!req.session.data.userId){
+                    _this._userService.createAnonymousUser(function(throwable, user){
+                        req.session.data.userId = user.getId();
+                        next();
+                    });
+                }
             });
             _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
-            _this._expressApp.use(express.logger('dev'));
             _this._expressApp.use(express.bodyParser());
             _this._expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
             _this._expressApp.use(express.static(path.resolve(__dirname, '../static')));
@@ -330,6 +335,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         this._expressApp.configure('development', function() {
 
         });
+
+        this._bugCallServer.registerRequestPreProcessor(this._userService);
+        // this._bugCallServer.registerRequestPreProcessor(this._requestContextBuilder);
+        this._bugCallServer.registerRequestProcessor(this._bugCallRouter);
 
         //TODO BRN: This setup should be replaced by an annotation
         this._handshaker.addHands([
@@ -428,7 +437,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {BugCallServer} bugCallRequestEventDispatcher
+     * @param {?BugCallServer} bugCallRequestEventDispatcher
      * @return {BugCallRouter}
      */
     bugCallRouter: function(bugCallRequestEventDispatcher) {
@@ -442,7 +451,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {BugCallServer}
      */
     bugCallServer: function(callServer, requestProcessor) {
-        this._bugCallServer = new BugCallServer(callServer);
+        this._bugCallServer = new BugCallServer(callServer, requestProcessor);
         return this._bugCallServer;
     },
 
@@ -803,11 +812,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // BugCall
         //-------------------------------------------------------------------------------
 
-        module("bugCallRequestProcessor")
-        module("bugCallRouter")
-            .args([
-                arg().ref("bugCallServer")
-            ]),
+        module("bugCallRequestProcessor"),
+        module("bugCallRouter"),
         module("bugCallServer")
             .args([
                 arg().ref("callServer"),

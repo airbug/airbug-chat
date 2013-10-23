@@ -37,7 +37,11 @@ var RequestContext = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {string} type
+     * @param {express.Request | bugcall.IncomingRequest} request
+     */
+    _constructor: function(type, request) {
 
         this._super();
 
@@ -51,6 +55,18 @@ var RequestContext = Class.extend(Obj, {
          * @type {Map.<string, *>}
          */
         this.contextMap = new Map();
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.type       = type;
+
+        /**
+         * @private
+         * @type {express.Request | bugcall.IncomingRequest} request
+         */
+        this.request    = request;
     },
 
 
@@ -66,6 +82,20 @@ var RequestContext = Class.extend(Obj, {
     },
 
     /**
+     * @return {express.Request | bugcall.IncomingRequest}
+     */
+    getRequest: function() {
+        return this.request;
+    },
+
+    /**
+     * @return {string}
+     */
+    getType: function() {
+        return this.type;
+    },
+
+    /**
      *
      */
     set: function(key, value) {
@@ -73,6 +103,13 @@ var RequestContext = Class.extend(Obj, {
     }
 });
 
+/**
+ * @enum{string}
+ */
+RequestContext.types = {
+    EXPRESS: "RequestContext::Types:express",
+    BUGCALL: "RequestContext::Types:bugcall"
+};
 
 //-------------------------------------------------------------------------------
 // Exports

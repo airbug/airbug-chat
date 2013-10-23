@@ -9,6 +9,8 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('bugcall.IPreProcessRequest')
+//@Require('bugcall.IProcessRequest')
 //@Require('bugflow.BugFlow')
 //@Require('handshaker.IHand')
 
@@ -28,6 +30,8 @@ var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Obj                 = bugpack.require('Obj');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var IPreProcessRequest  = bugpack.require('bugcall.IPreProcessRequest');
+var IProcessRequest     = bugpack.require('bugcall.IProcessRequest');
 var IHand               = bugpack.require('handshaker.IHand');
 
 
@@ -131,21 +135,46 @@ var UserService = Class.extend(Obj, {
                     }
                 });
             } else {
-                this.createAnonymousUser(function(throwable, user) {
-                    if (!throwable) {
-                        handshakeData.user = user;
-                        session.data.userId = user.id;
-                        session.save(function(throwable, user){
-                            callback(throwable);
-                        });
-                    } else {
-                        callback(throwable);
-                    }
-                });
+                callback(new Error('No userId associated with sessionManager'), false);
             }
         } else {
             callback(new Error('No session has been generated.'), false);
         }
+    },
+
+    //-------------------------------------------------------------------------------
+    // IPreProcess Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {IncomingRequest} request
+     * @param {CallResponder} responder
+     * @param {function(Throwable)}  callback
+     */
+    preProcessRequest: function(request, responder, callback) {
+        var handshake   = request.getHandshake();
+        var session     = handshake.session;
+        if(!session.data.userId){
+            this.createAnonymousUser(function(throwable){
+
+            })
+        } else {
+            
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IProcess Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {IncomingRequest} request
+     * @param {CallResponder} responder
+     * @param {function(Throwable)}  callback
+     */
+    processRequest: function(request, responder, callback) {
+
     },
 
 
@@ -173,13 +202,13 @@ var UserService = Class.extend(Obj, {
 
 
     /**
-     * @param {RequestContext} requestContext
+     * @param {Express.request} request
      * @param {string} email
      * @param {function(Throwable, User)} callback
      */
-    loginUser: function(requestContext, email, callback) {
+    loginUser: function(request, email, callback) {
         var _this       = this;
-        var currentUser = requestContext.get("currentUser");
+        // var currentUser = request.session.userId;
         var meldManager = this.meldService.factoryManager();
         var user        = undefined;
         var userManager = this.userManager;
@@ -187,6 +216,7 @@ var UserService = Class.extend(Obj, {
         $series([
             $task(function(flow){
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
+                    console.log("dbRetrieveUserByEmail throwable:", throwable);
                     if (!throwable) {
                         if (returnedUser) {
                             user = returnedUser;
@@ -209,10 +239,12 @@ var UserService = Class.extend(Obj, {
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
                 meldManager.commitTransaction(function(throwable) {
+                    console.log("commitTransaction:", throwable);
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
+            console.log("throwable:", throwable);
             if (!throwable) {
                 callback(throwable);
             } else {
@@ -232,7 +264,6 @@ var UserService = Class.extend(Obj, {
      */
     registerUser: function(requestContext, formData, callback) {
         var _this       = this;
-        var currentUser = requestContext.get("currentUser");
         var meldManager = this.meldService.factoryManager();
         var user        = undefined;
         var userEmail   = formData.email;
@@ -256,8 +287,8 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow){
                 //unmeld anonymous user
-                _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
-                _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
+                _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
+                _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
                 //meld registered user
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
@@ -529,6 +560,8 @@ var UserService = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(UserService, IHand);
+Class.implement(UserService, IPreProcessRequest);
+Class.implement(UserService, IProcessRequest);
 
 
 //-------------------------------------------------------------------------------

@@ -121,6 +121,7 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow){
                 req.session.regenerate(function(error){
                     //NOTE: req.session.regenerate replaces req.session with a new session
+                    console.log("session regenerate", error);
                     if(!error){
                         req.session.userId = userId;
                         req.session.save(function(error){
@@ -134,6 +135,7 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow){
                 // delete old session from db
                 _this.sessionManager.deleteSessionBySid(sid, function(error){
+                    console.log("deleteSessionBySid Error:", error);
                     flow.complete(error);
                 });
             })
