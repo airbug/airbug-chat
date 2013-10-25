@@ -36,9 +36,9 @@ var ChatMessageController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, chatMessageService, requestContextFactory) {
+    _constructor: function(bugCallRouter, chatMessageService) {
 
-        this._super(requestContextFactory);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

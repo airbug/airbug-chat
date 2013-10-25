@@ -60,14 +60,19 @@ var AirbugApi = Class.extend(Obj, {
      *
      */
     connect: function(){
-        this.bugCallClient.openConnection();
+        console.log("Inside AirbugApi#connect");
+        console.log("creating/opening connection")
+        this.bugCallClient.createConnection("");
+        // console.log("opening connection");
+        // this.bugCallClient.openConnection();
     },
 
     /**
      *
      */
     disconnect: function(){
-
+        this.bugCallClient.closeConnection();
+        this.bugCallClient.destroyConnection();
     },
 
     /**

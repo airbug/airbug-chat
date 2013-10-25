@@ -36,9 +36,9 @@ var ConversationController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, conversationService, requestContextFactory) {
+    _constructor: function(bugCallRouter, conversationService) {
 
-        this._super(requestContextFactory);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

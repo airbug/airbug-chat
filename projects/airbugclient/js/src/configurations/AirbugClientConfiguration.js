@@ -271,6 +271,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {bugcall.CallClient}
      */
     callClient: function(socketIoClient) {
+        console.log("*****************************************************");
+        console.log("socketIoClient:", socketIoClient);
         return new CallClient(socketIoClient);
     },
 
@@ -391,6 +393,9 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     socketIoConfig: function() {
         this._socketIoConfig = new SocketIoConfig({});
+        this._socketIoConfig.setHost("http://localhost:8000");
+        this._socketIoConfig.setPort(8000);
+        this._socketIoConfig.setResource("api/airbug");
         return this._socketIoConfig;
     },
 

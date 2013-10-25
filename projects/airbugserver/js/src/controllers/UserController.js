@@ -47,9 +47,9 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService, requestContextFactory) {
+    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService) {
 
-        this._super(requestContextFactory);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ var UserController = Class.extend(EntityController, {
         //-------------------------------------------------------------------------------
 
         expressApp.post('/app/login', function(request, response) {
-            var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+            var requestContext      = request.requestContext;
             var cookies             = request.cookies;
             var signedCookies       = request.signedCookies;
             var oldSid              = request.sessionID;
@@ -125,7 +125,8 @@ var UserController = Class.extend(EntityController, {
             console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "data:", data, "params:", params, "query:", query);
             $series([
                 $task(function(flow) {
-                    userService.loginUser(requestContext, data.email, function(throwable, user) {
+                    userService.loginUser(request, data.email, function(throwable, user) {
+                        console.log("userService#loginUser throwable:", throwable);
                         if (!throwable) {
                             returnedUser = user;
                             flow.complete();
@@ -136,6 +137,7 @@ var UserController = Class.extend(EntityController, {
                 }),
                 $task(function(flow) {
                     sessionService.regenerateSession(oldSid, request, returnedUser.getId(), function(throwable) {
+                        console.log("sessionService#regenerateSession throwable:", throwable);
                         flow.complete(throwable);
                     });
                 })
@@ -152,6 +154,7 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/app/logout', function(req, res){
+            var requestContext  = request.requestContext;
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
             var oldSid          = req.sessionID;
@@ -175,6 +178,7 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/app/register', function(req, res) {
+            var requestContext  = request.requestContext;
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
             var oldSid          = req.sessionID;
@@ -212,6 +216,7 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/app/user-availability-check-email', function(req, res){
+            var requestContext      = request.requestContext;
             var email = req.body.email;
 
             userService.findUserByEmail(email, function(throwable, user){
@@ -266,8 +271,7 @@ var UserController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              */
             retrieveCurrentUser: function(request, responder) {
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-
+                var requestContext = request.requestContext;
                 _this.userService.retrieveCurrentUser(requestContext, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable)
                 });
@@ -280,7 +284,7 @@ var UserController = Class.extend(EntityController, {
             retrieveUser: function(request, responder) {
                 var data                = request.getData();
                 var userId              = data.userId;
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var requestContext      = request.requestContext;
 
                 _this.userService.retrieveUser(requestContext, userId, function(error, throwable) {
                     _this.processRetrieveResponse(responder, throwable);
@@ -294,7 +298,7 @@ var UserController = Class.extend(EntityController, {
             retrieveUsers: function(request, responder) {
                 var data                = request.getData();
                 var userIds             = data.objectIds;
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var requestContext      = request.requestContext;
 
                 _this.userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
                     _this.processRetrieveEachResponse(responder, throwable, userIds, userMap);

@@ -108,11 +108,12 @@ var UserManager = Class.extend(EntityManager, {
      *      lastName: string,
      *      roomIdSet: (Array.<string> | Set.<string>),
      *      updatedAt: Date
-     } data
+     * } data
+     * @return {User}
      */
     generateUser: function(data){
         data.roomIdSet = new Set(data.roomIdSet);
-        var user = new User(data);
+        return new User(data);
     },
 
     /**
@@ -129,6 +130,7 @@ var UserManager = Class.extend(EntityManager, {
                 setter:     user.setRoomSet
             }
         };
+        console.log("UserManager#populateUser");
         this.populate(user, options, properties, callback);
     },
 

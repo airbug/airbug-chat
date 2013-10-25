@@ -29,7 +29,7 @@ airbugServerApplication.start(function(error) {
     if (!error){
         console.log("Airbug server successfully started");
     } else {
-        console.error(error);
+        console.error(error.toString());
         console.error(error.stack);
         process.exit(1);
     }

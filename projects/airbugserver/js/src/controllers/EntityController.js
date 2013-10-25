@@ -46,7 +46,7 @@ var EntityController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(requestContextFactory) {
+    _constructor: function() {
 
         this._super();
 
@@ -55,11 +55,6 @@ var EntityController = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {RequestContextFactory}
-         */
-        this.requestContextFactory      = requestContextFactory;
     },
 
 

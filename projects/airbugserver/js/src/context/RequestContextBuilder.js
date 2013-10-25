@@ -10,6 +10,7 @@
 //@Require('Obj')
 //@Require('airbugserver.RequestContext')
 //@Require('bugcall.IncomingRequest')
+//@Require('bugcall.IPreProcessRequest')
 
 
 //-------------------------------------------------------------------------------
@@ -23,10 +24,11 @@ var bugpack         = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var RequestContext  = bugpack.require('airbugserver.RequestContext');
-var IncomingRequest = bugpack.require('bugcall.IncomingRequest');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var RequestContext      = bugpack.require('airbugserver.RequestContext');
+var IncomingRequest     = bugpack.require('bugcall.IncomingRequest');
+var IPreProcessRequest  = bugpack.require('bugcall.IPreProcessRequest');
 
 
 //-------------------------------------------------------------------------------
@@ -49,27 +51,68 @@ var RequestContextBuilder = Class.extend(Obj, {
      * @param {function(Throwable)}  callback
      */
     preProcessRequest: function(request, responder, callback) {
-
+        var type                = RequestContext.types.BUGCALL;
+        var requestContext      = this.buildRequestContext(type, request);
+        request.requestContext  = requestContext;
+        callback();
     },
 
     /**
-     * @param {IncomingRequest} request
+     * @param {} req
+     * @param {} res
+     * @param {} next
+     */
+    buildRequestContextForExpress: function(req, res, next){
+        var type = RequestContext.types.EXPRESS;
+        var requestContext = this.buildRequestContext(type, req);
+        req.requestContext = requestContext;
+        next();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {} type
+     * @param {} request
      * @return {RequestContext}
      */
     buildRequestContext: function(type, request) {
-        // from requestcontextfactory:
         var requestContext = new RequestContext(type, request);
+        this.setSession(request, requestContext);
+        this.setCurrentUser(request, requestContext);
+        return requestContext;
+    },
+
+    /**
+     * @private
+     */
+    setCurrentUser: function(request, requestContext){
         if (Class.doesExtend(request, IncomingRequest)) {
             requestContext.set("currentUser", request.getHandshake().user.clone());
+        } else {
+            // TODO retrieve from db
+            // requestContext.set("session", request.session.clone());
+        }
+    },
+
+    /**
+     * @private
+     */
+    setSession: function(request, requestContext){
+        if (Class.doesExtend(request, IncomingRequest)) {
+            // requestContext.set("currentUser", request.getHandshake().user.clone());
             requestContext.set("session", request.getHandshake().session.clone());
         } else {
-            requestContext.set("session", request.session.clone());
+            requestContext.set("session", request.session); //no method clone on this version of session
         }
-
-        return requestContext;
     }
 });
 
+Class.implement(RequestContextBuilder, IPreProcessRequest);
 
 //-------------------------------------------------------------------------------
 // Exports

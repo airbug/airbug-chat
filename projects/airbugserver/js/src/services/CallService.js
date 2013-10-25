@@ -77,7 +77,7 @@ var CallService = Class.extend(Obj, {
      * @return {Set.<CallManager>}
      */
     findCallManagerSetByUserId: function(userId) {
-        var callManagerSet = this.userIdToCallManagerMap.get(userId);
+        var callManagerSet = this.userIdToCallManagerMap.getValue(userId);
         if (callManagerSet) {
             return callManagerSet.clone();
         } else {
@@ -124,6 +124,7 @@ var CallService = Class.extend(Obj, {
      * @param {CallEvent} event
      */
     hearCallClosed: function(event) {
+        console.log("Inside CallService#hearCallClosed");
         var data            = event.getData();
         var callManager     = data.callManager;
         this.deregisterCallManager(callManager);
@@ -134,6 +135,8 @@ var CallService = Class.extend(Obj, {
      * @param {CallEvent} event
      */
     hearCallOpened: function(event) {
+        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox");
+        console.log("Inside CallService#hearCallOpened");
         var data            = event.getData();
         var callManager     = data.callManager;
         var callConnection  = callManager.getConnection();

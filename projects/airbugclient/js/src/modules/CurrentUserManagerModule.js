@@ -305,7 +305,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 flow.complete();
             }),
             $task(function(flow){
+                console.log("CurrentUserManagerModule#loginUser retrieving current user");
                 _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
+                    console.log("Inside CurrentUserManagerModule#loginUser retrieveCurrentUser callback");
                     if(meldDocument){
                         var user = meldDocument.generateObject();
                         //TODO Refactor this so that the meldkey is passed through the retrieve callback

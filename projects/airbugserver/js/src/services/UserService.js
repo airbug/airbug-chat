@@ -108,14 +108,21 @@ var UserService = Class.extend(Obj, {
         var _this = this;
         if (handshakeData.session) {
             var session = handshakeData.session;
-            console.log("session:", session);
+            console.log("session:");
+            if(session) console.log("true");
+            if(!session) console.log("false");
+            //TODO
+            if(!session.data) session.data = {};
+            //
             if (session.data.userId) {
                 this.userManager.retrieveUser(session.data.userId, function(throwable, user) {
                     console.log("userManager.retrieveUser. user:", user);
                     if (!throwable) {
                         if (user) {
                             handshakeData.user = user;
-                            callback(throwable);
+                            console.log("Finish UserService shake userManager retrieveUser if !throwable && user");
+                            console.log("throwable:", throwable);
+                            callback(throwable, true);
                         } else {
                             delete session.data.userId;
                             _this.createAnonymousUser(function(throwable, user) {
@@ -123,21 +130,44 @@ var UserService = Class.extend(Obj, {
                                     handshakeData.user = user;
                                     session.data.userId = user.id;
                                     session.save(function(throwable, session) {
-                                        callback(throwable);
+                                        console.log("Finish UserService shake createAnonymousUser callback session save");
+                                        console.log("throwable:", throwable);
+                                        callback(throwable, true);
                                     });
                                 } else {
-                                    callback(throwable);
+                                    console.log("Finish UserService shake createAnonymousUser callback throwable");
+                                    console.log("throwable:", throwable);
+                                    callback(throwable, false);
                                 }
                             });
                         }
                     } else {
-                        callback(throwable);
+                        console.log("Finish UserService shake userManager retrieveUser throwable");
+                        console.log("throwable:", throwable);
+                        callback(throwable, false);
                     }
                 });
             } else {
-                callback(new Error('No userId associated with sessionManager'), false);
+                //TODO
+                this.createAnonymousUser(function(throwable, user) {
+                    if (!throwable) {
+                        handshakeData.user = user;
+                        session.data.userId = user.id;
+                        session.save(function(throwable, session) {
+                            console.log("Finish UserService shake createAnonymousUser 2 callback session save");
+                            console.log("throwable:", throwable);
+                            callback(throwable, true);
+                        });
+                    } else {
+                        console.log("Finish UserService shake createAnonymousUser 2 callback throwable");
+                        console.log("throwable:", throwable);
+                        callback(throwable, false);
+                    }
+                });
+                // callback(new Error('No userId associated with sessionManager'), false);
             }
         } else {
+            console.log("Finish UserService shake");
             callback(new Error('No session has been generated.'), false);
         }
     },
@@ -152,14 +182,25 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)}  callback
      */
     preProcessRequest: function(request, responder, callback) {
+        console.log("Inside UserService#preProcessRequest");
         var handshake   = request.getHandshake();
         var session     = handshake.session;
         if(!session.data.userId){
-            this.createAnonymousUser(function(throwable){
-
+            this.createAnonymousUser(function(throwable, user){
+                console.log("Inside UserService#preProcessRequest createAnonymousUser callback");
+                if(user && !throwable) {
+                    session.data.userId = user.getId();
+                    session.save(function(throwable, session){
+                        console.log("Finish preProcessRequest");
+                        callback(throwable);
+                    });
+                }
+                console.log("Finish preProcessRequest");
+                callback(throwable);
             })
         } else {
-            
+            console.log("Finish preProcessRequest");
+            callback();
         }
     },
 
@@ -173,10 +214,29 @@ var UserService = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {function(Throwable)}  callback
      */
-    processRequest: function(request, responder, callback) {
+    // processRequest: function(request, responder, callback) {
 
+    // },
+
+    //-------------------------------------------------------------------------------
+    // Express Middleware User Check
+    //-------------------------------------------------------------------------------
+
+    checkRequestForUser: function(req, res, next){
+        if(!req.session.data) req.session.data = {};
+        if(!req.session.data.userId){
+            this.createAnonymousUser(function(throwable, user){
+                req.session.data.userId = user.getId();
+                req.session.save(function(error){
+                    console.log("Finish checkRequestForUser");
+                    next(error);
+                });
+            });
+        } else {
+            console.log("Finish checkRequestForUser");
+            next();
+        }
     },
-
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
@@ -207,20 +267,42 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User)} callback
      */
     loginUser: function(request, email, callback) {
-        var _this       = this;
-        // var currentUser = request.session.userId;
-        var meldManager = this.meldService.factoryManager();
-        var user        = undefined;
-        var userManager = this.userManager;
-
+        var _this           = this;
+        var currentUser     = undefined;
+        var currentUserId   = request.session.data.userId;
+        var meldManager     = this.meldService.factoryManager();
+        var user            = undefined;
+        var userManager     = this.userManager;
+        console.log("UserService#loginUser");
+        console.log("currentUserId:", currentUserId);
         $series([
+            $task(function(flow){
+                _this.dbRetrieveUser(currentUserId, function(throwable, returnedUser){
+                    console.log("dbRetrieveUser throwable:", throwable);
+                    if (!throwable) {
+                        if (returnedUser) {
+                            currentUser = returnedUser;
+                            console.log("currentUser:", returnedUser);
+                            console.log("right before userManager#populateUser");
+                            userManager.populateUser(currentUser, ["roomSet"], function(throwable) {
+                                flow.complete(throwable);
+                            });
+                        } else {
+                            flow.complete(new Exception("NotFound"));
+                        }
+                    } else {
+                        flow.complete(throwable);
+                    }
+                });
+            }),
             $task(function(flow){
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
                     console.log("dbRetrieveUserByEmail throwable:", throwable);
                     if (!throwable) {
                         if (returnedUser) {
                             user = returnedUser;
-                            userManager.populateUser(user, function(throwable) {
+                            console.log("right before userManager#populateUser");
+                            userManager.populateUser(user, ["roomSet"], function(throwable) {
                                 flow.complete(throwable);
                             });
                         } else {
@@ -424,22 +506,37 @@ var UserService = Class.extend(Obj, {
         var meldManager = this.meldService.factoryManager();
         var user        = undefined;
         var userManager = this.userManager;
-
         $series([
             $task(function(flow){
                 user = userManager.generateUser({anonymous: true});
                 userManager.createUser(user, function(throwable){
+                    if(throwable) console.log("1throwable:", throwable);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow){
-                _this.meldService.meldEntity(meldManager, "User", "owner", user);
-                _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
+                console.log("meldManager:");
+                if(meldManager) console.log("true");
+                console.log("user:");
+                if(user) console.log("true");
+                try{
+                    _this.meldService.meldEntity(meldManager, "User", "owner", user);
+                } catch(error){
+                    console.log("Error in meldService.meldEntity");
+                }
+                try{
+                    _this.meldCurrentUserWithCurrentUser(meldManager, user);
+                } catch(error){
+                    console.log("Error in meldCurrentUserWithCurrentUser");
+                }
+
                 meldManager.commitTransaction(function(throwable) {
+                    if(throwable) console.log("2throwable:", throwable);
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable){
+            if(throwable) console.log("3throwable:", throwable);
             callback(throwable, user);
         });
     },
@@ -524,7 +621,8 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     meldCurrentUserWithCurrentUser: function(meldManager, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
+        console.log("Inside UserService#meldCurrentUserWithCurrentUser");
+        var userMeldKey = this.meldService.generateMeldKey("User", currentUser.getId(), "owner");
         var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     },
@@ -561,7 +659,7 @@ var UserService = Class.extend(Obj, {
 
 Class.implement(UserService, IHand);
 Class.implement(UserService, IPreProcessRequest);
-Class.implement(UserService, IProcessRequest);
+// Class.implement(UserService, IProcessRequest);
 
 
 //-------------------------------------------------------------------------------

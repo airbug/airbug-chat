@@ -36,9 +36,9 @@ var RoomController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, roomService, requestContextFactory) {
+    _constructor: function(bugCallRouter, roomService) {
 
-        this._super(requestContextFactory);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

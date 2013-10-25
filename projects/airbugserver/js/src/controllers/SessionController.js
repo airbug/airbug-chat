@@ -45,9 +45,9 @@ var SessionController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, sessionService, requestContextFactory) {
+    _constructor: function(expressApp, bugCallRouter, sessionService) {
 
-        this._super(requestContextFactory);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
