@@ -536,7 +536,11 @@ var UserService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable){
-            if(throwable) console.log("3throwable:", throwable);
+            if(throwable) {
+                console.log("3throwable:", throwable);
+                console.log(throwable.stack);
+            }
+
             callback(throwable, user);
         });
     },

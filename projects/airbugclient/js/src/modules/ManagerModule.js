@@ -179,7 +179,7 @@ var ManagerModule = Class.extend(Obj, {
      */
     request: function(requestType, objectType, requestData, callback){
         var _this = this;
-        if(this.airbugApi.isNotConnected()) this.airbugApi.connect();
+        //if(this.airbugApi.isNotConnected()) this.airbugApi.connect();
         this.airbugApi.request(requestType, objectType, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 callback(undefined, callResponse);

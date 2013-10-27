@@ -62,7 +62,7 @@ var CallService = Class.extend(Obj, {
          * @private
          * @type {DualMultiSetMap.<string, CallManager>}
          */
-        this.userIdToCallManagerMap    = new DualMultiSetMap();
+        this.userIdToCallManagerMap         = new DualMultiSetMap();
 
         this.initialize();
     },

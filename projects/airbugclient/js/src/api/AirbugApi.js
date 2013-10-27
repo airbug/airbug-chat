@@ -61,7 +61,7 @@ var AirbugApi = Class.extend(Obj, {
      */
     connect: function(){
         console.log("Inside AirbugApi#connect");
-        console.log("creating/opening connection")
+        console.log("creating/opening connection");
         this.bugCallClient.createConnection("");
         // console.log("opening connection");
         // this.bugCallClient.openConnection();

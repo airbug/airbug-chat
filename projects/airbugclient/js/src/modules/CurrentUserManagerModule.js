@@ -300,10 +300,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             //     flow.complete();
             // })
             ,
-            $task(function(flow){
-                _this.airbugApi.connect();
-                flow.complete();
-            }),
+
             $task(function(flow){
                 console.log("CurrentUserManagerModule#loginUser retrieving current user");
                 _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
@@ -382,18 +379,12 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(errorThrown);
                     }
                 });
-            })
-            // ,
-            // $task(function(flow){
-            //     _this.airbugApi.refreshConnection();
-            //     flow.complete();
-            // })
-            ,
-            $task(function(flow){
-                _this.airbugApi.connect();
+            }),
+            $task(function(flow) {
+                _this.airbugApi.refreshConnection();
                 flow.complete();
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
                     if(meldDocument){
                         var user = meldDocument.generateObject();
