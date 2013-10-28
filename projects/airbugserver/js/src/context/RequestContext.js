@@ -103,13 +103,20 @@ var RequestContext = Class.extend(Obj, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
 /**
- * @enum{string}
+ * @static
+ * @enum {string}
  */
-RequestContext.types = {
+RequestContext.Types = {
     EXPRESS: "RequestContext::Types:express",
     BUGCALL: "RequestContext::Types:bugcall"
 };
+
 
 //-------------------------------------------------------------------------------
 // Exports

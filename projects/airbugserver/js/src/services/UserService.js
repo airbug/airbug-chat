@@ -9,30 +9,30 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('airbugserver.IBuildRequestContext')
+//@Require('airbugserver.RequestContext')
 //@Require('bugcall.IPreProcessRequest')
-//@Require('bugcall.IProcessRequest')
 //@Require('bugflow.BugFlow')
-//@Require('handshaker.IHand')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var Obj                 = bugpack.require('Obj');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-var IPreProcessRequest  = bugpack.require('bugcall.IPreProcessRequest');
-var IProcessRequest     = bugpack.require('bugcall.IProcessRequest');
-var IHand               = bugpack.require('handshaker.IHand');
+var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
+var Obj                     = bugpack.require('Obj');
+var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
+var RequestContext          = bugpack.require('airbugserver.RequestContext');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var IPreProcessRequest      = bugpack.require('bugcall.IPreProcessRequest');
 
 
 //-------------------------------------------------------------------------------
@@ -85,97 +85,23 @@ var UserService = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IHand Implementation
+    // IBuildRequestContext Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {
-     *    headers: req.headers       // <Object> the headers of the request
-     *  , time: (new Date) +''       // <String> date time of the connection
-     *  , address: socket.address()  // <Object> remoteAddress and remotePort object
-     *  , xdomain: !!headers.origin  // <Boolean> was it a cross domain request?
-     *  , secure: socket.secure      // <Boolean> https connection
-     *  , issued: +date              // <Number> EPOCH of when the handshake was created
-     *  , url: request.url           // <String> the entrance path of the request
-     *  , query: data.query          // <Object> the result of url.parse().query or a empty object
-     * } handshakeData
-     * @param {function(Error, boolean)} callback
+     * @param {RequestContext} requestContext
+     * @param {function(Throwable)} callback
      */
-    shakeIt: function(handshakeData, callback) {
-
-        //TODO BRN (QUESTION): When a session is regenerated, does it automatically rerun the authorization (handshake.shakeIt) call
-        console.log("UserService#shakeIt");
-        var _this = this;
-        if (handshakeData.session) {
-            var session = handshakeData.session;
-            console.log("session:");
-            if(session) console.log("true");
-            if(!session) console.log("false");
-            //TODO
-            if(!session.data) session.data = {};
-            //
-            if (session.data.userId) {
-                this.userManager.retrieveUser(session.data.userId, function(throwable, user) {
-                    console.log("userManager.retrieveUser. user:", user);
-                    if (!throwable) {
-                        if (user) {
-                            handshakeData.user = user;
-                            console.log("Finish UserService shake userManager retrieveUser if !throwable && user");
-                            console.log("throwable:", throwable);
-                            callback(throwable, true);
-                        } else {
-                            delete session.data.userId;
-                            //TODO SUNG move this to end of handshake
-                            _this.createAnonymousUser(function(throwable, user) {
-                                if (!throwable) {
-                                    handshakeData.user = user;
-                                    //NOTE This session is an entity object
-                                    var userId = user.getId();
-                                    var data    = session.getData();
-                                    data.userId = userId;
-                                    session.setData(data);
-                                    console.log("Session:", session);
-                                    console.log("UserId:", userId);
-                                    callback(throwable, true);
-                                } else {
-                                    console.log("Finish UserService shake createAnonymousUser callback throwable");
-                                    console.log("throwable:", throwable);
-                                    callback(throwable, false);
-                                }
-                            });
-                        }
-                    } else {
-                        console.log("Finish UserService shake userManager retrieveUser throwable");
-                        console.log("throwable:", throwable);
-                        callback(throwable, false);
-                    }
-                });
-            } else {
-                //TODO
-                this.createAnonymousUser(function(throwable, user) {
-                    if (!throwable) {
-                        handshakeData.user = user;
-                        //NOTE This session is an entity object
-                        var userId = user.getId();
-                        var data    = session.getData();
-                        data.userId = userId;
-                        session.setData(data);
-                        console.log("Session:", session);
-                        console.log("UserId:", userId);
-                        callback(throwable, true);
-                    } else {
-                        console.log("Finish UserService shake createAnonymousUser 2 callback throwable");
-                        console.log("throwable:", throwable);
-                        callback(throwable, false);
-                    }
-                });
-                // callback(new Error('No userId associated with sessionManager'), false);
+    buildRequestContext: function(requestContext, callback) {
+        var userId = requestContext.get("session").getData().userId;
+        this.userManager.retrieveUser(userId, function(throwable, user) {
+            if (!throwable) {
+                requestContext.set("currentUser", user);
             }
-        } else {
-            console.log("Finish UserService shake");
-            callback(new Error('No session has been generated.'), false);
-        }
+            callback(throwable);
+        });
     },
+
 
     //-------------------------------------------------------------------------------
     // IPreProcess Implementation
@@ -188,63 +114,69 @@ var UserService = Class.extend(Obj, {
      */
     preProcessRequest: function(request, responder, callback) {
         console.log("Inside UserService#preProcessRequest");
+        var _this       = this;
         var handshake   = request.getHandshake();
-        var session     = handshake.session;
-        if(!session.data.userId){
-            this.createAndMeldAnonymousUser(function(throwable, user){
-                console.log("Inside UserService#preProcessRequest createAnonymousUser callback");
-                if(user && !throwable) {
-                    session.data.userId = user.getId();
-                    session.save(function(throwable, session){
-                        console.log("Finish preProcessRequest");
-                        callback(throwable);
-                    });
-                }
-                console.log("Finish preProcessRequest");
-                callback(throwable);
+        var sessionId   = handshake.sessionId;
+        var session     = undefined;
+        $series([
+            $task(function(flow) {
+                _this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, retrievedSession) {
+                    if (!throwable) {
+                        session = retrievedSession;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.ensureUserOnSession(session, function(throwable) {
+                    flow.complete(throwable);
+                });
             })
-        } else {
-            console.log("Finish preProcessRequest");
-            callback();
-        }
+        ]).execute(callback);
     },
 
 
     //-------------------------------------------------------------------------------
-    // IProcess Implementation
+    // Express Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IncomingRequest} request
-     * @param {CallResponder} responder
-     * @param {function(Throwable)}  callback
+     * @param req
+     * @param res
+     * @param next
      */
-    // processRequest: function(request, responder, callback) {
-
-    // },
-
-    //-------------------------------------------------------------------------------
-    // Express Middleware User Check
-    //-------------------------------------------------------------------------------
-
-    checkRequestForUser: function(req, res, next){
-        if(!req.session.data) req.session.data = {};
-        if(!req.session.data.userId){
-            this.createAnonymousUser(function(throwable, user){
-                req.session.data.userId = user.getId();
-                req.session.save(function(error){
-                    console.log("Finish checkRequestForUser");
-                    next(error);
+    checkRequestForUser: function(req, res, next) {
+        var _this   = this;
+        var session = undefined;
+        $series([
+            $task(function(flow) {
+                _this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
+                    if (!throwable) {
+                        session = retrievedSession;
+                    }
+                    flow.complete(throwable);
                 });
-            });
-        } else {
+            }),
+            $task(function(flow) {
+                _this.ensureUserOnSession(session, function(throwable) {
+                    if (!throwable) {
+                        req.session.reload(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            })
+        ]).execute(function(throwable) {
             console.log("Finish checkRequestForUser");
-            next();
-        }
+            next(throwable);
+        });
     },
 
+
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -265,7 +197,6 @@ var UserService = Class.extend(Obj, {
         //NOTE: This call does not require melding
     },
 
-
     /**
      * @param {Express.request} request
      * @param {string} email
@@ -281,7 +212,7 @@ var UserService = Class.extend(Obj, {
         console.log("UserService#loginUser");
         console.log("currentUserId:", currentUserId);
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 _this.dbRetrieveUser(currentUserId, function(throwable, returnedUser){
                     console.log("dbRetrieveUser throwable:", throwable);
                     console.log("dbRetrieveUser returnedUser:", returnedUser);
@@ -289,9 +220,10 @@ var UserService = Class.extend(Obj, {
                     if (!throwable) {
                         if (returnedUser) {
                             currentUser = returnedUser;
-                            userManager.populateUser(currentUser, ["roomSet"], function(throwable) {
+                            /*userManager.populateUser(currentUser, ["roomSet"], function(throwable) {
                                 flow.complete(throwable);
-                            });
+                            });*/
+                            flow.complete(throwable);
                         } else {
                             console.log("There is no user with the id of", currentUserId);
                             flow.complete(new Exception("NotFound"));
@@ -309,9 +241,10 @@ var UserService = Class.extend(Obj, {
                     if (!throwable) {
                         if (returnedUser) {
                             user = returnedUser;
-                            userManager.populateUser(user, ["roomSet"], function(throwable) {
+                            /*userManager.populateUser(user, ["roomSet"], function(throwable) {
                                 flow.complete(throwable);
-                            });
+                            });*/
+                            flow.complete(throwable);
                         } else {
                             console.log("There is no user by that email");
                             flow.complete(new Exception("NotFound"));
@@ -396,22 +329,21 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {RequestContext} requestContext
      * @param {function(Throwable)} callback
      */
     retrieveCurrentUser: function(requestContext, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
-        var userManager         = this.userManager;
+        //var userManager         = this.userManager;
 
         $series([
-            $task(function(flow){
+            /*$task(function(flow) {
                 //NOTE: SUNG Should anything beyond the rooms be populated??
                 userManager.populateUser(currentUser, ["roomSet"], function(throwable){
                     flow.complete(throwable)
                 });
-            }),
+            }),*/
             $task(function(flow) {
                 _this.meldService.meldEntity(meldManager, "User", "owner", currentUser);
                 _this.meldCurrentUserWithCurrentUser(meldManager, currentUser, currentUser);
@@ -476,7 +408,7 @@ var UserService = Class.extend(Obj, {
 
         $series([
             $task(function(flow){
-                _this.dbRetrieveUsers(userId, function(throwable, returnedUserMap){
+                _this.dbRetrieveUsers(userIds, function(throwable, returnedUserMap){
                     if (!throwable) {
                         userMap = returnedUserMap;
                         if (!userMap) {
@@ -504,6 +436,7 @@ var UserService = Class.extend(Obj, {
         });
     },
 
+
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
@@ -528,44 +461,59 @@ var UserService = Class.extend(Obj, {
         });
     },
 
-    createAndMeldAnonymousUser: function(){
-        var _this       = this;
-        var meldManager = this.meldService.factoryManager();
-        var user        = undefined;
-        var userManager = this.userManager;
-        $series([
-            $task(function(flow){
-                user = userManager.generateUser({anonymous: true});
-                userManager.createUser(user, function(throwable){
-                    if(throwable) console.log("1throwable:", throwable);
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow){
-                try{
-                    _this.meldService.meldEntity(meldManager, "User", "owner", user);
-                } catch(error){
-                    console.log("Error in meldService.meldEntity");
+    /**
+     * @private
+     * @param {Session} session
+     * @param {function(Throwable)} callback
+     */
+    ensureUserOnSession: function(session, callback) {
+        var _this = this;
+        if (session.getData().userId) {
+            this.userManager.retrieveUser(session.getData().userId, function(throwable, user) {
+                console.log("userManager.retrieveUser. user:", user);
+                if (!throwable) {
+                    if (user) {
+                        callback();
+                    } else {
+                        delete session.getData().userId;
+                        _this.createAnonymousUser(function(throwable, user) {
+                            if (!throwable) {
+                                session.getData().userId = user.getId();
+                                _this.sessionManager.updateSession(session, function(throwable) {
+                                    console.log("Finish UserService ensureUserOnSession createAnonymousUser callback session save");
+                                    console.log("throwable:", throwable);
+                                    callback(throwable);
+                                });
+                            } else {
+                                console.log("Finish UserService ensureUserOnSession createAnonymousUser callback throwable");
+                                console.log("throwable:", throwable);
+                                callback(throwable, false);
+                            }
+                        });
+                    }
+                } else {
+                    console.log("Finish UserService ensureUserOnSession userManager retrieveUser throwable");
+                    console.log("throwable:", throwable);
+                    callback(throwable, false);
                 }
-                try{
-                    _this.meldCurrentUserWithCurrentUser(meldManager, user);
-                } catch(error){
-                    console.log("Error in meldCurrentUserWithCurrentUser");
+            });
+        } else {
+            this.createAnonymousUser(function(throwable, user) {
+                if (!throwable) {
+                    session.getData().userId = user.id;
+                    _this.sessionManager.updateSession(session, function(throwable, session) {
+                        console.log("Finish UserService shake createAnonymousUser 2 callback session save");
+                        console.log("throwable:", throwable);
+                        callback(throwable);
+                    });
+                } else {
+                    console.log("Finish UserService shake createAnonymousUser 2 callback throwable");
+                    console.log("throwable:", throwable);
+                    callback(throwable);
                 }
-
-                meldManager.commitTransaction(function(throwable) {
-                    if(throwable) console.log("2throwable:", throwable);
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable){
-            if(throwable) {
-                console.log("3throwable:", throwable);
-                console.log(throwable.stack);
-            }
-
-            callback(throwable, user);
-        });    },
+            });
+        }
+    },
 
 
     // Private Database Methods
@@ -685,9 +633,8 @@ var UserService = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(UserService, IHand);
+Class.implement(UserService, IBuildRequestContext);
 Class.implement(UserService, IPreProcessRequest);
-// Class.implement(UserService, IProcessRequest);
 
 
 //-------------------------------------------------------------------------------

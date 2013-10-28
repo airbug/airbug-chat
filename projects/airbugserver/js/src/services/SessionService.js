@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.IBuildRequestContext')
+//@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
 //@Require('handshaker.IHand')
 
@@ -16,27 +18,29 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var cookie  = require('cookie');
+var bugpack                 = require('bugpack').context();
+var cookie                  = require('cookie');
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var BugFlow = bugpack.require('bugflow.BugFlow');
-var IHand   = bugpack.require('handshaker.IHand');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
+var RequestContext          = bugpack.require('airbugserver.RequestContext');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var IHand                   = bugpack.require('handshaker.IHand');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-$parallel   = BugFlow.$parallel;
-$series     = BugFlow.$series;
-$task       = BugFlow.$task;
+var $parallel               = BugFlow.$parallel;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -73,6 +77,33 @@ var SessionService = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // IBuildRequestContext Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {function(Throwable)} callback
+     */
+    buildRequestContext: function(requestContext, callback) {
+        var sessionId = undefined;
+        if (requestContext.getType() === RequestContext.Types.BUGCALL) {
+            sessionId = requestContext.getRequest().getHandshake().sessionId;
+        } else {
+            sessionId = requestContext.getRequest().sessionID;
+        }
+
+        //NOTE BRN: Load the correct version of the session
+
+        this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, session) {
+            if (!throwable) {
+                requestContext.set("session", session);
+            }
+            callback(throwable);
+        });
+    },
+
+
+    //-------------------------------------------------------------------------------
     // IHand Implementation
     //-------------------------------------------------------------------------------
 
@@ -94,26 +125,15 @@ var SessionService = Class.extend(Obj, {
         if (handshakeData.headers.cookie) {
             handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
             handshakeData.sessionId = this.cookieSigner.unsign(handshakeData.cookie['airbug.sid']);
-
-            this.sessionManager.retrieveSessionBySid(handshakeData.sessionId, function(throwable, session) {
-                if (throwable || !session) {
-                    console.log("Finish SessionService shake sessionManager retrieveSessionBySid");
-                    console.log("throwable:", throwable);
-                    callback(throwable, false);
-                } else {
-                    handshakeData.session = session;
-                    console.log("Finish SessionService shake sessionManager retrieveSessionBySid else");
-                    callback(null, true);
-                }
-            });
         } else {
             console.log("Finish SessionService shake first else");
             callback(new Error('No cookie transmitted.'), false);
         }
     },
 
+
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -126,8 +146,11 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow){
                 req.session.regenerate(function(error){
                     //NOTE: req.session.regenerate replaces req.session with a new session
-                    console.log("session regenerate error:", error);
-                    if(!error){
+
+                    //TODO BRN: This is broken, fix it!
+
+                    console.log("session regenerate", error);
+                    if (!error) {
                         req.session.userId = userId;
                         req.session.save(function(error){
                             flow.complete(error);
@@ -154,6 +177,7 @@ var SessionService = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(SessionService, IHand);
+Class.implement(SessionService, IBuildRequestContext);
 
 
 //-------------------------------------------------------------------------------

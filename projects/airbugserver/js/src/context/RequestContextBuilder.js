@@ -7,28 +7,41 @@
 //@Export('RequestContextBuilder')
 
 //@Require('Class')
+//@Require('List')
 //@Require('Obj')
+//@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugcall.IncomingRequest')
 //@Require('bugcall.IPreProcessRequest')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var RequestContext      = bugpack.require('airbugserver.RequestContext');
-var IncomingRequest     = bugpack.require('bugcall.IncomingRequest');
-var IPreProcessRequest  = bugpack.require('bugcall.IPreProcessRequest');
+var Class                   = bugpack.require('Class');
+var List                    = bugpack.require('List');
+var Obj                     = bugpack.require('Obj');
+var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
+var RequestContext          = bugpack.require('airbugserver.RequestContext');
+var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
+var IPreProcessRequest      = bugpack.require('bugcall.IPreProcessRequest');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $iterableSeries        = BugFlow.$iterableSeries;
 
 
 //-------------------------------------------------------------------------------
@@ -38,8 +51,46 @@ var IPreProcessRequest  = bugpack.require('bugcall.IPreProcessRequest');
 var RequestContextBuilder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function() {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {List.<IBuildRequestContext}
+         */
+        this.requestContextBuilderList  = new List();
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {IBuildRequestContext} requestContextBuilder
+     */
+    registerRequestContextBuilder: function(requestContextBuilder) {
+        if (Class.doesImplement(requestContextBuilder, IBuildRequestContext)) {
+            if (!this.requestContextBuilderList.contains(requestContextBuilder)) {
+                this.requestContextBuilderList.add(requestContextBuilder)
+            } else {
+                throw new Error("requestContextBuilder can only be registered once.");
+            }
+        } else {
+            throw new Error("requestContextBuilder does not implement IBuildRequestContext");
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // IPreProcess Implementation
@@ -51,11 +102,19 @@ var RequestContextBuilder = Class.extend(Obj, {
      * @param {function(Throwable)}  callback
      */
     preProcessRequest: function(request, responder, callback) {
-        var type                = RequestContext.types.BUGCALL;
-        var requestContext      = this.buildRequestContext(type, request);
-        request.requestContext  = requestContext;
-        callback();
+        var type                = RequestContext.Types.BUGCALL;
+        this.buildRequestContext(type, request, function(throwable, requestContext) {
+            if (!throwable) {
+                request.requestContext  = requestContext;
+            }
+            callback(throwable);
+        });
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Express Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @param {} req
@@ -63,10 +122,15 @@ var RequestContextBuilder = Class.extend(Obj, {
      * @param {} next
      */
     buildRequestContextForExpress: function(req, res, next){
-        var type = RequestContext.types.EXPRESS;
-        var requestContext = this.buildRequestContext(type, req);
-        req.requestContext = requestContext;
-        next();
+        var type = RequestContext.Types.EXPRESS;
+        this.buildRequestContext(type, req, function(throwable, requestContext) {
+            if (!throwable) {
+                req.requestContext = requestContext;
+                next();
+            } else {
+                next(throwable);
+            }
+        });
     },
 
 
@@ -78,41 +142,31 @@ var RequestContextBuilder = Class.extend(Obj, {
      * @private
      * @param {} type
      * @param {} request
-     * @return {RequestContext}
+     * @param {function(Throwable, RequestContext)} callback
      */
-    buildRequestContext: function(type, request) {
+    buildRequestContext: function(type, request, callback) {
         var requestContext = new RequestContext(type, request);
-        this.setSession(request, requestContext);
-        this.setCurrentUser(request, requestContext);
-        return requestContext;
-    },
-
-    /**
-     * @private
-     */
-    setCurrentUser: function(request, requestContext){
-        if (Class.doesExtend(request, IncomingRequest)) {
-            requestContext.set("currentUser", request.getHandshake().user.clone());
-        } else {
-            // TODO retrieve from db
-            // requestContext.set("session", request.session.clone());
-        }
-    },
-
-    /**
-     * @private
-     */
-    setSession: function(request, requestContext){
-        if (Class.doesExtend(request, IncomingRequest)) {
-            // requestContext.set("currentUser", request.getHandshake().user.clone());
-            requestContext.set("session", request.getHandshake().session.clone());
-        } else {
-            requestContext.set("session", request.session); //no method clone on this version of session
-        }
+        $iterableSeries(this.requestContextBuilderList, function(flow, requestContextBuilder) {
+            requestContextBuilder.buildRequestContext(requestContext, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                callback(undefined, requestContext);
+            } else {
+                callback(throwable);
+            }
+        });
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(RequestContextBuilder, IPreProcessRequest);
+
 
 //-------------------------------------------------------------------------------
 // Exports

@@ -107,6 +107,9 @@ var SessionStore = Class.adapt(connect.session.Store, {
     set: function(sid, data, callback) {
         var _this = this;
 
+        if (!TypeUtil.isObject(data)) {
+            data = {};
+        }
         //TEST
         console.log("SessionStore.set - sid:" + sid + " data:" + data.toString());
 

@@ -242,6 +242,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {RequestContextBuilder}
+         */
+        this._requestContextBuilder     = null;
+
+        /**
+         * @private
          * @type {RoomService}
          */
         this._roomService               = null;
@@ -290,7 +296,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         console.log("Initializing AirbugConfiguration");
 
         var config = this._config;
-        var secret = 'some secret'; // LOAD FROM CONFIG;
+        var secret = 'some secret, seriously don\'t tell'; // LOAD FROM CONFIG;
         var sessionKey = 'airbug.sid'; //signedcookie name
 
         this._cookieSigner.setSecret(secret);
@@ -339,6 +345,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         this._bugCallServer.registerRequestPreProcessor(this._userService);
         this._bugCallServer.registerRequestPreProcessor(this._requestContextBuilder);
         this._bugCallServer.registerRequestProcessor(this._bugCallRouter);
+
+        this._requestContextBuilder.registerRequestContextBuilder(this._sessionService);
+        this._requestContextBuilder.registerRequestContextBuilder(this._userService);
 
         //TODO BRN: This setup should be replaced by an annotation
         this._handshaker.addHands([
