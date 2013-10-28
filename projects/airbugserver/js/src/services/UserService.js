@@ -125,15 +125,18 @@ var UserService = Class.extend(Obj, {
                             callback(throwable, true);
                         } else {
                             delete session.data.userId;
+                            //TODO SUNG move this to end of handshake
                             _this.createAnonymousUser(function(throwable, user) {
                                 if (!throwable) {
                                     handshakeData.user = user;
-                                    session.data.userId = user.id;
-                                    session.save(function(throwable, session) {
-                                        console.log("Finish UserService shake createAnonymousUser callback session save");
-                                        console.log("throwable:", throwable);
-                                        callback(throwable, true);
-                                    });
+                                    //NOTE This session is an entity object
+                                    var userId = user.getId();
+                                    var data    = session.getData();
+                                    data.userId = userId;
+                                    session.setData(data);
+                                    console.log("Session:", session);
+                                    console.log("UserId:", userId);
+                                    callback(throwable, true);
                                 } else {
                                     console.log("Finish UserService shake createAnonymousUser callback throwable");
                                     console.log("throwable:", throwable);
@@ -152,12 +155,14 @@ var UserService = Class.extend(Obj, {
                 this.createAnonymousUser(function(throwable, user) {
                     if (!throwable) {
                         handshakeData.user = user;
-                        session.data.userId = user.id;
-                        session.save(function(throwable, session) {
-                            console.log("Finish UserService shake createAnonymousUser 2 callback session save");
-                            console.log("throwable:", throwable);
-                            callback(throwable, true);
-                        });
+                        //NOTE This session is an entity object
+                        var userId = user.getId();
+                        var data    = session.getData();
+                        data.userId = userId;
+                        session.setData(data);
+                        console.log("Session:", session);
+                        console.log("UserId:", userId);
+                        callback(throwable, true);
                     } else {
                         console.log("Finish UserService shake createAnonymousUser 2 callback throwable");
                         console.log("throwable:", throwable);
@@ -186,7 +191,7 @@ var UserService = Class.extend(Obj, {
         var handshake   = request.getHandshake();
         var session     = handshake.session;
         if(!session.data.userId){
-            this.createAnonymousUser(function(throwable, user){
+            this.createAndMeldAnonymousUser(function(throwable, user){
                 console.log("Inside UserService#preProcessRequest createAnonymousUser callback");
                 if(user && !throwable) {
                     session.data.userId = user.getId();
@@ -279,15 +284,16 @@ var UserService = Class.extend(Obj, {
             $task(function(flow){
                 _this.dbRetrieveUser(currentUserId, function(throwable, returnedUser){
                     console.log("dbRetrieveUser throwable:", throwable);
+                    console.log("dbRetrieveUser returnedUser:", returnedUser);
+                    console.log("dbRetrieveUser returnedUserId:", returnedUser.getId());
                     if (!throwable) {
                         if (returnedUser) {
                             currentUser = returnedUser;
-                            console.log("currentUser:", returnedUser);
-                            console.log("right before userManager#populateUser");
                             userManager.populateUser(currentUser, ["roomSet"], function(throwable) {
                                 flow.complete(throwable);
                             });
                         } else {
+                            console.log("There is no user with the id of", currentUserId);
                             flow.complete(new Exception("NotFound"));
                         }
                     } else {
@@ -298,14 +304,16 @@ var UserService = Class.extend(Obj, {
             $task(function(flow){
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
                     console.log("dbRetrieveUserByEmail throwable:", throwable);
+                    console.log("dbRetrieveUserByEmail returnedUser:", returnedUser);
+                    console.log("dbRetrieveUserByEmail returnedUserId:", returnedUser.getId());
                     if (!throwable) {
                         if (returnedUser) {
                             user = returnedUser;
-                            console.log("right before userManager#populateUser");
                             userManager.populateUser(user, ["roomSet"], function(throwable) {
                                 flow.complete(throwable);
                             });
                         } else {
+                            console.log("There is no user by that email");
                             flow.complete(new Exception("NotFound"));
                         }
                     } else {
@@ -321,15 +329,18 @@ var UserService = Class.extend(Obj, {
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
                 meldManager.commitTransaction(function(throwable) {
-                    console.log("commitTransaction:", throwable);
+                    console.log("commitTransaction throwable:", throwable);
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
-            console.log("throwable:", throwable);
+            console.log("UserService#login execute series callback");
+            console.log("UserService#loginUser throwable:", throwable);
             if (!throwable) {
                 callback(throwable);
             } else {
+                console.log("user:", user);
+                console.log("userId:", user.getId());
                 callback(undefined, user);
             }
         });
@@ -397,7 +408,7 @@ var UserService = Class.extend(Obj, {
         $series([
             $task(function(flow){
                 //NOTE: SUNG Should anything beyond the rooms be populated??
-                userManager.populateUser(currentUser, function(throwable){
+                userManager.populateUser(currentUser, ["roomSet"], function(throwable){
                     flow.complete(throwable)
                 });
             }),
@@ -502,6 +513,22 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User)} callback
      */
     createAnonymousUser: function(callback) {
+        console.log("Inside UserService#createAnonymousUser");
+        var _this       = this;
+        var meldManager = this.meldService.factoryManager();
+        var user        = undefined;
+        var userManager = this.userManager;
+
+        user = userManager.generateUser({anonymous: true});
+        userManager.createUser(user, function(throwable){
+            if(throwable) console.log("1throwable:", throwable);
+            console.log("userManager#createUser callback. user:", user);
+            console.log("user.getId():", user.getId());
+            callback(throwable, user);
+        });
+    },
+
+    createAndMeldAnonymousUser: function(){
         var _this       = this;
         var meldManager = this.meldService.factoryManager();
         var user        = undefined;
@@ -515,10 +542,6 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow){
-                console.log("meldManager:");
-                if(meldManager) console.log("true");
-                console.log("user:");
-                if(user) console.log("true");
                 try{
                     _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 } catch(error){
@@ -542,8 +565,7 @@ var UserService = Class.extend(Obj, {
             }
 
             callback(throwable, user);
-        });
-    },
+        });    },
 
 
     // Private Database Methods
@@ -594,7 +616,7 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow){
-                userManager.populateUser(user, function(throwable){
+                userManager.populateUser(user, ["roomSet"], function(throwable){
                     flow.complete(throwable);
                 });
             })
@@ -638,6 +660,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     unmeldUserFromCurrentUser: function(meldManager, user, currentUser) {
+        console.log("Inside UserService#unmeldUserFromCurrentUser");
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var reason = ""; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
@@ -650,6 +673,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     unmeldCurrentUserFromCurrentUser: function(meldManager, user, currentUser) {
+        console.log("Inside UserService#unmeldCurrentUserFromCurrentUser");
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
         var reason = ""; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);

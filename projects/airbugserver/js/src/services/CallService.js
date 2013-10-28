@@ -77,6 +77,8 @@ var CallService = Class.extend(Obj, {
      * @return {Set.<CallManager>}
      */
     findCallManagerSetByUserId: function(userId) {
+        console.log("Inside CallService#findCallManagerSetByUserId");
+        console.log("userIdToCallManagerMap count:", this.userIdToCallManagerMap.getCount());
         var callManagerSet = this.userIdToCallManagerMap.getValue(userId);
         if (callManagerSet) {
             return callManagerSet.clone();
@@ -102,6 +104,7 @@ var CallService = Class.extend(Obj, {
      * @private
      */
     initialize: function() {
+        console.log("Inside CallService#initialize");
         this.bugCallServer.on(CallEvent.CLOSED, this.hearCallClosed, this);
         this.bugCallServer.on(CallEvent.OPENED, this.hearCallOpened, this);
     },
@@ -111,7 +114,9 @@ var CallService = Class.extend(Obj, {
      * @param {CallManager} callManager
      */
     registerCallManager: function(userId, callManager) {
+        console.log("Inside CallService#registerCallManager");
         this.userIdToCallManagerMap.put(userId, callManager);
+        console.log("userIdToCallManagerMap count:", this.userIdToCallManagerMap.getCount());
     },
 
 

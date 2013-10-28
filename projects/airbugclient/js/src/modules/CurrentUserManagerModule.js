@@ -285,6 +285,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     dataType: "json",
                     data: {email: email},
                     success: function(data, textStatus, req) {
+                        console.log("LoginUser ajax call success");
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
                         flow.complete();
                     },

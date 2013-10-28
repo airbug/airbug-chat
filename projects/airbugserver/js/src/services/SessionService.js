@@ -126,7 +126,7 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow){
                 req.session.regenerate(function(error){
                     //NOTE: req.session.regenerate replaces req.session with a new session
-                    console.log("session regenerate", error);
+                    console.log("session regenerate error:", error);
                     if(!error){
                         req.session.userId = userId;
                         req.session.save(function(error){

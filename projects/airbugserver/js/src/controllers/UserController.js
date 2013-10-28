@@ -142,6 +142,7 @@ var UserController = Class.extend(EntityController, {
                     });
                 })
             ]).execute(function(throwable) {
+                console.log("UserController expressApp.post throwable:", throwable);
                 if (throwable) {
                    _this.processAjaxThrowable(throwable, response);
                 } else {

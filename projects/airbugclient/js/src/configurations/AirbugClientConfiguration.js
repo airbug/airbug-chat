@@ -178,6 +178,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         socketIoConfig.setPort(8000);
 
         //TODO BRN: Pass the session id here...
+        console.log("airbugApi.connect call");
        _this._airbugApi.connect();
 
         controllerScan.scan();

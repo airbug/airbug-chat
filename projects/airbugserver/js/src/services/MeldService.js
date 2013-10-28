@@ -108,7 +108,6 @@ var MeldService = Class.extend(Obj, {
             var meldKey = this.generateMeldKey(type, entity.getId(), filter);
             var meldDocument = undefined;
             if (!meldManager.containsMeldByKey(meldKey)) {
-                console.log("10");
                 try{
                     try{
                         entity.commitDelta();
@@ -136,7 +135,6 @@ var MeldService = Class.extend(Obj, {
                 }
 
             } else {
-                console.log("11");
                 meldDocument = meldManager.getMeld(meldKey);
 
                 // TODO BRN: MUST write a unit test that ensures that the operation for this meld generates the meld at
@@ -182,13 +180,13 @@ var MeldService = Class.extend(Obj, {
         console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId());
 
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
-        if (callManagerSet) {
+        // if (callManagerSet) {
             callManagerSet.forEach(function(callManager) {
                 meldKeys.forEach(function(meldKey) {
                     meldManager.meldCallManagerWithKeyAndReason(callManager, meldKey, reason);
                 });
             });
-        }
+        // }
     },
 
     /**
@@ -211,12 +209,16 @@ var MeldService = Class.extend(Obj, {
      * @param {string} reason
      */
     unmeldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
+        console.log("Inside MeldService#unmeldUserWithKeysAndReason");
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
         callManagerSet.forEach(function(callManager) {
+            console.log("Inside callManagerSet.forEach loop");
             meldKeys.forEach(function(meldKey) {
+                console.log("Inside meldKeys.forEach loop");
                 meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
             });
         });
+        console.log("End of MeldService#unmeldUserWithKeysAndReason");
     }
 });
 
