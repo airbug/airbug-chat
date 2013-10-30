@@ -55,7 +55,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager, userManager, meldService) {
+    _constructor: function(sessionManager, userManager, meldService, sessionService) {
 
         this._super();
 
@@ -81,6 +81,12 @@ var UserService = Class.extend(Obj, {
          * @type {UserManager}
          */
         this.userManager            = userManager;
+
+        /**
+         * @private
+         * @type {SessionService}
+         */
+        this.sessionService         = sessionService;
     },
 
 
@@ -200,42 +206,20 @@ var UserService = Class.extend(Obj, {
     },
 
     /**
-     * @param {Express.request} request
+     * @param {RequestContext} requestContext
      * @param {string} email
      * @param {function(Throwable, User)} callback
      */
-    loginUser: function(request, email, callback) {
+    loginUser: function(requestContext, email, callback) {
         var _this           = this;
-        var currentUser     = undefined;
-        var currentUserId   = request.session.data.userId;
+        var currentUser     = requestContext.get("currentUser");
         var meldManager     = this.meldService.factoryManager();
+        var session         = requestContext.get("session");
         var user            = undefined;
-        var userManager     = this.userManager;
+
         console.log("UserService#loginUser");
-        console.log("currentUserId:", currentUserId);
         $series([
             $task(function(flow) {
-                _this.dbRetrieveUser(currentUserId, function(throwable, returnedUser){
-                    console.log("dbRetrieveUser throwable:", throwable);
-                    console.log("dbRetrieveUser returnedUser:", returnedUser);
-                    console.log("dbRetrieveUser returnedUserId:", returnedUser.getId());
-                    if (!throwable) {
-                        if (returnedUser) {
-                            currentUser = returnedUser;
-                            /*userManager.populateUser(currentUser, ["roomSet"], function(throwable) {
-                                flow.complete(throwable);
-                            });*/
-                            flow.complete(throwable);
-                        } else {
-                            console.log("There is no user with the id of", currentUserId);
-                            flow.complete(new Exception("NotFound"));
-                        }
-                    } else {
-                        flow.complete(throwable);
-                    }
-                });
-            }),
-            $task(function(flow){
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
                     console.log("dbRetrieveUserByEmail throwable:", throwable);
                     console.log("dbRetrieveUserByEmail returnedUser:", returnedUser);
@@ -243,9 +227,6 @@ var UserService = Class.extend(Obj, {
                     if (!throwable) {
                         if (returnedUser) {
                             user = returnedUser;
-                            /*userManager.populateUser(user, ["roomSet"], function(throwable) {
-                                flow.complete(throwable);
-                            });*/
                             flow.complete(throwable);
                         } else {
                             console.log("There is no user by that email");
@@ -254,6 +235,20 @@ var UserService = Class.extend(Obj, {
                     } else {
                         flow.complete(throwable);
                     }
+                });
+            }),
+            $task(function(flow) {
+                _this.sessionService.regenerateSession(session, requestContext, function(throwable, generatedSession) {
+                    if (!throwable) {
+                        session = generatedSession;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                session.getData().userId = user.getId();
+                _this.sessionManager.updateSession(session, function(throwable) {
+                    flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
@@ -270,15 +265,42 @@ var UserService = Class.extend(Obj, {
             })
         ]).execute(function(throwable) {
             console.log("UserService#login execute series callback");
-            console.log("UserService#loginUser throwable:", throwable);
             if (!throwable) {
-                callback(throwable);
-            } else {
                 console.log("user:", user);
                 console.log("userId:", user.getId());
                 callback(undefined, user);
+            } else {
+                console.log("UserService#loginUser throwable:", throwable);
+                callback(throwable);
             }
         });
+
+        //TODO: find all call connections related to the oldSid and send them a refreshConnectionForLogin request
+        // Make sure there are no issues with client-side initiated disconnect.
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {function(Throwable)} callback
+     */
+    logoutUser: function(requestContext, callback) {
+        var session = requestContext.get("session");
+        $series([
+            $task(function(flow) {
+                session.destroy(function(throwable) {
+                    if(error){
+                        var error = error.toString();
+                        console.log(error);
+                        res.json({error: error});
+                    } else {
+                        res.json({error: null});
+                    }
+                });
+            })
+        ]).execute(callback);
+
+        // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
+
     },
 
     /**
@@ -292,26 +314,45 @@ var UserService = Class.extend(Obj, {
      */
     registerUser: function(requestContext, formData, callback) {
         var _this       = this;
+        var currentUser = requestContext.get("currentUser");
         var meldManager = this.meldService.factoryManager();
+        var session     = requestContext.get("session");
         var user        = undefined;
         var userEmail   = formData.email;
         var userObject  = formData;
 
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 _this.dbRetrieveUserByEmail(userEmail, function(throwable, user) {
                     if (!throwable) {
                         if (!user) {
-                            user = _this.userManager.generateUser(userObject);
-                            _this.userManager.createUser(user, function(throwable) {
-                                flow.complete(throwable);
-                            });
+                            flow.complete()
                         } else {
-                            flow.complete(new Error("User already exists"));
+                            flow.complete(new Exception("UserExists"));
                         }
                     } else {
                         flow.complete(throwable);
                     }
+                });
+            }),
+            $task(function(flow) {
+                user = _this.userManager.generateUser(userObject);
+                _this.userManager.createUser(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.sessionService.regenerateSession(session, requestContext, function(throwable, generatedSession) {
+                    if (!throwable) {
+                        session = generatedSession;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                session.getData().userId = user.getId();
+                _this.sessionManager.updateSession(session, function(throwable) {
+                    flow.complete(throwable);
                 });
             }),
             $task(function(flow) {

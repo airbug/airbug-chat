@@ -668,11 +668,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {ExpressApp} expressApp
      * @param {SocketRouter} bugCallRouter
      * @param {UserService} userService
-     * @param {SessionService} sessionService
      * @return {UserController}
      */
-    userController: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService) {
-        this._userController = new UserController(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService);
+    userController: function(config, expressApp, bugCallServer, bugCallRouter, userService) {
+        this._userController = new UserController(config, expressApp, bugCallServer, bugCallRouter, userService);
         return this._userController;
     },
 
@@ -682,8 +681,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {MeldService} meldService
      * @return {UserService}
      */
-    userService: function(sessionManager, userManager, meldService) {
-        this._userService = new UserService(sessionManager, userManager, meldService);
+    userService: function(sessionManager, userManager, meldService, sessionService) {
+        this._userService = new UserService(sessionManager, userManager, meldService, sessionService);
         return this._userService;
     },
 
@@ -853,8 +852,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("expressApp"),
                 arg().ref("bugCallServer"),
                 arg().ref("bugCallRouter"),
-                arg().ref("userService"),
-                arg().ref("sessionService"),
+                arg().ref("userService")
             ]),
 
 
@@ -901,7 +899,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("sessionManager"),
                 arg().ref("userManager"),
-                arg().ref("meldService")
+                arg().ref("meldService"),
+                arg().ref("sessionService")
             ])
     ])
 );

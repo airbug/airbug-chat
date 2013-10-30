@@ -86,11 +86,19 @@ var SessionService = Class.extend(Obj, {
      */
     buildRequestContext: function(requestContext, callback) {
         var sessionId = undefined;
+
+
+        //TEST
+        console.log("SessionService buildRequestContext - requestContext.getRequest():", requestContext.getRequest());
+
         if (requestContext.getType() === RequestContext.Types.BUGCALL) {
             sessionId = requestContext.getRequest().getHandshake().sessionId;
         } else {
             sessionId = requestContext.getRequest().sessionID;
         }
+
+        //TEST
+        console.log("SessionService buildRequestContext - sessionId:", sessionId);
 
         //NOTE BRN: Load the correct version of the session
 
@@ -137,37 +145,58 @@ var SessionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} sid
-     * @param {function(Throwable)} callback
+     * @param {Session} session
+     * @param {RequestContext} requestContext
+     * @param {function(Throwable, Session)} callback
      */
-    regenerateSession: function(sid, req, userId, callback){
-        var _this = this;
-        $parallel([
-            $task(function(flow){
-                req.session.regenerate(function(error){
-                    //NOTE: req.session.regenerate replaces req.session with a new session
+    regenerateSession: function(session, requestContext, callback) {
+        var _this           = this;
+        var expressRequest  = requestContext.getRequest();
+        var expressSession  = expressRequest.session;
+        var session         = undefined;
 
-                    //TODO BRN: This is broken, fix it!
+        //TEST
+        console.log("SessionService regenerateSession (before) - expressRequest.sessionID:", expressRequest.sessionID);
 
-                    console.log("session regenerate", error);
-                    if (!error) {
-                        req.session.userId = userId;
-                        req.session.save(function(error){
-                            flow.complete(error);
-                        });
-                    } else {
-                        flow.complete(error);
-                    }
+        $series([
+            $task(function(flow) {
+                expressSession.regenerate(function(throwable) {
+
+                    //NOTE: session.regenerate replaces req.session with a new session
+                    expressSession = expressRequest.session;
+
+                    //TEST
+                    console.log("SessionService regenerateSession (after) - expressRequest.sessionID:", expressRequest.sessionID);
+                    flow.complete(throwable);
                 });
             }),
-            $task(function(flow){
-                // delete old session from db
-                _this.sessionManager.deleteSessionBySid(sid, function(error){
-                    console.log("deleteSessionBySid Error:", error);
-                    flow.complete(error);
+            $task(function(flow) {
+                expressSession.save(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.sessionManager.retrieveSessionBySid(expressRequest.sessionID, function(throwable, retrievedSession) {
+                    if (!throwable) {
+                            if (retrievedSession) {
+                                requestContext.set("session", retrievedSession);
+                                session = retrievedSession;
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Could not find regenerated session"));
+                            }
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             })
-        ]).execute(callback);
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(undefined, session);
+            } else {
+                callback(throwable);
+            }
+        });
     }
 });
 

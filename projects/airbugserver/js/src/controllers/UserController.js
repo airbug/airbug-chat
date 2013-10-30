@@ -47,7 +47,7 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService, sessionService) {
+    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService) {
 
         this._super();
 
@@ -82,12 +82,6 @@ var UserController = Class.extend(EntityController, {
 
         /**
          * @private
-         * @type {SessionService}
-         */
-        this.sessionService         = sessionService;
-
-        /**
-         * @private
          * @type {UserService}
          */
         this.userService            = userService;
@@ -105,7 +99,6 @@ var UserController = Class.extend(EntityController, {
         var _this           = this;
         var expressApp      = this.expressApp;
         var userService     = this.userService;
-        var sessionService  = this.sessionService;
 
         //-------------------------------------------------------------------------------
         // Express Routes
@@ -113,105 +106,35 @@ var UserController = Class.extend(EntityController, {
 
         expressApp.post('/app/login', function(request, response) {
             var requestContext      = request.requestContext;
-            var cookies             = request.cookies;
-            var signedCookies       = request.signedCookies;
-            var oldSid              = request.sessionID;
-            var session             = request.session;
-            var params              = request.params;
-            var query               = request.query;
             var data                = request.body;
-            var returnedUser;
-
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "data:", data, "params:", params, "query:", query);
-            $series([
-                $task(function(flow) {
-                    userService.loginUser(request, data.email, function(throwable, user) {
-                        console.log("userService#loginUser throwable:", throwable);
-                        if (!throwable) {
-                            returnedUser = user;
-                            flow.complete();
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    sessionService.regenerateSession(oldSid, request, returnedUser.getId(), function(throwable) {
-                        console.log("sessionService#regenerateSession throwable:", throwable);
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                console.log("UserController expressApp.post throwable:", throwable);
+            userService.loginUser(requestContext, data.email, function(throwable) {
                 if (throwable) {
-                   _this.processAjaxThrowable(throwable, response);
+                    _this.processAjaxThrowable(throwable, response);
                 } else {
                     _this.sendAjaxSuccessResponse(response);
                 }
             });
-
-            // find all callconnections related to the oldSid and send them a refreshConnectionForLogin request
-            // Make sure there are no issues with client-side initiated disconnect.
         });
 
-        expressApp.post('/app/logout', function(req, res){
-            var requestContext  = req.requestContext;
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var body            = req.body;
-
-            session.destroy(function(error){
-                if(error){
-                    var error = error.toString();
-                    console.log(error);
-                    res.json({error: error});
+        expressApp.post('/app/logout', function(request, response) {
+            var requestContext  = request.requestContext;
+            userService.logoutUser(requestContext, function(throwable) {
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
                 } else {
-                    res.json({error: null});
+                    _this.sendAjaxSuccessResponse(response);
                 }
             });
-
-            // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
-
         });
 
-        expressApp.post('/app/register', function(req, res) {
-            var requestContext  = req.requestContext;
-            var cookies         = req.cookies;
-            var signedCookies   = req.signedCookies;
-            var oldSid          = req.sessionID;
-            var session         = req.session;
-            var params          = req.params;
-            var query           = req.query;
-            var userObject      = req.body;
-            var returnedUser;
-
-            console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
-            $series([
-                $task(function(flow){
-                    userService.registerUser(req, userObject, function(throwable, user) {
-                        returnedUser = user;
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow){
-                    sessionService.regenerateSession(oldSid, req, returnedUser.getId(), function(throwable) {
-                        if (!throwable) {
-                            res.json({error: null});
-                        }
-                        flow.complete(throwable);
-                    });
-                })
-                // ,
-                // $task(function(flow){
-                // find all callconnections related to the oldSid and send them a refreshConnectionForRegister request
-                // })
-            ]).execute(function(throwable) {
+        expressApp.post('/app/register', function(request, response) {
+            var requestContext  = request.requestContext;
+            var userObject      = request.body;
+            userService.registerUser(requestContext, userObject, function(throwable) {
                 if (throwable) {
-                    res.json({error: throwable.toString(), user: null});
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
                 }
             });
         });
@@ -238,34 +161,6 @@ var UserController = Class.extend(EntityController, {
         //-------------------------------------------------------------------------------
 
         this.bugCallRouter.addAll({
-
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            // loginUser: function(request, responder){
-            //     var data                = request.getData();
-            //     var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-            //     var formData            = data.formData;
-
-            //     _this.userService.loginUser(requestContext, formData, function(throwable, user) {
-            //         _this.processRetrieveResponse(responder, throwable)
-            //     });
-            // },
-
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             */
-            // registerUser:function(request, responder){
-            //     var data                = request.getData();
-            //     var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
-            //     var formData            = data.formData;
-
-            //     _this.userService.registerUser(requestContext, formData, function(throwable, user) {
-            //         _this.processRetrieveResponse(responder, throwable)
-            //     });
-            // },
 
             /**
              * @param {IncomingRequest} request
@@ -319,6 +214,12 @@ var UserController = Class.extend(EntityController, {
      * @param {Response} response
      */
     processAjaxThrowable: function(throwable, response) {
+
+        //TEST
+        console.log("Error occurred during request");
+        console.log(throwable);
+        console.log(throwable.stack);
+
         if (Class.doesExtend(throwable, Exception)) {
             if (throwable.getType() === "NotFound") {
                 this.sendAjaxNotFoundResponse(response);

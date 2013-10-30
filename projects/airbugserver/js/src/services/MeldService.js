@@ -180,13 +180,13 @@ var MeldService = Class.extend(Obj, {
         console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId());
 
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
-        // if (callManagerSet) {
+        if (callManagerSet) {
             callManagerSet.forEach(function(callManager) {
                 meldKeys.forEach(function(meldKey) {
                     meldManager.meldCallManagerWithKeyAndReason(callManager, meldKey, reason);
                 });
             });
-        // }
+        }
     },
 
     /**
@@ -211,13 +211,15 @@ var MeldService = Class.extend(Obj, {
     unmeldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         console.log("Inside MeldService#unmeldUserWithKeysAndReason");
         var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
-        callManagerSet.forEach(function(callManager) {
-            console.log("Inside callManagerSet.forEach loop");
-            meldKeys.forEach(function(meldKey) {
-                console.log("Inside meldKeys.forEach loop");
-                meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+        if (callManagerSet) {
+            callManagerSet.forEach(function(callManager) {
+                console.log("Inside callManagerSet.forEach loop");
+                meldKeys.forEach(function(meldKey) {
+                    console.log("Inside meldKeys.forEach loop");
+                    meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+                });
             });
-        });
+        }
         console.log("End of MeldService#unmeldUserWithKeysAndReason");
     }
 });
