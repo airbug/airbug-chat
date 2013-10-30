@@ -93,7 +93,9 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     buildRequestContext: function(requestContext, callback) {
-        var userId = requestContext.get("session").getData().userId;
+        console.log("UserService#buildRequestContext");
+        var userId = requestContext.get("session").getData().userId; //BUG undefined
+        console.log("userId:", userId);
         this.userManager.retrieveUser(userId, function(throwable, user) {
             if (!throwable) {
                 requestContext.set("currentUser", user);
@@ -455,7 +457,7 @@ var UserService = Class.extend(Obj, {
         user = userManager.generateUser({anonymous: true});
         userManager.createUser(user, function(throwable){
             if(throwable) console.log("1throwable:", throwable);
-            console.log("userManager#createUser callback. user:", user);
+            console.log("userManager#createUser callback:");
             console.log("user.getId():", user.getId());
             callback(throwable, user);
         });
@@ -500,7 +502,7 @@ var UserService = Class.extend(Obj, {
         } else {
             this.createAnonymousUser(function(throwable, user) {
                 if (!throwable) {
-                    session.getData().userId = user.id;
+                    session.getData().userId = user.getId();
                     _this.sessionManager.updateSession(session, function(throwable, session) {
                         console.log("Finish UserService shake createAnonymousUser 2 callback session save");
                         console.log("throwable:", throwable);
