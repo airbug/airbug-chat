@@ -155,7 +155,7 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/app/logout', function(req, res){
-            var requestContext  = request.requestContext;
+            var requestContext  = req.requestContext;
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
             var oldSid          = req.sessionID;
@@ -179,7 +179,7 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/app/register', function(req, res) {
-            var requestContext  = request.requestContext;
+            var requestContext  = req.requestContext;
             var cookies         = req.cookies;
             var signedCookies   = req.signedCookies;
             var oldSid          = req.sessionID;
@@ -192,7 +192,7 @@ var UserController = Class.extend(EntityController, {
             console.log("cookies:", cookies, "signedCookies:", signedCookies, "session:", session, "userObject:", userObject, "params:", params, "query:", query);
             $series([
                 $task(function(flow){
-                    userService.registerUser(userObject, function(throwable, user) {
+                    userService.registerUser(req, userObject, function(throwable, user) {
                         returnedUser = user;
                         flow.complete(throwable);
                     });
@@ -216,11 +216,11 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/user-availability-check-email', function(req, res){
-            var requestContext      = request.requestContext;
-            var email = req.body.email;
+        expressApp.post('/app/user-availability-check-email', function(req, res) {
+            var requestContext      = req.requestContext;
+            var email               = req.body.email;
 
-            userService.findUserByEmail(email, function(throwable, user){
+            userService.findUserByEmail(email, function(throwable, user) {
                 if (!throwable) {
                     if (user) {
                         res.send("false");

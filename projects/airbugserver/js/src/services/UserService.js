@@ -295,14 +295,15 @@ var UserService = Class.extend(Obj, {
         var meldManager = this.meldService.factoryManager();
         var user        = undefined;
         var userEmail   = formData.email;
+        var userObject  = formData;
 
         $series([
             $task(function(flow){
-                _this.dbRetrieveUserByEmail(userEmail, function(throwable, user){
-                    if(!throwable){
-                        if(!user){
+                _this.dbRetrieveUserByEmail(userEmail, function(throwable, user) {
+                    if (!throwable) {
+                        if (!user) {
                             user = _this.userManager.generateUser(userObject);
-                            _this.userManager.createUser(user, function(throwable){
+                            _this.userManager.createUser(user, function(throwable) {
                                 flow.complete(throwable);
                             });
                         } else {
@@ -313,7 +314,7 @@ var UserService = Class.extend(Obj, {
                     }
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
