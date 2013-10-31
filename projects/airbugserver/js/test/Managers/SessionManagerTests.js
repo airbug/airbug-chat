@@ -4,6 +4,7 @@
 
 //@TestFile
 
+//@Require('UuidGenerator')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomManager')
 //@Require('bugentity.EntityManagerStore')
@@ -26,8 +27,9 @@ var mongoose                = require('mongoose');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Room                    = bugpack.require('airbugserver.Room');
-var RoomManager             = bugpack.require('airbugserver.RoomManager');
+var UuidGenerator           = bugpack.require('UuidGenerator');
+var Session                 = bugpack.require('airbugserver.Session');
+var SessionManager          = bugpack.require('airbugserver.SessionManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -51,7 +53,7 @@ var $task                   = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 //NOTE BRN: As this test stands, it is more of an integration test than a unit test since it depends on DB access.
-var createRoomTest = {
+var sessionManagerTest = {
 
     async: true,
 
@@ -67,9 +69,9 @@ var createRoomTest = {
         this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
         this.schemaManager          = new SchemaManager();
-        this.roomManager            = new RoomManager(this .entityManagerStore, this.schemaManager, this.mongoDataStore);
-        this.roomManager.setEntityType("Room");
-        this.testRoom               = this.roomManager.generateRoom({name: 'testRoom'});
+        this.sessionManager         = new SessionManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
+        this.sessionManager.setEntityType("Session");
+        this.testSession            = this.sessionManager.generateSession({data: {key: "value"}, sid: UuidGenerator.generateUuid()});
     },
 
 
@@ -86,20 +88,57 @@ var createRoomTest = {
                 });
             }),
             $task(function(flow) {
-                _this.roomManager.initializeModule(function(throwable) {
+                _this.sessionManager.initializeModule(function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
+                _this.sessionManager.createSession(_this.testSession, function(throwable) {
                     if (!throwable) {
-                        test.assertTrue(!!_this.testRoom.getId(),
-                            "Assert created room has an id");
+                        test.assertTrue(!!_this.testSession.getId(),
+                            "Assert created Session has an id");
+                        test.assertEqual(_this.testSession.getData().key, "value",
+                            "Assert that key is equal to test value");
                     }
                     flow.complete(throwable);
                 });
 
+            }),
+            $task(function(flow) {
+                _this.sessionManager.retrieveSession(_this.testSession.getId(), function(throwable, retrievedSession) {
+                    if (!throwable) {
+                        test.assertEqual(retrievedSession.getData().key, "value",
+                            "Assert retrieved session data is {key: 'value'}");
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.testSession.getData().key2 = "value2";
+                _this.sessionManager.updateSession(_this.testSession, function(throwable) {
+                    if (!throwable) {
+                        test.assertTrue(!!_this.testSession.getId(),
+                            "Assert updated Session has an id");
+                        test.assertEqual(_this.testSession.getData().key, "value",
+                            "Assert that 'key' is equal to test 'value'");
+                        test.assertEqual(_this.testSession.getData().key2, "value2",
+                            "Assert that key2 is equal to test value2");
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.sessionManager.retrieveSession(_this.testSession.getId(), function(throwable, retrievedSession) {
+                    if (!throwable) {
+                        test.assertEqual(retrievedSession.getData().key, "value",
+                            "Assert retrieved session data is {key: 'value'}");
+                        test.assertEqual(retrievedSession.getData().key2, "value2",
+                            "Assert retrieved session data is {key2: 'value2'}");
+                    }
+                    flow.complete(throwable);
+                });
             })
+
         ]).execute(function(throwable) {
             mongoose.connection.close();
             if (!throwable) {
@@ -110,18 +149,6 @@ var createRoomTest = {
         });
     }
 };
-
-
-function makeEmail() {
-    var email = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < 20; i++ ) {
-        email += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    email += "@email.com";
-    return email;
-}
-
-bugmeta.annotate(createRoomTest).with(
-    test().name("RoomManager #createRoom Test")
+bugmeta.annotate(sessionManagerTest).with(
+    test().name("SessionManager #createSession Test")
 );

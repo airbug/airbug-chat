@@ -86,11 +86,6 @@ var SessionService = Class.extend(Obj, {
      */
     buildRequestContext: function(requestContext, callback) {
         var sessionId = undefined;
-
-
-        //TEST
-        console.log("SessionService buildRequestContext - requestContext.getRequest():", requestContext.getRequest());
-
         if (requestContext.getType() === RequestContext.Types.BUGCALL) {
             sessionId = requestContext.getRequest().getHandshake().sessionId;
         } else {

@@ -154,6 +154,10 @@ var UserService = Class.extend(Obj, {
      * @param next
      */
     checkRequestForUser: function(req, res, next) {
+
+        //TEST
+        console.log("UserService checkRequestForUser - req.session:", req.session);
+
         var _this   = this;
         var session = undefined;
         $series([
@@ -167,9 +171,18 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 _this.ensureUserOnSession(session, function(throwable) {
+                    //TEST
+                    console.log("UserService checkRequestForUser (after ensureUserOnSession) - session.getData():", session.getData());
+
                     if (!throwable) {
-                        req.session.reload(function(throwable) {
-                            flow.complete(throwable);
+                        _this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
+
+                            //TEST
+                            console.log("UserService TEST - retrievedSession.getData():", retrievedSession.getData());
+
+                            req.session.reload(function(throwable) {
+                                flow.complete(throwable);
+                            });
                         });
                     } else {
                         flow.error(throwable);
@@ -217,7 +230,7 @@ var UserService = Class.extend(Obj, {
         var session         = requestContext.get("session");
         var user            = undefined;
 
-        console.log("UserService#loginUser");
+        console.log("UserService#loginUser - currentUser:", currentUser);
         $series([
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
@@ -255,9 +268,9 @@ var UserService = Class.extend(Obj, {
                 //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
-                //meld logged in user
-                _this.meldService.meldEntity(meldManager, "User", "owner", user);
+
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
+                _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 meldManager.commitTransaction(function(throwable) {
                     console.log("commitTransaction throwable:", throwable);
                     flow.complete(throwable);

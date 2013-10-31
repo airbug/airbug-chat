@@ -121,7 +121,7 @@ var RequestContextBuilder = Class.extend(Obj, {
      * @param {} res
      * @param {} next
      */
-    buildRequestContextForExpress: function(req, res, next){
+    buildRequestContextForExpress: function(req, res, next) {
         var type = RequestContext.Types.EXPRESS;
         this.buildRequestContext(type, req, function(throwable, requestContext) {
             if (!throwable) {
