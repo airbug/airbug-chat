@@ -175,18 +175,20 @@ var MeldService = Class.extend(Obj, {
      * @param {string} reason
      */
     meldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
-
+        var _this = this;
         //TEST
         console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId());
 
-        var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
-        if (callManagerSet) {
-            callManagerSet.forEach(function(callManager) {
-                meldKeys.forEach(function(meldKey) {
-                    meldManager.meldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+        user.getSessionSet().forEach(function(session) {
+            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getId());
+            if (callManagerSet) {
+                callManagerSet.forEach(function(callManager) {
+                    meldKeys.forEach(function(meldKey) {
+                        meldManager.meldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+                    });
                 });
-            });
-        }
+            }
+        });
     },
 
     /**

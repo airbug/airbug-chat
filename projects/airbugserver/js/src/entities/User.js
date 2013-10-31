@@ -65,7 +65,13 @@ var User = Class.extend(Entity, {
          * @private
          * @type {Set.<Room>}
          */
-        this.roomSet    = new Set();
+        this.roomSet        = new Set();
+
+        /**
+         * @private
+         * @type {Set.<Session>}
+         */
+        this.sessionSet     = new Set();
     },
 
 
@@ -212,6 +218,13 @@ var User = Class.extend(Entity, {
     },
 
     /**
+     * @return {Set.<Session>}
+     */
+    getSessionSet: function() {
+        return this.sessionSet;
+    },
+
+    /**
      * @return {boolean}
      */
     isAnonymous: function() {
@@ -249,6 +262,10 @@ bugmeta.annotate(User).with(
         property("roomSet")
             .type("Set")
             .collectionOf("Room")
+            .populates(true),
+        property("sessionSet")
+            .type("Set")
+            .collectionOf("Session")
             .populates(true),
         property("status")
             .type("string"),

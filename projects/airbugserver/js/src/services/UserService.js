@@ -101,12 +101,29 @@ var UserService = Class.extend(Obj, {
     buildRequestContext: function(requestContext, callback) {
         console.log("UserService#buildRequestContext");
         var userId = requestContext.get("session").getUserId();
-        this.userManager.retrieveUser(userId, function(throwable, user) {
+        var _this = this;
+        var user = undefined;
+        $series([
+            $task(function(flow) {
+                _this.userManager.retrieveUser(userId, function(throwable, returnedUser) {
+                    if (!throwable) {
+                        user = returnedUser;
+                    }
+                    flow.complete(throwable)
+                });
+            }),
+            $task(function(flow) {
+                 _this.userManager.populateUser(user, ["sessionSet"], function(throwable) {
+                     flow.complete(throwable);
+                 });
+            })
+        ]).execute(function(throwable) {
             if (!throwable) {
                 requestContext.set("currentUser", user);
             }
             callback(throwable);
         });
+
     },
 
 
@@ -176,10 +193,8 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 _this.ensureUserOnSession(session, function(throwable) {
                     if (!throwable) {
-                        _this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
-                            req.session.reload(function(throwable) {
-                                flow.complete(throwable);
-                            });
+                        req.session.reload(function(throwable) {
+                            flow.complete(throwable);
                         });
                     } else {
                         flow.error(throwable);
