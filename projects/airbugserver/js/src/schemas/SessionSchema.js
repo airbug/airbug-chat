@@ -21,6 +21,7 @@ var mongoose    = require('mongoose');
 //-------------------------------------------------------------------------------
 
 var Mixed       = mongoose.Schema.Types.Mixed;
+var ObjectId    = mongoose.Schema.Types.ObjectId;
 var Schema      = mongoose.Schema;
 
 
@@ -33,7 +34,8 @@ var SessionSchema = new Schema({
     data: {type: Mixed, required: true},
     expires: Date,
     sid: {type: String, required: true, index: true, unique: true},
-    updatedAt: Date
+    updatedAt: Date,
+    userId: {type: ObjectId, index: true}
 });
 
 

@@ -105,6 +105,20 @@ var Session = Class.extend(Entity, {
      */
     setSid: function(sid) {
         this.deltaDocument.getData().sid = sid;
+    },
+
+    /**
+     * @return {string}
+     */
+    getUserId: function() {
+        return this.deltaDocument.getData().userId;
+    },
+
+    /**
+     * @param {string} userId
+     */
+    setUserId: function(userId) {
+        this.deltaDocument.getData().userId = userId;
     }
 });
 

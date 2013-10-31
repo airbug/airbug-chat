@@ -62,7 +62,7 @@ var CallService = Class.extend(Obj, {
          * @private
          * @type {DualMultiSetMap.<string, CallManager>}
          */
-        this.userIdToCallManagerMap         = new DualMultiSetMap();
+        this.sessionIdToCallManagerMap      = new DualMultiSetMap();
 
         this.initialize();
     },
@@ -73,13 +73,11 @@ var CallService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} userId
+     * @param {string} sessionId
      * @return {Set.<CallManager>}
      */
-    findCallManagerSetByUserId: function(userId) {
-        console.log("Inside CallService#findCallManagerSetByUserId");
-        console.log("userIdToCallManagerMap count:", this.userIdToCallManagerMap.getCount());
-        var callManagerSet = this.userIdToCallManagerMap.getValue(userId);
+    findCallManagerSetBySessionId: function(sessionId) {
+        var callManagerSet = this.sessionIdToCallManagerMap.getValue(sessionId);
         if (callManagerSet) {
             return callManagerSet.clone();
         } else {
@@ -97,7 +95,7 @@ var CallService = Class.extend(Obj, {
      * @param {CallManager} callManager
      */
     deregisterCallManager: function(callManager) {
-        this.userIdToCallManagerMap.removeByValue(callManager);
+        this.sessionIdToCallManagerMap.removeByValue(callManager);
     },
 
     /**
@@ -110,13 +108,13 @@ var CallService = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} userId
+     * @param {string} sessionId
      * @param {CallManager} callManager
      */
-    registerCallManager: function(userId, callManager) {
+    registerCallManager: function(sessionId, callManager) {
         console.log("Inside CallService#registerCallManager");
-        this.userIdToCallManagerMap.put(userId, callManager);
-        console.log("userIdToCallManagerMap count:", this.userIdToCallManagerMap.getCount());
+        this.sessionIdToCallManagerMap.put(sessionId, callManager);
+        console.log("sessionIdToCallManagerMap count:", this.sessionIdToCallManagerMap.getCount());
     },
 
 
@@ -145,8 +143,8 @@ var CallService = Class.extend(Obj, {
         var data            = event.getData();
         var callManager     = data.callManager;
         var callConnection  = callManager.getConnection();
-        var userId          = callConnection.getHandshake().session.userId;
-        this.registerCallManager(userId, callManager);
+        var sessionId       = callConnection.getHandshake().sessionId;
+        this.registerCallManager(sessionId, callManager);
     }
 });
 
