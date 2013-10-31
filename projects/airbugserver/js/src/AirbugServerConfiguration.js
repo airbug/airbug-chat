@@ -323,10 +323,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             }));
 
             _this._expressApp.use(function(req, res, next){
+                _this._sessionService.checkRequestForSession(req, res, next);
+            });
+            _this._expressApp.use(function(req, res, next){
                 _this._userService.checkRequestForUser(req, res, next);
             });
             _this._expressApp.use(function(req, res, next){
-                _this._requestContextBuilder.buildRequestContextForExpress(req, res, next);
+                _this._requestContextBuilder.buildRequestContextForExpress(req, res, next); //should this go first?
             });
 
             _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));

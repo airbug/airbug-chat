@@ -100,8 +100,8 @@ var UserService = Class.extend(Obj, {
      */
     buildRequestContext: function(requestContext, callback) {
         console.log("UserService#buildRequestContext");
-        var userId = requestContext.get("session").getData().userId; //BUG undefined
-        console.log("userId:", userId);
+        var userId = requestContext.get("session").getData().userId;
+
         this.userManager.retrieveUser(userId, function(throwable, user) {
             if (!throwable) {
                 requestContext.set("currentUser", user);
@@ -129,6 +129,7 @@ var UserService = Class.extend(Obj, {
         $series([
             $task(function(flow) {
                 _this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, retrievedSession) {
+                    console.log("retrievedSession:", retrievedSession);
                     if (!throwable) {
                         session = retrievedSession;
                     }
@@ -136,7 +137,9 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.ensureUserOnSession(session, function(throwable) {
+                console.log("session:", session);
+                _this.ensureUserOnSession(session, function(throwable, session) {
+
                     flow.complete(throwable);
                 });
             })
@@ -149,11 +152,12 @@ var UserService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param req
-     * @param res
-     * @param next
+     * @param {} req
+     * @param {} res
+     * @param {} next
      */
     checkRequestForUser: function(req, res, next) {
+        console.log("Inside UserService#checkRequestForUser");
 
         //TEST
         console.log("UserService checkRequestForUser - req.session:", req.session);
@@ -164,25 +168,24 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 _this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
                     if (!throwable) {
-                        session = retrievedSession;
+                            console.log("retrievedSession:", retrievedSession);
+                            session = retrievedSession;
                     }
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.ensureUserOnSession(session, function(throwable) {
-                    //TEST
-                    console.log("UserService checkRequestForUser (after ensureUserOnSession) - session.getData():", session.getData());
-
+                _this.ensureUserOnSession(session, function(throwable, session) {
+                    console.log("Inside UserService#checkRequestForUser ensureUserOnSession callback")
                     if (!throwable) {
-                        _this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
-
-                            //TEST
-                            console.log("UserService TEST - retrievedSession.getData():", retrievedSession.getData());
-
-                            req.session.reload(function(throwable) {
-                                flow.complete(throwable);
-                            });
+                        console.log("Before req.session save");
+                        console.log("session.getData():", session.getData());
+                        console.log("req.session:", req.session);
+                        req.session.userId = session.getData().userId;
+                        req.session.save(function(throwable) {
+                            console.log("After req.session save session.getData():", session.getData());
+                            console.log("req.session:", req.session);
+                            flow.complete(throwable);
                         });
                     } else {
                         flow.error(throwable);
@@ -224,8 +227,10 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User)} callback
      */
     loginUser: function(requestContext, email, callback) {
+        console.log("Inside UserService#login");
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
+        var currentUserId   = requestContext.get("session").getData().userId; //BUG undefined
         var meldManager     = this.meldService.factoryManager();
         var session         = requestContext.get("session");
         var user            = undefined;
@@ -235,7 +240,6 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
                     console.log("dbRetrieveUserByEmail throwable:", throwable);
-                    console.log("dbRetrieveUserByEmail returnedUser:", returnedUser);
                     console.log("dbRetrieveUserByEmail returnedUserId:", returnedUser.getId());
                     if (!throwable) {
                         if (returnedUser) {
@@ -264,11 +268,18 @@ var UserService = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             }),
+            $task(function(flow){
+                var request = requestContext.getRequest();
+                request.session.userId = user.getId();
+                request.session.save(function(error){
+                    flow.complete(error);
+                });
+            }),
             $task(function(flow) {
                 //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
-
+                //meld logged in user
                 _this.meldCurrentUserWithCurrentUser(meldManager, user, user);
                 _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 meldManager.commitTransaction(function(throwable) {
@@ -279,7 +290,6 @@ var UserService = Class.extend(Obj, {
         ]).execute(function(throwable) {
             console.log("UserService#login execute series callback");
             if (!throwable) {
-                console.log("user:", user);
                 console.log("userId:", user.getId());
                 callback(undefined, user);
             } else {
@@ -511,7 +521,7 @@ var UserService = Class.extend(Obj, {
 
         user = userManager.generateUser({anonymous: true});
         userManager.createUser(user, function(throwable){
-            if(throwable) console.log("1throwable:", throwable);
+            if(throwable) console.log("UserService#createAnonymousUser userManager.createUser callback throwable:", throwable);
             console.log("userManager#createUser callback:");
             console.log("user.getId():", user.getId());
             callback(throwable, user);
@@ -521,52 +531,63 @@ var UserService = Class.extend(Obj, {
     /**
      * @private
      * @param {Session} session
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable, Session)} callback
      */
     ensureUserOnSession: function(session, callback) {
+        console.log("Inside UserService#ensureUserOnSession");
         var _this = this;
+        console.log("session:", session);
         if (session.getData().userId) {
             this.userManager.retrieveUser(session.getData().userId, function(throwable, user) {
-                console.log("userManager.retrieveUser. user:", user);
+                // console.log("userManager.retrieveUser. user:", user);
                 if (!throwable) {
                     if (user) {
-                        callback();
+                        callback(null, session);
                     } else {
                         delete session.getData().userId;
                         _this.createAnonymousUser(function(throwable, user) {
                             if (!throwable) {
                                 session.getData().userId = user.getId();
-                                _this.sessionManager.updateSession(session, function(throwable) {
+                                _this.sessionManager.updateSession(session, function(throwable, session) {
                                     console.log("Finish UserService ensureUserOnSession createAnonymousUser callback session save");
                                     console.log("throwable:", throwable);
-                                    callback(throwable);
+                                    session = session;
+                                    callback(null, session);
                                 });
                             } else {
                                 console.log("Finish UserService ensureUserOnSession createAnonymousUser callback throwable");
                                 console.log("throwable:", throwable);
-                                callback(throwable, false);
+                                callback(null, session);
                             }
                         });
                     }
                 } else {
                     console.log("Finish UserService ensureUserOnSession userManager retrieveUser throwable");
                     console.log("throwable:", throwable);
-                    callback(throwable, false);
+                    callback(throwable, session);
                 }
             });
         } else {
             this.createAnonymousUser(function(throwable, user) {
+                console.log("Inside UserService#ensureUserOnSession createAnonymousUser callback");
+                console.log("throwable:", throwable);
+                // console.log("user:", user);
+                console.log("session.getData():", session.getData());
                 if (!throwable) {
-                    session.getData().userId = user.getId();
+                    var data = session.getData();
+                    data.userId = user.getId();
+                    session.setData(data);
                     _this.sessionManager.updateSession(session, function(throwable, session) {
-                        console.log("Finish UserService shake createAnonymousUser 2 callback session save");
+                        console.log("Finish UserService ensureUserOnSession createAnonymousUser 2 callback session save");
                         console.log("throwable:", throwable);
-                        callback(throwable);
+                        console.log("session.getData():", session.getData()); //BUG userId was not updated //was updated
+                        callback(throwable, session);
                     });
                 } else {
-                    console.log("Finish UserService shake createAnonymousUser 2 callback throwable");
+                    console.log("Finish UserService ensureUserOnSession createAnonymousUser 2 callback throwable");
                     console.log("throwable:", throwable);
-                    callback(throwable);
+                    console.log("session:", session);
+                    callback(throwable, session);
                 }
             });
         }

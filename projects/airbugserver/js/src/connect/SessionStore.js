@@ -83,7 +83,8 @@ var SessionStore = Class.adapt(connect.session.Store, {
                             : session.getExpires();
                         if (!expires || new Date < expires) {
                             console.log("data:", data);
-                            callback(undefined, data); // or session //clear cookies and retry
+                            callback(undefined, data);  //SUNG or session? SUNG no it should be data 
+                                                        //try clearing cookies and retry if there is an error
                         } else {
                             _this.destroy(sid, callback);
                         }
@@ -111,7 +112,7 @@ var SessionStore = Class.adapt(connect.session.Store, {
             data = {};
         }
         //TEST
-        console.log("SessionStore.set - sid:" + sid + " data:" + data.toString());
+        console.log("SessionStore.set - sid:" + sid + " data:" + data);
 
         var cookie = data.cookie;
         var expires = new Date(Date.now() + (60 * 60 * 24));

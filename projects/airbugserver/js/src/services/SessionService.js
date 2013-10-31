@@ -98,9 +98,14 @@ var SessionService = Class.extend(Obj, {
         //NOTE BRN: Load the correct version of the session
 
         this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, session) {
+            console.log("Inside SessionService#buildRequestContext sessionManager.retrieveSessionBySid callback");
+            console.log("throwable:", throwable);
+            console.log("session.getData():", session.getData());
             if (!throwable) {
                 requestContext.set("session", session);
             }
+            console.log("After requestContext.set session");
+            console.log("requestContext.get session.getData():", requestContext.get("session").getData());
             callback(throwable);
         });
     },
@@ -139,6 +144,25 @@ var SessionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
+
+    checkRequestForSession: function(req, res, next){
+        console.log("Inside SessionService#checkRequestForSession");
+        var _this   = this;
+        var session = undefined;
+        this.sessionManager.retrieveSessionBySid(req.sessionID, function(throwable, retrievedSession) {
+            if (!throwable) {
+                if(!retrievedSession){
+                    req.session.regenerate(function(error){
+                        next(error);
+                    });
+                } else {
+                    next();
+                }
+            } else {
+                next(throwable);
+            }
+        });
+    },
 
     /**
      * @param {Session} session
