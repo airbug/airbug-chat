@@ -230,7 +230,7 @@ var UserService = Class.extend(Obj, {
         var session         = requestContext.get("session");
         var user            = undefined;
 
-        console.log("UserService#loginUser - currentUser:", currentUser);
+        console.log("UserService#loginUser ");
         $series([
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {

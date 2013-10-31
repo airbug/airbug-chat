@@ -351,8 +351,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         //TODO BRN: This setup should be replaced by an annotation
         this._handshaker.addHands([
-            this._sessionService,
-            this._userService
+            this._sessionService
         ]);
 
         this._socketIoServerConfig.setResource("/api/socket");

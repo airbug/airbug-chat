@@ -128,6 +128,7 @@ var SessionService = Class.extend(Obj, {
         if (handshakeData.headers.cookie) {
             handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
             handshakeData.sessionId = this.cookieSigner.unsign(handshakeData.cookie['airbug.sid']);
+            callback(undefined, true);
         } else {
             console.log("Finish SessionService shake first else");
             callback(new Error('No cookie transmitted.'), false);
