@@ -200,14 +200,14 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveSessionsByUserId: function(userId, callback) {
         var _this = this;
-        this.dataStore.find(userId: userId).lean(true).exec(function(throwable, results) {
+        this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, results) {
             if (!throwable) {
                 var newSet = new Set();
                 results.forEach(function(result) {
                     var newSession = _this.generateSession(result);
                     newSession.commitDelta();
                     newSet.add(newSession);
-                }
+                });
                 callback(undefined, newSet);
             } else {
                 callback(throwable, undefined)
