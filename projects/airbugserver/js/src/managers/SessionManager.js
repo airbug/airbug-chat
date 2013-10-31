@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Map')
+//@Require('Set')
 //@Require('airbugserver.Session')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -29,6 +30,7 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Map                         = bugpack.require('Map');
+var Set                         = bugpack.require('Set');
 var Session                     = bugpack.require('airbugserver.Session');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -175,7 +177,7 @@ var SessionManager = Class.extend(EntityManager, {
     /**
      * @param {string} sid
      * @param {function(Throwable, Session)}
-        */
+     */
     retrieveSessionBySid: function(sid, callback) {
         var _this = this;
         this.dataStore.findOne({sid: sid}).lean(true).exec(function(throwable, dbJson) {
@@ -188,6 +190,27 @@ var SessionManager = Class.extend(EntityManager, {
                 callback(undefined, entityObject);
             } else {
                 callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {string} userId
+     * @param {function(Throwable, Set.<Session>)}
+     */
+    retrieveSessionsByUserId: function(userId, callback) {
+        var _this = this;
+        this.dataStore.find(userId: userId).lean(true).exec(function(throwable, results) {
+            if (!throwable) {
+                var newSet = new Set();
+                results.forEach(function(result) {
+                    var newSession = _this.generateSession(result);
+                    newSession.commitDelta();
+                    newSet.add(newSession);
+                }
+                callback(undefined, newSet);
+            } else {
+                callback(throwable, undefined)
             }
         });
     },
