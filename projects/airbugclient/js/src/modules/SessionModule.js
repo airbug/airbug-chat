@@ -39,9 +39,14 @@ var SessionModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldStore) {
+    /**
+     * @param {AirbugApi} airbugApi
+     * @param {MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
+     */
+    _constructor: function(airbugApi, meldStore, meldBuilder) {
 
-        this._super(airbugApi, meldStore);
+        this._super(airbugApi, meldStore, meldBuilder);
 
 
         //-------------------------------------------------------------------------------

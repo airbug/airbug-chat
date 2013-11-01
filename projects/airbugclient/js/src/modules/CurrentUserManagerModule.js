@@ -47,9 +47,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldStore, userManagerModule, bugCallRouter) {
+    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter) {
 
-        this._super(airbugApi, meldStore);
+        this._super(airbugApi, meldStore, meldBuilder);
 
 
         //-------------------------------------------------------------------------------
@@ -252,13 +252,11 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(errorThrown);
                     }
                 });
-            })
-            // ,
-            // $task(function(flow){
-            //     _this.airbugApi.refreshConnection();
-            //     flow.complete();
-            // })
-            ,
+            }),
+            $task(function(flow){
+                _this.airbugApi.refreshConnection();
+                flow.complete();
+            }),
             $task(function(flow){
                 console.log("CurrentUserManagerModule#loginUser retrieving current user");
                 _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){

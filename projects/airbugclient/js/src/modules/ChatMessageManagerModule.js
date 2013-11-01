@@ -41,12 +41,13 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {AirbugApi} airbugApi
      * @param {MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @param {CurrentUserManagerModule} currentUserManagerModule
      * @param {ConversationManagerModule} conversationManagerModule
      */
-    _constructor: function(airbugApi, meldStore, currentUserManagerModule, conversationManagerModule) {
+    _constructor: function(airbugApi, meldStore, meldBuilder, currentUserManagerModule, conversationManagerModule) {
 
-        this._super(airbugApi, meldStore);
+        this._super(airbugApi, meldStore, meldBuilder);
 
 
         //-------------------------------------------------------------------------------

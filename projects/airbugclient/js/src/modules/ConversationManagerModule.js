@@ -32,25 +32,6 @@ var ManagerModule   = bugpack.require('airbug.ManagerModule');
 var ConversationManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {AirbugApi} airbugApi
-     * @param {MeldStore} meldStore
-     */
-    _constructor: function(airbugApi, meldStore) {
-
-        this._super(airbugApi, meldStore);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-    },
-
-    //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 

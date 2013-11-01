@@ -59,26 +59,23 @@ var AirbugApi = Class.extend(Obj, {
     /**
      *
      */
-    connect: function(){
+    connect: function() {
         console.log("Inside AirbugApi#connect");
-        console.log("creating/opening connection");
-        this.bugCallClient.createConnection("");
-        // console.log("opening connection");
-        // this.bugCallClient.openConnection();
+        console.log("opening connection");
+        this.bugCallClient.openConnection();
     },
 
     /**
      *
      */
-    disconnect: function(){
+    disconnect: function() {
         this.bugCallClient.closeConnection();
-        this.bugCallClient.destroyConnection();
     },
 
     /**
      * @return {boolean}
      */
-    isConnected: function(){
+    isConnected: function() {
         return this.bugCallClient.isConnected();
     },
 
@@ -104,11 +101,11 @@ var AirbugApi = Class.extend(Obj, {
      * @param {function(error, CallResponse)} callback
      */
     request: function(type, dataType, requestData, callback){
-        this.bugCallClient.request(type + dataType, requestData, function(exception, callResponse) {
-            if (!exception) {
-                callback(error, callResponse);
+        this.bugCallClient.request(type + dataType, requestData, function(throwable, callResponse) {
+            if (!throwable) {
+                callback(undefined, callResponse);
             } else {
-                callback(exception, null);
+                callback(throwable);
             }
         });
     }

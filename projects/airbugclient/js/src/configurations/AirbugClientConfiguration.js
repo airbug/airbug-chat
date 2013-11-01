@@ -303,12 +303,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {airbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @param {airbug.CurrentUserManagerModule} currentUserManagerModule
      * @param {airbug.ConversationManagerModule} conversationManagerModule
      * @return {airbug.chatMessageManagerModule}
      */
-    chatMessageManagerModule: function(airbugApi, meldStore, currentUserManagerModule, conversationManagerModule) {
-        return new ChatMessageManagerModule(airbugApi, meldStore, currentUserManagerModule, conversationManagerModule);
+    chatMessageManagerModule: function(airbugApi, meldStore, meldBuilder, currentUserManagerModule, conversationManagerModule) {
+        return new ChatMessageManagerModule(airbugApi, meldStore, meldBuilder, currentUserManagerModule, conversationManagerModule);
     },
 
     /**
@@ -330,21 +331,23 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {airbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @return {airbug.ConversationManagerModule}
      */
-    conversationManagerModule: function(airbugApi, meldStore) {
-        return new ConversationManagerModule(airbugApi, meldStore);
+    conversationManagerModule: function(airbugApi, meldStore, meldBuilder) {
+        return new ConversationManagerModule(airbugApi, meldStore, meldBuilder);
     },
 
     /**
      * @param {airbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @param {airbug.UserManagerModule} userManagerModule
      * @param {BugCallRouter} bugCallRouter
      * @return {airbug.CurrentUserManagerModule}
      */
-    currentUserManagerModule: function(airbugApi, meldStore, userManagerModule, bugCallRouter) {
-        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, userManagerModule, bugCallRouter);
+    currentUserManagerModule: function(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter) {
+        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter);
         return this._currentUserManagerModule;
     },
 
@@ -365,19 +368,21 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {meldbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @return {airbug.RoomManagerModule}
      */
-    roomManagerModule: function(airbugApi, meldStore) {
-        return new RoomManagerModule(airbugApi, meldStore);
+    roomManagerModule: function(airbugApi, meldStore, meldBuilder) {
+        return new RoomManagerModule(airbugApi, meldStore, meldBuilder);
     },
 
     /**
      * @param {airbug.AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @return {airbug.SessionModule}
      */
-    sessionModule: function(airbugApi, meldStore) {
-        return new SessionModule(airbugApi, meldStore);
+    sessionModule: function(airbugApi, meldStore, meldBuilder) {
+        return new SessionModule(airbugApi, meldStore, meldBuilder);
     },
 
     /**
@@ -421,10 +426,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {AirbugApi} airbugApi
      * @param {meldbug.MeldStore} meldStore
+     * @param {MeldBuilder} meldBuilder
      * @return {UserManagerModule}
      */
-    userManagerModule: function(airbugApi, meldStore) {
-        return new UserManagerModule(airbugApi, meldStore);
+    userManagerModule: function(airbugApi, meldStore, meldBuilder) {
+        return new UserManagerModule(airbugApi, meldStore, meldBuilder);
     }
 });
 
@@ -470,6 +476,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),
+                arg().ref("meldBuilder"),
                 arg().ref("currentUserManagerModule"),
                 arg().ref("conversationManagerModule")
             ]),
@@ -481,12 +488,14 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("conversationManagerModule")
             .args([
                 arg().ref("airbugApi"),
-                arg().ref("meldStore")
+                arg().ref("meldStore"),
+                arg().ref("meldBuilder")
             ]),
         module("currentUserManagerModule")
             .args([
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),
+                arg().ref("meldBuilder"),
                 arg().ref("userManagerModule"),
                 arg().ref("bugCallRouter")
             ]),
@@ -501,12 +510,14 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("roomManagerModule")
             .args([
                 arg().ref("airbugApi"),
-                arg().ref("meldStore")
+                arg().ref("meldStore"),
+                arg().ref("meldBuilder")
             ]),
         module("sessionModule")
             .args([
                 arg().ref("airbugApi"),
-                arg().ref("meldStore")
+                arg().ref("meldStore"),
+                arg().ref("meldBuilder")
             ]),
         module("socketIoClient")
             .args([
@@ -523,7 +534,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("userManagerModule")
             .args([
                 arg().ref("airbugApi"),
-                arg().ref("meldStore")
+                arg().ref("meldStore"),
+                arg().ref("meldBuilder")
             ])
     ])
 );

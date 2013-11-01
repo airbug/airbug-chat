@@ -99,7 +99,6 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     buildRequestContext: function(requestContext, callback) {
-        console.log("UserService#buildRequestContext");
         var userId = requestContext.get("session").getUserId();
         var _this = this;
         var user = undefined;
@@ -123,7 +122,6 @@ var UserService = Class.extend(Obj, {
             }
             callback(throwable);
         });
-
     },
 
 
@@ -142,6 +140,10 @@ var UserService = Class.extend(Obj, {
         var handshake   = request.getHandshake();
         var sessionId   = handshake.sessionId;
         var session     = undefined;
+
+        //TEST
+        console.log("UserService preProcessRequest - sessionId:", sessionId);
+
         $series([
             $task(function(flow) {
                 _this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, retrievedSession) {
