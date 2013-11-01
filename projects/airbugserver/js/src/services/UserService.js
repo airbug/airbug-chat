@@ -251,9 +251,10 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
                     console.log("dbRetrieveUserByEmail throwable:", throwable);
-                    console.log("dbRetrieveUserByEmail returnedUserId:", returnedUser.getId());
                     if (!throwable) {
                         if (returnedUser) {
+                            console.log("dbRetrieveUserByEmail returnedUserId:", returnedUser.getId());
+
                             user = returnedUser;
                             flow.complete(throwable);
                         } else {
@@ -444,6 +445,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, *)} callback
      */
     retrieveUser: function(requestContext, userId, callback){
+        console.log("UserService#retrieveUser");
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
@@ -452,11 +454,14 @@ var UserService = Class.extend(Obj, {
 
         $series([
             $task(function(flow){
+                console.log("before dbRetrieveUser");
                 _this.dbRetrieveUser(userId, function(throwable, returnedUser){
                     user = returnedUser;
+                    flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
+                console.log("Before meld");
                 _this.meldService.meldEntity(meldManager, "User", "basic", user);
                 _this.meldUserWithCurrentUser(meldManager, user, currentUser);
                 meldManager.commitTransaction(function(throwable) {
@@ -464,6 +469,7 @@ var UserService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable) {
+            console.log("UserService#retrieveUser execute callback");
             if (!throwable) {
                 callback(undefined, user);
             } else {

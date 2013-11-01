@@ -67,13 +67,11 @@ var EntityController = Class.extend(Obj, {
      * @param {Throwable} throwable
      * @param {Entity} entity
      */
-    processCreateResponse: function(responder, throwable, entity) {
+    processCreateResponse: function(responder, throwable, entity, callback) {
         if (!throwable) {
-            this.sendSuccessResponse(responder, {
-                objectId: entity.getId()
-            });
+            this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
         } else {
-            this.processThrowable(responder, throwable);
+            this.processThrowable(responder, throwable, callback);
         }
     },
 
@@ -82,19 +80,19 @@ var EntityController = Class.extend(Obj, {
      * @param {Throwable} throwable
      * @param {Map.<string, *>} map
      */
-    processMappedResponse: function(responder, throwable, map) {
+    processMappedResponse: function(responder, throwable, map, callback) {
         if (throwable) {
             if (Class.doesExtend(throwable, MappedThrowable)) {
                 if (map) {
-                    this.sendMappedSuccessWithExceptionResponse(responder, throwable, map);
+                    this.sendMappedSuccessWithExceptionResponse(responder, throwable, map, callback);
                 } else {
-                    this.sendMappedException(responder, throwable);
+                    this.sendMappedException(responder, throwable, callback);
                 }
             } else {
-                this.processThrowable(responder, throwable);
+                this.processThrowable(responder, throwable, callback);
             }
         } else {
-            this.sendMappedSuccessResponse(responder, map);
+            this.sendMappedSuccessResponse(responder, map, callback);
         }
     },
 
@@ -103,7 +101,7 @@ var EntityController = Class.extend(Obj, {
      * @param {Throwable} throwable
      * @param {Map.<string, Entity>} entityMap
      */
-    processRetrieveEachResponse: function(responder, throwable, entityIds, entityMap) {
+    processRetrieveEachResponse: function(responder, throwable, entityIds, entityMap, callback) {
         var dataMap             = new Map();
         entityIds.forEach(function(entityId) {
             var entity = entityMap.get(entityId);
@@ -113,18 +111,19 @@ var EntityController = Class.extend(Obj, {
                 dataMap.put(entityId, false);
             }
         });
-        this.processMappedResponse(responder, throwable, dataMap);
+        this.processMappedResponse(responder, throwable, dataMap, callback);
     },
 
     /**
      * @param {CallResponder} responder
      * @param {Throwable} throwable
      */
-    processRetrieveResponse: function(responder, throwable) {
+    processRetrieveResponse: function(responder, throwable, callback) {
+        console.log("EntityController#processRetrieveResponse");
         if (!throwable) {
-            this.sendSuccessResponse(responder, {});
+            this.sendSuccessResponse(responder, {}, callback);
         } else {
-            this.processThrowable(responder, throwable);
+            this.processThrowable(responder, throwable, callback);
         }
     },
 
@@ -132,11 +131,12 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Throwable} throwable
      */
-    processThrowable: function(responder, throwable) {
+    processThrowable: function(responder, throwable, callback) {
+        console.log("EntityController#processThrowable");
         if (Class.doesExtend(throwable, Exception)) {
-            this.sendExceptionResponse(responder, throwable);
+            this.sendExceptionResponse(responder, throwable, callback);
         } else {
-            this.sendErrorResponse(responder, throwable);
+            this.sendErrorResponse(responder, throwable, callback);
         }
     },
 
@@ -144,7 +144,7 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Error} error
      */
-    sendErrorResponse: function(responder, error) {
+    sendErrorResponse: function(responder, error, callback) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Error. Instead, we should simply
         // send an error response that the client should have a generic reaction to
@@ -153,13 +153,14 @@ var EntityController = Class.extend(Obj, {
             error: error
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
      * @param {CallResponder} responder
      * @param {Exception} exception
      */
-    sendExceptionResponse: function(responder, exception) {
+    sendExceptionResponse: function(responder, exception, callback) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
 
@@ -167,13 +168,14 @@ var EntityController = Class.extend(Obj, {
             exception: exception.toObject()
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
      * @param {CallResponder} responder
      * @param {MappedThrowable} mappedThrowable
      */
-    sendMappedException: function(responder, mappedThrowable) {
+    sendMappedException: function(responder, mappedThrowable, callback) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
 
@@ -181,17 +183,19 @@ var EntityController = Class.extend(Obj, {
             mappedException: mappedThrowable.toObject()
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
      * @param {CallResponder} responder
      * @param {Map.<string, *>} map
      */
-    sendMappedSuccessResponse: function(responder, map) {
+    sendMappedSuccessResponse: function(responder, map, callback) {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS, {
             map: map.toObject()
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
@@ -199,23 +203,26 @@ var EntityController = Class.extend(Obj, {
      * @param {MappedThrowable} mappedThrowable
      * @param {Map.<string, *>} map
      */
-    sendMappedSuccessWithExceptionResponse: function(responder, mappedThrowable, map) {
+    sendMappedSuccessWithExceptionResponse: function(responder, mappedThrowable, map, callback) {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION, {
             mappedException: mappedThrowable.toObject(),
             map: map.toObject()
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
      * @param {CallResponder} responder
      * @param {Object} data
      */
-    sendSuccessResponse: function(responder, data) {
+    sendSuccessResponse: function(responder, data, callback) {
+        console.log("EntityController#sendSuccessResponse");
         var response = responder.response(EntityDefines.Responses.SUCCESS, {
             data: data
         });
         responder.sendResponse(response);
+        callback();
     },
 
     /**
@@ -223,12 +230,13 @@ var EntityController = Class.extend(Obj, {
      * @param {Exception} exception
      * @param {Object} data
      */
-    sendSuccessWithExceptionResponse: function(responder, exception, data) {
+    sendSuccessWithExceptionResponse: function(responder, exception, data, callback) {
         var response = responder.response(EntityDefines.Responses.SUCCESS_WITH_EXCEPTION, {
             exception: exception,
             data: data
         });
         responder.sendResponse(response);
+        callback();
     }
 });
 

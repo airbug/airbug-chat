@@ -166,10 +166,10 @@ var UserController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            retrieveCurrentUser: function(request, responder) {
+            retrieveCurrentUser: function(request, responder, callback) {
                 var requestContext = request.requestContext;
                 _this.userService.retrieveCurrentUser(requestContext, function(throwable, user) {
-                    _this.processRetrieveResponse(responder, throwable)
+                    _this.processRetrieveResponse(responder, throwable, callback);
                 });
             },
 
@@ -177,13 +177,14 @@ var UserController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            retrieveUser: function(request, responder) {
+            retrieveUser: function(request, responder, callback) {
+                console.log("UserController#retrieveUser");
                 var data                = request.getData();
                 var userId              = data.userId;
                 var requestContext      = request.requestContext;
-
+                console.log("requestContext:", requestContext);
                 _this.userService.retrieveUser(requestContext, userId, function(error, throwable) {
-                    _this.processRetrieveResponse(responder, throwable);
+                    _this.processRetrieveResponse(responder, throwable, callback);
                 });
             },
 
@@ -191,13 +192,13 @@ var UserController = Class.extend(EntityController, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            retrieveUsers: function(request, responder) {
+            retrieveUsers: function(request, responder, callback) {
                 var data                = request.getData();
                 var userIds             = data.objectIds;
                 var requestContext      = request.requestContext;
 
                 _this.userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
-                    _this.processRetrieveEachResponse(responder, throwable, userIds, userMap);
+                    _this.processRetrieveEachResponse(responder, throwable, userIds, userMap, callback);
                 });
             }
         });
