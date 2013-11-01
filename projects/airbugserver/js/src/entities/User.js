@@ -225,6 +225,13 @@ var User = Class.extend(Entity, {
     },
 
     /**
+     * @param {Set.<Session>} sessionSet
+     */
+    setSessionSet: function(sessionSet) {
+        this.sessionSet = sessionSet;
+    },
+
+    /**
      * @return {boolean}
      */
     isAnonymous: function() {

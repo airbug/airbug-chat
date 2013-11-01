@@ -87,13 +87,11 @@ var RoomMemberManager = Class.extend(EntityManager, {
         var options = {
             room: {
                 idGetter:   roomMember.getRoomId,
-                idSetter:   roomMember.setRoomId,
                 getter:     roomMember.getRoom,
                 setter:     roomMember.setRoom
             },
             user: {
                 idGetter:   roomMember.getUserId,
-                idSetter:   roomMember.setUserId,
                 getter:     roomMember.getUser,
                 setter:     roomMember.setUser
             }

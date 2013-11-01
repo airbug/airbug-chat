@@ -125,9 +125,12 @@ var UserManager = Class.extend(EntityManager, {
         var options = {
             roomSet: {
                 idGetter:   user.getRoomIdSet,
-                idSetter:   user.setRoomIdSet,
-                getter:     user.getRoomSet,
-                setter:     user.setRoomSet
+                getter:     user.getRoomSet
+            },
+            sessionSet: {
+                idGetter: user.getId,
+                retriever: "retrieveSessionsByUserId",
+                setter: user.setSessionSet
             }
         };
         console.log("UserManager#populateUser");

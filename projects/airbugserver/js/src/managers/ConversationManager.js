@@ -96,13 +96,11 @@ var ConversationManager = Class.extend(EntityManager, {
         var options = {
             chatMessageSet: {
                 idGetter:   conversation.getChatMessageIdSet,
-                idSetter:   conversation.setChatMessageIdSet,
                 getter:     conversation.getChatMessageSet,
                 setter:     conversation.setChatMessageSet
             },
             owner: {
                 idGetter:   conversation.getOwnerId,
-                idSetter:   conversation.setOwnerId,
                 getter:     conversation.getOwner,
                 setter:     conversation.setOwner
             }

@@ -99,13 +99,11 @@ var ChatMessageManager = Class.extend(EntityManager, {
         var options = {
             conversation: {
                 idGetter:   chatMessage.getConversationId,
-                idSetter:   chatMessage.setConversationId,
                 getter:     chatMessage.getConversation,
                 setter:     chatMessage.setConversation
             },
             senderUser: {
                 idGetter:   chatMessage.getSenderUserId,
-                idSetter:   chatMessage.setSenderUserId,
                 getter:     chatMessage.getSenderUser,
                 setter:     chatMessage.setSenderUser
             }
