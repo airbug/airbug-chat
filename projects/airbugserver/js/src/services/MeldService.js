@@ -212,16 +212,18 @@ var MeldService = Class.extend(Obj, {
      */
     unmeldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         console.log("Inside MeldService#unmeldUserWithKeysAndReason");
-        var callManagerSet = this.callService.findCallManagerSetByUserId(user.getId());
-        if (callManagerSet) {
-            callManagerSet.forEach(function(callManager) {
-                console.log("Inside callManagerSet.forEach loop");
-                meldKeys.forEach(function(meldKey) {
-                    console.log("Inside meldKeys.forEach loop");
-                    meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+        user.getSessionSet().forEach(function(session) {
+            var callManagerSet = this.callService.findCallManagerSetBySessionId(session.getId());
+            if (callManagerSet) {
+                callManagerSet.forEach(function(callManager) {
+                    console.log("Inside callManagerSet.forEach loop");
+                    meldKeys.forEach(function(meldKey) {
+                        console.log("Inside meldKeys.forEach loop");
+                        meldManager.unmeldCallManagerWithKeyAndReason(callManager, meldKey, reason);
+                    });
                 });
-            });
-        }
+            }
+        });
         console.log("End of MeldService#unmeldUserWithKeysAndReason");
     }
 });
