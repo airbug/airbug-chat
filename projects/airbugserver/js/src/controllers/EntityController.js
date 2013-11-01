@@ -117,11 +117,13 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Throwable} throwable
+     * @param {Entity} entity
+     * @param {function(Throwable)} callback
      */
-    processRetrieveResponse: function(responder, throwable, callback) {
+    processRetrieveResponse: function(responder, throwable, entity, callback) {
         console.log("EntityController#processRetrieveResponse");
         if (!throwable) {
-            this.sendSuccessResponse(responder, {}, callback);
+            this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
         } else {
             this.processThrowable(responder, throwable, callback);
         }

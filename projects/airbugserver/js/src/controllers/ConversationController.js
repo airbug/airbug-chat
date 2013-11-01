@@ -73,14 +73,15 @@ var ConversationController = Class.extend(Obj, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable)} callback
              */
-            retrieveConversation: function(request, responder) {
+            retrieveConversation: function(request, responder, callback) {
                 var data                = request.getData();
                 var conversationId      = data.objectId;
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var requestContext      = request.requestContext;
 
                 _this.conversationService.retrieveConversation(requestContext, conversationId, function(throwable, conversation) {
-                    _this.processRetrieveResponse(responder, throwable);
+                    _this.processRetrieveResponse(responder, throwable, conversation, callback);
                 });
             }
         });

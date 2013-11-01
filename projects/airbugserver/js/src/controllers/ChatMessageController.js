@@ -73,28 +73,30 @@ var ChatMessageController = Class.extend(Obj, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable)} callback
              */
-            createChatMessage: function(request, responder){
+            createChatMessage: function(request, responder, callback) {
                 var data                = request.getData();
                 var chatMessageData     = data.object;
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var requestContext      = request.requestContext;
 
                 _this.chatMessageService.createChatMessage(requestContext, chatMessageData, function(throwable, chatMessage) {
-                    _this.processCreateResponse(responder, throwable, chatMessage);
+                    _this.processCreateResponse(responder, throwable, chatMessage, callback);
                 });
             },
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable)} callback
              */
-            retrieveChatMessagesByConversationId: function(request, responder) {
+            retrieveChatMessagesByConversationId: function(request, responder, callback) {
                 var data                = request.getData();
                 var conversationId      = data.conversationId;
-                var requestContext      = _this.requestContextFactory.factoryRequestContext(request);
+                var requestContext      = request.requestContext;
 
                 _this.chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
-                    _this.processRetrieveEachResponse(responder, throwable, chatMessageMap.getKeyArray(), chatMessageMap);
+                    _this.processRetrieveEachResponse(responder, throwable, chatMessageMap.getKeyArray(), chatMessageMap, callback);
                 });
             }
         });
