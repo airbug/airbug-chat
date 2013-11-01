@@ -211,9 +211,10 @@ var MeldService = Class.extend(Obj, {
      * @param {string} reason
      */
     unmeldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
+        var _this = this;
         console.log("Inside MeldService#unmeldUserWithKeysAndReason");
         user.getSessionSet().forEach(function(session) {
-            var callManagerSet = this.callService.findCallManagerSetBySessionId(session.getId());
+            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getId());
             if (callManagerSet) {
                 callManagerSet.forEach(function(callManager) {
                     console.log("Inside callManagerSet.forEach loop");
