@@ -198,6 +198,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable, meldbug.MeldDocument, boolean)} callback
      */
     retrieveCurrentUser: function(callback) {
+        console.log("CurrentUserManagerModule#retrieveCurrentUser");
         // TODO refactor this so that currentUserManagerModule checks for socket RequestFailedException
         // if (this.currentUserId) {
             this.retrieveCurrentUserDefault(callback);
@@ -211,16 +212,27 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      */
     retrieveCurrentUserDefault: function(callback) {
         //NOTE: can the cached currentUserId be incorrect??
+        console.log("CurrentUserManagerModule#retrieveCurrentUserDefault");
         var _this       = this;
         var currentUser = this.getCurrentUser();
+        console.log("currentUser:", currentUser);
         if (currentUser) {
             callback(null, currentUser, this.userIsLoggedIn(currentUser));
         } else {
-            this.request("retrieve", "CurrentUser", {}, function(throwable, data) {
+            this.request("retrieve", "CurrentUser", {}, function(throwable, callResponse) {
+                console.log("CurrentUserManagerModule#retrieveCurrentUserDefault request retrieve CurrentUser callback");
+                console.log("throwable:", throwable);
+                console.log("callResponse:", callResponse);
+                var data = callResponse.getData();
+                console.log("data:", data);
                 if (!throwable) {
                     var currentUserId   = data.objectId;
+                    console.log("currentUserId:", currentUserId);
                     _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
-                        callback(throwable, currentUserMeldDocument, _this.userIsLoggedIn(currentUserMeldDocument.generateObject()));
+                        //TODO SUNG
+                        //HANDLE Throwables
+                        if(currentUserMeldDocument) currentUserMeldDocument = _this.userIsLoggedIn(currentUserMeldDocument.generateObject();
+                        callback(throwable, currentUserMeldDocument, currentUserMeldDocument));
                     });
                 } else {
                     callback(throwable);

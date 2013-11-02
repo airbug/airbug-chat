@@ -241,7 +241,7 @@ var UserService = Class.extend(Obj, {
         console.log("Inside UserService#login");
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
-        var currentUserId   = requestContext.get("session").getData().userId; //BUG undefined
+        var currentUserId   = requestContext.get("session").getData().userId;
         var meldManager     = this.meldService.factoryManager();
         var session         = requestContext.get("session");
         var user            = undefined;
@@ -411,6 +411,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     retrieveCurrentUser: function(requestContext, callback) {
+        console.log("UserService#retrieveCurrentUser");
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
@@ -446,6 +447,7 @@ var UserService = Class.extend(Obj, {
      */
     retrieveUser: function(requestContext, userId, callback){
         console.log("UserService#retrieveUser");
+        console.log("userId:", userId);
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
@@ -457,16 +459,25 @@ var UserService = Class.extend(Obj, {
                 console.log("before dbRetrieveUser");
                 _this.dbRetrieveUser(userId, function(throwable, returnedUser){
                     user = returnedUser;
+                    console.log("returnedUser", returnedUser);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 console.log("Before meld");
-                _this.meldService.meldEntity(meldManager, "User", "basic", user);
-                _this.meldUserWithCurrentUser(meldManager, user, currentUser);
-                meldManager.commitTransaction(function(throwable) {
-                    flow.complete(throwable);
-                });
+                //TODO
+                if(!user) console.log("user is undefined");
+                if(!currentUser) console.log("currentUser is undefined");
+                if(user && currentUser){
+                    _this.meldService.meldEntity(meldManager, "User", "basic", user); //BUG
+                    _this.meldUserWithCurrentUser(meldManager, user, currentUser);
+                    meldManager.commitTransaction(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.complete(new Exception()); //TODO
+                }
+
             })
         ]).execute(function(throwable) {
             console.log("UserService#retrieveUser execute callback");

@@ -95,6 +95,7 @@ var ApplicationController = Class.extend(CarapaceController, {
      * @param {function(error, {*}, boolean)} callback
      */
     preFilterRouting: function(routingRequest, callback){
+        console.log("ApplicationController#preFilterRouting");
         var _this       = this;
         var route       = routingRequest.getRoute().route;
         var args        = routingRequest.getArgs();

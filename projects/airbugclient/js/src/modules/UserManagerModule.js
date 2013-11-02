@@ -40,6 +40,7 @@ var UserManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     retrieveUser: function(userId, callback) {
+        console.log("UserManagerModule#retrieveUser");
         this.retrieve("User", userId, callback);
     },
 

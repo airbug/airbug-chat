@@ -197,6 +197,10 @@ var ManagerModule = Class.extend(Obj, {
      * @param {function(Throwable, Meld)} callback
      */
     retrieve: function(type, id, filter, callback){
+        console.log("ManagerModule#retrieve");
+        console.log("type:", type);
+        console.log("id:", id);
+        console.log("filter", filter);
         var _this       = this;
         if (TypeUtil.isFunction(filter)) {
             callback = filter;
@@ -209,17 +213,21 @@ var ManagerModule = Class.extend(Obj, {
         } else {
             var requestData = {objectId: id};
             _this.request("retrieve", type, requestData, function(throwable, callResponse) {
+                console.log("ManagerModule#retrieve request callback");
                 if (!throwable)  {
+                    var responseType    = callResponse.getType();
                     var data            = callResponse.getData();
-                    if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
+                    console.log("responseType:", responseType);
+                    console.log("data:", data);
+                    if (responseType === EntityDefines.Responses.SUCCESS) {
                         var objectId        = data.objectId;
                         var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
                         meldDocument          = _this.get(returnedMeldKey);
                         callback(undefined, meldDocument);
-                    } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
+                    } else if (responseType === EntityDefines.Responses.EXCEPTION) {
                         //TODO BRN: Handle common exceptions
                         callback(new Exception(data.exception));
-                    } else if (callResponse.getType() === EntityDefines.Responses.ERROR) {
+                    } else if (responseType === EntityDefines.Responses.ERROR) {
                         //TODO BRN: Handle common errors
                         callback(new Error(data.error));
                     } else {

@@ -184,6 +184,7 @@ var UserController = Class.extend(EntityController, {
                 var data                = request.getData();
                 var userId              = data.userId;
                 var requestContext      = request.requestContext;
+                console.log("data");
                 console.log("requestContext:", requestContext);
                 _this.userService.retrieveUser(requestContext, userId, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);

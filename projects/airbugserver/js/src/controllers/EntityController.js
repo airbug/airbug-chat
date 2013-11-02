@@ -220,9 +220,7 @@ var EntityController = Class.extend(Obj, {
      */
     sendSuccessResponse: function(responder, data, callback) {
         console.log("EntityController#sendSuccessResponse");
-        var response = responder.response(EntityDefines.Responses.SUCCESS, {
-            data: data
-        });
+        var response = responder.response(EntityDefines.Responses.SUCCESS, data);
         responder.sendResponse(response);
         callback();
     },
