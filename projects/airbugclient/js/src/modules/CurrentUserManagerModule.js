@@ -232,8 +232,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         //TODO SUNG
                         //HANDLE Throwables
                         var loggedIn = undefined;
-                        if(currentUserMeldDocument) loggedIn = _this.userIsLoggedIn(currentUserMeldDocument.generateObject();
-                        callback(throwable, currentUserMeldDocument, loggedIn));
+                        if (currentUserMeldDocument) {
+                            loggedIn = _this.userIsLoggedIn(currentUserMeldDocument.generateObject());
+                        }
+                        callback(throwable, currentUserMeldDocument, loggedIn);
                     });
                 } else {
                     callback(throwable);
