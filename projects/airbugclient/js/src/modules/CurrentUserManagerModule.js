@@ -231,8 +231,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
                         //TODO SUNG
                         //HANDLE Throwables
-                        if(currentUserMeldDocument) currentUserMeldDocument = _this.userIsLoggedIn(currentUserMeldDocument.generateObject();
-                        callback(throwable, currentUserMeldDocument, currentUserMeldDocument));
+                        var loggedIn = undefined;
+                        if(currentUserMeldDocument) loggedIn = _this.userIsLoggedIn(currentUserMeldDocument.generateObject();
+                        callback(throwable, currentUserMeldDocument, loggedIn));
                     });
                 } else {
                     callback(throwable);
