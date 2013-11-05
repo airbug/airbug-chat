@@ -151,6 +151,12 @@ var EntityController = Class.extend(Obj, {
         //TODO BRN: If we are in production mode, we should not send across a full Error. Instead, we should simply
         // send an error response that the client should have a generic reaction to
 
+        //TEST
+        console.log("Error occurred on request");
+        console.log(error.message);
+        console.log(error.stack);
+
+
         var response = responder.response(EntityDefines.Responses.ERROR, {
             error: error
         });
@@ -165,6 +171,10 @@ var EntityController = Class.extend(Obj, {
     sendExceptionResponse: function(responder, exception, callback) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
+        //TEST
+        console.log("Exception occurred on request");
+        console.log(exception.message);
+        console.log(exception.stack);
 
         var response = responder.response(EntityDefines.Responses.EXCEPTION, {
             exception: exception.toObject()
@@ -180,6 +190,11 @@ var EntityController = Class.extend(Obj, {
     sendMappedException: function(responder, mappedThrowable, callback) {
 
         //TODO BRN: If we are in production mode, we should not send across a full Exception.
+
+        //TEST
+        console.log("MappedException occurred on request");
+        console.log(mappedThrowable.message);
+        console.log(mappedThrowable.stack);
 
         var response = responder.response(EntityDefines.Responses.EXCEPTION, {
             mappedException: mappedThrowable.toObject()

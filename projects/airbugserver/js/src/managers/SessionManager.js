@@ -10,6 +10,8 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Set')
+//@Require('TypeUtil')
+//@Require('airbugserver.Cookie')
 //@Require('airbugserver.Session')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -31,6 +33,8 @@ var bugpack                     = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Map                         = bugpack.require('Map');
 var Set                         = bugpack.require('Set');
+var TypeUtil                    = bugpack.require('TypeUtil');
+var Cookie                      = bugpack.require('airbugserver.Cookie');
 var Session                     = bugpack.require('airbugserver.Session');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -131,7 +135,10 @@ var SessionManager = Class.extend(EntityManager, {
      * @return {Session}
      */
     generateSession: function(data) {
-        return new Session(data);
+        var session     = new Session(data);
+        var cookie      = new Cookie(session.getDeltaDocument().getData().cookie);
+        session.setCookie(cookie);
+        return session;
     },
 
     populateSession: function(session, properties, callback){

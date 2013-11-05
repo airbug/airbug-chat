@@ -92,13 +92,25 @@ var LoginPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        if(this.currentUserManagerModule.userIsLoggedIn()){
-            routingRequest.forward("home");
-        } else {
-            routingRequest.accept();
-        }
+        var _this = this;
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+            if (!throwable) {
+                if (currentUser.isLogggedIn()) {
+                    routingRequest.forward("home");
+                } else {
+                    routingRequest.accept();
+                }
+            } else {
+                throw throwable;
+            }
+        });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(LoginPageController).with(
     controller().route("login")

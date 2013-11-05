@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.SessionServiceConfig')
 //@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugcall.BugCallServer')
 //@Require('bugcall.CallServer')
@@ -21,6 +22,7 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroutes.BugCallRouter')
+//@Require('cookies.CookieParser')
 //@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
@@ -31,7 +33,6 @@
 //@Require('socketio:server.SocketIoServerConfig')
 
 //@Require('airbugserver.RequestContextBuilder')
-//@Require('airbugserver.SessionStore')
 
 //@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.ConversationController')
@@ -67,6 +68,7 @@ var path                    = require('path');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var SessionServiceConfig    = bugpack.require('airbugserver.SessionServiceConfig');
 var BugCallRequestProcessor = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
 var CallServer              = bugpack.require('bugcall.CallServer');
@@ -79,6 +81,7 @@ var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter           = bugpack.require('bugroutes.BugCallRouter');
+var CookieParser            = bugpack.require('cookies.CookieParser');
 var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
@@ -89,7 +92,6 @@ var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
 
 var RequestContextBuilder   = bugpack.require('airbugserver.RequestContextBuilder');
-var SessionStore            = bugpack.require('airbugserver.SessionStore');
 
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
@@ -206,6 +208,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {CookieParser}
+         */
+        this._cookieParser              = null;
+
+        /**
+         * @private
          * @type {CookieSigner}
          */
         this._cookieSigner              = null;
@@ -266,9 +274,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {SessionStore}
+         * @type {SessionServiceConfig}
          */
-        this._sessionStore              = null;
+        this._sessionServiceConfig      = null;
 
         /**
          * @private
@@ -300,9 +308,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         var sessionKey = 'airbug.sid'; //signedcookie name
 
         this._cookieSigner.setSecret(secret);
-
         this._mongoDataStore.connect('mongodb://' + config.mongoDbIp + '/airbug');
-
+        this._sessionServiceConfig.setCookieMaxAge(24 * 60 * 60 * 1000);
+        this._sessionServiceConfig.setCookieSecret(secret);
+        this._sessionServiceConfig.setSessionKey(sessionKey);
 
         this._expressApp.configure(function(){
             _this._expressApp.engine('mustache', mu2express.engine);
@@ -313,22 +322,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
             _this._expressApp.use(express.logger('dev'));
             _this._expressApp.use(express.cookieParser(secret));
-            _this._expressApp.use(express.session({
-                cookie: {
-                    maxAge: 24 * 60 * 60 * 1000
-                },
-                store: _this._sessionStore,
-                secret: secret,
-                key: sessionKey
-            }));
 
-            _this._expressApp.use(function(req, res, next){
-                _this._sessionService.checkRequestForSession(req, res, next);
+            _this._expressApp.use(function(req, res, next) {
+                _this._sessionService.processExpressRequest(req, res, next);
             });
-            _this._expressApp.use(function(req, res, next){
-                _this._userService.checkRequestForUser(req, res, next);
-            });
-            _this._expressApp.use(function(req, res, next){
+            _this._expressApp.use(function(req, res, next) {
                 _this._requestContextBuilder.buildRequestContextForExpress(req, res, next); //should this go first?
             });
 
@@ -341,11 +339,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         this._expressApp.use(express.errorHandler());
 
-        this._expressApp.configure('development', function() {
-
-        });
-
-        this._bugCallServer.registerRequestPreProcessor(this._userService);
         this._bugCallServer.registerRequestPreProcessor(this._requestContextBuilder);
         this._bugCallServer.registerRequestProcessor(this._bugCallRouter);
 
@@ -519,6 +512,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {CookieParser}
+     */
+    cookieParser: function() {
+        return new CookieParser();
+    },
+
+    /**
      * @return {CookieSigner}
      */
     cookieSigner: function() {
@@ -629,22 +629,23 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {SessionServiceConfig} config
+     * @param {CookieParser} cookieParser
      * @param {CookieSigner} cookieSigner
      * @param {SessionManager} sessionManager
      * @return {SessionService}
      */
-    sessionService: function(cookieSigner, sessionManager) {
-        this._sessionService = new SessionService(cookieSigner, sessionManager);
+    sessionService: function(config, cookieParser, cookieSigner, sessionManager) {
+        this._sessionService = new SessionService(config, cookieParser, cookieSigner, sessionManager);
         return this._sessionService;
     },
 
     /**
-     * @param {SessionManager} sessionManager
-     * @return {SessionStore}
+     * @return {SessionServiceConfig}
      */
-    sessionStore: function(sessionManager) {
-        this._sessionStore = new SessionStore(sessionManager);
-        return this._sessionStore;
+    sessionServiceConfig: function() {
+        this._sessionServiceConfig = new SessionServiceConfig({});
+        return this._sessionServiceConfig;
     },
 
     /**
@@ -752,7 +753,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         //-------------------------------------------------------------------------------
 
         module("config"),
-
+        module("sessionServiceConfig"),
 
         //-------------------------------------------------------------------------------
         // Express
@@ -761,17 +762,10 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("expressApp")
             .args([
                 arg().ref("config")
-            ])
-            .properties([
-                property("sessionStore").ref("sessionStore")
             ]),
         module("expressServer")
             .args([
                 arg().ref("expressApp")
-            ]),
-        module("sessionStore")
-            .args([
-                arg().ref("sessionManager")
             ]),
 
 
@@ -779,6 +773,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Util
         //-------------------------------------------------------------------------------
 
+        module("cookieParser"),
         module("cookieSigner"),
         module("handshaker"),
 
@@ -894,6 +889,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("sessionService")
             .args([
+                arg().ref("sessionServiceConfig"),
+                arg().ref("cookieParser"),
                 arg().ref("cookieSigner"),
                 arg().ref("sessionManager")
             ]),

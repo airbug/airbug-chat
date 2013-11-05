@@ -82,15 +82,15 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {CurrentUserManagerModule}
          */
-        this.navigationModule           = null;
+        this.currentUserManagerModule   = null;
 
         /**
          * @private
-         * @type {SessionModule}
+         * @type {NavigationModule}
          */
-        this.sessionModule              = null;
+        this.navigationModule           = null;
 
 
         // Views
@@ -188,16 +188,15 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
      */
     hearLogoutDropdownSelectedEvent: function(event) {
         var _this = this;
-
-        this.sessionModule.logout(function(response) {
-            if (response.error) {
-                // TODO BRN: Show error popup
-                // TODO BRN: What should we do if we are already logged out? How would this happen? If it does,
-                // perhaps we just redirect to the goodbye page. Some how the states have gotten out of sync.
-            } else if (response.success) {
+        this.currentUserManagerModule.logout(function(throwable) {
+            if (!throwable) {
                 _this.navigationModule.navigate("goodbye", {
                     trigger: true
                 });
+            } else {
+                // TODO BRN: Show error popup
+                // TODO BRN: What should we do if we are already logged out? How would this happen? If it does,
+                // perhaps we just redirect to the goodbye page. Some how the states have gotten out of sync.
             }
         });
     },
@@ -220,8 +219,8 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
 
 bugmeta.annotate(AccountButtonDropdownContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule"),
-        property("sessionModule").ref("sessionModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("navigationModule").ref("navigationModule")
     ])
 );
 

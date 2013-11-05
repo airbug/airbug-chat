@@ -77,12 +77,6 @@ var LogoutPageContainer = Class.extend(ApplicationContainer, {
          */
         this.navigationModule       = null;
 
-        /**
-         * @private
-         * @type {SessionModule}
-         */
-        this.sessionModule          = null;
-
 
         // Views
         //-------------------------------------------------------------------------------
@@ -148,7 +142,7 @@ var LogoutPageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
-    },
+    }
 
 
     //-------------------------------------------------------------------------------

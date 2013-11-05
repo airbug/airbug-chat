@@ -30,9 +30,9 @@ var Schema      = mongoose.Schema;
 //-------------------------------------------------------------------------------
 
 var SessionSchema = new Schema({
+    cookie: {type: Mixed, required: true},
     createdAt: Date,
     data: {type: Mixed, required: true},
-    expires: Date,
     sid: {type: String, required: true, index: true, unique: true},
     updatedAt: Date,
     userId: {type: ObjectId, index: true}

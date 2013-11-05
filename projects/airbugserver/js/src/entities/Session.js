@@ -58,12 +58,32 @@ var Session = Class.extend(Entity, {
         //-------------------------------------------------------------------------------
         // Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Cookie}
+         */
+        this.cookie = undefined;
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Cookie}
+     */
+    getCookie: function() {
+        return this.cookie;
+    },
+
+    /**
+     * @param {Cookie} cookie
+     */
+    setCookie: function(cookie) {
+        this.cookie = cookie;
+    },
 
     /**
      * @return {Object}
@@ -83,14 +103,7 @@ var Session = Class.extend(Entity, {
      * @return {Date}
      */
     getExpires: function() {
-        return this.deltaDocument.getData().expires;
-    },
-
-    /**
-     * @param {Date} expires
-     */
-    setExpires: function(expires) {
-        this.deltaDocument.getData().expires = expires;
+        return this.getCookie().getExpires();
     },
 
     /**
@@ -119,6 +132,18 @@ var Session = Class.extend(Entity, {
      */
     setUserId: function(userId) {
         this.deltaDocument.getData().userId = userId;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    resetMaxAge: function() {
+        this.cookie.resetMaxAge();
     }
 });
 

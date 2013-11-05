@@ -108,32 +108,10 @@ var MeldService = Class.extend(Obj, {
             var meldKey = this.generateMeldKey(type, entity.getId(), filter);
             var meldDocument = undefined;
             if (!meldManager.containsMeldByKey(meldKey)) {
-                try{
-                    try{
-                        entity.commitDelta();
-                    } catch(error){
-                        console.log("Error inside entity.commitDelta");
-                    }
-                    try{
-                        meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
-                    } catch(error){
-                        console.log("Error inside meldBuilder.generateMeldDocument");
-                    }
-                    try{
-                        meldManager.meldMeld(meldDocument);
-                    } catch(error){
-                        console.log("Error inside meldManager.meldMeld");
-                    }
-                    try{
-                        meldDocument.meldData(Obj.clone(entity.getDeltaDocument().getData(), true));
-                    } catch(error){
-                        //Error here
-                        console.log("Error inside meldDocument.meldData or entty.getDeltaDocument().getData()")
-                    }
-                } catch(error){
-                    console.log("Error inside first part of if");
-                }
-
+                entity.commitDelta();
+                meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
+                meldManager.meldMeld(meldDocument);
+                meldDocument.meldData(Obj.clone(entity.getDeltaDocument().getData(), true));
             } else {
                 meldDocument = meldManager.getMeld(meldKey);
 

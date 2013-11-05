@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('CurrentUserModel')
+//@Export('FullUserModel')
 
 //@Require('Class')
 //@Require('airbug.MeldModel')
@@ -29,7 +29,7 @@ var MeldModel       = bugpack.require('airbug.MeldModel');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CurrentUserModel = Class.extend(MeldModel, {
+var FullUserModel = Class.extend(MeldModel, {
 
     //-------------------------------------------------------------------------------
     // CarapaceModel Implementation
@@ -51,4 +51,4 @@ var CurrentUserModel = Class.extend(MeldModel, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CurrentUserModel", CurrentUserModel);
+bugpack.export("airbug.FullUserModel", FullUserModel);

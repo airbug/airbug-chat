@@ -81,7 +81,7 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {UserModel}
          */
-        this.currentUserModel = null;
+        this.userModel = null;
 
 
         // Modules
@@ -92,12 +92,6 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
          * @type {NavigationModule}
          */
         this.navigationModule = null;
-
-        /**
-         * @private
-         * @type {SessionModule}
-         */
-        this.sessionModule = null;
 
 
         // Views
@@ -153,7 +147,7 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.currentUserModel = this.sessionModule.getCurrentUserModel();
+        this.currentUserModel = this.sessionModule.getFullUserModel();
 
 
         // Create Views

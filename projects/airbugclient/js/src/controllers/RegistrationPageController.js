@@ -92,11 +92,13 @@ var RegistrationPageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        if (this.currentUserManagerModule.userIsLoggedIn()) {
-            routingRequest.forward("home");
-        } else {
-            routingRequest.accept();
-        }
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+            if (currentUser.isLoggedIn()) {
+                routingRequest.forward("home");
+            } else {
+                routingRequest.accept();
+            }
+        });
     }
 });
 

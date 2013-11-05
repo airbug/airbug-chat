@@ -128,7 +128,7 @@ var RequestContextBuilder = Class.extend(Obj, {
                 req.requestContext = requestContext;
                 next();
             } else {
-                next(throwable);
+                throw throwable;
             }
         });
     },
@@ -140,8 +140,8 @@ var RequestContextBuilder = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {} type
-     * @param {} request
+     * @param {string} type
+     * @param {(express.Request | IncomingRequest)} request
      * @param {function(Throwable, RequestContext)} callback
      */
     buildRequestContext: function(type, request, callback) {

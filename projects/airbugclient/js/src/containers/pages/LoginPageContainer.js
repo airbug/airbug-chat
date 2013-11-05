@@ -77,12 +77,6 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
          */
         this.navigationModule       = null;
 
-        /**
-         * @private
-         * @type {SessionModule}
-         */
-        this.sessionModule          = null;
-
 
         // Views
         //-------------------------------------------------------------------------------
@@ -147,7 +141,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
-    },
+    }
 
 
     //-------------------------------------------------------------------------------

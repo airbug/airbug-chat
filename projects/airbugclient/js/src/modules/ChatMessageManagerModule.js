@@ -82,11 +82,15 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
     createChatMessage: function(chatMessageObject, callback) {
-
-        //TODO BRN: This needs to be redone. We should be calling to the currentUserManagerModule to retrieve the current user
-
-        chatMessageObject.senderUserId    = this.currentUserManagerModule.getCurrentUserId();
-        this.create("ChatMessage", chatMessageObject, callback);
+        var _this = this;
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+            if (!throwable) {
+                chatMessageObject.senderUserId = currentUser.getId();
+                _this.create("ChatMessage", chatMessageObject, callback);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**

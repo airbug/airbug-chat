@@ -42,6 +42,7 @@ buildProperties({
             main: "./lib/AirBugServer.js",
             dependencies: {
                 bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+                "buffer-crc32": "0.2.x",
                 connect: "2.x",
                 cookie: "0.1.x",
                 "cookie-signature": "1.0.x",

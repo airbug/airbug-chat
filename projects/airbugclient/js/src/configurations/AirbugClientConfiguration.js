@@ -17,7 +17,6 @@
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
 //@Require('airbug.RoomManagerModule')
-//@Require('airbug.SessionModule')
 //@Require('airbug.TrackerModule')
 //@Require('airbug.UserManagerModule')
 //@Require('bugcall.BugCallClient')
@@ -63,7 +62,6 @@ var CurrentUserManagerModule    = bugpack.require('airbug.CurrentUserManagerModu
 var NavigationModule            = bugpack.require('airbug.NavigationModule');
 var PageStateModule             = bugpack.require('airbug.PageStateModule');
 var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
-var SessionModule               = bugpack.require('airbug.SessionModule');
 var TrackerModule               = bugpack.require('airbug.TrackerModule');
 var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
@@ -155,6 +153,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
          * @type {SocketIoConfig}
          */
         this._socketIoConfig        = null;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.trackingEnabled        = false;
     },
 
 
@@ -172,6 +176,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         var currentUserManagerModule    = this._currentUserManagerModule;
         var socketIoConfig              = this._socketIoConfig;
         var trackerModule               = this._trackerModule;
+
 
         socketIoConfig.setHost("http://localhost/api/airbug");
         socketIoConfig.setResource("api/socket");
@@ -376,16 +381,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {airbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
-     * @param {MeldBuilder} meldBuilder
-     * @return {airbug.SessionModule}
-     */
-    sessionModule: function(airbugApi, meldStore, meldBuilder) {
-        return new SessionModule(airbugApi, meldStore, meldBuilder);
-    },
-
-    /**
      * @param {ISocketFactory} socketIoFactory
      * @param {socketio:client.SocketIoConfig} socketIoConfig
      * @return {socketio:client.SocketIoClient}
@@ -508,12 +503,6 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
         module("roomManagerModule")
-            .args([
-                arg().ref("airbugApi"),
-                arg().ref("meldStore"),
-                arg().ref("meldBuilder")
-            ]),
-        module("sessionModule")
             .args([
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),

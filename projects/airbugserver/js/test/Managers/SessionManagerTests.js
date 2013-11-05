@@ -66,12 +66,21 @@ var sessionManagerTest = {
         //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
 
         mongoose.connect('mongodb://localhost/airbugtest');
+        this.testExpires            = new Date(Date.now() + 1000);
         this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
         this.schemaManager          = new SchemaManager();
         this.sessionManager         = new SessionManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
         this.sessionManager.setEntityType("Session");
-        this.testSession            = this.sessionManager.generateSession({data: {key: "value"}, sid: UuidGenerator.generateUuid()});
+        this.testSession            = this.sessionManager.generateSession({
+            data: {
+                key: "value"
+            },
+            sid: UuidGenerator.generateUuid(),
+            cookie: {
+                expires: this.testExpires
+            }
+        });
     },
 
 
@@ -99,6 +108,8 @@ var sessionManagerTest = {
                             "Assert created Session has an id");
                         test.assertEqual(_this.testSession.getData().key, "value",
                             "Assert that key is equal to test value");
+                        test.assertEqual(_this.testSession.getCookie().getExpires(), _this.testExpires,
+                            "Assert that expires is equal to testExpires");
                     }
                     flow.complete(throwable);
                 });

@@ -48,19 +48,35 @@ var sessionServiceShakeItTest = {
 
     setup: function(test) {
         var _this = this;
+        this.testSessionKey = "testSessionKey";
         this.testCookie = "testCookie";
+        this.testCookieString = "testCookieString";
+        this.testCookieObject = {};
+        this.testCookieObject[this.testSessionKey] = this.testCookie;
         this.testUnsignedCookie = "testUnsignedCookie";
+        this.dummyConfig = {
+            getSessionKey: function() {
+                return _this.testSessionKey;
+            }
+        };
+        this.dummyCookieParser = {
+            parse: function(cookieString) {
+                test.assertEqual(cookieString, _this.testCookieString,
+                    "Assert cookieString to parse is the testCookieString");
+                return _this.testCookieObject;
+            }
+        };
         this.dummyCookieSigner = {
             unsign: function(cookie) {
-                test.assertEqual(cookie, this.testCookie,
+                test.assertEqual(cookie, _this.testCookie,
                     "Assert we passed in the testCookie");
                 return _this.testUnsignedCookie;
             }
         };
-        this.testSessionService = new SessionService(this.dummyCookieSigner, {});
+        this.testSessionService = new SessionService(this.dummyConfig, this.dummyCookieParser, this.dummyCookieSigner, {});
         this.testHandShakeData = {
             headers: {
-                cookie: this.testCookie
+                cookie: this.testCookieString
             }
         };
     },

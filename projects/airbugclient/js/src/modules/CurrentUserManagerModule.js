@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('TypeUtil')
+//@Require('airbug.CurrentUser')
 //@Require('airbug.ManagerModule')
 //@Require('bugflow.BugFlow')
 
@@ -25,6 +26,7 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var TypeUtil            = bugpack.require('TypeUtil');
+var CurrentUser         = bugpack.require('airbug.CurrentUser');
 var ManagerModule       = bugpack.require('airbug.ManagerModule');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -64,9 +66,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
         /**
          * @private
-         * @type {string}
+         * @type {CurrentUser}
          */
-        this.currentUserId      = null;
+        this.currentUser        = undefined;
 
         /**
          * @private
@@ -121,103 +123,21 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         });
     },
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {meldbug.MeldDocument}
-     */
-    getCurrentUser: function() {
-        if (this.currentUserId) {
-            return this.get(this.currentUserId);
-        } else {
-            return null;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getCurrentUserId: function() { //needs to be changed to meldKey
-        return this.currentUserId;
-    },
-
-    /**
-     * @param {{*}} user
-     * @return {boolean}
-     */
-    userIsAnonymous: function(user) {
-        if (user.email && !user.anonymous) {
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    /**
-     * @param {?{*}=} user
-     * @return {boolean}
-     */
-    userIsLoggedIn: function(user) {
-        var currentUser = undefined;
-        if (!user) {
-            currentUser = this.getCurrentUser();
-        } else {
-            currentUser = user;
-        }
-        if (currentUser) {
-            return this.userIsNotAnonymous(currentUser);
-        } else {
-            return false;
-        }
-    },
-
-    /**
-     * @param {{*}} user
-     * @return {boolean}
-     */
-    userIsNotAnonymous: function(user){
-        return !this.userIsAnonymous(user);
-    },
-
-    /**
-     * @param {?{*}=} userObject
-     * @return {boolean}
-     */
-    userIsNotLoggedIn: function(userObject){
-        return !this.userIsLoggedIn(userObject);
-    },
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable, meldbug.MeldDocument, boolean)} callback
+     * @param {function(Throwable, CurrentUser)} callback
      */
     retrieveCurrentUser: function(callback) {
-        console.log("CurrentUserManagerModule#retrieveCurrentUser");
-        // TODO refactor this so that currentUserManagerModule checks for socket RequestFailedException
-        // if (this.currentUserId) {
-            this.retrieveCurrentUserDefault(callback);
-        // } else {
-        //     this.retrieveCurrentUserWithAjax(callback);
-        // }
-    },
 
-    /**
-     * @param {function(Throwable, meldbug.MeldDocument, boolean)} callback
-     */
-    retrieveCurrentUserDefault: function(callback) {
-        //NOTE: can the cached currentUserId be incorrect??
-        console.log("CurrentUserManagerModule#retrieveCurrentUserDefault");
+        console.log("CurrentUserManagerModule#retrieveCurrentUser");
         var _this       = this;
-        var currentUser = this.getCurrentUser();
-        console.log("currentUser:", currentUser);
-        if (currentUser) {
-            callback(null, currentUser, this.userIsLoggedIn(currentUser));
+        console.log("currentUser:", this.currentUser);
+        if (this.currentUser) {
+            callback(undefined, this.currentUser);
         } else {
             this.request("retrieve", "CurrentUser", {}, function(throwable, callResponse) {
                 console.log("CurrentUserManagerModule#retrieveCurrentUserDefault request retrieve CurrentUser callback");
@@ -228,14 +148,11 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 if (!throwable) {
                     var currentUserId   = data.objectId;
                     console.log("currentUserId:", currentUserId);
-                    _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
-                        //TODO SUNG
-                        //HANDLE Throwables
-                        var loggedIn = undefined;
-                        if (currentUserMeldDocument) {
-                            loggedIn = _this.userIsLoggedIn(currentUserMeldDocument.generateObject());
+                    _this.retrieve("User", currentUserId, "owner", function(throwable, currentUserMeldDocument) {
+                        if (!throwable) {
+                            _this.currentUser = new CurrentUser(currentUserMeldDocument);
+                            callback(undefined, _this.currentUser);
                         }
-                        callback(throwable, currentUserMeldDocument, loggedIn);
                     });
                 } else {
                     callback(throwable);
@@ -246,9 +163,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} email
-     * @param {function(Throwable, {*})} callback
+     * @param {function(Throwable)} callback
      */
-    loginUser: function(email, callback){
+    loginUser: function(email, callback) {
         var _this = this;
         $series([
             $task(function(flow){
@@ -262,32 +179,24 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
                         flow.complete();
                     },
-                    error: function(req, textStatus, errorThrown){
+                    error: function(req, textStatus, errorThrown) {
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.complete(errorThrown);
                     }
                 });
             }),
             $task(function(flow){
+                _this.currentUser = undefined;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             }),
             $task(function(flow){
                 console.log("CurrentUserManagerModule#loginUser retrieving current user");
-                _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
-                    console.log("Inside CurrentUserManagerModule#loginUser retrieveCurrentUser callback");
-                    if(meldDocument){
-                        var user = meldDocument.generateObject();
-                        //TODO Refactor this so that the meldkey is passed through the retrieve callback
-                        var meldKey = _this.meldBuilder.generateMeldKey("User", user.id, "owner");
-                        _this.currentUserId = meldKey;
-                    }
+                _this.retrieveCurrentUser(function(throwable, currentUser) {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable){
-            callback(throwable);
-        });
+        ]).execute(callback);
     },
 
     /**
@@ -352,23 +261,16 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             }),
             $task(function(flow) {
+                _this.currentUser = undefined;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             }),
             $task(function(flow) {
-                _this.retrieveCurrentUser(function(throwable, meldDocument, loggedIn){
-                    if (meldDocument) {
-                        var user = meldDocument.generateObject();
-                        //TODO Refactor this so that the meldkey is passed through the retrieve callback
-                        var meldKey = _this.meldBuilder.generateMeldKey("User", user.id, "owner");
-                        _this.currentUserId = meldKey;
-                    }
+                _this.retrieveCurrentUser(function(throwable, currentUser) {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable){
-            callback(throwable);
-        });
+        ]).execute(callback);
     }
 });
 
