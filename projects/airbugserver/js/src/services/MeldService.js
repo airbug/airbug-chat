@@ -155,7 +155,7 @@ var MeldService = Class.extend(Obj, {
     meldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         var _this = this;
         //TEST
-        console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId());
+        console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId(), " user.getSessionSet().toArray():", user.getSessionSet().toArray);
 
         user.getSessionSet().forEach(function(session) {
             var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getId());
