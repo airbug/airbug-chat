@@ -108,12 +108,12 @@ var CallService = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} sessionId
+     * @param {string} sid
      * @param {CallManager} callManager
      */
-    registerCallManager: function(sessionId, callManager) {
+    registerCallManager: function(sid, callManager) {
         console.log("Inside CallService#registerCallManager");
-        this.sessionIdToCallManagerMap.put(sessionId, callManager);
+        this.sessionIdToCallManagerMap.put(sid, callManager);
         console.log("sessionIdToCallManagerMap count:", this.sessionIdToCallManagerMap.getCount());
     },
 
@@ -138,8 +138,6 @@ var CallService = Class.extend(Obj, {
      * @param {CallEvent} event
      */
     hearCallOpened: function(event) {
-        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox");
-        console.log("Inside CallService#hearCallOpened");
         var data            = event.getData();
         var callManager     = data.callManager;
         var callConnection  = callManager.getConnection();

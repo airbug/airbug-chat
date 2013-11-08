@@ -108,6 +108,10 @@ var MeldService = Class.extend(Obj, {
             var meldKey = this.generateMeldKey(type, entity.getId(), filter);
             var meldDocument = undefined;
             if (!meldManager.containsMeldByKey(meldKey)) {
+
+                //TEST
+                console.log("MeldService#meldEntity - MeldManager did not contain meldKey:", meldKey.toKey());
+
                 entity.commitDelta();
                 meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
                 meldManager.meldMeld(meldDocument);
@@ -154,11 +158,8 @@ var MeldService = Class.extend(Obj, {
      */
     meldUserWithKeysAndReason: function(meldManager, user, meldKeys, reason) {
         var _this = this;
-        //TEST
-        console.log("Inside MeldService#meldUserWithKeysAndReason - user.getId():", user.getId(), " user.getSessionSet().toArray():", user.getSessionSet().toArray);
-
         user.getSessionSet().forEach(function(session) {
-            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getId());
+            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getSid());
             if (callManagerSet) {
                 callManagerSet.forEach(function(callManager) {
                     meldKeys.forEach(function(meldKey) {
@@ -192,7 +193,7 @@ var MeldService = Class.extend(Obj, {
         var _this = this;
         console.log("Inside MeldService#unmeldUserWithKeysAndReason");
         user.getSessionSet().forEach(function(session) {
-            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getId());
+            var callManagerSet = _this.callService.findCallManagerSetBySessionId(session.getSid());
             if (callManagerSet) {
                 callManagerSet.forEach(function(callManager) {
                     console.log("Inside callManagerSet.forEach loop");
