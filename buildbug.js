@@ -95,7 +95,8 @@ buildProperties({
             "../bugjs/projects/bugtrace/js/test",
             "../bugjs/projects/bugroutes/js/test",
             "../bugjs/projects/socketio/bugjars/socket/js/test",
-            "../meldbug/projects/meldbug/js/test"
+            "../meldbug/projects/meldbug/js/test",
+            "../meldbug/projects/meldbugserver/js/test"
         ],
 
         //TODO BRN: These static paths are temporary until we get the client js server working.
