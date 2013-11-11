@@ -22,6 +22,7 @@
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
+//@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.AutowiredScan')
@@ -67,6 +68,7 @@ var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
 var CallManager                 = bugpack.require('bugcall.CallManager');
+var BugCallRequestProcessor     = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
@@ -256,10 +258,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     /**
      * @param {bugcall.CallClient} callClient
      * @param {bugcall.CallManager} callManager
+     * @param {bugcall.BugCallRequestProcessor} requestProcessor
      * @return {bugcall.BugCallClient}
      */
-    bugCallClient: function(callClient, callManager) {
-        this._bugCallClient = new BugCallClient(callClient, callManager);
+    bugCallClient: function(callClient, callManager, requestProcessor) {
+        this._bugCallClient = new BugCallClient(callClient, callManager, requestProcessor);
         return this._bugCallClient;
     },
 
@@ -287,6 +290,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     callManager: function() {
         return new CallManager();
+    },
+
+    /**
+     * @return {bugcall.BugCallRequestProcessor}
+     */
+    requestProcessor: function() {
+        return new BugCallRequestProcessor();
     },
 
     /**
@@ -451,7 +461,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("bugCallClient")
             .args([
                 arg().ref("callClient"),
-                arg().ref("callManager")
+                arg().ref("callManager"),
+                arg().ref("requestProcessor")
             ]),
         module("bugCallRouter")
             .args([
@@ -462,6 +473,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("socketIoClient")
             ]),
         module("callManager"),
+        module("requestProcessor"),
         module("carapaceApplication")
             .args([
                 arg().ref("carapaceRouter")
