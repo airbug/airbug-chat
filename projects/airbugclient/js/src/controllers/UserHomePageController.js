@@ -92,9 +92,15 @@ var UserHomePageController = Class.extend(ApplicationController, {
      * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
-        this.preFilterRouting(routingRequest, function(error, currentUser, loggedIn){
-            if(loggedIn){
+        this.requireLogin(routingRequest, function(throwable, currentUser) {
+            if (!throwable) {
                 routingRequest.accept();
+            } else {
+                //TODO BRN: Figure out how to handle error
+
+                console.log(throwable.message);
+                console.log(throwable.stack);
+                routingRequest.reject();
             }
         });
     }

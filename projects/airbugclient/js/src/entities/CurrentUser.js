@@ -62,6 +62,13 @@ var CurrentUser = Class.extend(Obj, {
     },
 
     /**
+     * @return {Set.<string>}
+     */
+    getRoomIdSet: function() {
+        return this.meldDocument.getData().roomIdSet;
+    },
+
+    /**
      * @return {boolean}
      */
     isLoggedIn: function() {

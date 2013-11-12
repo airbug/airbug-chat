@@ -92,18 +92,18 @@ var ApplicationController = Class.extend(CarapaceController, {
 
     /**
      * @param {carapace.RoutingRequest} routingRequest
-     * @param {function(error, {*}, boolean)} callback
+     * @param {function(Throwable, {*})} callback
      */
-    preFilterRouting: function(routingRequest, callback){
-        console.log("ApplicationController#preFilterRouting");
+    requireLogin: function(routingRequest, callback) {
+        console.log("ApplicationController#requireLogin");
         var _this       = this;
         var route       = routingRequest.getRoute().route;
         var args        = routingRequest.getArgs();
 
-        this.currentUserManagerModule.retrieveCurrentUser(function(error, currentUser, loggedIn){
-            if(!error){
-                if(currentUser && loggedIn){
-                    callback(error, currentUser, loggedIn);
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+            if (!throwable) {
+                if (currentUser.isLoggedIn()) {
+                    callback(undefined, currentUser);
                 } else {
                     _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
                     _this.navigationModule.navigate("login", {
@@ -111,9 +111,7 @@ var ApplicationController = Class.extend(CarapaceController, {
                     });
                 }
             } else {
-                //TODO error handling
-                //TODO error tracking
-                callback(error, currentUser, loggedIn);
+                callback(throwable);
             }
         });
     }

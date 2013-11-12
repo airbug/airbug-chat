@@ -94,7 +94,9 @@ var RegistrationPageController = Class.extend(ApplicationController, {
     filterRouting: function(routingRequest) {
         this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
             if (currentUser.isLoggedIn()) {
-                routingRequest.forward("home");
+                routingRequest.forward("home", {
+                    trigger: true
+                });
             } else {
                 routingRequest.accept();
             }

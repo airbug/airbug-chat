@@ -99,32 +99,35 @@ var RoomPageController = Class.extend(ApplicationController, {
      */
     filterRouting: function(routingRequest) {
         var _this = this;
-        this.preFilterRouting(routingRequest, function(error, currentUser, loggedIn){
-            if(loggedIn){
-                if(!error && currentUser){
-                    var roomIdSet   = currentUser.roomIdSet;
-                    var roomId      = routingRequest.getArgs()[0];
-                    _this.roomManagerModule.updateRoom(roomId, function(error, room){
-                        if(!error && room){
-                            if(roomIdSet.contains(roomId) && _this.roomManagerModule.get(roomId)){
-                                routingRequest.accept();
-                            } else {
-                                _this.roomManagerModule.joinRoom(roomId, function(error, room){
-                                    if(!error && room){
-                                        routingRequest.accept();
-                                    } else {
-                                        routingRequest.reject(); //OR forward to home?
-                                    }
-                                });
-                            }
+        this.requireLogin(routingRequest, function(throwable, currentUser) {
+            if (!throwable) {
+                var roomId      = routingRequest.getArgs()[0];
+                _this.roomManagerModule.retrieveRoom(roomId, function(throwable, room) {
+                    if (!throwable) {
+                        if (roomIdSet.contains(roomId)) {
+                            routingRequest.accept();
                         } else {
-                            //TODO:
-                            routingRequest.reject();
+                            _this.roomManagerModule.joinRoom(roomId, function(throwable) {
+                                if (!throwable) {
+                                    routingRequest.accept();
+                                } else {
+                                    console.log(throwable.message);
+                                    console.log(throwable.stack);
+                                    routingRequest.reject();
+                                }
+                            });
                         }
-                    });
-                } else {
-                    routingRequest.reject(); //OR forward to home?
-                }
+                    } else {
+                        //TODO BRN: Handle
+                        console.log(throwable.message);
+                        console.log(throwable.stack);
+                        routingRequest.reject();
+                    }
+                });
+            } else {
+                console.log(throwable.message);
+                console.log(throwable.stack);
+                routingRequest.reject(); //OR forward to home?
             }
         });
     }
