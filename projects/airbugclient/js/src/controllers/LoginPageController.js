@@ -95,7 +95,7 @@ var LoginPageController = Class.extend(ApplicationController, {
         var _this = this;
         this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
             if (!throwable) {
-                if (currentUser.isLogggedIn()) {
+                if (currentUser.isLoggedIn()) {
                     routingRequest.forward("home", {
                         trigger: true
                     });
