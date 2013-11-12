@@ -182,18 +182,10 @@ var UserController = Class.extend(EntityController, {
             retrieveUser: function(request, responder, callback) {
                 console.log("UserController#retrieveUser");
                 var data                = request.getData();
-                var userId              = undefined;
+                var userId              = data.objectId;
                 var requestContext      = request.requestContext;
-
-                if (data.userId) {
-                    userId = data.userId;
-                    // TODO dkk - we should error out if this happens as we want to uniformly use data.objectId, I think.
-                } else if (data.objectId) {
-                    userId = data.objectId;
-                }
                 console.log("data", data);
                 console.log("userId ", userId);
-                console.log("requestContext:", requestContext);
                 _this.userService.retrieveUser(requestContext, userId, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);
                 });

@@ -229,19 +229,9 @@ var UserService = Class.extend(Obj, {
      */
     logoutUser: function(requestContext, callback) {
         var session = requestContext.get("session");
-        $series([
-            $task(function(flow) {
-                session.destroy(function(throwable) {
-                    if(error){
-                        var error = error.toString();
-                        console.log(error);
-                        res.json({error: error});
-                    } else {
-                        res.json({error: null});
-                    }
-                });
-            })
-        ]).execute(callback);
+        this.sessionService.deleteSession(session, function(throwable) {
+            callback(throwable);
+        });
 
         // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
 

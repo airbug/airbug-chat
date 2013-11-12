@@ -253,6 +253,16 @@ var SessionService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {Session} session
+     * @param {function(Throwable)} callback
+     */
+    deleteSession: function(session, callback) {
+        this.sessionManager.deleteSessionBySid(session.getSid(), function(throwable) {
+             callback(throwable);
+        });
+    },
+
+    /**
      * @param {Object} data
      * @param {function(Throwable, Session)} callback
      */

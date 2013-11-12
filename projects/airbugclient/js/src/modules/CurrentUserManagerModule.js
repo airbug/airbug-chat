@@ -152,6 +152,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         if (!throwable) {
                             _this.currentUser = new CurrentUser(currentUserMeldDocument);
                             callback(undefined, _this.currentUser);
+                        } else {
+                            //TODO
+                            callback(throwable);
                         }
                     });
                 } else {
@@ -222,7 +225,12 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.error(errorThrown);
                     }
                 });
-            })
+            }),
+            $task(function(flow){
+                _this.currentUser = undefined;
+                _this.airbugApi.refreshConnection();
+                flow.complete();
+            }),
         ]).execute(function(throwable){
             if (throwable) {
                 throwable = throwable.toString();
