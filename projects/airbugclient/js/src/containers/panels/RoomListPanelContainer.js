@@ -147,9 +147,9 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         //NOTE SC: The adding of rooms will occur asynchronously but should be well handled by backbone
 
-        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUserMeldDocument) {
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
             if (!throwable) {
-                _this.roomManagerModule.retrieveRooms(currentUserMeldDocument.getData().roomIdSet, function(throwable, roomMeldDocumentMap) {
+                _this.roomManagerModule.retrieveRooms(currentUser.getRoomIdSet(), function(throwable, roomMeldDocumentMap) {
                     if (!throwable) {
                         roomMeldDocumentMap.forEach(function(roomMeldDocument) {
                             if (roomMeldDocument) { // in case roomMeldDocument is null e.g. no longer exists
