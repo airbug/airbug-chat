@@ -288,10 +288,6 @@ var SessionService = Class.extend(Obj, {
      */
     regenerateSession: function(session, callback) {
         var _this           = this;
-
-        //TEST
-        console.log("SessionService regenerateSession (before) - expressRequest.sessionId:", expressRequest.sessionId);
-
         $series([
             $task(function(flow) {
                 _this.sessionManager.deleteSessionBySid(session.getSid(), function(throwable) {
@@ -301,6 +297,8 @@ var SessionService = Class.extend(Obj, {
             $task(function(flow) {
                 var data = session.getDeltaDocument().getData();
                 delete data.sid;
+                delete data.id;
+                delete data._id;
                 _this.generateSession(data, function(throwable, generatedSession) {
                     if (!throwable) {
                         session = generatedSession;

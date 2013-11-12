@@ -199,9 +199,10 @@ var UserService = Class.extend(Obj, {
                 //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
-                //meld logged in user
-                _this.meldCurrentUserWithCurrentUser(meldManager, user);
-                _this.meldService.meldEntity(meldManager, "User", "owner", user);
+
+                // NOTE BRN: We don't try to meld the logged in user here. Instead we depend on the client side to make
+                // another request to retrieve the current user
+
                 meldManager.commitTransaction(function(throwable) {
                     console.log("commitTransaction throwable:", throwable);
                     flow.complete(throwable);
@@ -301,12 +302,8 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                //unmeld anonymous user
                 _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
-                //meld registered user
-                _this.meldCurrentUserWithCurrentUser(meldManager, user);
-                _this.meldService.meldEntity(meldManager, "User", "owner", user);
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
