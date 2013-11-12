@@ -86,7 +86,7 @@ buildProperties({
         ],
         testPaths: [
             "./projects/airbugserver/js/test",
-            //"../bugjs/projects/bugcall/js/test",
+            "../bugjs/projects/bugcall/js/test",
             "../bugjs/projects/bugdelta/js/test",
             "../bugjs/projects/bugentity/js/test",
             "../bugjs/projects/bugflow/js/test",
