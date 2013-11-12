@@ -222,7 +222,7 @@ var ManagerModule = Class.extend(Obj, {
                     if (responseType === EntityDefines.Responses.SUCCESS) {
                         var objectId        = data.objectId;
                         var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
-                        meldDocument          = _this.get(returnedMeldKey);
+                        meldDocument        = _this.get(returnedMeldKey);
                         callback(undefined, meldDocument);
                     } else if (responseType === EntityDefines.Responses.EXCEPTION) {
                         //TODO BRN: Handle common exceptions
@@ -259,7 +259,7 @@ var ManagerModule = Class.extend(Obj, {
         var unretrievedMeldIds      = [];
         var meldKeys                = [];
 
-        ids.forEach(function(id) {
+        ids.forEach(function(meldId) {
 
             var meldDocument = _this.get(meldId);
             if (meldDocument) {
