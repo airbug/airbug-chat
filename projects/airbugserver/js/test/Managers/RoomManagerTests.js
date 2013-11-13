@@ -6,6 +6,8 @@
 
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomManager')
+//@Require('airbugserver.User')
+//@Require('airbugserver.UserManager')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
@@ -28,6 +30,8 @@ var mongoose                = require('mongoose');
 
 var Room                    = bugpack.require('airbugserver.Room');
 var RoomManager             = bugpack.require('airbugserver.RoomManager');
+var User                    = bugpack.require('airbugserver.User');
+var UserManager             = bugpack.require('airbugserver.UserManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -63,13 +67,18 @@ var $task                   = BugFlow.$task;
 
         //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
 
-        mongoose.connect('mongodb://localhost/airbugtest');
+        if (! mongoose.connections) {
+            mongoose.connect('mongodb://localhost/airbugtest');
+        }
         this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
         this.schemaManager          = new SchemaManager();
-        this.roomManager            = new RoomManager(this .entityManagerStore, this.schemaManager, this.mongoDataStore);
+        this.roomManager            = new RoomManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
         this.roomManager.setEntityType("Room");
+        this.userManager            = new UserManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
+        this.userManager.setEntityType("User");
         this.testRoom               = this.roomManager.generateRoom({name: 'testRoom'});
+        this.testUser               = this.userManager.generateUser({email: 'test@example.com'});
     },
 
 
@@ -82,26 +91,51 @@ var $task                   = BugFlow.$task;
         $series([
             $task(function(flow) {
                 _this.schemaManager.initializeModule(function(throwable) {
+                    console.log("schemaManager.initializeModule throwable = ", throwable);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 _this.roomManager.initializeModule(function(throwable) {
+                    console.log("roomManager.initializeModule throwable = ", throwable);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
+                _this.userManager.initializeModule(function(throwable) {
+                    console.log("userManager.initializeModule throwable = ", throwable);
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                try {
+                    _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
+                        if (!throwable) {
+                            var id = _this.testRoom.getId();
+                            test.assertTrue(!!id, "Assert created room has an id. id = ", id);
+                        } else {
+                            console.log("FUCK");
+                        }
+                        flow.complete(throwable);
+                    });
+                } catch (e) {
+                    console.log("roomManager.createRoom e ", e);
+                }
+                flow.complete();
+            }),
+            $task(function(flow) {
+                console.log("starting userManager.createUser");
+                _this.userManager.createUser(_this.testUser, function(throwable, user) {
+                    console.log("inside callback for userManager.createUser");
                     if (!throwable) {
-                        test.assertTrue(!!_this.testRoom.getId(),
-                            "Assert created room has an id");
+                        var id = _this.testUser.getId();
+                        test.assertTrue(!!id, "Assert create user has an id. id = ", id);
                     }
                     flow.complete(throwable);
                 });
-
             })
         ]).execute(function(throwable) {
-            mongoose.connection.close();
+            //mongoose.connection.close();
             if (!throwable) {
                 test.complete();
             } else {
@@ -124,4 +158,5 @@ function makeEmail() {
 
 bugmeta.annotate(createRoomTest).with(
     test().name("RoomManager #createRoom Test")
-);  */
+);
+*/

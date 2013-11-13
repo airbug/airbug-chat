@@ -65,7 +65,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @param {RoomMember} roomMember
      * @param {function(Throwable)} callback
      */
-    deleteRoomMember: function(roomMember, callback){
+    deleteRoomMember: function(roomMember, callback) {
         this.delete(roomMember, callback);
     },
 
@@ -83,7 +83,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
         return new RoomMember(data)
     },
 
-    populateRoomMember: function(roomMember, properties, callback){
+    populateRoomMember: function(roomMember, properties, callback) {
         var options = {
             room: {
                 idGetter:   roomMember.getRoomId,
@@ -111,7 +111,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @param {Array.<string>} roomMemberIds
      * @param {function(Throwable, Map.<string, RoomMember>)} callback
      */
-    retrieveRoomMembers: function(roomMemberIds, callback){
+    retrieveRoomMembers: function(roomMemberIds, callback) {
         this.retrieveEach(roomMemberIds, callback);
     },
 
@@ -152,7 +152,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @param {RoomMember} roomMember 
      * @param {function(Throwable, RoomMember)} callback
      */
-    updateRoomMember: function(roomMember, callback){
+    updateRoomMember: function(roomMember, callback) {
         this.update(roomMember, callback);
     }
 });

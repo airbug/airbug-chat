@@ -53,7 +53,7 @@ var $task                   = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 //NOTE BRN: As this test stands, it is more of an integration test than a unit test since it depends on DB access.
-var sessionManagerTest = {
+/*var sessionManagerTest = {
 
     async: true,
 
@@ -65,7 +65,9 @@ var sessionManagerTest = {
 
         //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
 
-        mongoose.connect('mongodb://localhost/airbugtest');
+        if (! mongoose.connections) {
+            mongoose.connect('mongodb://localhost/airbugtest');
+        }
         this.testExpires            = new Date(Date.now() + 1000);
         this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
@@ -163,3 +165,4 @@ var sessionManagerTest = {
 bugmeta.annotate(sessionManagerTest).with(
     test().name("SessionManager #createSession Test")
 );
+*/

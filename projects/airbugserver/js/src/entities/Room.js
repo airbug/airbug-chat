@@ -154,6 +154,9 @@ var Room = Class.extend(Entity, {
      * @param {RoomMember} roomMember
      */
     addRoomMember: function(roomMember) {
+        if (! roomMember) {
+            throw new Error("Error. Attempt to add non-existant room member");
+        }
         if (roomMember.getId()) {
             this.roomMemberSet.add(roomMember);
             this.addRoomMemberId(roomMember.getId());
