@@ -148,7 +148,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} chatMessageIds
-     * @param {function(Throwable, Map.<meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
      */
     retrieveChatMessages: function(chatMessageIds, callback) {
         this.retrieveEach("ChatMessage", chatMessageIds, callback);

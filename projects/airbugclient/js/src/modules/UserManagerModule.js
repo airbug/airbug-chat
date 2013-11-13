@@ -46,7 +46,7 @@ var UserManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} userIds
-     * @param {function(Throwable, Map.<meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
      */
     retrieveUsers: function(userIds, callback) {
         this.retrieveEach("User", userIds, callback);

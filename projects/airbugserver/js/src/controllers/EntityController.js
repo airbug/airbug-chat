@@ -196,7 +196,7 @@ var EntityController = Class.extend(Obj, {
         console.log(mappedThrowable.message);
         console.log(mappedThrowable.stack);
 
-        var response = responder.response(EntityDefines.Responses.EXCEPTION, {
+        var response = responder.response(EntityDefines.Responses.MAPPED_EXCEPTION, {
             mappedException: mappedThrowable.toObject()
         });
         responder.sendResponse(response);

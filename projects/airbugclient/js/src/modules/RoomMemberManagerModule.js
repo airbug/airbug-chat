@@ -46,7 +46,7 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomMemberIds
-     * @param {function(Throwable, Array.<meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
      */
     retrieveRoomMembers: function(roomMemberIds, callback){
         this.retrieveEach("RoomMember", roomMemberIds, callback);

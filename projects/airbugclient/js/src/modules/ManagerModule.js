@@ -244,9 +244,9 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} type
      * @param {Array.<string>} ids
      * @param {string} filter
-     * @param {function(Throwable, Array.<meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
      */
-    retrieveEach: function(type, ids, filter, callback){
+    retrieveEach: function(type, ids, filter, callback) {
 
         //TODO BRN: Fix this function, it's entirely broken.
 
@@ -255,38 +255,79 @@ var ManagerModule = Class.extend(Obj, {
             callback = filter;
             filter = "basic";
         }
-        var retrievedMeldDocuments    = new List();
-        var unretrievedMeldIds      = [];
-        var meldKeys                = [];
+        var retrievedMeldMap   = new Map();
+        var unretrievedIds     = [];
 
-        ids.forEach(function(meldId) {
-
-            var meldDocument = _this.get(meldId);
+        ids.forEach(function(id) {
+            var meldKey         = _this.meldBuilder.generateMeldKey(type, id, filter);
+            var meldDocument    = _this.get(meldKey);
             if (meldDocument) {
-                retrievedMeldDocuments.push(meldDocument);
+                retrievedMeldMap.put(id, meldDocument);
             } else {
-                unretrievedMeldIds.push(meldId);
+                unretrievedIds.push(id);
             }
         });
 
-        if (unretrievedMeldIds.length > 0) {
-            var requestData = {objectIds: unretrievedMeldIds};
-            var type = StringUtil.pluralize(type);
-            this.request("retrieve", type, requestData, function(throwable, data){
-                var extentMeldIds       = [];
-                var destroyedMeldIds    = [];
-                meldIds.forEach(function(meldId){
-                    if(data[meldId]){
-                        extentMeldIds.push(meldId);
+        if (unretrievedIds.length > 0) {
+            var requestData = {objectIds: unretrievedIds};
+
+            this.request("retrieve", StringUtil.pluralize(type), requestData, function(throwable, callResponse) {
+                if (!throwable) {
+                    var responseType    = callResponse.getType();
+                    var data            = callResponse.getData();
+                    if (responseType === EntityDefines.Responses.MAPPED_SUCCESS) {
+                        var dataMap     = data.map;
+                        Obj.forIn(dataMap, function(objectId, success) {
+                            if (success) {
+                                var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                                var meldDocument    = _this.get(returnedMeldKey);
+                                retrievedMeldMap.put(objectId, meldDocument);
+                            } else {
+                                retrievedMeldMap.put(objectId, null);
+                            }
+                        });
+                        callback(undefined, retrievedMeldMap);
+                    } else if (responseType === EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION) {
+                        var dataMap     = data.map;
+                        Obj.forIn(dataMap, function(objectId, success) {
+                            if (success) {
+                                var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                                var meldDocument    = _this.get(returnedMeldKey);
+                                retrievedMeldMap.put(objectId, meldDocument);
+                            } else {
+                                retrievedMeldMap.put(objectId, null);
+                            }
+                        });
+                        callback(new Exception(data.mappedException), retrievedMeldMap);
+                    } else if (responseType === EntityDefines.Responses.MAPPED_EXCEPTION) {
+                        //TODO BRN: Handle common exceptions
+                        callback(new Exception(data.mappedException));
+                    } else if (responseType === EntityDefines.Responses.ERROR) {
+                        //TODO BRN: Handle common errors
+                        callback(new Error(data.error));
                     } else {
-                        destroyedMeldIds.push(meldId);
+                        callback(undefined, callResponse);
                     }
-                });
-                retrievedMeldDocuments.concat(_this.getEach(extentMeldIds));
-                callback(throwable, retrievedMeldDocuments);
+
+
+
+                    var extentMeldIds       = [];
+                    var destroyedMeldIds    = [];
+                    meldIds.forEach(function(meldId){
+                        if(data[meldId]){
+                            extentMeldIds.push(meldId);
+                        } else {
+                            destroyedMeldIds.push(meldId);
+                        }
+                    });
+                    retrievedMeldDocuments.concat(_this.getEach(extentMeldIds));
+                    callback(throwable, retrievedMeldDocuments);
+                } else {
+                    callback(throwable);
+                }
             })
         } else {
-            callback(null, retrievedMeldDocuments);
+            callback(undefined, retrievedMeldMap);
         }
     },
 

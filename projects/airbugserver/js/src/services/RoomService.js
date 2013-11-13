@@ -579,7 +579,7 @@ var RoomService = Class.extend(Obj, {
         $parallel([
             $series([
                 $task(function(flow) {
-                    var roomMember = _this.roomMemberManager.generateRoomMember({
+                    roomMember = _this.roomMemberManager.generateRoomMember({
                         userId: user.getId(),
                         roomId: room.getId()
                     });
