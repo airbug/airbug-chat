@@ -131,7 +131,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     createContainerChildren: function() {
         this._super();
         this.workspaceWidgetContainer = new WorkspaceWidgetContainer();
-        this.addContainerChild(this.workspaceContainer, ".column3of4");
+        this.addContainerChild(this.workspaceWidgetContainer, ".column3of4");
     },
 
     /**
