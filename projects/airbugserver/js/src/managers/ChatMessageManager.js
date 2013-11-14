@@ -140,12 +140,12 @@ var ChatMessageManager = Class.extend(EntityManager, {
             .where("conversationId", conversationId)
             .where("tryUuid", tryUuid)
             .lean(true)
-            .exec(function(throwable, dbJson) {
+            .exec(function(throwable, dbObject) {
 
                 if (!throwable) {
                     var entityObject = null;
-                    if (dbJson) {
-                        entityObject = _this["generate" + _this.entityType](dbJson);
+                    if (dbObject) {
+                        entityObject = _this.convertDbObjectToEntity(dbObject);
                         entityObject.commitDelta();
                     }
                     callback(undefined, entityObject);

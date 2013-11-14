@@ -72,34 +72,6 @@ var UserManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {{
-     *      firstName: string,
-     *      lastName: string,
-     *      email: string
-     * }} user
-     * @param {function(Error, User)} callback
-     */
-    findOrCreateUser: function(user, callback) {
-        //NOTE this doesn't seem to be used. should also be replaced by saveUser (upsert) function 
-        var _this = this;
-        //NOTE not sure if this should be searching by email only or by all attributes
-        this.retrieveUserByEmail(user.email, function(throwable, userEntity){
-            if(!throwable){
-                var user = null;
-                if(userEntity){
-                    user = userEntity;
-                    user.commitDelta();
-                } else {
-                    _this.createUser(user, callback);
-                }
-                callback(undefined, user);
-            } else {
-                callback(throwable);
-            }
-        });
-    },
-
-    /**
      * @param {
      *      anonymous: boolean,
      *      createdAt: Date,
@@ -139,27 +111,6 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userId
-     * @param {string} roomId
-     * @param {function(error)} callback
-     */
-    removeRoomFromUser: function(roomId, userId, callback){
-        var update = {
-            $pull: {
-                roomIdSet: roomId
-            }
-        };
-        //TODO SUNG should this also return an Entity. What if there are more than one instance of the same entity created at once?
-        this.dataStore.findByIdAndUpdate(userId, update, function(error, dbUser) {
-            if (!error && !dbUser){
-                callback(new Error("User not found"));
-            } else {
-                callback(error);
-            }
-        });
-    },
-
-    /**
-     * @param {string} userId
      * @param {function(Throwable, User)} callback
      */
     retrieveUser: function(userId, callback){
@@ -172,11 +123,11 @@ var UserManager = Class.extend(EntityManager, {
      */
     retrieveUserByEmail: function(email, callback) {
         var _this = this;
-        this.dataStore.findOne({email: email}).lean(true).exec(function(throwable, dbUserJson){
-            if(!throwable){
+        this.dataStore.findOne({email: email}).lean(true).exec(function(throwable, dbObject){
+            if (!throwable) {
                 var user = null;
-                if(dbUserJson){
-                    user = _this.generateUser(dbUserJson);
+                if (dbObject) {
+                    user = _this.convertDbObjectToEntity(dbObject);
                     user.commitDelta();
                 }
                 callback(undefined, user);

@@ -196,18 +196,25 @@ bugmeta.annotate(Conversation).with(
     entity("Conversation").properties([
         property("chatMessageIdSet")
             .type("Set")
-            .collectionOf("string"),
+            .collectionOf("string")
+            .id(),
         property("chatMessageSet")
             .type("Set")
             .collectionOf("ChatMessage")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("createdAt")
             .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("ownerId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("owner")
             .type("Room")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("updatedAt")
             .type("date")
     ])

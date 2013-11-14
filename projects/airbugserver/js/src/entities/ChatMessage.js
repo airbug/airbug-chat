@@ -205,17 +205,23 @@ bugmeta.annotate(ChatMessage).with(
         property("codeLanguage")
             .type("string"),
         property("conversationId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("conversation")
             .type("Conversation")
             .populates(true),
         property("createdAt")
             .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("senderUserId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("senderUser")
             .type("User")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("sentAt")
             .type("date"),
         property("tryUuid")

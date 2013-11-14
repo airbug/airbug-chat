@@ -150,11 +150,11 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveAllSessions: function(callback) {
         var _this = this;
-        this.datStore.find({}).lean(true).exec(function(throwable, results) {
+        this.datStore.find({}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newMap = new Map();
-                results.forEach(function(result) {
-                    var entityObject = _this["generate" + _this.entityType](result);
+                dbObjects.forEach(function(dbObject) {
+                    var entityObject = _this.convertDbObjectToEntity(dbObject);
                     entityObject.commitDelta();
                     newMap.put(entityObject.getId(), entityObject);
                 });
@@ -187,11 +187,11 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveSessionBySid: function(sid, callback) {
         var _this = this;
-        this.dataStore.findOne({sid: sid}).lean(true).exec(function(throwable, dbJson) {
+        this.dataStore.findOne({sid: sid}).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
                 var entityObject = null;
-                if (dbJson) {
-                    entityObject = _this["generate" + _this.entityType](dbJson);
+                if (dbObject) {
+                    entityObject = _this.convertDbObjectToEntity(dbObject);
                     entityObject.commitDelta();
                 }
                 callback(undefined, entityObject);
@@ -207,13 +207,13 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveSessionsByUserId: function(userId, callback) {
         var _this = this;
-        this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, results) {
+        this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newSet = new Set();
-                results.forEach(function(result) {
-                    var newSession = _this.generateSession(result);
-                    newSession.commitDelta();
-                    newSet.add(newSession);
+                dbObjects.forEach(function(dbObject) {
+                    var session = _this.convertDbObjectToEntity(dbObject);
+                    session.commitDelta();
+                    newSet.add(session);
                 });
                 callback(undefined, newSet);
             } else {

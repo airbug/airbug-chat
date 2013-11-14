@@ -106,7 +106,7 @@ var RoomService = Class.extend(Obj, {
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow){
-                    if(Class.doesExtend(userOrUserId, User)){
+                    if (Class.doesExtend(userOrUserId, User)) {
                         user = userOrUserId;
                         _this.dbRetrievePopulatedRoom(user.getId(), roomId, function(throwable, returnedRoom){
                             if(!throwable){
@@ -115,7 +115,7 @@ var RoomService = Class.extend(Obj, {
                             flow.complete(throwable);
                         })
                     } else {
-                        _this.dbRetrieveUserAndRoom(userId, roomId, function(throwable, returnedUser, returnedRoom){
+                        _this.dbRetrieveUserAndRoom(userOrUserId, roomId, function(throwable, returnedUser, returnedRoom){
                             if(!throwable){
                                 room        = returnedRoom;
                                 user        = returnedUser;
@@ -132,7 +132,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, user, room);
                     _this.meldRoom(meldManager, room);
-                    meldService.meldEntity(meldManager, "User", "basic", user);
+                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -674,9 +674,6 @@ var RoomService = Class.extend(Obj, {
      * @param {Room} room
      */
     meldUserWithRoom: function(meldManager, user, room) {
-        var _this                           = this;
-        var meldKeys                        = [roomMeldKey];
-        var meldManager                     = this.meldManagerFactory.factoryManager();
         var meldUserWithRoomMembersSwitch   = false;
         var meldService                     = this.meldService;
         var reason                          = room.getId();
@@ -684,7 +681,7 @@ var RoomService = Class.extend(Obj, {
         var selfUserMeldKey                 = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var selfRoomMemberMeldKey           = undefined;
         var userId                          = user.getId();
-
+        var meldKeys                        = [roomMeldKey];
 
         room.getRoomMemberSet().forEach(function(roomMember) {
             var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");

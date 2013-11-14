@@ -213,20 +213,27 @@ bugmeta.annotate(Room).with(
     entity("Room").properties([
         property("conversation")
             .type("Conversation")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("conversationId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("createdAt")
             .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("name")
             .type("string"),
         property("roomMemberIdSet")
             .type("Set")
-            .collectionOf("string"),
+            .collectionOf("string")
+            .id(),
         property("roomMemberSet")
             .type("Set")
             .collectionOf("RoomMember")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("updatedAt")
             .type("date")
     ])

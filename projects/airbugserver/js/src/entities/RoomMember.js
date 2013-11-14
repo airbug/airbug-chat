@@ -174,20 +174,27 @@ bugmeta.annotate(RoomMember).with(
     entity("RoomMember").properties([
         property("createdAt")
             .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("memberType")
             .type("string"),
         property("room")
             .type("Room")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("roomId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("updatedAt")
             .type("date"),
         property("user")
             .type("User")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("userId")
             .type("string")
+            .id()
     ])
 );
 

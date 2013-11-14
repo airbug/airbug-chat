@@ -154,16 +154,22 @@ var Session = Class.extend(Entity, {
 
 bugmeta.annotate(Session).with(
     entity("Session").properties([
+        property("cookie")
+            .type("Cookie"),
         property("createdAt")
             .type("date"),
         property("data")
             .type("string"),
-        property("expires")
-            .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("sid")
             .type("string"),
         property("updatedAt")
-            .type("date")
+            .type("date"),
+        property("userId")
+            .type("string")
+            .id()
     ])
 );
 

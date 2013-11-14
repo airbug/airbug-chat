@@ -155,18 +155,24 @@ bugmeta.annotate(Dialogue).with(
     entity("Dialogue").properties([
         property("conversation")
             .type("Conversation")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("conversationId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("createdAt")
             .type("date"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("updatedAt")
             .type("date"),
-        property("userPairId")
-            .type("string"),
+        property("userIdPair")
+            .type("object"),
         property("userPair")
-            .type("UserPair")
+            .type("Pair")
             .populates(true)
+            .stored(false)
     ])
 );
 

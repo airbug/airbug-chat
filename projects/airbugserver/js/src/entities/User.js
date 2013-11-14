@@ -261,19 +261,25 @@ bugmeta.annotate(User).with(
             .type("string"),
         property("firstName")
             .type("string"),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("lastName")
             .type("string"),
         property("roomIdSet")
             .type("Set")
-            .collectionOf("string"),
+            .collectionOf("string")
+            .id(),
         property("roomSet")
             .type("Set")
             .collectionOf("Room")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("sessionSet")
             .type("Set")
             .collectionOf("Session")
-            .populates(true),
+            .populates(true)
+            .stored(false),
         property("status")
             .type("string"),
         property("updatedAt")

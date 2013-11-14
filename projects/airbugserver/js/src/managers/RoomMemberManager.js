@@ -122,11 +122,11 @@ var RoomMemberManager = Class.extend(EntityManager, {
      */
     retrieveRoomMemberByUserIdAndRoomId: function(userId, roomId, callback) {
         var _this = this;
-        this.dataStore.findOne({roomId: roomId, userId: userId}).lean(true).exec(function(throwable, dbJson) {
+        this.dataStore.findOne({roomId: roomId, userId: userId}).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
                 var entityObject = null;
-                if (dbJson) {
-                    entityObject = _this["generate" + _this.entityType](dbJson);
+                if (dbObject) {
+                    entityObject = _this.convertDbObjectToEntity(dbObject);
                     entityObject.commitDelta();
                 }
                 callback(undefined, entityObject);
