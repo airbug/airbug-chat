@@ -104,7 +104,7 @@ var RoomPageController = Class.extend(ApplicationController, {
                 var roomId      = routingRequest.getArgs()[0];
                 _this.roomManagerModule.retrieveRoom(roomId, function(throwable, room) {
                     if (!throwable) {
-                        if (roomIdSet.contains(roomId)) {
+                        if (currentUser.getRoomIdSet().contains(roomId)) {
                             routingRequest.accept();
                         } else {
                             _this.roomManagerModule.joinRoom(roomId, function(throwable) {
