@@ -67,9 +67,9 @@ var $task                   = BugFlow.$task;
 
         //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
 
-        if (! mongoose.connections) {
+        //if (! mongoose.connections) {
             mongoose.connect('mongodb://localhost/airbugtest');
-        }
+        //}
         this.entityManagerStore     = new EntityManagerStore();
         this.mongoDataStore         = new MongoDataStore(mongoose);
         this.schemaManager          = new SchemaManager();
@@ -108,20 +108,15 @@ var $task                   = BugFlow.$task;
                 });
             }),
             $task(function(flow) {
-                try {
-                    _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
-                        if (!throwable) {
-                            var id = _this.testRoom.getId();
-                            test.assertTrue(!!id, "Assert created room has an id. id = ", id);
-                        } else {
-                            console.log("FUCK");
-                        }
-                        flow.complete(throwable);
-                    });
-                } catch (e) {
-                    console.log("roomManager.createRoom e ", e);
-                }
-                flow.complete();
+                _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
+                    if (!throwable) {
+                        var id = _this.testRoom.getId();
+                        test.assertTrue(!!id, "Assert created room has an id. id = ", id);
+                    } else {
+                        console.log("FUCK");
+                    }
+                    flow.complete(throwable);
+                });
             }),
             $task(function(flow) {
                 console.log("starting userManager.createUser");
@@ -135,7 +130,7 @@ var $task                   = BugFlow.$task;
                 });
             })
         ]).execute(function(throwable) {
-            //mongoose.connection.close();
+            mongoose.connection.close();
             if (!throwable) {
                 test.complete();
             } else {
@@ -158,5 +153,4 @@ function makeEmail() {
 
 bugmeta.annotate(createRoomTest).with(
     test().name("RoomManager #createRoom Test")
-);
-*/
+);*/
