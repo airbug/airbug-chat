@@ -139,7 +139,7 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainerChildren: function() {
-        this.super();
+        this._super();
         this.workspaceContainer         = new WorkspaceContainer();
         this.workspaceTrayContainer     = new WorkspaceTrayContainer();
         this.addContainerChild(this.workspaceContainer,         "#workspace-container-panel");

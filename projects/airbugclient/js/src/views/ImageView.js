@@ -46,7 +46,7 @@ var ImageView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this.super();
+        var data = this._super();
         data.id = this.getId() || "";
         return data;
     }

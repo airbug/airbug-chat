@@ -169,7 +169,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     },
 
     createContainerChildren: function() {
-        this.super();
+        this._super();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
         this.addContainerChild(this.settingsButton, ".box-header");
     },

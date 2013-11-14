@@ -120,7 +120,7 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
     },
 
     createContainerChildren: function() {
-        this.super();
+        this._super();
     },
 
     /**

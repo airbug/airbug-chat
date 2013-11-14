@@ -149,7 +149,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
      *
      */
     createContainerChildren: function() {
-        this.super();
+        this._super();
         this.codeEditorTrayButtonContainer = new CodeEditorTrayButtonContainer();
         this.addContainerChild(this.codeEditorTrayButtonContainer, "#list-item-" + this.listItemViewOne.cid);
     },

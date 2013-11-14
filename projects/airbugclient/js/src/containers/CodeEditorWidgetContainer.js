@@ -146,7 +146,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     createContainerChildren: function() {
-        this.super();
+        this._super();
         this.codeEditorContainer            = new CodeEditorContainer();
         this.codeEditorSettingsContainer    = new CodeEditorSettingsContainer();
         this.addContainerChild(this.codeEditorContainer,            "#code-editor-widget");
