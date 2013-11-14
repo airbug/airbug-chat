@@ -151,7 +151,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     },
 
     createContainerChildren: function() {
-        this.super();
+        this._super();
         this.codeEditorWidgetContainer      = new CodeEditorWidgetContainer();
         this.addContainerChild(this.codeEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
         //TODO
