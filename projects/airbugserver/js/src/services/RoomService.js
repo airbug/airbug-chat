@@ -391,7 +391,7 @@ var RoomService = Class.extend(Obj, {
                 });
             }),
             $iterableParallel(room.getRoomMemberSet(), function(flow, roomMember) {
-                _this.roomMemberManager.populateRoomMember(roomMember, ["user"], function(throwable) {
+                _this.roomMemberManager.populateRoomMember(roomMember, ["room", "user"], function(throwable) {
                     flow.complete(throwable);
                 })
             })
