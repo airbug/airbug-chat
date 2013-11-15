@@ -205,7 +205,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {airbug.ButtonViewEvent} event
      */
-    hearEmbedButtonClickedEvent: function(event){
+    hearEmbedButtonClickedEvent: function(event) {
         this.handleEmbedButtonClickedEvent(event);
     },
 
@@ -217,7 +217,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @type {PublisherMessage} message
      */
-    handleDisplayCodeCommand: function(message){
+    handleDisplayCodeCommand: function(message) {
         var code = message.getData().code;
         this.setEditorText(code);
     },
@@ -225,7 +225,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {airbug.ButtonViewEvent} event
      */
-    handleEmbedButtonClickedEvent: function(event){
+    handleEmbedButtonClickedEvent: function(event) {
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
@@ -243,7 +243,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     // Ace Config and Helper Methods
     //-------------------------------------------------------------------------------
 
-    configureAceEditor: function(){
+    configureAceEditor: function() {
         this.aceEditor  = Ace.edit("box-body-" + this.boxView.cid);
         var aceModes    = new AceModes();
         KitchenSink.load();
@@ -256,7 +256,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @return {string}
      */
-    getEditorLanguage: function(){
+    getEditorLanguage: function() {
         var mode = this.aceEditor.getSession().getMode().$id;
         return mode.substring(mode.lastIndexOf("/"));
     },
@@ -264,8 +264,8 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @return {string}
      */
-    getEditorText: function(){
-        if(this.aceEditor){
+    getEditorText: function() {
+        if (this.aceEditor) {
             return this.aceEditor.getValue();
         } else {
             return "";
@@ -275,8 +275,8 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {string} value
      */
-    setEditorText: function(value){
-        if(this.aceEditor){
+    setEditorText: function(value) {
+        if (this.aceEditor) {
             this.aceEditor.setValue(value);
         }
     },
@@ -284,8 +284,8 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      *
      */
-    setEditorToReadOnly: function(){
-        if(this.aceEditor){
+    setEditorToReadOnly: function() {
+        if (this.aceEditor) {
             this.aceEditor.setReadOnly(true);
         }
     }
@@ -298,7 +298,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(CodeEditorContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule"),
+        property("commandModule").ref("commandModule")
     ])
 );
 

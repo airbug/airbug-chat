@@ -68,7 +68,7 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {Room} room
      * @param {function(Throwable)} callback
      */
-    deleteRoom: function(room, callback){
+    deleteRoom: function(room, callback) {
         this.delete(room, callback);
     },
 

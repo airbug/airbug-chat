@@ -252,7 +252,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
                 .children([
                     view(RoomNameView)
                         .model(roomModel)
-                        .attributes({classes : "text-simple"})
+                        .attributes({classes: "text-simple"})
                         .appendTo('*[id|="list-item"]')
                 ])
                 .build();

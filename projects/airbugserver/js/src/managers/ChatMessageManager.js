@@ -35,9 +35,9 @@ var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
-//------------------------------------------------------------------------------- 
+//-------------------------------------------------------------------------------
 // Simplify References
-//------------------------------------------------------------------------------- 
+//-------------------------------------------------------------------------------
 
 var arg                         = ArgAnnotation.arg;
 var bugmeta                     = BugMeta.context();
@@ -66,7 +66,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {ChatMessage} chatMessage
      * @param {function(Throwable)} callback
      */
-    deleteChatMessage: function(chatMessage, callback){
+    deleteChatMessage: function(chatMessage, callback) {
         this.delete(chatMessage, callback);
     },
 
@@ -131,7 +131,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {string} senderUserId
      * @param {string} conversationId
      * @param {string} tryUuid
-     * @param {function(Throwable, ChatMessage)}callback
+     * @param {function(Throwable, ChatMessage)} callback
      */
     retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid: function(senderUserId, conversationId, tryUuid, callback) {
         var _this = this;

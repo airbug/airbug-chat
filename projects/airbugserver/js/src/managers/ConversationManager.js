@@ -68,7 +68,7 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {Conversation} conversation
      * @param {function(Throwable)} callback
      */
-    deleteConversation: function(conversation, callback){
+    deleteConversation: function(conversation, callback) {
         this.delete(conversation, callback);
     },
 
@@ -92,7 +92,7 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {Array.<string>} properties
      * @param {function(Throwable, Conversation)} callback
      */
-    populateConversation: function(conversation, properties, callback){
+    populateConversation: function(conversation, properties, callback) {
         var options = {
             chatMessageSet: {
                 idGetter:   conversation.getChatMessageIdSet,
@@ -120,15 +120,15 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {Array.<string>} conversationIds
      * @param {function(Throwable, Map.<string, Conversation>)} callback
      */
-    retrieveConversations: function(conversationIds, callback){
+    retrieveConversations: function(conversationIds, callback) {
         this.retrieveEach(conversationIds, callback);
     },
 
     /**
-     * @param {Conversation} conversation 
+     * @param {Conversation} conversation
      * @param {function(Throwable, Conversation)} callback
      */
-    updateConversation: function(conversation, callback){
+    updateConversation: function(conversation, callback) {
         this.update(conversation, callback);
     }
 });

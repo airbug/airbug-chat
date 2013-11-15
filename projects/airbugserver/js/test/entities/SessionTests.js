@@ -53,7 +53,7 @@ var sessionInstantiationTest = {
                 key: "value"
             },
             sid: "someid"
-        })
+        });
     },
 
 

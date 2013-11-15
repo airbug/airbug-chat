@@ -313,7 +313,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         this._sessionServiceConfig.setCookieSecret(secret);
         this._sessionServiceConfig.setSessionKey(sessionKey);
 
-        this._expressApp.configure(function(){
+        this._expressApp.configure(function() {
             _this._expressApp.engine('mustache', mu2express.engine);
             _this._expressApp.set('view engine', 'mustache');
             _this._expressApp.set('views', path.resolve(__dirname, '../resources/views'));
@@ -354,7 +354,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         $series([
 
-            $task(function(flow){
+            $task(function(flow) {
                 console.log("Configuring socketIoServer");
 
                 _this._socketIoServer.configure(function(error) {
@@ -444,7 +444,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketIoManager}
+     * @param {SocketIoManager} socketIoManager
      * @return {CallServer}
      */
     callServer: function(socketIoManager) {
@@ -455,7 +455,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {BugCallServer} bugCallServer
      * @return {CallService}
      */
-    callService: function(bugCallServer){
+    callService: function(bugCallServer) {
         this._callService = new CallService(bugCallServer);
         return this._callService;
     },
@@ -465,7 +465,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {ChatMessageService} chatMessageService
      * @return {ChatMessageController}
      */
-    chatMessageController: function(bugCallRouter, chatMessageService){
+    chatMessageController: function(bugCallRouter, chatMessageService) {
         this._chatMessageController = new ChatMessageController(bugCallRouter, chatMessageService);
         return this._chatMessageController;
     },
@@ -624,7 +624,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {SessionService} sessionService
      * @return {UserController}
      */
-    sessionController: function(expressApp, bugCallRouter, sessionService){
+    sessionController: function(expressApp, bugCallRouter, sessionService) {
         return new SessionController(expressApp, bugCallRouter, sessionService);
     },
 
@@ -702,7 +702,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      *      mongoDbIp: string
      * }}
      **/
-    loadConfig: function(configPath){
+    loadConfig: function(configPath) {
         var config = {
             port: 8000,
             mongoDbIp: "localhost"
@@ -711,8 +711,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         if (BugFs.existsSync(configPath)) {
             try {
                 config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
-            } catch(error) {
-                console.log(configPath, "could not be parsed. Invalid JSON.");
+            } catch (error) {
+                console.log(configPath, "could not be parsed. Invalid JSON.", error);
             }
             return config;
         } else {
@@ -735,7 +735,7 @@ Class.implement(AirbugServerConfiguration, IConfiguration);
 
 bugmeta.annotate(AirbugServerConfiguration).with(
     configuration().modules([
-        
+
         //-------------------------------------------------------------------------------
         // AirBugServer
         //-------------------------------------------------------------------------------

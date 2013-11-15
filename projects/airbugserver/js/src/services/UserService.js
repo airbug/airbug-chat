@@ -133,7 +133,7 @@ var UserService = Class.extend(Obj, {
      * @param {string} email
      * @param {function(Throwable, User)} callback
      */
-    findUserByEmail: function(email, callback){
+    findUserByEmail: function(email, callback) {
         this.userManager.retrieveUserByEmail(email, callback);
         //NOTE: This call does not require melding
     },
@@ -142,7 +142,7 @@ var UserService = Class.extend(Obj, {
      * @param {string} id
      * @param {function(Throwable, User)} callback
      */
-    findUserById: function(id, callback){
+    findUserById: function(id, callback) {
         this.userManager.retrieveUser(id, callback);
         //NOTE: This call does not require melding
     },
@@ -260,7 +260,7 @@ var UserService = Class.extend(Obj, {
                 _this.dbRetrieveUserByEmail(userEmail, function(throwable, user) {
                     if (!throwable) {
                         if (!user) {
-                            flow.complete()
+                            flow.complete();
                         } else {
                             flow.complete(new Exception("UserExists"));
                         }
@@ -298,7 +298,7 @@ var UserService = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable){
+        ]).execute(function(throwable) {
             callback(throwable, user);
         });
     },
@@ -347,7 +347,7 @@ var UserService = Class.extend(Obj, {
      * @param {string} userId
      * @param {function(Throwable, *)} callback
      */
-    retrieveUser: function(requestContext, userId, callback){
+    retrieveUser: function(requestContext, userId, callback) {
         console.log("UserService#retrieveUser");
         console.log("userId:", userId);
         var _this               = this;
@@ -357,9 +357,9 @@ var UserService = Class.extend(Obj, {
         var user                = undefined;
 
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 console.log("before dbRetrieveUser");
-                _this.dbRetrieveUser(userId, function(throwable, returnedUser){
+                _this.dbRetrieveUser(userId, function(throwable, returnedUser) {
                     user = returnedUser;
                     console.log("returnedUser", returnedUser);
                     flow.complete(throwable);
@@ -402,8 +402,8 @@ var UserService = Class.extend(Obj, {
         var userMap             = undefined;
 
         $series([
-            $task(function(flow){
-                _this.dbRetrieveUsers(userIds, function(throwable, returnedUserMap){
+            $task(function(flow) {
+                _this.dbRetrieveUsers(userIds, function(throwable, returnedUserMap) {
                     if (!throwable) {
                         userMap = returnedUserMap;
                         if (!userMap) {
@@ -413,8 +413,8 @@ var UserService = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             }),
-            $task(function(flow){
-                userMap.getValueCollection().forEach(function(user){
+            $task(function(flow) {
+                userMap.getValueCollection().forEach(function(user) {
                     _this.meldService.meldEntity(meldManager, "User", "basic", user);
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);
                 });
@@ -529,7 +529,7 @@ var UserService = Class.extend(Obj, {
      * @param {string} userId
      * @param {function(Throwable, User)} callback
      */
-    dbRetrieveUser: function(userId, callback){
+    dbRetrieveUser: function(userId, callback) {
         this.userManager.retrieveUser(userId, callback);
     },
 
@@ -538,7 +538,7 @@ var UserService = Class.extend(Obj, {
      * @param {Array.<string>} userIds
      * @param {function(Throwable, User)} callback
      */
-    dbRetrieveUsers: function(userIds, callback){
+    dbRetrieveUsers: function(userIds, callback) {
         this.userManager.retrieveUsers(userIds, callback);
     },
 
@@ -547,7 +547,7 @@ var UserService = Class.extend(Obj, {
      * @param {string} userEmail
      * @param {function(Throwable, User)} callback
      */
-    dbRetrieveUserByEmail: function(userEmail, callback){
+    dbRetrieveUserByEmail: function(userEmail, callback) {
         this.userManager.retrieveUserByEmail(userEmail, callback);
     },
 
@@ -556,24 +556,24 @@ var UserService = Class.extend(Obj, {
      * @param {string} userId
      * @param {function(Throwable, User)} callback
      */
-    dbRetrievePopulatedUser: function(userId, callback){
+    dbRetrievePopulatedUser: function(userId, callback) {
         var user        = undefined;
         var userManager = this.userManager;
         $series([
-            $task(function(flow){
-                userManager.retrieveUser(userId, function(throwable, returnedUser){
-                    if(!throwable){
+            $task(function(flow) {
+                userManager.retrieveUser(userId, function(throwable, returnedUser) {
+                    if (!throwable) {
                         user = returnedUser;
                     }
                     flow.complete(throwable);
                 });
             }),
-            $task(function(flow){
-                userManager.populateUser(user, ["roomSet"], function(throwable){
+            $task(function(flow) {
+                userManager.populateUser(user, ["roomSet"], function(throwable) {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable){
+        ]).execute(function(throwable) {
             callback(throwable, user);
         });
     },

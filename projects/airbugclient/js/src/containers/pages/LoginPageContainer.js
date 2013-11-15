@@ -130,7 +130,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.loginFormContainer     = new LoginFormContainer(); 
+        this.loginFormContainer     = new LoginFormContainer();
         this.signupButtonContainer  = new SignupButtonContainer();
         this.addContainerChild(this.signupButtonContainer, "#header-right");
         this.addContainerChild(this.loginFormContainer, "#page-" + this.pageView.cid);

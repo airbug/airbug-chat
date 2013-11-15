@@ -128,7 +128,7 @@ var ButtonView = Class.extend(MustacheView, {
 
     /**
      * @private
-     * @param event
+     * @param {jQuery.Event} event
      */
     handleButtonClick: function(event) {
         event.preventDefault();

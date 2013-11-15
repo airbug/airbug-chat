@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class 			= bugpack.require('Class');
-var UserNameView 	= bugpack.require('airbug.UserNameView');
+var Class           = bugpack.require('Class');
+var UserNameView    = bugpack.require('airbug.UserNameView');
 
 
 //-------------------------------------------------------------------------------

@@ -149,7 +149,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @private
      */
-    handleButtonClickedEvent: function(){
+    handleButtonClickedEvent: function() {
         // Handled by ChatMessageContainer
     }
 });

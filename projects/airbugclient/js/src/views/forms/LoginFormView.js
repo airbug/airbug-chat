@@ -66,7 +66,7 @@ var LoginFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('form').on('submit', function(event){
+        this.$el.find('form').on('submit', function(event) {
             _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();

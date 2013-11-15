@@ -112,20 +112,20 @@ var NavigationModule = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getFinalDestination: function(){
+    getFinalDestination: function() {
         return this.finalDestination;
     },
 
     /**
      */
-    clearFinalDestination: function(){
+    clearFinalDestination: function() {
         this.finalDestination = null;
     },
 
     /**
      * @param {string} finalDestination
      */
-    setFinalDestination: function(finalDestination){
+    setFinalDestination: function(finalDestination) {
         this.finalDestination = finalDestination;
     }
 });

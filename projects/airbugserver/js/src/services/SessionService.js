@@ -409,7 +409,7 @@ bugpack.export('airbugserver.SessionService', SessionService);
  */
 
 function hash(sess) {
-    return crc32.signed(JSON.stringify(sess, function(key, val){
+    return crc32.signed(JSON.stringify(sess, function(key, val) {
         if ('cookie' != key) return val;
     }));
 }

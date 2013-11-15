@@ -67,7 +67,7 @@ var UserManager = Class.extend(EntityManager, {
      * @param {User} user
      * @param {function(Throwable)} callback
      */
-    deleteUser: function(user, callback){
+    deleteUser: function(user, callback) {
         this.delete(user, callback);
     },
 
@@ -83,7 +83,7 @@ var UserManager = Class.extend(EntityManager, {
      * } data
      * @return {User}
      */
-    generateUser: function(data){
+    generateUser: function(data) {
         data.roomIdSet = new Set(data.roomIdSet);
         return new User(data);
     },
@@ -93,7 +93,7 @@ var UserManager = Class.extend(EntityManager, {
      * @param {Array.<string>} properties
      * @param {function(Throwable)} callback
      */
-    populateUser: function(user, properties, callback){
+    populateUser: function(user, properties, callback) {
         var options = {
             roomSet: {
                 idGetter:   user.getRoomIdSet,
@@ -113,7 +113,7 @@ var UserManager = Class.extend(EntityManager, {
      * @param {string} userId
      * @param {function(Throwable, User)} callback
      */
-    retrieveUser: function(userId, callback){
+    retrieveUser: function(userId, callback) {
         this.retrieve(userId, callback);
     },
 
@@ -123,7 +123,7 @@ var UserManager = Class.extend(EntityManager, {
      */
     retrieveUserByEmail: function(email, callback) {
         var _this = this;
-        this.dataStore.findOne({email: email}).lean(true).exec(function(throwable, dbObject){
+        this.dataStore.findOne({email: email}).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
                 var user = null;
                 if (dbObject) {
@@ -141,15 +141,15 @@ var UserManager = Class.extend(EntityManager, {
      * @param {Array.<string>} userIds
      * @param {function(Throwable, Map.<string, User>)} callback
      */
-    retrieveUsers: function(userIds, callback){
+    retrieveUsers: function(userIds, callback) {
         this.retrieveEach(userIds, callback);
     },
 
     /**
-     * @param {User} user 
+     * @param {User} user
      * @param {function(Throwable, User)} callback
      */
-    updateUser: function(user, callback){
+    updateUser: function(user, callback) {
         this.update(user, callback);
     }
 });

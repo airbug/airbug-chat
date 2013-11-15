@@ -57,7 +57,7 @@ var CommandModule = Class.extend(Publisher, {
      * @param {string} topic
      * @param {*} data
      */
-    relayCommand: function(topic, data){
+    relayCommand: function(topic, data) {
         this.publish(topic, data);
     },
 
@@ -65,7 +65,7 @@ var CommandModule = Class.extend(Publisher, {
      * @param {string} topic
      * @param {*} data
      */
-    relayMessage: function(topic, data){
+    relayMessage: function(topic, data) {
         this.publish(topic, data);
     }
 });

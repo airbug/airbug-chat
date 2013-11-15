@@ -159,7 +159,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearTrayButtonClickedEvent , this);
+        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearTrayButtonClickedEvent, this);
     },
 
 
@@ -172,7 +172,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
      * @param {airbug.ButtonViewEvent} event
      * NOTE: event.data @type {{buttonName: string}}
      */
-    hearTrayButtonClickedEvent: function(event){
+    hearTrayButtonClickedEvent: function(event) {
         this.panelView.dispatchEvent(event);
         var parentContainer = this.getContainerParent(); //workspaceWidget
         var grandparentContainer = parentContainer.getContainerParent();

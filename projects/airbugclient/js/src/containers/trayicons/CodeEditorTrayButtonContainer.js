@@ -123,7 +123,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView = 
+        this.buttonView =
             view(ButtonView)
                 .attributes({})
                 .children([
@@ -150,7 +150,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this)
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
 

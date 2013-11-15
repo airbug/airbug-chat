@@ -37,16 +37,16 @@ var CarapaceCollection      = bugpack.require('carapace.CarapaceCollection');
 
 var ChatMessageCollection = Class.extend(CarapaceCollection, {
 
-    model: function(attributes, options){
-        switch(attributes.type) {
-            case "text": 
-                return new TextChatMessageModel(attributes, options); 
+    model: function(attributes, options) {
+        switch (attributes.type) {
+            case "text":
+                return new TextChatMessageModel(attributes, options);
                 break;
             case "code":
-                return new CodeChatMessageModel(attributes,options);
+                return new CodeChatMessageModel(attributes, options);
                 break;
             case "image":
-                return new ImageChatMessageModel(attributes,options);
+                return new ImageChatMessageModel(attributes, options);
                 break;
         }
     }

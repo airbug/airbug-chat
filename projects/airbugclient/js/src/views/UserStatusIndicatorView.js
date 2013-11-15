@@ -49,7 +49,7 @@ var UserStatusIndicatorView = Class.extend(MustacheView, {
      */
     renderModelAttribute: function(attributeName, attributeValue) {
         this._super(attributeName, attributeValue);
-        switch(attributeName) {
+        switch (attributeName) {
             case "status":
                 this.findElement('#user-status-indicator-' + this.cid).addClass("user-status-indicator user-status-indicator-" + attributeValue);
                 break;

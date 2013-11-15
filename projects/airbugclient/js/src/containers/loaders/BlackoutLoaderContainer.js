@@ -106,7 +106,7 @@ var BlackoutLoaderContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function() {
         this._super();
-    },
+    }
 
 
     //-------------------------------------------------------------------------------

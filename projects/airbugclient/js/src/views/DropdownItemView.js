@@ -70,7 +70,7 @@ var DropdownItemView = Class.extend(MustacheView, {
 
     /**
      * @private
-     * @param {jQuery.Event}
+     * @param {jQuery.Event} event
      */
     handleDropdownItemClick: function(event) {
         event.preventDefault();

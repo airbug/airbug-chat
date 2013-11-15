@@ -69,13 +69,13 @@ var ContactListItemContainer = Class.extend(UserListItemContainer, {
 
 
         if (this.contactModel.get("uuid") === "aN9o234") {
-            this.userModel.set({uuid:"nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
+            this.userModel.set({uuid: "nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
         } else if (this.contactModel.get("uuid") === "nv40pfs") {
-            this.userModel.set({uuid: "a93hdug", firstName: "Brian", lastName: "Neisler", status: "available"})
+            this.userModel.set({uuid: "a93hdug", firstName: "Brian", lastName: "Neisler", status: "available"});
         } else if (this.contactModel.get("uuid") === "amvp06d") {
             this.userModel.set({uuid: "18dh7fn", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"});
         } else if (this.contactModel.get("uuid") === "djGh4DA") {
-            this.userModel.set({uuid: "pm8e6ds", firstName: "Tom", lastName: "Raic", status: "offline"})
+            this.userModel.set({uuid: "pm8e6ds", firstName: "Tom", lastName: "Raic", status: "offline"});
         }
     },
 

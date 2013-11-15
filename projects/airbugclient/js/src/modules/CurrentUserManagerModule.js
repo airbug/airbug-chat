@@ -81,7 +81,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // Configuration
     //-------------------------------------------------------------------------------
 
-    configure: function(){
+    configure: function() {
         var _this = this;
         var airbugApi = this.airbugApi;
         this.bugCallRouter.addAll({
@@ -90,11 +90,11 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            refreshConnectionForLogin: function(request, responder){
+            refreshConnectionForLogin: function(request, responder) {
                 var data                = request.getData();
                 airbugApi.resetConnection();
                 responder.response();
-                // What is the current state. What page is the person on? Login page? 
+                // What is the current state. What page is the person on? Login page?
                 // Were they redirected there because they weren't logged in?
                 // If so, where do we forward them back to?
             },
@@ -171,7 +171,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     loginUser: function(email, callback) {
         var _this = this;
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 $.ajax({
                     url: "/app/login",
                     type: "POST",
@@ -188,12 +188,12 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     }
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 _this.currentUser = undefined;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 console.log("CurrentUserManagerModule#loginUser retrieving current user");
                 _this.retrieveCurrentUser(function(throwable, currentUser) {
                     flow.complete(throwable);
@@ -209,29 +209,29 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         //TODO
         var _this = this;
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 $.ajax({
                     url: "/app/logout",
                     type: "POST",
                     dataType: "json",
                     data: {},
-                    success: function(data, textStatus, req){
+                    success: function(data, textStatus, req) {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
                         var error = data.error;
                         flow.complete(error);
                     },
-                    error: function(req, textStatus, errorThrown){
+                    error: function(req, textStatus, errorThrown) {
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.error(errorThrown);
                     }
                 });
             }),
-            $task(function(flow){
+            $task(function(flow) {
                 _this.currentUser = undefined;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
-            }),
-        ]).execute(function(throwable){
+            })
+        ]).execute(function(throwable) {
             if (throwable) {
                 throwable = throwable.toString();
             }
@@ -247,10 +247,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      * }} userObject
      * @param {function(Throwable, *)} callback
      */
-    registerUser: function(userObject, callback){
+    registerUser: function(userObject, callback) {
         var _this = this;
         $series([
-            $task(function(flow){
+            $task(function(flow) {
                 $.ajax({
                     url: "/app/register",
                     type: "POST",
@@ -262,7 +262,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         var error   = data.error;
                         flow.complete(error);
                     },
-                    error: function(req, textStatus, errorThrown){
+                    error: function(req, textStatus, errorThrown) {
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.complete(errorThrown);
                     }

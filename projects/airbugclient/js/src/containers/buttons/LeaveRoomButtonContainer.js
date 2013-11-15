@@ -149,10 +149,10 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     hearButtonClickedEvent: function(event) {
         var _this = this;
-        this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(error){
+        this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(error) {
             console.log("Inside LeaveRoomButtonContainer#hearButtonClickedEvent callback from roomManagerModule#leaveRoom");
             console.log("error:", error);
-            if(!error){
+            if (!error) {
                 _this.navigationModule.navigate("home", {
                     trigger: true
                 });

@@ -68,7 +68,7 @@ var UserEmailSettingsView = Class.extend(MustacheView, {
     renderModelAttribute: function(attributeName, attributeValue) {
         this._super(attributeName, attributeValue);
 
-        switch(attributeName) {
+        switch (attributeName) {
             case "email":
                 this.findElement('#user-email-' + this.cid).text(this.model.get("email"));
                 break;

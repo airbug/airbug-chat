@@ -173,7 +173,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @param {function(Error)} callback
      */
     initializeConfiguration: function(callback) {
         var _this                       = this;
@@ -190,52 +190,56 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         //TODO BRN: Pass the session id here...
         console.log("airbugApi.connect call");
-       _this._airbugApi.connect();
+        _this._airbugApi.connect();
 
         controllerScan.scan();
 
         currentUserManagerModule.configure();
 
         this._bugCallClient.registerRequestProcessor(this._bugCallRouter);
-        
+
         $series([
             $task(function(flow) {
-                _this.initializeTracking(function(error){
+                _this.initializeTracking(function(error) {
                     flow.complete(error);
                 });
             }),
             $task(function(flow) {
-                carapaceApplication.start(function(error){
+                carapaceApplication.start(function(error) {
                     flow.complete(error);
                 });
             })
         ]).execute(callback);
     },
 
-    initializeTracking: function(callback){
+    initializeTracking: function(callback) {
         var sonarbugClient      = this._sonarbugClient;
         var trackerModule       = this._trackerModule;
         var carapaceApplication = this._carapaceApplication;
 
-        carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event){
+        carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event) {
             var data = event.getData();
             trackerModule.track("RoutingRequest.Result", data);
         });
 
         $series([
-            $task(function(flow){
-                sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error){
-                    if (!error) console.log('SonarBugClient configured');
+            $task(function(flow) {
+                sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error) {
+                    if (!error) {
+                        console.log('SonarBugClient configured');
+                    }
                     flow.complete(error);
                 });
             }),
-            $task(function(flow){
-                trackerModule.initialize(function(error){
+            $task(function(flow) {
+                trackerModule.initialize(function(error) {
                     flow.complete(error);
                 });
             })
-        ]).execute(function(error){
-            if (!error) console.log("tracking initialized");
+        ]).execute(function(error) {
+            if (!error) {
+                console.log("tracking initialized");
+            }
             callback(error);
         });
     },
@@ -250,7 +254,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {airbug.AirbugApi}
      */
     airbugApi: function(bugCallClient) {
-        this._airbugApi = new AirbugApi(bugCallClient); 
+        this._airbugApi = new AirbugApi(bugCallClient);
         return this._airbugApi;
     },
 

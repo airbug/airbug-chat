@@ -53,10 +53,10 @@ var userAssetBasicsTest = {
 
     setup: function(test) {
         this.testUser = new User({
-            
+
         });
         this.testAsset = new Asset({
-            
+
         });
         this.testAssetId = "testAssetId";
         this.testUserId = "testUserId";

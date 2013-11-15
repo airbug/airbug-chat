@@ -114,7 +114,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
-    activateContainer: function(routerArgs){
+    activateContainer: function(routerArgs) {
         this._super(routerArgs);
         this.threeColumnView.$el.find("textarea")[0].focus();
     },
@@ -143,7 +143,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                         .children([
                             view(TextView)
                                 .attributes({text: "Send"})
-                                .appendTo('*[id|="button"]'),
+                                .appendTo('*[id|="button"]')
                         ])
                 ])
                 .build();
@@ -203,7 +203,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ChatWidgetInputFormContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule"),
+        property("commandModule").ref("commandModule")
     ])
 );
 

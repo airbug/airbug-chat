@@ -77,10 +77,10 @@ var RoomMemberManager = Class.extend(EntityManager, {
      *      updatedAt: Date,
      *      userId: string
      * }} data
-     * @return {
+     * @return {RoomMember}
      */
     generateRoomMember: function(data) {
-        return new RoomMember(data)
+        return new RoomMember(data);
     },
 
     populateRoomMember: function(roomMember, properties, callback) {
@@ -149,7 +149,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {RoomMember} roomMember 
+     * @param {RoomMember} roomMember
      * @param {function(Throwable, RoomMember)} callback
      */
     updateRoomMember: function(roomMember, callback) {

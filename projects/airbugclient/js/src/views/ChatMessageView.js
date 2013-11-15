@@ -63,7 +63,7 @@ var ChatMessageView = Class.extend(MustacheView, {
      */
     renderModelAttribute: function(attributeName, attributeValue) {
         this._super(attributeName, attributeValue);
-        switch(attributeName) {
+        switch (attributeName) {
             case "message":
                 this.findElement('#message-message-' + this.cid).text(attributeValue);
                 break;

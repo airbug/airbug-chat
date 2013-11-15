@@ -69,7 +69,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('form').on('submit', function(event){
+        this.$el.find('form').on('submit', function(event) {
             _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();
@@ -121,7 +121,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
 
     /**
      * @private
-     * @param event
+     * @param {jquery.Event} event
      */
     handleSubmit: function(event) {
         this.submitForm();

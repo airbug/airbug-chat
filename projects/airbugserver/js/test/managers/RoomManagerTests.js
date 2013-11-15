@@ -113,7 +113,7 @@ var $task                   = BugFlow.$task;
                         var id = _this.testRoom.getId();
                         test.assertTrue(!!id, "Assert created room has an id. id = ", id);
                     } else {
-                        console.log("FUCK");
+                        console.log("WHOOPS");
                     }
                     flow.complete(throwable);
                 });

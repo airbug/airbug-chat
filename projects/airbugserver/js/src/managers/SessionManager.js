@@ -106,16 +106,16 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {Session} session
-     * @param {function(Throwable)} 
+     * @param {function(Throwable)} callback
      */
-    deleteSession: function(session, callback){
+    deleteSession: function(session, callback) {
         this.delete(session, callback);
     },
 
     /**
      *
      */
-    deleteSessionBySid: function(sid, callback){
+    deleteSessionBySid: function(sid, callback) {
         this.dataStore.remove({sid: sid}, function(throwable) {
             if (callback) {
                 callback(throwable);
@@ -141,7 +141,7 @@ var SessionManager = Class.extend(EntityManager, {
         return session;
     },
 
-    populateSession: function(session, properties, callback){
+    populateSession: function(session, properties, callback) {
         //TODO
     },
 
@@ -169,7 +169,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {Array.<string>} sessionId
      * @param {function(Throwable, Session)} callback
      */
-    retrieveSession: function(sessionId, callback){
+    retrieveSession: function(sessionId, callback) {
         this.retrieve(sessionId, callback);
     },
 
@@ -177,13 +177,13 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {string} sessionIds
      * @param {function(Throwable, Map.<string, Session>)} callback
      */
-    retrieveSessions: function(sessionIds, callback){
+    retrieveSessions: function(sessionIds, callback) {
         this.retrieveEach(sessionIds, callback);
     },
 
     /**
      * @param {string} sid
-     * @param {function(Throwable, Session)}
+     * @param {function(Throwable, Session)} callback
      */
     retrieveSessionBySid: function(sid, callback) {
         var _this = this;
@@ -203,7 +203,7 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, Set.<Session>)}
+     * @param {function(Throwable, Set.<Session>)} callback
      */
     retrieveSessionsByUserId: function(userId, callback) {
         var _this = this;
@@ -217,7 +217,7 @@ var SessionManager = Class.extend(EntityManager, {
                 });
                 callback(undefined, newSet);
             } else {
-                callback(throwable, undefined)
+                callback(throwable, undefined);
             }
         });
     },
@@ -226,7 +226,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {Session} session
      * @param {function(Throwable, Session)} callback
      */
-    updateSession: function(session, callback){
+    updateSession: function(session, callback) {
         this.update(session, callback);
     }
 });

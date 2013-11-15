@@ -137,7 +137,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     /**
      * @protected
      */
-    activateContainer: function(routingArgs){
+    activateContainer: function(routingArgs) {
         this._super(routingArgs);
     },
 
@@ -156,7 +156,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     /**
      * @private
      */
-    initializeCommandSubscriptions: function(){
+    initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,      this.handleToggleWorkspaceCommand,      this);
         this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT, this.handleToggleHamburgerLeftCommand,  this);
     },
@@ -165,7 +165,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {PublisherMessage} message
      */
-    handleToggleWorkspaceCommand: function(message){
+    handleToggleWorkspaceCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
         var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
@@ -178,7 +178,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {PublisherMessage} message
      */
-    handleToggleHamburgerLeftCommand: function(message){
+    handleToggleHamburgerLeftCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
         var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
@@ -191,7 +191,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      * @param {PublisherMessage} message
      */
-    handleToggleHamburgerRightCommand: function(message){
+    handleToggleHamburgerRightCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
         var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
@@ -203,7 +203,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     /**
      * @private
      */
-    updateColumnSpans: function(){
+    updateColumnSpans: function() {
         var hamburgerLeft           = this.viewTop.$el.find("#page-row-container>.column1of4");
         var roomspace               = this.viewTop.$el.find("#page-row-container>.column2of4");
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
@@ -212,8 +212,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
         var hamburgerRightIsOpen    = !hamburgerRight.hasClass("hamburger-panel-hidden");
         var workspaceIsOpen         = workspace.hasClass("workspace-open");
 
-        if(hamburgerLeftIsOpen && hamburgerRightIsOpen){
-            if(workspaceIsOpen){
+        if (hamburgerLeftIsOpen && hamburgerRightIsOpen) {
+            if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span3");
                 workspace.removeClass("span4 span1");
@@ -222,10 +222,10 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 roomspace.removeClass("span11 span8 span3");
                 roomspace.addClass("span5");
                 workspace.removeClass("span4 span3");
-                workspace.addClass("span1")
+                workspace.addClass("span1");
             }
-        } else if(hamburgerLeftIsOpen || hamburgerRightIsOpen){
-            if(workspaceIsOpen){
+        } else if (hamburgerLeftIsOpen || hamburgerRightIsOpen) {
+            if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span8 span3");
                 roomspace.addClass("span5");
                 workspace.removeClass("span3 span1");
@@ -237,7 +237,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 workspace.addClass("span1");
             }
         } else {
-            if(workspaceIsOpen){
+            if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span5 span3");
                 roomspace.addClass("span8");
                 workspace.removeClass("span3 span1");

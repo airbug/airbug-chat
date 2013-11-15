@@ -49,7 +49,7 @@ var RoomNameView = Class.extend(MustacheView, {
      */
     renderModelAttribute: function(attributeName, attributeValue) {
         this._super(attributeName, attributeValue);
-        switch(attributeName) {
+        switch (attributeName) {
             case "name":
                 this.findElement('#room-name-' + this.cid).text(attributeValue);
                 break;

@@ -134,7 +134,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string=} filter
      * @param {function(Throwable, Map.<MeldDocument>)=} callback
      */
-    createEach: function(type, objects, filter, callback){
+    createEach: function(type, objects, filter, callback) {
         var _this = this;
         var requestData = {objects: objects};
         if (TypeUtil.isFunction(filter)) {
@@ -168,7 +168,7 @@ var ManagerModule = Class.extend(Obj, {
             } else {
                 callback(throwable);
             }
-        });    
+        });
     },
 
     /**
@@ -177,7 +177,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {{*}} requestData
      * @param {function(Throwable, CallResponse} callback
      */
-    request: function(requestType, objectType, requestData, callback){
+    request: function(requestType, objectType, requestData, callback) {
         var _this = this;
         //if(this.airbugApi.isNotConnected()) this.airbugApi.connect();
         this.airbugApi.request(requestType, objectType, requestData, function(throwable, callResponse) {
@@ -196,7 +196,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} filter
      * @param {function(Throwable, Meld)} callback
      */
-    retrieve: function(type, id, filter, callback){
+    retrieve: function(type, id, filter, callback) {
         console.log("ManagerModule#retrieve");
         console.log("type:", type);
         console.log("id:", id);
@@ -312,7 +312,7 @@ var ManagerModule = Class.extend(Obj, {
                 } else {
                     callback(throwable);
                 }
-            })
+            });
         } else {
             callback(undefined, retrievedMeldMap);
         }
@@ -360,21 +360,21 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<string>} meldIds
-     * @param {{meldId: changeObject} changeObjects
+     * @param {Array.<ChangeObject>} changeObjects
      * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
-    updateEach: function(type, meldIds, changeObjects, callback){
+    updateEach: function(type, meldIds, changeObjects, callback) {
         var _this = this;
         var requestData = {
             objectIds: meldIds,
             changeObjects: changeObjects
         };
         var type = StringUtil.pluralize(type);
-        this.airbugApi.request("updateEach", type, requestData, function(throwable, data){
+        this.airbugApi.request("updateEach", type, requestData, function(throwable, data) {
             var extentMeldIds       = [];
             var destroyedMeldIds    = [];
-            meldIds.forEach(function(meldId){
-                if(data[meldId]){
+            meldIds.forEach(function(meldId) {
+                if (data[meldId]) {
                     extentMeldIds.push(meldId);
                 } else {
                     destroyedMeldIds.push(meldId);
@@ -390,7 +390,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} meldId
      * @param {function(Throwable)} callback
      */
-    destroy: function(type, meldId, callback){
+    destroy: function(type, meldId, callback) {
         var requestData = {objectId: meldId};
         this.airbugApi.request("destroy", type, requestData, callback);
     },
@@ -400,10 +400,10 @@ var ManagerModule = Class.extend(Obj, {
      * @param {Array.<string>} meldIds
      * @param {function(Throwable)} callback
      */
-    destroyEach: function(type, meldIds, callback){
+    destroyEach: function(type, meldIds, callback) {
         var requestData = {objectIds: meldIds};
         var type = StringUtil.pluralize(type);
-        this.airbugApi.request("destroy", type, requestData, function(throwable, data){
+        this.airbugApi.request("destroy", type, requestData, function(throwable, data) {
             //TODO
             // var destroyedMeldIds    = [];
             // var extentMeldIds       = [];
@@ -428,16 +428,16 @@ var ManagerModule = Class.extend(Obj, {
      * @param {MeldKey} meldKey
      * @return {Meld}
      */
-    get: function(meldKey){
+    get: function(meldKey) {
         return this.meldStore.getMeld(meldKey);
     },
 
     /**
      * @private
      * @param {Array.<string>} meldKeys
-     * @return {List.<Meld>}}
+     * @return {List.<Meld>}
      */
-    getEach: function(meldKeys){
+    getEach: function(meldKeys) {
         return this.meldStore.getEachMeld(meldKeys);
     }
 });

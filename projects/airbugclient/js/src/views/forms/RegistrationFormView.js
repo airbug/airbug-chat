@@ -36,7 +36,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: 	    
+    template:
                     '<div class="form-wrapper">' +
                         '<div class=""> Welcome </div>' +
                         '<form class="form-horizontal">' +
@@ -77,11 +77,11 @@ var RegistrationFormView = Class.extend(MustacheView, {
 
         this.addFormValidations();
 
-        this.$el.find('form').on('keypress', function(event){
+        this.$el.find('form').on('keypress', function(event) {
             _this.handleKeypress(event);
         });
 
-        this.$el.find('form').on('submit', function(event){
+        this.$el.find('form').on('submit', function(event) {
             _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();
@@ -103,13 +103,13 @@ var RegistrationFormView = Class.extend(MustacheView, {
     /**
      * @private
      */
-    addFormValidations: function(){
+    addFormValidations: function() {
         this.$el.find('form').validate({
             rules: {
                 email: {
                     remote: {
                         url: "app/user-availability-check-email",
-                        type: "post",
+                        type: "post"
                     }
                 }
             },
@@ -158,7 +158,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
      * @param event
      */
     handleSubmit: function(event) {
-        if(this.$el.find('form').valid()){
+        if (this.$el.find('form').valid()) {
             this.submitForm();
         }
     },

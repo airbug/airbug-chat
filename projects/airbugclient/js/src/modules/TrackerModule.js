@@ -77,21 +77,25 @@ var TrackerModule = Class.extend(Obj, {
     /**
      *
      */
-    deinitialize: function(){
+    deinitialize: function() {
 
     },
 
     /**
      *
      */
-    initialize: function(callback){
+    initialize: function(callback) {
         if (this.trackingEnabled) {
             this.sonarbugClient.startTracking();
             this.trackDocumentEvents();
             this.initializeMessageSubscriptions();
-            if(callback && typeof callback === "function") callback(null);
+            if (callback && typeof callback === "function") {
+                callback(null);
+            }
         } else {
-            if(callback && typeof callback === "function") callback(null);
+            if (callback && typeof callback === "function") {
+                callback(null);
+            }
         }
     },
 
@@ -99,7 +103,7 @@ var TrackerModule = Class.extend(Obj, {
      * @param {string} eventName
      * @param {{*}} data
      */
-    track: function(eventName, data){
+    track: function(eventName, data) {
         if (this.trackingEnabled) {
             this.trackSB(eventName, data);
         }
@@ -115,7 +119,7 @@ var TrackerModule = Class.extend(Obj, {
     /**
      *
      */
-    trackDocumentEvents: function(){
+    trackDocumentEvents: function() {
         this.trackClicksOnDocument();
         this.trackMousedownsOnDocument();
         this.trackMouseupsOnDocument();
@@ -126,14 +130,14 @@ var TrackerModule = Class.extend(Obj, {
     // Private Methods
     //-------------------------------------------------------------------------------
 
-    initializeMessageSubscriptions: function(){
+    initializeMessageSubscriptions: function() {
         this.commandModule.subscribe(CommandModule.MessageType.BUTTON_CLICKED, this.handleButtonClickedMessage, this);
     },
 
     /**
-     * @param {PublisherMessage}
+     * @param {PublisherMessage} message
      */
-    handleButtonClickedMessage: function(message){
+    handleButtonClickedMessage: function(message) {
         var topic   = message.getTopic();
         /** @type {buttonName: string} */
         var data    = message.getData();
@@ -144,7 +148,7 @@ var TrackerModule = Class.extend(Obj, {
      * @private
      * @param {Event} event
      */
-    parseEventForTracking: function(event){
+    parseEventForTracking: function(event) {
         var data    = {};
         var $target = $(event.target);
 
@@ -159,9 +163,9 @@ var TrackerModule = Class.extend(Obj, {
     /**
      * @private
      */
-    trackClicksOnDocument: function(){
+    trackClicksOnDocument: function() {
         var _this = this;
-        $(document).on("click", function(event){
+        $(document).on("click", function(event) {
             var data = _this.parseEventForTracking(event);
             _this.track("mouseclick", data);
         });
@@ -170,9 +174,9 @@ var TrackerModule = Class.extend(Obj, {
     /**
      * @private
      */
-    trackMousedownsOnDocument: function(){
+    trackMousedownsOnDocument: function() {
         var _this = this;
-        $(document).on("mousedown", function(event){
+        $(document).on("mousedown", function(event) {
             var data = _this.parseEventForTracking(event);
             _this.track("mousedown", data);
         });
@@ -181,9 +185,9 @@ var TrackerModule = Class.extend(Obj, {
     /**
      * @private
      */
-    trackMouseupsOnDocument: function(){
+    trackMouseupsOnDocument: function() {
         var _this = this;
-        $(document).on("mouseup", function(event){
+        $(document).on("mouseup", function(event) {
             var data = _this.parseEventForTracking(event);
             _this.track("mouseup", data);
         });
@@ -194,7 +198,7 @@ var TrackerModule = Class.extend(Obj, {
      * @param {string} eventName
      * @param {{*}} data
      */
-    trackSB: function(eventName, data){
+    trackSB: function(eventName, data) {
         this.sonarbugClient.track(eventName, data);
     }
 });

@@ -40,7 +40,7 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
      * @param {string} roomMemberId
      * @param {function(Throwable, meldbug.MeldDocument)} callback
      */
-    retrieveRoomMember: function(roomMemberId, callback){
+    retrieveRoomMember: function(roomMemberId, callback) {
         this.retrieve("RoomMember", roomMemberId, callback);
     },
 
@@ -48,7 +48,7 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
      * @param {Array.<string>} roomMemberIds
      * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
      */
-    retrieveRoomMembers: function(roomMemberIds, callback){
+    retrieveRoomMembers: function(roomMemberIds, callback) {
         this.retrieveEach("RoomMember", roomMemberIds, callback);
     }
 });

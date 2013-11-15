@@ -63,7 +63,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {airbug.ConversationModel}
+     * @param {airbug.ConversationModel} conversationModel
      */
     _constructor: function(conversationModel) {
 
@@ -101,7 +101,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
-        /** 
+        /**
          * @type {airbug.ChatMessageManagerModule}
          */
         this.chatMessageManagerModule       = null;
@@ -152,9 +152,8 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.chatWidgetMessagesView);
     },
 
-    createContainerChildren: function(){
+    createContainerChildren: function() {
         this._super();
-
     },
 
     /**
@@ -162,7 +161,6 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-
     }
 
 

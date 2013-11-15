@@ -171,7 +171,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    initializeCommandSubscriptions: function(){
+    initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
         // this.commandModule.subscribe(CommandType.DISPLAY.PICTURE_EDITOR, this.handleDisplayPictureEditorCommand, this);
 
@@ -184,7 +184,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {PublisherMessage} message
      */
-    handleDisplayCodeEditorCommand: function(message){
+    handleDisplayCodeEditorCommand: function(message) {
         // var topic               = message.getTopic();
         // var data                = message.getMessage();
 
@@ -194,7 +194,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {PublisherMessage} message
      */
-    handleDisplayPictureEditorCommand: function(message){
+    handleDisplayPictureEditorCommand: function(message) {
         // var topic               = message.getTopic();
         // var data                = message.getMessage();
 
@@ -204,7 +204,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {string} widgetId //in CSS format
      */
-    handleDisplayCommand: function(widgetId){
+    handleDisplayCommand: function(widgetId) {
         var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
         var codeEditorWidget    = this.viewTop.$el.find("#code-editor-widget");
 

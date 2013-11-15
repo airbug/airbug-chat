@@ -93,7 +93,7 @@ var MeldModel = Class.extend(CarapaceModel, {
     /**
      * @param {MeldDocument} meldDocument
      */
-    setMeldDocument: function(meldDocument){
+    setMeldDocument: function(meldDocument) {
         this.meldDocument = meldDocument;
 
         //TODO BRN: Do we need to clear out past values?
@@ -110,8 +110,8 @@ var MeldModel = Class.extend(CarapaceModel, {
     /**
      * @private
      */
-    addListenersToMeldDocument: function(){
-        if(this.meldDocument){
+    addListenersToMeldDocument: function() {
+        if (this.meldDocument) {
             this.meldDocument.addEventListener(MeldDocument.EventTypes.DESTROYED, this.handleDestroyed, this);
             this.meldDocument.addEventListener(MeldDocument.EventTypes.PROPERTY_CHANGES, this.handlePropertyChanges, this);
         }
@@ -140,7 +140,7 @@ var MeldModel = Class.extend(CarapaceModel, {
         var setAttributes = {};
         var set = false;
         delta.getChangeList().forEach(function(deltaChange) {
-            switch(deltaChange.getChangeType()) {
+            switch (deltaChange.getChangeType()) {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
                     setAttributes = deltaChange.getData();
                     set = true;

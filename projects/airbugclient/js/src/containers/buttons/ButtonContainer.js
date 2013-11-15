@@ -96,7 +96,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    handleButtonClickedEvent: function(event){
+    handleButtonClickedEvent: function(event) {
         this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
     }
 });

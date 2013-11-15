@@ -8,9 +8,9 @@
 
 //@Require('Class')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation') 
+//@Require('bugentity.EntityAnnotation')
 //@Require('bugentity.PropertyAnnotation')
-//@Require('bugmeta.BugMeta') 
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------

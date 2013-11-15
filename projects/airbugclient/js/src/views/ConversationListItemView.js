@@ -44,8 +44,8 @@ var ConversationListItemView = Class.extend(SelectableListItemView, {
                         '<span id="chat-unread-message-preview-{{cid}}" class="text chat-unread-message-preview">{{model.unreadMessagePreview}}</span>' +
                     '</div>' +
                 '</div>',
-    
-    
+
+
     //-------------------------------------------------------------------------------
     // MustacheView Implementation
     //-------------------------------------------------------------------------------

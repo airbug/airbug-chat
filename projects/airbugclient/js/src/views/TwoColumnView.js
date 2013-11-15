@@ -99,7 +99,7 @@ var TwoColumnView = Class.extend(MultiColumnView, {
                 data.rightColumnSpan = "span3";
                 break;
         }
-        
+
         return data;
     }
 });

@@ -139,7 +139,7 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.createRoomFormContainer, ".column2of2");
     },
 
-    activateContainer: function(routingArgs){
+    activateContainer: function(routingArgs) {
         this._super(routingArgs);
     }
 });

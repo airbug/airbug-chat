@@ -230,7 +230,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    animateChatMessageCollectionAdd: function(){
+    animateChatMessageCollectionAdd: function() {
         var panelBody = this.chatWidgetView.$el.find(".panel-body");
         panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
         //TODO:

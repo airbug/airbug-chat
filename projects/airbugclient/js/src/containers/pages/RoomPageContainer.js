@@ -233,7 +233,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
                 console.log("throwable:", throwable);
                 notificationView.flashError(throwable);
                 notificationView.flashError("This room is currently unavailable. You will be redirected to your user homepage");
-                setTimeout(function(){
+                setTimeout(function() {
                     _this.navigationModule.navigate("home", {trigger: true});
                 }, 1500);
             }

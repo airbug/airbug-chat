@@ -133,7 +133,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView = 
+        this.panelView =
             view(PanelView)
                 .id("code-editor-widget")
                 .attributes({classes: "workspace-widget"})
@@ -182,11 +182,11 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {PublisherMessage} message
      */
-    handleToggleCodeEditorSettingsCommand: function(message){
+    handleToggleCodeEditorSettingsCommand: function(message) {
         var codeEditor          = this.viewTop.$el.find("#code-editor-container");
         var codeEditorSettings  = this.viewTop.$el.find("#code-editor-settings-wrapper");
 
-        if(codeEditor.is(":hidden")){
+        if (codeEditor.is(":hidden")) {
             codeEditor.show();
             codeEditorSettings.hide();
         } else {

@@ -70,7 +70,7 @@ var UserController = Class.extend(EntityController, {
 
         /**
          * @private
-         * @type {}
+         * @type {Object}
          */
         this.config                 = config;
 

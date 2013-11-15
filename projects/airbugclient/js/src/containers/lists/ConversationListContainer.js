@@ -132,7 +132,7 @@ var ConversationListContainer = Class.extend(CarapaceContainer, {
             uuid: "bn6LPsd",
             name: "airbug Company Room",
             unreadMessageCount: 20,
-            unreadMessagePreview:"Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
+            unreadMessagePreview: "Brian: We have our first customer! Also, this is a really long message that should eventually overflow the preview because i just kept typing and typing and typing and typing and typing and typing and typing and typing and typing...",
             context: {
                 type: "room",
                 uuid: "g13Dl0s"

@@ -82,7 +82,7 @@ var SessionController = Class.extend(EntityController, {
     /**
      *
      */
-    configure: function(){
+    configure: function() {
         var _this       = this;
         var expressApp  = this.expressApp;
 

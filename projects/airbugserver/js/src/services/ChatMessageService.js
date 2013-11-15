@@ -147,7 +147,7 @@ var ChatMessageService = Class.extend(Obj, {
                         }
                     });
                 }),
-                $task(function(flow){
+                $task(function(flow) {
                     _this.chatMessageManager.createChatMessage(chatMessage, function(throwable, chatMessage) {
                         flow.complete(throwable);
                     });
@@ -166,7 +166,7 @@ var ChatMessageService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.roomService.dbPopulateRoomAndRoomMembers(conversation.getOwner(), function(throwable) {
                         flow.complete(throwable);
-                    })
+                    });
                 }),
                 $task(function(flow) {
                     _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);

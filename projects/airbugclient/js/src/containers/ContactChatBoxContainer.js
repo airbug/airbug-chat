@@ -200,13 +200,13 @@ var ContactChatBoxContainer = Class.extend(CarapaceContainer, {
         // TODO BRN: Send the user uuid and the userModel to the API. It's the API's responsibility to change the model
 
         if (userUuid === "nmhsieh") {
-            this.userModel.set({uuid:"nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
+            this.userModel.set({uuid: "nmhsieh", firstName: "Tim", lastName: "Pote", status: "away"});
         } else if (userUuid === "a93hdug") {
-            this.userModel.set({uuid: "a93hdug", firstName: "Brian", lastName: "Neisler", status: "available"})
+            this.userModel.set({uuid: "a93hdug", firstName: "Brian", lastName: "Neisler", status: "available"});
         } else if (userUuid === "18dh7fn") {
             this.userModel.set({uuid: "18dh7fn", firstName: "Adam", lastName: "Nisenbaum", status: "dnd"});
         } else if (userUuid === "pm8e6ds") {
-            this.userModel.set({uuid: "pm8e6ds", firstName: "Tom", lastName: "Raic", status: "offline"})
+            this.userModel.set({uuid: "pm8e6ds", firstName: "Tom", lastName: "Raic", status: "offline"});
         }
     },
 

@@ -2,7 +2,7 @@
 //      start airbug server
 //      npm install phantomjs
 //      phantomjs applicationIntegrationTest.js
-//      open homeScreen.png 
+//      open homeScreen.png
 
 console.log("Starting Airbug PhantomJS Automation Tests");
 function printArgs() {

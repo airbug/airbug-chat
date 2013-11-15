@@ -50,7 +50,7 @@ var UserNameView = Class.extend(MustacheView, {
     renderModelAttribute: function(attributeName, attributeValue) {
         this._super(attributeName, attributeValue);
 
-        switch(attributeName) {
+        switch (attributeName) {
             case "firstName":
             case "lastName":
                 this.findElement('#user-name-' + this.cid).text(this.model.get("firstName") + " " + this.model.get("lastName"));

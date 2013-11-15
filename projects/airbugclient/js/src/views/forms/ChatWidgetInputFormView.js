@@ -66,10 +66,10 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#text-area-' + this.cid).on('keypress', function(event){
+        this.$el.find('#text-area-' + this.cid).on('keypress', function(event) {
             _this.handleKeyPress(event);
         });
-        this.$el.find('form').on('submit', function(event){
+        this.$el.find('form').on('submit', function(event) {
             event.preventDefault();
             event.stopPropagation();
             return false;
@@ -116,7 +116,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
      */
     handleEnterKeyPress: function(event) {
         var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.cid).prop("checked");
-        if(submitOnEnter) {
+        if (submitOnEnter) {
             this.submitForm();
             event.preventDefault();
             event.stopPropagation();
@@ -130,7 +130,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     handleKeyPress: function(event) {
         var key = event.which;
         var ctl = event.ctrlKey;
-        if(key === 13 && !ctl){
+        if (key === 13 && !ctl) {
             this.handleEnterKeyPress(event);
         }
     },
@@ -138,7 +138,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     /**
      * @param {jQuery.Event} event
      */
-    handleSubmit: function(event){
+    handleSubmit: function(event) {
         this.submitForm();
     }
 });

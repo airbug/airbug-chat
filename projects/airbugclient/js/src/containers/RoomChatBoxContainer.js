@@ -180,7 +180,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxWithHeaderView = 
+        this.boxWithHeaderView =
             view(BoxWithHeaderView)
                 .children([
                     view(SubHeaderView)

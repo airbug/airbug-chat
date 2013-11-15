@@ -160,11 +160,11 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    createContainerChildren: function(){
+    createContainerChildren: function() {
         var type = this.chatMessageModel.get("type");
         if (type === "code") {
             this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
-            this.addContainerChild(this.chatMessageReplyButton, ".message-controls")
+            this.addContainerChild(this.chatMessageReplyButton, ".message-controls");
         }
     },
 
@@ -175,7 +175,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         var _this = this;
         this._super();
         this.chatMessageView.$el.find(".message-failed-false, .message-failed-true")
-            .on("click", function(event){
+            .on("click", function(event) {
                 event.preventDefault();
                 event.stopPropagation();
                 console.log("firing chatMessage retry click event");

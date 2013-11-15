@@ -87,7 +87,7 @@ var ConversationService = Class.extend(Obj, {
 
         if (!currentUser.isAnonymous()) {
             $series([
-                $task(function(flow){
+                $task(function(flow) {
                     _this.dbRetrievePopulatedConversation(conversationId, function(throwable, returnedConversation) {
 
                         //TODO BRN: Is it ok for non-room members to retrieve a conversation?

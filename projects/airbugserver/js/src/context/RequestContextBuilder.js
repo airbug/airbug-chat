@@ -82,7 +82,7 @@ var RequestContextBuilder = Class.extend(Obj, {
     registerRequestContextBuilder: function(requestContextBuilder) {
         if (Class.doesImplement(requestContextBuilder, IBuildRequestContext)) {
             if (!this.requestContextBuilderList.contains(requestContextBuilder)) {
-                this.requestContextBuilderList.add(requestContextBuilder)
+                this.requestContextBuilderList.add(requestContextBuilder);
             } else {
                 throw new Error("requestContextBuilder can only be registered once.");
             }
@@ -117,9 +117,9 @@ var RequestContextBuilder = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {} req
-     * @param {} res
-     * @param {} next
+     * @param {IncomingRequest} req
+     * @param {CallResponder} res
+     * @param {function} next
      */
     buildRequestContextForExpress: function(req, res, next) {
         var type = RequestContext.Types.EXPRESS;

@@ -132,7 +132,7 @@ var CallService = Class.extend(Obj, {
         var callManager     = data.callManager;
         this.deregisterCallManager(callManager);
     },
-    
+
     /**
      * @private
      * @param {CallEvent} event

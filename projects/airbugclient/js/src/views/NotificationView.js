@@ -48,9 +48,9 @@ var NotificationView = Class.extend(MustacheView, {
     },
 
     /**
-     * @param (string) message
+     * @param {string} message
      */
-    flashError: function(message){
+    flashError: function(message) {
         console.log("NotificationView#flashError");
         this.flash(
             '<div id="notification-message" class="notification-message error-notification">' +
@@ -59,15 +59,15 @@ var NotificationView = Class.extend(MustacheView, {
     },
 
     /**
-     * @param (string) html
+     * @param {string} html
      */
-    flash: function(html){
+    flash: function(html) {
         console.log("NotificationView#flash");
         var _this = this;
         var notificationContainer = $(this.$el[0]);
         notificationContainer.prepend(html).show();
-        setTimeout(function(){
-            notificationContainer.fadeOut(500, function(){
+        setTimeout(function() {
+            notificationContainer.fadeOut(500, function() {
                 notificationContainer.children("div").remove();
             });
         }, 3000);

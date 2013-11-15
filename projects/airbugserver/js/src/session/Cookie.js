@@ -129,7 +129,7 @@ var Cookie = Class.extend(Obj, {
      */
     setMaxAge: function(ms) {
         if (TypeUtil.isNumber(ms)) {
-            this.data.expires = new Date(Date.now() + ms)
+            this.data.expires = new Date(Date.now() + ms);
         } else {
             this.data.expires = ms;
         }
