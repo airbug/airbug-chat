@@ -157,8 +157,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     initializeCommandSubscriptions: function(){
-        this.commandModule.subscribe(CommandTypes.TOGGLE.WORKSPACE,      this.handleToggleWorkspaceCommand,      this);
-        this.commandModule.subscribe(CommandTypes.TOGGLE.HAMBURGER_LEFT, this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,      this.handleToggleWorkspaceCommand,      this);
+        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT, this.handleToggleHamburgerLeftCommand,  this);
     },
 
     /**
