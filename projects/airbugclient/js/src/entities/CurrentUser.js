@@ -72,7 +72,11 @@ var CurrentUser = Class.extend(Obj, {
      * @return {boolean}
      */
     isLoggedIn: function() {
-        return !this.meldDocument.getData().anonymous;
+        if(!this.meldDocument){
+            return false;
+        } else {
+            return !this.meldDocument.getData().anonymous;
+        }
     }
 });
 
