@@ -108,7 +108,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow){
                     if (Class.doesExtend(userOrUserId, User)) {
                         user = userOrUserId;
-                        _this.dbRetrievePopulatedRoom(user.getId(), roomId, function(throwable, returnedRoom){
+                        _this.dbRetrievePopulatedRoom(roomId, function(throwable, returnedRoom){
                             if(!throwable){
                                 room = returnedRoom;
                             }
