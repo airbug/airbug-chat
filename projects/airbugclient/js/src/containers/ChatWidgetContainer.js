@@ -203,9 +203,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.chatWidgetMessagesContainer        = new ChatWidgetMessagesContainer(this.conversationModel);
-        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages-' + this.chatWidgetView.cid);
+        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages');
         this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer();
-        this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input-" + this.chatWidgetView.cid);
+        this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input");
     },
 
     /**
