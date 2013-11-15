@@ -200,12 +200,13 @@ var ManagerModule = Class.extend(Obj, {
         console.log("ManagerModule#retrieve");
         console.log("type:", type);
         console.log("id:", id);
-        console.log("filter", filter);
         var _this       = this;
         if (TypeUtil.isFunction(filter)) {
             callback = filter;
             filter = "basic";
         }
+        console.log("filter", filter);
+
         var meldKey     = this.meldBuilder.generateMeldKey(type, id, filter);
         var meldDocument  = this.get(meldKey);
         if (meldDocument) {

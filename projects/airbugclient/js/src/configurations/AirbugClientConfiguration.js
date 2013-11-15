@@ -17,6 +17,7 @@
 //@Require('airbug.NavigationModule')
 //@Require('airbug.PageStateModule')
 //@Require('airbug.RoomManagerModule')
+//@Require('airbug.RoomMemberManagerModule')
 //@Require('airbug.TrackerModule')
 //@Require('airbug.UserManagerModule')
 //@Require('bugcall.BugCallClient')
@@ -64,6 +65,7 @@ var CurrentUserManagerModule    = bugpack.require('airbug.CurrentUserManagerModu
 var NavigationModule            = bugpack.require('airbug.NavigationModule');
 var PageStateModule             = bugpack.require('airbug.PageStateModule');
 var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
+var RoomMemberManagerModule     = bugpack.require('airbug.RoomMemberManagerModule');
 var TrackerModule               = bugpack.require('airbug.TrackerModule');
 var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
@@ -284,7 +286,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {bugcall.CallClient}
      */
     callClient: function(socketIoClient) {
-        console.log("*****************************************************");
         console.log("socketIoClient:", socketIoClient);
         return new CallClient(socketIoClient);
     },
@@ -392,6 +393,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     roomManagerModule: function(airbugApi, meldStore, meldBuilder) {
         return new RoomManagerModule(airbugApi, meldStore, meldBuilder);
+    },
+
+    roomMemberManagerModule: function(airbugApi, meldStore, meldBuilder) {
+        return new RoomMemberManagerModule(airbugApi, meldStore, meldBuilder);
     },
 
     /**
@@ -519,6 +524,12 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 property("carapaceRouter").ref("carapaceRouter")
             ]),
         module("roomManagerModule")
+            .args([
+                arg().ref("airbugApi"),
+                arg().ref("meldStore"),
+                arg().ref("meldBuilder")
+            ]),
+        module("roomMemberManagerModule")
             .args([
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),
