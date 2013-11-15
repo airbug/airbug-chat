@@ -308,20 +308,6 @@ var ManagerModule = Class.extend(Obj, {
                     } else {
                         callback(undefined, callResponse);
                     }
-
-
-
-                    var extentMeldIds       = [];
-                    var destroyedMeldIds    = [];
-                    meldIds.forEach(function(meldId){
-                        if(data[meldId]){
-                            extentMeldIds.push(meldId);
-                        } else {
-                            destroyedMeldIds.push(meldId);
-                        }
-                    });
-                    retrievedMeldDocuments.concat(_this.getEach(extentMeldIds));
-                    callback(throwable, retrievedMeldDocuments);
                 } else {
                     callback(throwable);
                 }
