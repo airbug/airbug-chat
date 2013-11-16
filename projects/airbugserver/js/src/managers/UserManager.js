@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Set')
+//@Require('TypeUtil')
 //@Require('airbugserver.User')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -29,6 +30,7 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Set                         = bugpack.require('Set');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var User                        = bugpack.require('airbugserver.User');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -59,8 +61,13 @@ var UserManager = Class.extend(EntityManager, {
      * @param {airbugserver.User} user
      * @param {function(Error, User)=} callback
      */
-    createUser: function(user, callback) {
-        this.create(user, callback);
+    createUser: function(user, dependencies, callback) {
+        if(TypeUtil.isFunction(dependencies)){
+            callback        = dependencies;
+            dependencies    = [];
+        };
+        var options         = {};
+        this.create(user, options, dependencies, callback);
     },
 
     /**

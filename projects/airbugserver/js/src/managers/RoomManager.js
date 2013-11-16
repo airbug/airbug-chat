@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Set')
+//@TypeUtil('TypeUtil')
 //@Require('airbugserver.Room')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -29,6 +30,7 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Set                         = bugpack.require('Set');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var Room                        = bugpack.require('airbugserver.Room');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -60,8 +62,21 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {Room} room
      * @param {function(Throwable, Room)} callback
      */
-    createRoom: function(room, callback) {
-        this.create(room, callback);
+    createRoom: function(room, dependencies, callback) {
+        if(TypeUtil.isFunction(dependencies)){
+            callback        = dependencies;
+            dependencies    = [];
+        };
+
+        var options = {
+            conversation: {
+                idSetter:   room.setConversationId,
+                setter:     room.setConversation,
+                ownerIdProperty: "ownerId", //Should this be ownerIdSetter? This would require requiring Conversation here.
+                ownerProperty: "owner" //How should we handle many to many associations?
+            }
+        };
+        this.create(room, options, dependencies, callback);
     },
 
     /**

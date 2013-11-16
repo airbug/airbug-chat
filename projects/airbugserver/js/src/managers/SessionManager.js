@@ -89,8 +89,13 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {Session} session
      * @param {function(Throwable, Session)} callback
      */
-    createSession: function(session, callback) {
-        this.create(session, callback);
+    createSession: function(session, dependencies, callback) {
+        if(TypeUtil.isFunction(dependencies)){
+            callback        = dependencies;
+            dependencies    = [];
+        };
+        var options         = {};
+        this.create(session, options, dependencies, callback);
     },
 
     /**
