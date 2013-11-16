@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Map')
+//@Require('TypeUtil')
 //@Require('airbugserver.Asset')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -33,6 +34,7 @@ var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var TypeUtil                    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -59,9 +61,14 @@ var AssetManager = Class.extend(EntityManager, {
      * @param {Asset} asset
      * @param {function(Asset, Throwable)} callback
      */
-    createAsset: function(asset, callback) {
+    createAsset: function(asset, dependencies, callback)
         console.log("in AssetManager#createAsset");
-        this.create(asset, callback);
+        if (TypeUtil.isFunction(dependencies)) {
+            callback        = dependencies;
+            dependencies    = [];
+        };
+        var options         = {};
+        this.create(asset, options, dependencies, callback);
     },
 
     /**
