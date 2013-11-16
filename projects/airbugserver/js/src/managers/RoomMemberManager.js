@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('TypeUtil')
 //@Require('airbugserver.RoomMember')
 //@Require('bugentity.EntityManger')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -27,6 +28,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var RoomMember                  = bugpack.require('airbugserver.RoomMember');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -57,8 +59,13 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @param {Object} roomMember
      * @param {function(Error, RoomMember} callback
      */
-    createRoomMember: function(roomMember, callback) {
-        this.create(roomMember, callback);
+    createRoomMember: function(roomMember, dependencies, callback) {
+        if(TypeUtil.isFunction(dependencies)){
+            callback        = dependencies;
+            dependencies    = [];
+        };
+        var options         = {};
+        this.create(roomMember, options, dependencies, callback);
     },
 
     /**

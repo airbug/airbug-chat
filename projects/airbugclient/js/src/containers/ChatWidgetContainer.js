@@ -167,7 +167,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        this.loadChatMessageCollection(this.conversationModel.get("id"));
+        this.loadChatMessageCollection(this.conversationModel.get("_id"));
     },
 
     /**
@@ -213,7 +213,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.conversationModel.bind('change:id', this.handleConversationModelChangeId, this);
+        this.conversationModel.bind('change:_id', this.handleConversationModelChangeId, this);
 
         //TODO BRN: Add listener to conversationModel for new id added to chatMessageIdSet
 
@@ -249,7 +249,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @param {string} conversationId
      */
     loadChatMessageCollection: function(conversationId) {
-
         // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
         // The api call would then be responsible for adding ChatMessageModels to the chatMessageCollection.
 
@@ -275,7 +274,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     sendChatMessage: function(chatMessageData) {
         var _this = this;
         var chatMessage = this.chatMessageManagerModule.generateChatMessage(Obj.merge(chatMessageData, {
-            conversationId: this.conversationModel.get("id"),
+            conversationId: this.conversationModel.get("_id"),
             sentAt: new Date().toString()
         }));
         var newChatMessageModel = undefined;
@@ -346,7 +345,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     handleConversationModelChangeId: function() {
-        this.loadChatMessageCollection(this.conversationModel.get('id'));
+        this.loadChatMessageCollection(this.conversationModel.get('_id'));
     },
 
     /**
