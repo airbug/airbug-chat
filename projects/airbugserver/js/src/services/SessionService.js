@@ -380,6 +380,14 @@ var SessionService = Class.extend(Obj, {
                 callback(throwable);
             }
         });
+    },
+
+    /**
+     * @param {string} userId
+     * @param {function(Throwable, Set.<Session>)}
+     */
+    retrieveSessionsByUserId: function(userId, callback) {
+        this.sessionManager.retrieveSessionsByUserId(userId, callback);
     }
 });
 

@@ -62,7 +62,7 @@ var CallService = Class.extend(Obj, {
          * @private
          * @type {DualMultiSetMap.<string, CallManager>}
          */
-        this.sessionIdToCallManagerMap      = new DualMultiSetMap();
+        this.sessionSidToCallManagerMap      = new DualMultiSetMap();
 
         this.initialize();
     },
@@ -73,11 +73,21 @@ var CallService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {CallManager} callManager
+     * @param {string} requestType
+     * @param {Object} requestData
+     * @param {function(Exception, CallResponse)} requestCallback
+     */
+    request: function(callManager, requestType, requestData, requestCallback) {
+        this.bugCallServer.request(callManager, requestType, requestData, requestCallback);
+    },
+
+    /**
      * @param {string} sessionId
      * @return {Set.<CallManager>}
      */
     findCallManagerSetBySessionId: function(sessionId) {
-        var callManagerSet = this.sessionIdToCallManagerMap.getValue(sessionId);
+        var callManagerSet = this.sessionSidToCallManagerMap.getValue(sessionId);
         if (callManagerSet) {
             return callManagerSet.clone();
         } else {
@@ -95,7 +105,7 @@ var CallService = Class.extend(Obj, {
      * @param {CallManager} callManager
      */
     deregisterCallManager: function(callManager) {
-        this.sessionIdToCallManagerMap.removeByValue(callManager);
+        this.sessionSidToCallManagerMap.removeByValue(callManager);
     },
 
     /**
@@ -113,8 +123,8 @@ var CallService = Class.extend(Obj, {
      */
     registerCallManager: function(sid, callManager) {
         console.log("Inside CallService#registerCallManager");
-        this.sessionIdToCallManagerMap.put(sid, callManager);
-        console.log("sessionIdToCallManagerMap count:", this.sessionIdToCallManagerMap.getCount());
+        this.sessionSidToCallManagerMap.put(sid, callManager);
+        console.log("sessionSidToCallManagerMap count:", this.sessionSidToCallManagerMap.getCount());
     },
 
 

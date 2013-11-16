@@ -149,11 +149,12 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
         var _this = this;
         this.currentUserManagerModule.logout(function(error) {
             console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logout");
-            if (!error) {
-                // _this.navigationModule.navigate("loggedout", {
-                //     trigger: true
-                // });
-                window.location.replace("http://localhost:8000/app");
+            if(!error) {
+                _this.navigationModule.navigate("login", {
+                    trigger: true
+                });
+                // window.location.replace("http://localhost:8000/app");
+                console.log("end of currentUserManagerModule.logout callbacks in LogoutButtonContainer");
             } else {
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();

@@ -93,7 +93,7 @@ var RegistrationPageController = Class.extend(ApplicationController, {
      */
     filterRouting: function(routingRequest) {
         this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
-            if (currentUser.isLoggedIn()) {
+            if (currentUser && currentUser.isLoggedIn()) { //bandaid
                 routingRequest.forward("home", {
                     trigger: true
                 });

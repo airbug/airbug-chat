@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('Set')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
@@ -28,6 +29,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -53,7 +55,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager, userManager, meldService, sessionService) {
+    _constructor: function(sessionManager, userManager, meldService, sessionService, callService) {
 
         this._super();
 
@@ -63,6 +65,12 @@ var UserService = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         this.counter = 0;
+
+        /**
+         * @private
+         * @type {CallService}
+         */
+        this.callService            = callService;
 
         /**
          * @private
@@ -228,11 +236,85 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     logoutUser: function(requestContext, callback) {
-        var session = requestContext.get("session");
-        this.sessionService.deleteSession(session, function(throwable) {
-            callback(throwable);
-        });
+        console.log("UserService#logoutUser");
+        var callService         = this.callService;
+        var session             = requestContext.get("session");
+        var currentUser         = requestContext.get("currentUser");
+        var sessionService      = this.sessionService;
+        var sessionSid          = session.getSid();
+        var sessionSet          = undefined;
+        var callManagerSet      = new Set();
+        var callManagerCount    = undefined;
 
+
+        // It is currently sending the refresh requests out. But the UI remains the same.
+        $series([
+            //does a user have more than one session? yes.
+            // $task(function(flow){
+            //     sessionService.deleteSession(session, function(throwable){
+            //         flow.complete(throwable);
+            //     });
+            // }),
+            $task(function(flow){
+                //callService.findCallManagerSetByUserId()
+                sessionService.retrieveSessionsByUserId(currentUser.getId(), function(throwable, returnedSessionSet){
+                    sessionSet = returnedSessionSet;
+                    flow.complete();
+                });
+            }),
+            $task(function(flow){
+                console.log("userId:", currentUser.getId());
+                console.log("sessionSet count:", sessionSet.getCount());
+                if(!sessionSet.isEmpty()){
+                    sessionSet.forEach(function(session){
+                        var sessionSid      = session.getSid();
+                        var callManagers    = callService.findCallManagerSetBySessionId(sessionSid);
+                        console.log("sessionSid:", sessionSid);
+                        if(callManagers) {
+                            callManagerSet.addAll(callManagers.getValueArray());
+                            console.log("new callManagerSet count:", callManagerSet.getCount());
+                        }
+                    });
+                }
+                flow.complete();
+            }),
+            $task(function(flow){
+                if(!sessionSet.isEmpty()){
+                    $iterableParallel(sessionSet, function(flow, session){
+                        sessionService.deleteSession(session, function(throwable){
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable){
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.complete();
+                }
+            }),
+            $task(function(flow){
+                callManagerCount = callManagerSet.getCount();
+                console.log("callManagerSet count:", callManagerCount);
+                if(callManagerCount > 0){
+                    $iterableParallel(callManagerSet, function(flow, callManager){
+                        callService.request(callManager, "refreshConnectionForLogout", {}, function(throwable, callResponse){
+                            console.log("current callManagerSet count:", callManagerCount);
+                            callManagerCount -= 1; //if Success
+                            console.log("throwable:", throwable);
+                            console.log("new callManager count:", callManagerCount);
+                            callService.deregisterCallManager(callManager);
+                            if(callManagerCount === 0) console.log("All callManagers have refreshed connection for sid:", sessionSid);
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable){
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.complete();
+                }
+            })
+        ]).execute(callback);
+
+        // find all callconnections related to userId
         // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
 
     },
@@ -308,7 +390,8 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     retrieveCurrentUser: function(requestContext, callback) {
-
+        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo");
+        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo");
         console.log("UserService#retrieveCurrentUser");
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
@@ -317,6 +400,7 @@ var UserService = Class.extend(Obj, {
 
         //TEST
         console.log("UserService#retrieveCurrentUser - currentUser.getId():", currentUser.getId());
+        console.log("currentUser:", currentUser);
         $series([
             /*$task(function(flow) {
                 //NOTE: SUNG Should anything beyond the rooms be populated??
@@ -333,7 +417,7 @@ var UserService = Class.extend(Obj, {
             })
         ]).execute(function(throwable) {
 
-            console.log("AFTER UserService#retrieveCurrentUser - throwable", currentUser.getId());
+            console.log("AFTER UserService#retrieveCurrentUser - throwable", throwable, "currentUserId:", currentUser.getId());
             if (!throwable) {
                 callback(undefined, currentUser);
             } else {
@@ -358,16 +442,12 @@ var UserService = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                console.log("before dbRetrieveUser");
-                _this.dbRetrieveUser(userId, function(throwable, returnedUser) {
+                _this.dbRetrieveUser(userId, function(throwable, returnedUser){
                     user = returnedUser;
-                    console.log("returnedUser", returnedUser);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                console.log("Before meld");
-
                 if (user && currentUser) {
                     _this.meldService.meldEntity(meldManager, "User", "basic", user); //BUG
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);

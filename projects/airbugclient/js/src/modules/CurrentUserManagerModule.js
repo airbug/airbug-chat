@@ -49,7 +49,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter) {
+    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter) {
 
         this._super(airbugApi, meldStore, meldBuilder);
 
@@ -69,6 +69,8 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          * @type {CurrentUser}
          */
         this.currentUser        = undefined;
+
+        this.navigationModule   = navigationModule;
 
         /**
          * @private
@@ -90,13 +92,14 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            refreshConnectionForLogin: function(request, responder) {
-                var data                = request.getData();
-                airbugApi.resetConnection();
-                responder.response();
-                // What is the current state. What page is the person on? Login page?
-                // Were they redirected there because they weren't logged in?
-                // If so, where do we forward them back to?
+            refreshConnectionForLogin: function(request, responder, callback) {
+                var response = responder.response("Success", {});
+                responder.sendResponse(response, function(error){
+                    _this.currentUser = undefined;
+                    airbugApi.refreshConnection();
+                    callback(error);
+                });
+                //redirect to finalDesintation
             },
 
             /**
@@ -105,20 +108,36 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
              */
              //NOTE: SUNG Does this need to be done on the server side to ensure disconnect.
              // If so, how do we deal with the default reconnect behavior?
-            refreshConnectionForLogout: function(request, responder) {
-                var data                = request.getData();
-                airbugApi.resetConnection();
-                responder.response();
+            refreshConnectionForLogout: function(request, responder, callback) {
+                console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                console.log("CurrentUserManagerModule refreshConnectionForLogout route");
+                var response = responder.response("Success", {});
+                _this.currentUser = undefined;
+                //do i need to wait for connection_established event?
+                //ajax call -- http request made on socket connect. should replace cookie if session no longer exists.
+                responder.sendResponse(response, function(error){
+                    airbugApi.refreshConnection();
+                    //Do I need to wait for connection_established to navigate?? CurrentUser may not be available.
+                    //May need to add eventListener to airbugApi.bugCallClient.callClient
+                    _this.navigationModule.navigate("login", {
+                        trigger: true
+                    });
+                    callback(error);
+                });
+
             },
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-            refreshConnectionForRegister: function(request, responder) {
-                var data                = request.getData();
-                airbugApi.resetConnection();
-                responder.response();
+            refreshConnectionForRegister: function(request, responder, callback) {
+                var response = responder.response("Success", {});
+                responder.sendResponse(response, function(error){
+                    _this.currentUser = undefined;
+                    airbugApi.refreshConnection();
+                    callback(error);
+                });
             }
         });
     },
@@ -137,6 +156,8 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         var _this       = this;
         console.log("currentUser:", this.currentUser);
         if (this.currentUser) {
+            console.log("user already retrieved");
+            console.log("currentUser:", this.currentUser);
             callback(undefined, this.currentUser);
         } else {
             this.request("retrieve", "CurrentUser", {}, function(throwable, callResponse) {
@@ -206,7 +227,6 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable)} callback
      */
     logout: function(callback) {
-        //TODO
         var _this = this;
         $series([
             $task(function(flow) {

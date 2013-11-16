@@ -177,6 +177,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     initializeConfiguration: function(callback) {
         var _this                       = this;
+        var bugCallRouter               = this._bugCallRouter;
         var carapaceApplication         = this._carapaceApplication;
         var controllerScan              = this._controllerScan;
         var currentUserManagerModule    = this._currentUserManagerModule;
@@ -195,6 +196,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         controllerScan.scan();
 
         currentUserManagerModule.configure();
+
+        console.log("routes:", bugCallRouter.getRoutes());
 
         this._bugCallClient.registerRequestProcessor(this._bugCallRouter);
 
@@ -370,8 +373,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @param {BugCallRouter} bugCallRouter
      * @return {airbug.CurrentUserManagerModule}
      */
-    currentUserManagerModule: function(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter) {
-        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, meldBuilder, userManagerModule, bugCallRouter);
+    currentUserManagerModule: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter) {
+        this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter);
         return this._currentUserManagerModule;
     },
 
@@ -517,6 +520,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("meldStore"),
                 arg().ref("meldBuilder"),
                 arg().ref("userManagerModule"),
+                arg().ref("navigationModule"),
                 arg().ref("bugCallRouter")
             ]),
         module("navigationModule")
