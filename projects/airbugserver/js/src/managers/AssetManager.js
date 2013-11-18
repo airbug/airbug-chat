@@ -61,7 +61,7 @@ var AssetManager = Class.extend(EntityManager, {
      * @param {Asset} asset
      * @param {function(Asset, Throwable)} callback
      */
-    createAsset: function(asset, dependencies, callback)
+    createAsset: function(asset, dependencies, callback) {
         console.log("in AssetManager#createAsset");
         if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
