@@ -32,7 +32,7 @@
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('bugroutes.BugCallRouter')
+//@Require('bugroute:bugcall.BugCallRouter')
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
@@ -80,7 +80,7 @@ var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var BugCallRouter               = bugpack.require('bugroutes.BugCallRouter');
+var BugCallRouter               = bugpack.require('bugroute:bugcall.BugCallRouter');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
@@ -197,8 +197,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         currentUserManagerModule.configure();
 
-        console.log("routes:", bugCallRouter.getRoutes());
-
         this._bugCallClient.registerRequestProcessor(this._bugCallRouter);
 
         $series([
@@ -281,7 +279,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
     /**
      * @param {bugcall.BugCallClient} bugCallRequestEventDispatcher
-     * @return {bugroutes.BugCallRouter}
+     * @return {bugroute:bugcall.BugCallRouter}
      */
     bugCallRouter: function(bugCallRequestEventDispatcher) {
         this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);

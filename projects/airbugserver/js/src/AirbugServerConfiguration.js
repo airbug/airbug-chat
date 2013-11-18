@@ -21,7 +21,7 @@
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('bugroutes.BugCallRouter')
+//@Require('bugroute:bugcall.BugCallRouter')
 //@Require('cookies.CookieParser')
 //@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
@@ -80,7 +80,7 @@ var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var BugCallRouter           = bugpack.require('bugroutes.BugCallRouter');
+var BugCallRouter           = bugpack.require('bugroute:bugcall.BugCallRouter');
 var CookieParser            = bugpack.require('cookies.CookieParser');
 var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
