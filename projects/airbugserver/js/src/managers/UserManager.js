@@ -51,6 +51,10 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {EntityManager}
+ */
 var UserManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
@@ -59,14 +63,14 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {User} user
-     * @param {(Object | function(Throwable, User))} dependencies
+     * @param {(Array.<string> | function(Throwable, User))} dependencies
      * @param {function(Throwable, User)=} callback
      */
     createUser: function(user, dependencies, callback) {
-        if (TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(user, options, dependencies, callback);
     },
@@ -80,7 +84,7 @@ var UserManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {
+     * @param {{
      *      anonymous: boolean,
      *      createdAt: Date,
      *      email: string,
@@ -88,7 +92,7 @@ var UserManager = Class.extend(EntityManager, {
      *      lastName: string,
      *      roomIdSet: (Array.<string> | Set.<string>),
      *      updatedAt: Date
-     * } data
+     * }} data
      * @return {User}
      */
     generateUser: function(data) {

@@ -87,14 +87,14 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {Session} session
-     * @param {(Object | function(Throwable, Session))} dependencies
+     * @param {(Array.<string> | function(Throwable, Session))} dependencies
      * @param {function(Throwable, Session)=} callback
      */
     createSession: function(session, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(session, options, dependencies, callback);
     },
@@ -156,7 +156,7 @@ var SessionManager = Class.extend(EntityManager, {
      */
     retrieveAllSessions: function(callback) {
         var _this = this;
-        this.datStore.find({}).lean(true).exec(function(throwable, dbObjects) {
+        this.dataStore.find({}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newMap = new Map();
                 dbObjects.forEach(function(dbObject) {
@@ -172,7 +172,7 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {Array.<string>} sessionId
+     * @param {string} sessionId
      * @param {function(Throwable, Session)} callback
      */
     retrieveSession: function(sessionId, callback) {
@@ -180,7 +180,7 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {string} sessionIds
+     * @param {Array.<string>} sessionIds
      * @param {function(Throwable, Map.<string, Session>)} callback
      */
     retrieveSessions: function(sessionIds, callback) {

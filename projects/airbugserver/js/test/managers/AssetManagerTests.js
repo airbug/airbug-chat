@@ -49,11 +49,12 @@ var test                    = TestAnnotation.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
+
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var assetManagerTests = {
+var assetManagerCreateAssetTest = {
     async: true,
 
     //-------------------------------------------------------------------------------
@@ -99,9 +100,7 @@ var assetManagerTests = {
                 });
             }),
             $task(function(flow) {
-                console.log("Creating an asset");
                 _this.assetManager.createAsset(_this.testAsset, function(throwable) {
-                    console.log("inside createAsset callback");
                     if (!throwable) {
                         test.assertTrue(!! _this.testAsset.getId(),
                             "Newly created asset should have an id");
@@ -113,13 +112,12 @@ var assetManagerTests = {
             if (!throwable) {
                 test.complete();
             } else {
-                rest.error(throwable);
+                test.error(throwable);
             }
         });
-        //test.assertTrue(true, "making sure true is true");
     }
 };
 
-bugmeta.annotate(assetManagerTests).with(
-    test().name("AssetManager Tests")
+bugmeta.annotate(assetManagerCreateAssetTest).with(
+    test().name("AssetManager - createAsset Test")
 );

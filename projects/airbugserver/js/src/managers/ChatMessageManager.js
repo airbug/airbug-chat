@@ -58,7 +58,8 @@ var ChatMessageManager = Class.extend(EntityManager, {
 
     /**
      * @param {ChatMessage} chatMessage
-     * @param {function(Throwable, ChatMessage)} callback
+     * @param {(Array.<string> | function(Throwable, ChatMessage))} dependencies
+     * @param {function(Throwable, ChatMessage)=} callback
      */
     createChatMessage: function(chatMessage, dependencies, callback) {
         if(TypeUtil.isFunction(dependencies)){

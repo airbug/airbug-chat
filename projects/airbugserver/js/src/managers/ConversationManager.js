@@ -60,7 +60,8 @@ var ConversationManager = Class.extend(EntityManager, {
 
     /**
      * @param {Conversation} conversation
-     * @param {function(Throwable, Conversation)} callback
+     * @param {(Array.<string> | function(Throwable, Conversation))} dependencies
+     * @param {function(Throwable, Conversation)=} callback
      */
     createConversation: function(conversation, dependencies, callback) {
         if(TypeUtil.isFunction(dependencies)){

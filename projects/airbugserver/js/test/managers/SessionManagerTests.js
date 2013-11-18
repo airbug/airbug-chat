@@ -56,7 +56,7 @@ var $task                   = BugFlow.$task;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var sessionManagerTest = {
+var sessionManagerCreateAndUpdateTest = {
 
     async: true,
 
@@ -160,6 +160,6 @@ var sessionManagerTest = {
         });
     }
 };
-bugmeta.annotate(sessionManagerTest).with(
-    test().name("SessionManager #createSession Test")
+bugmeta.annotate(sessionManagerCreateAndUpdateTest).with(
+    test().name("SessionManager - create and update session test")
 );

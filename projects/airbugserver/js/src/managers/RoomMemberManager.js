@@ -56,14 +56,15 @@ var RoomMemberManager = Class.extend(EntityManager, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Object} roomMember
-     * @param {function(Error, RoomMember} callback
+     * @param {RoomMember} roomMember
+     * @param {(Array.<string> | function(Throwable, RoomMember))} dependencies
+     * @param {function(Throwable, RoomMember)=} callback
      */
     createRoomMember: function(roomMember, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(roomMember, options, dependencies, callback);
     },
