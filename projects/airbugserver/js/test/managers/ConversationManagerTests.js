@@ -6,22 +6,23 @@
 
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('mongo.DummyMongoDataStore')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var BugMeta         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
-
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
 
 
 //-------------------------------------------------------------------------------

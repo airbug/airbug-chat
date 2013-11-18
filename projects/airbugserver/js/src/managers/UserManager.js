@@ -58,11 +58,12 @@ var UserManager = Class.extend(EntityManager, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {airbugserver.User} user
-     * @param {function(Error, User)=} callback
+     * @param {User} user
+     * @param {(Object | function(Throwable, User))} dependencies
+     * @param {function(Throwable, User)=} callback
      */
     createUser: function(user, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)){
             callback        = dependencies;
             dependencies    = [];
         };

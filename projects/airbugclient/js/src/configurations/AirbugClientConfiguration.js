@@ -26,7 +26,6 @@
 //@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.AutowiredScan')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
@@ -37,7 +36,6 @@
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
 //@Require('carapace.RoutingRequest')
-//@Require('meldbugclient.MeldbugClientController')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
@@ -74,7 +72,6 @@ var CallManager                 = bugpack.require('bugcall.CallManager');
 var BugCallRequestProcessor     = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
-var AutowiredScan               = bugpack.require('bugioc.AutowiredScan');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
@@ -85,7 +82,6 @@ var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication'
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
 var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
-var MeldbugClientController     = bugpack.require('meldbugclient.MeldbugClientController');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -173,7 +169,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     initializeConfiguration: function(callback) {
         var _this                       = this;
@@ -251,8 +247,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {bugcall.BugCallClient} bugCallClient
-     * @return {airbug.AirbugApi}
+     * @param {BugCallClient} bugCallClient
+     * @return {AirbugApi}
      */
     airbugApi: function(bugCallClient) {
         this._airbugApi = new AirbugApi(bugCallClient);
@@ -260,17 +256,17 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {socketio:factorybrowser.BrowserSocketIoFactory}
+     * @return {.BrowserSocketIoFactory}
      */
     browserSocketIoFactory: function() {
         return new BrowserSocketIoFactory();
     },
 
     /**
-     * @param {bugcall.CallClient} callClient
-     * @param {bugcall.CallManager} callManager
-     * @param {bugcall.BugCallRequestProcessor} requestProcessor
-     * @return {bugcall.BugCallClient}
+     * @param {CallClient} callClient
+     * @param {CallManager} callManager
+     * @param {BugCallRequestProcessor} requestProcessor
+     * @return {BugCallClient}
      */
     bugCallClient: function(callClient, callManager, requestProcessor) {
         this._bugCallClient = new BugCallClient(callClient, callManager, requestProcessor);
@@ -278,8 +274,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {bugcall.BugCallClient} bugCallRequestEventDispatcher
-     * @return {bugroute:bugcall.BugCallRouter}
+     * @param {BugCallClient} bugCallRequestEventDispatcher
+     * @return {BugCallRouter}
      */
     bugCallRouter: function(bugCallRequestEventDispatcher) {
         this._bugCallRouter = new BugCallRouter(bugCallRequestEventDispatcher);
@@ -287,8 +283,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {socketio:client.SocketIoClient} socketIoClient
-     * @return {bugcall.CallClient}
+     * @param {SocketIoClient} socketIoClient
+     * @return {CallClient}
      */
     callClient: function(socketIoClient) {
         console.log("socketIoClient:", socketIoClient);
@@ -296,22 +292,22 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {bugcall.CallManager}
+     * @return {CallManager}
      */
     callManager: function() {
         return new CallManager();
     },
 
     /**
-     * @return {bugcall.BugCallRequestProcessor}
+     * @return {BugCallRequestProcessor}
      */
     requestProcessor: function() {
         return new BugCallRequestProcessor();
     },
 
     /**
-     * @param {carapace.CarapaceRouter} carapaceRouter
-     * @return {carapace.CarapaceApplication}
+     * @param {CarapaceRouter} carapaceRouter
+     * @return {CarapaceApplication}
      */
     carapaceApplication: function(carapaceRouter) {
         this._carapaceApplication = new CarapaceApplication(carapaceRouter);
@@ -319,33 +315,33 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {carapace.CarapaceRouter}
+     * @return {CarapaceRouter}
      */
     carapaceRouter: function() {
         return new CarapaceRouter();
     },
 
     /**
-     * @param {airbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
+     * @param {AirbugApi} airbugApi
+     * @param {MeldStore} meldStore
      * @param {MeldBuilder} meldBuilder
-     * @param {airbug.CurrentUserManagerModule} currentUserManagerModule
-     * @param {airbug.ConversationManagerModule} conversationManagerModule
-     * @return {airbug.chatMessageManagerModule}
+     * @param {CurrentUserManagerModule} currentUserManagerModule
+     * @param {ConversationManagerModule} conversationManagerModule
+     * @return {ChatMessageManagerModule}
      */
     chatMessageManagerModule: function(airbugApi, meldStore, meldBuilder, currentUserManagerModule, conversationManagerModule) {
         return new ChatMessageManagerModule(airbugApi, meldStore, meldBuilder, currentUserManagerModule, conversationManagerModule);
     },
 
     /**
-     * @return {airbug.CommandModule}
+     * @return {CommandModule}
      */
     commandModule: function() {
         return new CommandModule();
     },
 
     /**
-     * @param {carapace.CarapaceApplication} carapaceApplication
+     * @param {CarapaceApplication} carapaceApplication
      * @return {ControllerScan}
      */
     controllerScan: function(carapaceApplication) {
@@ -354,22 +350,22 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {airbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
+     * @param {AirbugApi} airbugApi
+     * @param {MeldStore} meldStore
      * @param {MeldBuilder} meldBuilder
-     * @return {airbug.ConversationManagerModule}
+     * @return {ConversationManagerModule}
      */
     conversationManagerModule: function(airbugApi, meldStore, meldBuilder) {
         return new ConversationManagerModule(airbugApi, meldStore, meldBuilder);
     },
 
     /**
-     * @param {airbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
+     * @param {AirbugApi} airbugApi
+     * @param {MeldStore} meldStore
      * @param {MeldBuilder} meldBuilder
-     * @param {airbug.UserManagerModule} userManagerModule
+     * @param {UserManagerModule} userManagerModule
      * @param {BugCallRouter} bugCallRouter
-     * @return {airbug.CurrentUserManagerModule}
+     * @return {CurrentUserManagerModule}
      */
     currentUserManagerModule: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter) {
         this._currentUserManagerModule = new CurrentUserManagerModule(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter);
@@ -377,7 +373,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {airbug.NavigationModule}
+     * @return {NavigationModule}
      */
     navigationModule: function() {
         return new NavigationModule();
@@ -391,10 +387,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {meldbug.AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
+     * @param {AirbugApi} airbugApi
+     * @param {MeldStore} meldStore
      * @param {MeldBuilder} meldBuilder
-     * @return {airbug.RoomManagerModule}
+     * @return {RoomManagerModule}
      */
     roomManagerModule: function(airbugApi, meldStore, meldBuilder) {
         return new RoomManagerModule(airbugApi, meldStore, meldBuilder);
@@ -406,15 +402,15 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
     /**
      * @param {ISocketFactory} socketIoFactory
-     * @param {socketio:client.SocketIoConfig} socketIoConfig
-     * @return {socketio:client.SocketIoClient}
+     * @param {SocketIoConfig} socketIoConfig
+     * @return {SocketIoClient}
      */
     socketIoClient: function(socketIoFactory, socketIoConfig) {
         return new SocketIoClient(socketIoFactory, socketIoConfig);
     },
 
     /**
-     * @return {socketio:client.SocketIoConfig}
+     * @return {SocketIoConfig}
      */
     socketIoConfig: function() {
         this._socketIoConfig = new SocketIoConfig({});
@@ -425,7 +421,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {sonarbugclient.SonarbugClient}
+     * @return {SonarbugClient}
      */
     sonarbugClient: function() {
         this._sonarbugClient = SonarbugClient.getInstance();
@@ -433,9 +429,9 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {sonarbugclient.SonarBugClient} sonarbugClient
+     * @param {SonarbugClient} sonarbugClient
      * @param {CommandModule} commandModule
-     * @return {airbug.TrackerModule}
+     * @return {TrackerModule}
      */
     trackerModule: function(sonarbugClient, commandModule) {
         this._trackerModule = new TrackerModule(sonarbugClient, commandModule);
@@ -444,7 +440,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
     /**
      * @param {AirbugApi} airbugApi
-     * @param {meldbug.MeldStore} meldStore
+     * @param {MeldStore} meldStore
      * @param {MeldBuilder} meldBuilder
      * @return {UserManagerModule}
      */

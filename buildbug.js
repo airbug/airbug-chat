@@ -56,10 +56,10 @@ buildProperties({
                 start: "node ./scripts/airbug-server-application-start.js"
             }
         },
+
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
-            "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
@@ -67,8 +67,8 @@ buildProperties({
             "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
-            "../bugjs/projects/bugroute/bugjars/socketio/js/src",
             "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/cookies/js/src",
             "../bugjs/projects/express/js/src",
@@ -93,9 +93,11 @@ buildProperties({
             "../bugjs/projects/bugflow/js/test",
             "../bugjs/projects/bugioc/js/test",
             "../bugjs/projects/bugjs/js/test",
-            "../bugjs/projects/bugtrace/js/test",
+            "../bugjs/projects/bugmeta/js/test",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
-            "../bugjs/projects/bugroute/bugjars/socketio/js/test",
+            "../bugjs/projects/bugtrace/js/test",
+            "../bugjs/projects/handshaker/js/test",
+            "../bugjs/projects/mongo/js/test",
             "../bugjs/projects/socketio/bugjars/socket/js/test",
             "../meldbug/projects/meldbug/js/test",
             "../meldbug/projects/meldbugserver/js/test"
@@ -129,7 +131,6 @@ buildProperties({
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
-            "../bugjs/projects/bugroute/bugjars/socketio/js/src",
             "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/carapace/js/src",
             "../bugjs/projects/cookies/js/src",

@@ -14,7 +14,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.MongoDataStore')
+//@Require('mongo.DummyMongoDataStore')
 
 
 //-------------------------------------------------------------------------------
@@ -22,7 +22,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
-var mongoose                = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +37,7 @@ var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
+var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
 
 
 //-------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ var $task                   = BugFlow.$task;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-/*var assetManagerTests = {
+var assetManagerTests = {
     async: true,
 
     //-------------------------------------------------------------------------------
@@ -62,10 +61,8 @@ var $task                   = BugFlow.$task;
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        mongoose.connect('mongodb://localhost/airbugtest');
-
         this.entityManagerStore     = new EntityManagerStore();
-        this.mongoDataStore         = new MongoDataStore(mongoose);
+        this.mongoDataStore         = new DummyMongoDataStore();
         this.schemaManager          = new SchemaManager();
         this.entityProcessor        = new EntityProcessor(this.schemaManager);
         this.entityScan             = new EntityScan(this.entityProcessor);
@@ -126,4 +123,3 @@ var $task                   = BugFlow.$task;
 bugmeta.annotate(assetManagerTests).with(
     test().name("AssetManager Tests")
 );
-*/

@@ -60,7 +60,8 @@ var RoomManager = Class.extend(EntityManager, {
 
     /**
      * @param {Room} room
-     * @param {function(Throwable, Room)} callback
+     * @param {(Object | function(Throwable, Room)} dependencies
+     * @param {function(Throwable, Room)=} callback
      */
     createRoom: function(room, dependencies, callback) {
         if(TypeUtil.isFunction(dependencies)){

@@ -651,6 +651,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {SocketIoServerConfig} config
      * @param {ExpressServer} expressServer
+     * @param {Handshaker} handshaker
      * @return {SocketIoServer}
      */
     socketIoServer: function(config, expressServer, handshaker) {
@@ -669,7 +670,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {Object} config
      * @param {ExpressApp} expressApp
-     * @param {SocketRouter} bugCallRouter
+     * @param {BugCallServer} bugCallServer
+     * @param {BugCallRouter} bugCallRouter
      * @param {UserService} userService
      * @return {UserController}
      */
@@ -682,6 +684,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {SessionManager} sessionManager
      * @param {UserManager} userManager
      * @param {MeldService} meldService
+     * @param {SessionService} sessionService
+     * @param {CallService} callService
      * @return {UserService}
      */
     userService: function(sessionManager, userManager, meldService, sessionService, callService) {

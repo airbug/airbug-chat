@@ -15,7 +15,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.MongoDataStore')
+//@Require('mongo.DummyMongoDataStore')
 
 
 //-------------------------------------------------------------------------------
@@ -23,7 +23,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
-var mongoose                = require('mongoose');
 
 
 //-------------------------------------------------------------------------------
@@ -40,7 +39,7 @@ var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
+var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
 
 
 //-------------------------------------------------------------------------------
@@ -57,7 +56,6 @@ var $task                   = BugFlow.$task;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-//NOTE BRN: As this test stands, it is more of an integration test than a unit test since it depends on DB access.
 var sessionManagerTest = {
 
     async: true,
@@ -67,15 +65,9 @@ var sessionManagerTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-
-        //TODO BRN: We need some sort of setup for mongodb database for INTEGRATION tests
-
-        //if (! mongoose.connections) {
-            mongoose.connect('mongodb://localhost/airbugtest');
-        //}
         this.testExpires            = new Date(Date.now() + 1000);
         this.entityManagerStore     = new EntityManagerStore();
-        this.mongoDataStore         = new MongoDataStore(mongoose);
+        this.mongoDataStore         = new DummyMongoDataStore();
         this.schemaManager          = new SchemaManager();
         this.entityProcessor        = new EntityProcessor(this.schemaManager);
         this.entityScan             = new EntityScan(this.entityProcessor);
@@ -160,7 +152,6 @@ var sessionManagerTest = {
             })
 
         ]).execute(function(throwable) {
-            mongoose.connection.close();
             if (!throwable) {
                 test.complete();
             } else {

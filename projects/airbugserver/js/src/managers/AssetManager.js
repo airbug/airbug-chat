@@ -52,9 +52,8 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 
 var AssetManager = Class.extend(EntityManager, {
 
-
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -122,6 +121,7 @@ var AssetManager = Class.extend(EntityManager, {
         this.update(asset, callback);
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // BugMeta

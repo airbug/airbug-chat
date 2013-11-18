@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,6 +31,10 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Config}
+ */
 var SessionServiceConfig = Class.extend(Config, {
 
     //-------------------------------------------------------------------------------
@@ -41,21 +45,21 @@ var SessionServiceConfig = Class.extend(Config, {
      * @return {number}
      */
     getCookieMaxAge: function() {
-        return this.properties.getProperty("cookieMaxAge");
+        return this.getProperties().getProperty("cookieMaxAge");
     },
 
     /**
      * @param {number} cookieMaxAge
      */
     setCookieMaxAge: function(cookieMaxAge) {
-        this.properties.setProperty("cookieMaxAge", cookieMaxAge);
+        this.getProperties().setProperty("cookieMaxAge", cookieMaxAge);
     },
 
     /**
      * @return {string}
      */
     getCookiePath: function() {
-        var cookiePath = this.properties.getProperty("cookiePath");
+        var cookiePath = this.getProperties().getProperty("cookiePath");
         if (!TypeUtil.isString(cookiePath)) {
             cookiePath = "/";
         }
@@ -66,28 +70,28 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {string} cookiePath
      */
     setCookiePath: function(cookiePath) {
-        this.properties.setProperty("cookiePath", cookiePath);
+        this.getProperties().setProperty("cookiePath", cookiePath);
     },
 
     /**
      * @return {string}
      */
     getCookieSecret: function() {
-        return this.properties.getProperty("cookieSecret");
+        return this.getProperties().getProperty("cookieSecret");
     },
 
     /**
      * @param {string} cookieSecret
      */
     setCookieSecret: function(cookieSecret) {
-        this.properties.setProperty("cookieSecret", cookieSecret);
+        this.getProperties().setProperty("cookieSecret", cookieSecret);
     },
 
     /**
      * @return {boolean}
      */
     getRollingSessions: function() {
-        var rollingSessions = this.properties.getProperty("rollingSessions");
+        var rollingSessions = this.getProperties().getProperty("rollingSessions");
         if (!TypeUtil.isBoolean(rollingSessions)) {
             rollingSessions = false;
         }
@@ -98,14 +102,14 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {boolean} rollingSessions
      */
     setRollingSessions: function(rollingSessions) {
-        this.properties.setProperty("rollingSessions", rollingSessions);
+        this.getProperties().setProperty("rollingSessions", rollingSessions);
     },
 
     /**
      * @return {string}
      */
     getSessionKey: function() {
-        var sessionKey = this.properties.getProperty("sessionKey");
+        var sessionKey = this.getProperties().getProperty("sessionKey");
         if (!TypeUtil.isString(sessionKey)) {
             sessionKey = "airbug.sid";
         }
@@ -116,14 +120,14 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {string} sessionKey
      */
     setSessionKey: function(sessionKey) {
-        this.properties.setProperty("sessionKey", sessionKey);
+        this.getProperties().setProperty("sessionKey", sessionKey);
     },
 
     /**
      * @return {boolean}
      */
     getTrustProxy: function() {
-        var trustProxy = this.properties.getProperty("trustProxy");
+        var trustProxy = this.getProperties().getProperty("trustProxy");
         if (!TypeUtil.isBoolean(trustProxy)) {
             trustProxy = false;
         }
@@ -134,7 +138,7 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {boolean} trustProxy
      */
     setTrustProxy: function(trustProxy) {
-        this.properties.setProperty("trustProxy", trustProxy);
+        this.getProperties().setProperty("trustProxy", trustProxy);
     }
 });
 
