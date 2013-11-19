@@ -64,6 +64,7 @@ var UserService = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        //What is this for?
         this.counter = 0;
 
         /**
@@ -205,8 +206,8 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 //unmeld anonymous user
-                _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
+                _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
 
                 // NOTE BRN: We don't try to meld the logged in user here. Instead we depend on the client side to make
                 // another request to retrieve the current user
@@ -242,57 +243,21 @@ var UserService = Class.extend(Obj, {
         var currentUser         = requestContext.get("currentUser");
         var sessionService      = this.sessionService;
         var sessionSid          = session.getSid();
-        var sessionSet          = undefined;
-        var callManagerSet      = new Set();
+        var callManagerSet      = undefined;
         var callManagerCount    = undefined;
 
 
-        // It is currently sending the refresh requests out. But the UI remains the same.
         $series([
-            //does a user have more than one session? yes.
-            // $task(function(flow){
-            //     sessionService.deleteSession(session, function(throwable){
-            //         flow.complete(throwable);
-            //     });
-            // }),
             $task(function(flow){
-                //callService.findCallManagerSetByUserId()
-                sessionService.retrieveSessionsByUserId(currentUser.getId(), function(throwable, returnedSessionSet){
-                    sessionSet = returnedSessionSet;
-                    flow.complete();
+                console.log("userId:", currentUser.getId());
+                console.log("sessionSid:", sessionSid);
+                callManagerSet      = callService.findCallManagerSetBySessionId(sessionSid);
+                callManagerCount    = callManagerSet.getCount();
+                sessionService.deleteSession(session, function(throwable){
+                    flow.complete(throwable);
                 });
             }),
             $task(function(flow){
-                console.log("userId:", currentUser.getId());
-                console.log("sessionSet count:", sessionSet.getCount());
-                if(!sessionSet.isEmpty()){
-                    sessionSet.forEach(function(session){
-                        var sessionSid      = session.getSid();
-                        var callManagers    = callService.findCallManagerSetBySessionId(sessionSid);
-                        console.log("sessionSid:", sessionSid);
-                        if(callManagers) {
-                            callManagerSet.addAll(callManagers.getValueArray());
-                            console.log("new callManagerSet count:", callManagerSet.getCount());
-                        }
-                    });
-                }
-                flow.complete();
-            }),
-            $task(function(flow){
-                if(!sessionSet.isEmpty()){
-                    $iterableParallel(sessionSet, function(flow, session){
-                        sessionService.deleteSession(session, function(throwable){
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable){
-                        flow.complete(throwable);
-                    });
-                } else {
-                    flow.complete();
-                }
-            }),
-            $task(function(flow){
-                callManagerCount = callManagerSet.getCount();
                 console.log("callManagerSet count:", callManagerCount);
                 if(callManagerCount > 0){
                     $iterableParallel(callManagerSet, function(flow, callManager){
@@ -312,11 +277,10 @@ var UserService = Class.extend(Obj, {
                     flow.complete();
                 }
             })
+//            , $task(function(flow){
+//                //unmeld??
+//            })
         ]).execute(callback);
-
-        // find all callconnections related to userId
-        // find all callconnections related to the oldSid and send them a refreshConnectionForLogout request
-
     },
 
     /**
@@ -374,8 +338,8 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
+                _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
@@ -449,8 +413,8 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 if (user && currentUser) {
-                    _this.meldService.meldEntity(meldManager, "User", "basic", user); //BUG
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);
+                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -495,8 +459,8 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 userMap.getValueCollection().forEach(function(user) {
-                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);
+                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
                 });
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
@@ -661,17 +625,6 @@ var UserService = Class.extend(Obj, {
     // Private Meld Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {User} currentUser
-     */
-    meldUserWithCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
-        var reason = ""; //TODO
-        this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
-    },
 
     /**
      * @private
@@ -682,6 +635,18 @@ var UserService = Class.extend(Obj, {
         console.log("Inside UserService#meldCurrentUserWithCurrentUser");
         var userMeldKey = this.meldService.generateMeldKey("User", currentUser.getId(), "owner");
         var reason = "currentUser"; //TODO
+        this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
+    },
+
+    /**
+     * @private
+     * @param {MeldManager} meldManager
+     * @param {User} user
+     * @param {User} currentUser
+     */
+    meldUserWithCurrentUser: function(meldManager, user, currentUser) {
+        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
+        var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     },
 
