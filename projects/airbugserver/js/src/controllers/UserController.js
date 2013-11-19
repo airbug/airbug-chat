@@ -163,7 +163,8 @@ var UserController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var userId              = request.params.id;
             _this.userService.retrieveUser(requestContext, userId, function(throwable, userEntity){
-                if (userEntity) var userJson = userEntity.toObject();
+                var userJson = null;
+                if (userEntity) userJson = userEntity.toObject();
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
