@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
 
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
+var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -162,9 +164,11 @@ var UserController = Class.extend(EntityController, {
         expressApp.get('/app/users/:id', function(request, response){
             var requestContext      = request.requestContext;
             var userId              = request.params.id;
-            userService.retrieveUser(requestContext, userId, function(throwable, userEntity){
+            userService.retrieveUser(requestContext, userId, function(throwable, entity){
                 var userJson = null;
-                if (userEntity) userJson = userEntity.toObject();
+                if (entity) {
+                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -176,9 +180,11 @@ var UserController = Class.extend(EntityController, {
         expressApp.post('/app/users', function(request, response){
             var requestContext      = request.requestContext;
             var user                = request.body;
-            userService.createUser(requestContext, user, function(throwable, userEntity){
+            userService.createUser(requestContext, user, function(throwable, entity){
                 var userJson = null;
-                if (userEntity) userJson = userEntity.toObject();
+                if (entity) {
+                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -191,9 +197,11 @@ var UserController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var userId          = request.params.id;
             var updates         = request.body;
-            userService.updateUser(requestContext, userId, updates, function(throwable, userEntity){
+            userService.updateUser(requestContext, userId, updates, function(throwable, entity){
                 var userJson = null;
-                if (userEntity) userJson = userEntity.toObject();
+                if (entity) {
+                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {

@@ -7,6 +7,7 @@
 //@Export('ChatMessageController')
 
 //@Require('Class')
+//@Require('LiteralUtil')
 //@Require('Obj')
 
 
@@ -22,6 +23,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var LiteralUtil = bugpack.require('LiteralUtil');
 var Obj         = bugpack.require('Obj');
 
 
@@ -84,7 +86,9 @@ var ChatMessageController = Class.extend(Obj, {
             var chatMessageId       = request.params.id;
             chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity){
                 var chatMessageJson = null;
-                if (entity) chatMessageJson = entity.toObject();
+                if (entity) {
+                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -98,7 +102,9 @@ var ChatMessageController = Class.extend(Obj, {
             var chatMessage         = request.body;
             chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity){
                 var chatMessageJson = null;
-                if (entity) chatMessageJson = entity.toObject();
+                if (entity) {
+                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -113,7 +119,9 @@ var ChatMessageController = Class.extend(Obj, {
             var updates         = request.body;
             chatMessageService.updateChatMessage(requestContext, chatMessageId, updates, function(throwable, entity){
                 var chatMessageJson = null;
-                if (entity) chatMessageJson = entity.toObject();
+                if (entity) {
+                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {

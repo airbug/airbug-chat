@@ -7,6 +7,7 @@
 //@Export('ConversationController')
 
 //@Require('Class')
+//@Require('LiteralUtil')
 //@Require('Obj')
 
 
@@ -22,6 +23,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
+var LiteralUtil = bugpack.require('LiteralUtil');
 var Obj         = bugpack.require('Obj');
 
 
@@ -84,7 +86,9 @@ var ConversationController = Class.extend(Obj, {
             var conversationId      = request.params.id;
             conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity){
                 var conversationJson = null;
-                if (entity) conversationJson = entity.toObject();
+                if (entity) {
+                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -98,7 +102,9 @@ var ConversationController = Class.extend(Obj, {
             var conversation        = request.body;
             conversationService.createConversation(requestContext, conversation, function(throwable, entity){
                 var conversationJson = null;
-                if (entity) conversationJson = entity.toObject();
+                if (entity) {
+                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
@@ -113,7 +119,9 @@ var ConversationController = Class.extend(Obj, {
             var updates         = request.body;
             conversationService.updateConversation(requestContext, conversationId, updates, function(throwable, entity){
                 var conversationJson = null;
-                if (entity) conversationJson = entity.toObject();
+                if (entity) {
+                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
+                }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
