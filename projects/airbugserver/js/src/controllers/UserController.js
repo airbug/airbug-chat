@@ -237,7 +237,7 @@ var UserController = Class.extend(EntityController, {
             retrieveCurrentUser: function(request, responder, callback) {
                 console.log("UserController#retrieveCurrentUser");
                 var requestContext = request.requestContext;
-                _this.userService.retrieveCurrentUser(requestContext, function(throwable, user) {
+                userService.retrieveCurrentUser(requestContext, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);
                 });
             },
@@ -254,7 +254,7 @@ var UserController = Class.extend(EntityController, {
                 var requestContext      = request.requestContext;
                 console.log("data", data);
                 console.log("userId ", userId);
-                _this.userService.retrieveUser(requestContext, userId, function(throwable, user) {
+                userService.retrieveUser(requestContext, userId, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);
                 });
             },
@@ -269,7 +269,7 @@ var UserController = Class.extend(EntityController, {
                 var userIds             = data.objectIds;
                 var requestContext      = request.requestContext;
 
-                _this.userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
+                userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
                     _this.processRetrieveEachResponse(responder, throwable, userIds, userMap, callback);
                 });
             }

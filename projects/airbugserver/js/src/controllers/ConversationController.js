@@ -76,12 +76,13 @@ var ConversationController = Class.extend(Obj, {
      */
     configure: function() {
         var _this               = this;
+        var expressApp          = this.expressApp;
         var conversationService = this.conversationService;
 
         // REST API
         //-------------------------------------------------------------------------------
 
-        this.expressApp.get('/app/conversations/:id', function(request, response){
+        expressApp.get('/app/conversations/:id', function(request, response){
             var requestContext      = request.requestContext;
             var conversationId      = request.params.id;
             conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity){
@@ -97,7 +98,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.post('/app/conversations', function(request, response){
+        expressApp.post('/app/conversations', function(request, response){
             var requestContext      = request.requestContext;
             var conversation        = request.body;
             conversationService.createConversation(requestContext, conversation, function(throwable, entity){
@@ -113,7 +114,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.put('/app/conversations/:id', function(request, response){
+        expressApp.put('/app/conversations/:id', function(request, response){
             var requestContext  = request.requestContext;
             var conversationId          = request.params.id;
             var updates         = request.body;
@@ -130,7 +131,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.delete('/app/conversations/:id', function(request, response){
+        expressApp.delete('/app/conversations/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var conversationId  = request.params.id;
@@ -155,7 +156,7 @@ var ConversationController = Class.extend(Obj, {
                 var conversationId      = data.objectId;
                 var requestContext      = request.requestContext;
 
-                _this.conversationService.retrieveConversation(requestContext, conversationId, function(throwable, conversation) {
+                conversationService.retrieveConversation(requestContext, conversationId, function(throwable, conversation) {
                     _this.processRetrieveResponse(responder, throwable, conversation, callback);
                 });
             }

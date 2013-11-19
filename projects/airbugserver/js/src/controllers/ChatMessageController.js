@@ -76,12 +76,13 @@ var ChatMessageController = Class.extend(Obj, {
      */
     configure: function() {
         var _this               = this;
+        var expressApp          = this.expressApp;
         var chatMessageService  = this.chatMessageService;
 
         // REST API
         //-------------------------------------------------------------------------------
 
-        this.expressApp.get('/app/chatMessages/:id', function(request, response){
+        expressApp.get('/app/chatMessages/:id', function(request, response){
             var requestContext      = request.requestContext;
             var chatMessageId       = request.params.id;
             chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity){
@@ -97,7 +98,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.post('/app/chatMessages', function(request, response){
+        expressApp.post('/app/chatMessages', function(request, response){
             var requestContext      = request.requestContext;
             var chatMessage         = request.body;
             chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity){
@@ -113,7 +114,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.put('/app/chatMessages/:id', function(request, response){
+        expressApp.put('/app/chatMessages/:id', function(request, response){
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
             var updates         = request.body;
@@ -130,7 +131,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        this.expressApp.delete('/app/chatMessages/:id', function(request, response){
+        expressApp.delete('/app/chatMessages/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
@@ -155,7 +156,7 @@ var ChatMessageController = Class.extend(Obj, {
                 var chatMessageData     = data.object;
                 var requestContext      = request.requestContext;
 
-                _this.chatMessageService.createChatMessage(requestContext, chatMessageData, function(throwable, chatMessage) {
+                chatMessageService.createChatMessage(requestContext, chatMessageData, function(throwable, chatMessage) {
                     _this.processCreateResponse(responder, throwable, chatMessage, callback);
                 });
             },
@@ -170,7 +171,7 @@ var ChatMessageController = Class.extend(Obj, {
                 var conversationId      = data.conversationId;
                 var requestContext      = request.requestContext;
 
-                _this.chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
+                chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
                     _this.processRetrieveEachResponse(responder, throwable, chatMessageMap.getKeyArray(), chatMessageMap, callback);
                 });
             }

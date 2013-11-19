@@ -157,7 +157,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.roomId;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.addUserToRoom(requestContext, userId, roomId, function(throwable, user, room) {
+                roomService.addUserToRoom(requestContext, userId, roomId, function(throwable, user, room) {
                     if (!throwable) {
                         _this.sendSuccessResponse(responder, {}, callback);
                     } else {
@@ -176,7 +176,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomData            = data.object;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.createRoom(requestContext, roomData, function(throwable, room) {
+                roomService.createRoom(requestContext, roomData, function(throwable, room) {
                     _this.processCreateResponse(responder, throwable, room, callback);
                 });
             },
@@ -191,7 +191,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.roomId;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.joinRoom(requestContext, roomId, function(throwable, room) {
+                roomService.joinRoom(requestContext, roomId, function(throwable, room) {
                     if (!throwable) {
                         _this.sendSuccessResponse(responder, {}, callback);
                     } else {
@@ -210,7 +210,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.roomId;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.leaveRoom(requestContext, roomId, function(throwable, room) {
+                roomService.leaveRoom(requestContext, roomId, function(throwable, room) {
                     if (!throwable) {
                         _this.sendSuccessResponse(responder, {}, callback);
                     } else {
@@ -229,7 +229,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.objectId;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
+                roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
                     _this.processRetrieveResponse(responder, throwable, room, callback);
                 });
             },
@@ -244,7 +244,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomIds             = data.objectIds;
                 var requestContext      = request.requestContext;
 
-                _this.roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
+                roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
                     _this.processRetrieveEachResponse(responder, throwable, roomIds, roomMap, callback);
                 });
             }
