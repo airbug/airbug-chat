@@ -200,6 +200,15 @@ var RoomService = Class.extend(Obj, {
         }
     },
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} roomId
+     * @param {function(Throwable, Room)} callback
+     */
+    deleteRoom: function(requestContext, roomId, callback) {
+        //TODO
+    },
+
     /**
      * @param {RequestContext} requestContext
      * @param {string} roomId
@@ -380,6 +389,16 @@ var RoomService = Class.extend(Obj, {
         } else {
             callback(new Exception("UnauthorizedAccess"));
         }
+    },
+
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} roomId
+     * @param {{*}} updates
+     * @param {function(Throwable)} callback
+     */
+    updateRoom: function(requestContext, roomId, updates, callback) {
+        //TODO
     },
 
 

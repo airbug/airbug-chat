@@ -74,6 +74,24 @@ var ConversationService = Class.extend(Obj, {
     // Methods
     //-------------------------------------------------------------------------------
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {{*}} conversation
+     * @param {function(Throwable, Conversation)} callback
+     */
+    createConversation: function(requestContext, conversation, callback) {
+        //TODO
+    },
+
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} conversationId
+     * @param {function(Throwable)} callback
+     */
+    deleteConversation: function(requestContext, conversationId, callback) {
+        //TODO
+    },
+
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
@@ -118,6 +136,15 @@ var ConversationService = Class.extend(Obj, {
         }
     },
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} conversationId
+     * @param {{*}} updates
+     * @param {function(Throwable, Conversation)} callback
+     */
+    updateConversation: function(requestContext, conversationId, updates, callback) {
+        //TODO
+    },
 
     // Convenience Retrieve Methods
     //-------------------------------------------------------------------------------

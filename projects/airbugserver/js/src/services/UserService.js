@@ -506,6 +506,12 @@ var UserService = Class.extend(Obj, {
         });
     },
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {{*}} updates
+     * @param {function(Throwable, User)} callback
+     */
     updateUser: function(requestContext, userId, updates, callback) {
         //TODO
     },
