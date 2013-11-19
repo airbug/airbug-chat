@@ -156,6 +156,64 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
+        // REST API
+        //-------------------------------------------------------------------------------
+
+        expressApp.get('/app/users/:id', function(request, response){
+            var requestContext      = request.requestContext;
+            var userId              = request.params.id;
+            _this.userService.retrieveUser(requestContext, userId, function(throwable, userEntity){
+                if (userEntity) var userJson = userEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(userJson);
+                }
+            });
+        });
+
+        expressApp.post('/app/users', function(request, response){
+            var requestContext      = request.requestContext;
+            var user                = request.body;
+            _this.userService.createUser(requestContext, user, function(throwable, userEntity){
+                var userJson = null;
+                if (userEntity) userJson = userEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(userJson);
+                }
+            });
+        });
+
+        expressApp.put('/app/users/:id', function(request, response){
+            var requestContext  = request.requestContext;
+            var userId          = request.params.id;
+            var updates         = request.body;
+            _this.userService.updateUser(requestContext, userId, updates, function(throwable, userEntity){
+                var userJson = null;
+                if (userEntity) userJson = userEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(userJson);
+                }
+            });
+        });
+
+        expressApp.delete('/app/users/:id', function(request, response){
+            var _this = this;
+            var requestContext  = req.requestContext;
+            var userId          = req.params.id;
+            _this.userService.deleteUser(requestContext, userId, function(throwable){
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
+                }
+            });
+        });
+
         //-------------------------------------------------------------------------------
         // BugCall Routes
         //-------------------------------------------------------------------------------
@@ -168,6 +226,7 @@ var UserController = Class.extend(EntityController, {
              * @param {function(Throwable)} callback
              */
             retrieveCurrentUser: function(request, responder, callback) {
+                console.log("UserController#retrieveCurrentUser");
                 var requestContext = request.requestContext;
                 _this.userService.retrieveCurrentUser(requestContext, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);

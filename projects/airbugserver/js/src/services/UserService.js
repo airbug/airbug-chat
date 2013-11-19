@@ -138,6 +138,10 @@ var UserService = Class.extend(Obj, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    deleteUser: function(requestContext, ){
+        //TODO
+    },
+
     /**
      * @param {string} email
      * @param {function(Throwable, User)} callback
@@ -393,7 +397,7 @@ var UserService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} userId
-     * @param {function(Throwable, *)} callback
+     * @param {function(Throwable, User)} callback
      */
     retrieveUser: function(requestContext, userId, callback) {
         console.log("UserService#retrieveUser");
@@ -401,7 +405,6 @@ var UserService = Class.extend(Obj, {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
-        var userManager         = this.userManager;
         var user                = undefined;
 
         $series([
@@ -442,7 +445,6 @@ var UserService = Class.extend(Obj, {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
-        var userManager         = this.userManager;
         var userMap             = undefined;
 
         $series([
@@ -473,6 +475,10 @@ var UserService = Class.extend(Obj, {
                 callback(throwable);
             }
         });
+    },
+
+    updateUser: function(requestContext, userId, updates, callback) {
+        //TODO
     },
 
 
