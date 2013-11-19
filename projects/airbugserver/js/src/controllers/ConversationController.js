@@ -36,7 +36,7 @@ var ConversationController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, conversationService) {
+    _constructor: function(expressApp, bugCallRouter, conversationService) {
 
         this._super();
 
@@ -56,6 +56,12 @@ var ConversationController = Class.extend(Obj, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter          = bugCallRouter;
+
+        /*
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp             = expressApp;
     },
 
 
@@ -68,6 +74,67 @@ var ConversationController = Class.extend(Obj, {
      */
     configure: function() {
         var _this               = this;
+        var conversationService = this.conversationService;
+
+        // REST API
+        //-------------------------------------------------------------------------------
+
+        expressApp.get('/app/conversations/:id', function(request, response){
+            var requestContext      = request.requestContext;
+            var conversationId      = request.params.id;
+            conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity){
+                var conversationJson = null;
+                if (entity) conversationJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(conversationJson);
+                }
+            });
+        });
+
+        expressApp.post('/app/conversations', function(request, response){
+            var requestContext      = request.requestContext;
+            var conversation        = request.body;
+            conversationService.createConversation(requestContext, conversation, function(throwable, entity){
+                var conversationJson = null;
+                if (entity) conversationJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(conversationJson);
+                }
+            });
+        });
+
+        expressApp.put('/app/conversations/:id', function(request, response){
+            var requestContext  = request.requestContext;
+            var conversationId          = request.params.id;
+            var updates         = request.body;
+            conversationService.updateConversation(requestContext, conversationId, updates, function(throwable, entity){
+                var conversationJson = null;
+                if (entity) conversationJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(conversationJson);
+                }
+            });
+        });
+
+        expressApp.delete('/app/conversations/:id', function(request, response){
+            var _this = this;
+            var requestContext  = request.requestContext;
+            var conversationId  = request.params.id;
+            conversationService.deleteConversation(requestContext, conversationId, function(throwable){
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
+                }
+            });
+        });
+
         this.bugCallRouter.addAll({
 
             /**

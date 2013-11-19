@@ -492,12 +492,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      * @param {ConversationService} conversationService
      * @return {ConversationController}
      */
-    conversationController: function(bugCallRouter, conversationService) {
-        this._conversationController = new ConversationController(bugCallRouter, conversationService);
+    conversationController: function(expressApp, bugCallRouter, conversationService) {
+        this._conversationController = new ConversationController(expressApp, bugCallRouter, conversationService);
         return this._conversationController;
     },
 
@@ -597,6 +598,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
      * @return {RoomController}
@@ -828,6 +830,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("conversationController")
             .args([
+                arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("conversationService")
             ]),

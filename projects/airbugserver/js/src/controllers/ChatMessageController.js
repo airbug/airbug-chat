@@ -68,6 +68,67 @@ var ChatMessageController = Class.extend(Obj, {
      */
     configure: function() {
         var _this               = this;
+        var chatMessageService  = this.chatMessageService;
+
+        // REST API
+        //-------------------------------------------------------------------------------
+
+        expressApp.get('/app/chatMessages/:id', function(request, response){
+            var requestContext      = request.requestContext;
+            var chatMessageId       = request.params.id;
+            chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity){
+                var chatMessageJson = null;
+                if (entity) chatMessageJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(chatMessageJson);
+                }
+            });
+        });
+
+        expressApp.post('/app/chatMessages', function(request, response){
+            var requestContext      = request.requestContext;
+            var chatMessage         = request.body;
+            chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity){
+                var chatMessageJson = null;
+                if (entity) chatMessageJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(chatMessageJson);
+                }
+            });
+        });
+
+        expressApp.put('/app/chatMessages/:id', function(request, response){
+            var requestContext  = request.requestContext;
+            var chatMessageId   = request.params.id;
+            var updates         = request.body;
+            chatMessageService.updateChatMessage(requestContext, chatMessageId, updates, function(throwable, entity){
+                var chatMessageJson = null;
+                if (entity) chatMessageJson = entity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(chatMessageJson);
+                }
+            });
+        });
+
+        expressApp.delete('/app/chatMessages/:id', function(request, response){
+            var _this = this;
+            var requestContext  = request.requestContext;
+            var chatMessageId   = request.params.id;
+            chatMessageService.deleteChatMessage(requestContext, chatMessageId, function(throwable){
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
+                }
+            });
+        });
+
         this.bugCallRouter.addAll({
 
             /**
