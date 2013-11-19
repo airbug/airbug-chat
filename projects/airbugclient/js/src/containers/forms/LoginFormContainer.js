@@ -148,7 +148,7 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var formData    = event.getData().formData;
-        this.currentUserManagerModule.loginUser(formData.email, function(throwable, currentUser) {
+        this.currentUserManagerModule.loginUser(formData.email, formData.password, function(throwable, currentUser) {
             console.log("Inside LoginFormContainer currentUserManagerModule#loginUser callback");
             console.log("throwable:", throwable, " currentUser:", currentUser, " inside LoginFormContainer");
 

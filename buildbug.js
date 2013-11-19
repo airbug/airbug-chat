@@ -50,7 +50,8 @@ buildProperties({
                 mu2express: "0.0.x",
                 mongodb: ">=1.2.11",
                 mongoose: ">=3.5.6",
-                "socket.io": "0.9.x"
+                "socket.io": "0.9.x",
+                bcrypt: "0.7.x"
             },
             scripts: {
                 start: "node ./scripts/airbug-server-application-start.js"

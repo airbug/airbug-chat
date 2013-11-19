@@ -107,7 +107,7 @@ var UserController = Class.extend(EntityController, {
         expressApp.post('/app/login', function(request, response) {
             var requestContext      = request.requestContext;
             var data                = request.body;
-            userService.loginUser(requestContext, data.email, function(throwable) {
+            userService.loginUser(requestContext, data.email, data.password, function(throwable) {
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {

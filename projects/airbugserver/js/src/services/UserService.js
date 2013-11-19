@@ -20,6 +20,7 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
+var bcrypt                  = require('bcrypt');
 
 
 //-------------------------------------------------------------------------------
@@ -163,9 +164,10 @@ var UserService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} email
+     * @param {string} password
      * @param {function(Throwable, User)} callback
      */
-    loginUser: function(requestContext, email, callback) {
+    loginUser: function(requestContext, email, password, callback) {
         console.log("Inside UserService#login");
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
@@ -191,6 +193,20 @@ var UserService = Class.extend(Obj, {
                     } else {
                         flow.complete(throwable);
                     }
+                });
+            }),
+            $task(function(flow) {
+                bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
+                    if (! password) {
+                        flow.complete(new Exception("Password can't be blank"));
+                    }
+                    if (err) {
+                        flow.complete(err);
+                    }
+                    if (! res) {
+                        flow.complete(new Exception("Invalid Password"));
+                    }
+                    flow.complete();
                 });
             }),
             $task(function(flow) {
@@ -293,6 +309,8 @@ var UserService = Class.extend(Obj, {
      *      email: string
      *      firstName: string
      *      lastName: string
+     *      password: string
+     *      confirmPassword: string
      * }} formData
      * @param {function(Throwable, User)} callback
      */
@@ -321,6 +339,17 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 user = _this.userManager.generateUser(userObject);
+                bcrypt.genSalt(10, function(err, salt) {
+                    if (err) {
+                        flow.complete(err);
+                    }
+                    bcrypt.hash(userObject.password, salt, function(err, crypted) {
+                        user.setPasswordHash(crypted);
+                        flow.complete(err);
+                    });
+                });
+            }),
+            $task(function(flow) {
                 _this.userManager.createUser(user, function(throwable) {
                     flow.complete(throwable);
                 });

@@ -90,6 +90,7 @@ var UserManager = Class.extend(EntityManager, {
      *      email: string,
      *      firstName: string,
      *      lastName: string,
+     *      passwordHash: string,
      *      roomIdSet: (Array.<string> | Set.<string>),
      *      updatedAt: Date
      * }} data

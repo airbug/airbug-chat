@@ -41,6 +41,9 @@ var LoginFormView = Class.extend(MustacheView, {
                             '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
                         '</div>' +
                         '<div class="control-group">' +
+                            '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
+                        '</div>' +
+                        '<div class="control-group">' +
                             '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
                         '</div>' +
                     '</form>' +

@@ -136,6 +136,22 @@ var User = Class.extend(Entity, {
     },
 
     /**
+     *
+     * @returns {string|*}
+     */
+    getPasswordHash: function() {
+        return this.deltaDocument.getData().passwordHash;
+    },
+
+    /**
+     *
+     * @param {string} passwordHash
+     */
+    setPasswordHash: function(passwordHash) {
+        this.deltaDocument.getData().passwordHash = passwordHash;
+    },
+
+    /**
      * @return {Set.<string>}
      */
     getRoomIdSet: function() {
@@ -265,6 +281,8 @@ bugmeta.annotate(User).with(
             .type("string")
             .primaryId(),
         property("lastName")
+            .type("string"),
+        property("passwordHash")
             .type("string"),
         property("roomIdSet")
             .type("Set")

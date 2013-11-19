@@ -187,9 +187,10 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} email
+     * @param {string} password
      * @param {function(Throwable)} callback
      */
-    loginUser: function(email, callback) {
+    loginUser: function(email, password, callback) {
         var _this = this;
         $series([
             $task(function(flow) {
@@ -197,7 +198,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     url: "/app/login",
                     type: "POST",
                     dataType: "json",
-                    data: {email: email},
+                    data: {email: email, password: password},
                     success: function(data, textStatus, req) {
                         console.log("LoginUser ajax call success");
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
