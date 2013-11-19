@@ -189,6 +189,33 @@ var ChatMessageService = Class.extend(Obj, {
         }
     },
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} chatMessageId
+     * @param {function(Throwable} callback
+     */
+    deleteChatMessage: function(requestContext, chatMessageId, callback) {
+        //TODO
+    },
+
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} chatMessageId
+     * @param {function(Throwable, ChatMessage} callback
+     */
+    retrieveChatMessage: function(requestContext, chatMessageId, callback) {
+        //TODO
+    },
+
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} chatMessageId
+     * @param {function(Throwable, Map.<string, ChatMessage>} callback
+     */
+    retrieveChatMessages: function(requestContext, chatMessageId, callback) {
+        //TODO
+    },
+
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
@@ -260,6 +287,15 @@ var ChatMessageService = Class.extend(Obj, {
         }
     },
 
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} chatMessageId
+     * @param {{*}} updates
+     * @param {function(Throwable, ChatMessage} callback
+     */
+    updateChatMessage: function(requestContext, chatMessageId, updates, callback) {
+        //TODO
+    },
 
     // Convenience Meld Methods
     //-------------------------------------------------------------------------------
