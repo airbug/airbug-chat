@@ -125,8 +125,8 @@ var RoomController = Class.extend(EntityController, {
 
         expressApp.delete('/app/rooms/:id', function(request, response){
             var _this = this;
-            var requestContext  = req.requestContext;
-            var roomId          = req.params.id;
+            var requestContext  = request.requestContext;
+            var roomId          = request.params.id;
             roomService.deleteRoom(requestContext, roomId, function(throwable){
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);

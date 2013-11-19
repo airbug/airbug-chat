@@ -162,7 +162,7 @@ var UserController = Class.extend(EntityController, {
         expressApp.get('/app/users/:id', function(request, response){
             var requestContext      = request.requestContext;
             var userId              = request.params.id;
-            _this.userService.retrieveUser(requestContext, userId, function(throwable, userEntity){
+            userService.retrieveUser(requestContext, userId, function(throwable, userEntity){
                 var userJson = null;
                 if (userEntity) userJson = userEntity.toObject();
                 if (throwable) {
@@ -176,7 +176,7 @@ var UserController = Class.extend(EntityController, {
         expressApp.post('/app/users', function(request, response){
             var requestContext      = request.requestContext;
             var user                = request.body;
-            _this.userService.createUser(requestContext, user, function(throwable, userEntity){
+            userService.createUser(requestContext, user, function(throwable, userEntity){
                 var userJson = null;
                 if (userEntity) userJson = userEntity.toObject();
                 if (throwable) {
@@ -191,7 +191,7 @@ var UserController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var userId          = request.params.id;
             var updates         = request.body;
-            _this.userService.updateUser(requestContext, userId, updates, function(throwable, userEntity){
+            userService.updateUser(requestContext, userId, updates, function(throwable, userEntity){
                 var userJson = null;
                 if (userEntity) userJson = userEntity.toObject();
                 if (throwable) {
@@ -204,9 +204,9 @@ var UserController = Class.extend(EntityController, {
 
         expressApp.delete('/app/users/:id', function(request, response){
             var _this = this;
-            var requestContext  = req.requestContext;
-            var userId          = req.params.id;
-            _this.userService.deleteUser(requestContext, userId, function(throwable){
+            var requestContext  = request.requestContext;
+            var userId          = request.params.id;
+            userService.deleteUser(requestContext, userId, function(throwable){
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
