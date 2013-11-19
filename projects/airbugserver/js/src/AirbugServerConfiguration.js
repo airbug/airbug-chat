@@ -461,12 +461,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      * @param {ChatMessageService} chatMessageService
      * @return {ChatMessageController}
      */
-    chatMessageController: function(bugCallRouter, chatMessageService) {
-        this._chatMessageController = new ChatMessageController(bugCallRouter, chatMessageService);
+    chatMessageController: function(exrpressApp, bugCallRouter, chatMessageService) {
+        this._chatMessageController = new ChatMessageController(exrpressApp, bugCallRouter, chatMessageService);
         return this._chatMessageController;
     },
 
@@ -825,6 +826,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("chatMessageController")
             .args([
+                arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("chatMessageService")
             ]),
