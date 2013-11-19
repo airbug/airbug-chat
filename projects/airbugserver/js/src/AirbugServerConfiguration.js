@@ -601,8 +601,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {RoomService} roomService
      * @return {RoomController}
      */
-    roomController: function(bugCallRouter, roomService) {
-        this._roomController = new RoomController(bugCallRouter, roomService);
+    roomController: function(expressApp, bugCallRouter, roomService) {
+        this._roomController = new RoomController(expressApp, bugCallRouter, roomService);
         return this._roomController;
     },
 
@@ -838,6 +838,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("roomController")
             .args([
+                arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("roomService")
             ]),

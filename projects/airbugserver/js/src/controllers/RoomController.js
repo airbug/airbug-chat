@@ -36,7 +36,7 @@ var RoomController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, roomService) {
+    _constructor: function(expressApp, bugCallRouter, roomService) {
 
         this._super();
 
@@ -50,6 +50,12 @@ var RoomController = Class.extend(EntityController, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter              = bugCallRouter;
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp                 = expressApp;
 
         /**
          * @private
@@ -67,7 +73,69 @@ var RoomController = Class.extend(EntityController, {
      *
      */
     configure: function() {
-        var _this               = this;
+        var _this           = this;
+        var expressApp      = this.expressApp;
+        var roomService     = this.roomService;
+
+        // REST API
+        //-------------------------------------------------------------------------------
+
+        expressApp.get('/app/rooms/:id', function(request, response){
+            var requestContext      = request.requestContext;
+            var roomId              = request.params.id;
+            roomService.retrieveRoom(requestContext, roomId, function(throwable, roomEntity){
+                var roomJson = null;
+                if (roomEntity) roomJson = roomEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(roomJson);
+                }
+            });
+        });
+
+        expressApp.post('/app/rooms', function(request, response){
+            var requestContext      = request.requestContext;
+            var room                = request.body;
+            roomService.createRoom(requestContext, room, function(throwable, roomEntity){
+                var roomJson = null;
+                if (roomEntity) roomJson = roomEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(roomJson);
+                }
+            });
+        });
+
+        expressApp.put('/app/rooms/:id', function(request, response){
+            var requestContext  = request.requestContext;
+            var roomId          = request.params.id;
+            var updates         = request.body;
+            roomService.updateRoom(requestContext, roomId, updates, function(throwable, roomEntity){
+                var roomJson = null;
+                if (roomEntity) roomJson = roomEntity.toObject();
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    response.json(roomJson);
+                }
+            });
+        });
+
+        expressApp.delete('/app/rooms/:id', function(request, response){
+            var _this = this;
+            var requestContext  = req.requestContext;
+            var roomId          = req.params.id;
+            roomService.deleteRoom(requestContext, roomId, function(throwable){
+                if (throwable) {
+                    _this.processAjaxThrowable(throwable, response);
+                } else {
+                    _this.sendAjaxSuccessResponse(response);
+                }
+            });
+        });
+
         this.bugCallRouter.addAll({
 
             /**
