@@ -204,14 +204,13 @@ var UserService = Class.extend(Obj, {
                 bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
                     if (! password) {
                         flow.complete(new Exception("Password can't be blank"));
-                    }
-                    if (err) {
+                    } else if (err) {
                         flow.complete(err);
-                    }
-                    if (! res) {
+                    } else if (! res) {
                         flow.complete(new Exception("Invalid Password"));
+                    } else {
+                        flow.complete();
                     }
-                    flow.complete();
                 });
             }),
             $task(function(flow) {
@@ -347,11 +346,12 @@ var UserService = Class.extend(Obj, {
                 bcrypt.genSalt(10, function(err, salt) {
                     if (err) {
                         flow.complete(err);
+                    } else {
+                        bcrypt.hash(userObject.password, salt, function(err, crypted) {
+                            user.setPasswordHash(crypted);
+                            flow.complete(err);
+                        });
                     }
-                    bcrypt.hash(userObject.password, salt, function(err, crypted) {
-                        user.setPasswordHash(crypted);
-                        flow.complete(err);
-                    });
                 });
             }),
             $task(function(flow) {
