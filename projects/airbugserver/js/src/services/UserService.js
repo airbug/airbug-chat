@@ -201,17 +201,21 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
-                    if (! password) {
-                        flow.complete(new Exception("Password can't be blank"));
-                    } else if (err) {
-                        flow.complete(err);
-                    } else if (! res) {
-                        flow.complete(new Exception("Invalid Password"));
-                    } else {
-                        flow.complete();
-                    }
-                });
+                if (!password) {
+                    flow.complete(new Exception("Password can't be blank"));
+                } else if (!user.getPasswordHash()) {
+                    flow.complete(new Exception("NotFound"));
+                } else {
+                    bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
+                        if (err) {
+                            flow.complete(err);
+                        } else if (!res) {
+                            flow.complete(new Exception("NotFound"));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }
             }),
             $task(function(flow) {
                 _this.sessionService.regenerateSession(session, function(throwable, generatedSession) {
