@@ -53,6 +53,10 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ButtonContainer}
+ */
 var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
@@ -61,14 +65,22 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function(roomModel) {
 
-        this._super();
+        this._super("LeaveRoomButton");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.buttonName                 = "LeaveRoomButton";
+
+        // Models
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {RoomModel}
+         */
+        this.roomModel                  = roomModel;
 
 
         // Modules
@@ -95,8 +107,6 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
          * @type {ButtonView}
          */
         this.buttonView                 = null;
-
-        this.roomModel                  = roomModel;
     },
 
 
@@ -135,7 +145,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLeaveRoomButtonClickedEvent, this);
     },
 
 
@@ -147,12 +157,10 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
+    hearLeaveRoomButtonClickedEvent: function(event) {
         var _this = this;
-        this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(error) {
-            console.log("Inside LeaveRoomButtonContainer#hearButtonClickedEvent callback from roomManagerModule#leaveRoom");
-            console.log("error:", error);
-            if (!error) {
+        this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(throwable) {
+            if (!throwable) {
                 _this.navigationModule.navigate("home", {
                     trigger: true
                 });
@@ -160,7 +168,6 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
                 //TODO
             }
         });
-
     }
 });
 

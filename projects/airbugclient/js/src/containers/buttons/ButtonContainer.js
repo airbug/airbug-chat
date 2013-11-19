@@ -51,13 +51,17 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {CarapaceContainer}
+ */
 var ButtonContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(buttonName) {
 
         this._super();
 
@@ -66,16 +70,40 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.buttonName         = null;
+        /**
+         * @private
+         * @type {string}
+         */
+        this.buttonName         = buttonName;
+
 
         // Modules
         //-------------------------------------------------------------------------------
 
-        this.trackerModule      = null;
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule      = null;
+    },
 
-        // Views
-        //-------------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getButtonName: function() {
+        return this.buttonName;
+    },
+
+    /**
+     * @return {CommandModule}
+     */
+    getCommandModule: function() {
+        return this.commandModule;
     },
 
 
@@ -88,7 +116,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
+        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
     },
 
 
@@ -96,7 +124,11 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    handleButtonClickedEvent: function(event) {
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
+    hearViewTopButtonClickedEvent: function(event) {
         this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
     }
 });

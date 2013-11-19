@@ -7,7 +7,9 @@
 //@Export('LoginPageContainer')
 
 //@Require('Class')
+//@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
+//@Require('airbug.BoxWithFooterView')
 //@Require('airbug.LoginFormContainer')
 //@Require('airbug.PageView')
 //@Require('airbug.SignupButtonContainer')
@@ -21,32 +23,34 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ApplicationContainer    = bugpack.require('airbug.ApplicationContainer');
-var LoginFormContainer      = bugpack.require('airbug.LoginFormContainer');
-var PageView                = bugpack.require('airbug.PageView');
-var SignupButtonContainer   = bugpack.require('airbug.SignupButtonContainer');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
+var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
+var BoxWithFooterView               = bugpack.require('airbug.BoxWithFooterView');
+var LoginFormContainer              = bugpack.require('airbug.LoginFormContainer');
+var PageView                        = bugpack.require('airbug.PageView');
+var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta     = BugMeta.context();
-var autowired   = AutowiredAnnotation.autowired;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var bugmeta                         = BugMeta.context();
+var autowired                       = AutowiredAnnotation.autowired;
+var property                        = PropertyAnnotation.property;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -75,29 +79,45 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule       = null;
+        this.navigationModule               = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
-         * @type {LoginFormView}
+         * @private
+         * @type {BoxWithFooterView}
          */
-        this.loginFormView          = null;
+        this.boxView                        = null;
 
         /**
          * @protected
          * @type {PageView}
          */
-        this.pageView               = null;
+        this.pageView                       = null;
+
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @type {AlternateLoginPanelContainer}
+         */
+        this.alternateLoginPanelContainer     = null;
+
+        /**
+         * @protected
+         * @type {LoginFormContainer}
+         */
+        this.loginFormContainer             = null;
 
         /**
          * @protected
          * @type {SignupButtonContainer}
          */
-        this.signupButtonContainer  = null;
+        this.signupButtonContainer          = null;
     },
 
 
@@ -116,13 +136,22 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
         this.pageView =
             view(PageView)
+                .children([
+                    view(BoxWithFooterView)
+                        .id("loginBoxView")
+                        .attributes({classes: "login-box"})
+                        .appendTo('*[id|="page"]')
+                ])
                 .build();
+
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.getApplicationView().addViewChild(this.pageView, "#application-" + this.getApplicationView().getCid());
+
+        this.boxView =  this.findViewById("loginBoxView");
     },
 
     /**
@@ -130,10 +159,13 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.loginFormContainer     = new LoginFormContainer();
-        this.signupButtonContainer  = new SignupButtonContainer();
+
+        this.alternateLoginPanelContainer   = new AlternateLoginPanelContainer();
+        this.loginFormContainer             = new LoginFormContainer();
+        this.signupButtonContainer          = new SignupButtonContainer();
         this.addContainerChild(this.signupButtonContainer, "#header-right");
-        this.addContainerChild(this.loginFormContainer, "#page-" + this.pageView.cid);
+        this.addContainerChild(this.loginFormContainer, "#box-body-" + this.boxView.getCid());
+        this.addContainerChild(this.alternateLoginPanelContainer, "#box-footer-" + this.boxView.getCid());
     },
 
     /**
@@ -142,14 +174,13 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
     initializeContainer: function() {
         this._super();
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
 bugmeta.annotate(LoginPageContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")

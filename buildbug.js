@@ -123,6 +123,7 @@ buildProperties({
             "../bugjs/external/jquery-plugins/js/src/validator",
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/socket-io/js/src",
+            "../bugjs/external/socialbuttons/static",
             "../bugjs/external/underscore/js/src",
             "../bugjs/external/zeroclipboard/js/src",
             "../bugjs/projects/bugmeta/js/src",

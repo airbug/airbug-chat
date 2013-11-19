@@ -35,7 +35,7 @@ var BoxWithHeaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-header">' +
+    template:   '<div id="{{id}}" class="box box-with-header {{attributes.classes}}">' +
                     '<div id="box-header-{{cid}}" class="box-header">' +
                     '</div>' +
                     '<div id="box-body-{{cid}}" class="box-body">' +

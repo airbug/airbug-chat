@@ -125,7 +125,7 @@ var AnonymousRegisterPageContainer = Class.extend(ApplicationContainer, {
                 view(LoginFormView)
                     .id("loginFormView")
                     .appendTo("*[id|=page]")
-            ])
+                ])
                 .build();
 
 

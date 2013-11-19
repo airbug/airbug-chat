@@ -4,13 +4,12 @@
 
 //@Package('airbug')
 
-//@Export('ChatMessageReplyButtonContainer')
+//@Export('AlternateLoginPanelContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.TextView')
+//@Require('airbug.GithubLoginButtonContainer')
+//@Require('airbug.PanelView')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -18,33 +17,36 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var TextView                = bugpack.require('airbug.TextView');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var GithubLoginButtonContainer      = bugpack.require('airbug.GithubLoginButtonContainer');
+var PanelView                       = bugpack.require('airbug.PanelView');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view                    = ViewBuilder.view;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
+/**
+ * @constructor
+ * @extends {CarapaceContainer}
+ */
+var AlternateLoginPanelContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -52,27 +54,36 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function() {
 
-        this._super("ChatMessageReplyButton");
+        this._super();
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {PanelView}
          */
-        this.buttonView         = null;
+        this.panelView                      = null;
+
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @type {GithubLoginButtonContainer}
+         */
+        this.githubLoginButtonContainer     = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceController Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -81,45 +92,28 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
     createContainer: function() {
         this._super();
 
+
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "link", align: "right"})
-                .children([
-                    view(TextView)
-                        .attributes({text: "reply"})
-                        .appendTo('*[id|="button"]')
-                ])
+        this.panelView =
+            view(PanelView)
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
+        this.setViewTop(this.panelView);
     },
 
     /**
      * @protected
      */
-    initializeContainer: function() {
+    createContainerChildren: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearChatMessageReplyButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearChatMessageReplyButtonClickedEvent: function(event) {
-
+        this.githubLoginButtonContainer = new GithubLoginButtonContainer();
+        this.addContainerChild(this.githubLoginButtonContainer, "#panel-body-" + this.panelView.getCid());
     }
 });
 
@@ -128,4 +122,4 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ChatMessageReplyButtonContainer", ChatMessageReplyButtonContainer);
+bugpack.export("airbug.AlternateLoginPanelContainer", AlternateLoginPanelContainer);

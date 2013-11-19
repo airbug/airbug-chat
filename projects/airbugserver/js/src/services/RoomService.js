@@ -155,7 +155,7 @@ var RoomService = Class.extend(Obj, {
      * @param {{
      *
      * }} roomData
-     * @param {function(Throwable, Room)} callback
+     * @param {function(Throwable, Room=)} callback
      */
     createRoom: function(requestContext, roomData, callback) {
         var _this           = this;
@@ -235,9 +235,9 @@ var RoomService = Class.extend(Obj, {
      * @param {RequestContext} requestContext
      * @param {User | string} userOrUserId
      * @param {string} roomId
-     * @param {function(Throwable, room)} callback
+     * @param {function(Throwable, Room)} callback
      */
-    removeUserFromRoom: function(requestContext, userOrUserId, roomId, callback){
+    removeUserFromRoom: function(requestContext, userOrUserId, roomId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();

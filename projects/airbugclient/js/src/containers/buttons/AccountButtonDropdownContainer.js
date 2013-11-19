@@ -59,6 +59,10 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ButtonContainer}
+ */
 var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
@@ -67,14 +71,12 @@ var AccountButtonDropdownContainer = Class.extend(ButtonContainer, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("AccountButtonDropdown");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        this.buttonName                 = "AccountButtonDropdown";
 
 
         // Modules

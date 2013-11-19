@@ -53,22 +53,27 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ButtonContainer}
+ */
 var LogoutButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
-        this._super();
+        this._super("LogoutButton");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        this.buttonName                 = "LogoutButton";
 
 
         // Modules
@@ -133,7 +138,7 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLogoutButtonClickedEvent, this);
     },
 
 
@@ -145,11 +150,11 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
+    hearLogoutButtonClickedEvent: function(event) {
         var _this = this;
-        this.currentUserManagerModule.logout(function(error) {
+        this.currentUserManagerModule.logout(function(throwable) {
             console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logout");
-            if(!error) {
+            if (!throwable) {
                 _this.navigationModule.navigate("login", {
                     trigger: true
                 });
@@ -158,8 +163,8 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
             } else {
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("error:", error);
-                notificationView.flashError(error);
+                console.log("throwable:", throwable);
+                notificationView.flashError(throwable);
             }
         });
 

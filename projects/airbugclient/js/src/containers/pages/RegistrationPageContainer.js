@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
+//@Require('airbug.BoxView')
 //@Require('airbug.LoginButtonContainer')
 //@Require('airbug.PageView')
 //@Require('airbug.RegistrationFormContainer')
@@ -18,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -27,6 +28,7 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
+var BoxView                     = bugpack.require('airbug.BoxView');
 var PageView                    = bugpack.require('airbug.PageView');
 var LoginButtonContainer        = bugpack.require('airbug.LoginButtonContainer');
 var RegistrationFormContainer   = bugpack.require('airbug.RegistrationFormContainer');
@@ -37,19 +39,26 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ApplicationContainer}
+ */
 var RegistrationPageContainer = Class.extend(ApplicationContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();
@@ -57,6 +66,10 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
 
         //-------------------------------------------------------------------------------
         // Declare Variables
+        //-------------------------------------------------------------------------------
+
+
+        // Containers
         //-------------------------------------------------------------------------------
 
         /**
@@ -70,6 +83,16 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
          * @type {RegistrationFormContainer}
          */
         this.registrationFormContainer  = null;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {BoxView}
+         */
+        this.boxView                    = null;
 
         /**
          * @protected
@@ -94,13 +117,20 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
 
         this.pageView =
             view(PageView)
+                .children([
+                    view(BoxView)
+                        .id("registrationBoxView")
+                        .attributes({classes: "registration-box"})
+                        .appendTo('*[id|="page"]')
+                ])
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.getApplicationView().addViewChild(this.pageView, "#application-" + this.getApplicationView().getCid());
+        this.boxView =  this.findViewById("registrationBoxView");
     },
 
     /**
@@ -111,7 +141,7 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         this.loginButtonContainer       = new LoginButtonContainer();
         this.registrationFormContainer  = new RegistrationFormContainer();
         this.addContainerChild(this.loginButtonContainer, "#header-right");
-        this.addContainerChild(this.registrationFormContainer, "#page-" + this.pageView.cid);
+        this.addContainerChild(this.registrationFormContainer, "#" + this.boxView.getId());
     }
 });
 

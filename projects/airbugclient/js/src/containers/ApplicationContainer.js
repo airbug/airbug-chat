@@ -18,7 +18,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -37,12 +37,19 @@ var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {CarapaceContainer}
+ */
 var ApplicationContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();
@@ -54,25 +61,25 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.ApplicationView}
+         * @type {ApplicationView}
          */
         this.applicationView        = null;
 
         /**
          * @private
-         * @type {airbug.BodyView}
+         * @type {BodyView}
          */
         this.bodyView               = null;
 
         /**
          * @private
-         * @type {airbug.ApplicationHeaderView}
+         * @type {ApplicationHeaderView}
          */
         this.applicationHeaderView  = null;
 
         /**
          * @private
-         * @type {airbug.NotificationView}
+         * @type {NotificationView}
          */
         this.notificationView       = null;
     },
@@ -83,28 +90,28 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {airbug.ApplicationView}
+     * @return {ApplicationView}
      */
     getApplicationView: function() {
         return this.applicationView;
     },
 
     /**
-     * @return {airbug.BodyView}
+     * @return {BodyView}
      */
     getBodyView: function() {
         return this.bodyView;
     },
 
     /**
-     * return {airbug.ApplicationHeaderView}
+     * return {ApplicationHeaderView}
      */
     getApplicationHeaderView: function() {
         return this.applicationHeaderView;
     },
 
     /**
-     * return {airbug.NotificationView}
+     * return {NotificationView}
      */
     getNotificationView: function() {
         return this.notificationView;
@@ -151,6 +158,9 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.bodyView);
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
     },

@@ -189,7 +189,7 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} sid
-     * @param {function(Throwable, Session)} callback
+     * @param {function(Throwable, Session=)} callback
      */
     retrieveSessionBySid: function(sid, callback) {
         var _this = this;

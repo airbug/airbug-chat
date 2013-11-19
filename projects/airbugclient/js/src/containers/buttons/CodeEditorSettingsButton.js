@@ -10,10 +10,9 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
+//@Require('airbug.IconView')
 //@Require('airbug.TextView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -21,7 +20,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -33,10 +32,8 @@ var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule           = bugpack.require('airbug.CommandModule');
+var IconView                = bugpack.require('airbug.IconView');
 var TextView                = bugpack.require('airbug.TextView');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -44,43 +41,35 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var CommandType             = CommandModule.CommandType;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ButtonContainer}
+ */
 var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
-        this._super();
+        this._super("CodeEditorSettingsButton");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        this.buttonName         = "CodeEditorSettingsButton";
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CommandModule}
-         */
-        this.commandModule      = null;
 
 
         // Views
@@ -136,7 +125,7 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorButtonClickedEvent, this);
     },
 
 
@@ -148,23 +137,10 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
-        event.stopPropagation();
-        this.commandModule.relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
-        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
+    hearCodeEditorButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorSettingsButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

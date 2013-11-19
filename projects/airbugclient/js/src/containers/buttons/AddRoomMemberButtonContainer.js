@@ -8,14 +8,11 @@
 
 //@Require('Class')
 //@Require('airbug.AddRoomMemberContainer')
-//@Require('airbug.BoxWithFooterView')
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonDropdownView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.DropdownItemView')
 //@Require('airbug.IconView')
-//@Require('airbug.ParagraphView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -35,14 +32,11 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var AddRoomMemberContainer  = bugpack.require('airbug.AddRoomMemberContainer');
-var BoxWithFooterView       = bugpack.require('airbug.BoxWithFooterView');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonDropdownView      = bugpack.require('airbug.ButtonDropdownView');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
 var IconView                = bugpack.require('airbug.IconView');
-var ParagraphView           = bugpack.require('airbug.ParagraphView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -71,7 +65,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function(roomModel) {
 
-        this._super();
+        this._super("AddRoomMemberButton");
 
 
         //-------------------------------------------------------------------------------
@@ -79,12 +73,8 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {string}
-         */
-        this.buttonName         = "AddRoomMemberButton";
-
-        /**
-         * @type {airbug.RoomModel}
+         * @private
+         * @type {RoomModel}
          */
         this.roomModel          = roomModel;
 
@@ -146,7 +136,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
     createContainerChildren: function() {
         this._super();
         this.addRoomMemberContainer        = new AddRoomMemberContainer(this.roomModel);
-        this.addContainerChild(this.addRoomMemberContainer,   "#dropdown-list-" + this.buttonView.cid);
+        this.addContainerChild(this.addRoomMemberContainer,   "#dropdown-list-" + this.buttonView.getCid());
     },
 
     /**
@@ -156,21 +146,6 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
         this._super();
         this.buttonView.$el.find("li:first-child").addClass("add-roommember-container");
         this.buttonView.$el.find("ul").addClass("span2");
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-        console.log("Inside AddRoomMemberButtonContainer#hearButtonClickedEvent");
-        console.log("viewTop:", this.getViewTop());
     }
 });
 

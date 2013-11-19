@@ -12,9 +12,6 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -22,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -35,9 +32,6 @@ var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var IconView                = bugpack.require('airbug.IconView');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -45,11 +39,8 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var CommandType             = CommandModule.CommandType;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -64,23 +55,13 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("RoomsHamburgerButton");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.buttonName                 = "RoomsHamburgerButton";
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {airbug.CommandModule}
-         */
-        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -136,7 +117,7 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearRoomsHamburgerButtonClickedEvent, this);
 
     },
 
@@ -147,6 +128,7 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
         this._super();
     },
 
+
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
@@ -155,36 +137,10 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
-        this.handleButtonClick(event);
-    },
-
-    //-------------------------------------------------------------------------------
-    // Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {airbug.ButtonViewEvent} event
-     */
-    handleButtonClick: function(event) {
-        var data = event.getData;
-        this.commandModule.relayCommand(CommandType.TOGGLE.HAMBURGER_LEFT,      {});
-        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICK, data);
+    hearRoomsHamburgerButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.TOGGLE.HAMBURGER_LEFT,      {});
     }
-
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(RoomsHamburgerButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

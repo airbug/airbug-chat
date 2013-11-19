@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
+//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
@@ -21,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
+var ButtonView          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
 var IconView            = bugpack.require('airbug.IconView');
 var TextView            = bugpack.require('airbug.TextView');
@@ -43,25 +45,32 @@ var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired           = AutowiredAnnotation.autowired;
+var bugmeta             = BugMeta.context();
+var property            = PropertyAnnotation.property;
+var view                = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {ButtonContainer}
+ */
 var BackButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
-        this._super();
+        this._super("BackButton");
 
 
         //-------------------------------------------------------------------------------
@@ -69,9 +78,10 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {string}
+         * @private
+         * @type {number}
          */
-        this.buttonName         = "BackButton";
+        this.goBackId           = null;
 
 
         // Modules
@@ -98,12 +108,6 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
          * @type {ButtonView}
          */
         this.buttonView         = null;
-
-        /**
-         * @private
-         * @type {number}
-         */
-        this.goBackId           = null;
     },
 
 
@@ -153,7 +157,7 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
 
         this.goBackId = this.pageStateModule.getState(BackButtonContainer.STATE_KEY);
         if (!this.goBackId) {
@@ -170,7 +174,7 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
+    hearBackButtonClickedEvent: function(event) {
         this.navigationModule.goBack(this.goBackId, {
             trigger: true
         });
@@ -191,9 +195,13 @@ bugmeta.annotate(BackButtonContainer).with(
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Static Properties
 //-------------------------------------------------------------------------------
 
+/**
+ * @static
+ * @type {string}
+ */
 BackButtonContainer.STATE_KEY = "BackButtonContainer:goBackId";
 
 

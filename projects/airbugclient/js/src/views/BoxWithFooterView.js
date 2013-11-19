@@ -35,7 +35,7 @@ var BoxWithFooterView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-footer">' +
+    template:   '<div id="{{id}}" class="box box-with-footer {{attributes.classes}}">' +
                     '<div id="box-body-{{cid}}" class="box-body">' +
                     '</div>' +
                     '<div id="box-footer-{{cid}}" class="box-footer">' +

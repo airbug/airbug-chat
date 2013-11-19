@@ -4,14 +4,12 @@
 
 //@Package('airbug')
 
-//@Export('HomeButtonContainer')
+//@Export('GithubLoginButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
+//@Require('airbug.GithubLoginButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.IconView')
-//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -31,10 +29,8 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
+var GithubLoginButtonView   = bugpack.require('airbug.GithubLoginButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var IconView                = bugpack.require('airbug.IconView');
-var TextView                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -59,7 +55,7 @@ var view                    = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var HomeButtonContainer = Class.extend(ButtonContainer, {
+var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -67,7 +63,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function() {
 
-        this._super("HomeButton");
+        this._super("GithubLoginButton");
 
 
         //-------------------------------------------------------------------------------
@@ -110,16 +106,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "left"})
-                .children([
-                    view(IconView)
-                        .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
-                        .appendTo('*[id|="button"]'),
-                    view(TextView)
-                        .attributes({text: "Home"})
-                        .appendTo('*[id|="button"]')
-                ])
+            view(GithubLoginButtonView)
                 .build();
 
 
@@ -134,7 +121,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearHomeButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearGithubLoginButtonClickedEvent, this);
     },
 
 
@@ -146,10 +133,8 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearHomeButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("home", {
-            trigger: true
-        });
+    hearGithubLoginButtonClickedEvent: function(event) {
+        // TODO BRN: Navigate to github oauth login
     }
 });
 
@@ -158,7 +143,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(HomeButtonContainer).with(
+bugmeta.annotate(GithubLoginButtonContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule")
     ])
@@ -169,4 +154,4 @@ bugmeta.annotate(HomeButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.HomeButtonContainer", HomeButtonContainer);
+bugpack.export("airbug.GithubLoginButtonContainer", GithubLoginButtonContainer);

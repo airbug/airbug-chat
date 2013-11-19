@@ -4,10 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('BoxWithHeaderAndFooterView')
+//@Export('GithubLoginButtonView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -22,41 +23,49 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var ButtonViewEvent = bugpack.require('airbug.ButtonViewEvent');
+var ButtonView      = bugpack.require('airbug.ButtonView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxWithHeaderAndFooterView = Class.extend(MustacheView, {
+var GithubLoginButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-header {{attributes.classes}}">' +
-                    '<div id="box-header-{{cid}}" class="box-header">' +
-                    '</div>' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
-                '</div>',
-
     /**
-     * @return {Object}
+     *
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.cid;
-        return data;
-    }
+    template: '<a id="button-{{cid}}" class="btn-auth btn-github large" href="#">' +
+            'Sign in with <b>Github</b>' +
+        '</a>'
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+
+    //-------------------------------------------------------------------------------
+    // View Event Handlers
+    //-------------------------------------------------------------------------------
+
+
 });
+
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BoxWithHeaderAndFooterView", BoxWithHeaderAndFooterView);
+bugpack.export("airbug.GithubLoginButtonView", GithubLoginButtonView);
