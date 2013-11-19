@@ -139,7 +139,12 @@ var UserService = Class.extend(Obj, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
-    deleteUser: function(requestContext, ){
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {function(Throwable)} callback
+     */
+    deleteUser: function(requestContext, userId, callback){
         //TODO
     },
 
