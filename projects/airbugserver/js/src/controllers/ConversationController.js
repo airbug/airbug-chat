@@ -79,7 +79,7 @@ var ConversationController = Class.extend(Obj, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/conversations/:id', function(request, response){
+        this.expressApp.get('/app/conversations/:id', function(request, response){
             var requestContext      = request.requestContext;
             var conversationId      = request.params.id;
             conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity){
@@ -93,7 +93,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        expressApp.post('/app/conversations', function(request, response){
+        this.expressApp.post('/app/conversations', function(request, response){
             var requestContext      = request.requestContext;
             var conversation        = request.body;
             conversationService.createConversation(requestContext, conversation, function(throwable, entity){
@@ -107,7 +107,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        expressApp.put('/app/conversations/:id', function(request, response){
+        this.expressApp.put('/app/conversations/:id', function(request, response){
             var requestContext  = request.requestContext;
             var conversationId          = request.params.id;
             var updates         = request.body;
@@ -122,7 +122,7 @@ var ConversationController = Class.extend(Obj, {
             });
         });
 
-        expressApp.delete('/app/conversations/:id', function(request, response){
+        this.expressApp.delete('/app/conversations/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var conversationId  = request.params.id;

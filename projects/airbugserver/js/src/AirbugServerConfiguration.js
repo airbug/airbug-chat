@@ -466,8 +466,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {ChatMessageService} chatMessageService
      * @return {ChatMessageController}
      */
-    chatMessageController: function(exrpressApp, bugCallRouter, chatMessageService) {
-        this._chatMessageController = new ChatMessageController(exrpressApp, bugCallRouter, chatMessageService);
+    chatMessageController: function(expressApp, bugCallRouter, chatMessageService) {
+        this._chatMessageController = new ChatMessageController(expressApp, bugCallRouter, chatMessageService);
         return this._chatMessageController;
     },
 

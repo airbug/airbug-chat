@@ -36,7 +36,7 @@ var ChatMessageController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugCallRouter, chatMessageService) {
+    _constructor: function(expressApp, bugCallRouter, chatMessageService) {
 
         this._super();
 
@@ -44,6 +44,12 @@ var ChatMessageController = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp             = expressApp;
 
         /**
          * @private
@@ -73,7 +79,7 @@ var ChatMessageController = Class.extend(Obj, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/chatMessages/:id', function(request, response){
+        this.expressApp.get('/app/chatMessages/:id', function(request, response){
             var requestContext      = request.requestContext;
             var chatMessageId       = request.params.id;
             chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity){
@@ -87,7 +93,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        expressApp.post('/app/chatMessages', function(request, response){
+        this.expressApp.post('/app/chatMessages', function(request, response){
             var requestContext      = request.requestContext;
             var chatMessage         = request.body;
             chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity){
@@ -101,7 +107,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        expressApp.put('/app/chatMessages/:id', function(request, response){
+        this.expressApp.put('/app/chatMessages/:id', function(request, response){
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
             var updates         = request.body;
@@ -116,7 +122,7 @@ var ChatMessageController = Class.extend(Obj, {
             });
         });
 
-        expressApp.delete('/app/chatMessages/:id', function(request, response){
+        this.expressApp.delete('/app/chatMessages/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
