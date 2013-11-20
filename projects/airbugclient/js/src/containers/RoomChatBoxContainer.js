@@ -166,14 +166,16 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainer: function() {
-        var _this = this;
         this._super();
 
 
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel  = new ConversationModel({});
+        this.conversationModel  = new ConversationModel({
+            _id: this.roomModel.get("conversationId"),
+            ownerId: this.roomModel.get("_id")
+        });
         this.addModel("conversation", this.conversationModel);
 
 
