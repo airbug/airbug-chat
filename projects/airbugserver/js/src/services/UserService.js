@@ -206,13 +206,13 @@ var UserService = Class.extend(Obj, {
                 if (!password) {
                     flow.complete(new Exception("Password can't be blank"));
                 } else if (!user.getPasswordHash()) {
-                    flow.complete(new Exception("NotFound"));
+                    flow.complete(new Exception("PasswordHashNotFound"));
                 } else {
                     bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
                         if (err) {
                             flow.complete(err);
                         } else if (!res) {
-                            flow.complete(new Exception("NotFound"));
+                            flow.complete(new Exception("InvalidPassword"));
                         } else {
                             flow.complete();
                         }
@@ -253,7 +253,7 @@ var UserService = Class.extend(Obj, {
                 console.log("userId:", user.getId());
                 callback(undefined, user);
             } else {
-                console.log("UserService#loginUser throwable:", throwable);
+                console.log("UserService#loginUser throwable:", throwable, " trace ", throwable.stack);
                 callback(throwable);
             }
         });
@@ -395,6 +395,9 @@ var UserService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable) {
+            if (throwable) {
+                console.log("throwable registerUser ", throwable, " trace ", throwable.stack);
+            }
             callback(throwable, user);
         });
     },

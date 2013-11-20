@@ -7,6 +7,7 @@
 //@Require('airbugserver.Session')
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserService')
+//@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 var Session             = bugpack.require('airbugserver.Session');
 var User                = bugpack.require('airbugserver.User');
 var UserService         = bugpack.require('airbugserver.UserService');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -35,6 +37,8 @@ var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 var bugmeta             = BugMeta.context();
 var test                = TestAnnotation.test;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -92,7 +96,9 @@ var userServiceMeldCurrentUserWithCurrentUserTest = {
     }
 };
 
-userServiceRegisterTests = {
+userServicePasswordTests = {
+
+    async: true,
 
     //-------------------------------------------------------------------------------
     // Setup Test
@@ -101,7 +107,9 @@ userServiceRegisterTests = {
     setup: function(test) {
         var _this = this;
         this.existingUser = new User({
-            email: "test@example.com"
+            id: "testId",
+            email: 'test@example.com',
+            passwordHash: '$2a$10$UCNxW7UFww9z97eijL8QhewpxjqNCjv0CoPO/PKOyjdnMdoRSnlMe'
         });
         this.testCurrentUser = new User({
 
@@ -116,11 +124,17 @@ userServiceRegisterTests = {
             generateUser: function(userObject) {
                 return new User(userObject);
             },
-            createUser: function() {}
+            createUser: function(user, callback) {
+                callback();
+            }
         };
         this.dummyUserManagerExistingUser = {
             retrieveUserByEmail: function(email, callback) {
-                callback(undefined, _this.existingUser);
+                if (email === "test@example.com") {
+                    callback(undefined, _this.existingUser);
+                } else {
+                    callback(undefined, undefined);
+                }
             }
         };
         this.testRequestContext = {
@@ -131,18 +145,46 @@ userServiceRegisterTests = {
                     return _this.testSession;
                 }
                 return undefined;
+            },
+            set: function(key, value) {
+
             }
         };
         this.testMeldManager = {
-        };
-        this.testMeldKey = {};
-        this.dummyMeldService   = {
-            factoryManager: function() {
-                return _this.testMeldManager;
+            commitTransaction: function(callback) {
+                callback();
             }
         };
-        this.testUserService = new UserService({}, this.dummyUserManager, this.dummyMeldService, {});
-        this.testUserServiceExistingUser = new UserService({}, this.dummyUserManagerExistingUser, this.dummyMeldService, {});
+        this.testMeldKey = {};
+        this.dummyMeldService = {
+            factoryManager: function() {
+                return _this.testMeldManager;
+            },
+            generateMeldKey: function() {
+                return _this.testMeldKey;
+            },
+            meldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
+            },
+            unmeldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
+            },
+            unmeldEntity: function(meldManager, type, filter, entity) {
+
+            }
+        };
+        this.sessionService = {
+            regenerateSession: function(session, callback) {
+                callback(undefined, _this.testSession);
+            }
+        };
+        this.dummySessionManager = {
+            updateSession: function(session, callback) {
+                callback();
+            }
+        };
+        this.testUserServiceNoUsers = new UserService(this.dummySessionManager, this.dummyUserManager,
+            this.dummyMeldService, this.sessionService);
+        this.testUserServiceExistingUser = new UserService(this.dummySessionManager,
+            this.dummyUserManagerExistingUser, this.dummyMeldService, this.sessionService);
     },
 
     //-------------------------------------------------------------------------------
@@ -150,67 +192,137 @@ userServiceRegisterTests = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        // Test with a user that doesn't exist yet.
-        var formData = {
-            email: "test@example.com",
-            firstName: "",
-            lastName: "",
-            password: "testPassword",
-            confirmPassword: "testPassword"
-        };
-        this.testUserService.registerUser(this.testRequestContext, formData, function(throwable, user) {
-            console.log("this.testUserService.registerUser throwable", throwable);
-            test.assertTrue(user !== undefined, "Assert user was generated");
-            test.assertEqual(user.getEmail(), "test@example.com",
-                "Assert that email was set properly");
-            test.assertTrue(user.getPasswordHash() !== undefined,
-                "Assert that password hash was generated");
-            test.assertTrue(user.getPasswordHash().length > 0,
-                "Assert that the hash was generated");
-        });
-
-        // Test with a user that already exists
-        this.testUserServiceExistingUser.registerUser(this.testRequestContext, formData, function(throwable, user) {
-            test.assertTrue(user === undefined,
-                "Assert user was not generated because it already existed");
-            test.assertTrue(throwable !== undefined,
-                "Make sure that throwable was defined");
-            test.assertEqual(throwable.getType(), "UserExists",
-                "Assert that the user was not created because it already existed");
-        });
-
-        // Test with specifying an empty password
-        formData = {
-            email: "test@example.com",
-            firstName: "",
-            lastName: "",
-            password: "",
-            confirmPassword: ""
-        };
-        this.testUserService.registerUser(this.testRequestContext, formData, function(throwable, user) {
-            test.assertTrue(user === undefined,
-                "Assert user was not generated because no password was specified");
-            test.assertTrue(throwable !== undefined,
-                "Make sure that throwable was defined");
-            test.assertEqual(throwable.getType(), "InvalidPassword",
-                "Assert that the user was not created because the password was invalid");
-        });
-
-        // Test with specifying mismatching passwords
-        formData = {
-            email: "test@example.com",
-            firstName: "",
-            lastName: "",
-            password: "password1",
-            confirmPassword: "password2"
-        };
-        this.testUserService.registerUser(this.testRequestContext, formData, function(throwable, user) {
-            test.assertTrue(user === undefined,
-                "Assert user was not generated because passwords don't match");
-            test.assertTrue(throwable !== undefined,
-                "Make sure that throwable was defined");
-            test.assertEqual(throwable.getType(), "PasswordMismatch",
-                "Assert that the user was not created because the passwords didn't match");
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                console.log("test!!!");
+                // Test with a user that doesn't exist yet.
+                var formData = {
+                    email: "test@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "testPassword",
+                    confirmPassword: "testPassword"
+                };
+                _this.testUserServiceNoUsers.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    console.log("this.testUserServiceNoUsers.registerUser throwable", throwable);
+                    test.assertTrue(throwable === undefined,
+                        "Make sure that throwable was not defined");
+                    test.assertTrue(user !== undefined, "Assert user was generated");
+                    test.assertEqual(user.getEmail(), "test@example.com",
+                        "Assert that email was set properly");
+                    test.assertTrue(user.getPasswordHash() !== undefined,
+                        "Assert that password hash was generated");
+                    test.assertTrue(user.getPasswordHash().length > 0,
+                        "Assert that the hash was generated");
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                // Test with a user that already exists
+                var formData = {
+                    email: "test@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "testPassword",
+                    confirmPassword: "testPassword"
+                };
+                _this.testUserServiceExistingUser.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because it already existed");
+                    test.assertTrue(throwable !== undefined,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "UserExists",
+                        "Assert that the user was not created because it already existed");
+                    flow.complete();
+                });
+            }),
+            $task(function(flow) {
+                // Test with specifying an empty password
+                var formData = {
+                    email: "test@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "",
+                    confirmPassword: ""
+                };
+                _this.testUserServiceNoUsers.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because no password was specified");
+                    test.assertTrue(throwable !== undefined,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "InvalidPassword",
+                        "Assert that the user was not created because the password was invalid");
+                    flow.complete();
+                });
+            }),
+            $task(function(flow) {
+                // Test register with mismatching passwords
+                var formData = {
+                    email: "test@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "password1",
+                    confirmPassword: "password2"
+                };
+                _this.testUserServiceNoUsers.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because passwords don't match");
+                    test.assertTrue(throwable !== undefined,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "PasswordMismatch",
+                        "Assert that the user was not created because the passwords didn't match");
+                    flow.complete();
+                });
+            }),
+            $task(function(flow) {
+                // test login with a valid user and password
+                var email = "test@example.com";
+                var password = "lastpass";
+                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                    test.assertTrue(throwable === undefined,
+                        "Make sure that throwable was not defined");
+                    test.assertTrue(user !== undefined,
+                        "Assert user was loaded");
+                    test.assertEqual(user.getEmail(), "test@example.com",
+                        "Assert that email was the user we expected");
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                // test login with a user that doesn't exist
+                var email = "test@plagzample.com";
+                var password = "what???";
+                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because login failed");
+                    test.assertTrue(throwable !== undefined,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "NotFound",
+                        "Assert that the user was not loaded because it was not found");
+                    flow.complete();
+                });
+            }),
+            $task(function(flow) {
+                // test login with a valid user but wrong password
+                var email = "test@example.com";
+                var password = "what???";
+                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because login failed");
+                    test.assertTrue(throwable !== undefined,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "InvalidPassword",
+                        "Assert that the user was not loaded because the password was invalid");
+                    flow.complete();
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.complete();
+            } else {
+                test.error(throwable);
+            }
         });
     }
 };
@@ -219,6 +331,6 @@ bugmeta.annotate(userServiceMeldCurrentUserWithCurrentUserTest).with(
     test().name("UserService #meldCurrentUserWithCurrentUser Test")
 );
 
-bugmeta.annotate(userServiceRegisterTests).with(
-    test().name("UserService #register Test")
+bugmeta.annotate(userServicePasswordTests).with(
+    test().name("UserService password Tests")
 );

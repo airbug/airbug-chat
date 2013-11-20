@@ -47,6 +47,7 @@ var userInstantiationTests = {
     // Setup Test
     //-------------------------------------------------------------------------------
 
+    // testPasswordHash will validate against password 'lastpass' no quotes.
     setup: function(test) {
         this.testPasswordHash = "$2a$10$UCNxW7UFww9z97eijL8QhewpxjqNCjv0CoPO/PKOyjdnMdoRSnlMe";
         this.testUser = new User({
