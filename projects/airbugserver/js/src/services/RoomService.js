@@ -162,7 +162,6 @@ var RoomService = Class.extend(Obj, {
         var room            = this.roomManager.generateRoom(roomData);
         var currentUser     = requestContext.get("currentUser");
         var meldManager     = this.meldService.factoryManager();
-        var meldService     = this.meldService;
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
@@ -300,7 +299,6 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Throwable, Room)} callback
      */
     retrieveRoom: function(requestContext, roomId, callback) {
-        conosle.log("RoomService#retrieveRoom");
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
         var meldManager = this.meldService.factoryManager();
@@ -338,7 +336,6 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Throwable, Map.<string, Room>)} callback
      */
     retrieveRooms: function(requestContext, roomIds, callback) {
-        conosle.log("RoomService#retrieveRooms");
         var _this       = this;
         /** @type {Map.<string, Room>} */
         var roomMap     = undefined;
@@ -349,7 +346,6 @@ var RoomService = Class.extend(Obj, {
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    console.log("RoomService#retrieveRooms retrieveRooms");
                     roomManager.retrieveRooms(roomIds, function(throwable, returnedRoomMap) {
                         if (!throwable) {
                             roomMap = returnedRoomMap;
@@ -361,7 +357,6 @@ var RoomService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    console.log("RoomService#retrieveRooms iterableParallel roomMap getValueCollection");
                     $iterableParallel(roomMap.getValueCollection(), function(flow, room) {
                         _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
                             _this.meldUserWithRoom(meldManager, currentUser, room);
@@ -373,13 +368,11 @@ var RoomService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow){
-                    console.log("commitTransaction");
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
-                console.log("end of RoomService#retrieveRooms");
                 if (!throwable) {
                     callback(undefined, roomMap);
                 } else {
@@ -418,30 +411,29 @@ var RoomService = Class.extend(Obj, {
         var _this = this;
         $series([
             $task(function(flow) {
-                console.log("populateRoom");
                 _this.roomManager.populateRoom(room, ["roomMemberSet"], function(throwable) {
-                    console.log("end of populateRoom inside dbPopulateRoomAndRoomMembers");
-                    console.log("roomMemberSet count:", room.getRoomMemberSet().getCount());
                     flow.complete(throwable);
                 });
             }),
-            $iterableParallel(room.getRoomMemberSet(), function(flow, roomMember) {
-                console.log("populateRoomMember");
-                _this.roomMemberManager.populateRoomMember(roomMember, ["user"], function(throwable) {
-                    if(!throwable){
-                        if(roomMember.getRoomId() === room.getId()){
-                            roomMember.setRoom(room);
-                            flow.complete();
+            $task(function(flow){
+                $iterableParallel(room.getRoomMemberSet(), function(flow, roomMember) {
+                    _this.roomMemberManager.populateRoomMember(roomMember, ["user"], function(throwable) {
+                        if(!throwable){
+                            if(roomMember.getRoomId() === room.getId()){
+                                roomMember.setRoom(room);
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("RoomMember does not belong in this room"));
+                            }
                         } else {
-                            flow.error(new Exception("RoomMember does not belong in this room"));
+                            flow.error(throwable);
                         }
-                    } else {
-                        flow.error(throwable);
-                    }
+                    });
+                }).execute(function(throwable){
+                        flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
-            console.log("End of dbPopulateRoomAndRoomMembers");
             if (!throwable) {
                 callback(undefined, room);
             } else {
