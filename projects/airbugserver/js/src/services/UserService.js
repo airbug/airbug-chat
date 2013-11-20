@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('PasswordUtil')
 //@Require('Set')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
@@ -30,6 +31,7 @@ var bcrypt                  = require('bcrypt');
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
+var PasswordUtil            = bugpack.require('PasswordUtil');
 var Set                     = bugpack.require('Set');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
@@ -346,17 +348,23 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                user = _this.userManager.generateUser(userObject);
-                bcrypt.genSalt(10, function(err, salt) {
-                    if (err) {
-                        flow.complete(err);
-                    } else {
-                        bcrypt.hash(userObject.password, salt, function(err, crypted) {
-                            user.setPasswordHash(crypted);
+                if (userObject.password !== userObject.confirmPassword) {
+                    flow.complete(new Exception("PasswordMismatch"));
+                } else if (!PasswordUtil.isValid(userObject.password)) {
+                    flow.complete(new Exception("InvalidPassword"));
+                } else {
+                    user = _this.userManager.generateUser(userObject);
+                    bcrypt.genSalt(10, function(err, salt) {
+                        if (err) {
                             flow.complete(err);
-                        });
-                    }
-                });
+                        } else {
+                            bcrypt.hash(userObject.password, salt, function(err, crypted) {
+                                user.setPasswordHash(crypted);
+                                flow.complete(err);
+                            });
+                        }
+                    });
+                }
             }),
             $task(function(flow) {
                 _this.userManager.createUser(user, function(throwable) {
