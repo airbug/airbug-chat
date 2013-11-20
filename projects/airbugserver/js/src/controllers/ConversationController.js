@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@Require('LiteralUtil')
-//@Require('Obj')
+//@Require('airbugserver.EntityController')
 
 
 //-------------------------------------------------------------------------------
@@ -24,14 +24,14 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var LiteralUtil = bugpack.require('LiteralUtil');
-var Obj         = bugpack.require('Obj');
+var EntityController = bugpack.require('airbugserver.EntityController');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationController = Class.extend(Obj, {
+var ConversationController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ var ConversationController = Class.extend(Obj, {
          */
         this.bugCallRouter          = bugCallRouter;
 
-        /*
+        /**
          * @private
          * @type {ExpressApp}
          */
