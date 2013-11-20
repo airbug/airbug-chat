@@ -71,6 +71,7 @@ buildProperties({
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/bugtrace/js/src",
+            "../bugjs/projects/configbug/js/src",
             "../bugjs/projects/cookies/js/src",
             "../bugjs/projects/express/js/src",
             "../bugjs/projects/handshaker/js/src",
@@ -97,6 +98,7 @@ buildProperties({
             "../bugjs/projects/bugmeta/js/test",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
             "../bugjs/projects/bugtrace/js/test",
+            "../bugjs/projects/configbug/js/test",
             "../bugjs/projects/handshaker/js/test",
             "../bugjs/projects/mongo/js/test",
             "../bugjs/projects/socketio/bugjars/socket/js/test",
@@ -107,7 +109,8 @@ buildProperties({
         //TODO BRN: These static paths are temporary until we get the client js server working.
 
         resourcePaths: [
-            "./projects/airbugclient/resources"
+            "./projects/airbugclient/resources",
+            "./projects/airbugserver/resources"
         ],
         staticPaths: [
             "./projects/airbug/js/src",

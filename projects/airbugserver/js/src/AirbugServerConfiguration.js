@@ -9,7 +9,22 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.AirbugClientConfig')
+//@Require('airbugserver.CallService')
+//@Require('airbugserver.ChatMessageController')
+//@Require('airbugserver.ChatMessageService')
+//@Require('airbugserver.ConversationController')
+//@Require('airbugserver.ConversationService')
+//@Require('airbugserver.HomePageController')
+//@Require('airbugserver.MeldService')
+//@Require('airbugserver.RequestContextBuilder')
+//@Require('airbugserver.RoomController')
+//@Require('airbugserver.RoomService')
+//@Require('airbugserver.SessionController')
+//@Require('airbugserver.SessionService')
 //@Require('airbugserver.SessionServiceConfig')
+//@Require('airbugserver.UserController')
+//@Require('airbugserver.UserService')
 //@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugcall.BugCallServer')
 //@Require('bugcall.CallServer')
@@ -22,6 +37,7 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute:bugcall.BugCallRouter')
+//@Require('configbug.Configbug')
 //@Require('cookies.CookieParser')
 //@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
@@ -31,23 +47,6 @@
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
 //@Require('socketio:server.SocketIoServerConfig')
-
-//@Require('airbugserver.RequestContextBuilder')
-
-//@Require('airbugserver.ChatMessageController')
-//@Require('airbugserver.ConversationController')
-//@Require('airbugserver.HomePageController')
-//@Require('airbugserver.RoomController')
-//@Require('airbugserver.SessionController')
-//@Require('airbugserver.UserController')
-
-//@Require('airbugserver.CallService')
-//@Require('airbugserver.ChatMessageService')
-//@Require('airbugserver.ConversationService')
-//@Require('airbugserver.MeldService')
-//@Require('airbugserver.RoomService')
-//@Require('airbugserver.SessionService')
-//@Require('airbugserver.UserService')
 
 
 //-------------------------------------------------------------------------------
@@ -68,7 +67,22 @@ var path                    = require('path');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var AirbugClientConfig      = bugpack.require('airbugserver.AirbugClientConfig');
+var CallService             = bugpack.require('airbugserver.CallService');
+var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
+var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
+var ConversationController  = bugpack.require('airbugserver.ConversationController');
+var ConversationService     = bugpack.require('airbugserver.ConversationService');
+var HomePageController      = bugpack.require('airbugserver.HomePageController');
+var MeldService             = bugpack.require('airbugserver.MeldService');
+var RequestContextBuilder   = bugpack.require('airbugserver.RequestContextBuilder');
+var RoomController          = bugpack.require('airbugserver.RoomController');
+var RoomService             = bugpack.require('airbugserver.RoomService');
+var SessionController       = bugpack.require('airbugserver.SessionController');
+var SessionService          = bugpack.require('airbugserver.SessionService');
 var SessionServiceConfig    = bugpack.require('airbugserver.SessionServiceConfig');
+var UserController          = bugpack.require('airbugserver.UserController');
+var UserService             = bugpack.require('airbugserver.UserService');
 var BugCallRequestProcessor = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
 var CallServer              = bugpack.require('bugcall.CallServer');
@@ -81,6 +95,7 @@ var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter           = bugpack.require('bugroute:bugcall.BugCallRouter');
+var Configbug               = bugpack.require('configbug.Configbug');
 var CookieParser            = bugpack.require('cookies.CookieParser');
 var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
@@ -90,23 +105,6 @@ var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
-
-var RequestContextBuilder   = bugpack.require('airbugserver.RequestContextBuilder');
-
-var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
-var ConversationController  = bugpack.require('airbugserver.ConversationController');
-var HomePageController      = bugpack.require('airbugserver.HomePageController');
-var RoomController          = bugpack.require('airbugserver.RoomController');
-var SessionController       = bugpack.require('airbugserver.SessionController');
-var UserController          = bugpack.require('airbugserver.UserController');
-
-var CallService             = bugpack.require('airbugserver.CallService');
-var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
-var ConversationService     = bugpack.require('airbugserver.ConversationService');
-var MeldService             = bugpack.require('airbugserver.MeldService');
-var RoomService             = bugpack.require('airbugserver.RoomService');
-var SessionService          = bugpack.require('airbugserver.SessionService');
-var UserService             = bugpack.require('airbugserver.UserService');
 
 
 //-------------------------------------------------------------------------------
@@ -142,6 +140,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @pirvate
+         * @type {AirbugClientConfig}
+         */
+        this._airbugClientConfig        = null;
 
         /**
          * @private
@@ -181,18 +185,9 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {{
-         *      port: number,
-         *      mongoDbIp: string
-         * }}
+         * @type {Configbug}
          */
-        this._config                    = null;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this._configFilePath            = path.resolve(__dirname, '../config.json');
+        this._configbug                 = null;
 
         /**
          * @private
@@ -280,6 +275,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {SocketIoServerConfig}
+         */
+        this._socketIoServerConfig      = null;
+
+        /**
+         * @private
          * @type {UserController}
          */
         this._userController            = null;
@@ -303,60 +304,70 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         var _this = this;
         console.log("Initializing AirbugConfiguration");
 
-        var config = this._config;
-        var secret = 'some secret, seriously don\'t tell'; // LOAD FROM CONFIG;
-        var sessionKey = 'airbug.sid'; //signedcookie name
-
-        this._cookieSigner.setSecret(secret);
-        this._mongoDataStore.connect('mongodb://' + config.mongoDbIp + '/airbug');
-        this._sessionServiceConfig.setCookieMaxAge(24 * 60 * 60 * 1000);
-        this._sessionServiceConfig.setCookieSecret(secret);
-        this._sessionServiceConfig.setSessionKey(sessionKey);
-
-        this._expressApp.configure(function() {
-            _this._expressApp.engine('mustache', mu2express.engine);
-            _this._expressApp.set('view engine', 'mustache');
-            _this._expressApp.set('views', path.resolve(__dirname, '../resources/views'));
-
-            _this._expressApp.set('port', config.port);
-
-            _this._expressApp.use(express.logger('dev'));
-            _this._expressApp.use(express.cookieParser(secret));
-
-            _this._expressApp.use(function(req, res, next) {
-                _this._sessionService.processExpressRequest(req, res, next);
-            });
-            _this._expressApp.use(function(req, res, next) {
-                _this._requestContextBuilder.buildRequestContextForExpress(req, res, next); //should this go first?
-            });
-
-            _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
-            _this._expressApp.use(express.bodyParser());
-            _this._expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
-            _this._expressApp.use(express.static(path.resolve(__dirname, '../static')));
-            _this._expressApp.use(_this._expressApp.getApp().router);
-        });
-
-        this._expressApp.use(express.errorHandler());
-
-        this._bugCallServer.registerRequestPreProcessor(this._requestContextBuilder);
-        this._bugCallServer.registerRequestProcessor(this._bugCallRouter);
-
-        this._requestContextBuilder.registerRequestContextBuilder(this._sessionService);
-        this._requestContextBuilder.registerRequestContextBuilder(this._userService);
-
-        //TODO BRN: This setup should be replaced by an annotation
-        this._handshaker.addHands([
-            this._sessionService
-        ]);
-
-        this._socketIoServerConfig.setResource("/api/socket");
+        //TODO BRN: This configName should either be passed in via a parameter or set in some non code specific way
+        /** @type {string} */
+        var configName  = "dev";
+        /** @type {Config} */
+        var config      = undefined;
 
         $series([
+            $task(function(flow) {
+                _this.loadConfig(configName, function(throwable, loadedConfig) {
+                    if (!throwable) {
+                        config = loadedConfig;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.buildConfigs(config);
 
+                var secret      = config.getProperty("cookieSecret");
+
+                _this._cookieSigner.setSecret(secret);
+                _this._mongoDataStore.connect('mongodb://' + config.getProperty("mongoDbIp") + '/airbug');
+
+
+                _this._expressApp.configure(function() {
+                    _this._expressApp.engine('mustache', mu2express.engine);
+                    _this._expressApp.set('view engine', 'mustache');
+                    _this._expressApp.set('views', path.resolve(__dirname, '../resources/views'));
+
+                    _this._expressApp.set('port', config.getProperty("port"));
+
+                    _this._expressApp.use(express.logger('dev'));
+                    _this._expressApp.use(express.cookieParser(secret));
+
+                    _this._expressApp.use(function(req, res, next) {
+                        _this._sessionService.processExpressRequest(req, res, next);
+                    });
+                    _this._expressApp.use(function(req, res, next) {
+                        _this._requestContextBuilder.buildRequestContextForExpress(req, res, next); //should this go first?
+                    });
+
+                    _this._expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
+                    _this._expressApp.use(express.bodyParser());
+                    _this._expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
+                    _this._expressApp.use(express.static(path.resolve(__dirname, '../static')));
+                    _this._expressApp.use(_this._expressApp.getApp().router);
+                });
+
+                _this._expressApp.use(express.errorHandler());
+
+                _this._bugCallServer.registerRequestPreProcessor(_this._requestContextBuilder);
+                _this._bugCallServer.registerRequestProcessor(_this._bugCallRouter);
+
+                _this._requestContextBuilder.registerRequestContextBuilder(_this._sessionService);
+                _this._requestContextBuilder.registerRequestContextBuilder(_this._userService);
+
+                //TODO BRN: This setup should be replaced by an annotation
+                _this._handshaker.addHands([
+                    _this._sessionService
+                ]);
+                flow.complete();
+            }),
             $task(function(flow) {
                 console.log("Configuring socketIoServer");
-
                 _this._socketIoServer.configure(function(error) {
                     if (!error) {
                         console.log("socketIoServer configured");
@@ -408,6 +419,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 });
             })
         ]).execute(callback);
+    },
+
+    /**
+     * @returns {AirbugClientConfig}
+     */
+    airbugClientConfig: function() {
+        this._airbugClientConfig = new AirbugClientConfig();
+        return this._airbugClientConfig;
     },
 
     /**
@@ -485,11 +504,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {Object}
+     * @return {Configbug}
      */
-    config: function() {
-        this._config = this.loadConfig(this._configFilePath);
-        return this._config;
+    configbug: function() {
+        this._configbug = new Configbug(BugFs.resolvePaths([__dirname, '../resources/config']));
+        return this._configbug;
     },
 
     /**
@@ -529,11 +548,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {Object} config
      * @return {ExpressServer}
      */
-    expressApp: function(config) {
-        this._expressApp = new ExpressApp(config);
+    expressApp: function() {
+        this._expressApp = new ExpressApp();
         return this._expressApp;
     },
 
@@ -555,12 +573,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {Object} config
+     * @param {AirbugClientConfig} airbugClientConfig
      * @param {ExpressApp} expressApp
      * @return {HomePageController}
      */
-    homePageController: function(config, expressApp) {
-        this._homePageController = new HomePageController(config, expressApp);
+    homePageController: function(airbugClientConfig, expressApp) {
+        this._homePageController = new HomePageController(airbugClientConfig, expressApp);
         return this._homePageController;
     },
 
@@ -671,15 +689,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {Object} config
      * @param {ExpressApp} expressApp
      * @param {BugCallServer} bugCallServer
      * @param {BugCallRouter} bugCallRouter
      * @param {UserService} userService
      * @return {UserController}
      */
-    userController: function(config, expressApp, bugCallServer, bugCallRouter, userService) {
-        this._userController = new UserController(config, expressApp, bugCallServer, bugCallRouter, userService);
+    userController: function(expressApp, bugCallRouter, userService) {
+        this._userController = new UserController(expressApp, bugCallRouter, userService);
         return this._userController;
     },
 
@@ -701,30 +718,25 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     // Private Methods
     //-------------------------------------------------------------------------------
 
-    /*
+    /**
      * @private
-     * @param {?string=} configPath
-     * @return {{
-     *      port: number,
-     *      mongoDbIp: string
-     * }}
-     **/
-    loadConfig: function(configPath) {
-        var config = {
-            port: 8000,
-            mongoDbIp: "localhost"
-        };
+     * @param {Config} config
+     */
+    buildConfigs: function(config) {
+        this._airbugClientConfig.setGithubClientId(config.getProperty("github.clientId"));
+        this._sessionServiceConfig.setCookieMaxAge(config.getProperty("cookieMaxAge"));
+        this._sessionServiceConfig.setCookieSecret(config.getProperty("cookieSecret"));
+        this._sessionServiceConfig.setSessionKey(config.getProperty("sessionKey"));
+        this._socketIoServerConfig.setResource("/api/socket");
+    },
 
-        if (BugFs.existsSync(configPath)) {
-            try {
-                config = JSON.parse(BugFs.readFileSync(configPath, 'utf8'));
-            } catch (error) {
-                console.log(configPath, "could not be parsed. Invalid JSON.", error);
-            }
-            return config;
-        } else {
-            return config;
-        }
+    /**
+     * @private
+     * @param {string} configName
+     * @param {function(Throwable, Config)} callback
+     */
+    loadConfig: function(configName, callback) {
+        this._configbug.getConfig(configName, callback);
     }
 });
 
@@ -759,17 +771,16 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Config
         //-------------------------------------------------------------------------------
 
-        module("config"),
+        module("configbug"),
+        module("airbugClientConfig"),
         module("sessionServiceConfig"),
+
 
         //-------------------------------------------------------------------------------
         // Express
         //-------------------------------------------------------------------------------
 
-        module("expressApp")
-            .args([
-                arg().ref("config")
-            ]),
+        module("expressApp"),
         module("expressServer")
             .args([
                 arg().ref("expressApp")
@@ -838,7 +849,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("homePageController")
             .args([
-                arg().ref("config"),
+                arg().ref("airbugClientConfig"),
                 arg().ref("expressApp")
             ]),
         module("roomController")
@@ -855,9 +866,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("userController")
             .args([
-                arg().ref("config"),
                 arg().ref("expressApp"),
-                arg().ref("bugCallServer"),
                 arg().ref("bugCallRouter"),
                 arg().ref("userService")
             ]),

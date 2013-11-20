@@ -64,10 +64,10 @@ var RoomManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Room)=} callback
      */
     createRoom: function(room, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
 
         var options = {
             conversation: {

@@ -45,21 +45,21 @@ var SessionServiceConfig = Class.extend(Config, {
      * @return {number}
      */
     getCookieMaxAge: function() {
-        return this.getProperties().getProperty("cookieMaxAge");
+        return this.getProperty("cookieMaxAge");
     },
 
     /**
      * @param {number} cookieMaxAge
      */
     setCookieMaxAge: function(cookieMaxAge) {
-        this.getProperties().setProperty("cookieMaxAge", cookieMaxAge);
+        this.setProperty("cookieMaxAge", cookieMaxAge);
     },
 
     /**
      * @return {string}
      */
     getCookiePath: function() {
-        var cookiePath = this.getProperties().getProperty("cookiePath");
+        var cookiePath = this.getProperty("cookiePath");
         if (!TypeUtil.isString(cookiePath)) {
             cookiePath = "/";
         }
@@ -70,28 +70,28 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {string} cookiePath
      */
     setCookiePath: function(cookiePath) {
-        this.getProperties().setProperty("cookiePath", cookiePath);
+        this.setProperty("cookiePath", cookiePath);
     },
 
     /**
      * @return {string}
      */
     getCookieSecret: function() {
-        return this.getProperties().getProperty("cookieSecret");
+        return this.getProperty("cookieSecret");
     },
 
     /**
      * @param {string} cookieSecret
      */
     setCookieSecret: function(cookieSecret) {
-        this.getProperties().setProperty("cookieSecret", cookieSecret);
+        this.setProperty("cookieSecret", cookieSecret);
     },
 
     /**
      * @return {boolean}
      */
     getRollingSessions: function() {
-        var rollingSessions = this.getProperties().getProperty("rollingSessions");
+        var rollingSessions = this.getProperty("rollingSessions");
         if (!TypeUtil.isBoolean(rollingSessions)) {
             rollingSessions = false;
         }
@@ -102,14 +102,14 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {boolean} rollingSessions
      */
     setRollingSessions: function(rollingSessions) {
-        this.getProperties().setProperty("rollingSessions", rollingSessions);
+        this.setProperty("rollingSessions", rollingSessions);
     },
 
     /**
      * @return {string}
      */
     getSessionKey: function() {
-        var sessionKey = this.getProperties().getProperty("sessionKey");
+        var sessionKey = this.getProperty("sessionKey");
         if (!TypeUtil.isString(sessionKey)) {
             sessionKey = "airbug.sid";
         }
@@ -120,14 +120,14 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {string} sessionKey
      */
     setSessionKey: function(sessionKey) {
-        this.getProperties().setProperty("sessionKey", sessionKey);
+        this.setProperty("sessionKey", sessionKey);
     },
 
     /**
      * @return {boolean}
      */
     getTrustProxy: function() {
-        var trustProxy = this.getProperties().getProperty("trustProxy");
+        var trustProxy = this.getProperty("trustProxy");
         if (!TypeUtil.isBoolean(trustProxy)) {
             trustProxy = false;
         }
@@ -138,7 +138,7 @@ var SessionServiceConfig = Class.extend(Config, {
      * @param {boolean} trustProxy
      */
     setTrustProxy: function(trustProxy) {
-        this.getProperties().setProperty("trustProxy", trustProxy);
+        this.setProperty("trustProxy", trustProxy);
     }
 });
 

@@ -49,7 +49,7 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, bugCallServer, bugCallRouter, userService) {
+    _constructor: function(expressApp, bugCallRouter, userService) {
 
         this._super();
 
@@ -63,18 +63,6 @@ var UserController = Class.extend(EntityController, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter          = bugCallRouter;
-
-        /**
-         * @private
-         * @type {BugCallServer}
-         */
-        this.bugCallServer          = bugCallServer;
-
-        /**
-         * @private
-         * @type {Object}
-         */
-        this.config                 = config;
 
         /**
          * @private

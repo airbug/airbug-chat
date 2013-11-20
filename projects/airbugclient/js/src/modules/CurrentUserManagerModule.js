@@ -205,6 +205,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete();
                     },
                     error: function(req, textStatus, errorThrown) {
+                        if (TypeUtil.isString(errorThrown)) {
+                            errorThrown = new Error(errorThrown);
+                        }
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.complete(errorThrown);
                     }
@@ -242,6 +245,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(error);
                     },
                     error: function(req, textStatus, errorThrown) {
+                        if (TypeUtil.isString(errorThrown)) {
+                            errorThrown = new Error(errorThrown);
+                        }
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.error(errorThrown);
                     }
@@ -284,6 +290,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                         flow.complete(error);
                     },
                     error: function(req, textStatus, errorThrown) {
+                        if (TypeUtil.isString(errorThrown)) {
+                            errorThrown = new Error(errorThrown);
+                        }
                         console.log("error. errorThrown:", errorThrown, "textStatus:", textStatus, "req:", req);
                         flow.complete(errorThrown);
                     }

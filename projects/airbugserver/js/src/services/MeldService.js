@@ -104,7 +104,9 @@ var MeldService = Class.extend(Obj, {
      * @param {Entity} entity
      */
     meldEntity: function(meldManager, type, filter, entity) {
+        /** @type {MeldKey} */
         var meldKey = this.generateMeldKey(type, entity.getId(), filter);
+        /** @type {MeldDocument} */
         var meldDocument = undefined;
         if (!meldManager.containsMeldByKey(meldKey)) {
 

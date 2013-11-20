@@ -35,7 +35,7 @@ var HomePageController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp) {
+    _constructor: function(airbugClientConfig, expressApp) {
 
         this._super();
 
@@ -46,15 +46,15 @@ var HomePageController = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Object}
+         * @type {AirbugClientConfig}
          */
-        this.config     = config;
+        this.airbugClientConfig     = airbugClientConfig;
 
         /**
          * @private
          * @type {ExpressApp}
          */
-        this.expressApp = expressApp;
+        this.expressApp             = expressApp;
     },
 
 
@@ -69,9 +69,10 @@ var HomePageController = Class.extend(Obj, {
         var _this = this;
 
         this.expressApp.get('/app', function(req, res) {
+
             res.render('home', {
                 title: 'airbug',
-                production: _this.config.production
+                config: _this.airbugClientConfig.toJson()
             }, function(error, html)  {
                 if (error) {
                     console.error(error);
