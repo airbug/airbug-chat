@@ -12,6 +12,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CopyToClipboardButtonView')
 //@Require('airbug.DropdownItemView')
+//@Require('airbug.DropdownViewEvent')
 //@Require('airbug.FauxTextAreaView')
 //@Require('airbug.IconView')
 //@Require('airbug.ParagraphView')
@@ -40,6 +41,7 @@ var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CopyToClipboardButtonView   = bugpack.require('airbug.CopyToClipboardButtonView');
 var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
+var DropdownViewEvent           = bugpack.require('airbug.DropdownViewEvent');
 var FauxTextAreaView            = bugpack.require('airbug.FauxTextAreaView');
 var IconView                    = bugpack.require('airbug.IconView');
 var ParagraphView               = bugpack.require('airbug.ParagraphView');
