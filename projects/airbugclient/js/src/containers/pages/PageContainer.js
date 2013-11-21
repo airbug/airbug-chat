@@ -168,7 +168,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     handleToggleWorkspaceCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
-        var workspace       = $("#page-row-container>.column3of4");
+        var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
 
         workspace.toggleClass("workspace-open");
         this.updateColumnSpans();
@@ -181,7 +181,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     handleToggleHamburgerLeftCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
-        var hamburgerLeft   = $("#page-row-container>.column1of4");
+        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
 
         hamburgerLeft.toggleClass("hamburger-panel-hidden");
         this.updateColumnSpans();
@@ -194,7 +194,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     handleToggleHamburgerRightCommand: function(message) {
         // var topic           = message.getTopic();
         // var data            = message.getData();
-        var hamburgerRight  = $("#page-row-container>.column4of4");
+        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
 
         hamburgerRight.toggleClass("hamburger-panel-hidden");
         this.updateColumnSpans();
@@ -204,10 +204,10 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     updateColumnSpans: function() {
-        var hamburgerLeft           = $("#page-row-container>.column1of4");
-        var roomspace               = $("#page-row-container>.column2of4");
-        var workspace               = $("#page-row-container>.column3of4");
-        var hamburgerRight          = $("#page-row-container>.column4of4");
+        var hamburgerLeft           = this.viewTop.$el.find("#page-row-container>.column1of4");
+        var roomspace               = this.viewTop.$el.find("#page-row-container>.column2of4");
+        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+        var hamburgerRight          = this.viewTop.$el.find("#page-row-container>.column4of4");
         var hamburgerLeftIsOpen     = !hamburgerLeft.hasClass("hamburger-panel-hidden");
         var hamburgerRightIsOpen    = !hamburgerRight.hasClass("hamburger-panel-hidden");
         var workspaceIsOpen         = workspace.hasClass("workspace-open");
