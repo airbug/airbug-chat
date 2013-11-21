@@ -166,6 +166,21 @@ var ChatMessageController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              * @param {function(Throwable)} callback
              */
+            retrieveChatMessage: function(request, responder, callback) {
+                var data                = request.getData();
+                var chatMessageId       = data.objectId;
+                var requestContext      = request.requestContext;
+
+                chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, chatMessage) {
+                    _this.processRetrieveResponse(responder, throwable, chatMessage, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable)} callback
+             */
             retrieveChatMessagesByConversationId: function(request, responder, callback) {
                 var data                = request.getData();
                 var conversationId      = data.conversationId;
