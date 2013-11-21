@@ -310,14 +310,19 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow){
                     _this.dbRetrievePopulatedRoom(roomId, function(throwable, returnedRoom){
                         room = returnedRoom;
+                        flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.meldUserWithRoom(meldManager, currentUser, room);
-                    _this.meldRoom(meldManager, room);
-                    meldManager.commitTransaction(function(throwable) {
-                        flow.complete(throwable);
-                    });
+                    if(room){
+                        _this.meldUserWithRoom(meldManager, currentUser, room);
+                        _this.meldRoom(meldManager, room);
+                        meldManager.commitTransaction(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(new Exception("Room does not exist"));
+                    }
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {

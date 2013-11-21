@@ -95,7 +95,7 @@ var ConversationService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
-     * @param {function(Throwable, Conversation)} callback
+     * @param {function(Throwable, Conversation=)} callback
      */
     retrieveConversation: function(requestContext, conversationId, callback) {
         var _this               = this;
@@ -109,20 +109,28 @@ var ConversationService = Class.extend(Obj, {
                     _this.dbRetrievePopulatedConversation(conversationId, function(throwable, returnedConversation) {
 
                         //TODO BRN: Is it ok for non-room members to retrieve a conversation?
-
-                        if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                            conversation = returnedConversation;
+                        if (!throwable) {
+                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                conversation = returnedConversation;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("UnauthorizedAccess", {objectId: conversationId}));
+                            }
                         } else {
-                            new Exception("UnauthorizedAccess", {objectId: conversationId});
+                            flow.error(throwable);
                         }
                     });
                 }),
                 $task(function(flow) {
-                    _this.meldUserWithConversation(meldManager, currentUser, conversation);
-                    _this.meldConversation(meldManager, conversation);
-                    meldManager.commitTransaction(function(throwable) {
-                        flow.complete(throwable);
-                    });
+                    if(conversation){
+                        _this.meldUserWithConversation(meldManager, currentUser, conversation);
+                        _this.meldConversation(meldManager, conversation);
+                        meldManager.commitTransaction(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(new Exception("Conversation does not exist"));
+                    }
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
