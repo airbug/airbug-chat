@@ -188,7 +188,6 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     createZeroClipboard: function() {
-        var _this = this;
         var button      = this.getViewTop().$el.find('.btn')[0];
         var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
         var options     = {
@@ -248,7 +247,6 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     },
 
     activateContainer: function() {
-        var _this = this;
         this._super();
         var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
         fauxTextArea.on("click", function() {
