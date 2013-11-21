@@ -126,7 +126,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-
+        this.configureAceEditor();
     },
 
     /**
