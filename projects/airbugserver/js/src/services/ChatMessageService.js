@@ -204,7 +204,41 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {function(Throwable, ChatMessage} callback
      */
     retrieveChatMessage: function(requestContext, chatMessageId, callback) {
-        //TODO
+        var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
+        var meldManager         = this.meldService.factoryManager();
+        var chatMessage         = undefined;
+        var chatMessageManager  = this.chatMessageManager;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow){
+                    chatMessageManager.retrieveChatMessage(chatMessageId, function(throwable, returnedChatMessage){
+                        chatMessage = returnedChatMessage;
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    if(chatMessage){
+                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
+                        _this.meldChatMessage(meldManager, chatMessage);
+                        meldManager.commitTransaction(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(new Exception("ChatMessage does not exist"));
+                    }
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(undefined, chatMessage);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
     },
 
     /*
