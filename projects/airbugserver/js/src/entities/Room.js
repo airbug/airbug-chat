@@ -173,6 +173,13 @@ var Room = Class.extend(Entity, {
     },
 
     /**
+     * @param {Set.<RoomMember>}
+     */
+    setRoomMemberSet: function(roomMemberSet) {
+        this.roomMemberSet = roomMemberSet;
+    },
+
+    /**
      * @param {RoomMember} roomMember
      */
     removeRoomMember: function(roomMember) {
