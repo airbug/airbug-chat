@@ -139,7 +139,7 @@ var MeldModel = Class.extend(CarapaceModel, {
         var delta = event.getData().delta;
         var setAttributes = {};
         var set = false;
-        delta.getChangeList().forEach(function(deltaChange) {
+        delta.getDeltaChangeList().forEach(function(deltaChange) {
             switch (deltaChange.getChangeType()) {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
                     setAttributes = deltaChange.getData();
