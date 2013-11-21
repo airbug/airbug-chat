@@ -232,7 +232,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 workspace.addClass("span4");
             } else {
                 roomspace.removeClass("span11 span8 span3");
-                roomspace.addClass("span5");
+                roomspace.addClass("span8o");
                 workspace.removeClass("span4 span3");
                 workspace.addClass("span1");
             }
