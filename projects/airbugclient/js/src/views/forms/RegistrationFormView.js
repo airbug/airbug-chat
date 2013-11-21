@@ -7,6 +7,7 @@
 //@Export('RegistrationFormView')
 
 //@Require('Class')
+//@Require('PasswordUtil')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.MustacheView')
 
@@ -23,6 +24,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var PasswordUtil    = bugpack.require('PasswordUtil');
 var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
@@ -50,10 +52,10 @@ var RegistrationFormView = Class.extend(MustacheView, {
                                 '<input class="input-xxlarge" type="text" name="lastName" placeholder="Last Name  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="password" name="password" placeholder="Password  (required)" required>' +
+                                '<input class="input-xxlarge" type="password" name="password" id="password" placeholder="Password  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="password" name="confirmPassword" placeholder="Confirm Password  (required)" required>' +
+                                '<input class="input-xxlarge" type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
                                 '<button id="submit-button-{{cid}}" type="submit" class="btn">Enter</button>' +
@@ -117,6 +119,10 @@ var RegistrationFormView = Class.extend(MustacheView, {
                         url: "app/user-availability-check-email",
                         type: "post"
                     }
+                },
+                password: "required",
+                confirmPassword: {
+                    equalTo: "#password"
                 }
             },
             messages: {
@@ -125,6 +131,9 @@ var RegistrationFormView = Class.extend(MustacheView, {
                 }
             }
         });
+        jQuery.validator.addMethod("password", function(value, element) {
+            return PasswordUtil.isValid(value);
+        }, PasswordUtil.requirementsString);
     },
 
     /**
