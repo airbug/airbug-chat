@@ -101,7 +101,7 @@ var CallService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @protected
      * @param {CallManager} callManager
      */
     deregisterCallManager: function(callManager) {
