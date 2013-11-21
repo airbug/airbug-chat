@@ -9,12 +9,14 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.AirbugClientConfig')
+//@Require('airbug.AirbugClientConfig')
 //@Require('airbugserver.CallService')
 //@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.ChatMessageService')
 //@Require('airbugserver.ConversationController')
 //@Require('airbugserver.ConversationService')
+//@Require('airbugserver.GithubController')
+//@Require('airbugserver.GithubService')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.MeldService')
 //@Require('airbugserver.RequestContextBuilder')
@@ -67,12 +69,14 @@ var path                    = require('path');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
-var AirbugClientConfig      = bugpack.require('airbugserver.AirbugClientConfig');
+var AirbugClientConfig      = bugpack.require('airbug.AirbugClientConfig');
 var CallService             = bugpack.require('airbugserver.CallService');
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
+var GithubController        = bugpack.require('airbugserver.GithubController');
+var GithubService           = bugpack.require('airbugserver.GithubService');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var MeldService             = bugpack.require('airbugserver.MeldService');
 var RequestContextBuilder   = bugpack.require('airbugserver.RequestContextBuilder');
@@ -227,6 +231,18 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {GithubController}
+         */
+        this._githubController          = null;
+
+        /**
+         * @private
+         * @type {GithubService}
+         */
+        this._githubService             = null;
+
+        /**
+         * @private
          * @type {Handshaker}
          */
         this._handshaker                = null;
@@ -359,6 +375,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
                 _this._requestContextBuilder.registerRequestContextBuilder(_this._sessionService);
                 _this._requestContextBuilder.registerRequestContextBuilder(_this._userService);
+                _this._requestContextBuilder.registerRequestContextBuilder(_this._githubService);
 
                 //TODO BRN: This setup should be replaced by an annotation
                 _this._handshaker.addHands([
@@ -385,6 +402,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                 console.log("chatMessageController configured");
                 _this._conversationController.configure();
                 console.log("conversationController configured");
+                _this._githubController.configure();
+                console.log("githubController configured");
                 _this._homePageController.configure();
                 console.log("homePageController configured");
                 _this._roomController.configure();
@@ -565,6 +584,26 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {ExpressApp} expressApp
+     * @param {BugCallRouter} bugCallRouter
+     * @param {GithubService} githubService
+     * @return {GithubController}
+     */
+    githubController: function(expressApp, bugCallRouter, githubService) {
+        this._githubController = new GithubController(expressApp, bugCallRouter, githubService);
+        return this._githubController;
+    },
+
+    /**
+     * @param {SessionManager} sessionManager
+     * @returns {GithubService}
+     */
+    githubService: function(sessionManager) {
+        this._githubService = new GithubService(sessionManager);
+        return this._githubService;
+    },
+
+    /**
      * @return {Handshaker}
      */
     handshaker: function() {
@@ -690,7 +729,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
     /**
      * @param {ExpressApp} expressApp
-     * @param {BugCallServer} bugCallServer
      * @param {BugCallRouter} bugCallRouter
      * @param {UserService} userService
      * @return {UserController}
@@ -723,17 +761,24 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {Config} config
      */
     buildConfigs: function(config) {
-        this._airbugClientConfig.setGithubClientId(config.getProperty("github.clientId"));
-        this._sessionServiceConfig.setCookieMaxAge(config.getProperty("cookieMaxAge"));
-        this._sessionServiceConfig.setCookieSecret(config.getProperty("cookieSecret"));
-        this._sessionServiceConfig.setSessionKey(config.getProperty("sessionKey"));
+        this._airbugClientConfig.absorbConfig(config, [
+            "github.clientId",
+            "github.redirectUri",
+            "github.scope"
+        ]);
+
+        this._sessionServiceConfig.absorbConfig(config, [
+            "cookieMaxAge",
+            "cookieSecret",
+            "sessionKey"
+        ]);
         this._socketIoServerConfig.setResource("/api/socket");
     },
 
     /**
      * @private
      * @param {string} configName
-     * @param {function(Throwable, Config)} callback
+     * @param {function(Throwable, Config=)} callback
      */
     loadConfig: function(configName, callback) {
         this._configbug.getConfig(configName, callback);
@@ -847,6 +892,12 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("bugCallRouter"),
                 arg().ref("conversationService")
             ]),
+        module("githubController")
+            .args([
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("githubService")
+            ]),
         module("homePageController")
             .args([
                 arg().ref("airbugClientConfig"),
@@ -892,6 +943,10 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("conversationManager"),
                 arg().ref("meldService")
+            ]),
+        module("githubService")
+            .args([
+                arg().ref("sessionManager")
             ]),
         module("meldService")
             .args([

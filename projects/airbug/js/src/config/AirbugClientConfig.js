@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
+//@Package('airbug')
 
 //@Export('AirbugClientConfig')
 
@@ -53,6 +53,34 @@ var AirbugClientConfig = Class.extend(Config, {
      */
     setGithubClientId: function(clientId) {
         this.setProperty("github.clientId", clientId);
+    },
+
+    /**
+     * @returns {string}
+     */
+    getGithubScope: function() {
+        return this.getProperty("github.scope");
+    },
+
+    /**
+     * @param {string} scope
+     */
+    setGithubScope: function(scope) {
+        this.setProperty("github.scope", scope);
+    },
+
+    /**
+     * @returns {string}
+     */
+    getGithubState: function() {
+        return this.getProperty("github.state");
+    },
+
+    /**
+     * @param {string} state
+     */
+    setGithubState: function(state) {
+        this.setProperty("github.state", state);
     }
 });
 
@@ -61,4 +89,4 @@ var AirbugClientConfig = Class.extend(Config, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbugserver.AirbugClientConfig", AirbugClientConfig);
+bugpack.export("airbug.AirbugClientConfig", AirbugClientConfig);

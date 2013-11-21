@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Url')
 //@Require('TypeUtil')
 
 
@@ -26,6 +27,7 @@ var bugpack = require('bugpack').context();
 var Class       = bugpack.require('Class');
 var Map         = bugpack.require('Map');
 var Obj         = bugpack.require('Obj');
+var Url         = bugpack.require('Url');
 var TypeUtil    = bugpack.require('TypeUtil');
 
 
@@ -56,6 +58,12 @@ var NavigationModule = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {string}
+         */
+        this.finalDestination       = null;
+
+        /**
+         * @private
          * @type {Map<number, string>}
          */
         this.goBackIdToFragmentMap  = new Map();
@@ -68,15 +76,14 @@ var NavigationModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {Window}
          */
-        this.finalDestination       = null;
-
+        this.window                 = undefined;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -107,6 +114,21 @@ var NavigationModule = Class.extend(Obj, {
      */
     navigate: function(fragment, options) {
         this.carapaceRouter.navigate(fragment, options);
+    },
+
+    /**
+     * @param {(string | Url)} url
+     */
+    navigateToUrl: function(url) {
+        var href = undefined;
+        if (Class.doesExtend(url, Url)) {
+            href = url.toString();
+        } else if (TypeUtil.isString(url)) {
+            href = url;
+        } else {
+            throw new Error("'url' must be a string or a Url instance");
+        }
+        this.window.location.href = href;
     },
 
     /**

@@ -31,7 +31,34 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {MustacheView}
+ */
 var ButtonView = Class.extend(MustacheView, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {Object} options
+     */
+    _constructor: function(options) {
+
+        this._super(options);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        if (!this.id) {
+            this.id = "button-" + this.cid;
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // Template
@@ -51,7 +78,7 @@ var ButtonView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('button-' + this.cid).off();
+        this.findElement('#' + this.getId()).off();
     },
 
     /**
@@ -60,7 +87,7 @@ var ButtonView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#button-' + this.cid).on('click', function(event) {
+        this.findElement('#' + this.getId()).on('click', function(event) {
             _this.handleButtonClick(event);
         });
     },
@@ -76,7 +103,7 @@ var ButtonView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         data.buttonClasses = "";
-        data.id = this.getId() || "button-" + this.cid;
+        data.id = this.getId();
         switch (this.attributes.size) {
             case ButtonView.Size.LARGE:
                 data.buttonClasses += " btn-large";
@@ -136,7 +163,13 @@ var ButtonView = Class.extend(MustacheView, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
 /**
+ * @static
  * @enum {number}
  */
 ButtonView.Size = {

@@ -76,7 +76,6 @@ var RequestContextBuilder = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
      * @param {IBuildRequestContext} requestContextBuilder
      */
     registerRequestContextBuilder: function(requestContextBuilder) {

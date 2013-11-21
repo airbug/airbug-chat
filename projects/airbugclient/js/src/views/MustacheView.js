@@ -31,6 +31,10 @@ var Mustache        = bugpack.require('mustache.Mustache');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {CarapaceView}
+ */
 var MustacheView = Class.extend(CarapaceView, {
 
     //-------------------------------------------------------------------------------

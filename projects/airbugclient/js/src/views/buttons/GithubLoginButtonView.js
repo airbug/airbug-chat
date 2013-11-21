@@ -40,7 +40,7 @@ var GithubLoginButtonView = Class.extend(ButtonView, {
     /**
      *
      */
-    template: '<a id="button-{{cid}}" class="btn-auth btn-github large" href="#">' +
+    template: '<a id="{{id}}" class="btn-auth btn-github large" href="#">' +
             'Sign in with <b>Github</b>' +
         '</a>'
 

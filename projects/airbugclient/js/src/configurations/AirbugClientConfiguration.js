@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugApi')
+//@Require('airbug.AirbugClientConfig')
 //@Require('airbug.ChatMessageManagerModule')
 //@Require('airbug.CommandModule')
 //@Require('airbug.ConversationManagerModule')
@@ -56,6 +57,7 @@ var bugpack = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var AirbugApi                   = bugpack.require('airbug.AirbugApi');
+var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
 var ChatMessageManagerModule    = bugpack.require('airbug.ChatMessageManagerModule');
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var ConversationManagerModule   = bugpack.require('airbug.ConversationManagerModule');
@@ -256,6 +258,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @returns {AirbugClientConfig}
+     */
+    airbugClientConfig: function() {
+        return new AirbugClientConfig(JSON.parse(_appConfig));
+    },
+
+    /**
      * @return {.BrowserSocketIoFactory}
      */
     browserSocketIoFactory: function() {
@@ -446,6 +455,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     userManagerModule: function(airbugApi, meldStore, meldBuilder) {
         return new UserManagerModule(airbugApi, meldStore, meldBuilder);
+    },
+
+    /**
+     * @return {Window}
+     */
+    window: function() {
+        return window;
     }
 });
 
@@ -467,6 +483,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("bugCallClient")
             ]),
+        module("airbugClientConfig"),
         module("browserSocketIoFactory"),
         module("bugCallClient")
             .args([
@@ -519,7 +536,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             ]),
         module("navigationModule")
             .properties([
-                property("carapaceRouter").ref("carapaceRouter")
+                property("carapaceRouter").ref("carapaceRouter"),
+                property("window").ref("window")
             ]),
         module("pageStateModule")
             .properties([
@@ -554,7 +572,8 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("airbugApi"),
                 arg().ref("meldStore"),
                 arg().ref("meldBuilder")
-            ])
+            ]),
+        module("window")
     ])
 );
 
