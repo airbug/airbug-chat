@@ -149,12 +149,13 @@ var ChatMessageManager = Class.extend(EntityManager, {
             .where("tryUuid", tryUuid)
             .lean(true)
             .exec(function(throwable, dbObject) {
-
                 if (!throwable) {
                     var entityObject = null;
                     if (dbObject) {
-                        entityObject = _this.convertDbObjectToEntity(dbObject);
-                        entityObject.commitDelta();
+                        if(!TypeUtil.isArray(dbObject) || dbObject.length > 0){
+                            entityObject = _this.convertDbObjectToEntity(dbObject);
+                            entityObject.commitDelta();
+                        }
                     }
                     callback(undefined, entityObject);
                 } else {
