@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Url')
 //@Require('airbug.AirbugApi')
 //@Require('airbug.AirbugClientConfig')
 //@Require('airbug.ChatMessageManagerModule')
@@ -56,6 +57,7 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
+var Url                         = bugpack.require('Url');
 var AirbugApi                   = bugpack.require('airbug.AirbugApi');
 var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
 var ChatMessageManagerModule    = bugpack.require('airbug.ChatMessageManagerModule');
@@ -163,6 +165,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
          * @type {boolean}
          */
         this.trackingEnabled        = false;
+
+        /**
+         * @private
+         * @type {Window}
+         */
+        this._window                = null;
     },
 
 
@@ -183,11 +191,15 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         var trackerModule               = this._trackerModule;
 
 
-        socketIoConfig.setHost("http://localhost/api/airbug");
-        socketIoConfig.setResource("api/socket");
-        socketIoConfig.setPort(8000);
+        var host        = this._window.location.host;
+        var hrefString  = this._window.location.href.toString();
+        var currentHost = hrefString.split(host)[0] + host;
+        var port        = host.split(":")[1];
 
-        //TODO BRN: Pass the session id here...
+        socketIoConfig.setHost(currentHost + "/api/airbug");
+        socketIoConfig.setResource("api/socket");
+        socketIoConfig.setPort(port);
+
         console.log("airbugApi.connect call");
         _this._airbugApi.connect();
 
@@ -423,9 +435,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     socketIoConfig: function() {
         this._socketIoConfig = new SocketIoConfig({});
-        this._socketIoConfig.setHost("http://localhost:8000");
-        this._socketIoConfig.setPort(8000);
-        this._socketIoConfig.setResource("api/airbug");
         return this._socketIoConfig;
     },
 
@@ -461,7 +470,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {Window}
      */
     window: function() {
-        return window;
+        this._window = window;
+        return this._window;
     }
 });
 

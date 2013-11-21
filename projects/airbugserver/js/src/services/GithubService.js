@@ -47,12 +47,20 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var GithubService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {SessionManager} sessionManager
+     */
     _constructor: function(sessionManager) {
 
         this._super();
@@ -106,8 +114,11 @@ var GithubService = Class.extend(Obj, {
         //TEST
         var session = requestContext.get("session");
 
+        //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
         //TODO BRN: Verify that state's match
-
+        //TODO BRN: Make a request to the github api to retrieve the access token
+        //TODO BRN: Lookup
+        //TODO BRN: Look at the currentUser,
         console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         callback();
     },
