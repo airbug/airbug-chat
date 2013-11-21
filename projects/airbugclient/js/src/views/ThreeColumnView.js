@@ -56,27 +56,27 @@ var ThreeColumnView = Class.extend(MultiColumnView, {
         data.centerColumnSpan = "span4";
         data.rightColumnSpan = "span4";
         switch (this.attributes.configuration) {
-            case TwoColumnView.Configuration.HAMBURGER_LEFT:
+            case ThreeColumnView.Configuration.HAMBURGER_LEFT:
                 data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
                 data.leftColumnSpan = "span3";
                 data.centerColumnSpan = "span6";
                 data.rightColumnSpan = "span6";
                 break;
-            case TwoColumnView.Configuration.HAMBURGER_RIGHT:
+            case ThreeColumnView.Configuration.HAMBURGER_RIGHT:
                 data.leftHamburger = "";
                 data.rightHamburger = "hamburger-panel-right hamburger-panel-hidden";
                 data.leftColumnSpan = "span6";
                 data.centerColumnSpan = "span6";
                 data.rightColumnSpan = "span3";
                 break;
-            case TwoColumnView.Configuration.HAMBURGER_LEFT_AND_RIGHT:
+            case ThreeColumnView.Configuration.HAMBURGER_LEFT_AND_RIGHT:
                 data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
                 data.rightHamburger = "hamburger-panel-right hamburger-panel-hidden";
                 data.leftColumnSpan = "span3";
                 data.centerColumnSpan = "span12";
                 data.rightColumnSpan = "span3";
                 break;
-            case TwoColumnView.Configuration.CHAT_WIDGET_INPUT_CONTAINER:
+            case ThreeColumnView.Configuration.CHAT_WIDGET_INPUT_CONTAINER:
                 data.leftColumnSpan = "span9";
                 data.centerColumnSpan = "span1";
                 data.rightColumnSpan = "span2";

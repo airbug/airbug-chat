@@ -12,6 +12,7 @@
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.ChatWidgetInputFormView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.MultiColumnView')
 //@Require('airbug.TextView')
 //@Require('airbug.ThreeColumnView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -38,6 +39,7 @@ var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var MultiColumnView         = bugpack.require('airbug.MultiColumnView');
 var TextView                = bugpack.require('airbug.TextView');
 var ThreeColumnView         = bugpack.require('airbug.ThreeColumnView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
@@ -130,14 +132,23 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         this.threeColumnView =
             view(ThreeColumnView)
-                .attributes({configuration: ThreeColumnView.Configuration.CHAT_WIDGET_INPUT_CONTAINER})
+                .attributes({
+                    configuration: ThreeColumnView.Configuration.CHAT_WIDGET_INPUT_CONTAINER,
+                    rowStyle: MultiColumnView.RowStyle.FLUID
+                })
                 .id("chatWidgetInputRowContainer")
                 .children([
                     view(ChatWidgetInputFormView)
                         .id("chatWidgetInputForm")
                         .appendTo(".column1of3"),
-
-                    //TODO MW: add image button in column 2
+                    //TODO Make real image button
+                    view(ButtonView)
+                        .appendTo(".column2of3")
+                        .children([
+                            view(TextView)
+                                .attributes({text: "img"})
+                                .appendTo('*[id|="button"]')
+                        ]),
                     view(ButtonView)
                         .appendTo(".column3of3")
                         .children([
