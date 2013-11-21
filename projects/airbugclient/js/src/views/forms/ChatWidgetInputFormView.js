@@ -92,6 +92,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         var formData = {};
         var value = this.$el.find("textarea").val();
         formData.body = value;
+        if(!formData.type){
+            formData.type = "text";
+        }
         return formData;
     },
 

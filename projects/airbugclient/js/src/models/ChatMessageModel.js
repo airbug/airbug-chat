@@ -42,6 +42,7 @@ var ChatMessageModel = Class.extend(MeldModel, {
         pending: true,
         failed: false,
         retry: false,
+        tryUuid: "",
         type: ""
     }
 });
