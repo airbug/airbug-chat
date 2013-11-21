@@ -16,6 +16,7 @@
 //@Require('airbug.FauxTextAreaView')
 //@Require('airbug.IconView')
 //@Require('airbug.ParagraphView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -45,6 +46,7 @@ var DropdownViewEvent           = bugpack.require('airbug.DropdownViewEvent');
 var FauxTextAreaView            = bugpack.require('airbug.FauxTextAreaView');
 var IconView                    = bugpack.require('airbug.IconView');
 var ParagraphView               = bugpack.require('airbug.ParagraphView');
+var TextView                    = bugpack.require('airbug.TextView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
