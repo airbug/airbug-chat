@@ -145,7 +145,6 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
     initializeContainer: function() {
         this._super();
         this.buttonView.$el.find("li:first-child").addClass("add-roommember-container");
-        this.buttonView.$el.find("ul").addClass("span2");
     }
 });
 
