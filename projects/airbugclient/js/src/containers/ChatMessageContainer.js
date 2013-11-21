@@ -8,8 +8,8 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.ChatMessageCollection')
 //@Require('airbug.ChatMessageView')
+//@Require('airbug.CommandModule')
 //@Require('airbug.ListItemView')
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
@@ -33,8 +33,8 @@ var bugpack = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
 var ChatMessageView                 = bugpack.require('airbug.ChatMessageView');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
