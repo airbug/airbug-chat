@@ -782,9 +782,9 @@ var RoomService = Class.extend(Obj, {
     unmeldUserWithRoom: function(meldManager, user, room){
         console.log("RoomService#unmeldUserWithRoom");
         var meldService = this.meldService;
+        var roomMeldKey = meldService.generateMeldKey("Room", room.getId(), "basic");
         var meldKeys    = [roomMeldKey];
         var reason      = room.getId();
-        var roomMeldKey = meldService.generateMeldKey("Room", room.getId(), "basic");
 
         room.getRoomMemberSet().forEach(function(roomMember) {
             var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
