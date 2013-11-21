@@ -35,8 +35,9 @@ var BugFlow             = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $task               = BugFlow.$task;
+var $iterableParallel   = BugFlow.$iterableParallel;
 var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -243,11 +244,49 @@ var ChatMessageService = Class.extend(Obj, {
 
     /*
      * @param {RequestContext} requestContext
-     * @param {string} chatMessageId
+     * @param {string} chatMessageIds
      * @param {function(Throwable, Map.<string, ChatMessage>} callback
      */
-    retrieveChatMessages: function(requestContext, chatMessageId, callback) {
-        //TODO
+    retrieveChatMessages: function(requestContext, chatMessageIds, callback) {
+        var _this               = this;
+        /** @type {Map.<string, ChatMessage>} */
+        var chatMessageMap      = undefined;
+        var currentUser         = requestContext.get("currentUser");
+        var meldManager         = this.meldService.factoryManager();
+        var chatMessageManager  = this.chatMessageManager;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    chatMessageManager.retrieveChatMessages(chatMessageIds, function(throwable, returnedChatMessageMap) {
+                        if (!throwable) {
+                            chatMessageMap = returnedChatMessageMap;
+                            if (!chatMessageMap) {
+                                throwable = new Exception(""); //TODO
+                            }
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    chatMessageMap.forEach(function(chatMessage) {
+                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
+                        _this.meldChatMessage(meldManager, chatMessage);
+                    });
+                    meldManager.commitTransaction(function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(undefined, chatMessageMap);
+                } else {
+                    callback(throwable);
+                }
+            });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
     },
 
     /**
@@ -304,9 +343,9 @@ var ChatMessageService = Class.extend(Obj, {
                     chatMessageMap.forEach(function(chatMessage) {
                         _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
                         _this.meldChatMessage(meldManager, chatMessage);
-                        meldManager.commitTransaction(function(throwable) {
-                            flow.complete(throwable);
-                        });
+                    });
+                    meldManager.commitTransaction(function(throwable) {
+                        flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
@@ -363,9 +402,9 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {string=} reason
      */
     unmeldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
-        var conversationMeldKey     = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
-        var meldKeys                = [conversationMeldKey];
-        reason                      = reason ? reason : conversation.getId();
+        var chatMessageMeldKey      = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
+        var meldKeys                = [chatMessageMeldKey];
+        reason                      = reason ? reason : chatMessage.getId();
 
         this.meldService.unmeldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     }

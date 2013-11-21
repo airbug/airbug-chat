@@ -37,7 +37,7 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, Meld=)} callback
      */
     retrieveConversation: function(conversationId, callback) {
         this.retrieve("Conversation", conversationId, callback);

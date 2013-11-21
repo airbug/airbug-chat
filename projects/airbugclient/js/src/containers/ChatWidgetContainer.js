@@ -36,7 +36,6 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-
 var Class                           = bugpack.require('Class');
 var Obj                             = bugpack.require('Obj');
 var ChatMessageCollection           = bugpack.require('airbug.ChatMessageCollection');
@@ -78,7 +77,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {airbug.ConversationModel} conversationModel
+     * @param {ConversationModel} conversationModel
      */
     _constructor: function(conversationModel) {
 
@@ -138,7 +137,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
          this.commandModule                 = null;
 
@@ -167,7 +166,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        this.loadChatMessageCollection(this.conversationModel.get("_id"));
+        this.loadChatMessageCollection(this.conversationModel.get("chatMessageIdSet"));
     },
 
     /**
@@ -216,6 +215,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.conversationModel.bind('change:_id', this.handleConversationModelChangeId, this);
 
         //TODO BRN: Add listener to conversationModel for new id added to chatMessageIdSet
+        //TODO BRN: Chat messages aren't loading because the set is empty on activate. It's only set later after the conversation meldDocument has loaded
+
 
         this.chatMessageCollection.bind('add', this.handleChatMessageCollectionAdd, this);
 
@@ -246,14 +247,15 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {string} conversationId
+     * @param {Array.<string>} chatMessageIdSet
      */
-    loadChatMessageCollection: function(conversationId) {
-        // TODO BRN: This is where we make an api call and send both the conversationUuid and the messageCollection.
-        // The api call would then be responsible for adding ChatMessageModels to the chatMessageCollection.
+    loadChatMessageCollection: function(chatMessageIdSet) {
+
+        //TEST
+        console.log("loadChatMessageCollection - chatMessageIdSet:", chatMessageIdSet, " this.conversationModel:", this.conversationModel);
 
         var _this = this;
-        this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(throwable, chatMessageMeldDocuments) {
+        this.chatMessageManagerModule.retrieveChatMessages(chatMessageIdSet, function(throwable, chatMessageMeldDocuments) {
             if (!throwable) {
                 chatMessageMeldDocuments.forEach(function(chatMessageMeldDocument) {
                     var chatMessageModel = new TextChatMessageModel(chatMessageMeldDocument);
@@ -269,7 +271,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {{*}} chatMessageData
+     * @param {*} chatMessageData
      */
     sendChatMessage: function(chatMessageData) {
         var _this = this;
@@ -293,6 +295,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             if (!throwable) {
                 _this.userManagerModule.retrieveUser(chatMessageMeldDocument.getData().senderUserId, function(throwable, senderUserMeldDocument) {
                     if (!throwable) {
+                        //TODO BRN: Modify ChatMessageModel to hold two meldDocuments. the senderUser and the chatMessage
                         newChatMessageModel.setMeldDocument(chatMessageMeldDocument);
                         newChatMessageModel.set({
                             sentBy: senderUserMeldDocument.getData().firstName + " " + senderUserMeldDocument.getData().lastName,
@@ -345,7 +348,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     handleConversationModelChangeId: function() {
-        this.loadChatMessageCollection(this.conversationModel.get('_id'));
+        this.loadChatMessageCollection(this.conversationModel.get('chatMessageIdSet'));
     },
 
     /**

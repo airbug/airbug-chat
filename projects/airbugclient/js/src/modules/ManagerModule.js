@@ -89,18 +89,19 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {{*}} object
+     * @param {Object} object
      * @param {string=} filter
      * @param {function(Throwable, Meld)=} callback
      */
     create: function(type, object, filter, callback) {
         var _this = this;
         var requestData = {object: object};
+        var requestType = "create" + type;
         if (TypeUtil.isFunction(filter)) {
             callback = filter;
             filter = "basic";
         }
-        this.request("create", type, requestData, function(throwable, callResponse) {
+        this.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
                     var data        = callResponse.getData();
@@ -137,12 +138,12 @@ var ManagerModule = Class.extend(Obj, {
     createEach: function(type, objects, filter, callback) {
         var _this = this;
         var requestData = {objects: objects};
+        var requestType = "create" + StringUtil.pluralize(type);
         if (TypeUtil.isFunction(filter)) {
             callback = filter;
             filter = "basic";
         }
-        type = StringUtil.pluralize(type);
-        this.request("create", type, requestData, function(throwable, callResponse) {
+        this.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
 
                 //TODO BRN: Handle a partially successful response.
@@ -173,14 +174,11 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} requestType
-     * @param {string} objectType
-     * @param {{*}} requestData
-     * @param {function(Throwable, CallResponse} callback
+     * @param {*} requestData
+     * @param {function(Throwable, CallResponse=)} callback
      */
-    request: function(requestType, objectType, requestData, callback) {
-        var _this = this;
-        //if(this.airbugApi.isNotConnected()) this.airbugApi.connect();
-        this.airbugApi.request(requestType, objectType, requestData, function(throwable, callResponse) {
+    request: function(requestType, requestData, callback) {
+        this.airbugApi.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 callback(undefined, callResponse);
             }  else {
@@ -213,7 +211,8 @@ var ManagerModule = Class.extend(Obj, {
             callback(null, meldDocument);
         } else {
             var requestData = {objectId: id};
-            _this.request("retrieve", type, requestData, function(throwable, callResponse) {
+            var requestType = "retrieve" + type;
+            _this.request(requestType, requestData, function(throwable, callResponse) {
                 console.log("ManagerModule#retrieve request callback");
                 if (!throwable)  {
                     var responseType    = callResponse.getType();
@@ -244,13 +243,10 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<string>} ids
-     * @param {string} filter
-     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
+     * @param {(string | function(Throwable, Map.<string, Meld>=))} filter
+     * @param {function(Throwable, Map.<string, Meld>)=} callback
      */
     retrieveEach: function(type, ids, filter, callback) {
-
-        //TODO BRN: Fix this function, it's entirely broken.
-
         var _this       = this;
         if (TypeUtil.isFunction(filter)) {
             callback = filter;
@@ -271,47 +267,9 @@ var ManagerModule = Class.extend(Obj, {
 
         if (unretrievedIds.length > 0) {
             var requestData = {objectIds: unretrievedIds};
-
-            this.request("retrieve", StringUtil.pluralize(type), requestData, function(throwable, callResponse) {
-                if (!throwable) {
-                    var responseType    = callResponse.getType();
-                    var data            = callResponse.getData();
-                    if (responseType === EntityDefines.Responses.MAPPED_SUCCESS) {
-                        var dataMap     = data.map;
-                        Obj.forIn(dataMap, function(objectId, success) {
-                            if (success) {
-                                var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
-                                var meldDocument    = _this.get(returnedMeldKey);
-                                retrievedMeldMap.put(objectId, meldDocument);
-                            } else {
-                                retrievedMeldMap.put(objectId, null);
-                            }
-                        });
-                        callback(undefined, retrievedMeldMap);
-                    } else if (responseType === EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION) {
-                        var dataMap     = data.map;
-                        Obj.forIn(dataMap, function(objectId, success) {
-                            if (success) {
-                                var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
-                                var meldDocument    = _this.get(returnedMeldKey);
-                                retrievedMeldMap.put(objectId, meldDocument);
-                            } else {
-                                retrievedMeldMap.put(objectId, null);
-                            }
-                        });
-                        callback(new Exception(data.mappedException), retrievedMeldMap);
-                    } else if (responseType === EntityDefines.Responses.MAPPED_EXCEPTION) {
-                        //TODO BRN: Handle common exceptions
-                        callback(new Exception(data.mappedException));
-                    } else if (responseType === EntityDefines.Responses.ERROR) {
-                        //TODO BRN: Handle common errors
-                        callback(new Error(data.error));
-                    } else {
-                        callback(undefined, callResponse);
-                    }
-                } else {
-                    callback(throwable);
-                }
+            var requestType = "retrieve" + StringUtil.pluralize(type);
+            this.request(requestType, requestData, function(throwable, callResponse) {
+                _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, type, filter, callback);
             });
         } else {
             callback(undefined, retrievedMeldMap);
@@ -321,9 +279,9 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {string} id
-     * @param {{*}} changeObject
+     * @param {*} changeObject
      * @param {string=} filter
-     * @param {function(Throwable, meldbug.MeldDocument)=} callback
+     * @param {function(Throwable, Meld)=} callback
      */
     update: function(type, id, changeObject, filter, callback) {
         var _this = this;
@@ -335,13 +293,14 @@ var ManagerModule = Class.extend(Obj, {
             objectId: id,
             changeObject: changeObject
         };
-        this.airbugApi.request("update", type, requestData, function(throwable, callResponse) {
+        var requestType = "update" + type;
+        this.airbugApi.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable)  {
                 var data = callResponse.getData();
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
                     var returnedMeldKey     = _this.meldBuilder.generateMeldKey(type, id, filter);
                     var meldDocument        = _this.get(returnedMeldKey);
-                    callback(undefined);
+                    callback(undefined, meldDocument);
                 } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
                     //TODO BRN: Handle common exceptions
                     callback(new Exception(data.exception));
@@ -359,28 +318,30 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {Array.<string>} meldIds
-     * @param {Array.<ChangeObject>} changeObjects
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {Array.<string>} ids
+     * @param {Array.<Object>} changeObjects
+     * @param {string} filter
+     * @param {function(Throwable, List.<Meld>=)} callback
      */
-    updateEach: function(type, meldIds, changeObjects, callback) {
+    updateEach: function(type, ids, changeObjects, filter, callback) {
         var _this = this;
         var requestData = {
-            objectIds: meldIds,
+            objectIds: ids,
             changeObjects: changeObjects
         };
-        var type = StringUtil.pluralize(type);
-        this.airbugApi.request("updateEach", type, requestData, function(throwable, data) {
-            var extentMeldIds       = [];
-            var destroyedMeldIds    = [];
-            meldIds.forEach(function(meldId) {
-                if (data[meldId]) {
-                    extentMeldIds.push(meldId);
+        var requestType = "update" + StringUtil.pluralize(type);
+        this.airbugApi.request(requestType, requestData, function(throwable, data) {
+            var extentMeldKeys      = [];
+            var destroyedMeldKeys    = [];
+            ids.forEach(function(id) {
+                var meldKey = _this.meldBuilder.generateMeldKey(type, id, filter);
+                if (data.objectIds[id]) {
+                    extentMeldKeys.push(meldKey);
                 } else {
-                    destroyedMeldIds.push(meldId);
+                    destroyedMeldKeys.push(meldKey);
                 }
             });
-            var updatedMeldDocuments = _this.getEach(extentMeldIds);
+            var updatedMeldDocuments = _this.getEach(extentMeldKeys);
             callback(throwable, updatedMeldDocuments);
         });
     },
@@ -392,7 +353,8 @@ var ManagerModule = Class.extend(Obj, {
      */
     destroy: function(type, meldId, callback) {
         var requestData = {objectId: meldId};
-        this.airbugApi.request("destroy", type, requestData, callback);
+        var requestType = "destroy" + type;
+        this.airbugApi.request(requestType, requestData, callback);
     },
 
     /**
@@ -402,8 +364,8 @@ var ManagerModule = Class.extend(Obj, {
      */
     destroyEach: function(type, meldIds, callback) {
         var requestData = {objectIds: meldIds};
-        var type = StringUtil.pluralize(type);
-        this.airbugApi.request("destroy", type, requestData, function(throwable, data) {
+        var requestType = "destroy" + StringUtil.pluralize(type);
+        this.airbugApi.request(requestType, type, requestData, function(throwable, data) {
             //TODO
             // var destroyedMeldIds    = [];
             // var extentMeldIds       = [];
@@ -439,6 +401,63 @@ var ManagerModule = Class.extend(Obj, {
      */
     getEach: function(meldKeys) {
         return this.meldStore.getEachMeld(meldKeys);
+    },
+
+
+    /**
+     * @private
+     * @param {Throwable} throwable
+     * @param {CallResponse} callResponse
+     * @param {(Map.<string, Meld> | function(Throwable, Map.<string, Meld>=))} retrievedMeldMap
+     * @param {string} type
+     * @param {string} filter
+     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     */
+    processMappedRetrieveResponse: function(throwable, callResponse, retrievedMeldMap, type, filter, callback) {
+        if (TypeUtil.isFunction(retrievedMeldMap)) {
+            callback = retrievedMeldMap;
+            retrievedMeldMap = new Map();
+        }
+        var _this = this;
+        if (!throwable) {
+            var responseType    = callResponse.getType();
+            var data            = callResponse.getData();
+            if (responseType === EntityDefines.Responses.MAPPED_SUCCESS) {
+                var dataMap     = data.map;
+                Obj.forIn(dataMap, function(objectId, success) {
+                    if (success) {
+                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                        var meldDocument    = _this.get(returnedMeldKey);
+                        retrievedMeldMap.put(objectId, meldDocument);
+                    } else {
+                        retrievedMeldMap.put(objectId, null);
+                    }
+                });
+                callback(undefined, retrievedMeldMap);
+            } else if (responseType === EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION) {
+                var dataMap     = data.map;
+                Obj.forIn(dataMap, function(objectId, success) {
+                    if (success) {
+                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                        var meldDocument    = _this.get(returnedMeldKey);
+                        retrievedMeldMap.put(objectId, meldDocument);
+                    } else {
+                        retrievedMeldMap.put(objectId, null);
+                    }
+                });
+                callback(new Exception(data.mappedException), retrievedMeldMap);
+            } else if (responseType === EntityDefines.Responses.MAPPED_EXCEPTION) {
+                //TODO BRN: Handle common exceptions
+                callback(new Exception(data.mappedException));
+            } else if (responseType === EntityDefines.Responses.ERROR) {
+                //TODO BRN: Handle common errors
+                callback(new Error(data.error));
+            } else {
+                callback(undefined, callResponse);
+            }
+        } else {
+            callback(throwable);
+        }
     }
 });
 

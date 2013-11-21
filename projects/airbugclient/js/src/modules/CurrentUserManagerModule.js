@@ -70,11 +70,15 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          */
         this.currentUser        = undefined;
 
+        /**
+         * @private
+         * @type {NavigationModule}
+         */
         this.navigationModule   = navigationModule;
 
         /**
          * @private
-         * @type {airbug.UserManagerModule}
+         * @type {UserManagerModule}
          */
         this.userManagerModule  = userManagerModule;
     },
@@ -160,7 +164,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             console.log("currentUser:", this.currentUser);
             callback(undefined, this.currentUser);
         } else {
-            this.request("retrieve", "CurrentUser", {}, function(throwable, callResponse) {
+            this.request("retrieveCurrentUser", {}, function(throwable, callResponse) {
                 console.log("CurrentUserManagerModule#retrieveCurrentUserDefault request retrieve CurrentUser callback");
                 console.log("throwable:", throwable);
                 console.log("callResponse:", callResponse);

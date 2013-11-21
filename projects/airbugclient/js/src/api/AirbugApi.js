@@ -95,14 +95,13 @@ var AirbugApi = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} type
-     * @param {string} dataType
-     * @param {{*}} requestData
+     * @param {string} requestType
+     * @param {*} requestData
      * @param {function(error, CallResponse)} callback
      */
-    request: function(type, dataType, requestData, callback) {
-        console.log("AirbugApi#request", type + dataType);
-        this.bugCallClient.request(type + dataType, requestData, function(throwable, callResponse) {
+    request: function(requestType, requestData, callback) {
+        console.log("AirbugApi#request", requestType);
+        this.bugCallClient.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 callback(undefined, callResponse);
             } else {

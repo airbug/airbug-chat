@@ -79,7 +79,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      senderUserId: {string},
      *      messageBody: {string}
      * }} chatMessageObject
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, Meld=)} callback
      */
     createChatMessage: function(chatMessageObject, callback) {
         var _this = this;
@@ -140,7 +140,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} chatMessageId
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, Meld=)} callback
      */
     retrieveChatMessage: function(chatMessageId, callback) {
         this.retrieve("ChatMessage", chatMessageId, callback);
@@ -148,25 +148,10 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} chatMessageIds
-     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, Meld>=)} callback
      */
     retrieveChatMessages: function(chatMessageIds, callback) {
         this.retrieveEach("ChatMessage", chatMessageIds, callback);
-    },
-
-    /**
-     * @param {string} conversationId
-     * @param {function(Throwable, Map.<meldbug.MeldDocument>)} callback
-     */
-    retrieveChatMessagesByConversationId: function(conversationId, callback) {
-        var _this = this;
-        this.conversationManagerModule.retrieveConversation(conversationId, function(throwable, conversationMeldDocument) {
-            if (!throwable) {
-                _this.retrieveEach("ChatMessage", conversationMeldDocument.getData().chatMessageIdSet, callback);
-            } else {
-                callback(throwable);
-            }
-        });
     }
 });
 
