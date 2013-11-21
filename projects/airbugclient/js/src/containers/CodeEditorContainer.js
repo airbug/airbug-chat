@@ -249,8 +249,8 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         KitchenSink.load();
         aceModes.loadTopTen();
 
-        aceEditor.setTheme("ace/theme/textmate");
-        aceEditor.getSession().setMode("ace/mode/javascript");
+        this.aceEditor.setTheme("ace/theme/textmate");
+        this.aceEditor.getSession().setMode("ace/mode/javascript");
     },
 
     /**
