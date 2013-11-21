@@ -427,7 +427,7 @@ var UserService = Class.extend(Obj, {
             }),*/
             $task(function(flow) {
                 _this.meldCurrentUserWithCurrentUser(meldManager, currentUser);
-                _this.meldService.meldEntity(meldManager, "User", "owner", currentUser);
+                _this.meldService.meldEntity(meldManager, "User", "owner", currentUser); //
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
@@ -471,7 +471,7 @@ var UserService = Class.extend(Obj, {
                         flow.complete(throwable);
                     });
                 } else {
-                    flow.complete(new Exception()); //TODO
+                    flow.complete(new Exception("User does not exist"));
                 }
 
             })
