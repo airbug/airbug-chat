@@ -39,6 +39,10 @@ var EntityDefines       = bugpack.require('airbug.EntityDefines');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var EntityController = Class.extend(Obj, {
 
 
@@ -46,7 +50,12 @@ var EntityController = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @constructs
+     * @param {ExpressApp} expressApp
+     * @param {BugCallRouter} bugCallRouter
+     */
+    _constructor: function(expressApp, bugCallRouter) {
 
         this._super();
 
@@ -55,6 +64,37 @@ var EntityController = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {BugCallRouter}
+         */
+        this.bugCallRouter              = bugCallRouter;
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp                 = expressApp;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     * @returns {BugCallRouter}
+     */
+    getBugCallRouter: function() {
+        return this.bugCallRouter;
+    },
+
+    /**
+     * @return {ExpressApp}
+     */
+    getExpressApp: function() {
+        return this.expressApp;
     },
 
 

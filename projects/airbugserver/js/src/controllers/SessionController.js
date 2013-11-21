@@ -47,7 +47,7 @@ var SessionController = Class.extend(EntityController, {
 
     _constructor: function(expressApp, bugCallRouter, sessionService) {
 
-        this._super();
+        this._super(expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -56,27 +56,26 @@ var SessionController = Class.extend(EntityController, {
 
         /**
          * @private
-         * @type {BugCallRouter}
-         */
-        this.bugCallRouter          = bugCallRouter;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp             = expressApp;
-
-        /**
-         * @private
          * @type {SessionService}
          */
         this.sessionService         = sessionService;
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {SessionService}
+     */
+    getSessionService: function() {
+        return this.sessionService;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**

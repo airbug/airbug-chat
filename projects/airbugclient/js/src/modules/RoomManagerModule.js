@@ -39,7 +39,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {string} userId
      * @param {string} roomId
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, MeldDocument)} callback
      */
     addUserToRoom: function(userId, roomId, callback) {
         var requestData = {userId: userId, roomId: roomId};
@@ -50,7 +50,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      * @param {{
      *      name: string
      * }} roomObject
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, MeldDocument)} callback
      */
     createRoom: function(roomObject, callback) {
         this.create("Room", roomObject, callback);
@@ -58,10 +58,10 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, MeldDocument)} callback
      */
     joinRoom: function(roomId, callback) {
-        var requestData = {objectId: roomId};
+        var requestData = {roomId: roomId};
         this.request("join", "Room", requestData, callback);
     },
 
@@ -70,13 +70,13 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      * @param {function(Throwable, string)} callback
      */
     leaveRoom: function(roomId, callback) {
-        var requestData = {objectId: roomId};
+        var requestData = {roomId: roomId};
         this.request("leave", "Room", requestData, callback);
     },
 
     /**
      * @param {string} roomId
-     * @param {function(Throwable, meldbug.MeldDocument)} callback
+     * @param {function(Throwable, Meld)} callback
      */
     retrieveRoom: function(roomId, callback) {
         this.retrieve("Room", roomId, callback);
@@ -84,7 +84,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(Throwable, Map.<string, meldbug.MeldDocument>)} callback
+     * @param {function(Throwable, Map.<string, MeldDocument>)} callback
      */
     retrieveRooms: function(roomIds, callback) {
         this.retrieveEach("Room", roomIds, callback);

@@ -5,8 +5,8 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.EntityController')
+//@Require('airbugserver.SessionController')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var EntityController        = bugpack.require('airbugserver.EntityController');
+var SessionController       = bugpack.require('airbugserver.SessionController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -33,34 +33,34 @@ var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation')
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var test = TestAnnotation.test;
+var bugmeta                 = BugMeta.context();
+var test                    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var chatMessageControllerInstantiationTest = {
+var sessionControllerInstantiationTest = {
 
     setup: function() {
         this.expressApp             = {};
         this.bugCallRouter          = {};
-        this.chatMessageService     = {};
-        this.chatMessageController  = new ChatMessageController(this.expressApp, this.bugCallRouter, this.chatMessageService);
+        this.sessionService            = {};
+        this.sessionController      = new SessionController(this.expressApp, this.bugCallRouter, this.sessionService);
     },
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.chatMessageController, EntityController),
-            "Assert chatMessageController extends EntityController");
-        test.assertEqual(this.chatMessageController.getExpressApp(), this.expressApp,
-            "Assert expressApp has been set to chatMessageController's expressApp property");
-        test.assertEqual(this.chatMessageController.getBugCallRouter(), this.bugCallRouter,
-            "Assert bugCallRouter has been set to chatMessageController's expressApp property");
-        test.assertEqual(this.chatMessageController.getChatMessageService(), this.chatMessageService,
-            "Assert chatMessageService has been set to chatMessageController's expressApp property");
+        test.assertTrue(Class.doesExtend(this.sessionController, EntityController),
+            "Assert sessionController extends EntityController");
+        test.assertEqual(this.sessionController.getExpressApp(), this.expressApp,
+            "Assert expressApp has been set to sessionController's expressApp property");
+        test.assertEqual(this.sessionController.getBugCallRouter(), this.bugCallRouter,
+            "Assert bugCallRouter has been set to sessionController's bugCallRouter property");
+        test.assertEqual(this.sessionController.getSessionService(), this.sessionService,
+            "Assert sessionService has been set to sessionController's expressApp property");
     }
 };
-bugmeta.annotate(chatMessageControllerInstantiationTest).with(
-    test().name("ChatMessageController - instantiation Test")
+bugmeta.annotate(sessionControllerInstantiationTest).with(
+    test().name("SessionController - instantiation Test")
 );

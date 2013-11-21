@@ -103,11 +103,22 @@ var RoomPageController = Class.extend(ApplicationController, {
             if (!throwable) {
                 var roomId      = routingRequest.getArgs()[0];
                 _this.roomManagerModule.retrieveRoom(roomId, function(throwable, room) {
+
+                    //TEST
+                    console.log("RoomPageController #filterRouting - throwable:", throwable, " room:", room);
+
                     if (!throwable) {
+                        //TEST
+                        console.log("currentUser.getRoomIdSet().contains(roomId):", currentUser.getRoomIdSet().contains(roomId));
+
+
                         if (currentUser.getRoomIdSet().contains(roomId)) {
                             routingRequest.accept();
                         } else {
                             _this.roomManagerModule.joinRoom(roomId, function(throwable) {
+                                //TEST
+                                console.log("RoomPageController #filterRouting - joinRoom return - throwable:", throwable);
+
                                 if (!throwable) {
                                     routingRequest.accept();
                                 } else {

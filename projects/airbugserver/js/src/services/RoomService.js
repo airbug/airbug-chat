@@ -92,7 +92,7 @@ var RoomService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {User | string} userOrUserId
+     * @param {(User | string)} userOrUserId
      * @param {string} roomId
      * @param {function(Throwable, User, Room)} callback
      */
@@ -211,10 +211,10 @@ var RoomService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} roomId
-     * @param {function(Throwable, Room)} callback
+     * @param {function(Throwable, User, Room)} callback
      */
     joinRoom: function(requestContext, roomId, callback) {
-        /* @type {airbugserver.User}*/
+        /** @type {User} */
         var currentUser     = requestContext.get("currentUser");
         this.addUserToRoom(requestContext, currentUser, roomId, callback);
     },

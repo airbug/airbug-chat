@@ -51,30 +51,30 @@ var UserController = Class.extend(EntityController, {
 
     _constructor: function(expressApp, bugCallRouter, userService) {
 
-        this._super();
+        this._super(expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {BugCallRouter}
-         */
-        this.bugCallRouter          = bugCallRouter;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp             = expressApp;
 
         /**
          * @private
          * @type {UserService}
          */
         this.userService            = userService;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {UserService}
+     */
+    getUserService: function() {
+        return this.userService;
     },
 
 
@@ -87,8 +87,8 @@ var UserController = Class.extend(EntityController, {
      */
     configure: function() {
         var _this           = this;
-        var expressApp      = this.expressApp;
-        var userService     = this.userService;
+        var expressApp      = this.getExpressApp();
+        var userService     = this.getUserService();
 
         //-------------------------------------------------------------------------------
         // Express Routes

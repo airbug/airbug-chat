@@ -15,16 +15,16 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var LiteralUtil = bugpack.require('LiteralUtil');
-var EntityController = bugpack.require('airbugserver.EntityController');
+var Class               = bugpack.require('Class');
+var LiteralUtil         = bugpack.require('LiteralUtil');
+var EntityController    = bugpack.require('airbugserver.EntityController');
 
 
 //-------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ var ChatMessageController = Class.extend(EntityController, {
 
     _constructor: function(expressApp, bugCallRouter, chatMessageService) {
 
-        this._super();
+        this._super(expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -49,26 +49,26 @@ var ChatMessageController = Class.extend(EntityController, {
 
         /**
          * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp             = expressApp;
-
-        /**
-         * @private
-         * @type {RoomService}
+         * @type {ChatMessageService}
          */
         this.chatMessageService     = chatMessageService;
-
-        /**
-         * @private
-         * @type {BugCallRouter}
-         */
-        this.bugCallRouter          = bugCallRouter;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {ChatMessageService}
+     */
+    getChatMessageService: function() {
+        return this.chatMessageService;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public  Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -76,8 +76,8 @@ var ChatMessageController = Class.extend(EntityController, {
      */
     configure: function() {
         var _this               = this;
-        var expressApp          = this.expressApp;
-        var chatMessageService  = this.chatMessageService;
+        var expressApp          = this.getExpressApp();
+        var chatMessageService  = this.getChatMessageService();
 
         // REST API
         //-------------------------------------------------------------------------------

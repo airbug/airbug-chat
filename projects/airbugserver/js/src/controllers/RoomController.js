@@ -31,6 +31,10 @@ var EntityController    = bugpack.require('airbugserver.EntityController');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {EntityController}
+ */
 var RoomController = Class.extend(EntityController, {
 
 
@@ -38,26 +42,20 @@ var RoomController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {ExpressApp} expressApp
+     * @param {BugCallRouter} bugCallRouter
+     * @param {RoomService} roomService
+     */
     _constructor: function(expressApp, bugCallRouter, roomService) {
 
-        this._super();
+        this._super(expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {BugCallRouter}
-         */
-        this.bugCallRouter              = bugCallRouter;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp                 = expressApp;
 
         /**
          * @private
@@ -68,7 +66,19 @@ var RoomController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {RoomService}
+     */
+    getRoomService: function() {
+        return this.roomService;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -76,8 +86,8 @@ var RoomController = Class.extend(EntityController, {
      */
     configure: function() {
         var _this           = this;
-        var expressApp      = this.expressApp;
-        var roomService     = this.roomService;
+        var expressApp      = this.getExpressApp();
+        var roomService     = this.getRoomService();
 
         // REST API
         //-------------------------------------------------------------------------------
@@ -191,7 +201,7 @@ var RoomController = Class.extend(EntityController, {
                 var roomId              = data.roomId;
                 var requestContext      = request.requestContext;
 
-                roomService.joinRoom(requestContext, roomId, function(throwable, room) {
+                roomService.joinRoom(requestContext, roomId, function(throwable, user, room) {
                     if (!throwable) {
                         _this.sendSuccessResponse(responder, {}, callback);
                     } else {

@@ -58,12 +58,14 @@ var ApplicationController = Class.extend(CarapaceController, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.CurrentManagerModule}
+         * @private
+         * @type {CurrentUserManagerModule}
          */
         this.currentUserManagerModule   = null;
 
         /**
-         * @type {airbug.NavigationModule}
+         * @private
+         * @type {NavigationModule}
          */
         this.navigationModule           = null;
 
@@ -84,15 +86,15 @@ var ApplicationController = Class.extend(CarapaceController, {
     /**
      * @Override
      * @protected
-     * @param {carapace.RoutingRequest} routingRequest
+     * @param {RoutingRequest} routingRequest
      */
     filterRouting: function(routingRequest) {
 
     },
 
     /**
-     * @param {carapace.RoutingRequest} routingRequest
-     * @param {function(Throwable, {*})} callback
+     * @param {RoutingRequest} routingRequest
+     * @param {function(Throwable, CurrentUser=)} callback
      */
     requireLogin: function(routingRequest, callback) {
         console.log("ApplicationController#requireLogin");

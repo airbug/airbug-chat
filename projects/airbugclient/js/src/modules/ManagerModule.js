@@ -193,8 +193,8 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {string} id
-     * @param {string} filter
-     * @param {function(Throwable, Meld)} callback
+     * @param {(string | function(Throwable, Meld))} filter
+     * @param {function(Throwable, Meld)=} callback
      */
     retrieve: function(type, id, filter, callback) {
         console.log("ManagerModule#retrieve");
