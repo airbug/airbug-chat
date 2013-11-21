@@ -75,7 +75,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
         this.commandModule      = null;
 
@@ -84,7 +84,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {airbug.WorkspaceContainer}
+         * @type {WorkspaceContainer}
          */
         this.workspaceContainer = null;
 
@@ -93,7 +93,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {airbug.PageView}
+         * @type {PageView}
          */
         this.pageView           = null;
     },
