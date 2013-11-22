@@ -116,7 +116,7 @@ var MeldService = Class.extend(Obj, {
             entity.commitDelta();
             meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
             meldManager.meldMeld(meldDocument);
-            meldDocument.meldData(Obj.clone(entity.getDeltaDocument().getData(), true));
+            meldDocument.meldData(entity.toObject());
         } else {
             meldDocument = meldManager.getMeld(meldKey);
 
