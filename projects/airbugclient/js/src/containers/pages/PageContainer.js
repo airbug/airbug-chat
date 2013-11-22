@@ -130,7 +130,6 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 .build();
 
         this.bodyView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
-
     },
 
     /**
@@ -160,6 +159,13 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this.initializeCommandSubscriptions();
     },
 
+    deinitializeContainer: function() {
+        this._super();
+        this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
+        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
+    },
+
     //-------------------------------------------------------------------------------
     // Private Instance Methods
     //-------------------------------------------------------------------------------
@@ -174,7 +180,11 @@ var PageContainer = Class.extend(ApplicationContainer, {
     },
 
     handleDisplayCodeEditorCommand: function(message) {
-        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+        console.log("viewTop:", this.viewTop);
+
+        if(this.viewTop){
+            var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+        }
     },
 
     /**
@@ -182,13 +192,17 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleWorkspaceCommand: function(message) {
-        var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+        console.log("viewTop:", this.viewTop);
 
-        workspace.toggleClass("workspace-open");
-        if(workspace.hasClass("workspace-open")){
-            workspace.addClass("span3").show();
+        if(this.viewTop){
+            var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+
+            workspace.toggleClass("workspace-open");
+            if(workspace.hasClass("workspace-open")){
+                workspace.addClass("span3").show();
+            }
+            this.updateColumnSpans();
         }
-        this.updateColumnSpans();
     },
 
     /**
@@ -197,9 +211,12 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     handleToggleHamburgerLeftCommand: function(message) {
         console.log("viewTop:", this.viewTop);
-        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
-        hamburgerLeft.toggleClass("hamburger-panel-hidden");
-        this.updateColumnSpans();
+
+        if(this.viewTop){
+            var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
+            hamburgerLeft.toggleClass("hamburger-panel-hidden");
+            this.updateColumnSpans();
+        }
     },
 
     /**
@@ -207,9 +224,13 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleHamburgerRightCommand: function(message) {
-        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
-        hamburgerRight.toggleClass("hamburger-panel-hidden");
-        this.updateColumnSpans();
+        console.log("viewTop:", this.viewTop);
+
+        if(this.viewTop){
+            var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
+            hamburgerRight.toggleClass("hamburger-panel-hidden");
+            this.updateColumnSpans();
+        }
     },
 
     /**
