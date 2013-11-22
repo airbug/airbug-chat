@@ -9,9 +9,13 @@
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorTrayButtonContainer')
-//@Require('airbug.ListItemView')
+//@Require('airbug.CommandModule')
 //@Require('airbug.ListView')
-//@Require('airbug.PanelWithHeaderView')
+//@Require('airbug.TextView')
+//@Require('airbug.PanelView')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -30,9 +34,12 @@ var bugpack                         = require('bugpack').context();
 var Class                           = bugpack.require('Class');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorTrayButtonContainer   = bugpack.require('airbug.CodeEditorTrayButtonContainer');
-var ListItemView                    = bugpack.require('airbug.ListItemView');
-var ListView                        = bugpack.require('airbug.ListView');
-var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
+var TextView                        = bugpack.require('airbug.TextView');
+var PanelView                       = bugpack.require('airbug.PanelView');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -41,6 +48,10 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var CommandType                     = CommandModule.CommandType;
+var bugmeta                         = BugMeta.context();
+var autowired                       = AutowiredAnnotation.autowired;
+var property                        = PropertyAnnotation.property;
 var view                            = ViewBuilder.view;
 
 
@@ -70,25 +81,18 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {airbug.ListView}
-         */
-        this.listView                   = null;
-
-        /**
-         * @private
-         * @type {airbug.ListItemView}
-         */
-        this.listItemViewOne            = null;
-
-        /**
-         * @private
-         * @type {airbug.PanelWithHeaderView}
+         * @type {PanelView}
          */
         this.panelView                  = null;
     },
@@ -121,18 +125,36 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.panelView =
-            view(PanelWithHeaderView)
-                .attributes({headerTitle: "Workspace Tray"})
+            view(PanelView)
+                .attributes({})
                 .children([
-                    view(ListView)
-                        .id("listView")
-                        .appendTo('*[id|="panel-body"]')
+                    view(ButtonView)
+                        .id("code-editor-button")
+                        .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
                         .children([
-                            view(ListItemView)
-                                .id("list-item-code-editor")
-                            // ,view(ListItemView)
-                            //     .id("")
+                            view(TextView)
+                                .attributes({text:'<C/>'})
+                                .appendTo("#code-editor-button")
                         ])
+                        .appendTo('*[id|="panel-body"]'),
+                    view(ButtonView)
+                        .id("image-markup-button")
+                        .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
+                        .children([
+                            view(TextView)
+                                .attributes({text:'IMG'})
+                                .appendTo("#image-markup-button")
+                        ])
+                        .appendTo('*[id|="panel-body"]'),
+                    view(ButtonView)
+                        .id("git-button")
+                        .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
+                        .children([
+                            view(TextView)
+                                .attributes({text:'git'})
+                                .appendTo("#git-button")
+                        ])
+                        .appendTo('*[id|="panel-body"]')
                 ])
                 .build();
 
@@ -141,8 +163,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.panelView);
-        this.listView           = this.findViewById("listView");
-        this.listItemViewOne    = this.findViewById("list-item-code-editor");
+        this.codeEditorButtonView = this.findViewById("code-editor-button");
     },
 
     /**
@@ -151,7 +172,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.codeEditorTrayButtonContainer = new CodeEditorTrayButtonContainer();
-        this.addContainerChild(this.codeEditorTrayButtonContainer, "#list-item-" + this.listItemViewOne.cid);
+//        this.addContainerChild(this.codeEditorTrayButtonContainer, "#list-item-code-editor");
     },
 
     /**
@@ -159,13 +180,19 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearTrayButtonClickedEvent, this);
+        this.codeEditorButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorButtonClickedEvent, this);
+//        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearTrayButtonClickedEvent, this);
     },
 
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    hearCodeEditorButtonClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
+        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {});
+    },
 
     /**
      * @private
@@ -178,7 +205,11 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         var grandparentContainer = parentContainer.getContainerParent();
     }
 });
-
+bugmeta.annotate(WorkspaceTrayContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule"),
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

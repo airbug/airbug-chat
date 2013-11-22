@@ -123,7 +123,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @override
      */
     create: function(routingArgs) {
         if (!this.created) {
@@ -166,6 +166,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @override
      * @protected
      */
     destroyContainer: function() {

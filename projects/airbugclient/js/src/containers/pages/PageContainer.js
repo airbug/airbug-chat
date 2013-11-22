@@ -11,6 +11,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.PageView')
 //@Require('airbug.FourColumnView')
+//@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -34,7 +35,8 @@ var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer')
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var FourColumnView              = bugpack.require('airbug.FourColumnView');
 var PageView                    = bugpack.require('airbug.PageView');
-var WorkspaceWidgetContainer    = bugpack.require('airbug.WorkspaceContainer');
+var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
+var WorkspaceWidgetContainer    = bugpack.require('airbug.WorkspaceWidgetContainer');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
@@ -84,9 +86,15 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {WorkspaceContainer}
+         * @type {WorkspaceTrayContainer}
          */
-        this.workspaceContainer = null;
+        this.workspaceTrayContainer = null;
+
+        /**
+         * @protected
+         * @type {WorkspaceWidgetContainer}
+         */
+        this.workspaceWidgetContainer = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -117,11 +125,11 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 .children([
                     view(FourColumnView)
                         .id("page-row-container")
-                        .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT})
+                        .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT})
                 ])
                 .build();
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.bodyView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
 
     },
 
@@ -130,6 +138,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
+        this.workspaceTrayContainer = new WorkspaceTrayContainer();
+        this.addContainerChild(this.workspaceTrayContainer, ".column4of4");
         this.workspaceWidgetContainer = new WorkspaceWidgetContainer();
         this.addContainerChild(this.workspaceWidgetContainer, ".column3of4");
     },
@@ -139,6 +149,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     activateContainer: function(routingArgs) {
         this._super(routingArgs);
+        this.viewTop.$el.find("#page-row-container>.column3of4").removeClass("span3").hide();
     },
 
     /**
@@ -157,8 +168,13 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,      this.handleToggleWorkspaceCommand,      this);
-        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT, this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
+        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
+    },
+
+    handleDisplayCodeEditorCommand: function(message) {
+        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
     },
 
     /**
@@ -166,11 +182,12 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleWorkspaceCommand: function(message) {
-        // var topic           = message.getTopic();
-        // var data            = message.getData();
         var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
 
         workspace.toggleClass("workspace-open");
+        if(workspace.hasClass("workspace-open")){
+            workspace.addClass("span3").show();
+        }
         this.updateColumnSpans();
     },
 
@@ -179,10 +196,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleHamburgerLeftCommand: function(message) {
-        // var topic           = message.getTopic();
-        // var data            = message.getData();
+        console.log("viewTop:", this.viewTop);
         var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
-
         hamburgerLeft.toggleClass("hamburger-panel-hidden");
         this.updateColumnSpans();
     },
@@ -192,10 +207,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleHamburgerRightCommand: function(message) {
-        // var topic           = message.getTopic();
-        // var data            = message.getData();
         var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
-
         hamburgerRight.toggleClass("hamburger-panel-hidden");
         this.updateColumnSpans();
     },
@@ -207,46 +219,26 @@ var PageContainer = Class.extend(ApplicationContainer, {
         var hamburgerLeft           = this.viewTop.$el.find("#page-row-container>.column1of4");
         var roomspace               = this.viewTop.$el.find("#page-row-container>.column2of4");
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
-        var hamburgerRight          = this.viewTop.$el.find("#page-row-container>.column4of4");
         var hamburgerLeftIsOpen     = !hamburgerLeft.hasClass("hamburger-panel-hidden");
-        var hamburgerRightIsOpen    = !hamburgerRight.hasClass("hamburger-panel-hidden");
         var workspaceIsOpen         = workspace.hasClass("workspace-open");
 
-        if (hamburgerLeftIsOpen && hamburgerRightIsOpen) {
+        if (hamburgerLeftIsOpen) {
             if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span8 span5");
-                roomspace.addClass("span3");
-                workspace.removeClass("span4 span1");
-                workspace.addClass("span3");
-            } else {
-                roomspace.removeClass("span11 span8 span3");
                 roomspace.addClass("span5");
-                workspace.removeClass("span4 span3");
-                workspace.addClass("span1");
-            }
-        } else if (hamburgerLeftIsOpen || hamburgerRightIsOpen) {
-            if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span8 span3");
-                roomspace.addClass("span5");
-                workspace.removeClass("span3 span1");
-                workspace.addClass("span4");
             } else {
-                roomspace.removeClass("span11 span8 span3");
+                roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span8");
-                workspace.removeClass("span4 span3");
-                workspace.addClass("span1");
+                workspace.removeClass("span 3");
             }
         } else {
             if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span5 span3");
+                roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span8");
-                workspace.removeClass("span3 span1");
-                workspace.addClass("span 4");
             } else {
-                roomspace.removeClass("span8 span5 span3");
+                roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span11");
-                workspace.removeClass("span4 span3");
-                workspace.addClass("span1");
+                workspace.removeClass("span 3");
             }
         }
     }

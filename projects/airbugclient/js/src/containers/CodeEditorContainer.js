@@ -151,11 +151,16 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
                         .attributes({text: "Code Editor"})
                         .appendTo(".box-header"),
                     view(ButtonView)
-                        .id("embedButtonView")
+                        .id("embed-code-button")
                         .attributes({
                             type: "default",
                             size: ButtonView.Size.LARGE
                         })
+                        .children([
+                            view(TextView)
+                                .attributes({text: "embed"})
+                                .appendTo("#embed-code-button")
+                        ])
                         .appendTo(".box-footer")
                 ])
                 .build();
@@ -165,7 +170,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.boxView);
-        this.embedButtonView = this.findViewById("embedButtonView");
+        this.embedButtonView = this.findViewById("embed-code-button");
     },
 
     createContainerChildren: function() {
@@ -244,10 +249,11 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     configureAceEditor: function() {
-        this.aceEditor  = Ace.edit("box-body-" + this.boxView.cid);
         var aceModes    = new AceModes();
         KitchenSink.load();
         aceModes.loadTopTen();
+        this.aceEditor  = Ace.edit("box-body-" + this.boxView.cid);
+
 
         this.aceEditor.setTheme("ace/theme/textmate");
         this.aceEditor.getSession().setMode("ace/mode/javascript");

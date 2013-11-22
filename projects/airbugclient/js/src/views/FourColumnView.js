@@ -106,6 +106,14 @@ var FourColumnView = Class.extend(MultiColumnView, {
                 data.centerRightColumnSpan  = "span1";
                 data.rightColumnSpan        = "span3";
                 break;
+            case FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT:
+                data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
+                data.rightHamburger = "";
+                data.leftColumnSpan         = "span3";
+                data.centerLeftColumnSpan   = "span11";
+                data.centerRightColumnSpan  = "span3";
+                data.rightColumnSpan        = "span1";
+                break;
         }
         return data;
     }
@@ -121,7 +129,8 @@ FourColumnView.Configuration = {
     HAMBURGER_LEFT_AND_RIGHT: 4,
     THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 5,
     EXTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 6,
-    ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 7
+    ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT: 7,
+    ULTRA_THIN_RIGHT_HAMBURGER_LEFT: 8
 };
 
 

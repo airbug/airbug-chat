@@ -86,13 +86,6 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {airbug.WorkspaceContainer}
          */
         this.workspaceContainer         = null;
-
-        /**
-         * @private
-         * @type {airbug.WorkspaceTrayContainer}
-         */
-        this.workspaceTrayContainer     = null;
-
     },
 
 
@@ -141,9 +134,7 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.workspaceContainer         = new WorkspaceContainer();
-        this.workspaceTrayContainer     = new WorkspaceTrayContainer();
         this.addContainerChild(this.workspaceContainer,         "#workspace-container-panel");
-        this.addContainerChild(this.workspaceTrayContainer,     "#workspace-container-panel");
     },
 
     /**
