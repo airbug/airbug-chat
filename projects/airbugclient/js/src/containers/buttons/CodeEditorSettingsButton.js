@@ -110,6 +110,7 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
                             type: IconView.Type.WRENCH,
                             color: IconView.Color.WHITE
                         })
+                        .appendTo('#code-editor-settings-button')
                 ])
                 .build();
 
