@@ -7,10 +7,10 @@
 //@Export('CodeEditorWidgetContainer')
 
 //@Require('Class')
+//@Require('airbug.BoxView')
 //@Require('airbug.CodeEditorContainer')
 //@Require('airbug.CodeEditorSettingsContainer')
 //@Require('airbug.CommandModule')
-//@Require('airbug.PanelView')
 //@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -31,10 +31,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
+var BoxView                             = bugpack.require('airbug.BoxView');
 var CodeEditorContainer                 = bugpack.require('airbug.CodeEditorContainer');
 var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
-var PanelView                           = bugpack.require('airbug.PanelView');
 var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
@@ -83,9 +83,9 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.PanelView}
+         * @type {BoxView}
          */
-        this.panelView                      = null;
+        this.boxView                      = null;
 
 
         // Containers
@@ -133,8 +133,8 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelView)
+        this.boxView =
+            view(BoxView)
                 .id("code-editor-widget")
                 .attributes({classes: "workspace-widget"})
                 .build();
@@ -142,7 +142,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxView);
     },
 
     createContainerChildren: function() {
@@ -162,6 +162,13 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
     },
 
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeCommandSubscriptions();
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -172,7 +179,13 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
+    },
 
+    /**
+     * @private
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
     },
 
     //-------------------------------------------------------------------------------
@@ -180,18 +193,23 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @private
      * @param {PublisherMessage} message
      */
     handleToggleCodeEditorSettingsCommand: function(message) {
-        var codeEditor          = this.viewTop.$el.find("#code-editor-container");
-        var codeEditorSettings  = this.viewTop.$el.find("#code-editor-settings-wrapper");
+        console.log("viewTop:", this.viewTop);
 
-        if (codeEditor.is(":hidden")) {
-            codeEditor.show();
-            codeEditorSettings.hide();
-        } else {
-            codeEditorSettings.show();
-            codeEditor.hide();
+        if(this.viewTop){
+            var codeEditor          = this.viewTop.$el.find("#code-editor-container");
+            var codeEditorSettings  = this.viewTop.$el.find("#code-editor-settings-wrapper");
+
+            if (codeEditor.is(":hidden")) {
+                codeEditor.show();
+                codeEditorSettings.hide();
+            } else {
+                codeEditorSettings.show();
+                codeEditor.hide();
+            }
         }
     }
 });

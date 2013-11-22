@@ -10,10 +10,10 @@
 //@Require('ace.Ace')
 //@Require('ace.AceModes')
 //@Require('ace.KitchenSink')
-//@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
+//@Require('airbug.CodeEditorView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -38,10 +38,10 @@ var Class                               = bugpack.require('Class');
 var Ace                                 = bugpack.require('ace.Ace');
 var AceModes                            = bugpack.require('ace.AceModes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
-var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
+var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var TextView                            = bugpack.require('airbug.TextView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
@@ -104,9 +104,9 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.BoxWithHeaderAndFooterView}
+         * @type {CodeEditorView}
          */
-        this.boxView                   = null;
+        this.codeEditorView             = null;
 
 
         // Containers
@@ -143,25 +143,29 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxView =
-            view(BoxWithHeaderAndFooterView)
+        this.codeEditorView =
+            view(CodeEditorView)
                 .id("code-editor-container")
                 .children([
                     view(TextView)
-                        .attributes({text: "Code Editor"})
-                        .appendTo(".box-header"),
+                        .attributes({
+                            text: "Code Editor",
+                            classes: ""
+                        })
+                        .appendTo(".code-editor-header"),
                     view(ButtonView)
                         .id("embed-code-button")
                         .attributes({
                             type: "default",
-                            size: ButtonView.Size.LARGE
+                            size: ButtonView.Size.LARGE,
+                            align: "right"
                         })
                         .children([
                             view(TextView)
                                 .attributes({text: "embed"})
                                 .appendTo("#embed-code-button")
                         ])
-                        .appendTo(".box-footer")
+                        .appendTo(".code-editor-footer")
                 ])
                 .build();
 
@@ -169,14 +173,14 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.boxView);
+        this.setViewTop(this.codeEditorView);
         this.embedButtonView = this.findViewById("embed-code-button");
     },
 
     createContainerChildren: function() {
         this._super();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
-        this.addContainerChild(this.settingsButton, ".box-header");
+        this.addContainerChild(this.settingsButton, ".code-editor-header");
     },
 
     /**
@@ -188,6 +192,14 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         this.initializeCommandSubscriptions();
     },
 
+    /**
+     *
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeEventListeners();
+        this.deinitializeCommandSubscriptions();
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -203,8 +215,22 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     /**
      *
      */
+    deinitializeEventListeners: function() {
+        this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+    },
+
+    /**
+     *
+     */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+    },
+
+    /**
+     *
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
     },
 
     /**
@@ -252,7 +278,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         var aceModes    = new AceModes();
         KitchenSink.load();
         aceModes.loadTopTen();
-        this.aceEditor  = Ace.edit("box-body-" + this.boxView.cid);
+        this.aceEditor  = Ace.edit("code-editor-body-" + this.codeEditorView.cid);
 
 
         this.aceEditor.setTheme("ace/theme/textmate");

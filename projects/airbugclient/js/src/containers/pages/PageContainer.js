@@ -88,13 +88,13 @@ var PageContainer = Class.extend(ApplicationContainer, {
          * @protected
          * @type {WorkspaceTrayContainer}
          */
-        this.workspaceTrayContainer = null;
+        this.workspaceTrayContainer     = null;
 
         /**
          * @protected
          * @type {WorkspaceWidgetContainer}
          */
-        this.workspaceWidgetContainer = null;
+        this.workspaceWidgetContainer   = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -137,9 +137,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.workspaceTrayContainer = new WorkspaceTrayContainer();
+        this.workspaceTrayContainer     = new WorkspaceTrayContainer();
         this.addContainerChild(this.workspaceTrayContainer, ".column4of4");
-        this.workspaceWidgetContainer = new WorkspaceWidgetContainer();
+        this.workspaceWidgetContainer   = new WorkspaceWidgetContainer();
         this.addContainerChild(this.workspaceWidgetContainer, ".column3of4");
     },
 
@@ -159,11 +159,12 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this.initializeCommandSubscriptions();
     },
 
+    /**
+     * @protected
+     */
     deinitializeContainer: function() {
         this._super();
-        this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
-        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
+        this.deinitializeCommandSubscriptions();
     },
 
     //-------------------------------------------------------------------------------
@@ -179,6 +180,16 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
     },
 
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
+        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
+    },
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
     handleDisplayCodeEditorCommand: function(message) {
         console.log("viewTop:", this.viewTop);
 

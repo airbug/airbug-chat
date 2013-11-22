@@ -766,6 +766,50 @@ li.add-roommember-container {
     width: 398px;
 }
 
+/* CodeEditor CSS (borrows from Box CSS)
+*******************************************************************/
+
+.code-editor {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.code-editor-body {
+    margin: 46px 0px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.code-editor-footer {
+    bottom: 0px;
+    height: 40px;
+    left: 0px;
+    position: absolute;
+    width: 100%;
+}
+
+.code-editor-header {
+    font-size: 18px;
+    font-weight: 500;
+    left: 0px;
+    line-height: 32px;
+    height: 40px;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+}
+
+.code-editor-footer button {
+    width: 100%;
+}
+.code-editor-body.ace_editor {
+    position: absolute;
+}
+
 /* Twitter Bootstrap Overrides
 *******************************************************************/
 @media (max-width: 979px) {
