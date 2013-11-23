@@ -114,6 +114,7 @@ var GithubService = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     loginUserWithGithub: function(requestContext, code, state, error, callback) {
+        console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         var _this = this;
         var session = requestContext.get("session");
         var authToken = undefined;
@@ -135,12 +136,15 @@ var GithubService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.githubManager.retrieveGithubUser(authToken, function(throwable, githubUser) {
-                        // TODO - dkk - finish login process
-                        callback();
+                    _this.githubManager.retrieveGithubUser(authToken, function(throwable, githubUserObject) {
+                        githubUser = githubUserObject;
+                        flow.complete();
                     });
                 })
-            ]).execute(callback);
+            ]).execute(function() {
+                // TODO - dkk - finish login process
+                callback();
+            });
         }
 
         //DONE BRN: Make a request to the github api to retrieve the access token
@@ -148,7 +152,6 @@ var GithubService = Class.extend(Obj, {
         //TODO BRN: Look at the currentUser,
         // TODO: if anonymous we need to register to collect email and first/last name. NOT password.
         // TODO: if logged in currently then
-        console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
     },
 
 
@@ -177,20 +180,6 @@ var GithubService = Class.extend(Obj, {
      */
     generateGithubState: function() {
         return UuidGenerator.generateUuid();
-    },
-
-    /**
-     *
-     */
-    getAuthToken: function(code, callback) {
-
-        callback(throwable, authToken);
-    },
-
-    /**
-     *
-     */
-    retrieveGithubUser: function(authToken, callback) {
     }
 });
 
