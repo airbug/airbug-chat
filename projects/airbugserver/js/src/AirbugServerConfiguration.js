@@ -16,6 +16,7 @@
 //@Require('airbugserver.ConversationController')
 //@Require('airbugserver.ConversationService')
 //@Require('airbugserver.GithubController')
+//@Require('airbugserver.GithubManager')
 //@Require('airbugserver.GithubService')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.MeldService')
@@ -76,6 +77,7 @@ var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService')
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
 var GithubController        = bugpack.require('airbugserver.GithubController');
+var GithubManager           = bugpack.require('airbugserver.GithubManager');
 var GithubService           = bugpack.require('airbugserver.GithubService');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var MeldService             = bugpack.require('airbugserver.MeldService');
@@ -234,6 +236,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {GithubController}
          */
         this._githubController          = null;
+
+        /**
+         * @private
+         * @type {GithubManager}
+         */
+        this._githubManager             = null;
 
         /**
          * @private
@@ -595,11 +603,21 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     *
+     * @returns {GithubManager}
+     */
+    githubManager: function() {
+        this._githubManager = new GithubManager();
+        return this._githubManager;
+    },
+
+    /**
      * @param {SessionManager} sessionManager
+     * @param {GithubManager} githubManager
      * @returns {GithubService}
      */
-    githubService: function(sessionManager) {
-        this._githubService = new GithubService(sessionManager);
+    githubService: function(sessionManager, githubManager) {
+        this._githubService = new GithubService(sessionManager, githubManager);
         return this._githubService;
     },
 
@@ -946,7 +964,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             ]),
         module("githubService")
             .args([
-                arg().ref("sessionManager")
+                arg().ref("sessionManager"),
+                arg().ref("githubManager")
             ]),
         module("meldService")
             .args([

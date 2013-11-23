@@ -34,6 +34,7 @@ var GithubDefines = {};
  * @enum {string}
  */
 GithubDefines.RedirectUris = {
+    CALLBACK: "/auth/github",
     LOGIN: "/auth/github/login"
 };
 

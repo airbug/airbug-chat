@@ -97,6 +97,14 @@ var GithubController = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Express Routes
         //-------------------------------------------------------------------------------
+        expressApp.get(GithubDefines.RedirectUris.CALLBACK, function(request, response) {
+            var error = request.query.error;
+
+            // If a user clicks on "deny this request"
+            if (error === "access_denied") {
+                _this.sendRedirectResponse(response, "/app");
+            }
+        });
 
         expressApp.get(GithubDefines.RedirectUris.LOGIN, function(request, response) {
             var requestContext      = request.requestContext;

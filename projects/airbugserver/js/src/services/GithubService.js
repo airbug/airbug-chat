@@ -60,8 +60,9 @@ var GithubService = Class.extend(Obj, {
     /**
      * @constructs
      * @param {SessionManager} sessionManager
+     * @param {GithubManager} githubManager
      */
-    _constructor: function(sessionManager) {
+    _constructor: function(sessionManager, githubManager) {
 
         this._super();
 
@@ -75,6 +76,8 @@ var GithubService = Class.extend(Obj, {
          * @type {SessionManager}
          */
         this.sessionManager         = sessionManager;
+
+        this.githubManager          = githubManager;
     },
 
 
@@ -111,16 +114,41 @@ var GithubService = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     loginUserWithGithub: function(requestContext, code, state, error, callback) {
-        //TEST
+        var _this = this;
         var session = requestContext.get("session");
-
+        var authToken = undefined;
+        var githubUser = undefined;
         //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
-        //TODO BRN: Verify that state's match
-        //TODO BRN: Make a request to the github api to retrieve the access token
+        if (error) {
+            // bad_verification_code - user has
+            // incorrect_client_credentials - client_id or client_secret is not set properly.
+            callback(new Exception("GithubError"));
+        } else if (state !== session.getData().githubState) {
+            //TODO BRN: Verify that state's match
+            callback(new Exception("badState"));
+        } else {
+            $series([
+                $task(function(flow) {
+                    _this.githubManager.getAuthToken(code, function(throwable, token) {
+                        authToken = token;
+                        flow.complete();
+                    });
+                }),
+                $task(function(flow) {
+                    _this.githubManager.retrieveGithubUser(authToken, function(throwable, githubUser) {
+                        // TODO - dkk - finish login process
+                        callback();
+                    });
+                })
+            ]).execute(callback);
+        }
+
+        //DONE BRN: Make a request to the github api to retrieve the access token
         //TODO BRN: Lookup
         //TODO BRN: Look at the currentUser,
+        // TODO: if anonymous we need to register to collect email and first/last name. NOT password.
+        // TODO: if logged in currently then
         console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
-        callback();
     },
 
 
@@ -149,6 +177,20 @@ var GithubService = Class.extend(Obj, {
      */
     generateGithubState: function() {
         return UuidGenerator.generateUuid();
+    },
+
+    /**
+     *
+     */
+    getAuthToken: function(code, callback) {
+
+        callback(throwable, authToken);
+    },
+
+    /**
+     *
+     */
+    retrieveGithubUser: function(authToken, callback) {
     }
 });
 
