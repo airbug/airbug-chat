@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('ace.Ace')
 //@Require('ace.AceModes')
+//@Require('ace.AceThemes')
 //@Require('ace.KitchenSink')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
@@ -37,6 +38,7 @@ var bugpack = require('bugpack').context();
 var Class                               = bugpack.require('Class');
 var Ace                                 = bugpack.require('ace.Ace');
 var AceModes                            = bugpack.require('ace.AceModes');
+var AceThemes                           = bugpack.require('ace.AceThemes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
@@ -257,6 +259,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
      * @param {airbug.ButtonViewEvent} event
      */
     handleEmbedButtonClickedEvent: function(event) {
+        console.log("CodeEditorContainer");
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
@@ -264,6 +267,10 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
             type: "code",
             codeLanguage: codeLanguage
         };
+
+        console.log("code:", code);
+        console.log("codeLanguage:", codeLanguage);
+        console.log("chatMessageObject:", chatMessageObject);
 
         this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
         event.stopPropagation();
@@ -275,9 +282,11 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     configureAceEditor: function() {
-        var aceModes    = new AceModes();
+        var aceModes    = AceModes.getInstance();
+        var aceThemes   = AceThemes.getInstance();
         KitchenSink.load();
         aceModes.loadTopTen();
+        aceThemes.loadAll();
         this.aceEditor  = Ace.edit("code-editor-body-" + this.codeEditorView.cid);
 
 
@@ -290,7 +299,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
      */
     getEditorLanguage: function() {
         var mode = this.aceEditor.getSession().getMode().$id;
-        return mode.substring(mode.lastIndexOf("/"));
+        return mode.substring(mode.lastIndexOf("/") + 1);
     },
 
     /**

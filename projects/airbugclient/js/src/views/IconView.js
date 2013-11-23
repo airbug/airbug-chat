@@ -70,14 +70,17 @@ IconView.Color = {
  * @enum {string}
  */
 IconView.Type = {
-    ALIGN_JUSTIFY: "align-justify",
-    ASTERISK: "asterisk",
-    CHEVRON_LEFT: "chevron-left",
-    EXCLAMATION: "exclamation-sign",
-    PLUS: "plus",
-    SHARE: "share",
-    USER: "user",
-    WRENCH: "wrench"
+    ALIGN_JUSTIFY:  "align-justify",
+    ASTERISK:       "asterisk",
+    CHEVRON_LEFT:   "chevron-left",
+    CHEVRON_RIGHT:  "chevron-right",
+    COG:            "cog",
+    EXCLAMATION:    "exclamation-sign",
+    PICTURE:        "picture",
+    PLUS:           "plus",
+    SHARE:          "share",
+    USER:           "user",
+    WRENCH:         "wrench"
 };
 
 

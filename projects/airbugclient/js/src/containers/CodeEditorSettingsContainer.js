@@ -7,7 +7,14 @@
 //@Export('CodeEditorSettingsContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsView')
+//@Require('airbug.CommandModule')
+//@Require('airbug.TextView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -24,7 +31,14 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonView                  = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsView      = bugpack.require('airbug.CodeEditorSettingsView');
+var CommandModule               = bugpack.require('airbug.CommandModule');
+var TextView                    = bugpack.require('airbug.TextView');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -33,6 +47,10 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -62,15 +80,20 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule                      = null;
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {airbug.CodeEditorSettingsView}
+         * @type {CodeEditorSettingsView}
          */
-        this.codeEditorSettingsView               = null;
+        this.codeEditorSettingsView             = null;
 
 
         // Containers
@@ -110,6 +133,33 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         this.codeEditorSettingsView =
             view(CodeEditorSettingsView)
                 .id("code-editor-settings")
+                .children([
+                    view(ButtonView)
+                        .id("back-to-code-editor-button")
+                        .attributes({
+                            type: "link",
+                            align: "right"
+                        })
+                        .children([
+                            view(IconView)
+                                .attributes({
+                                    type: IconView.Type.CHEVRON_RIGHT
+                                })
+                                .appendTo("#back-to-code-editor-button")
+                        ])
+                        .appendTo(".box-header"),
+                    view(ButtonView)
+                        .id("apply-code-editor-settings-button")
+                        .attributes({
+                            align: "right"
+                        })
+                        .children([
+                            view(TextView)
+                                .attributes({text: "Apply"})
+                                .appendTo("#apply-code-editor-settings-button")
+                        ])
+                        .appendTo(".box-footer")
+                ])
                 .build();
 
 
@@ -117,6 +167,9 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.codeEditorSettingsView);
+
+        this.backButtonView = this.findViewById("back-to-code-editor-button");
+        this.applyButtonView = this.findViewById("apply-code-editor-settings-button");
     },
 
     createContainerChildren: function() {
@@ -128,20 +181,51 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-    }
+        this.initializeEventListeners();
+    },
+
+    deinitializeConatainer: function() {
+        this._super();
+        this.deinitializeEventListeners();
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    initializeEventListeners: function() {
+        this.backButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.applyButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleApplyButtonClickedEvent, this);
+    },
+
+    deinitializeEventListeners: function() {
+        this.backButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.applyButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleApplyButtonClickedEvent, this);
+    },
 
 
     //-------------------------------------------------------------------------------
     // Model Event Handlers
     //-------------------------------------------------------------------------------
 
+    handleBackButtonClickedEvent: function() {
+        this.commandModule.relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
+    },
 
+    handleApplyButtonClickedEvent: function() {
+        this.commandModule.relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
+    }
 });
 
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CodeEditorSettingsContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports

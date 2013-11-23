@@ -177,25 +177,11 @@ var PageContainer = Class.extend(ApplicationContainer, {
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
         this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
     },
 
     deinitializeCommandSubscriptions: function() {
         this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR,    this.handleDisplayCodeEditorCommand,    this);
-    },
-
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleDisplayCodeEditorCommand: function(message) {
-        console.log("viewTop:", this.viewTop);
-
-        if(this.viewTop){
-            var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
-        }
     },
 
     /**
@@ -211,6 +197,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
             workspace.toggleClass("workspace-open");
             if(workspace.hasClass("workspace-open")){
                 workspace.addClass("span3").show();
+            } else {
+                workspace.removeClass("span3").hide();
             }
             this.updateColumnSpans();
         }

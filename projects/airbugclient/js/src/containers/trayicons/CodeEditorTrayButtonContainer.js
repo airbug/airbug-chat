@@ -129,6 +129,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
                 .children([
                     view(ImageView)
                         .attributes({source: "img/"}) //TODO
+                        .appendTo('*[id|="button"]')
                 ])
                 .build();
 

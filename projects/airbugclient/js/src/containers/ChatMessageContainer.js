@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.ChatMessageReplyButtonContainer')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.ListItemView')
@@ -33,6 +34,7 @@ var bugpack = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+var ChatMessageReplyButtonContainer = bugpack.require('airbug.ChatMessageReplyButtonContainer');
 var ChatMessageView                 = bugpack.require('airbug.ChatMessageView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var ListItemView                    = bugpack.require('airbug.ListItemView');

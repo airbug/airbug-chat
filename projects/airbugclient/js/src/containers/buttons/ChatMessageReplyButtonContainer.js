@@ -119,7 +119,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
      * @param {ButtonViewEvent} event
      */
     hearChatMessageReplyButtonClickedEvent: function(event) {
-
+        //TODO
     }
 });
 

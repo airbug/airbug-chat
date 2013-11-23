@@ -10,6 +10,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorTrayButtonContainer')
 //@Require('airbug.CommandModule')
+//@Require('airbug.IconView')
 //@Require('airbug.ListView')
 //@Require('airbug.TextView')
 //@Require('airbug.PanelView')
@@ -35,6 +36,7 @@ var Class                           = bugpack.require('Class');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorTrayButtonContainer   = bugpack.require('airbug.CodeEditorTrayButtonContainer');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
+var IconView                        = bugpack.require('airbug.IconView');
 var TextView                        = bugpack.require('airbug.TextView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -141,8 +143,11 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
                         .id("image-markup-button")
                         .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
                         .children([
-                            view(TextView)
-                                .attributes({text:'IMG'})
+                            view(IconView)
+                                .attributes({
+                                    type: IconView.Type.PICTURE,
+                                    color: IconView.Color.WHITE
+                                })
                                 .appendTo("#image-markup-button")
                         ])
                         .appendTo('*[id|="panel-body"]'),
