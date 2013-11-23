@@ -118,7 +118,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
                 .id("addRoomMemberButtonView")
                 .children([
                     view(IconView)
-                        .attributes({type: IconView.Type.PLUS, color: IconView.Color.WHITE})
+                        .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})
                         .appendTo('*[id|="button"]')
                 ])
                 .build();

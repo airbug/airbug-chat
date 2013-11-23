@@ -153,11 +153,13 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
                             view(CopyToClipboardButtonView)
                                 .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
                                 .children([
-                                    view(IconView)
-                                        .attributes({type: IconView.Type.SHARE, color: IconView.Color.WHITE})
-                                        .appendTo('*[id|="button"]'),
                                     view(TextView)
                                         .attributes({text: " Copy Link"})
+                                        .appendTo('*[id|="button"]'),
+                                    view(IconView)
+                                        .attributes({
+                                            type: IconView.Type.PAPERCLIP,
+                                            color: IconView.Color.WHITE})
                                         .appendTo('*[id|="button"]')
                                 ])
                         ])

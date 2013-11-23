@@ -76,6 +76,7 @@ IconView.Type = {
     CHEVRON_RIGHT:  "chevron-right",
     COG:            "cog",
     EXCLAMATION:    "exclamation-sign",
+    PAPERCLIP:      "paperclip",
     PICTURE:        "picture",
     PLUS:           "plus",
     SHARE:          "share",
