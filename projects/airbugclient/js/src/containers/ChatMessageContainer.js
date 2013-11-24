@@ -128,6 +128,8 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
+        var codeBlock = this.chatMessageView.$el.find("pre").get()[0];
+        hljs.highlightBlock(codeBlock);
     },
 
     /**
