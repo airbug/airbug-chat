@@ -10,7 +10,11 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
+//@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -20,6 +24,10 @@
 var bugpack                     = require('bugpack').context();
 var GitHubApi                   = require("github");
 var https                       = require('https');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
@@ -36,8 +44,11 @@ var BugFlow                     = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                         = ArgAnnotation.arg;
 var $series                     = BugFlow.$series;
 var $task                       = BugFlow.$task;
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -136,6 +147,20 @@ var GithubManager = Class.extend(Obj, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(GithubManager).with(
+    entityManager("githubManager")
+        .ofType("GitHubApi")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports
