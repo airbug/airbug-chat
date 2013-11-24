@@ -994,7 +994,13 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("meldService"),
                 arg().ref("sessionService"),
                 arg().ref("callService")
-            ])
+            ]),
+
+        //-------------------------------------------------------------------------------
+        // Managers (NOTE: EntityManagers are autoloaded)
+        //-------------------------------------------------------------------------------
+
+        module("githubManager")
     ])
 );
 
