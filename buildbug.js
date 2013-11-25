@@ -119,6 +119,7 @@ buildProperties({
             "./projects/airbugclient/static",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/acemodes/js/src",
+            "../bugjs/external/acethemes/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/bootstrap2/static",
