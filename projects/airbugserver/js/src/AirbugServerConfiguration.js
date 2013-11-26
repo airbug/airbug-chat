@@ -15,8 +15,8 @@
 //@Require('airbugserver.ChatMessageService')
 //@Require('airbugserver.ConversationController')
 //@Require('airbugserver.ConversationService')
+//@Require('airbugserver.GithubApi')
 //@Require('airbugserver.GithubController')
-//@Require('airbugserver.GithubManager')
 //@Require('airbugserver.GithubService')
 //@Require('airbugserver.HomePageController')
 //@Require('airbugserver.MeldService')
@@ -59,10 +59,11 @@
 var bugpack                 = require('bugpack').context();
 var connect                 = require('connect');
 var express                 = require('express');
+var github                  = require('github');
+var https                   = require('https');
 var mongoose                = require('mongoose');
 var mu2express              = require('mu2express');
 var path                    = require('path');
-
 
 //-------------------------------------------------------------------------------
 // BugPack
@@ -76,8 +77,8 @@ var ChatMessageController   = bugpack.require('airbugserver.ChatMessageControlle
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
 var ConversationController  = bugpack.require('airbugserver.ConversationController');
 var ConversationService     = bugpack.require('airbugserver.ConversationService');
+var GithubApi               = bugpack.require('airbugserver.GithubApi');
 var GithubController        = bugpack.require('airbugserver.GithubController');
-var GithubManager           = bugpack.require('airbugserver.GithubManager');
 var GithubService           = bugpack.require('airbugserver.GithubService');
 var HomePageController      = bugpack.require('airbugserver.HomePageController');
 var MeldService             = bugpack.require('airbugserver.MeldService');
@@ -236,12 +237,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {GithubController}
          */
         this._githubController          = null;
-
-        /**
-         * @private
-         * @type {GithubManager}
-         */
-        this._githubManager             = null;
 
         /**
          * @private
@@ -592,6 +587,20 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @returns {*}
+     */
+    github: function() {
+        return github;
+    },
+
+    /**
+     * @returns {GithubApi}
+     */
+    githubApi: function() {
+        return new GithubApi();
+    },
+
+    /**
      * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      * @param {GithubService} githubService
@@ -600,15 +609,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     githubController: function(expressApp, bugCallRouter, githubService) {
         this._githubController = new GithubController(expressApp, bugCallRouter, githubService);
         return this._githubController;
-    },
-
-    /**
-     *
-     * @returns {GithubManager}
-     */
-    githubManager: function() {
-        this._githubManager = new GithubManager();
-        return this._githubManager;
     },
 
     /**
@@ -637,6 +637,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     homePageController: function(airbugClientConfig, expressApp) {
         this._homePageController = new HomePageController(airbugClientConfig, expressApp);
         return this._homePageController;
+    },
+
+    /**
+     * @returns {*}
+     */
+    https: function() {
+        return https;
     },
 
     /**
@@ -822,6 +829,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // AirBugServer
         //-------------------------------------------------------------------------------
 
+        module("https"),
+        module("github"),
         module("mongoose"),
         module("mongoDataStore")
             .args([
@@ -962,10 +971,16 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("conversationManager"),
                 arg().ref("meldService")
             ]),
+        module("githubApi")
+            .args([
+                arg().ref("https"),
+                arg().ref("github")
+            ]),
         module("githubService")
             .args([
                 arg().ref("sessionManager"),
-                arg().ref("githubManager")
+                arg().ref("githubManager"),
+                arg().ref("githubApi")
             ]),
         module("meldService")
             .args([
@@ -999,8 +1014,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         //-------------------------------------------------------------------------------
         // Managers (NOTE: EntityManagers are autoloaded)
         //-------------------------------------------------------------------------------
-
-        module("githubManager")
     ])
 );
 

@@ -5,11 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('GithubManager')
+//@Autoload
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Set')
-//@Require('bugflow.BugFlow')
+//@Require('airbugserver.Github')
+//@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -17,8 +20,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                     = require('bugpack').context();
-var GitHubApi                   = require("github");
-var https                       = require('https');
 
 
 //-------------------------------------------------------------------------------
@@ -26,17 +27,22 @@ var https                       = require('https');
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
 var Set                         = bugpack.require('Set');
-var BugFlow                     = bugpack.require('bugflow.BugFlow');
+var TypeUtil                    = bugpack.require('TypeUtil');
+var Github                      = bugpack.require('airbugserver.Github');
+var EntityManager               = bugpack.require('bugentity.EntityManager');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $series                     = BugFlow.$series;
-var $task                       = BugFlow.$task;
+var arg                         = ArgAnnotation.arg;
+var bugmeta                     = BugMeta.context();
+var entityManager               = EntityManagerAnnotation.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -45,95 +51,129 @@ var $task                       = BugFlow.$task;
 
 /**
  * @constructor
- * @extends {Obj}
+ * @extends {EntityManager}
  */
-var GithubManager = Class.extend(Obj, {
+var GithubManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} code
-     * @param {function(Throwable, String)=} callback
+     * @param Github github
+     * @param {(Array.<string> | function(Throwable, User))} dependencies
+     * @param {function(Throwable, User)=} callback
      */
-    getAuthToken: function(code, callback) {
-        // TODO - DKK - wire up client id
-        // TODO - DKK - wire up client_secret
-        var params = {
-            'client_id': '',
-            'client_secret': '',
-            'code': 'cc31f9ba8e97a3497e0f'
-        };
-
-        var headers = {
-            'Content-Type': 'application/json',
-            'Host': 'github.com',
-            'Accept': 'application/json'
-        };
-
-        // TODO - DKK - build path. It should look like:
-        //   /login/oauth/access_token?code={code}&client_id={client_id}&client_secret={client_secret}
-        //path = buildPath();
-
-        var options = {
-            hostname: 'github.com',
-            port: 443,
-            path: path,
-            method: 'POST',
-            headers: {}
-        };
-
-        var result = "";
-        var statusCode = undefined;
-        var resultHeaders = undefined;
-
-        var req = https.request(options, function(res) {
-            statusCode = res.statusCode;
-            resultHeaders = res.headers;
-            res.setEncoding('utf8');
-            res.on('data', function (chunk) {
-                result += chunk;
-                //console.log('BODY: ' + chunk);
-            });
-        });
-
-        req.on('error', function(error) {
-            console.log('problem with request: ' + e.message);
-        });
-
-        req.on('close'), function() {
-            var authObject = jQuery.parseJSON(result);
-            callback(undefined, authObject);
+    createGithub: function(github, dependencies, callback) {
+        if (TypeUtil.isFunction(dependencies)) {
+            callback        = dependencies;
+            dependencies    = [];
         }
-        req.end();
+        var options         = {};
+        this.create(github, options, dependencies, callback);
     },
 
     /**
-     * @param authToken
-     * @param {function(Throwable, Object)} callback
+     * @param Github github
+     * @param {function(Throwable)} callback
      */
-    retrieveGithubUser: function(authToken, callback) {
-        var github = new GitHubApi({
-            version: "3.0.0", // required
-            timeout: 5000 // optional
-        });
-        github.authenticate({
-            type: "oauth",
-            token: authToken
-        });
-        github.user.get({}, function(err, res) {
-            // console.log("GOT ERR?", err);
-            // console.log("GOT RES?", res);
-            if (err) {
-                callback(err, undefined);
+    deleteGithub: function(github, callback) {
+        this.delete(github, callback);
+    },
+
+    /**
+     * @param {{
+     *      createdAt: Date,
+     *      githubAuth: string,
+     *      githubId: string,
+     *      githubLogin: string,
+     *      updatedAt: Date,
+     *      userId: string
+     * }} data
+     * @returns {Github}
+     */
+    generateGithub: function(data) {
+        return new Github(data);
+    },
+
+    /**
+     * @param {Github} github
+     * @param {Array.<string>} properties
+     * @param {function(Throwable)} callback
+     */
+    populateGithub: function(github, properties, callback) {
+        var options = {
+            user: {
+                idGetter:   github.getUserId,
+                idSetter:   github.setUserId,
+                getter:     github.getUser,
+                setter:     github.setUser
+            }
+        };
+        this.populate(github, options, properties, callback);
+    },
+
+    /**
+     * @param {string} id
+     * @param {function(Throwable, Github)} callback
+     */
+    retrieveGithub: function(id, callback) {
+        this.retrieve(id, callback);
+    },
+
+    /**
+     * @param {string} githubId
+     * @param @param {function(Throwable, Github)} callback
+     */
+    retrieveGithubByGithubId: function(githubId, callback) {
+        var _this = this;
+        console.log("retrieveGithubByGithubId this.dataStore = ", this.dataStore);
+
+        this.dataStore.findOne({githubId: githubId}).lean(true).exec(function(throwable, dbObject) {
+            if (!throwable) {
+                var github = null;
+                if (dbObject) {
+                    github = _this.convertDbObjectToEntity(dbObject);
+                    github.commitDelta();
+                }
+                callback(undefined, github);
             } else {
-                var githubUser = jQuery.parseJSON(res);
-                callback(undefined, githubUser);
+                callback(throwable);
             }
         });
+    },
+
+    /**
+     * @param {Array.<string>} ids
+     * @param {function(Throwable, Map.<string, Github>)} callback
+     */
+    retrieveGithubs: function(ids, callback) {
+        this.retrieveEach(ids, callback);
+    },
+
+    /**
+     *
+     * @param {Github} github
+     * @param {function(Throwable, Github)} callback
+     */
+    updateGithub: function(github, callback) {
+        this.update(github, callback);
     }
 });
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(GithubManager).with(
+    entityManager("githubManager")
+        .ofType("Github")
+        .args([
+            arg().ref("entityManagerStore"),
+            arg().ref("schemaManager"),
+            arg().ref("mongoDataStore")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------
