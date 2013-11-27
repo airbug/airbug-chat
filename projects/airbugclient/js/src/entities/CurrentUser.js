@@ -29,6 +29,10 @@ var Obj                     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var CurrentUser = Class.extend(Obj, {
 
 
@@ -47,6 +51,18 @@ var CurrentUser = Class.extend(Obj, {
          * @type {MeldDocument}
          */
         this.meldDocument = meldDocument;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {MeldDocument}
+     */
+    getMeldDocument: function() {
+        return this.meldDocument;
     },
 
 
