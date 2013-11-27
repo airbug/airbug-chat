@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('GithubApi')
+//@Autowired
 
 //@Require('Class')
 //@Require('Obj')
@@ -18,8 +19,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                     = require('bugpack').context();
-var Github                      = require("github");
-var https                       = require('https');
 
 
 //-------------------------------------------------------------------------------
@@ -51,9 +50,24 @@ var $task                       = BugFlow.$task;
  */
 var GithubApi = Class.extend(Obj, {
 
-    _constructor: function(http, github) {
-        this.http = http;
+    _constructor: function(https, github, airbugServerConfig) {
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        this.https = https;
         this.github = github;
+
+        /**
+         * @private
+         * @type {AirbugServerConfig}
+         */
+        this.airbugServerConfig = airbugServerConfig;
+
+        if (! airbugServerConfig) {
+            console.log("ERROR: GithubApi#constructor airbugServerConfig was not defined! ",
+                airbugServerConfig, " https ", https, " github ", github);
+        }
     },
 
     //-------------------------------------------------------------------------------
@@ -65,7 +79,7 @@ var GithubApi = Class.extend(Obj, {
      * @param {function(Throwable, String)=} callback
      */
     getAuthToken: function(code, callback) {
-
+        var _this = this;
         var headers = {
             'Content-Type': 'application/json',
             'Host': 'github.com',
@@ -79,41 +93,50 @@ var GithubApi = Class.extend(Obj, {
         //path = buildPath();
         var path = "/login/oauth/access_token?" +
             "code=" + encodeURIComponent(code) +
-            "&client_id=" + encodeURIComponent() +
-            "&client_secret" + encodeURIComponent();
-
+            "&client_id=" + encodeURIComponent(this.airbugServerConfig.getGithubClientId()) +
+            "&client_secret=" + encodeURIComponent(this.airbugServerConfig.getGithubClientSecret());
 
         var options = {
             hostname: 'github.com',
             port: 443,
             path: path,
             method: 'POST',
-            headers: {}
+            headers: {'Accept': 'application/json'} // 'Accept': 'application/json'
         };
 
-        var result = "";
+        var responseData = "";
         var statusCode = undefined;
         var resultHeaders = undefined;
 
-        var req = https.request(options, function(res) {
+        var req = this.https.request(options, function(res) {
             statusCode = res.statusCode;
             resultHeaders = res.headers;
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
-                result += chunk;
-                //console.log('BODY: ' + chunk);
+                responseData += chunk;
+                console.log('BODY: ' + chunk);
+            });
+            res.on('close', function() {
+                _this.handleRequestEnd(responseData, callback);
+            });
+            res.on('end', function() {
+                _this.handleRequestEnd(responseData, callback);
             });
         });
 
-        req.on('error', function(error) {
-            console.log('problem with request: ' + e.message);
-        });
-
-        req.on('close'), function() {
-            var authObject = jQuery.parseJSON(result);
-            callback(undefined, authObject);
-        }
         req.end();
+
+        req.on('error', function(error) {
+            console.log('problem with request: ' + error.message);
+            callback(error);
+        });
+    },
+
+    handleRequestEnd: function(responseData, callback) {
+        console.log("getAuthToken - in end handler");
+        var responseObject = JSON.parse(responseData);
+        var authToken = responseObject.access_token;
+        callback(undefined, authToken);
     },
 
     /**
@@ -121,7 +144,7 @@ var GithubApi = Class.extend(Obj, {
      * @param {function(Throwable, Object)} callback
      */
     retrieveGithubUser: function(authToken, callback) {
-        var github = new Github({
+        var github = new this.github({
             version: "3.0.0", // required
             timeout: 5000 // optional
         });
@@ -130,14 +153,14 @@ var GithubApi = Class.extend(Obj, {
             token: authToken
         });
         github.user.get({}, function(err, res) {
-            // console.log("GOT ERR?", err);
-            // console.log("GOT RES?", res);
-            if (err) {
-                callback(err, undefined);
-            } else {
-                var githubUser = jQuery.parseJSON(res);
-                callback(undefined, githubUser);
-            }
+                // console.log("GOT ERR?", err);
+                // console.log("GOT RES?", res);
+                if (err) {
+                    callback(err, undefined);
+                } else {
+                    var githubUser = res;
+                    callback(undefined, githubUser);
+                }
         });
     }
 });

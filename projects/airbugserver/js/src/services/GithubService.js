@@ -61,8 +61,9 @@ var GithubService = Class.extend(Obj, {
      * @constructs
      * @param {SessionManager} sessionManager
      * @param {GithubManager} githubManager
+     * @param {GithubApi} githubApi
      */
-    _constructor: function(sessionManager, githubManager) {
+    _constructor: function(sessionManager, githubManager, githubApi) {
 
         this._super();
 
@@ -77,7 +78,17 @@ var GithubService = Class.extend(Obj, {
          */
         this.sessionManager         = sessionManager;
 
+        /**
+         * @private
+         * @type {GithubManager}
+         */
         this.githubManager          = githubManager;
+
+        /**
+         * @private
+         * @type {GithubApi}
+         */
+        this.githubApi              = githubApi;
     },
 
 
@@ -114,34 +125,46 @@ var GithubService = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     loginUserWithGithub: function(requestContext, code, state, error, callback) {
-        console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         var _this = this;
         var session = requestContext.get("session");
         var authToken = undefined;
         var githubUser = undefined;
+        console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
         if (error) {
             // bad_verification_code - user has
             // incorrect_client_credentials - client_id or client_secret is not set properly.
+            console.log("GithubService #loginUserWithGithub error encountered. error ", error);
             callback(new Exception("GithubError"));
         } else if (state !== session.getData().githubState) {
+            console.log("GithubService #loginUserWithGithub state mismatch ", state, 'vs', session.getData().githubState);
             //TODO BRN: Verify that state's match
             callback(new Exception("badState"));
         } else {
+            console.log('GithubService #loginUserWithGithub No errors. Going to get auth token and retrieve github user');
             $series([
                 $task(function(flow) {
-                    _this.githubManager.getAuthToken(code, function(throwable, token) {
-                        authToken = token;
-                        flow.complete();
-                    });
+                    console.log('GithubService #loginUserWithGithub about to get auth token');
+                    try {
+                        _this.githubApi.getAuthToken(code, function(throwable, token) {
+                            console.log("loginUserWithGithub# in getAuthToken callback. token = ", token, " throwable = ", throwable);
+                            authToken = token;
+                            flow.complete(throwable);
+                        });
+                    } catch (e) {
+                        console.log('GithubService #loginUserWithGithub ERROR calling getAuthToken', e, " trace ", e.trace);
+                    }
                 }),
                 $task(function(flow) {
-                    _this.githubManager.retrieveGithubUser(authToken, function(throwable, githubUserObject) {
+                    console.log('GithubService #loginUserWithGithub about to get github user');
+                    _this.githubApi.retrieveGithubUser(authToken, function(throwable, githubUserObject) {
+                        console.log("loginUserWithGithub# in retrieveGithubUser callback. githubUserObject = ", githubUserObject, " throwable = ", throwable);
                         githubUser = githubUserObject;
-                        flow.complete();
+                        flow.complete(throwable);
                     });
                 })
             ]).execute(function() {
+                    console.log('GithubService #loginUserWithGithub TODO: finish this.');
                 // TODO - dkk - finish login process
                 callback();
             });

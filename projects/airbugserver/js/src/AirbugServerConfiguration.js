@@ -72,6 +72,7 @@ var path                    = require('path');
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var AirbugClientConfig      = bugpack.require('airbug.AirbugClientConfig');
+var AirbugServerConfig      = bugpack.require('airbug.AirbugServerConfig');
 var CallService             = bugpack.require('airbugserver.CallService');
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
@@ -153,6 +154,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {AirbugClientConfig}
          */
         this._airbugClientConfig        = null;
+
+        /**
+         * @pirvate
+         * @type {AirbugServerConfig}
+         */
+        this._airbugServerConfig        = null;
 
         /**
          * @private
@@ -452,6 +459,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @returns {AirbugServerConfig}
+     */
+    airbugServerConfig: function() {
+        this._airbugServerConfig = new AirbugServerConfig();
+        return this._airbugServerConfig;
+    },
+
+    /**
      * @param {SocketIoServer} socketIoServer
      * @return {SocketIoManager}
      */
@@ -594,10 +609,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {https} https
+     * @param {github} github
+     * @param {AirbugServerConfig}
      * @returns {GithubApi}
      */
-    githubApi: function() {
-        return new GithubApi();
+    githubApi: function(https, github, airbugServerConfig) {
+        return new GithubApi(https, github, airbugServerConfig);
     },
 
     /**
@@ -614,10 +632,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {SessionManager} sessionManager
      * @param {GithubManager} githubManager
+     * @param {GithubApi} githubApi
      * @returns {GithubService}
      */
-    githubService: function(sessionManager, githubManager) {
-        this._githubService = new GithubService(sessionManager, githubManager);
+    githubService: function(sessionManager, githubManager, githubApi) {
+        this._githubService = new GithubService(sessionManager, githubManager, githubApi);
         return this._githubService;
     },
 
@@ -792,6 +811,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             "github.scope"
         ]);
 
+        this._airbugServerConfig.absorbConfig(config, [
+            "github.clientId",
+            "github.clientSecret"
+        ]);
+
         this._sessionServiceConfig.absorbConfig(config, [
             "cookieMaxAge",
             "cookieSecret",
@@ -845,6 +869,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("configbug"),
         module("airbugClientConfig"),
+        module("airbugServerConfig"),
         module("sessionServiceConfig"),
 
 
@@ -974,7 +999,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("githubApi")
             .args([
                 arg().ref("https"),
-                arg().ref("github")
+                arg().ref("github"),
+                arg().ref("airbugServerConfig")
             ]),
         module("githubService")
             .args([
