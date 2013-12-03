@@ -459,7 +459,7 @@ var userServiceLoginWithValidEmailAndBlankPasswordTest = {
                 // test login with a valid user and blank password
                 var email = "test@example.com";
                 var password = "";
-                _this.testUserService.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(!!throwable,

@@ -79,7 +79,7 @@ var UserService = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                 = undefined;
+        this.logger                 = null;
 
         /**
          * @private
@@ -181,9 +181,7 @@ var UserService = Class.extend(Obj, {
      */
     loginUserWithEmailAndPassword: function(requestContext, email, password, callback) {
         var _this           = this;
-        var currentUser     = requestContext.get("currentUser");
-        var session         = requestContext.get("session");
-        var meldManager     = this.meldService.factoryManager();
+        /** @type {User} */
         var user            = undefined;
 
         this.logger.debug("Starting user login - email:", email);
@@ -219,24 +217,22 @@ var UserService = Class.extend(Obj, {
                             _this.logger.info("Failed login for user. Incorrect password - userId:", user.getId());
                             flow.complete(new Exception("InvalidPassword", {}, "Could not login using given email and password"));
                         } else {
-                            _this.logger.info("Successful login for user - userId:", user.getId());
                             flow.complete();
                         }
                     });
                 }
-            })
-        ]).execute(function(throwable) {
-            console.log('UserService#loginUserWithEmailAndPassword in execute function. throwable =', throwable);
-            if (!throwable) {
+            }),
+            $task(function(flow) {
                 _this.loginUser(requestContext, user, function(throwable, user) {
                     if (!throwable) {
-                        console.log("userId:", user.getId());
-                        callback(undefined, user);
-                    } else {
-                        console.log("UserService#loginUser throwable:", throwable, " trace ", throwable.stack);
-                        callback(throwable, undefined);
+                        _this.logger.info("Successful login for user - userId:", user.getId());
                     }
+                    flow.complete(throwable);
                 });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, user);
             } else {
                 callback(throwable);
             }
@@ -245,8 +241,8 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {User} email
-     * @param {function(Throwable, User)} callback
+     * @param {User} user
+     * @param {function(Throwable, User=)} callback
      */
     loginUser: function(requestContext, user, callback) {
         console.log("Inside UserService#login");
@@ -257,7 +253,6 @@ var UserService = Class.extend(Obj, {
 
         console.log("UserService#loginUser ");
         $series([
-
             $task(function(flow) {
                 _this.sessionService.regenerateSession(session, function(throwable, generatedSession) {
                     if (!throwable) {
@@ -309,7 +304,6 @@ var UserService = Class.extend(Obj, {
         var sessionService      = this.sessionService;
         var sessionSid          = session.getSid();
         var callManagerSet      = undefined;
-        var callManagerCount    = undefined;
 
         this.logger.debug("Starting user logout - userId:", currentUser.getId(), " sessionSid:", sessionSid);
         $series([
