@@ -611,7 +611,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @param {https} https
      * @param {github} github
-     * @param {AirbugServerConfig}
+     * @param {AirbugServerConfig} airbugServerConfig
      * @returns {GithubApi}
      */
     githubApi: function(https, github, airbugServerConfig) {
