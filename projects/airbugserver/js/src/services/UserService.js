@@ -184,7 +184,7 @@ var UserService = Class.extend(Obj, {
         /** @type {User} */
         var user            = undefined;
 
-        this.logger.debug("Starting user login - email:", email);
+        this.logger.debug("Starting user login via email and password - email:", email);
         $series([
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
@@ -245,13 +245,12 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User=)} callback
      */
     loginUser: function(requestContext, user, callback) {
-        console.log("Inside UserService#login");
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
         var session         = requestContext.get("session");
         var meldManager     = this.meldService.factoryManager();
 
-        console.log("UserService#loginUser ");
+        this.logger.debug("Logging user in - userId:", user.getId());
         $series([
             $task(function(flow) {
                 _this.sessionService.regenerateSession(session, function(throwable, generatedSession) {
