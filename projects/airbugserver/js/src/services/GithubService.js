@@ -163,10 +163,22 @@ var GithubService = Class.extend(Obj, {
                         flow.complete(throwable);
                     });
                 })
-            ]).execute(function() {
+            ]).execute(function(throwable) {
                     console.log('GithubService #loginUserWithGithub TODO: finish this.');
-                // TODO - dkk - finish login process
-                callback();
+                if (throwable) {
+                    callback(throwable);
+                } else {
+                    var githubId = githubUser.id;
+                    // TODO - dkk - are we currently logged in?
+                        // if we are logged in, then we wouldn't have gotten here from the login page. We are here
+                        // because we are linking. We still need to make sure that the github id is
+                    // TODO - dkk - verify that the id is numeric
+                    // TODO - dkk - attempt to load the Github record having this github id
+                    // TODO - dkk - if the id exists then we need to load the user associated with this github id
+                    // TODO - dkk - if the id is not found, attempt to find emails and name. these may not be available.
+                    // TODO - dkk - Store in the session that we are doing a github registration
+                    callback();
+                }
             });
         }
 
