@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
@@ -29,6 +30,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
+var TypeUtil                = bugpack.require('TypeUtil');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
@@ -63,7 +65,7 @@ var GithubService = Class.extend(Obj, {
      * @param {GithubManager} githubManager
      * @param {GithubApi} githubApi
      */
-    _constructor: function(sessionManager, githubManager, githubApi) {
+    _constructor: function(sessionManager, githubManager, githubApi, userService) {
 
         this._super();
 
@@ -89,6 +91,12 @@ var GithubService = Class.extend(Obj, {
          * @type {GithubApi}
          */
         this.githubApi              = githubApi;
+
+        /**
+         * @private
+         * @type {UserService}
+         */
+        this.userService            = userService;
     },
 
 
@@ -172,12 +180,30 @@ var GithubService = Class.extend(Obj, {
                     // TODO - dkk - are we currently logged in?
                         // if we are logged in, then we wouldn't have gotten here from the login page. We are here
                         // because we are linking. We still need to make sure that the github id is
-                    // TODO - dkk - verify that the id is numeric
-                    // TODO - dkk - attempt to load the Github record having this github id
+                    if (!TypeUtil.isNumber(githubId)) {
+                        callback(new Error("NotFound"));
+                    } else {
+                        // TODO - dkk - attempt to load the Github record having this github id
+                        _this.githubManager.retrieveGithubByGithubId(githubId, function(throwable, github) {
+                            if (throwable) {
+                                callback(throwable);
+                            } else {
+                                if (github) {
+                                    _this.userService.loginUser(requestContext, github.getUser(), function(throwable, user) {
+                                        callback(throwable);
+                                    });
+                                } else {
+                                    // No github record found. Send them off to register.
+                                    _this.addGithubDataToSession(session, githubUser.id, authToken, function() {
+                                        callback();
+                                    })
+                                }
+                            }
+                        });
+                    }
                     // TODO - dkk - if the id exists then we need to load the user associated with this github id
                     // TODO - dkk - if the id is not found, attempt to find emails and name. these may not be available.
                     // TODO - dkk - Store in the session that we are doing a github registration
-                    callback();
                 }
             });
         }
@@ -204,6 +230,19 @@ var GithubService = Class.extend(Obj, {
         if (!sessionData.githubState) {
             sessionData.githubState = this.generateGithubState();
         }
+        this.sessionManager.updateSession(session, function(throwable, session) {
+            callback(throwable);
+        });
+    },
+
+    /**
+     * @param {Session} session
+     * @param {function(Throwable)} callback
+     */
+    addGithubDataToSession: function(session, githubId, authToken, callback) {
+        var sessionData = session.getData();
+        sessionData.githubId = githubId;
+        sessionData.githubAuthToken = authToken;
         this.sessionManager.updateSession(session, function(throwable, session) {
             callback(throwable);
         });

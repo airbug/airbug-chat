@@ -279,7 +279,7 @@ userServicePasswordTests = {
                 // test login with a valid user and password
                 var email = "test@example.com";
                 var password = "lastpass";
-                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.testUserServiceExistingUser.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(throwable === undefined,
                         "Make sure that throwable was not defined");
                     test.assertTrue(user !== undefined,
@@ -293,7 +293,7 @@ userServicePasswordTests = {
                 // test login with a user that doesn't exist
                 var email = "test@plagzample.com";
                 var password = "what???";
-                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.testUserServiceExistingUser.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(throwable !== undefined,
@@ -307,7 +307,7 @@ userServicePasswordTests = {
                 // test login with a valid user but wrong password
                 var email = "test@example.com";
                 var password = "what???";
-                _this.testUserServiceExistingUser.loginUser(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.testUserServiceExistingUser.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(throwable !== undefined,

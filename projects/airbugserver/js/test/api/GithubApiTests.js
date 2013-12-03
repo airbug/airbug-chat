@@ -79,7 +79,7 @@ var githubApiGetAuthTokenTest = {
                     on: function(event, callback) {
                         _this.requestEventHandlers[event] = callback;
                     }
-                }
+                };
             }
         };
         this.testAirbugServerConfig = {

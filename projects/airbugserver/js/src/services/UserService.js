@@ -174,15 +174,13 @@ var UserService = Class.extend(Obj, {
      * @param {string} password
      * @param {function(Throwable, User)} callback
      */
-    loginUser: function(requestContext, email, password, callback) {
-        console.log("Inside UserService#login");
+    loginUserWithEmailAndPassword: function(requestContext, email, password, callback) {
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
         var session         = requestContext.get("session");
         var meldManager     = this.meldService.factoryManager();
         var user            = undefined;
 
-        console.log("UserService#loginUser ");
         $series([
             $task(function(flow) {
                 _this.dbRetrieveUserByEmail(email, function(throwable, returnedUser) {
@@ -218,7 +216,40 @@ var UserService = Class.extend(Obj, {
                         }
                     });
                 }
-            }),
+            })
+        ]).execute(function(throwable) {
+            console.log('UserService#loginUserWithEmailAndPassword in execute function. throwable =', throwable);
+            if (!throwable) {
+                _this.loginUser(requestContext, user, function(throwable, user) {
+                    if (!throwable) {
+                        console.log("userId:", user.getId());
+                        callback(undefined, user);
+                    } else {
+                        console.log("UserService#loginUser throwable:", throwable, " trace ", throwable.stack);
+                        callback(throwable, undefined);
+                    }
+                });
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {User} email
+     * @param {function(Throwable, User)} callback
+     */
+    loginUser: function(requestContext, user, callback) {
+        console.log("Inside UserService#login");
+        var _this           = this;
+        var currentUser     = requestContext.get("currentUser");
+        var session         = requestContext.get("session");
+        var meldManager     = this.meldService.factoryManager();
+
+        console.log("UserService#loginUser ");
+        $series([
+
             $task(function(flow) {
                 _this.sessionService.regenerateSession(session, function(throwable, generatedSession) {
                     if (!throwable) {

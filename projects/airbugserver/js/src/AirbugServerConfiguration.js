@@ -150,13 +150,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @pirvate
+         * @private
          * @type {AirbugClientConfig}
          */
         this._airbugClientConfig        = null;
 
         /**
-         * @pirvate
+         * @private
          * @type {AirbugServerConfig}
          */
         this._airbugServerConfig        = null;
@@ -451,7 +451,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @returns {AirbugClientConfig}
+     * @return {AirbugClientConfig}
      */
     airbugClientConfig: function() {
         this._airbugClientConfig = new AirbugClientConfig();
@@ -459,7 +459,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @returns {AirbugServerConfig}
+     * @return {AirbugServerConfig}
      */
     airbugServerConfig: function() {
         this._airbugServerConfig = new AirbugServerConfig();
@@ -602,7 +602,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @returns {*}
+     * @return {*}
      */
     github: function() {
         return github;
@@ -612,7 +612,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {https} https
      * @param {github} github
      * @param {AirbugServerConfig} airbugServerConfig
-     * @returns {GithubApi}
+     * @return {GithubApi}
      */
     githubApi: function(https, github, airbugServerConfig) {
         return new GithubApi(https, github, airbugServerConfig);
@@ -633,10 +633,11 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {SessionManager} sessionManager
      * @param {GithubManager} githubManager
      * @param {GithubApi} githubApi
-     * @returns {GithubService}
+     * @param {UserService} userService
+     * @return {GithubService}
      */
-    githubService: function(sessionManager, githubManager, githubApi) {
-        this._githubService = new GithubService(sessionManager, githubManager, githubApi);
+    githubService: function(sessionManager, githubManager, githubApi, userService) {
+        this._githubService = new GithubService(sessionManager, githubManager, githubApi, userService);
         return this._githubService;
     },
 
@@ -659,7 +660,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @returns {*}
+     * @return {*}
      */
     https: function() {
         return https;
@@ -1006,7 +1007,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
             .args([
                 arg().ref("sessionManager"),
                 arg().ref("githubManager"),
-                arg().ref("githubApi")
+                arg().ref("githubApi"),
+                arg().ref("userService")
             ]),
         module("meldService")
             .args([
