@@ -80,17 +80,7 @@ var GithubApi = Class.extend(Obj, {
      */
     getAuthToken: function(code, callback) {
         var _this = this;
-        var headers = {
-            'Content-Type': 'application/json',
-            'Host': 'github.com',
-            'Accept': 'application/json'
-        };
 
-        // TODO - DKK - wire up client id
-        // TODO - DKK - wire up client_secret
-        // TODO - DKK - build path. It should look like:
-        //   /login/oauth/access_token?code={code}&client_id={client_id}&client_secret={client_secret}
-        //path = buildPath();
         var path = "/login/oauth/access_token?" +
             "code=" + encodeURIComponent(code) +
             "&client_id=" + encodeURIComponent(this.airbugServerConfig.getGithubClientId()) +
@@ -101,7 +91,7 @@ var GithubApi = Class.extend(Obj, {
             port: 443,
             path: path,
             method: 'POST',
-            headers: {'Accept': 'application/json'} // 'Accept': 'application/json'
+            headers: {'Accept': 'application/json'}
         };
 
         var responseData = "";
@@ -134,9 +124,16 @@ var GithubApi = Class.extend(Obj, {
 
     handleRequestEnd: function(responseData, callback) {
         console.log("getAuthToken - in end handler");
-        var responseObject = JSON.parse(responseData);
-        var authToken = responseObject.access_token;
-        callback(undefined, authToken);
+        var responseObject = "";
+        var error = undefined;
+        var authToken = undefined;
+        try {
+            responseObject = JSON.parse(responseData);
+            authToken = responseObject.access_token;
+        } catch (e) {
+            error = e;
+        }
+        callback(error, authToken);
     },
 
     /**
@@ -153,14 +150,14 @@ var GithubApi = Class.extend(Obj, {
             token: authToken
         });
         github.user.get({}, function(err, res) {
-                // console.log("GOT ERR?", err);
-                // console.log("GOT RES?", res);
-                if (err) {
-                    callback(err, undefined);
-                } else {
-                    var githubUser = res;
-                    callback(undefined, githubUser);
-                }
+            // console.log("GOT ERR?", err);
+            // console.log("GOT RES?", res);
+            if (err) {
+                callback(err, undefined);
+            } else {
+                var githubUser = res;
+                callback(undefined, githubUser);
+            }
         });
     }
 });
