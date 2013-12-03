@@ -4,53 +4,36 @@
 
 //@Package('airbug')
 
-//@Export('BoxView')
+//@Export('RoomMemberList')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('carapace.CarapaceList')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class               = bugpack.require('Class');
+var CarapaceList        = bugpack.require('carapace.CarapaceList');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxView = Class.extend(MustacheView, {
-
-    //-------------------------------------------------------------------------------
-    // Template
-    //-------------------------------------------------------------------------------
-
-    template:   '<div id="{{id}}" class="box {{attributes.classes}}">' +
-                '</div>',
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
-    }
-});
+var RoomMemberList = Class.extend(CarapaceList, {});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BoxView", BoxView);
+bugpack.export("airbug.RoomMemberList", RoomMemberList);

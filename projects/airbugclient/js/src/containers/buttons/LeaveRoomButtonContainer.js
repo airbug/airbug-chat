@@ -69,7 +69,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -159,15 +159,19 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     hearLeaveRoomButtonClickedEvent: function(event) {
         var _this = this;
-        this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(throwable) {
-            if (!throwable) {
-                _this.navigationModule.navigate("home", {
-                    trigger: true
-                });
-            } else {
-                //TODO
-            }
-        });
+        if (this.roomModel.get("_id")) {
+            this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(throwable) {
+                if (!throwable) {
+                    _this.navigationModule.navigate("home", {
+                        trigger: true
+                    });
+                } else {
+                    //TODO
+                }
+            });
+        } else {
+            console.warn("Room id not set yet. Cannot send leaveRoom command");
+        }
     }
 });
 

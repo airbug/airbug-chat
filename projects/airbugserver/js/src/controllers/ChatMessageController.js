@@ -153,10 +153,10 @@ var ChatMessageController = Class.extend(EntityController, {
              */
             createChatMessage: function(request, responder, callback) {
                 var data                = request.getData();
-                var chatMessageData     = data.object;
+                var chatMessageObject   = data.object;
                 var requestContext      = request.requestContext;
 
-                chatMessageService.createChatMessage(requestContext, chatMessageData, function(throwable, chatMessage) {
+                chatMessageService.createChatMessage(requestContext, chatMessageObject, function(throwable, chatMessage) {
                     _this.processCreateResponse(responder, throwable, chatMessage, callback);
                 });
             },

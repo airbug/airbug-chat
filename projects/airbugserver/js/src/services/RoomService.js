@@ -101,6 +101,7 @@ var RoomService = Class.extend(Obj, {
         var currentUser     = requestContext.get("currentUser");
         var meldManager     = this.meldService.factoryManager();
         var room            = undefined;
+        /** @type {User} */
         var user            = undefined;
 
         if (currentUser.isNotAnonymous()) {
@@ -132,7 +133,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, user, room);
                     _this.meldRoom(meldManager, room);
-                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
+                    _this.meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -175,7 +176,7 @@ var RoomService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.dbPopulateRoomAndRoomMembers(room, function(throwable, returnedRoom){
+                    _this.dbPopulateRoomAndRoomMembers(room, function(throwable, returnedRoom) {
                         room = returnedRoom;
                         flow.complete(throwable);
                     });
@@ -279,7 +280,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     meldService.unmeldEntity(meldManager, "RoomMember", "basic", roomMember);
                     _this.meldRoom(meldManager, room);
-                    meldService.meldEntity(meldManager, "User", "basic", user);
+                    meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -729,7 +730,7 @@ var RoomService = Class.extend(Obj, {
         roomMemberSet.forEach(function(roomMember) {
             var user = roomMember.getUser();
             meldService.meldEntity(meldManager, "RoomMember", "basic", roomMember);
-            meldService.meldEntity(meldManager, "User", "basic", user);
+            meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
         });
     },
 

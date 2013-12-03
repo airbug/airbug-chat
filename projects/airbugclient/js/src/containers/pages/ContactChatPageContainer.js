@@ -14,7 +14,6 @@
 //@Require('airbug.ConversationListSlidePanelContainer')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.PageView')
-//@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomModel')
 //@Require('carapace.ViewBuilder')
@@ -39,7 +38,6 @@ var ContactModel                            = bugpack.require('airbug.ContactMod
 var ConversationListSlidePanelContainer     = bugpack.require('airbug.ConversationListSlidePanelContainer');
 var HomeButtonContainer                     = bugpack.require('airbug.HomeButtonContainer');
 var PageView                                = bugpack.require('airbug.PageView');
-var RoomChatBoxContainer                    = bugpack.require('airbug.RoomChatBoxContainer');
 var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomModel                               = bugpack.require('airbug.RoomModel');
 var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
@@ -145,7 +143,6 @@ var ContactChatPageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         this.contactModel = new ContactModel({});
-        this.addModel("contactModel", this.contactModel);
 
 
         // Create Views

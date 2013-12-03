@@ -275,18 +275,11 @@ var UserController = Class.extend(EntityController, {
      * @param {Response} response
      */
     processAjaxThrowable: function(throwable, response) {
-
-        //TEST
-        console.log("Error occurred during request");
-        console.log(throwable);
-        console.log(throwable.stack);
-
         if (Class.doesExtend(throwable, Exception)) {
             if (throwable.getType() === "NotFound") {
-                this.sendAjaxNotFoundResponse(response);
+                this.sendAjaxNotFoundResponse(/** @type {Exception} */ (throwable), response);
             } else {
-                this.sendAjaxErrorResponse(throwable, response);
-                console.error(throwable);
+                this.sendAjaxExceptionResponse(/** @type {Exception} */ (throwable), response);
             }
         } else {
             this.sendAjaxErrorResponse(throwable, response);
@@ -299,17 +292,52 @@ var UserController = Class.extend(EntityController, {
      * @param {Response} response
      */
     sendAjaxErrorResponse: function(error, response) {
+        //TEST
+        console.log("Error occurred during request");
+        console.log(error.message);
+        console.log(error.stack);
+
         response.status(500);
-        response.json({error: error.toString()});
+        response.json({
+            responseType: "Error",
+            error: {
+                message: error.message
+            }
+        });
     },
 
     /**
      * @private
+     * @param {Exception} exception
      * @param {Response} response
      */
-    sendAjaxNotFoundResponse: function(response) {
+    sendAjaxExceptionResponse: function(exception, response) {
+        response.status(200);
+        response.json({
+            responseType: "Exception",
+            exception: {
+                type: exception.getType(),
+                data: exception.getData(),
+                message: exception.getMessage()
+            }
+        });
+    },
+
+    /**
+     * @private
+     * @param {Exception} exception
+     * @param {Response} response
+     */
+    sendAjaxNotFoundResponse: function(exception, response) {
         response.status(404);
-        response.json({exception: new Exception("NotFound")});
+        response.json({
+            responseType: "Exception",
+            exception: {
+                type: exception.getType(),
+                data: exception.getData(),
+                message: exception.getMessage()
+            }
+        });
     },
 
     /**
@@ -317,7 +345,11 @@ var UserController = Class.extend(EntityController, {
      * @param {Response} response
      */
     sendAjaxSuccessResponse: function(response) {
-        response.json({success: true});
+        response.status(200);
+        response.json({
+            responseType: "Success",
+            success: true
+        });
     }
 });
 

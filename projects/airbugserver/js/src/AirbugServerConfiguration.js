@@ -46,6 +46,7 @@
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 //@Require('handshaker.Handshaker')
+//@Require('loggerbug.Logger')
 //@Require('mongo.MongoDataStore')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
@@ -109,6 +110,7 @@ var CookieSigner            = bugpack.require('cookies.CookieSigner');
 var ExpressApp              = bugpack.require('express.ExpressApp');
 var ExpressServer           = bugpack.require('express.ExpressServer');
 var Handshaker              = bugpack.require('handshaker.Handshaker');
+var Logger                  = bugpack.require('loggerbug.Logger');
 var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
@@ -667,6 +669,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @returns {Logger}
+     */
+    logger: function() {
+        return new Logger();
+    },
+
+    /**
      * @param {MeldManagerFactory} meldManagerFactory
      * @param {MeldBuilder} meldBuilder
      * @param {CallService} callService
@@ -892,6 +901,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("cookieParser"),
         module("cookieSigner"),
         module("handshaker"),
+        module("logger"),
 
 
         //-------------------------------------------------------------------------------
@@ -1037,7 +1047,10 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("meldService"),
                 arg().ref("sessionService"),
                 arg().ref("callService")
-            ]),
+            ])
+            .properties([
+                property("logger").ref("logger")
+            ])
 
         //-------------------------------------------------------------------------------
         // Managers (NOTE: EntityManagers are autoloaded)

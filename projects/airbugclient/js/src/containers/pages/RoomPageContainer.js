@@ -7,10 +7,10 @@
 //@Export('RoomPageContainer')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.PageContainer')
-//@Require('airbug.TwoColumnView')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.RoomModel')
@@ -32,10 +32,10 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var Exception                   = bugpack.require('Exception');
 var HomeButtonContainer         = bugpack.require('airbug.HomeButtonContainer');
 var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
 var PageContainer               = bugpack.require('airbug.PageContainer');
-var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
 var RoomChatBoxContainer        = bugpack.require('airbug.RoomChatBoxContainer');
 var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
 var RoomModel                   = bugpack.require('airbug.RoomModel');
@@ -71,7 +71,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Containers
@@ -88,12 +88,6 @@ var RoomPageContainer = Class.extend(PageContainer, {
          * @type {HomeButtonContainer}
          */
         this.homeButtonContainer                    = null;
-
-        /**
-         * @private
-         * @type {LeaveRoomButtonContainer}
-         */
-        this.leaveRoomButtonContainer               = null;
 
         /**
          * @private
@@ -138,7 +132,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.NavigationModule}
+         * @type {NavigationModule}
          */
         this.navigationModule                       = null;
 
@@ -155,10 +149,12 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
     /**
      * @protected
-     * @param {Array<*>} routerArgs
+     * @param {Array.<*>} routingArgs
      */
     activateContainer: function(routingArgs) {
         this._super(routingArgs);
+
+        this.loadRoom(this.roomModel.getProperty("id"));
     },
 
     /**
@@ -173,18 +169,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.loadRoomModel(roomId);
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-            // Done by PageContainer
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-            // Done by PageContainer
+        this.roomModel = this.roomManagerModule.generateRoomModel({_id: roomId});
     },
 
     /**
@@ -194,14 +179,13 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super(routingArgs);
         this.homeButtonContainer                    = new HomeButtonContainer();
         this.logoutButtonContainer                  = new LogoutButtonContainer();
-        this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
+        this.roomChatBoxContainer                   = new RoomChatBoxContainer();
         this.roomListPanelContainer                 = new RoomListPanelContainer();
-        // this.createRoomButtonContainer           = new CreateRoomButtonContainer();
+
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
         this.addContainerChild(this.roomListPanelContainer,         ".column1of4");
         this.addContainerChild(this.roomChatBoxContainer,           ".column2of4");
-        // this.addContainerChild(this.createRoomButtonContainer, "");
     },
 
 
@@ -213,11 +197,10 @@ var RoomPageContainer = Class.extend(PageContainer, {
      * @private
      * @param {string} roomId
      */
-    loadRoomModel: function(roomId) {
+    loadRoom: function(roomId) {
         console.log("Loading roomModel inside of RoomPageContainer#loadRoomModel");
         var _this = this;
-        this.roomModel = new RoomModel({});
-        this.addModel(roomId, this.roomModel);
+
         //TODO start loading animation
         // var blackoutLoaderContainer = new BlackoutLoaderContainer();
         // this.addContainerChild(blackoutLoaderContainer);
@@ -227,15 +210,20 @@ var RoomPageContainer = Class.extend(PageContainer, {
                 _this.roomModel.setMeldDocument(roomMeldDocument);
                 //TODO stop loading animation
             } else {
-                //TODO
-                // retry mechanism
-                var notificationView    = _this.getNotificationView();
-                console.log("throwable:", throwable);
-                notificationView.flashError(throwable);
-                notificationView.flashError("This room is currently unavailable. You will be redirected to your user homepage");
-                setTimeout(function() {
-                    _this.navigationModule.navigate("home", {trigger: true});
-                }, 1500);
+
+                //TODO stop loading animation
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
+                var parentContainer     = _this.getContainerParent();
+                var notificationView    = parentContainer.getNotificationView();
+                if (Class.doesExtend(throwable, Exception)) {
+                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    setTimeout(function() {
+                        _this.navigationModule.navigate("home", {trigger: true});
+                    }, 1500);
+                } else {
+                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                }
             }
         });
     }
@@ -248,8 +236,8 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
 bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([
-        property("roomManagerModule").ref("roomManagerModule"),
-        property("navigationModule").ref("navigationModule")
+        property("navigationModule").ref("navigationModule"),
+        property("roomManagerModule").ref("roomManagerModule")
     ])
 );
 

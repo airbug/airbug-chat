@@ -174,14 +174,6 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         this.applicationView.dispose();
         this.notificationView.dispose();
         this.viewTop = null;
-        this.collectionMap.forEach(function(collection) {
-            collection.dispose();
-        });
-        this.collectionMap.clear();
-        this.modelMap.forEach(function(model) {
-            model.dispose();
-        });
-        this.modelMap.clear();
     },
 
 

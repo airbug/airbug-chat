@@ -8,33 +8,57 @@
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
+//@Require('airbug.RoomMemberList')
+//@Require('airbug.RoomMemberModel')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Class               = bugpack.require('Class');
+var ManagerModule       = bugpack.require('airbug.ManagerModule');
+var RoomMemberList      = bugpack.require('airbug.RoomMemberList');
+var RoomMemberModel     = bugpack.require('airbug.RoomMemberModel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ManagerModule}
+ */
 var RoomMemberManagerModule = Class.extend(ManagerModule, {
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {List=} list
+     * @return {RoomMemberList}
+     */
+    generateRoomMemberList: function(list) {
+        return new RoomMemberList(list);
+    },
+
+    /**
+     * @param {Object} dataObject
+     * @param {MeldDocument} roomMemberMeldDocument
+     * @returns {RoomMemberModel}
+     */
+    generateRoomMemberModel: function(dataObject, roomMemberMeldDocument) {
+        return new RoomMemberModel(dataObject, roomMemberMeldDocument);
+    },
 
     /**
      * @param {string} roomMemberId

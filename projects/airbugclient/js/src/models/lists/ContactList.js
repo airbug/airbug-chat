@@ -4,51 +4,36 @@
 
 //@Package('airbug')
 
-//@Export('FullUserModel')
+//@Export('ContactList')
 
 //@Require('Class')
-//@Require('airbug.MeldModel')
+//@Require('carapace.CarapaceList')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MeldModel       = bugpack.require('airbug.MeldModel');
+var Class               = bugpack.require('Class');
+var CarapaceList        = bugpack.require('carapace.CarapaceList');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var FullUserModel = Class.extend(MeldModel, {
-
-    //-------------------------------------------------------------------------------
-    // CarapaceModel Implementation
-    //-------------------------------------------------------------------------------
-
-    defaults: {
-        id: "",
-        email: "",
-        emailSet: [],
-        firstName: "",
-        lastName: "",
-        roomsList: [],
-        status: ""
-    }
-});
+var ContactList = Class.extend(CarapaceList, {});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.FullUserModel", FullUserModel);
+bugpack.export("airbug.ContactList", ContactList);

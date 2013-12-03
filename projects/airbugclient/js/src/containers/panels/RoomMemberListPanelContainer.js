@@ -52,8 +52,6 @@ var view = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-//TODO BRN: Break this out in to RoomMemberListPanelContainer and RoomMemberListContainer
-
 var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------

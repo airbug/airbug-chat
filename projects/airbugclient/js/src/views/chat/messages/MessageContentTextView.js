@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('BoxWithFooterView')
+//@Export('MessageContentTextView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,26 +29,31 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxWithFooterView = Class.extend(MustacheView, {
+var MessageContentTextView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-footer {{attributes.classes}}">' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
-                '</div>',
+    template: '<div id="message-text-{{cid}}" class="message-text">{{model.body}}</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @protected
+     * @param {string} propertyName
+     * @param {string} propertyValue
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
+            case "message":
+                this.findElement('#message-text-' + this.getCid()).text(propertyValue);
+                break;
+        }
     }
 });
 
@@ -57,4 +62,4 @@ var BoxWithFooterView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BoxWithFooterView", BoxWithFooterView);
+bugpack.export("airbug.MessageContentTextView", MessageContentTextView);

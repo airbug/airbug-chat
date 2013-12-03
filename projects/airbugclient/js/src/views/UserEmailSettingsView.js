@@ -51,7 +51,7 @@ var UserEmailSettingsView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.emailSet = this.renderEmailSet(this.model.get("emailSet"));
+        data.emailSet = this.renderEmailSet(this.model.getProperty("emailSet"));
         return data;
     },
 
@@ -62,18 +62,18 @@ var UserEmailSettingsView = Class.extend(MustacheView, {
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
 
-        switch (attributeName) {
+        switch (propertyName) {
             case "email":
-                this.findElement('#user-email-' + this.cid).text(this.model.get("email"));
+                this.findElement('#user-email-' + this.getCid()).text(this.model.getProperty("email"));
                 break;
             case "emailSet":
-                this.findElement('#user-email-set-' + this.cid).text(this.renderEmailSet(this.model.get("emailSet")));
+                this.findElement('#user-email-set-' + this.getCid()).text(this.renderEmailSet(this.model.getProperty("emailSet")));
                 break;
         }
     },

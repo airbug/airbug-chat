@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ConversationModel')
+//@Export('CurrentUserModel')
 
 //@Require('Class')
 //@Require('airbug.MeldModel')
@@ -37,7 +37,7 @@ var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
  * @class
  * @extends {MeldModel}
  */
-var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.prototype} */{
+var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -46,15 +46,15 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     /**
      * @return {MeldDocument}
      */
-    getConversationMeldDocument: function() {
+    getCurrentUserMeldDocument: function() {
         return this.getMeldDocument();
     },
 
     /**
-     * @param {MeldDocument} conversationMeldDocument
+     * @param {MeldDocument} currentUserMeldDocument
      */
-    setConversationMeldDocument: function(conversationMeldDocument) {
-        this.setMeldDocument(conversationMeldDocument)
+    setCurrentUserMeldDocument: function(currentUserMeldDocument) {
+        this.setMeldDocument(currentUserMeldDocument);
     },
 
 
@@ -73,28 +73,28 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "ownerId", "chatMessageIdSet"])
+                .in(["_id", "email", "firstName", "lastName", "status", "roomIdSet"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "ownerId", "chatMessageIdSet"])
+                .in(["_id", "email", "firstName", "lastName", "status", "roomIdSet"])
                 .call(this.hearMeldPropertyRemovedChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.ADDED_TO_SET])
                 .where("data.deltaChange.path")
-                .in(["chatMessageIdSet"])
+                .in(["roomIdSet"])
                 .call(this.hearMeldAddedToSetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.REMOVED_FROM_SET])
                 .where("data.deltaChange.path")
-                .in(["chatMessageIdSet"])
+                .in(["roomIdSet"])
                 .call(this.hearMeldRemovedFromSetChange, this);
         }
     },
@@ -124,12 +124,15 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     /**
      * @protected
      */
-    processMeldDcoument: function() {
+    processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
         this.setProperty("_id", data._id);
-        this.setProperty("chatMessageIdSet", data.chatMessageIdSet);
-        this.setProperty("ownerId", data.ownerId);
+        this.setProperty("email", data.email);
+        this.setProperty("firstName", data.firstName);
+        this.setProperty("lastName", data.lastName);
+        this.setProperty("roomIdSet", data.roomIdSet);
+        this.setProperty("status", data.status);
     },
 
     /**
@@ -138,8 +141,11 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     unprocessMeldDocument: function() {
         this._super();
         this.removeProperty("_id");
-        this.removeProperty("chatMessageIdSet");
-        this.removeProperty("ownerId");
+        this.removeProperty("email");
+        this.removeProperty("firstName");
+        this.removeProperty("lastName");
+        this.removeProperty("roomIdSet");
+        this.removeProperty("status");
     },
 
 
@@ -196,4 +202,4 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationModel", ConversationModel);
+bugpack.export("airbug.CurrentUserModel", CurrentUserModel);

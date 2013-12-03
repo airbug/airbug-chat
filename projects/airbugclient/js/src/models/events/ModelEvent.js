@@ -4,11 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('RoomCollection')
+//@Export('ModelEvent')
 
 //@Require('Class')
-//@Require('airbug.RoomModel')
-//@Require('carapace.CarapaceCollection')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
@@ -22,28 +21,35 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var RoomModel           = bugpack.require('airbug.RoomModel');
-var CarapaceCollection  = bugpack.require('carapace.CarapaceCollection');
+var Class = bugpack.require('Class');
+var Event = bugpack.require('Event');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomCollection = Class.extend(CarapaceCollection, {
+var ModelEvent = Class.extend(Event, {
 
-    model: RoomModel
 
-    //-------------------------------------------------------------------------------
-    // CarapaceCollection Implementation
-    //-------------------------------------------------------------------------------
 
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+ModelEvent.EventType = {
+    CHANGE: "ModelEvent:Change"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RoomCollection", RoomCollection);
+bugpack.export("airbug.ModelEvent", ModelEvent);

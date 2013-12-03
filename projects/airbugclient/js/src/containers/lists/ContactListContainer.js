@@ -7,7 +7,6 @@
 //@Export('ContactListContainer')
 
 //@Require('Class')
-//@Require('airbug.ContactCollection')
 //@Require('airbug.ContactListItemContainer')
 //@Require('airbug.ContactModel')
 //@Require('airbug.ListView')
@@ -34,7 +33,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =                     bugpack.require('Class');
-var ContactCollection =         bugpack.require('airbug.ContactCollection');
 var ContactListItemContainer =  bugpack.require('airbug.ContactListItemContainer');
 var ContactModel =              bugpack.require('airbug.ContactModel');
 var ListView =                  bugpack.require('airbug.ListView');
@@ -83,9 +81,9 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ContactCollection}
+         * @type {ContactList}
          */
-        this.contactCollection = null;
+        this.contactList = null;
 
 
         // Modules
@@ -122,13 +120,6 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         //TODO BRN:
 
 
-        // this.contactManagerModule.retrieveContacts(function(error, contacts){
-        //  })
-        //TEST
-        this.contactCollection.add(new ContactModel({uuid: "aN9o234", userUuid: "nmhsieh", conversationUuid: "1aRtls0"})); //Tim
-        this.contactCollection.add(new ContactModel({uuid: "nv40pfs", userUuid: "a93hdug", conversationUuid: "lm7497s"})); //Brian
-        this.contactCollection.add(new ContactModel({uuid: "amvp06d", userUuid: "18dh7fn", conversationUuid: "g7pfcnd"})); //Adam
-        this.contactCollection.add(new ContactModel({uuid: "djGh4DA", userUuid: "pm8e6ds", conversationUuid: "ldhsyin"})); //Tom
     },
 
     /**
@@ -141,8 +132,7 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.contactCollection = new ContactCollection([]);
-        this.addCollection("contactCollection", this.contactCollection);
+        this.contactList = this.contactManagerModule.generateContactList();
 
 
         // Create Views
@@ -162,7 +152,9 @@ var ContactListContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.contactCollection.bind('add', this.handleContactCollectionAdd, this);
+
+        //TODO BRN: Add listeners
+
         this.listView.addEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
 

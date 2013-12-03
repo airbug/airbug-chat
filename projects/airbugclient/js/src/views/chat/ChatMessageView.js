@@ -40,15 +40,12 @@ var ChatMessageView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div id="chat-message-{{cid}}" class="message-wrapper">' +
-                    // SUNG Are the inner ids necessary?
                     '<div id="message-sent-by-{{cid}}"      class="message-sent-by">{{model.sentBy}}</div>' +
                     '<div id="message-pending-{{cid}}"      class="message-pending-{{model.pending}}"><img src="/img/pending-dark-blue.gif"></div>' +
                     '<div id="message-failed-{{cid}}"       class="message-failed-{{model.failed}}"><button class="btn btn-warning btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
                     '<div id="message-created-at-{{cid}}"   class="message-created-at">{{model.createdAt}}</div>' +
-                    '<div id="message-message-{{cid}}"      class="message-body">{{model.body}}</div>' +
-                    '<div id="message-code-{{cid}}"         class="message-code">' +
-                        '<pre><code class="{{model.codeLanguage}}">{{model.code}}</code></pre></div>' +
                     '<div id="message-controls-{{cid}}"     class="message-controls"></div>' +
+                    '<div id="message-content-{{cid}}"    class="message-content"></div>' +
                 '</div>',
 
 
@@ -58,26 +55,26 @@ var ChatMessageView = Class.extend(MustacheView, {
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
-        switch (attributeName) {
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
             case "message":
-                this.findElement('#message-message-' + this.cid).text(attributeValue);
+                this.findElement('#message-message-' + this.cid).text(propertyValue);
                 break;
-            case "createdAt":
-                this.findElement('#message-created-at-' + this.cid).text(attributeValue);
+            case "sentAt":
+                this.findElement('#message-created-at-' + this.cid).text(this.renderSentAgo(propertyValue));
                 break;
             case "sentBy":
-                this.findElement('#message-sent-by-' + this.cid).text(attributeValue);
+                this.findElement('#message-sent-by-' + this.cid).text(propertyValue);
                 break;
             case "pending":
-                this.findElement('#message-pending-' + this.cid).removeClass("message-pending-false, message-pending-true").addClass("message-pending-" + attributeValue);
+                this.findElement('#message-pending-' + this.cid).removeClass("message-pending-false, message-pending-true").addClass("message-pending-" + propertyValue);
                 break;
             case "failed":
-                this.findElement('#message-failed-'  + this.cid).removeClass("message-failed-false, message-failed-true").addClass("message-failed-" + attributeValue);
+                this.findElement('#message-failed-'  + this.cid).removeClass("message-failed-false, message-failed-true").addClass("message-failed-" + propertyValue);
                 break;
         }
     },
@@ -95,9 +92,9 @@ var ChatMessageView = Class.extend(MustacheView, {
 
         //TODO BRN: This is a good unit test candidate.
 
-        // if (data.model.sentAtUtc) {
-        //     data.sentAgo = this.renderSentAgo(data.model.sentAtUtc);
-        // }
+        if (data.model.sentAt) {
+            data.sentAgo = this.renderSentAgo(data.model.sentAt);
+        }
         return data;
     },
 

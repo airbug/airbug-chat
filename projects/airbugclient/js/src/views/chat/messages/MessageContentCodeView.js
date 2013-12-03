@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('BoxWithFooterView')
+//@Export('MessageContentCodeView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,26 +29,37 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxWithFooterView = Class.extend(MustacheView, {
+var MessageContentCodeView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-footer {{attributes.classes}}">' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
+    template:   '<div id="message-code-{{cid}}" class="message-code">' +
+                    '<pre><code id="code-{{cid}}" class="{{model.codeLanguage}}">{{model.code}}</code></pre>' +
                 '</div>',
 
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
+
     /**
-     * @return {Object}
+     * @protected
+     * @param {string} propertyName
+     * @param {string} propertyValue
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
+            case "code":
+                this.findElement('#code-' + this.getCid()).text(propertyValue);
+                break;
+            case "codeLanguage":
+                this.findElement('#code-' + this.getCid()).removeClass();
+                this.findElement('#code-' + this.getCid()).addClass(propertyValue);
+                break;
+        }
     }
 });
 
@@ -57,4 +68,4 @@ var BoxWithFooterView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BoxWithFooterView", BoxWithFooterView);
+bugpack.export("airbug.MessageContentCodeView", MessageContentCodeView);

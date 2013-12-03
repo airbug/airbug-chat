@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('BoxWithFooterView')
+//@Export('MessageContentImageView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,26 +29,34 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BoxWithFooterView = Class.extend(MustacheView, {
+var MessageContentImageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-footer {{attributes.classes}}">' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
-                '</div>',
+    template:   '<div id="message-image-{{cid}}" class="message-image">' +
+            '<img id="image-{{cid}}" src={{model.imageUrl}} />' +
+        '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @protected
+     * @param {string} propertyName
+     * @param {string} propertyValue
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
+            //TODO BRN: figure out which attribute will hold the image url or if we need to load the asset data from somewhere else
+            /*case "message":
+                this.findElement('#message-text-' + this.cid).text(attributeValue);
+                break;*/
+        }
     }
 });
 
@@ -57,4 +65,4 @@ var BoxWithFooterView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BoxWithFooterView", BoxWithFooterView);
+bugpack.export("airbug.MessageContentImageView", MessageContentImageView);

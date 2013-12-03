@@ -7,6 +7,7 @@
 //@Export('MustacheView')
 
 //@Require('Class')
+//@Require('LiteralUtil')
 //@Require('carapace.CarapaceView')
 //@Require('mustache.Mustache')
 
@@ -23,6 +24,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var LiteralUtil     = bugpack.require('LiteralUtil');
 var CarapaceView    = bugpack.require('carapace.CarapaceView');
 var Mustache        = bugpack.require('mustache.Mustache');
 
@@ -64,7 +66,7 @@ var MustacheView = Class.extend(CarapaceView, {
      */
     generateTemplateData: function() {
         var data = {};
-        data.model = this.model ? this.model.toJSON() : {};
+        data.model = this.model ? LiteralUtil.convertToLiteral(this.model) : {};
         data.attributes = this.attributes;
         data.cid = this.cid;
         return data;

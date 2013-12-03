@@ -4,18 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('ContactCollection')
+//@Export('RoomList')
 
 //@Require('Class')
-//@Require('airbug.ContactModel')
-//@Require('carapace.CarapaceCollection')
+//@Require('carapace.CarapaceList')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,27 +22,18 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var ContactModel        = bugpack.require('airbug.ContactModel');
-var CarapaceCollection  = bugpack.require('carapace.CarapaceCollection');
+var CarapaceList        = bugpack.require('carapace.CarapaceList');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ContactCollection = Class.extend(CarapaceCollection, {
-
-    model: ContactModel
-
-    //-------------------------------------------------------------------------------
-    // CarapaceCollection Implementation
-    //-------------------------------------------------------------------------------
-
-});
+var RoomList = Class.extend(CarapaceList, {});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ContactCollection", ContactCollection);
+bugpack.export("airbug.RoomList", RoomList);

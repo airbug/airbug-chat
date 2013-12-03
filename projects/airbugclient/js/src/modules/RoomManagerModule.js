@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
+//@Require('airbug.RoomList')
+//@Require('airbug.RoomModel')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +25,8 @@ var bugpack         = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var RoomList        = bugpack.require('airbug.RoomList');
+var RoomModel       = bugpack.require('airbug.RoomModel');
 
 
 //-------------------------------------------------------------------------------
@@ -54,6 +58,23 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      */
     createRoom: function(roomObject, callback) {
         this.create("Room", roomObject, callback);
+    },
+
+    /**
+     * @param {IList=} dataList
+     * @return {RoomList}
+     */
+    generateRoomList: function(dataList) {
+        return new RoomList(dataList);
+    },
+
+    /**
+     * @param {Object=} roomObject
+     * @param {MeldDocument=} roomMeldDocument
+     * @returns {RoomModel}
+     */
+    generateRoomModel: function(roomObject, roomMeldDocument) {
+        return new RoomModel(roomObject, roomMeldDocument);
     },
 
     /**

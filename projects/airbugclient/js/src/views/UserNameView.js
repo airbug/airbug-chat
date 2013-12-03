@@ -44,16 +44,16 @@ var UserNameView = Class.extend(MustacheView, {
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
 
-        switch (attributeName) {
+        switch (propertyName) {
             case "firstName":
             case "lastName":
-                this.findElement('#user-name-' + this.cid).text(this.model.get("firstName") + " " + this.model.get("lastName"));
+                this.findElement('#user-name-' + this.getCid()).text(this.model.getProperty("firstName") + " " + this.model.getProperty("lastName"));
                 break;
         }
     }

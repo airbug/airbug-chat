@@ -4,15 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('UserListItemContainer')
+//@Export('ChatMessageCodeContainer')
 
 //@Require('Class')
-//@Require('airbug.SelectableListItemView')
-//@Require('airbug.TextView')
-//@Require('airbug.UserModel')
-//@Require('airbug.UserNameView')
-//@Require('airbug.UserStatusIndicatorView')
-//@Require('carapace.CarapaceContainer')
+//@Require('airbug.ChatMessageContainer')
+//@Require('airbug.MessageContentCodeView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -20,73 +16,76 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
-var TextView                    = bugpack.require('airbug.TextView');
-var UserModel                   = bugpack.require('airbug.UserModel');
-var UserNameView                = bugpack.require('airbug.UserNameView');
-var UserStatusIndicatorView     = bugpack.require('airbug.UserStatusIndicatorView');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var ChatMessageContainer            = bugpack.require('airbug.ChatMessageContainer');
+var MessageContentCodeView          = bugpack.require('airbug.MessageContentCodeView');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserListItemContainer = Class.extend(CarapaceContainer, {
+var ChatMessageCodeContainer = Class.extend(ChatMessageContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(chatMessageModel) {
 
-        this._super();
+        this._super(chatMessageModel);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Models
-        //-------------------------------------------------------------------------------
-
         /**
          * @private
-         * @type {UserModel}
+         * @type {MessageContentCodeView}
          */
-        this.userModel = null;
-
-
-        // Views
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {SelectableListItemView}
-         */
-        this.selectableListItemView = null;
+        this.messageContentCodeView            = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {MessageContentCodeView}
+     */
+    getMessageContentCodeView: function() {
+        return this.messageContentCodeView;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceContainer Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array<*>} routerArgs
+     */
+    activateContainer: function(routerArgs) {
+        this._super(routerArgs);
+    },
 
     /**
      * @protected
@@ -94,35 +93,22 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
-
         // Create Models
         //-------------------------------------------------------------------------------
-
-        this.userModel = new UserModel({});
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.selectableListItemView =
-            view(SelectableListItemView)
-                .model(this.userModel)
-                .children([
-                    view(UserStatusIndicatorView)
-                        .model(this.userModel)
-                        .appendTo('*[id|=list-item]'),
-                    view(UserNameView)
-                        .model(this.userModel)
-                        .attributes({classes: "text-simple"})
-                        .appendTo('*[id|=list-item]')
-                ])
+        this.messageContentCodeView =
+            view(MessageContentCodeView)
+                .model(this.getChatMessageModel())
                 .build();
-
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.selectableListItemView);
+        this.getChatMessageView().addViewChild(this.messageContentCodeView, "#message-content-" + this.getChatMessageView().getCid());
     }
 });
 
@@ -131,4 +117,4 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.UserListItemContainer", UserListItemContainer);
+bugpack.export("airbug.ChatMessageCodeContainer", ChatMessageCodeContainer);

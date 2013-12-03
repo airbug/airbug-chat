@@ -96,7 +96,7 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         var userId  = this.roomMemberModel.get("userId");
         this.userManagerModule.retrieveUser(userId, function(throwable, userMeldDocument) {
             if (!throwable) {
-                _this.userModel.setMeldDocument(userMeldDocument);
+                _this.userModel.setUserMeldDocument(userMeldDocument);
             } else {
                 //TODO error handling
                 // retry condition

@@ -7,8 +7,10 @@
 //@Export('CurrentUserManagerModule')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('TypeUtil')
 //@Require('airbug.CurrentUser')
+//@Require('airbug.CurrentUserModel')
 //@Require('airbug.ManagerModule')
 //@Require('bugflow.BugFlow')
 
@@ -17,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -25,8 +27,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var TypeUtil            = bugpack.require('TypeUtil');
 var CurrentUser         = bugpack.require('airbug.CurrentUser');
+var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
 var ManagerModule       = bugpack.require('airbug.ManagerModule');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -68,7 +72,13 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          * @private
          * @type {CurrentUser}
          */
-        this.currentUser        = undefined;
+        this.currentUser        = null;
+
+        /**
+         * @private
+         * @type {null}
+         */
+        this.logger             = null;
 
         /**
          * @private
@@ -82,6 +92,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          */
         this.userManagerModule  = userManagerModule;
     },
+
 
     //-------------------------------------------------------------------------------
     // Configuration
@@ -99,7 +110,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             refreshConnectionForLogin: function(request, responder, callback) {
                 var response = responder.response("Success", {});
                 responder.sendResponse(response, function(error){
-                    _this.currentUser = undefined;
+                    _this.currentUser = null;
                     airbugApi.refreshConnection();
                     callback(error);
                 });
@@ -116,7 +127,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                 console.log("CurrentUserManagerModule refreshConnectionForLogout route");
                 var response = responder.response("Success", {});
-                _this.currentUser = undefined;
+                _this.currentUser = null;
                 //do i need to wait for connection_established event?
                 //ajax call -- http request made on socket connect. should replace cookie if session no longer exists.
                 responder.sendResponse(response, function(error){
@@ -138,7 +149,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             refreshConnectionForRegister: function(request, responder, callback) {
                 var response = responder.response("Success", {});
                 responder.sendResponse(response, function(error){
-                    _this.currentUser = undefined;
+                    _this.currentUser = null;
                     airbugApi.refreshConnection();
                     callback(error);
                 });
@@ -152,6 +163,15 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {Object=} dataObject
+     * @param {MeldDocument=} currentUserMeldDocument
+     * @returns {CurrentUserModel}
+     */
+    generateCurrentUserModel: function(dataObject, currentUserMeldDocument) {
+        return new CurrentUserModel(dataObject, currentUserMeldDocument);
+    },
+
+    /**
      * @param {function(Throwable, CurrentUser)} callback
      */
     retrieveCurrentUser: function(callback) {
@@ -162,7 +182,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         if (this.currentUser) {
             console.log("user already retrieved");
             console.log("currentUser:", this.currentUser);
-            callback(undefined, this.currentUser);
+            callback(null, this.currentUser);
         } else {
             this.request("retrieveCurrentUser", {}, function(throwable, callResponse) {
                 console.log("CurrentUserManagerModule#retrieveCurrentUserDefault request retrieve CurrentUser callback");
@@ -176,7 +196,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     _this.retrieve("User", currentUserId, "owner", function(throwable, currentUserMeldDocument) {
                         if (!throwable) {
                             _this.currentUser = new CurrentUser(currentUserMeldDocument);
-                            callback(undefined, _this.currentUser);
+                            callback(null, _this.currentUser);
                         } else {
                             //TODO
                             callback(throwable);
@@ -204,9 +224,18 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     dataType: "json",
                     data: {email: email, password: password},
                     success: function(data, textStatus, req) {
-                        console.log("LoginUser ajax call success");
-                        console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                        flow.complete();
+                        if (data.responseType === "Success") {
+                            flow.complete();
+                        } else if (data.responseType === "Exception") {
+                            var exceptionData = data.exception;
+
+                            //TEST
+                            console.log("BIG TEST - exceptionData:", exceptionData);
+
+                            flow.error(new Exception(exceptionData.type, exceptionData.data, exceptionData.message));
+                        } else {
+                            _this.logger.error("Unhandled response type on login");
+                        }
                     },
                     error: function(req, textStatus, errorThrown) {
                         if (TypeUtil.isString(errorThrown)) {
@@ -218,7 +247,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             }),
             $task(function(flow) {
-                _this.currentUser = undefined;
+                _this.currentUser = null;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             }),
@@ -258,7 +287,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             }),
             $task(function(flow) {
-                _this.currentUser = undefined;
+                _this.currentUser = null;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             })
@@ -303,7 +332,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             }),
             $task(function(flow) {
-                _this.currentUser = undefined;
+                _this.currentUser = null;
                 _this.airbugApi.refreshConnection();
                 flow.complete();
             }),

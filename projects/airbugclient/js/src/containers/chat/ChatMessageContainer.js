@@ -81,40 +81,74 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.ChatMessageModel}
+         * @private
+         * @type {ChatMessageModel}
          */
         this.chatMessageModel           = chatMessageModel;
+
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {airbug.ListItemView}
+         * @type {ChatMessageView}
          */
         this.chatMessageView            = null;
+
+        /**
+         * @private
+         * @type {ListItemView}
+         */
+        this.listItemView               = null;
+
 
         // Modules
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {airbug.ChatMessageManagerModule}
+         * @type {ChatMessageManagerModule}
          */
         this.chatMessageManagerModule   = null;
 
         /**
          * @private
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
         this.commandModule              = null;
 
         /**
          * @private
-         * @type {airbug.UserManagerModule}
+         * @type {UserManagerModule}
          */
         this.userManagerModule          = null;
+    },
 
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {ChatMessageModel}
+     */
+    getChatMessageModel: function() {
+        return this.chatMessageModel;
+    },
+
+    /**
+     * @returns {ChatMessageView}
+     */
+    getChatMessageView: function() {
+        return this.chatMessageView;
+    },
+
+    /**
+     * @returns {ListItemView}
+     */
+    getListItemView: function() {
+        return this.listItemView;
     },
 
 
@@ -145,12 +179,13 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatMessageView =
+        this.listItemView =
             view(ListItemView)
                 .model(this.chatMessageModel)
                 .attributes({size: "flex"})
                 .children([
                     view(ChatMessageView)
+                        .id("chatMessageView")
                         .model(this.chatMessageModel)
                 ])
                 .build();
@@ -158,7 +193,8 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.chatMessageView);
+        this.setViewTop(this.listItemView);
+        this.chatMessageView = this.findViewById("chatMessageView");
     },
 
     /**
@@ -207,8 +243,10 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
         //TODO BRN: This needs to figure out the type of chat message
 
+
         var chatMessage         = this.chatMessageManagerModule.generateTextChatMessage(chatMessageModel.toJSON());
 
+        //TODO BRN: Rework this to use BugFlow
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
             if (!throwable) {
                 chatMessageModel.set({
@@ -220,21 +258,24 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
                         //NOTE BRN: We want to set both of these at the same time so that we don't do a partial update of the message display
 
-                        chatMessageModel.setMeldDocument(chatMessageMeldDocument);
-                        var sender = userMeldDocument.generateObject();
-                        chatMessageModel.set("sentBy", sender.firstName + " " + sender.lastName);
+                        chatMessageModel.setChatMessageMeldDocument(chatMessageMeldDocument);
+                        chatMessageModel.setSenderUserMeldDocument(userMeldDocument)
                     } else {
-                        //NOTE if this error occurs it is an unforseeable edge case
-                        //TODO error handling
-                        //TODO error tracking
-                        //Retry to get sender information which should be self
+                        if (Class.doesExtend(throwable, RequestFailedException)) {
+
+                            //TODO BRN: Need to add a retry mechanism here for loading the user
+
+                            console.error(throwable);
+                        } else {
+                            console.error(throwable);
+                        }
                     }
                 });
             } else {
                 if (Class.doesExtend(throwable, RequestFailedException)) {
                     chatMessageModel.set({failed: true, pending: false});
                 } else {
-
+                    console.error(throwable);
                 }
             }
         });

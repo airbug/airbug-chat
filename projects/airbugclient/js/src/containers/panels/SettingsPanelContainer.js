@@ -147,7 +147,6 @@ var SettingsPanelContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.currentUserModel = this.sessionModule.getFullUserModel();
 
 
         // Create Views

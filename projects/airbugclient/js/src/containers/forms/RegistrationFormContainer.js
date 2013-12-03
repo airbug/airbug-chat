@@ -7,6 +7,7 @@
 //@Export('RegistrationFormContainer')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
@@ -21,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
 var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
@@ -43,10 +45,10 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta     = BugMeta.context();
-var autowired   = AutowiredAnnotation.autowired;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var bugmeta                 = BugMeta.context();
+var autowired               = AutowiredAnnotation.autowired;
+var property                = PropertyAnnotation.property;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -164,11 +166,16 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
                     });
                 }
             } else {
+
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("throwable:", throwable);
-                notificationView.flashError(throwable);
-                console.log("currentUserManagerModule#registerUser callback throwable:", throwable);
+                if (Class.doesExtend(throwable, Exception)) {
+                    notificationView.flashExceptionMessage(throwable.getMessage());
+                } else {
+                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                }
             }
         });
     }

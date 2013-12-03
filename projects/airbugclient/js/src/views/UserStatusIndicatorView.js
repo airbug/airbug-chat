@@ -44,14 +44,14 @@ var UserStatusIndicatorView = Class.extend(MustacheView, {
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
-        switch (attributeName) {
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
             case "status":
-                this.findElement('#user-status-indicator-' + this.cid).addClass("user-status-indicator user-status-indicator-" + attributeValue);
+                this.findElement('#user-status-indicator-' + this.getCid()).addClass("user-status-indicator user-status-indicator-" + propertyValue);
                 break;
         }
     }

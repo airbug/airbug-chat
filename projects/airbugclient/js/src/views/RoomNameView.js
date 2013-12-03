@@ -44,14 +44,14 @@ var RoomNameView = Class.extend(MustacheView, {
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
-        this._super(attributeName, attributeValue);
-        switch (attributeName) {
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
             case "name":
-                this.findElement('#room-name-' + this.cid).text(attributeValue);
+                this.findElement('#room-name-' + this.getCid()).text(propertyValue);
                 break;
         }
     }

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('bugdelta.DeltaDocumentChange')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
@@ -26,6 +27,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var TypeUtil                = bugpack.require('TypeUtil');
 var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
@@ -100,51 +102,19 @@ var MeldService = Class.extend(Obj, {
     /**
      * @param {MeldManager} meldManager
      * @param {string} type
-     * @param {string} filter
+     * @param {(string | Array.<string>)} filters
      * @param {Entity} entity
      */
-    meldEntity: function(meldManager, type, filter, entity) {
-        /** @type {MeldKey} */
-        var meldKey = this.generateMeldKey(type, entity.getId(), filter);
-        /** @type {MeldDocument} */
-        var meldDocument = undefined;
-        if (!meldManager.containsMeldByKey(meldKey)) {
-
-            //TEST
-            console.log("MeldService#meldEntity - MeldManager did not contain meldKey:", meldKey.toKey());
-
-            entity.commitDelta();
-            meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
-            meldManager.meldMeld(meldDocument);
-            meldDocument.meldData(entity.toObject());
-        } else {
-            meldDocument = meldManager.getMeld(meldKey);
-
-            // TODO BRN: MUST write a unit test that ensures that the operation for this meld generates the meld at
-            // this point in time and NOT with all of the additional property changes that will come after it.
-
-            meldManager.meldMeld(meldDocument);
-            entity.generateDelta().getDeltaChangeList().forEach(function(deltaChange) {
-                switch (deltaChange.getChangeType()) {
-                    case DeltaDocumentChange.ChangeTypes.DATA_SET:
-                        meldDocument.meldData(Obj.clone(deltaChange.getData(), true));
-                        break;
-                    case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
-                        meldDocument.unmeldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName());
-                        break;
-                    case ObjectChange.ChangeTypes.PROPERTY_SET:
-                        meldDocument.meldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName(), Obj.clone(deltaChange.getPropertyValue(), true));
-                        break;
-                    case SetChange.ChangeTypes.ADDED_TO_SET:
-                        meldDocument.meldToSet(deltaChange.getPath(), deltaChange.getSetValue());
-                        break;
-                    case SetChange.ChangeTypes.REMOVED_FROM_SET:
-                        meldDocument.unmeldFromSet(deltaChange.getPath(), deltaChange.getSetValue());
-                        break;
-                }
+    meldEntity: function(meldManager, type, filters, entity) {
+        var _this = this;
+        if (TypeUtil.isArray(filters)) {
+            filters.forEach(function(filter) {
+                _this.meldEntityForFilter(meldManager, type, filter, entity);
             });
-            entity.commitDelta();
+        } else {
+            this.meldEntityForFilter(meldManager, type, filters, entity);
         }
+        entity.commitDelta();
     },
 
     /**
@@ -202,6 +172,60 @@ var MeldService = Class.extend(Obj, {
             }
         });
         console.log("End of MeldService#unmeldUserWithKeysAndReason");
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {MeldManager} meldManager
+     * @param {string} type
+     * @param {string} filter
+     * @param {Entity} entity
+     */
+    meldEntityForFilter: function(meldManager, type, filter, entity) {
+        /** @type {MeldKey} */
+        var meldKey = this.generateMeldKey(type, entity.getId(), filter);
+        /** @type {MeldDocument} */
+        var meldDocument = undefined;
+        if (!meldManager.containsMeldByKey(meldKey)) {
+
+            //TEST
+            console.log("MeldService#meldEntity - MeldManager did not contain meldKey:", meldKey.toKey());
+
+            meldDocument = this.meldBuilder.generateMeldDocument(meldKey);
+            meldManager.meldMeld(meldDocument);
+            meldDocument.meldData(entity.toObject());
+        } else {
+            meldDocument = meldManager.getMeld(meldKey);
+
+            // TODO BRN: MUST write a unit test that ensures that the operation for this meld generates the meld at
+            // this point in time and NOT with all of the additional property changes that will come after it.
+
+            meldManager.meldMeld(meldDocument);
+            entity.generateDelta().getDeltaChangeList().forEach(function(deltaChange) {
+                switch (deltaChange.getChangeType()) {
+                    case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                        meldDocument.meldData(Obj.clone(deltaChange.getData(), true));
+                        break;
+                    case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
+                        meldDocument.unmeldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName());
+                        break;
+                    case ObjectChange.ChangeTypes.PROPERTY_SET:
+                        meldDocument.meldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName(), Obj.clone(deltaChange.getPropertyValue(), true));
+                        break;
+                    case SetChange.ChangeTypes.ADDED_TO_SET:
+                        meldDocument.meldToSet(deltaChange.getPath(), deltaChange.getSetValue());
+                        break;
+                    case SetChange.ChangeTypes.REMOVED_FROM_SET:
+                        meldDocument.unmeldFromSet(deltaChange.getPath(), deltaChange.getSetValue());
+                        break;
+                }
+            });
+        }
     }
 });
 

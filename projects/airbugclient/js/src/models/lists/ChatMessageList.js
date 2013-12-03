@@ -4,18 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('ConversationCollection')
+//@Export('ChatMessageList')
 
 //@Require('Class')
-//@Require('airbug.ConversationModel')
-//@Require('carapace.CarapaceCollection')
+//@Require('carapace.CarapaceList')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,27 +22,18 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var ConversationModel   = bugpack.require('airbug.ConversationModel');
-var CarapaceCollection  = bugpack.require('carapace.CarapaceCollection');
+var CarapaceList        = bugpack.require('carapace.CarapaceList');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationCollection = Class.extend(CarapaceCollection, {
-
-    model: ConversationModel
-
-    //-------------------------------------------------------------------------------
-    // CarapaceCollection Implementation
-    //-------------------------------------------------------------------------------
-
-});
+var ChatMessageList = Class.extend(CarapaceList, {});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ConversationCollection", ConversationCollection);
+bugpack.export("airbug.ChatMessageList", ChatMessageList);

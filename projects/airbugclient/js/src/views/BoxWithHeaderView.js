@@ -47,7 +47,7 @@ var BoxWithHeaderView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "box-" + this.cid;
+        data.id     = this.getId() || "box-" + this.getCid();
         return data;
     }
 });

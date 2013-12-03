@@ -7,6 +7,7 @@
 //@Export('LogoutButtonContainer')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
@@ -21,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
@@ -43,10 +45,10 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired               = AutowiredAnnotation.autowired;
+var bugmeta                 = BugMeta.context();
+var property                = PropertyAnnotation.property;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -153,18 +155,21 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
     hearLogoutButtonClickedEvent: function(event) {
         var _this = this;
         this.currentUserManagerModule.logout(function(throwable) {
-            console.log("Inside LogoutButtonContainer#hearButtonClickedEvent callback from currentUserManagerModule#logout");
             if (!throwable) {
                 _this.navigationModule.navigate("login", {
                     trigger: true
                 });
-                // window.location.replace("http://localhost:8000/app");
-                console.log("end of currentUserManagerModule.logout callbacks in LogoutButtonContainer");
             } else {
+
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("throwable:", throwable);
-                notificationView.flashError(throwable);
+                if (Class.doesExtend(throwable, Exception)) {
+                    notificationView.flashExceptionMessage(throwable.getMessage());
+                } else {
+                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                }
             }
         });
 

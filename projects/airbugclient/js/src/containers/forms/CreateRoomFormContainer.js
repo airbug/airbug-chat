@@ -7,6 +7,7 @@
 //@Export('CreateRoomFormContainer')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('airbug.CreateRoomFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
@@ -21,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
 var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
@@ -43,10 +45,10 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired               = AutowiredAnnotation.autowired;
+var bugmeta                 = BugMeta.context();
+var property                = PropertyAnnotation.property;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -149,20 +151,22 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         var _this       = this;
         var formData     = event.getData().formData;
         this.roomManagerModule.createRoom(formData, function(throwable, roomMeldDocument) {
-
-            console.log("Inside of CreateRoomFormContainer#hearFormSubmittedEvent roomManagerModule#createRoom callback");
-            console.log("Throwable:", throwable, "roomMeldDocument:", roomMeldDocument);
-
             if (!throwable) {
                 var roomId = roomMeldDocument.getData().id;
                 _this.navigationModule.navigate("room/" + roomId, {
                     trigger: true
                 });
             } else {
+
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
                 var parentContainer     = _this.getContainerParent();
                 var notificationView    = parentContainer.getNotificationView();
-                console.log("roomManagerModule#createRoom callback throwable:", throwable);
-                notificationView.flashError(throwable);
+                if (Class.doesExtend(throwable, Exception)) {
+                    notificationView.flashExceptionMessage(throwable.getMessage());
+                } else {
+                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                }
             }
         });
     }

@@ -8,23 +8,33 @@
 
 //@Require('Class')
 //@Require('UuidGenerator')
+//@Require('airbug.ChatMessageList')
+//@Require('airbug.ChatMessageModel')
+//@Require('airbug.CodeChatMessageModel')
+//@Require('airbug.ImageChatMessageModel')
 //@Require('airbug.ManagerModule')
+//@Require('airbug.TextChatMessageModel')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var UuidGenerator   = bugpack.require('UuidGenerator');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Class                   = bugpack.require('Class');
+var UuidGenerator           = bugpack.require('UuidGenerator');
+var ChatMessageList         = bugpack.require('airbug.ChatMessageList');
+var ChatMessageModel        = bugpack.require('airbug.ChatMessageModel');
+var CodeChatMessageModel    = bugpack.require('airbug.CodeChatMessageModel');
+var ImageChatMessageModel   = bugpack.require('airbug.ImageChatMessageModel');
+var ManagerModule           = bugpack.require('airbug.ManagerModule');
+var TextChatMessageModel    = bugpack.require('airbug.TextChatMessageModel');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +42,6 @@ var ManagerModule   = bugpack.require('airbug.ManagerModule');
 //-------------------------------------------------------------------------------
 
 var ChatMessageManagerModule = Class.extend(ManagerModule, {
-
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -94,40 +103,134 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {*} chatMessageData
-     * @return {*}
+     * @param {IList=} dataList
+     * @returns {ChatMessageList}
      */
-    generateChatMessage: function(chatMessageData) {
-        if (chatMessageData.type === "text") {
-            return this.generateTextChatMessage(chatMessageData);
-        } else if (chatMessageData.type === "code") {
-            return this.generateCodeChatMessage(chatMessageData);
+    generateChatMessageList: function(dataList) {
+        return new ChatMessageList(dataList);
+    },
+
+    /**
+     * @param {{}} chatMessageObject
+     * @param {Meld=} chatMessageMeld
+     * @param {Meld=} senderUserMeld
+     */
+    generateChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
+        var type = chatMessageObject.type || chatMessageMeld.getData().type;
+        if (type === "text") {
+            return this.generateTextChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
+        } else if (type === "code") {
+            return this.generateCodeChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
+        } else if (type === "image") {
+            return this.generateImageChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
         } else {
             throw new Error("ChatMessage data must specify a type");
         }
     },
 
     /**
-     * @param {*} chatMessageData
-     * @return {*}
+     * @param {{}} chatMessageObject
+     * @param {Meld=} chatMessageMeld
+     * @param {Meld=} senderUserMeld
      */
-    generateCodeChatMessage: function(chatMessageData) {
-        var codeChatMessageObject = {};
-        codeChatMessageObject.code              = chatMessageData.code;
-        codeChatMessageObject.codeLanguage      = chatMessageData.codeLanguage;
-        codeChatMessageObject.conversationId    = chatMessageData.conversationId;
-        codeChatMessageObject.senderUserId      = chatMessageData.senderUserId;
-        codeChatMessageObject.sentAt            = chatMessageData.sentAt;
-        codeChatMessageObject.tryUuid           = chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid();
-        codeChatMessageObject.type              = chatMessageData.type;
-        return codeChatMessageObject;
+    generateCodeChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
+        return new CodeChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
+    },
+
+    /**
+     * @param {{}} chatMessageObject
+     * @param {Meld=} chatMessageMeld
+     * @param {Meld=} senderUserMeld
+     */
+    generateImageChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
+        return new ImageChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
+    },
+
+    /**
+     * @param {{}} chatMessageObject
+     * @param {Meld=} chatMessageMeld
+     * @param {Meld=} senderUserMeld
+     */
+    generateTextChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
+        return new TextChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
     },
 
     /**
      * @param {*} chatMessageData
      * @return {*}
      */
-    generateTextChatMessage: function(chatMessageData) {
+    generateChatMessageObject: function(chatMessageData) {
+        if (chatMessageData.type === "text") {
+            return this.generateTextChatMessageObject(chatMessageData);
+        } else if (chatMessageData.type === "code") {
+            return this.generateCodeChatMessageObject(chatMessageData);
+        } else if (chatMessageData.type === "image") {
+            return this.generateImageChatMessageObject(chatMessageData);
+        } else {
+            throw new Error("ChatMessage data must specify a type");
+        }
+    },
+
+    /**
+     * @param {Object} chatMessageData
+     * @return {{
+     *      code: string.
+     *      codeLanguage:   string,
+     *      conversationId: string,
+     *      senderUserId:   string,
+     *      sentAt:         Date,
+     *      tryUuid:        string,
+     *      type:           string
+     * }}
+     */
+    generateCodeChatMessageObject: function(chatMessageData) {
+        var codeChatMessageObject = {
+            code:           chatMessageData.code,
+            codeLanguage:   chatMessageData.codeLanguage,
+            conversationId: chatMessageData.conversationId,
+            senderUserId:   chatMessageData.senderUserId,
+            sentAt:         chatMessageData.sentAt,
+            tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
+            type:           chatMessageData.type
+        };
+        return codeChatMessageObject;
+    },
+
+    /**
+     * @param {Object} chatMessageData
+     * @return {{
+     *      conversationId: string,
+     *      imageUrl:       string,
+     *      senderUserId:   string,
+     *      sentAt:         Date,
+     *      tryUuid:        string,
+     *      type:           string
+     * }}
+     */
+    generateImageChatMessageObject: function(chatMessageData) {
+        var codeChatMessageObject = {
+            conversationId: chatMessageData.conversationId,
+            imageUrl:       chatMessageData.imageUrl,
+            senderUserId:   chatMessageData.senderUserId,
+            sentAt:         chatMessageData.sentAt,
+            tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
+            type:           chatMessageData.type
+        };
+        return codeChatMessageObject;
+    },
+
+    /**
+     * @param {Object} chatMessageData
+     * @return {{
+     *      body:           string,
+     *      conversationId: string,
+     *      senderUserId:   string,
+     *      sentAt:         Date,
+     *      tryUuid:        string,
+     *      type:           string
+     * }}
+     */
+    generateTextChatMessageObject: function(chatMessageData) {
         var textChatMessageObject = {};
         textChatMessageObject.body              = chatMessageData.body;
         textChatMessageObject.conversationId    = chatMessageData.conversationId;
@@ -137,6 +240,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         textChatMessageObject.type              = chatMessageData.type;
         return textChatMessageObject;
     },
+
+
 
     /**
      * @param {string} chatMessageId

@@ -38,6 +38,7 @@
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
 //@Require('carapace.RoutingRequest')
+//@Require('loggerbug.Logger')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
@@ -86,6 +87,7 @@ var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication'
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
 var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
+var Logger                      = bugpack.require('loggerbug.Logger');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -394,6 +396,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {Logger}
+     */
+    logger: function() {
+        return new Logger();
+    },
+
+    /**
      * @return {NavigationModule}
      */
     navigationModule: function() {
@@ -543,7 +552,11 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("userManagerModule"),
                 arg().ref("navigationModule"),
                 arg().ref("bugCallRouter")
+            ])
+            .properties([
+                property("logger").ref("logger")
             ]),
+        module("logger"),
         module("navigationModule")
             .properties([
                 property("carapaceRouter").ref("carapaceRouter"),
