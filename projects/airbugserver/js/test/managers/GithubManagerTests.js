@@ -54,7 +54,7 @@ var $task                   = BugFlow.$task;
 // Declare Setup Objects
 //-------------------------------------------------------------------------------
 
-var setupGithubManager = function(setupObject, test) {
+var setupGithubManager = function(setupObject) {
     setupObject.entityManagerStore     = new EntityManagerStore();
     setupObject.mongoDataStore         = new DummyMongoDataStore();
     setupObject.schemaManager          = new SchemaManager();
@@ -74,6 +74,9 @@ var setupGithubManager = function(setupObject, test) {
         githubId: setupObject.testGithubId,
         githubLogin: setupObject.testGithubLogin
     });
+};
+
+var initializeManagers = function(setupObject, test) {
     $series([
         $task(function(flow) {
             setupObject.schemaManager.initializeModule(function(throwable) {
@@ -84,7 +87,17 @@ var setupGithubManager = function(setupObject, test) {
             setupObject.githubManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });
-        }),
+        })
+    ]).execute(function(throwable) {
+            if (throwable) {
+                test.error(throwable);
+            }
+        });
+
+};
+
+var setupGithubEntity = function(setupObject, test) {
+    $series([
         $task(function(flow) {
             setupObject.githubManager.createGithub(setupObject.testGithub, function(throwable) {
                 if (!throwable) {
@@ -95,10 +108,10 @@ var setupGithubManager = function(setupObject, test) {
             });
         })
     ]).execute(function(throwable) {
-        if (throwable) {
-            test.error(throwable);
-        }
-    });
+            if (throwable) {
+                test.error(throwable);
+            }
+        });
 };
 
 //-------------------------------------------------------------------------------
@@ -113,7 +126,7 @@ var githubManagerRetrieveGithubByGithubIdTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubManager(this, test);
+        setupGithubManager(this);
     },
 
     //-------------------------------------------------------------------------------
@@ -122,6 +135,8 @@ var githubManagerRetrieveGithubByGithubIdTest = {
 
     test: function(test) {
         var _this = this;
+        initializeManagers(_this, test);
+        setupGithubEntity(_this, test);
         $series([
             $task(function(flow) {
                 _this.githubManager.retrieveGithubByGithubId(_this.testGithubId, function(throwable, github) {
@@ -150,7 +165,7 @@ var githubManagerRetrieveGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubManager(this, test);
+        setupGithubManager(this);
     },
 
     //-------------------------------------------------------------------------------
@@ -159,6 +174,8 @@ var githubManagerRetrieveGithubTest = {
 
     test: function(test) {
         var _this = this;
+        initializeManagers(_this, test);
+        setupGithubEntity(_this, test);
         $series([
             $task(function(flow) {
                 _this.githubManager.retrieveGithub(_this.testGithub.getId(), function(throwable, github) {
@@ -187,7 +204,7 @@ var githubManagerDeleteGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubManager(this, test);
+        setupGithubManager(this);
     },
 
     //-------------------------------------------------------------------------------
@@ -196,6 +213,8 @@ var githubManagerDeleteGithubTest = {
 
     test: function(test) {
         var _this = this;
+        initializeManagers(_this, test);
+        setupGithubEntity(_this, test);
         _this.testGithubObjectId = _this.testGithub.getId();
         $series([
             $task(function(flow) {
