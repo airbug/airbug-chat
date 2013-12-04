@@ -146,18 +146,6 @@ var RoomMemberManager = Class.extend(EntityManager, {
 
     /**
      * @param {RoomMember} roomMember
-     * @param {function(Error, RoomMember} callback
-     */
-    saveRoomMember: function(roomMember, callback) {
-        //TODO
-        if (!roomMember.getCreatedAt()) {
-            roomMember.setCreatedAt(new Date());
-        }
-        roomMember.setUpdatedAt(new Date());
-    },
-
-    /**
-     * @param {RoomMember} roomMember
      * @param {function(Throwable, RoomMember)} callback
      */
     updateRoomMember: function(roomMember, callback) {

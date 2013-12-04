@@ -17,18 +17,18 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Exception   = bugpack.require('Exception');
-var Obj         = bugpack.require('Obj');
-var User        = bugpack.require('airbugserver.User');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
+var Obj                 = bugpack.require('Obj');
+var User                = bugpack.require('airbugserver.User');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ var RoomService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {{
-     *
+     *      name: string
      * }} roomData
      * @param {function(Throwable, Room=)} callback
      */
@@ -310,14 +310,14 @@ var RoomService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} roomId
-     * @param {function(Throwable, Room)} callback
+     * @param {function(Throwable, Room=)} callback
      */
     retrieveRoom: function(requestContext, roomId, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
         var meldManager = this.meldService.factoryManager();
-        var room        = undefined;
-        var roomManager = this.roomManager;
+        /** @type {Room} */
+        var room        = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
@@ -330,7 +330,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     if(room){
                         _this.meldUserWithRoom(meldManager, currentUser, room);
-                        _this.meldRoom(meldManager, room);
+                        _this.pushRoom(meldManager, room);
                         meldManager.commitTransaction(function(throwable) {
                             flow.complete(throwable);
                         });
@@ -340,7 +340,7 @@ var RoomService = Class.extend(Obj, {
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(undefined, room);
+                    callback(null, room);
                 } else {
                     callback(throwable);
                 }
@@ -352,7 +352,7 @@ var RoomService = Class.extend(Obj, {
 
     /**
      * @param {Array.<string>} roomIds
-     * @param {function(Throwable, Map.<string, Room>)} callback
+     * @param {function(Throwable, Map.<string, Room>=)} callback
      */
     retrieveRooms: function(requestContext, roomIds, callback) {
         var _this       = this;
@@ -379,7 +379,7 @@ var RoomService = Class.extend(Obj, {
                     $iterableParallel(roomMap.getValueCollection(), function(flow, room) {
                         _this.dbPopulateRoomAndRoomMembers(room, function(throwable) {
                             _this.meldUserWithRoom(meldManager, currentUser, room);
-                            _this.meldRoom(meldManager, room);
+                            _this.pushRoom(meldManager, room);
                             flow.complete(throwable);
                         });
                     }).execute(function(throwable) {

@@ -33,8 +33,6 @@ var ISet                    = bugpack.require('ISet');
 var Set                     = bugpack.require('Set');
 var Room                    = bugpack.require('airbugserver.Room');
 var RoomManager             = bugpack.require('airbugserver.RoomManager');
-var User                    = bugpack.require('airbugserver.User');
-var UserManager             = bugpack.require('airbugserver.UserManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -117,6 +115,10 @@ var roomManagerCreateRoomTest = {
                             "Assert that Room.roomMemberSet is still a Set");
                         test.assertTrue(room.getRoomMemberIdSet().contains(_this.testRoomMemberId),
                             "Assert that Room.roomMemberSet contains the testRoomMemberId");
+                        test.assertTrue((room.getCreatedAt() instanceof Date),
+                            "Assert createdAt was set to a Date");
+                        test.assertTrue((room.getUpdatedAt() instanceof Date),
+                            "Assert updatedAt was set to a Date");
                     }
                     flow.complete(throwable);
                 });

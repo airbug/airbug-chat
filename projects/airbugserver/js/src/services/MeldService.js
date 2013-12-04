@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
+//@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.DeltaDocumentChange')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
@@ -28,6 +29,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var TypeUtil                = bugpack.require('TypeUtil');
+var DeltaBuilder            = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
@@ -134,7 +136,6 @@ var MeldService = Class.extend(Obj, {
         } else {
             this.pushEntityForFilter(meldManager, type, filters, entity);
         }
-        entity.commitDelta();
     },
 
     /**
@@ -206,7 +207,12 @@ var MeldService = Class.extend(Obj, {
             // this point in time and NOT with all of the additional property changes that will come after it.
 
             meldManager.meldMeld(meldDocument);
-            entity.generateDelta().getDeltaChangeList().forEach(function(deltaChange) {
+
+            var deltaBuilder        = new DeltaBuilder();
+            var meldDeltaDocument   = meldDocument.getDeltaDocument();
+            var entityDeltaDocument = entity.getDeltaDocument();
+            var delta               = deltaBuilder.buildDelta(entityDeltaDocument, meldDeltaDocument);
+            delta.getDeltaChangeList().forEach(function(deltaChange) {
                 switch (deltaChange.getChangeType()) {
                     case DeltaDocumentChange.ChangeTypes.DATA_SET:
                         meldDocument.meldData(Obj.clone(deltaChange.getData(), true));
@@ -218,10 +224,10 @@ var MeldService = Class.extend(Obj, {
                         meldDocument.meldObjectProperty(deltaChange.getPath(), deltaChange.getPropertyName(), Obj.clone(deltaChange.getPropertyValue(), true));
                         break;
                     case SetChange.ChangeTypes.ADDED_TO_SET:
-                        meldDocument.meldToSet(deltaChange.getPath(), deltaChange.getSetValue());
+                        meldDocument.meldToSet(deltaChange.getPath(), Obj.clone(deltaChange.getSetValue(), true));
                         break;
                     case SetChange.ChangeTypes.REMOVED_FROM_SET:
-                        meldDocument.unmeldFromSet(deltaChange.getPath(), deltaChange.getSetValue());
+                        meldDocument.unmeldFromSet(deltaChange.getPath(), Obj.clone(deltaChange.getSetValue(), true));
                         break;
                 }
             });
