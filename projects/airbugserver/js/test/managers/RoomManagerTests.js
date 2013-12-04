@@ -4,10 +4,11 @@
 
 //@TestFile
 
+//@Require('Class')
+//@Require('ISet')
+//@Require('Set')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomManager')
-//@Require('airbugserver.User')
-//@Require('airbugserver.UserManager')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
@@ -27,6 +28,9 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class                   = bugpack.require('Class');
+var ISet                    = bugpack.require('ISet');
+var Set                     = bugpack.require('Set');
 var Room                    = bugpack.require('airbugserver.Room');
 var RoomManager             = bugpack.require('airbugserver.RoomManager');
 var User                    = bugpack.require('airbugserver.User');
@@ -53,7 +57,7 @@ var $task                   = BugFlow.$task;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var createRoomTest = {
+var roomManagerCreateRoomTest = {
 
     async: true,
 
@@ -67,10 +71,16 @@ var createRoomTest = {
         this.schemaManager          = new SchemaManager();
         this.roomManager            = new RoomManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
         this.roomManager.setEntityType("Room");
-        this.userManager            = new UserManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
-        this.userManager.setEntityType("User");
-        this.testRoom               = this.roomManager.generateRoom({name: 'testRoom'});
-        this.testUser               = this.userManager.generateUser({email: 'test@example.com'});
+
+        this.testName               = "testName";
+        this.testConversationId     = "testConversationId";
+        this.testRoomMemberId       = "testRoomMemberId";
+        this.testRoomMemberIdSet    = new Set([this.testRoomMemberId]);
+        this.testRoom               = this.roomManager.generateRoom({
+            name: this.testName,
+            conversationId: this.testConversationId,
+            roomMemberIdSet: this.testRoomMemberIdSet
+        });
     },
 
 
@@ -83,40 +93,30 @@ var createRoomTest = {
         $series([
             $task(function(flow) {
                 _this.schemaManager.initializeModule(function(throwable) {
-                    console.log("schemaManager.initializeModule throwable = ", throwable);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 _this.roomManager.initializeModule(function(throwable) {
-                    console.log("roomManager.initializeModule throwable = ", throwable);
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.userManager.initializeModule(function(throwable) {
-                    console.log("userManager.initializeModule throwable = ", throwable);
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 _this.roomManager.createRoom(_this.testRoom, function(throwable, room) {
                     if (!throwable) {
-                        var id = _this.testRoom.getId();
-                        test.assertTrue(!!id, "Assert created room has an id. id = ", id);
-                    } else {
-                        console.log("WHOOPS");
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                console.log("starting userManager.createUser");
-                _this.userManager.createUser(_this.testUser, function(throwable, user) {
-                    console.log("inside callback for userManager.createUser");
-                    if (!throwable) {
-                        var id = _this.testUser.getId();
-                        test.assertTrue(!!id, "Assert create user has an id. id = ", id);
+                        test.assertEqual(room, _this.testRoom,
+                            "Assert room sent in to createRoom is the same room returned");
+                        var id = room.getId();
+                        test.assertTrue(!!id,
+                            "Assert created room has an id. id = " + id);
+                        test.assertEqual(room.getName(), _this.testName,
+                            "Assert that Room.name has not changed");
+                        test.assertEqual(room.getConversationId(), _this.testConversationId,
+                            "Assert that Room.conversationId has not changed");
+                        test.assertTrue(Class.doesImplement(room.getRoomMemberIdSet(), ISet),
+                            "Assert that Room.roomMemberSet is still a Set");
+                        test.assertTrue(room.getRoomMemberIdSet().contains(_this.testRoomMemberId),
+                            "Assert that Room.roomMemberSet contains the testRoomMemberId");
                     }
                     flow.complete(throwable);
                 });
@@ -130,18 +130,6 @@ var createRoomTest = {
         });
     }
 };
-
-
-function makeEmail() {
-    var email = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < 20; i++ ) {
-        email += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    email += "@email.com";
-    return email;
-}
-
-bugmeta.annotate(createRoomTest).with(
-    test().name("RoomManager #createRoom Test")
+bugmeta.annotate(roomManagerCreateRoomTest).with(
+    test().name("RoomManager - #createRoom Test")
 );

@@ -232,12 +232,12 @@ var githubManagerDeleteGithubTest = {
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
-                }
-            });
+            if (!throwable) {
+                test.complete();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
