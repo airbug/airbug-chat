@@ -51,10 +51,61 @@ var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
+// Declare Setup Objects
+//-------------------------------------------------------------------------------
+
+var setupGithubManager = function(setupObject, test) {
+    setupObject.entityManagerStore     = new EntityManagerStore();
+    setupObject.mongoDataStore         = new DummyMongoDataStore();
+    setupObject.schemaManager          = new SchemaManager();
+    setupObject.entityProcessor        = new EntityProcessor(setupObject.schemaManager);
+    setupObject.entityScan             = new EntityScan(setupObject.entityProcessor);
+    setupObject.entityScan.scanClass(Github);
+    setupObject.githubManager           = new GithubManager(setupObject.entityManagerStore,
+        setupObject.schemaManager, setupObject.mongoDataStore);
+    setupObject.githubManager.setEntityType("Github");
+    setupObject.testUserId = '528ad6c3859c7f16a4000001';
+    setupObject.testGithubAuthCode = 'a1b75646f9ec91dee2dd4270f76e49ef2ebb9575';
+    setupObject.testGithubId = '12345';
+    setupObject.testGithubLogin = 'dicegame';
+    setupObject.testGithub = new Github({
+        userId: setupObject.testUserId,
+        githubAuthCode: setupObject.testGithubAuthCode,
+        githubId: setupObject.testGithubId,
+        githubLogin: setupObject.testGithubLogin
+    });
+    $series([
+        $task(function(flow) {
+            setupObject.schemaManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.githubManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.githubManager.createGithub(setupObject.testGithub, function(throwable) {
+                if (!throwable) {
+                    test.assertTrue(!! setupObject.testGithub.getId(),
+                        "Newly created github should have an id");
+                }
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(function(throwable) {
+        if (throwable) {
+            test.error(throwable);
+        }
+    });
+};
+
+//-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var githubManagerCreateGithubTest = {
+var githubManagerRetrieveGithubByGithubIdTest = {
     async: true,
 
     //-------------------------------------------------------------------------------
@@ -62,24 +113,7 @@ var githubManagerCreateGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.entityManagerStore     = new EntityManagerStore();
-        this.mongoDataStore         = new DummyMongoDataStore();
-        this.schemaManager          = new SchemaManager();
-        this.entityProcessor        = new EntityProcessor(this.schemaManager);
-        this.entityScan             = new EntityScan(this.entityProcessor);
-        this.entityScan.scanClass(Github);
-        this.githubManager           = new GithubManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
-        this.githubManager.setEntityType("Github");
-        this.testUserId = '528ad6c3859c7f16a4000001';
-        this.testGithubAuthCode = 'a1b75646f9ec91dee2dd4270f76e49ef2ebb9575';
-        this.testGithubId = '12345';
-        this.testGithubLogin = 'dicegame';
-        this.testGithub = new Github({
-            userId: this.testUserId,
-            githubAuthCode: this.testGithubAuthCode,
-            githubId: this.testGithubId,
-            githubLogin: this.testGithubLogin
-        });
+        setupGithubManager(this, test);
     },
 
     //-------------------------------------------------------------------------------
@@ -90,30 +124,47 @@ var githubManagerCreateGithubTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.schemaManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.githubManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.githubManager.createGithub(_this.testGithub, function(throwable) {
-                    if (!throwable) {
-                        test.assertTrue(!! _this.testGithub.getId(),
-                            "Newly created github should have an id");
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
                 _this.githubManager.retrieveGithubByGithubId(_this.testGithubId, function(throwable, github) {
-                    console.log("retrieveGithubByGithubId github object = ", github);
                     if (!throwable) {
                         test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
                             "retrieveGithubByGithubId should return proper entity object");
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.complete();
+            } else {
+                test.error(throwable);
+            }
+        });
+    }
+};
+
+var githubManagerRetrieveGithubTest = {
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupGithubManager(this, test);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.githubManager.retrieveGithub(_this.testGithub.getId(), function(throwable, github) {
+                    if (!throwable) {
+                        test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
+                            "retrieveGithub should return proper entity object");
                     }
                     flow.complete(throwable);
                 });
@@ -128,6 +179,57 @@ var githubManagerCreateGithubTest = {
     }
 };
 
-bugmeta.annotate(githubManagerCreateGithubTest).with(
-    test().name("GithubManager - createGithub Test")
+var githubManagerDeleteGithubTest = {
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupGithubManager(this, test);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        _this.testGithubObjectId = _this.testGithub.getId();
+        $series([
+            $task(function(flow) {
+                _this.githubManager.deleteGithub(_this.testGithub, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.githubManager.retrieveGithub(_this.testGithubObjectId, function(throwable, github) {
+                    if (!throwable) {
+                        test.assertTrue(github === null,
+                            "retrieveGithub should return null after we delete github object");
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+                if (!throwable) {
+                    test.complete();
+                } else {
+                    test.error(throwable);
+                }
+            });
+    }
+};
+
+bugmeta.annotate(githubManagerRetrieveGithubByGithubIdTest).with(
+    test().name("GithubManager - Retrieve Github by Id Test")
+);
+
+bugmeta.annotate(githubManagerRetrieveGithubTest).with(
+    test().name("GithubManager - Retrieve Github Test")
+);
+
+bugmeta.annotate(githubManagerDeleteGithubTest).with(
+    test().name("GithubManager - Delete Github Test")
 );
