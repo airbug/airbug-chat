@@ -105,6 +105,13 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
          */
         this.navigationModule   = null;
 
+        /**
+         * @private
+         * @type {WindowUtil}
+         */
+        this.windowUtil         = null;
+
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -136,6 +143,8 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
+        var currentUrl = this.windowUtil.getUrl();
+
         this.dropdownItemView =
             view(DropdownItemView)
                 .children([
@@ -148,7 +157,7 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
                                 .children([
                                     view(ParagraphView)
                                     .attributes({
-                                        text: "http://airbug.com/app#room/" + this.roomModel.getProperty("id")
+                                        text: currentUrl + "#room/" + this.roomModel.getProperty("id")
                                     })
                                 ]),
                             view(CopyToClipboardButtonView)
@@ -186,7 +195,8 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      */
     createZeroClipboard: function() {
         var button      = this.getViewTop().$el.find('.btn')[0];
-        var copyText    = "http://airbug.com/app#room/" + this.roomModel.getProperty("id");
+        var currentUrl  = this.windowUtil.getUrl();
+        var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
         var options     = {
               moviePath: "/zeroclipboard/ZeroClipboard.swf"
         };
@@ -280,7 +290,8 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(AddRoomMemberContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule")
+        property("navigationModule").ref("navigationModule"),
+        property("windowUtil").ref("windowUtil")
     ])
 );
 

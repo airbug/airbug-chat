@@ -22,6 +22,7 @@
 //@Require('airbug.RoomMemberManagerModule')
 //@Require('airbug.TrackerModule')
 //@Require('airbug.UserManagerModule')
+//@Require('airbug.WindowUtil')
 //@Require('bugcall.BugCallClient')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
@@ -71,6 +72,7 @@ var RoomManagerModule           = bugpack.require('airbug.RoomManagerModule');
 var RoomMemberManagerModule     = bugpack.require('airbug.RoomMemberManagerModule');
 var TrackerModule               = bugpack.require('airbug.TrackerModule');
 var UserManagerModule           = bugpack.require('airbug.UserManagerModule');
+var WindowUtil                  = bugpack.require('airbug.WindowUtil');
 var BugCallClient               = bugpack.require('bugcall.BugCallClient');
 var CallClient                  = bugpack.require('bugcall.CallClient');
 var CallManager                 = bugpack.require('bugcall.CallManager');
@@ -170,9 +172,9 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Window}
+         * @type {WindowUtil}
          */
-        this._window                = null;
+        this._windowUtil            = null;
     },
 
 
@@ -191,14 +193,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         var currentUserManagerModule    = this._currentUserManagerModule;
         var socketIoConfig              = this._socketIoConfig;
         var trackerModule               = this._trackerModule;
+        var port                        = this._windowUtil.getPort();
+        var baseUrl                     = this._windowUtil.getBaseUrl();
 
 
-        var host        = this._window.location.host;
-        var hrefString  = this._window.location.href.toString();
-        var currentHost = hrefString.split(host)[0] + host;
-        var port        = host.split(":")[1];
-
-        socketIoConfig.setHost(currentHost + "/api/airbug");
+        socketIoConfig.setHost(baseUrl + "/api/airbug");
         socketIoConfig.setResource("api/socket");
         socketIoConfig.setPort(port);
 
@@ -479,8 +478,16 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @return {Window}
      */
     window: function() {
-        this._window = window;
-        return this._window;
+        return window;
+    },
+
+    /**
+     * @param {Window} window
+     * @return {WindowUtil}
+     */
+    windowUtil: function(window) {
+        this._windowUtil = new WindowUtil(window);
+        return this._windowUtil;
     }
 });
 
@@ -596,7 +603,11 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("meldStore"),
                 arg().ref("meldBuilder")
             ]),
-        module("window")
+        module("window"),
+        module("windowUtil")
+            .args([
+                arg().ref("window")
+            ])
     ])
 );
 
