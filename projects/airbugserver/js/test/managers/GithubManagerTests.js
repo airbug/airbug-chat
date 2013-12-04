@@ -107,16 +107,17 @@ var githubManagerCreateGithubTest = {
                     }
                     flow.complete(throwable);
                 });
-            })/*,
+            }),
             $task(function(flow) {
                 _this.githubManager.retrieveGithubByGithubId(_this.testGithubId, function(throwable, github) {
+                    console.log("retrieveGithubByGithubId github object = ", github);
                     if (!throwable) {
                         test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
                             "retrieveGithubByGithubId should return proper entity object");
                     }
                     flow.complete(throwable);
                 });
-            })*/
+            })
         ]).execute(function(throwable) {
                 if (!throwable) {
                     test.complete();
