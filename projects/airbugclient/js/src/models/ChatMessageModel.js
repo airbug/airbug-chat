@@ -120,20 +120,21 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
                 .where("data.deltaChange.propertyName")
                 .in(["firstName", "lastName"])
                 .call(this.hearSenderUserPropertyRemoveChange, this);
-        } else if (this.getChatMessageMeldDocument()) {
+        }
+        if (this.getChatMessageMeldDocument()) {
             this.getChatMessageMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "sentAt", "conversationId", "tryUuid", "type"])
+                .in(["id", "sentAt", "conversationId", "tryUuid", "type"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getChatMessageMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "sentAt", "conversationId", "tryUuid", "type"])
+                .in(["id", "sentAt", "conversationId", "tryUuid", "type"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -148,7 +149,8 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearSenderUserPropertySetChange, this);
             this.getSenderUserMeldDocument()
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearSenderUserPropertyRemoveChange, this);
-        } else if (this.getChatMessageMeldDocument()) {
+        }
+        if (this.getChatMessageMeldDocument()) {
             this.getChatMessageMeldDocument()
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
             this.getChatMessageMeldDocument()
@@ -170,7 +172,7 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
         this._super();
         if (key === "chatMessage") {
             var chatMessageData    = meldDocument.getData();
-            this.setProperty("_id", chatMessageData._id);
+            this.setProperty("id", chatMessageData.id);
             this.setProperty("sentAt", chatMessageData.sentAt);
             this.setProperty("conversationId", chatMessageData.conversationId);
             this.setProperty("type", chatMessageData.type);
@@ -189,7 +191,7 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
     unprocessMeldDocument: function(key, meldDocument) {
         this._super();
         if (key === "chatMessage") {
-            this.removeProperty("_id");
+            this.removeProperty("id");
             this.removeProperty("sentAt");
             this.removeProperty("conversationId");
             this.removeProperty("type");

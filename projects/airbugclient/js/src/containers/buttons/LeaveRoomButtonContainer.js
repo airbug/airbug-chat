@@ -159,8 +159,8 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     hearLeaveRoomButtonClickedEvent: function(event) {
         var _this = this;
-        if (this.roomModel.get("_id")) {
-            this.roomManagerModule.leaveRoom(this.roomModel.get("_id"), function(throwable) {
+        if (this.roomModel.getProperty("id")) {
+            this.roomManagerModule.leaveRoom(this.roomModel.getProperty("id"), function(throwable) {
                 if (!throwable) {
                     _this.navigationModule.navigate("home", {
                         trigger: true

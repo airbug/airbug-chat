@@ -18,9 +18,6 @@
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
 //@Require('airbug.RoomMemberListItemContainer')
-//@Require('airbug.TextView')
-//@Require('airbug.UserNameView')
-//@Require('airbug.UserStatusIndicatorView')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
@@ -52,9 +49,6 @@ var SetPropertyChange               = bugpack.require('SetPropertyChange');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListViewEvent                   = bugpack.require('airbug.ListViewEvent');
 var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
-var TextView                        = bugpack.require('airbug.TextView');
-var UserNameView                    = bugpack.require('airbug.UserNameView');
-var UserStatusIndicatorView         = bugpack.require('airbug.UserStatusIndicatorView');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
@@ -134,15 +128,15 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {RoomManagerModule}
-         */
-        this.roomManagerModule                  = null;
-
-        /**
-         * @private
          * @type {RoomMemberManagerModule}
          */
         this.roomMemberManagerModule            = null;
+
+        /**
+         * @private
+         * @type {UserManagerModule}
+         */
+        this.userManagerModule                 = null;
 
 
         // Views
@@ -226,10 +220,11 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      * @param {Object} dataObject
-     * @param {MeldDocument} meldDocument
+     * @param {MeldDocument} roomMemberMeldDocument
+     * @param {MeldDocument} userMeldDocument
      */
-    buildRoomMemberModel: function(dataObject, meldDocument) {
-        var roomMemberModel = this.roomMemberManagerModule.generateRoomMemberModel(dataObject, meldDocument);
+    buildRoomMemberModel: function(dataObject, roomMemberMeldDocument, userMeldDocument) {
+        var roomMemberModel = this.roomMemberManagerModule.generateRoomMemberModel(dataObject, roomMemberMeldDocument, userMeldDocument);
         this.roomMemberIdToRoomMemberModelMap.put(roomMemberModel.getProperty("id"), roomMemberModel);
 
         //TEST
@@ -242,9 +237,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @protected
      * @param {RoomMemberModel} roomMemberModel
      */
-    buildRoomMemberListItemContainer: function(roomMemberModel) {
+    buildRoomMemberListItem: function(roomMemberModel) {
         var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
-        this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.cid);
+        this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.getCid());
         this.roomMemberModelToListItemMap.put(roomMemberModel, roomMemberListItemContainer);
     },
 
@@ -258,7 +253,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
-    destroyAllListItemViews: function() {
+    destroyAllListItems: function() {
         var _this = this;
         this.roomMemberModelToListItemMap.forEach(function(listItemContainer) {
             _this.removeContainerChild(listItemContainer, true);
@@ -269,7 +264,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {RoomMemberModel} roomMemberModel
      */
-    destroyListItemView: function(roomMemberModel) {
+    destroyListItem: function(roomMemberModel) {
         var listItemContainer = this.roomMemberModelToListItemMap.remove(roomMemberModel);
         if (listItemContainer) {
             this.removeContainerChild(listItemContainer, true);
@@ -281,23 +276,35 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {string} id
      */
     loadRoomMember: function(id) {
+        var _this                       = this;
+        /** @type {MeldDocument} */
+        var roomMemberMeldDocument      = null;
+        /** @type {MeldDocument} */
+        var userMeldDocument            = null;
+        /** @type {string} */
+        var userId                      = null;
 
-        //TODO BRN: The RoomMemberModel needs to have both the roomMemberDocument and the userDocument
-
-        var _this               = this;
-        var meldDocument         = undefined;
         $series([
             $task(function(flow) {
                 _this.roomMemberManagerModule.retrieveRoomMember(id, function(throwable, retrievedMeldDocument) {
                     if (!throwable) {
-                        meldDocument        = retrievedMeldDocument;
+                        roomMemberMeldDocument      =  /** @type {MeldDocument} */( retrievedMeldDocument);
+                        userId                      = roomMemberMeldDocument.getData().userId;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userManagerModule.retrieveUser(userId, function(throwable, retrievedUserMeldDocument) {
+                    if (!throwable) {
+                        userMeldDocument = /** @type {MeldDocument} */(retrievedUserMeldDocument);
                     }
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                _this.buildRoomMemberModel({}, meldDocument);
+                _this.buildRoomMemberModel({}, roomMemberMeldDocument, userMeldDocument);
             }
         });
 
@@ -309,14 +316,31 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     loadRoomMemberList: function(idSet) {
         var _this               = this;
-        var meldDocumentSet     = new Set();
+        var roomMemberMeldDocumentSet   = new Set();
+        var userMeldDocumentMap         = new Map();
+        var userIdSet                   = new Set();
         $series([
             $task(function(flow) {
                 _this.roomMemberManagerModule.retrieveRoomMembers(idSet.toArray(), function(throwable, retrievedMeldDocumentMap) {
                     if (!throwable) {
                         retrievedMeldDocumentMap.forEach(function(meldDocument, id) {
                             if (meldDocument) {
-                                meldDocumentSet.add(meldDocument);
+                                roomMemberMeldDocumentSet.add(meldDocument);
+                                userIdSet.add(meldDocument.getData().userId);
+                            } else {
+                                //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
+                            }
+                        });
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userManagerModule.retrieveUsers(userIdSet.toArray(), function(throwable, meldDocumentMap) {
+                    if (!throwable) {
+                        meldDocumentMap.forEach(function(meldDocument, id) {
+                            if (meldDocument) {
+                                userMeldDocumentMap.put(id, meldDocument);
                             } else {
                                 //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
                             }
@@ -327,8 +351,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                meldDocumentSet.forEach(function(meldDocument) {
-                    _this.buildRoomMemberModel({}, meldDocument);
+                roomMemberMeldDocumentSet.forEach(function(roomMemberMeldDocument) {
+                    var userMeldDocument = userMeldDocumentMap.get(roomMemberMeldDocument.getData().userId);
+                    _this.buildRoomMemberModel({}, roomMemberMeldDocument, userMeldDocument);
                 });
             } else {
                 //TODO Error handling
@@ -379,7 +404,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     hearListViewItemSelectedEvent: function(event) {
         var roomMember = event.getData();
-        this.navigationModule.navigate("room-member/" + roomMember.uuid, {
+        this.navigationModule.navigate("user/" + roomMember.userId, {
             trigger: true
         });
     },
@@ -441,7 +466,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     observeRoomMemberListAdd: function(change) {
         var roomMemberModel = change.getValue();
-        this.buildRoomMemberListItemContainer(roomMemberModel);
+        this.buildRoomMemberListItem(roomMemberModel);
     },
 
     /**
@@ -449,7 +474,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {ClearChange} change
      */
     observeRoomMemberListClear: function(change) {
-        this.destroyAllListItemViews();
+        this.destroyAllListItems();
         this.roomMemberModelToListItemMap.clear();
         this.processRoomMemberList();
     },
@@ -460,7 +485,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     observeRoomMemberListRemove: function(change) {
         var roomMemberModel = change.getValue();
-        this.destroyListItemView(roomMemberModel);
+        this.destroyListItem(roomMemberModel);
     }
 });
 
@@ -472,8 +497,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(RoomMemberListContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
-        property("roomManagerModule").ref("roomManagerModule"),
-        property("roomMemberManagerModule").ref("roomMemberManagerModule")
+        property("roomMemberManagerModule").ref("roomMemberManagerModule"),
+        property("userManagerModule").ref("userManagerModule")
     ])
 );
 

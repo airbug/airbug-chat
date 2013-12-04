@@ -7,7 +7,7 @@
 //@Export('RoomMemberModel')
 
 //@Require('Class')
-//@Require('airbug.MeldModel')
+//@Require('airbug.MappedMeldModel')
 //@Require('meldbug.MeldDocument')
 //@Require('meldbug.MeldDocumentEvent')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var MeldModel               = bugpack.require('airbug.MeldModel');
+var MappedMeldModel         = bugpack.require('airbug.MappedMeldModel');
 var MeldDocument            = bugpack.require('meldbug.MeldDocument');
 var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
 
@@ -35,9 +35,27 @@ var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
 
 /**
  * @class
- * @extends {MeldModel}
+ * @extends {MappedMeldModel}
  */
-var RoomMemberModel = Class.extend(MeldModel, /** @lends {RoomMemberModel.prototype} */ {
+var RoomMemberModel = Class.extend(MappedMeldModel, /** @lends {RoomMemberModel.prototype} */ {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {Object} dataObject
+     * @param {MeldDocument} roomMemberMeldDocument
+     * @param {MeldDocument} userMeldDocument
+     */
+    _constructor: function(dataObject, roomMemberMeldDocument, userMeldDocument) {
+        var meldDocumentMap = new Map();
+        meldDocumentMap.put("roomMember", roomMemberMeldDocument);
+        meldDocumentMap.put("user", userMeldDocument);
+        this._super(dataObject, meldDocumentMap);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -47,14 +65,28 @@ var RoomMemberModel = Class.extend(MeldModel, /** @lends {RoomMemberModel.protot
      * @return {MeldDocument}
      */
     getRoomMemberMeldDocument: function() {
-        return this.getMeldDocument();
+        return this.getMeldDocument("roomMember");
     },
 
     /**
      * @param {MeldDocument} roomMemberMeldDocument
      */
     setRoomMemberMeldDocument: function(roomMemberMeldDocument) {
-        this.setMeldDocument(roomMemberMeldDocument);
+        this.putMeldDocument("roomMember", roomMemberMeldDocument);
+    },
+
+    /**
+     * @return {MeldDocument}
+     */
+    getUserMeldDocument: function() {
+        return this.getMeldDocument("user");
+    },
+
+    /**
+     * @param {MeldDocument} userMeldDocument
+     */
+    setUserMeldDocument: function(userMeldDocument) {
+        this.putMeldDocument("user", userMeldDocument);
     },
 
 
@@ -67,22 +99,39 @@ var RoomMemberModel = Class.extend(MeldModel, /** @lends {RoomMemberModel.protot
      */
     initializeModel: function() {
         this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
+        if (this.getRoomMemberMeldDocument()) {
+            this.getRoomMemberMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "roomId", "userId"])
+                .in(["id", "roomId", "userId"])
                 .call(this.hearMeldPropertySetChange, this);
-            this.getMeldDocument()
+            this.getRoomMemberMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "roomId", "userId"])
+                .in(["id", "roomId", "userId"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
+        if (this.getUserMeldDocument()) {
+            this.getUserMeldDocument()
+                .on(MeldDocumentEvent.EventTypes.CHANGE)
+                .where("data.changeType")
+                .in([MeldDocument.ChangeTypes.PROPERTY_SET])
+                .where("data.deltaChange.propertyName")
+                .in(["firstName", "lastName", "status"])
+                .call(this.hearMeldPropertySetChange, this);
+            this.getUserMeldDocument()
+                .on(MeldDocumentEvent.EventTypes.CHANGE)
+                .where("data.changeType")
+                .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
+                .where("data.deltaChange.propertyName")
+                .in(["firstName", "lastName", "status"])
+                .call(this.hearMeldPropertyRemovedChange, this);
+        }
+
     },
 
     /**
@@ -90,10 +139,16 @@ var RoomMemberModel = Class.extend(MeldModel, /** @lends {RoomMemberModel.protot
      */
     deinitializeModel: function() {
         this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
+        if (this.getRoomMemberMeldDocument()) {
+            this.getRoomMemberMeldDocument()
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
-            this.getMeldDocument()
+            this.getRoomMemberMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertyRemovedChange, this);
+        }
+        if (this.getUserMeldDocument()) {
+            this.getUserMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
+            this.getUserMeldDocument()
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -105,23 +160,39 @@ var RoomMemberModel = Class.extend(MeldModel, /** @lends {RoomMemberModel.protot
 
     /**
      * @protected
+     * @param {string} key
+     * @param {MeldDocument} meldDocument
      */
-    processMeldDcoument: function() {
+    processMeldDocument: function(key, meldDocument) {
         this._super();
-        var data    = this.getMeldDocument().getData();
-        this.setProperty("_id", data._id);
-        this.setProperty("roomId", data.roomId);
-        this.setProperty("userId", data.userId);
+        var data    = meldDocument.getData();
+        if (key === "roomMember") {
+            this.setProperty("id", data.id);
+            this.setProperty("roomId", data.roomId);
+            this.setProperty("userId", data.userId);
+        } else if (key === "user") {
+            this.setProperty("firstName", data.firstName);
+            this.setProperty("lastName", data.lastName);
+            this.setProperty("status", data.status);
+        }
     },
 
     /**
      * @protected
+     * @param {string} key
+     * @param {MeldDocument} meldDocument
      */
-    unprocessMeldDocument: function() {
+    unprocessMeldDocument: function(key, meldDocument) {
         this._super();
-        this.removeProperty("_id");
-        this.removeProperty("roomId");
-        this.removeProperty("userId");
+        if (key === "roomMember") {
+            this.removeProperty("id");
+            this.removeProperty("roomId");
+            this.removeProperty("userId");
+        } else if (key === "user") {
+            this.removeProperty("firstName");
+            this.removeProperty("lastName");
+            this.removeProperty("status");
+        }
     },
 
 

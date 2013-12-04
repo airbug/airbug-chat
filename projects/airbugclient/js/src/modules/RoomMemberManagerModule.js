@@ -54,10 +54,11 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {Object} dataObject
      * @param {MeldDocument} roomMemberMeldDocument
+     * @param {MeldDocument} userMeldDocument
      * @returns {RoomMemberModel}
      */
-    generateRoomMemberModel: function(dataObject, roomMemberMeldDocument) {
-        return new RoomMemberModel(dataObject, roomMemberMeldDocument);
+    generateRoomMemberModel: function(dataObject, roomMemberMeldDocument, userMeldDocument) {
+        return new RoomMemberModel(dataObject, roomMemberMeldDocument, userMeldDocument);
     },
 
     /**

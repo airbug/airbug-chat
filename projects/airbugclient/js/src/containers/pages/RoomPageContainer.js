@@ -169,7 +169,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.roomModel = this.roomManagerModule.generateRoomModel({_id: roomId});
+        this.roomModel = this.roomManagerModule.generateRoomModel({id: roomId});
     },
 
     /**
@@ -179,7 +179,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super(routingArgs);
         this.homeButtonContainer                    = new HomeButtonContainer();
         this.logoutButtonContainer                  = new LogoutButtonContainer();
-        this.roomChatBoxContainer                   = new RoomChatBoxContainer();
+        this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
         this.roomListPanelContainer                 = new RoomListPanelContainer();
 
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");

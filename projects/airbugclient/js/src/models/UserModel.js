@@ -73,14 +73,14 @@ var UserModel = Class.extend(MeldModel, /** @lends {UserModel.prototype} */{
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "firstName", "lastName", "status"])
+                .in(["id", "firstName", "lastName", "status"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "firstName", "lastName", "status"])
+                .in(["id", "firstName", "lastName", "status"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -109,7 +109,7 @@ var UserModel = Class.extend(MeldModel, /** @lends {UserModel.prototype} */{
     processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
-        this.setProperty("_id", data._id);
+        this.setProperty("id", data.id);
         this.setProperty("firstName", data.firstName);
         this.setProperty("lastName", data.lastName);
         this.setProperty("status", data.status);
@@ -120,7 +120,7 @@ var UserModel = Class.extend(MeldModel, /** @lends {UserModel.prototype} */{
      */
     unprocessMeldDocument: function() {
         this._super();
-        this.removeProperty("_id");
+        this.removeProperty("id");
         this.removeProperty("firstName");
         this.removeProperty("lastName");
         this.removeProperty("status");

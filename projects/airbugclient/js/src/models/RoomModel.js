@@ -74,14 +74,14 @@ var RoomModel = Class.extend(MeldModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "name", "conversationId", "roomMemberIdSet"])
+                .in(["id", "name", "conversationId", "roomMemberIdSet"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "name", "conversationId", "roomMemberIdSet"])
+                .in(["id", "name", "conversationId", "roomMemberIdSet"])
                 .call(this.hearMeldPropertyRemovedChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
@@ -128,7 +128,7 @@ var RoomModel = Class.extend(MeldModel, {
     processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
-        this.setProperty("_id", data._id);
+        this.setProperty("id", data.id);
         this.setProperty("name", data.name);
         this.setProperty("conversationId", data.conversationId);
         this.setProperty("roomMemberIdSet", data.roomMemberIdSet);
@@ -139,7 +139,7 @@ var RoomModel = Class.extend(MeldModel, {
      */
     unprocessMeldDocument: function() {
         this._super();
-        this.removeProperty("_id");
+        this.removeProperty("id");
         this.removeProperty("name");
         this.removeProperty("conversationId");
         this.removeProperty("roomMemberIdSet");

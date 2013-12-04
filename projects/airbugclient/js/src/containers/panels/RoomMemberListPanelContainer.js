@@ -137,8 +137,8 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
         this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
-        this.addContainerChild(this.addRoomMemberButtonContainer,   "#panel-header-nav-" + this.panelView.cid);
-        this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.cid);
+        this.addContainerChild(this.addRoomMemberButtonContainer,   "#panel-header-nav-" + this.panelView.getCid());
+        this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.getCid());
     },
 
     initializeContainer: function() {

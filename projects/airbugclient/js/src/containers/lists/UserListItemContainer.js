@@ -8,8 +8,6 @@
 
 //@Require('Class')
 //@Require('airbug.SelectableListItemView')
-//@Require('airbug.TextView')
-//@Require('airbug.UserModel')
 //@Require('airbug.UserNameView')
 //@Require('airbug.UserStatusIndicatorView')
 //@Require('carapace.CarapaceContainer')
@@ -29,8 +27,6 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
-var TextView                    = bugpack.require('airbug.TextView');
-var UserModel                   = bugpack.require('airbug.UserModel');
 var UserNameView                = bugpack.require('airbug.UserNameView');
 var UserStatusIndicatorView     = bugpack.require('airbug.UserStatusIndicatorView');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
@@ -54,7 +50,7 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(userModel) {
 
         this._super();
 
@@ -70,7 +66,7 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {UserModel}
          */
-        this.userModel = null;
+        this.userModel              = userModel;
 
 
         // Views
@@ -93,12 +89,6 @@ var UserListItemContainer = Class.extend(CarapaceContainer, {
      */
     createContainer: function() {
         this._super();
-
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-        this.userModel = new UserModel({});
 
 
         // Create Views

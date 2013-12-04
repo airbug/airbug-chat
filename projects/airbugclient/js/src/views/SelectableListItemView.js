@@ -84,7 +84,7 @@ var SelectableListItemView = Class.extend(ListItemView, {
      */
     handleListItemClick: function(event) {
         event.preventDefault();
-        var modelData = this.model ? this.model.toJSON() : {};
+        var modelData = this.model ? this.model.toLiteral() : {};
         this.dispatchEvent(new ListViewEvent(ListViewEvent.EventType.ITEM_SELECTED, modelData));
     }
 });

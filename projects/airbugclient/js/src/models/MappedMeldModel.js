@@ -41,9 +41,6 @@ var MappedMeldModel = Class.extend(CarapaceModel, {
 
     _constructor: function(dataObject, meldDocumentMap) {
 
-        this._super(dataObject);
-
-
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
@@ -53,6 +50,8 @@ var MappedMeldModel = Class.extend(CarapaceModel, {
          * @type {Map.<string, MeldDocument>}
          */
         this.meldDocumentMap = new Map();
+
+        this._super(dataObject);
         
         var _this = this;
         meldDocumentMap.forEach(function(meldDocument, key) {
@@ -88,7 +87,7 @@ var MappedMeldModel = Class.extend(CarapaceModel, {
      * @param {string} key
      * @returns {MeldDocument}
      */
-    getMeldDocoument: function(key) {
+    getMeldDocument: function(key) {
         return this.meldDocumentMap.get(key);
     },
 

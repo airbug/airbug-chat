@@ -315,10 +315,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     loadChatMessageList: function(chatMessageIdSet) {
 
-
-        //TEST
-        console.log("loadChatMessageList - chatMessageIdSet:", chatMessageIdSet, " this.conversationModel:", this.conversationModel);
-
         var _this                       = this;
         var chatMessageMeldDocumentSet  = new Set();
         var senderUserMeldDocumentMap   = new Map();

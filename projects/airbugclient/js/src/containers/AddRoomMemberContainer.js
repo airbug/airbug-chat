@@ -139,15 +139,16 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
         this.dropdownItemView =
             view(DropdownItemView)
                 .children([
+                    //TODO BRN: This needs to be encapsulated in it's own view so that it can react to model changes
                     view(BoxView)
                         .children([
                             view(ParagraphView)
-                                .attributes({text: "Share room " + this.roomModel.get("name")}),
+                                .attributes({text: "Share room " + this.roomModel.getProperty("name")}),
                             view(FauxTextAreaView)
                                 .children([
                                     view(ParagraphView)
                                     .attributes({
-                                        text: "http://airbug.com/app#room/" + this.roomModel.get("_id")
+                                        text: "http://airbug.com/app#room/" + this.roomModel.getProperty("id")
                                     })
                                 ]),
                             view(CopyToClipboardButtonView)
@@ -178,14 +179,6 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         //TODO
-        // NOTE: For future refactor (pull out zeroClipboard buttons into its own container)
-        // var button      = this.getViewTop().$el.find('.btn')[0];
-        // var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
-        // var options     = {
-        //       moviePath: "/zeroclipboard/ZeroClipboard.swf"
-        // };
-        // this.copyLinkButtonContainer = new CopyLinkButtonContainer(button, options, copyText);
-        // this.addContainerChild(this.copyLinkButtonContainer, "??????")
     },
 
     /**
@@ -193,7 +186,7 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      */
     createZeroClipboard: function() {
         var button      = this.getViewTop().$el.find('.btn')[0];
-        var copyText    = "http://airbug.com/app#room/" + this.roomModel.get("_id");
+        var copyText    = "http://airbug.com/app#room/" + this.roomModel.getProperty("id");
         var options     = {
               moviePath: "/zeroclipboard/ZeroClipboard.swf"
         };

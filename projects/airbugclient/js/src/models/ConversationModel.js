@@ -73,14 +73,14 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "ownerId", "chatMessageIdSet"])
+                .in(["id", "ownerId", "chatMessageIdSet"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "ownerId", "chatMessageIdSet"])
+                .in(["id", "ownerId", "chatMessageIdSet"])
                 .call(this.hearMeldPropertyRemovedChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
@@ -127,7 +127,7 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     processMeldDcoument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
-        this.setProperty("_id", data._id);
+        this.setProperty("id", data.id);
         this.setProperty("chatMessageIdSet", data.chatMessageIdSet);
         this.setProperty("ownerId", data.ownerId);
     },
@@ -137,7 +137,7 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
      */
     unprocessMeldDocument: function() {
         this._super();
-        this.removeProperty("_id");
+        this.removeProperty("id");
         this.removeProperty("chatMessageIdSet");
         this.removeProperty("ownerId");
     },

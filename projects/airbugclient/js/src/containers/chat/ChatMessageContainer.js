@@ -201,7 +201,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     createContainerChildren: function() {
-        var type = this.chatMessageModel.get("type");
+        var type = this.chatMessageModel.getProperty("type");
         if (type === "code") {
             this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
             this.addContainerChild(this.chatMessageReplyButton, ".message-controls");
@@ -220,10 +220,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 event.stopPropagation();
                 console.log("firing chatMessage retry click event");
                 _this.handleChatMessageRetry();
-                // _this.chatMessageView.dispatchEvent(new Event("retry", _this.chatMessageModel.toJSON()));
                 return false;
             });
-        this.viewTop.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageReply, this);
+        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageReply, this);
     },
 
 
@@ -244,16 +243,16 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         //TODO BRN: This needs to figure out the type of chat message
 
 
-        var chatMessage         = this.chatMessageManagerModule.generateTextChatMessage(chatMessageModel.toJSON());
+        var chatMessage         = this.chatMessageManagerModule.generateChatMessageObject(chatMessageModel.toLiteral());
 
         //TODO BRN: Rework this to use BugFlow
         this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
             if (!throwable) {
-                chatMessageModel.set({
+                chatMessageModel.setProperties({
                     pending: false,
                     failed: false
                 });
-                _this.userManagerModule.retrieveUser(chatMessageModel.get("senderUserId"), function(throwable, userMeldDocument) {
+                _this.userManagerModule.retrieveUser(chatMessageModel.getProperty("senderUserId"), function(throwable, userMeldDocument) {
                     if (!throwable) {
 
                         //NOTE BRN: We want to set both of these at the same time so that we don't do a partial update of the message display
@@ -273,7 +272,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 });
             } else {
                 if (Class.doesExtend(throwable, RequestFailedException)) {
-                    chatMessageModel.set({failed: true, pending: false});
+                    chatMessageModel.setProperties({
+                        failed: true, pending: false
+                    });
                 } else {
                     console.error(throwable);
                 }
@@ -286,9 +287,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     handleChatMessageReply: function(event) {
-        var chatMessageId = this.chatMessageModel.get("id");
-        if (this.chatMessageModel.get("type") === code) {
-            var code = this.chatMessageModel.get("code");
+        var chatMessageId = this.chatMessageModel.getProperty("id");
+        if (this.chatMessageModel.getProperty("type") === "code") {
+            var code = this.chatMessageModel.getProperty("code");
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
             //TODO Future Feature Figure out a way to remember the reference to the original chatMessage

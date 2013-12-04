@@ -73,14 +73,14 @@ var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prot
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "email", "firstName", "lastName", "status", "roomIdSet"])
+                .in(["id", "email", "firstName", "lastName", "status", "roomIdSet"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "email", "firstName", "lastName", "status", "roomIdSet"])
+                .in(["id", "email", "firstName", "lastName", "status", "roomIdSet"])
                 .call(this.hearMeldPropertyRemovedChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
@@ -127,7 +127,7 @@ var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prot
     processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
-        this.setProperty("_id", data._id);
+        this.setProperty("id", data.id);
         this.setProperty("email", data.email);
         this.setProperty("firstName", data.firstName);
         this.setProperty("lastName", data.lastName);
@@ -140,7 +140,7 @@ var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prot
      */
     unprocessMeldDocument: function() {
         this._super();
-        this.removeProperty("_id");
+        this.removeProperty("id");
         this.removeProperty("email");
         this.removeProperty("firstName");
         this.removeProperty("lastName");

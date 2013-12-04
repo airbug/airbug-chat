@@ -73,7 +73,7 @@ var ContactModel = Class.extend(MeldModel, {
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.deltaChange.propertyName")
-                .in(["_id", "contactUserId", "ownerUserId"])
+                .in(["id", "contactUserId", "ownerUserId"])
                 .call(this.hearMeldPropertySetChange, this);
         }
     },
@@ -100,7 +100,7 @@ var ContactModel = Class.extend(MeldModel, {
     processMeldDocument: function() {
         this._super();
         var contactData    = this.getMeldDocument().getData();
-        this.setProperty("_id", contactData._id);
+        this.setProperty("id", contactData.id);
         this.setProperty("contactUserId", contactData.contactUserId);
         this.setProperty("ownerUserId", contactData.ownerUserId);
     },
@@ -110,7 +110,7 @@ var ContactModel = Class.extend(MeldModel, {
      */
     unprocessMeldDocument: function() {
         this._super();
-        this.removeProperty("_id");
+        this.removeProperty("id");
         this.removeProperty("contactUserId");
         this.removeProperty("ownerUserId");
     },

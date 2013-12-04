@@ -7,10 +7,10 @@
 //@Export('RoomMemberListItemContainer')
 
 //@Require('Class')
-//@Require('airbug.UserListItemContainer')
-//@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('airbug.SelectableListItemView')
+//@Require('airbug.UserNameView')
+//@Require('airbug.UserStatusIndicatorView')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -26,10 +26,10 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var UserListItemContainer       = bugpack.require('airbug.UserListItemContainer');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
+var UserNameView                = bugpack.require('airbug.UserNameView');
+var UserStatusIndicatorView     = bugpack.require('airbug.UserStatusIndicatorView');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -37,9 +37,6 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                     = BugMeta.context();
-var autowired                   = AutowiredAnnotation.autowired;
-var property                    = PropertyAnnotation.property;
 var view                        = ViewBuilder.view;
 
 
@@ -47,15 +44,12 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
+var RoomMemberListItemContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {airbug.RoomMemberModel} roomMemberModel
-     */
     _constructor: function(roomMemberModel) {
 
         this._super();
@@ -65,12 +59,6 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        this.userManagerModule  = null;
-
-
         // Models
         //-------------------------------------------------------------------------------
 
@@ -78,32 +66,23 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
          * @private
          * @type {RoomMemberModel}
          */
-        this.roomMemberModel    = roomMemberModel;
+        this.roomMemberModel            = roomMemberModel;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {SelectableListItemView}
+         */
+        this.selectableListItemView     = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-        var _this   = this;
-        var userId  = this.roomMemberModel.get("userId");
-        this.userManagerModule.retrieveUser(userId, function(throwable, userMeldDocument) {
-            if (!throwable) {
-                _this.userModel.setUserMeldDocument(userMeldDocument);
-            } else {
-                //TODO error handling
-                // retry condition
-                // roomMember may no longer exist. If so, destroy container?
-            }
-        });
-    },
 
     /**
      * @protected
@@ -111,23 +90,31 @@ var RoomMemberListItemContainer = Class.extend(UserListItemContainer, {
     createContainer: function() {
         this._super();
 
-        //NOTE BRN: We need to override the selectable model so that the correct model data is sent when an item is
-        //selected.
 
-        this.selectableListItemView.model = this.roomMemberModel;
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        this.selectableListItemView =
+            view(SelectableListItemView)
+                .model(this.roomMemberModel)
+                .children([
+                    view(UserStatusIndicatorView)
+                        .model(this.roomMemberModel)
+                        .appendTo('*[id|=list-item]'),
+                    view(UserNameView)
+                        .model(this.roomMemberModel)
+                        .attributes({classes: "text-simple"})
+                        .appendTo('*[id|=list-item]')
+                ])
+                .build();
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
+        this.setViewTop(this.selectableListItemView);
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(RoomMemberListItemContainer).with(
-    autowired().properties([
-        property("userManagerModule").ref("userManagerModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------
