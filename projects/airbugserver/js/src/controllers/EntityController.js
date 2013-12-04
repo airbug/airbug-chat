@@ -106,6 +106,7 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Throwable} throwable
      * @param {Entity} entity
+     * @param {function(Throwable=)} callback
      */
     processCreateResponse: function(responder, throwable, entity, callback) {
         if (!throwable) {
@@ -119,6 +120,7 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Throwable} throwable
      * @param {Map.<string, *>} map
+     * @param {function(Throwable=)} callback
      */
     processMappedResponse: function(responder, throwable, map, callback) {
         if (throwable) {
@@ -139,7 +141,9 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Throwable} throwable
-     * @param {Map.<string, Entity>} entityMap
+     * @param {ICollection.<string>} entityIds
+     * @param {IMap.<string, Entity>} entityMap
+     * @param {function(Throwable=)} callback
      */
     processRetrieveEachResponse: function(responder, throwable, entityIds, entityMap, callback) {
         var dataMap             = new Map();
@@ -172,6 +176,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Throwable} throwable
+     * @param {function(Throwable=)} callback
      */
     processThrowable: function(responder, throwable, callback) {
         console.log("EntityController#processThrowable");
@@ -185,6 +190,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Error} error
+     * @param {function(Throwable=)} callback
      */
     sendErrorResponse: function(responder, error, callback) {
 
@@ -207,6 +213,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Exception} exception
+     * @param {function(Throwable=)} callback
      */
     sendExceptionResponse: function(responder, exception, callback) {
 
@@ -226,6 +233,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {MappedThrowable} mappedThrowable
+     * @param {function(Throwable=)} callback
      */
     sendMappedException: function(responder, mappedThrowable, callback) {
 
@@ -246,6 +254,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Map.<string, *>} map
+     * @param {function(Throwable=)} callback
      */
     sendMappedSuccessResponse: function(responder, map, callback) {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS, {
@@ -259,6 +268,7 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {MappedThrowable} mappedThrowable
      * @param {Map.<string, *>} map
+     * @param {function(Throwable=)} callback
      */
     sendMappedSuccessWithExceptionResponse: function(responder, mappedThrowable, map, callback) {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION, {
@@ -272,6 +282,7 @@ var EntityController = Class.extend(Obj, {
     /**
      * @param {CallResponder} responder
      * @param {Object} data
+     * @param {function(Throwable=)} callback
      */
     sendSuccessResponse: function(responder, data, callback) {
         console.log("EntityController#sendSuccessResponse");
@@ -284,6 +295,7 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Exception} exception
      * @param {Object} data
+     * @param {function(Throwable=)} callback
      */
     sendSuccessWithExceptionResponse: function(responder, exception, data, callback) {
         var response = responder.response(EntityDefines.Responses.SUCCESS_WITH_EXCEPTION, {

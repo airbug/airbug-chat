@@ -94,7 +94,7 @@ var RoomService = Class.extend(Obj, {
      * @param {RequestContext} requestContext
      * @param {(User | string)} userOrUserId
      * @param {string} roomId
-     * @param {function(Throwable, User, Room)} callback
+     * @param {function(Throwable, User=, Room=)} callback
      */
     addUserToRoom: function(requestContext, userOrUserId, roomId, callback) {
         var _this           = this;

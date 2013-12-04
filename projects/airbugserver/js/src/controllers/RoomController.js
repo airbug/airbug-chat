@@ -159,7 +159,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             addUserToRoom:  function(request, responder, callback) {
                 var data                = request.getData();
@@ -179,7 +179,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             createRoom:     function(request, responder, callback) {
                 var data                = request.getData();
@@ -194,7 +194,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             joinRoom:       function(request, responder, callback) {
                 var data                = request.getData();
@@ -213,7 +213,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             leaveRoom:      function(request, responder, callback) {
                 var data                = request.getData();
@@ -232,7 +232,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveRoom:   function(request, responder, callback) {
                 var data                = request.getData();
@@ -247,7 +247,7 @@ var RoomController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveRooms: function(request, responder, callback) {
                 var data                = request.getData();
