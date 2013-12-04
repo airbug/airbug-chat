@@ -270,7 +270,6 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 //unmeld anonymous user
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
-                _this.meldService.unmeldEntity(meldManager, "User", "owner", currentUser);
 
                 // NOTE BRN: We don't try to meld the logged in user here. Instead we depend on the client side to make
                 // another request to retrieve the current user
@@ -403,7 +402,6 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
-                _this.meldService.unmeldEntity(meldManager, "User", "owner", user);
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
@@ -430,7 +428,7 @@ var UserService = Class.extend(Obj, {
         $series([
             $task(function(flow) {
                 _this.meldCurrentUserWithCurrentUser(meldManager, currentUser);
-                _this.meldService.meldEntity(meldManager, "User", "owner", currentUser);
+                _this.pushUser(meldManager, currentUser);
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
@@ -453,7 +451,8 @@ var UserService = Class.extend(Obj, {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
-        var user                = undefined;
+        /** @type {User} */
+        var user                = null;
 
         this.logger.debug("Starting retrieveUser - userId:", userId);
         $series([
@@ -466,7 +465,7 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 if (user && currentUser) {
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);
-                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
+                    _this.pushUser(meldManager, user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -510,7 +509,7 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 userMap.getValueCollection().forEach(function(user) {
                     _this.meldUserWithCurrentUser(meldManager, user, currentUser);
-                    _this.meldService.meldEntity(meldManager, "User", "basic", user);
+                    _this.pushUser(meldManager, user);
                 });
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
@@ -733,6 +732,15 @@ var UserService = Class.extend(Obj, {
         var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
         var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
+    },
+
+    /**
+     * @private
+     * @param {MeldManager} meldManager
+     * @param {User} user
+     */
+    pushUser: function(meldManager, user) {
+        this.meldService.pushEntity(meldManager, "User", ["owner", "basic"], user);
     },
 
     /**

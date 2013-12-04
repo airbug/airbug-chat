@@ -62,6 +62,12 @@ var RoomService = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+
+        /**
+         * @private
          * @type {MeldService}
          */
         this.meldService            = meldService;
@@ -100,9 +106,12 @@ var RoomService = Class.extend(Obj, {
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
         var meldManager     = this.meldService.factoryManager();
-        var room            = undefined;
+        /** @type {Room} */
+        var room            = null;
         /** @type {User} */
-        var user            = undefined;
+        var user            = null;
+        /** @type {RoomMember} */
+        var roomMember      = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
@@ -126,22 +135,22 @@ var RoomService = Class.extend(Obj, {
                     }
                 }),
                 $task(function(flow) {
-                    _this.dbAddUserToRoom(user, room, function(throwable) {
+                    _this.dbAddUserToRoom(user, room, function(throwable, user, room, roomMember) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, user, room);
-                    _this.meldRoom(meldManager, room);
-                    _this.meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
+                    _this.meldRoomMemberUsersWithUserAndRoomMember(meldManager, room, user, roomMember);
+                    _this.pushRoom(meldManager, room);
+                    _this.meldService.pushEntity(meldManager, "User", "owner", user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
-                console.log("RoomService#addUserToRoom results: Throwable:", throwable, "user:", user, "room:", room);
                 if (!throwable) {
-                    callback(undefined, room, user);
+                    callback(null, user, room);
                 } else {
                     callback(throwable);
                 }
@@ -183,18 +192,19 @@ var RoomService = Class.extend(Obj, {
                 }),
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, currentUser, room);
-                    _this.meldRoom(meldManager, room);
+                    _this.pushRoom(meldManager, room);
+                    _this.meldService.pushEntity(meldManager, "User", "owner", user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
-                    if (!throwable) {
-                        callback(undefined, room);
-                    } else {
-                        callback(throwable);
-                    }
-                });
+                if (!throwable) {
+                    callback(null, room);
+                } else {
+                    callback(throwable);
+                }
+            });
         } else {
             callback(new Exception("UnauthorizedAccess"));
         }
@@ -242,9 +252,12 @@ var RoomService = Class.extend(Obj, {
         var currentUser         = requestContext.get("currentUser");
         var meldManager         = this.meldService.factoryManager();
         var meldService         = this.meldService;
-        var room                = undefined;
-        var user                = undefined;
-        var roomMember          = undefined;
+        /** @type {Room} */
+        var room                = null;
+        /** @Type {User} */
+        var user                = null;
+        /** @type {RoomMember} */
+        var roomMember          = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
@@ -278,9 +291,9 @@ var RoomService = Class.extend(Obj, {
                 }),
                 //melds
                 $task(function(flow) {
-                    meldService.unmeldEntity(meldManager, "RoomMember", "basic", roomMember);
-                    _this.meldRoom(meldManager, room);
-                    meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
+                    meldService.unpushEntity(meldManager, "RoomMember", "basic", roomMember);
+                    _this.pushRoom(meldManager, room);
+                    meldService.pushEntity(meldManager, "User", ["basic", "owner"], user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -618,12 +631,12 @@ var RoomService = Class.extend(Obj, {
      * @private
      * @param {User} user
      * @param {Room} room
-     * @param {function(Throwable, User, Room)} callback
+     * @param {function(Throwable, User=, Room=, RoomMember=)} callback
      */
     dbAddUserToRoom: function(user, room, callback) {
-        console.log("RoomService#dbAddUserToRoom");
         var _this           = this;
-        var roomMember      = undefined;
+        /** @type {RoomMember} */
+        var roomMember      = null;
         var roomId          = room.getId();
         var userId          = user.getId();
         $parallel([
@@ -667,11 +680,11 @@ var RoomService = Class.extend(Obj, {
                     });
                 }
             })
-        ]).execute(function(throwable){
+        ]).execute(function(throwable) {
             if (!throwable) {
-                callback(undefined, user, room);
+                callback(null, user, room, roomMember);
             } else {
-                callback(throwable, user, room);
+                callback(throwable);
             }
         });
     },
@@ -719,65 +732,59 @@ var RoomService = Class.extend(Obj, {
 
     /**
      * @param {MeldManager} meldManager
+     * @param {User} user
      * @param {Room} room
      */
-    meldRoom: function(meldManager, room) {
-        console.log("RoomService#meldRoom");
-        var meldService             = this.meldService;
-        var roomMemberSet           = room.getRoomMemberSet();
+    meldUserWithRoom: function(meldManager, user, room) {
+        var meldService                     = this.meldService;
+        var reason                          = room.getId();
+        var roomMeldKey                     = this.meldService.generateMeldKey("Room", room.getId(), "basic");
+        var meldKeys                        = [roomMeldKey];
 
-        meldService.meldEntity(meldManager, "Room", "basic", room);
-        roomMemberSet.forEach(function(roomMember) {
-            var user = roomMember.getUser();
-            meldService.meldEntity(meldManager, "RoomMember", "basic", roomMember);
-            meldService.meldEntity(meldManager, "User", ["basic", "owner"], user);
+        room.getRoomMemberSet().forEach(function(roomMember) {
+            var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberUser          = roomMember.getUser();
+            var roomMemberUserMeldKey   = meldService.generateMeldKey("User", roomMemberUser.getId(), "basic");
+
+            meldKeys.push(roomMemberMeldKey);
+            meldKeys.push(roomMemberUserMeldKey);
+        });
+
+        meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
+    },
+
+    /**
+     * @param {MeldManager} meldManager
+     * @param {Room} room
+     * @param {User} user
+     * @param {RoomMember} roomMember
+     */
+    meldRoomMemberUsersWithUserAndRoomMember: function(meldManager, room, user, roomMember) {
+        var meldService             = this.meldService;
+        var userMeldKey             = meldService.generateMeldKey("User", user.getId(), "basic");
+        var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+        var reason                  = room.getId();
+
+        room.getRoomMemberSet().forEach(function(roomMember) {
+            var roomMemberUser      = roomMember.getUser();
+            meldService.meldUserWithKeysAndReason(meldManager, roomMemberUser, [userMeldKey, roomMemberMeldKey], reason);
         });
     },
 
     /**
      * @param {MeldManager} meldManager
-     * @param {User} user
      * @param {Room} room
      */
-    meldUserWithRoom: function(meldManager, user, room) {
-        console.log("RoomService#meldUserWithRoom");
-        var meldUserWithRoomMembersSwitch   = false;
-        var meldService                     = this.meldService;
-        var reason                          = room.getId();
-        var roomMeldKey                     = this.meldService.generateMeldKey("Room", room.getId(), "basic");
-        var selfUserMeldKey                 = this.meldService.generateMeldKey("User", user.getId(), "basic");
-        var selfRoomMemberMeldKey           = undefined;
-        var userId                          = user.getId();
-        var meldKeys                        = [roomMeldKey];
+    pushRoom: function(meldManager, room) {
+        var meldService             = this.meldService;
+        var roomMemberSet           = room.getRoomMemberSet();
 
-        console.log("roomMemberSet count:", room.getRoomMemberSet().getCount());
-
-        room.getRoomMemberSet().forEach(function(roomMember) {
-            console.log("roomMember:", roomMember);
-            var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
-            var roomMemberUser          = roomMember.getUser();
-            console.log("roomMemberUser:", roomMemberUser);
-            var roomMemberUserMeldKey   = meldService.generateMeldKey("User", roomMemberUser.getId(), "basic");
-
-            meldKeys.push(roomMemberMeldKey);
-            meldKeys.push(roomMemberUserMeldKey);
-
-            if (!meldUserWithRoomMembersSwitch) {
-                if (roomMember.getUserId() === userId) {
-                    meldUserWithRoomMembersSwitch = true;
-                    selfRoomMemberMeldKey = roomMemberMeldKey;
-                }
-            }
+        meldService.pushEntity(meldManager, "Room", "basic", room);
+        roomMemberSet.forEach(function(roomMember) {
+            var user = roomMember.getUser();
+            meldService.pushEntity(meldManager, "RoomMember", "basic", roomMember);
+            meldService.pushEntity(meldManager, "User", "basic", user);
         });
-
-        if(meldUserWithRoomMembersSwitch) {
-            room.getRoomMemberSet().forEach(function(roomMember) {
-                var roomMemberUser      = roomMember.getUser();
-                meldService.meldUserWithKeysAndReason(meldManager, roomMemberUser, [selfUserMeldKey, selfRoomMemberMeldKey], reason);
-            });
-        }
-
-        meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     },
 
     /**

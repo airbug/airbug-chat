@@ -8,7 +8,6 @@
 //@Require('airbugserver.User')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.MongoDataStore')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +25,6 @@ var UuidGenerator           = bugpack.require('UuidGenerator');
 var User                    = bugpack.require('airbugserver.User');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 
 
 //-------------------------------------------------------------------------------
@@ -54,7 +52,6 @@ var userInstantiationTests = {
         this.testUser = new User({
             anonymous: this.testAnonymous,
             passwordHash: this.testPasswordHash
-
         });
     },
 
@@ -67,8 +64,6 @@ var userInstantiationTests = {
             "Assert User.anonymous was set correctly");
         test.assertEqual(this.testUser.getPasswordHash(), this.testPasswordHash,
             "Assert User.passwordHash was set correctly");
-        test.complete();
-
     }
 };
 
@@ -105,7 +100,6 @@ var userGetterSetterTests = {
         this.testUser.setPasswordHash("testPasswordHash");
         test.assertEqual(this.testUser.getPasswordHash(), "testPasswordHash",
             "Assert User.setPasswordHash works correctly");
-        test.complete();
     }
 
 };

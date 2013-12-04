@@ -1032,6 +1032,9 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("userManager"),
                 arg().ref("roomMemberManager"),
                 arg().ref("meldService")
+            ])
+            .properties([
+                property("logger").ref("logger")
             ]),
         module("sessionService")
             .args([

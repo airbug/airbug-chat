@@ -222,7 +222,7 @@ var ConversationService = Class.extend(Obj, {
      * @param {Conversation} conversation
      */
     meldConversation: function(meldManager, conversation) {
-        this.meldService.meldEntity(meldManager, "Conversation", "basic", conversation);
+        this.meldService.pushEntity(meldManager, "Conversation", "basic", conversation);
     },
 
     /**

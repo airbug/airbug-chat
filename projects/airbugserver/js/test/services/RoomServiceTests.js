@@ -27,11 +27,22 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var test    = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
+
+
+//-------------------------------------------------------------------------------
+// Setup Methods
+//-------------------------------------------------------------------------------
+
+var setupRoomService = function() {
+
+};
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+

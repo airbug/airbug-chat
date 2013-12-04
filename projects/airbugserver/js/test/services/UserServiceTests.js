@@ -118,7 +118,10 @@ var setupUserService = function(setupObject, userManager) {
         },
         unmeldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
         },
-        unmeldEntity: function(meldManager, type, filter, entity) {
+        pushEntity: function(meldManager, type, filter, entity) {
+
+        },
+        unpushEntity: function(meldManager, type, filter, entity) {
 
         }
     };

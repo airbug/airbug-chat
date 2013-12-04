@@ -378,7 +378,7 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {ChatMessage} chatMessage
      */
     meldChatMessage: function(meldManager, chatMessage) {
-        this.meldService.meldEntity(meldManager, "ChatMessage", "basic", chatMessage);
+        this.meldService.pushEntity(meldManager, "ChatMessage", "basic", chatMessage);
     },
 
     /**

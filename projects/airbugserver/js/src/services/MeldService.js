@@ -101,24 +101,6 @@ var MeldService = Class.extend(Obj, {
 
     /**
      * @param {MeldManager} meldManager
-     * @param {string} type
-     * @param {(string | Array.<string>)} filters
-     * @param {Entity} entity
-     */
-    meldEntity: function(meldManager, type, filters, entity) {
-        var _this = this;
-        if (TypeUtil.isArray(filters)) {
-            filters.forEach(function(filter) {
-                _this.meldEntityForFilter(meldManager, type, filter, entity);
-            });
-        } else {
-            this.meldEntityForFilter(meldManager, type, filters, entity);
-        }
-        entity.commitDelta();
-    },
-
-    /**
-     * @param {MeldManager} meldManager
      * @param {User} user
      * @param {(Array.<MeldKey> | Collection.<MeldKey>)} meldKeys
      * @param {string} reason
@@ -140,10 +122,28 @@ var MeldService = Class.extend(Obj, {
     /**
      * @param {MeldManager} meldManager
      * @param {string} type
+     * @param {(string | Array.<string>)} filters
+     * @param {Entity} entity
+     */
+    pushEntity: function(meldManager, type, filters, entity) {
+        var _this = this;
+        if (TypeUtil.isArray(filters)) {
+            filters.forEach(function(filter) {
+                _this.pushEntityForFilter(meldManager, type, filter, entity);
+            });
+        } else {
+            this.pushEntityForFilter(meldManager, type, filters, entity);
+        }
+        entity.commitDelta();
+    },
+
+    /**
+     * @param {MeldManager} meldManager
+     * @param {string} type
      * @param {string} filter
      * @param {Entity} entity
      */
-    unmeldEntity: function(meldManager, type, filter, entity) {
+    unpushEntity: function(meldManager, type, filter, entity) {
         var meldKey = this.generateMeldKey(type, entity.getId(), filter);
         if (meldManager.containsMeldByKey(meldKey)) {
             meldManager.removeMeld(meldKey);
@@ -186,7 +186,7 @@ var MeldService = Class.extend(Obj, {
      * @param {string} filter
      * @param {Entity} entity
      */
-    meldEntityForFilter: function(meldManager, type, filter, entity) {
+    pushEntityForFilter: function(meldManager, type, filter, entity) {
         /** @type {MeldKey} */
         var meldKey = this.generateMeldKey(type, entity.getId(), filter);
         /** @type {MeldDocument} */

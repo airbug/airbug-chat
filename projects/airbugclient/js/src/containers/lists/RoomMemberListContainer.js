@@ -281,6 +281,9 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {string} id
      */
     loadRoomMember: function(id) {
+
+        //TODO BRN: The RoomMemberModel needs to have both the roomMemberDocument and the userDocument
+
         var _this               = this;
         var meldDocument         = undefined;
         $series([
@@ -297,11 +300,12 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
                 _this.buildRoomMemberModel({}, meldDocument);
             }
         });
+
     },
 
     /**
      * @protected
-     * @param {Set.<string>} roomMemberIdSet
+     * @param {Set.<string>} idSet
      */
     loadRoomMemberList: function(idSet) {
         var _this               = this;
@@ -436,8 +440,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {AddChange} change
      */
     observeRoomMemberListAdd: function(change) {
-        var roomModel = change.getValue();
-        this.buildRoomMemberListItemContainer(roomModel);
+        var roomMemberModel = change.getValue();
+        this.buildRoomMemberListItemContainer(roomMemberModel);
     },
 
     /**
@@ -455,8 +459,8 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {RemoveChange} change
      */
     observeRoomMemberListRemove: function(change) {
-        var roomModel = change.getValue();
-        this.destroyListItemView(roomModel);
+        var roomMemberModel = change.getValue();
+        this.destroyListItemView(roomMemberModel);
     }
 });
 

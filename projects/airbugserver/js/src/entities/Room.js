@@ -65,11 +65,11 @@ var Room = Class.extend(Entity, {
          * @private
          * @type {Conversation}
          */
-        this.conversation       = undefined;
+        this.conversation       = null;
 
         /**
          * @private
-         * @type {Set.<RoomMember>}
+         * @type {ISet.<RoomMember>}
          */
         this.roomMemberSet      = new Set();
     },
@@ -83,42 +83,42 @@ var Room = Class.extend(Entity, {
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaDocument.getData().conversationId;
+        return this.getDeltaDocument().getData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaDocument.getData().conversationId = conversationId;
+        this.getDeltaDocument().getData().conversationId = conversationId;
     },
 
     /**
      * @return {string}
      */
     getName: function() {
-        return this.deltaDocument.getData().name;
+        return this.getDeltaDocument().getData().name;
     },
 
     /**
      * @param {string} name
      */
     setName: function(name) {
-        this.deltaDocument.getData().name = name;
+        this.getDeltaDocument().getData().name = name;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomMemberIdSet: function() {
-        return this.deltaDocument.getData().roomMemberIdSet;
+        return this.getDeltaDocument().getData().roomMemberIdSet;
     },
 
     /**
      * @param {Set.<string>} roomMemberIdSet
      */
     setRoomMemberIdSet: function(roomMemberIdSet) {
-        this.deltaDocument.getData().roomMemberIdSet = roomMemberIdSet;
+        this.getDeltaDocument().getData().roomMemberIdSet = roomMemberIdSet;
     },
 
 
@@ -173,7 +173,7 @@ var Room = Class.extend(Entity, {
     },
 
     /**
-     * @param {Set.<RoomMember>}
+     * @param {ISet.<RoomMember>} roomMemberSet
      */
     setRoomMemberSet: function(roomMemberSet) {
         this.roomMemberSet = roomMemberSet;
