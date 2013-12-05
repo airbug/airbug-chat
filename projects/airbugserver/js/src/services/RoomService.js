@@ -193,7 +193,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, currentUser, room);
                     _this.pushRoom(meldManager, room);
-                    _this.meldService.pushEntity(meldManager, "User", "owner", user);
+                    _this.meldService.pushEntity(meldManager, "User", "owner", currentUser);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });

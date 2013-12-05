@@ -181,7 +181,7 @@ var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prot
     hearMeldAddedToSetChange: function(event) {
         var deltaChange         = event.getData().deltaChange;
         var setValue            = deltaChange.getSetValue();
-        var chatMessageIdSet    = this.getProperty("chatMessageIdSet");
+        var chatMessageIdSet    = this.getProperty("roomIdSet");
         chatMessageIdSet.add(setValue);
     },
 
@@ -192,7 +192,7 @@ var CurrentUserModel = Class.extend(MeldModel, /** @lends {CurrentUserModel.prot
     hearMeldRemovedFromSetChange: function(event) {
         var deltaChange         = event.getData().deltaChange;
         var setValue            = deltaChange.getSetValue();
-        var chatMessageIdSet    = this.getProperty("chatMessageIdSet");
+        var chatMessageIdSet    = this.getProperty("roomIdSet");
         chatMessageIdSet.remove(setValue);
     }
 });
