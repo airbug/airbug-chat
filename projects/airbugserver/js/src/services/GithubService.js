@@ -139,6 +139,7 @@ var GithubService = Class.extend(Obj, {
         var githubUser = undefined;
         console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
+        // TODO - dkk - we should be checking to see if the current user is anonymous or not
         if (error) {
             // bad_verification_code - user has
             // incorrect_client_credentials - client_id or client_secret is not set properly.
@@ -189,12 +190,14 @@ var GithubService = Class.extend(Obj, {
                                 callback(throwable);
                             } else {
                                 if (github) {
-                                    _this.userService.loginUser(requestContext, github.getUser(), function(throwable, user) {
-                                        callback(throwable);
+                                    _this.githubManager.populateGithub(github, ["user"], function(throwable) {
+                                        _this.userService.loginUser(requestContext, github.getUser(), function(throwable, user) {
+                                            callback(throwable);
+                                        });
                                     });
                                 } else {
                                     // No github record found. Send them off to register.
-                                    _this.addGithubDataToSession(session, githubUser.id, authToken, function() {
+                                    _this.addGithubDataToSession(session, githubUser.id, authToken, githubUser.login, function() {
                                         callback();
                                     })
                                 }
@@ -239,10 +242,11 @@ var GithubService = Class.extend(Obj, {
      * @param {Session} session
      * @param {function(Throwable)} callback
      */
-    addGithubDataToSession: function(session, githubId, authToken, callback) {
+    addGithubDataToSession: function(session, githubId, authToken, githubLogin, callback) {
         var sessionData = session.getData();
         sessionData.githubId = githubId;
         sessionData.githubAuthToken = authToken;
+        sessionData.githubLogin = githubLogin;
         this.sessionManager.updateSession(session, function(throwable, session) {
             callback(throwable);
         });

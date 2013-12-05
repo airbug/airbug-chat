@@ -12,6 +12,7 @@
 //@Require('Obj')
 //@Require('PasswordUtil')
 //@Require('Set')
+//@Require('airbugserver.Github')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
@@ -35,6 +36,7 @@ var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var PasswordUtil            = bugpack.require('PasswordUtil');
 var Set                     = bugpack.require('Set');
+var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -60,7 +62,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager, userManager, meldService, sessionService, callService) {
+    _constructor: function(sessionManager, userManager, meldService, sessionService, callService, githubManager) {
 
         this._super();
 
@@ -74,6 +76,12 @@ var UserService = Class.extend(Obj, {
          * @type {CallService}
          */
         this.callService            = callService;
+
+        /**
+         * @private
+         * @type {GithubManager}
+         */
+        this.githubManager          = githubManager;
 
         /**
          * @private
@@ -340,6 +348,7 @@ var UserService = Class.extend(Obj, {
     registerUser: function(requestContext, formData, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
+        var github      = undefined;
         var meldManager = this.meldService.factoryManager();
         var session     = requestContext.get("session");
         var user        = undefined;
@@ -405,6 +414,38 @@ var UserService = Class.extend(Obj, {
                 meldManager.commitTransaction(function(throwable) {
                     flow.complete(throwable);
                 });
+            }),
+            $task(function(flow) {
+                var sessionData = session.getData();
+                if (sessionData && sessionData.githubAuthToken) {
+                    github = new Github({
+                        userId: user.id,
+                        githubAuthCode: sessionData.githubAuthToken,
+                        githubId: sessionData.githubId,
+                        githubLogin: sessionData.githubLogin
+                    });
+                    github.setUser(user);
+                    _this.githubManager.createGithub(github, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.complete();
+                }
+            }),
+            $task(function(flow) {
+                if (github) {
+                    var sessionData = session.getData();
+                    delete sessionData.githubId;
+                    delete sessionData.githubAuthToken;
+                    delete sessionData.githubLogin;
+                    delete sessionData.githubState;
+                    _this.sessionManager.updateSession(session, function(throwable, session) {
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.complete();
+                }
+
             })
         ]).execute(function(throwable) {
             if (!throwable) {

@@ -31,7 +31,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var GithubSchema = new Schema({
     createdAt: Date,
     githubAuthCode: String,
-    githubId: String,
+    githubId: {type: String, required: true, index: true, unique: true},
     githubLogin: String,
     updatedAt: Date,
     userId: {type: ObjectId, index: true, required: true}
