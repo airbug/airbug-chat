@@ -299,7 +299,6 @@ var RoomService = Class.extend(Obj, {
                     });
                 })
             ]).execute(function(throwable) {
-                console.log("RoomService#removeUserFromRoom results: throwable:", throwable, " user:", user, " room:", room);
                 callback(throwable, room, user);
             });
         } else {
@@ -527,7 +526,6 @@ var RoomService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable){
-            console.log("RoomService#dbRetrieveRoomAndRoomMember results: Throwable:", throwable, "room:", room, "roomMember:", roomMember);
             if (!throwable) {
                 callback(undefined, room, roomMember);
             } else {
@@ -566,7 +564,6 @@ var RoomService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable){
-            console.log("RoomService#dbRetrieveUserRoomAndRoomMember results: Throwable:", throwable, "user:", user, "room:", room, "roomMember:", roomMember);
             if (!throwable) {
                 callback(undefined, user, room, roomMember);
             } else {

@@ -118,7 +118,6 @@ var UserManager = Class.extend(EntityManager, {
                 setter: user.setSessionSet
             }
         };
-        console.log("UserManager#populateUser");
         this.populate(user, options, properties, callback);
     },
 

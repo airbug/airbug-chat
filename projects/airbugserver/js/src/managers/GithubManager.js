@@ -127,8 +127,6 @@ var GithubManager = Class.extend(EntityManager, {
      */
     retrieveGithubByGithubId: function(githubId, callback) {
         var _this = this;
-        console.log("retrieveGithubByGithubId this.dataStore = ", this.dataStore);
-
         this.dataStore.findOne({githubId: githubId}).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
                 var github = null;
