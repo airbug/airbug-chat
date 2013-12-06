@@ -8,7 +8,9 @@
 
 //@Require('Class')
 //@Require('ace.Ace')
+//@Require('ace.AceExts')
 //@Require('ace.AceModes')
+//@Require('ace.AceSnippets')
 //@Require('ace.AceThemes')
 //@Require('ace.KitchenSink')
 //@Require('airbug.ButtonView')
@@ -37,7 +39,9 @@ var bugpack = require('bugpack').context();
 
 var Class                               = bugpack.require('Class');
 var Ace                                 = bugpack.require('ace.Ace');
+var AceExts                             = bugpack.require('ace.AceExts');
 var AceModes                            = bugpack.require('ace.AceModes');
+var AceSnippets                         = bugpack.require('ace.AceSnippets');
 var AceThemes                           = bugpack.require('ace.AceThemes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
@@ -85,7 +89,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ace.Ace}
+         * @type {Ace}
          */
         this.aceEditor                  = null;
 
@@ -93,7 +97,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
         this.commandModule              = null;
 
@@ -236,7 +240,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     * @param {airbug.ButtonViewEvent} event
+     * @param {ButtonViewEvent} event
      */
     hearEmbedButtonClickedEvent: function(event) {
         this.handleEmbedButtonClickedEvent(event);
@@ -256,7 +260,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     * @param {airbug.ButtonViewEvent} event
+     * @param {ButtonViewEvent} event
      */
     handleEmbedButtonClickedEvent: function(event) {
         console.log("CodeEditorContainer");
@@ -282,16 +286,15 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     configureAceEditor: function() {
-        var aceModes    = AceModes.getInstance();
-        var aceThemes   = AceThemes.getInstance();
+        AceExts.loadAll();
+        AceModes.loadAll();
+        AceThemes.loadAll();
+        AceSnippets.loadAll();
         KitchenSink.load();
-        aceModes.loadTopTen();
-        aceThemes.loadAll();
-        this.aceEditor  = Ace.edit("code-editor-body-" + this.codeEditorView.cid);
+        Ace.require("kitchen-sink/demo"); //TODO SUNG update html ids to avoid naming conflicts
 
-
-        this.aceEditor.setTheme("ace/theme/textmate");
-        this.aceEditor.getSession().setMode("ace/mode/javascript");
+        this.aceEditor  = Ace.edit("code-editor-container-body");
+        this.aceEditor.setTheme("ace/theme/twilight");
     },
 
     /**
