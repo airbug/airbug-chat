@@ -6,6 +6,7 @@
 
 //@Export('ManagerModule')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
 //@Require('List')
@@ -28,6 +29,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var List                = bugpack.require('List');
@@ -195,16 +197,18 @@ var ManagerModule = Class.extend(Obj, {
      * @param {function(Throwable, Meld)=} callback
      */
     retrieve: function(type, id, filter, callback) {
-        console.log("ManagerModule#retrieve");
-        console.log("type:", type);
-        console.log("id:", id);
-        var _this       = this;
-        if (TypeUtil.isFunction(filter)) {
-            callback = filter;
-            filter = "basic";
-        }
-        console.log("filter", filter);
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "id", optional: false, type: "string"},
+            {name: "filter", optional: true, type: "string", default: "basic"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type        = args.type;
+        id          = args.id;
+        filter      = args.filter;
+        callback    = args.callback;
 
+        var _this       = this;
         var meldKey     = this.meldBuilder.generateMeldKey(type, id, filter);
         var meldDocument  = this.get(meldKey);
         if (meldDocument) {

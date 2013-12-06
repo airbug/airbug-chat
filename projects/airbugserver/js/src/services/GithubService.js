@@ -137,26 +137,20 @@ var GithubService = Class.extend(Obj, {
         var session = requestContext.get("session");
         var authToken = undefined;
         var githubUser = undefined;
-        console.log("GithubService #loginUserWithGithub - code:", code, " state:", state, " error:", error, " session.getData():", session.getData());
         //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
         // TODO - dkk - we should be checking to see if the current user is anonymous or not
         if (error) {
             // bad_verification_code - user has
             // incorrect_client_credentials - client_id or client_secret is not set properly.
-            console.log("GithubService #loginUserWithGithub error encountered. error ", error);
             callback(new Exception("GithubError"));
         } else if (state !== session.getData().githubState) {
-            console.log("GithubService #loginUserWithGithub state mismatch ", state, 'vs', session.getData().githubState);
             //TODO BRN: Verify that state's match
             callback(new Exception("badState"));
         } else {
-            console.log('GithubService #loginUserWithGithub No errors. Going to get auth token and retrieve github user');
             $series([
                 $task(function(flow) {
-                    console.log('GithubService #loginUserWithGithub about to get auth token');
                     try {
                         _this.githubApi.getAuthToken(code, function(throwable, token) {
-                            console.log("loginUserWithGithub# in getAuthToken callback. token = ", token, " throwable = ", throwable);
                             authToken = token;
                             flow.complete(throwable);
                         });
@@ -165,15 +159,12 @@ var GithubService = Class.extend(Obj, {
                     }
                 }),
                 $task(function(flow) {
-                    console.log('GithubService #loginUserWithGithub about to get github user');
                     _this.githubApi.retrieveGithubUser(authToken, function(throwable, githubUserObject) {
-                        console.log("loginUserWithGithub# in retrieveGithubUser callback. githubUserObject = ", githubUserObject, " throwable = ", throwable);
                         githubUser = githubUserObject;
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
-                    console.log('GithubService #loginUserWithGithub TODO: finish this.');
                 if (throwable) {
                     callback(throwable);
                 } else {

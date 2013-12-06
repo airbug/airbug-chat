@@ -225,12 +225,15 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      */
     buildRoomMemberModel: function(dataObject, roomMemberMeldDocument, userMeldDocument) {
         var roomMemberModel = this.roomMemberManagerModule.generateRoomMemberModel(dataObject, roomMemberMeldDocument, userMeldDocument);
-        this.roomMemberIdToRoomMemberModelMap.put(roomMemberModel.getProperty("id"), roomMemberModel);
+        var roomMemberId    = roomMemberModel.getProperty("id");
+        if (!this.roomMemberIdToRoomMemberModelMap.containsKey(roomMemberId)) {
+            this.roomMemberIdToRoomMemberModelMap.put(roomMemberModel.getProperty("id"), roomMemberModel);
 
-        //TEST
-        console.log("Adding roomMemberModel - ", roomMemberModel);
+            //TEST
+            console.log("Adding roomMemberModel - ", roomMemberModel);
 
-        this.roomMemberList.add(roomMemberModel);
+            this.roomMemberList.add(roomMemberModel);
+        }
     },
 
     /**
@@ -238,9 +241,11 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {RoomMemberModel} roomMemberModel
      */
     buildRoomMemberListItem: function(roomMemberModel) {
-        var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
-        this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.getCid());
-        this.roomMemberModelToListItemMap.put(roomMemberModel, roomMemberListItemContainer);
+        if (!this.roomMemberModelToListItemMap.containsKey(roomMemberModel)) {
+            var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
+            this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.getCid());
+            this.roomMemberModelToListItemMap.put(roomMemberModel, roomMemberListItemContainer);
+        }
     },
 
     /**
@@ -276,6 +281,10 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {string} id
      */
     loadRoomMember: function(id) {
+
+        //TEST
+        console.log("#loadRoomMmeber - id:", id);
+
         var _this                       = this;
         /** @type {MeldDocument} */
         var roomMemberMeldDocument      = null;
@@ -315,6 +324,10 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {Set.<string>} idSet
      */
     loadRoomMemberList: function(idSet) {
+
+        //TEST
+        console.log("#loadRoomMemberList - idSet:", idSet);
+
         var _this               = this;
         var roomMemberMeldDocumentSet   = new Set();
         var userMeldDocumentMap         = new Map();

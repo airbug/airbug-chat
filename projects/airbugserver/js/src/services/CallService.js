@@ -112,7 +112,6 @@ var CallService = Class.extend(Obj, {
      * @private
      */
     initialize: function() {
-        console.log("Inside CallService#initialize");
         this.bugCallServer.on(CallEvent.CLOSED, this.hearCallClosed, this);
         this.bugCallServer.on(CallEvent.OPENED, this.hearCallOpened, this);
     },
@@ -122,9 +121,7 @@ var CallService = Class.extend(Obj, {
      * @param {CallManager} callManager
      */
     registerCallManager: function(sid, callManager) {
-        console.log("Inside CallService#registerCallManager");
         this.sessionSidToCallManagerMap.put(sid, callManager);
-        console.log("sessionSidToCallManagerMap count:", this.sessionSidToCallManagerMap.getCount());
     },
 
 
@@ -137,7 +134,6 @@ var CallService = Class.extend(Obj, {
      * @param {CallEvent} event
      */
     hearCallClosed: function(event) {
-        console.log("Inside CallService#hearCallClosed");
         var data            = event.getData();
         var callManager     = data.callManager;
         this.deregisterCallManager(callManager);

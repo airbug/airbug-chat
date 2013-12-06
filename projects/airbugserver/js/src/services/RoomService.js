@@ -611,7 +611,6 @@ var RoomService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable){
-            console.log("RoomService#dbRetrieveUserRoomAndRoomMember results: Throwable:", throwable, "user:", user, "room:", room, "roomMember:", roomMember);
             if (!throwable) {
                 callback(undefined, user, room, roomMember);
             } else {
