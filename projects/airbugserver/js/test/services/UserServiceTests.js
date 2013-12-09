@@ -111,7 +111,7 @@ var setupUserService = function(setupObject, userManager) {
         factoryManager: function() {
             return setupObject.testMeldManager;
         },
-        generateMeldKey: function() {
+        generateMeldKeyFromEntity: function() {
             return setupObject.testMeldKey;
         },
         meldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
@@ -165,7 +165,7 @@ var userServiceMeldCurrentUserWithCurrentUserTest = {
         this.testMeldManager = {};
         this.testMeldKey = {};
         this.dummyMeldService   = {
-            generateMeldKey: function() {
+            generateMeldKeyFromEntity: function() {
                 return _this.testMeldKey;
             },
             meldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
@@ -420,12 +420,14 @@ var userServiceLoginWithValidEmailAndPasswordTest = {
                 var email = "test@example.com";
                 var password = "lastpass";
                 _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
-                    test.assertTrue(throwable === null,
-                        "Make sure that throwable was null");
-                    test.assertTrue(!!user,
-                        "Assert user was loaded");
-                    test.assertEqual(user.getEmail(), "test@example.com",
-                        "Assert that email was the user we expected");
+                    if (!throwable) {
+                        test.assertTrue(throwable === null,
+                            "Make sure that throwable was null");
+                        test.assertTrue(!!user,
+                            "Assert user was loaded");
+                        test.assertEqual(user.getEmail(), "test@example.com",
+                            "Assert that email was the user we expected");
+                    }
                     flow.complete(throwable);
                 });
             })

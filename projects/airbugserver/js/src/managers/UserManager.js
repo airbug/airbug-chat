@@ -98,7 +98,9 @@ var UserManager = Class.extend(EntityManager, {
      */
     generateUser: function(data) {
         data.roomIdSet = new Set(data.roomIdSet);
-        return new User(data);
+        var user = new User(data);
+        this.generate(user);
+        return user;
     },
 
     /**

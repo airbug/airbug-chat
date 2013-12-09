@@ -53,7 +53,6 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 
 var ConversationManager = Class.extend(EntityManager, {
 
-
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
@@ -92,7 +91,9 @@ var ConversationManager = Class.extend(EntityManager, {
      */
     generateConversation: function(data) {
         data.chatMessageIdSet = new Set(data.chatMessageIdSet);
-        return new Conversation(data);
+        var conversation = new Conversation(data);
+        this.generate(conversation);
+        return conversation;
     },
 
     /**

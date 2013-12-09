@@ -144,6 +144,7 @@ var SessionManager = Class.extend(EntityManager, {
         var session     = new Session(data);
         var cookie      = new Cookie(session.getDeltaDocument().getData().cookie);
         session.setCookie(cookie);
+        this.generate(session);
         return session;
     },
 

@@ -159,7 +159,7 @@ var ConversationService = Class.extend(Obj, {
 
     /**
      * @param {Conversation} conversation
-     * @param {function(Throwable, Conversation)} callback
+     * @param {function(Throwable, Conversation=)} callback
      */
     dbPopulateConversation: function(conversation, callback) {
         var _this = this;
@@ -171,7 +171,7 @@ var ConversationService = Class.extend(Obj, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                callback(undefined, conversation);
+                callback(null, conversation);
             } else {
                 callback(throwable);
             }
@@ -180,7 +180,7 @@ var ConversationService = Class.extend(Obj, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Throwable, Conversation)} callback
+     * @param {function(Throwable, Conversation=)} callback
      */
     dbRetrievePopulatedConversation: function(conversationId, callback) {
         var _this               = this;
@@ -206,7 +206,7 @@ var ConversationService = Class.extend(Obj, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                callback(undefined, conversation);
+                callback(null, conversation);
             } else {
                 callback(throwable);
             }
@@ -222,7 +222,7 @@ var ConversationService = Class.extend(Obj, {
      * @param {Conversation} conversation
      */
     meldConversation: function(meldManager, conversation) {
-        this.meldService.pushEntity(meldManager, "Conversation", "basic", conversation);
+        this.meldService.pushEntity(meldManager, conversation);
     },
 
     /**
@@ -232,7 +232,7 @@ var ConversationService = Class.extend(Obj, {
      * @param {string=} reason
      */
     meldUserWithConversation: function(meldManager, user, conversation, reason) {
-        var conversationMeldKey     = this.meldService.generateMeldKey("Conversation", conversation.getId(), "basic");
+        var conversationMeldKey     = this.meldService.generateMeldKeyFromEntity(conversation);
         var meldKeys                = [conversationMeldKey];
         reason                      = reason ? reason : conversation.getId();
 
@@ -246,7 +246,7 @@ var ConversationService = Class.extend(Obj, {
      * @param {string=} reason
      */
     unmeldUserWithConversation: function(meldManager, user, conversation, reason) {
-        var conversationMeldKey     = this.meldService.generateMeldKey("Conversation", conversation.getId(), "basic");
+        var conversationMeldKey     = this.meldService.generateMeldKeyFromEntity(conversation);
         var meldKeys                = [conversationMeldKey];
         reason                      = reason ? reason : conversation.getId();
 

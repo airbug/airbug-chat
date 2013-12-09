@@ -89,16 +89,11 @@ var MeldService = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} type
-     * @param {string} id
-     * @param {string=} filter
+     * @param {Entity} entity
      * @return {MeldKey}
      */
-    generateMeldKey: function(type, id, filter) {
-        if (!filter) {
-            filter = "basic";
-        }
-        return this.meldBuilder.generateMeldKey(type, id, filter);
+    generateMeldKeyFromEntity: function(entity) {
+        return this.meldBuilder.generateMeldKey(entity.getEntityType(), entity.getId());
     },
 
     /**
@@ -123,29 +118,25 @@ var MeldService = Class.extend(Obj, {
 
     /**
      * @param {MeldManager} meldManager
-     * @param {string} type
-     * @param {(string | Array.<string>)} filters
-     * @param {Entity} entity
+     * @param {(Entity | Array.<Entity>)} entities
      */
-    pushEntity: function(meldManager, type, filters, entity) {
+    pushEntity: function(meldManager, entities) {
         var _this = this;
-        if (TypeUtil.isArray(filters)) {
-            filters.forEach(function(filter) {
-                _this.pushEntityForFilter(meldManager, type, filter, entity);
+        if (TypeUtil.isArray(entities)) {
+            entities.forEach(function(entity) {
+                _this.doPushEntity(meldManager, entity);
             });
         } else {
-            this.pushEntityForFilter(meldManager, type, filters, entity);
+            this.doPushEntity(meldManager, entities);
         }
     },
 
     /**
      * @param {MeldManager} meldManager
-     * @param {string} type
-     * @param {string} filter
      * @param {Entity} entity
      */
-    unpushEntity: function(meldManager, type, filter, entity) {
-        var meldKey = this.generateMeldKey(type, entity.getId(), filter);
+    unpushEntity: function(meldManager, entity) {
+        var meldKey = this.generateMeldKeyFromEntity(entity);
         if (meldManager.containsMeldByKey(meldKey)) {
             meldManager.removeMeld(meldKey);
         }
@@ -183,15 +174,13 @@ var MeldService = Class.extend(Obj, {
     /**
      * @private
      * @param {MeldManager} meldManager
-     * @param {string} type
-     * @param {string} filter
      * @param {Entity} entity
      */
-    pushEntityForFilter: function(meldManager, type, filter, entity) {
+    doPushEntity: function(meldManager, entity) {
         /** @type {MeldKey} */
-        var meldKey = this.generateMeldKey(type, entity.getId(), filter);
+        var meldKey = this.generateMeldKeyFromEntity(entity);
         /** @type {MeldDocument} */
-        var meldDocument = undefined;
+        var meldDocument = null;
         if (!meldManager.containsMeldByKey(meldKey)) {
 
             //TEST

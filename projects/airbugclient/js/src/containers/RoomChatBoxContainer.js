@@ -149,9 +149,17 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.boxWithHeaderView              = null;
     },
 
+
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {ConversationModel}
+     */
+    getConversationModel: function() {
+        return this.conversationModel;
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -255,8 +263,16 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      * @param {string} conversationId
      */
     loadConversation: function(conversationId) {
+
+        //TEST
+        console.log("RoomChatBoxContainer#loadConversation - conversationId:", conversationId);
+
         var _this = this;
         this.conversationManagerModule.retrieveConversation(conversationId, function(throwable, conversationMeldDocument) {
+
+            //TEST
+            console.log("RoomChatBoxContainer#loadConversation (after retrieveConversation) - conversationId:", conversationId);
+
             if (!throwable) {
                 if (conversationMeldDocument) {
                     _this.conversationModel.setConversationMeldDocument(conversationMeldDocument);

@@ -758,7 +758,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     meldCurrentUserWithCurrentUser: function(meldManager, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", currentUser.getId(), "owner");
+        var userMeldKey = this.meldService.generateMeldKeyFromEntity(currentUser);
         var reason = "currentUser"; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     },
@@ -770,7 +770,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     meldUserWithCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
+        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
         var reason = ""; //TODO
         this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     },
@@ -781,7 +781,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} user
      */
     pushUser: function(meldManager, user) {
-        this.meldService.pushEntity(meldManager, "User", ["owner", "basic"], user);
+        this.meldService.pushEntity(meldManager, user);
     },
 
     /**
@@ -791,7 +791,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     unmeldUserFromCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "basic");
+        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
         var reason = "currentUser"; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     },
@@ -803,7 +803,7 @@ var UserService = Class.extend(Obj, {
      * @param {User} currentUser
      */
     unmeldCurrentUserFromCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKey("User", user.getId(), "owner");
+        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
         var reason = ""; //TODO
         this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     }

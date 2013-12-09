@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('Set')
 //@Require('airbugserver.User')
 //@Require('bugflow.BugFlow')
 
@@ -27,6 +28,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Obj                 = bugpack.require('Obj');
+var Set                 = bugpack.require('Set');
 var User                = bugpack.require('airbugserver.User');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 
@@ -503,7 +505,6 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Throwable, Room, RoomMember)} callback
      */
     dbRetrieveRoomAndRoomMember: function(userId, roomId, callback){
-        console.log("RoomService#dbRetrieveRoomAndRoomMember");
         var _this           = this;
         var room            = undefined;
         var roomMember      = undefined;
@@ -734,13 +735,13 @@ var RoomService = Class.extend(Obj, {
     meldUserWithRoom: function(meldManager, user, room) {
         var meldService                     = this.meldService;
         var reason                          = room.getId();
-        var roomMeldKey                     = this.meldService.generateMeldKey("Room", room.getId(), "basic");
+        var roomMeldKey                     = this.meldService.generateMeldKeyFromEntity(room);
         var meldKeys                        = [roomMeldKey];
 
         room.getRoomMemberSet().forEach(function(roomMember) {
-            var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberMeldKey       = meldService.generateMeldKeyFromEntity(roomMember);
             var roomMemberUser          = roomMember.getUser();
-            var roomMemberUserMeldKey   = meldService.generateMeldKey("User", roomMemberUser.getId(), "basic");
+            var roomMemberUserMeldKey   = meldService.generateMeldKeyFromEntity(roomMemberUser);
 
             meldKeys.push(roomMemberMeldKey);
             meldKeys.push(roomMemberUserMeldKey);
@@ -757,8 +758,8 @@ var RoomService = Class.extend(Obj, {
      */
     meldRoomMemberUsersWithUserAndRoomMember: function(meldManager, room, user, roomMember) {
         var meldService             = this.meldService;
-        var userMeldKey             = meldService.generateMeldKey("User", user.getId(), "basic");
-        var roomMemberMeldKey       = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+        var userMeldKey             = meldService.generateMeldKeyFromEntity(user);
+        var roomMemberMeldKey       = meldService.generateMeldKeyFromEntity(roomMember);
         var reason                  = room.getId();
 
         room.getRoomMemberSet().forEach(function(roomMember) {
@@ -774,13 +775,14 @@ var RoomService = Class.extend(Obj, {
     pushRoom: function(meldManager, room) {
         var meldService             = this.meldService;
         var roomMemberSet           = room.getRoomMemberSet();
-
-        meldService.pushEntity(meldManager, "Room", "basic", room);
+        var pushEntitySet           = new Set();
+        pushEntitySet.add(room);
         roomMemberSet.forEach(function(roomMember) {
             var user = roomMember.getUser();
-            meldService.pushEntity(meldManager, "RoomMember", "basic", roomMember);
-            meldService.pushEntity(meldManager, "User", "basic", user);
+            pushEntitySet.add(roomMember);
+            pushEntitySet.add(user);
         });
+        meldService.pushEntity(meldManager, pushEntitySet.toArray());
     },
 
     /**
@@ -789,18 +791,17 @@ var RoomService = Class.extend(Obj, {
      * @param {Room} room
      */
     unmeldUserWithRoom: function(meldManager, user, room){
-        console.log("RoomService#unmeldUserWithRoom");
         var meldService = this.meldService;
-        var roomMeldKey = meldService.generateMeldKey("Room", room.getId(), "basic");
+        var roomMeldKey = meldService.generateMeldKeyFromEntity(room);
         var meldKeys    = [roomMeldKey];
         var reason      = room.getId();
 
         room.getRoomMemberSet().forEach(function(roomMember) {
-            var roomMemberMeldKey   = meldService.generateMeldKey("RoomMember", roomMember.getId(), "basic");
+            var roomMemberMeldKey   = meldService.generateMeldKeyFromEntity(roomMember);
             var roomMemberUser      = roomMember.getUser();
             meldKeys.push(roomMemberMeldKey);
             if (roomMemberUser) {
-                var userMeldKey = meldService.generateMeldKey("User", user.getId(), "basic");
+                var userMeldKey = meldService.generateMeldKeyFromEntity(user);
                 meldKeys.push(userMeldKey);
             }
         });

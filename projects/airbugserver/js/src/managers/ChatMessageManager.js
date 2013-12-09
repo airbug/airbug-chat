@@ -95,7 +95,9 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @return {ChatMessage}
      */
     generateChatMessage: function(data) {
-        return new ChatMessage(data);
+        var chatMessage = new ChatMessage(data);
+        this.generate(chatMessage);
+        return chatMessage;
     },
 
     /**

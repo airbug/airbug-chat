@@ -378,7 +378,7 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {ChatMessage} chatMessage
      */
     meldChatMessage: function(meldManager, chatMessage) {
-        this.meldService.pushEntity(meldManager, "ChatMessage", "basic", chatMessage);
+        this.meldService.pushEntity(meldManager, chatMessage);
     },
 
     /**
@@ -388,7 +388,7 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {string=} reason
      */
     meldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
-        var chatMessageMeldKey      = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
+        var chatMessageMeldKey      = this.meldService.generateMeldKeyFromEntity(chatMessage);
         var meldKeys                = [chatMessageMeldKey];
         reason                      = reason ? reason : chatMessage.getId();
 
@@ -402,7 +402,7 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {string=} reason
      */
     unmeldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
-        var chatMessageMeldKey      = this.meldService.generateMeldKey("ChatMessage", chatMessage.getId());
+        var chatMessageMeldKey      = this.meldService.generateMeldKeyFromEntity(chatMessage);
         var meldKeys                = [chatMessageMeldKey];
         reason                      = reason ? reason : chatMessage.getId();
 

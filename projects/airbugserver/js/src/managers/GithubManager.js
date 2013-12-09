@@ -93,7 +93,9 @@ var GithubManager = Class.extend(EntityManager, {
      * @returns {Github}
      */
     generateGithub: function(data) {
-        return new Github(data);
+        var github = new Github(data);
+        this.generate(github);
+        return github;
     },
 
     /**

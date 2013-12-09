@@ -58,7 +58,6 @@ buildProperties({
                 start: "node ./scripts/airbug-server-application-start.js"
             }
         },
-
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
@@ -80,32 +79,11 @@ buildProperties({
             "../bugjs/projects/mongo/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
-            "../bugunit/projects/bugdouble/js/src",
-            "../bugunit/projects/bugunit/js/src",
             "../meldbug/projects/meldbug/js/src",
             "../meldbug/projects/meldbugserver/js/src"
         ],
         scriptPaths: [
-            "./projects/airbugserver/js/scripts",
-            "../bugunit/projects/bugunit/js/scripts"
-        ],
-        testPaths: [
-            "./projects/airbugserver/js/test",
-            "../bugjs/projects/bugcall/js/test",
-            "../bugjs/projects/bugdelta/js/test",
-            "../bugjs/projects/bugentity/js/test",
-            "../bugjs/projects/bugflow/js/test",
-            "../bugjs/projects/bugioc/js/test",
-            "../bugjs/projects/bugjs/js/test",
-            "../bugjs/projects/bugmeta/js/test",
-            "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
-            "../bugjs/projects/bugtrace/js/test",
-            "../bugjs/projects/configbug/js/test",
-            "../bugjs/projects/handshaker/js/test",
-            "../bugjs/projects/mongo/js/test",
-            "../bugjs/projects/socketio/bugjars/socket/js/test",
-            "../meldbug/projects/meldbug/js/test",
-            "../meldbug/projects/meldbugserver/js/test"
+            "./projects/airbugserver/js/scripts"
         ],
 
         //TODO BRN: These static paths are temporary until we get the client js server working.
@@ -154,6 +132,55 @@ buildProperties({
             "../meldbug/projects/meldbugclient/js/src",
             "../bugpack/projects/bugpack-client/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
+        ]
+    },
+    unitTest: {
+        packageJson: {
+            name: "airbugserver-test",
+            version: "0.0.1",
+            main: "./lib/AirBugServer.js",
+            dependencies: {
+                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+                "buffer-crc32": "0.2.x",
+                connect: "2.x",
+                cookie: "0.1.x",
+                "cookie-signature": "1.0.x",
+                express: "3.2.x",
+                mu2express: "0.0.x",
+                mongodb: ">=1.2.11",
+                mongoose: ">=3.5.6",
+                "socket.io": "0.9.x",
+                bcrypt: "0.7.x",
+                github: "0.1.x"
+            },
+            scripts: {
+                start: "node ./scripts/airbug-server-application-start.js"
+            }
+        },
+        sourcePaths: [
+            "../bugunit/projects/bugdouble/js/src",
+            "../bugunit/projects/bugunit/js/src"
+        ],
+        scriptPaths: [
+            "../bugunit/projects/bugunit/js/scripts"
+        ],
+        testPaths: [
+            "./projects/airbugserver/js/test",
+            "../bugjs/projects/bugcall/js/test",
+            "../bugjs/projects/bugdelta/js/test",
+            "../bugjs/projects/bugentity/js/test",
+            "../bugjs/projects/bugflow/js/test",
+            "../bugjs/projects/bugioc/js/test",
+            "../bugjs/projects/bugjs/js/test",
+            "../bugjs/projects/bugmeta/js/test",
+            "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
+            "../bugjs/projects/bugtrace/js/test",
+            "../bugjs/projects/configbug/js/test",
+            "../bugjs/projects/handshaker/js/test",
+            "../bugjs/projects/mongo/js/test",
+            "../bugjs/projects/socketio/bugjars/socket/js/test",
+            "../meldbug/projects/meldbug/js/test",
+            "../meldbug/projects/meldbugserver/js/test"
         ]
     },
     client: {
@@ -227,9 +254,13 @@ buildTarget('local').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
-                        sourcePaths: buildProject.getProperty("server.sourcePaths"),
-                        scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        testPaths: buildProject.getProperty("server.testPaths"),
+                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
+                            buildProject.getProperty("unitTest.sourcePaths")
+                        ),
+                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
+                            buildProject.getProperty("unitTest.scriptPaths")
+                        ),
+                        testPaths: buildProject.getProperty("unitTest.testPaths"),
 
                         //TODO BRN: This is temporary until we get client js packages working.
 
@@ -364,41 +395,115 @@ buildTarget('prod').buildFlow(
 
         targetTask('clean'),
         parallel([
+
+            //Create test package (this is not the production package). We create a different package for testing so that the production code does not have the unit test code in it.
+
+            series([
+                targetTask('createNodePackage', {
+                    properties: {
+                        packageJson: buildProject.getProperty("unitTest.packageJson"),
+                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
+                            buildProject.getProperty("unitTest.sourcePaths")
+                        ),
+                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
+                            buildProject.getProperty("unitTest.scriptPaths")
+                        ),
+                        testPaths: buildProject.getProperty("unitTest.testPaths"),
+
+                        //TODO BRN: This is temporary until we get client js packages working.
+
+                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
+                        staticPaths: buildProject.getProperty("server.staticPaths")
+                    }
+                }),
+                parallel([
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("unitTest.packageJson.name"),
+                                buildProject.getProperty("unitTest.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath(),
+                                ignore: ["static"]
+                            });
+                        }
+                    }),
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("unitTest.packageJson.name"),
+                                buildProject.getProperty("unitTest.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath().getAbsolutePath() + "/static"
+                            });
+                        }
+                    })
+                ]),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: buildProject.getProperty("unitTest.packageJson.name"),
+                        packageVersion: buildProject.getProperty("unitTest.packageJson.version")
+                    }
+                }),
+                targetTask('startNodeModuleTests', {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(
+                            buildProject.getProperty("unitTest.packageJson.name"),
+                            buildProject.getProperty("unitTest.packageJson.version")
+                        );
+                        task.updateProperties({
+                            modulePath: packedNodePackage.getFilePath()
+                        });
+                    }
+                })
+            ]),
+
+            // Create production package
+
             series([
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
                         sourcePaths: buildProject.getProperty("server.sourcePaths"),
                         scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        testPaths: buildProject.getProperty("server.testPaths")
+
+                        //TODO BRN: This is temporary until we get client js packages working.
+
+                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
+                        staticPaths: buildProject.getProperty("server.staticPaths")
                     }
                 }),
-                targetTask('generateBugPackRegistry', {
-                    init: function(task, buildProject, properties) {
-                        var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperty("server.packageJson.name"),
-                            buildProject.getProperty("server.packageJson.version")
-                        );
-                        task.updateProperties({
-                            sourceRoot: nodePackage.getBuildPath()
-                        });
-                    }
-                }),
+                parallel([
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("server.packageJson.name"),
+                                buildProject.getProperty("server.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath(),
+                                ignore: ["static"]
+                            });
+                        }
+                    }),
+                    targetTask('generateBugPackRegistry', {
+                        init: function(task, buildProject, properties) {
+                            var nodePackage = nodejs.findNodePackage(
+                                buildProject.getProperty("server.packageJson.name"),
+                                buildProject.getProperty("server.packageJson.version")
+                            );
+                            task.updateProperties({
+                                sourceRoot: nodePackage.getBuildPath().getAbsolutePath() + "/static"
+                            });
+                        }
+                    })
+                ]),
                 targetTask('packNodePackage', {
                     properties: {
                         packageName: buildProject.getProperty("server.packageJson.name"),
                         packageVersion: buildProject.getProperty("server.packageJson.version")
-                    }
-                }),
-                targetTask('startNodeModuleTests', {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(
-                            buildProject.getProperty("server.packageJson.name"),
-                            buildProject.getProperty("server.packageJson.version")
-                        );
-                        task.updateProperties({
-                            modulePath: packedNodePackage.getFilePath()
-                        });
                     }
                 }),
                 targetTask("s3EnsureBucket", {
@@ -421,8 +526,8 @@ buildTarget('prod').buildFlow(
                         bucket: "airbug"
                     }
                 })
-            ]),
-            series([
+            ])
+            /*series([
                 // TODO BRN: build client app
                  targetTask('createClientPackage', {
                       properties: {
@@ -468,7 +573,7 @@ buildTarget('prod').buildFlow(
                        bucket: "airbug"
                    }
                })
-            ])
+            ])*/
         ])
     ])
 );

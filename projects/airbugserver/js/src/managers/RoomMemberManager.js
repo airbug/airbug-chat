@@ -88,7 +88,9 @@ var RoomMemberManager = Class.extend(EntityManager, {
      * @return {RoomMember}
      */
     generateRoomMember: function(data) {
-        return new RoomMember(data);
+        var roomMember = new RoomMember(data);
+        this.generate(roomMember);
+        return roomMember;
     },
 
     populateRoomMember: function(roomMember, properties, callback) {

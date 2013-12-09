@@ -91,7 +91,9 @@ var AssetManager = Class.extend(EntityManager, {
      * @return {Asset}
      */
     generateAsset: function(data) {
-        return new Asset(data);
+        var asset = new Asset(data);
+        this.generate(asset);
+        return asset;
     },
 
     populateAsset: function(asset, properties, callback) {
@@ -107,7 +109,7 @@ var AssetManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {string} assetIds
+     * @param {Array.<string>} assetIds
      * @param {function(Throwable, Map.<string, Asset>)} callback
      */
     retrieveAssets: function(assetIds, callback) {

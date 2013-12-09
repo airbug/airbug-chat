@@ -79,7 +79,7 @@ var meldServiceMeldUserWithKeysAndReasonTest = {
         this.testUser               = new User({});
         this.testSid                = "testSid";
         this.testSession            = new Session({sid: this.testSid});
-        this.testMeldKey            = new MeldKey("dataType", "id", "filterType");
+        this.testMeldKey            = new MeldKey("dataType", "id");
         this.testReason             = "testReason";
         this.testUser.setSessionSet(new Set([this.testSession]));
         this.testCallService.registerCallManager(this.testSession.getSid(), this.dummyCallManager);

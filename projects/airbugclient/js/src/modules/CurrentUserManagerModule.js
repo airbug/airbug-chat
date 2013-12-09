@@ -193,7 +193,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 if (!throwable) {
                     var currentUserId   = data.objectId;
                     console.log("currentUserId:", currentUserId);
-                    _this.retrieve("User", currentUserId, "owner", function(throwable, currentUserMeldDocument) {
+                    _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
                         if (!throwable) {
                             _this.currentUser = new CurrentUser(currentUserMeldDocument);
                             callback(null, _this.currentUser);

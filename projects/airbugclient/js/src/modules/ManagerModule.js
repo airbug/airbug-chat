@@ -15,7 +15,9 @@
 //@Require('Set')
 //@Require('StringUtil')
 //@Require('TypeUtil')
+//@Require('airbug.ApiRequest')
 //@Require('airbug.EntityDefines')
+//@Require('airbug.RetrieveRequest')
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +40,9 @@ var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 var StringUtil          = bugpack.require('StringUtil');
 var TypeUtil            = bugpack.require('TypeUtil');
+var ApiRequest          = bugpack.require('airbug.ApiRequest');
 var EntityDefines       = bugpack.require('airbug.EntityDefines');
+var RetrieveRequest     = bugpack.require('airbug.RetrieveRequest');
 
 
 //-------------------------------------------------------------------------------
@@ -67,23 +71,29 @@ var ManagerModule = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Map.<string, RetrieveRequest>}
+         */
+        this.activeRetrieveRequestMap   = new Map();
+
+        /**
+         * @private
          * @type {AirbugApi}
          */
-        this.airbugApi              = airbugApi;
+        this.airbugApi                  = airbugApi;
 
         /**
          * @private
          * @type {MeldBuilder}
          */
-        this.meldBuilder            = meldBuilder;
+        this.meldBuilder                = meldBuilder;
 
         /**
          * @private
          * @type {MeldStore}
          */
-        this.meldStore              = meldStore;
-
+        this.meldStore                  = meldStore;
     },
+
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
@@ -92,23 +102,27 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Object} object
-     * @param {string=} filter
-     * @param {function(Throwable, Meld)=} callback
+     * @param {function(Throwable, Meld)} callback
      */
-    create: function(type, object, filter, callback) {
+    create: function(type, object, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "object", optional: false, type: "object"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type        = args.type;
+        object      = args.object;
+        callback    = args.callback;
+
         var _this = this;
         var requestData = {object: object};
         var requestType = "create" + type;
-        if (TypeUtil.isFunction(filter)) {
-            callback = filter;
-            filter = "basic";
-        }
         this.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
                     var data        = callResponse.getData();
                     var objectId    = data.objectId;
-                    var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                    var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId);
                     var meldDocument  = _this.get(meldKey);
                     if (meldDocument) {
                         callback(undefined, meldDocument);
@@ -134,17 +148,21 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<*>} objects
-     * @param {string=} filter
-     * @param {function(Throwable, Map.<MeldDocument>)=} callback
+     * @param {function(Throwable, Map.<MeldDocument>)} callback
      */
-    createEach: function(type, objects, filter, callback) {
+    createEach: function(type, objects, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "objects", optional: false, type: "array"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type        = args.type;
+        objects     = args.objects;
+        callback    = args.callback;
+
         var _this = this;
         var requestData = {objects: objects};
         var requestType = "create" + StringUtil.pluralize(type);
-        if (TypeUtil.isFunction(filter)) {
-            callback = filter;
-            filter = "basic";
-        }
         this.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
 
@@ -154,7 +172,7 @@ var ManagerModule = Class.extend(Obj, {
                     var objectIds       = data.objectIds;
                     var meldDocumentSet   = new Set();
                     objectIds.forEach(function(objectId) {
-                        var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                        var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId);
                         var meldDocument  = _this.get(meldKey);
                         meldDocumentSet.add(meldDocument);
                     });
@@ -191,76 +209,46 @@ var ManagerModule = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} type
-     * @param {string} id
-     * @param {(string | function(Throwable, Meld))} filter
-     * @param {function(Throwable, Meld)=} callback
+     * @param {string} entityType
+     * @param {string} entityId
+     * @param {function(Throwable, Meld)} callback
      */
-    retrieve: function(type, id, filter, callback) {
+    retrieve: function(entityType, entityId, callback) {
         var args = ArgUtil.process(arguments, [
-            {name: "type", optional: false, type: "string"},
-            {name: "id", optional: false, type: "string"},
-            {name: "filter", optional: true, type: "string", default: "basic"},
+            {name: "entityType", optional: false, type: "string"},
+            {name: "entityId", optional: false, type: "string"},
             {name: "callback", optional: false, type: "function"}
         ]);
-        type        = args.type;
-        id          = args.id;
-        filter      = args.filter;
+        entityType  = args.entityType;
+        entityId    = args.entityId;
         callback    = args.callback;
 
-        var _this       = this;
-        var meldKey     = this.meldBuilder.generateMeldKey(type, id, filter);
-        var meldDocument  = this.get(meldKey);
-        if (meldDocument) {
-            callback(null, meldDocument);
-        } else {
-            var requestData = {objectId: id};
-            var requestType = "retrieve" + type;
-            _this.request(requestType, requestData, function(throwable, callResponse) {
-                console.log("ManagerModule#retrieve request callback");
-                if (!throwable)  {
-                    var responseType    = callResponse.getType();
-                    var data            = callResponse.getData();
-                    console.log("responseType:", responseType);
-                    console.log("data:", data);
-                    if (responseType === EntityDefines.Responses.SUCCESS) {
-                        var objectId        = data.objectId;
-                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
-                        meldDocument        = _this.get(returnedMeldKey);
-                        callback(undefined, meldDocument);
-                    } else if (responseType === EntityDefines.Responses.EXCEPTION) {
-                        //TODO BRN: Handle common exceptions
-                        callback(new Exception(data.exception));
-                    } else if (responseType === EntityDefines.Responses.ERROR) {
-                        //TODO BRN: Handle common errors
-                        callback(new Error(data.error));
-                    } else {
-                        callback(undefined, callResponse);
-                    }
-                } else {
-                    callback(throwable);
-                }
-            });
-        }
+        var request = this.generateRetrieveRequest(entityType, entityId);
+        request.addCallback(callback);
+        this.airbugApi.sendRequest(request);
     },
 
     /**
      * @param {string} type
      * @param {Array.<string>} ids
-     * @param {(string | function(Throwable, Map.<string, Meld>=))} filter
-     * @param {function(Throwable, Map.<string, Meld>)=} callback
+     * @param {function(Throwable, Map.<string, Meld>)} callback
      */
     retrieveEach: function(type, ids, filter, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "ids", optional: false, type: "array"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type        = args.type;
+        ids         = args.ids;
+        callback    = args.callback;
+
         var _this       = this;
-        if (TypeUtil.isFunction(filter)) {
-            callback = filter;
-            filter = "basic";
-        }
         var retrievedMeldMap   = new Map();
         var unretrievedIds     = [];
 
         ids.forEach(function(id) {
-            var meldKey         = _this.meldBuilder.generateMeldKey(type, id, filter);
+            var meldKey         = _this.meldBuilder.generateMeldKey(type, id);
             var meldDocument    = _this.get(meldKey);
             if (meldDocument) {
                 retrievedMeldMap.put(id, meldDocument);
@@ -273,7 +261,7 @@ var ManagerModule = Class.extend(Obj, {
             var requestData = {objectIds: unretrievedIds};
             var requestType = "retrieve" + StringUtil.pluralize(type);
             this.request(requestType, requestData, function(throwable, callResponse) {
-                _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, type, filter, callback);
+                _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, type, callback);
             });
         } else {
             callback(undefined, retrievedMeldMap);
@@ -284,15 +272,21 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} type
      * @param {string} id
      * @param {*} changeObject
-     * @param {string=} filter
-     * @param {function(Throwable, Meld)=} callback
+     * @param {function(Throwable, Meld)} callback
      */
-    update: function(type, id, changeObject, filter, callback) {
+    update: function(type, id, changeObject, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "id", optional: false, type: "string"},
+            {name: "changeObject", optional: false, type: "object"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type            = args.type;
+        id              = args.id;
+        changeObject    = args.changeObject;
+        callback        = args.callback;
+
         var _this = this;
-        if (TypeUtil.isFunction(filter)) {
-            callback = filter;
-            filter = "basic";
-        }
         var requestData = {
             objectId: id,
             changeObject: changeObject
@@ -302,7 +296,7 @@ var ManagerModule = Class.extend(Obj, {
             if (!throwable)  {
                 var data = callResponse.getData();
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
-                    var returnedMeldKey     = _this.meldBuilder.generateMeldKey(type, id, filter);
+                    var returnedMeldKey     = _this.meldBuilder.generateMeldKey(type, id);
                     var meldDocument        = _this.get(returnedMeldKey);
                     callback(undefined, meldDocument);
                 } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
@@ -324,10 +318,20 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} type
      * @param {Array.<string>} ids
      * @param {Array.<Object>} changeObjects
-     * @param {string} filter
      * @param {function(Throwable, List.<Meld>=)} callback
      */
-    updateEach: function(type, ids, changeObjects, filter, callback) {
+    updateEach: function(type, ids, changeObjects, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "type", optional: false, type: "string"},
+            {name: "ids", optional: false, type: "arrat"},
+            {name: "changeObjects", optional: false, type: "array"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        type            = args.type;
+        ids             = args.ids;
+        changeObjects   = args.changeObjects;
+        callback        = args.callback;
+
         var _this = this;
         var requestData = {
             objectIds: ids,
@@ -338,7 +342,7 @@ var ManagerModule = Class.extend(Obj, {
             var extentMeldKeys      = [];
             var destroyedMeldKeys    = [];
             ids.forEach(function(id) {
-                var meldKey = _this.meldBuilder.generateMeldKey(type, id, filter);
+                var meldKey = _this.meldBuilder.generateMeldKey(type, id);
                 if (data.objectIds[id]) {
                     extentMeldKeys.push(meldKey);
                 } else {
@@ -352,42 +356,80 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {string} meldId
+     * @param {string} id
      * @param {function(Throwable)} callback
      */
-    destroy: function(type, meldId, callback) {
-        var requestData = {objectId: meldId};
-        var requestType = "destroy" + type;
-        this.airbugApi.request(requestType, requestData, callback);
+    destroy: function(type, id, callback) {
+        //TODO
     },
 
     /**
      * @param {string} type
-     * @param {Array.<string>} meldIds
+     * @param {Array.<string>} ids
      * @param {function(Throwable)} callback
      */
-    destroyEach: function(type, meldIds, callback) {
-        var requestData = {objectIds: meldIds};
-        var requestType = "destroy" + StringUtil.pluralize(type);
-        this.airbugApi.request(requestType, type, requestData, function(throwable, data) {
-            //TODO
-            // var destroyedMeldIds    = [];
-            // var extentMeldIds       = [];
-            // meldIds.forEach(function(meldId){
-            //     if(data[meldId]){
-            //         destroyedMeldIds.push(meldId);
-            //     } else {
-            //         extentMeldIds.push(meldId);
-            //     }
-            // });
-            callback(throwable);
-        });
+    destroyEach: function(type, ids, callback) {
+        //TODO
     },
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {RetrieveRequest} request
+     */
+    addRetrieveRequest: function(request) {
+        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityId());
+        request.addEventListener(ApiRequest.EventTypes.REQUEST_COMPLETE, this.hearApiRequestComplete, this);
+        this.activeRetrieveRequestMap.put(key, request);
+    },
+
+    /**
+     * @private
+     * @param entityType
+     * @param entityId
+     * @returns {RetrieveRequest}
+     */
+    generateRetrieveRequest: function(entityType, entityId) {
+        var key = this.generateRetrieveRequestKey(entityType, entityId);
+
+        //TEST
+        console.log("ManagerModule#generateRetrieveRequest - entityType:", entityType, " entityId:", entityId);
+
+        //TEST
+        console.log("this.activeRetrieveRequestMap.containsKey(key):", this.activeRetrieveRequestMap.containsKey(key));
+
+        if (this.activeRetrieveRequestMap.containsKey(key)) {
+            return this.activeRetrieveRequestMap.get(key);
+        } else {
+            var request = new RetrieveRequest(entityType, entityId, this.meldBuilder, this.meldStore);
+            this.addRetrieveRequest(request);
+            return request;
+        }
+    },
+
+    /**
+     * @private
+     * @param {string} entityType
+     * @param {string} entityId
+     * @returns {string}
+     */
+    generateRetrieveRequestKey: function(entityType, entityId) {
+        return entityType + "_" + entityId;
+    },
+
+    /**
+     * @private
+     * @param {RetrieveRequest} request
+     */
+    removeRetrieveRequest: function(request) {
+        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityType());
+        request.removeEventListener(ApiRequest.EventTypes.REQUEST_COMPLETE, this.hearApiRequestComplete, this);
+        this.activeRetrieveRequestMap.remove(key);
+    },
 
     /**
      * @private
@@ -414,10 +456,9 @@ var ManagerModule = Class.extend(Obj, {
      * @param {CallResponse} callResponse
      * @param {(Map.<string, Meld> | function(Throwable, Map.<string, Meld>=))} retrievedMeldMap
      * @param {string} type
-     * @param {string} filter
      * @param {function(Throwable, Map.<string, Meld>=)} callback
      */
-    processMappedRetrieveResponse: function(throwable, callResponse, retrievedMeldMap, type, filter, callback) {
+    processMappedRetrieveResponse: function(throwable, callResponse, retrievedMeldMap, type, callback) {
         if (TypeUtil.isFunction(retrievedMeldMap)) {
             callback = retrievedMeldMap;
             retrievedMeldMap = new Map();
@@ -430,7 +471,7 @@ var ManagerModule = Class.extend(Obj, {
                 var dataMap     = data.map;
                 Obj.forIn(dataMap, function(objectId, success) {
                     if (success) {
-                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId);
                         var meldDocument    = _this.get(returnedMeldKey);
                         retrievedMeldMap.put(objectId, meldDocument);
                     } else {
@@ -442,7 +483,7 @@ var ManagerModule = Class.extend(Obj, {
                 var dataMap     = data.map;
                 Obj.forIn(dataMap, function(objectId, success) {
                     if (success) {
-                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId, filter);
+                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId);
                         var meldDocument    = _this.get(returnedMeldKey);
                         retrievedMeldMap.put(objectId, meldDocument);
                     } else {
@@ -462,6 +503,20 @@ var ManagerModule = Class.extend(Obj, {
         } else {
             callback(throwable);
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearApiRetrieveRequestComplete: function(event) {
+        var request = event.getTarget();
+        this.removeRetrieveRequest(request);
     }
 });
 

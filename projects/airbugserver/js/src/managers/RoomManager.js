@@ -97,11 +97,13 @@ var RoomManager = Class.extend(EntityManager, {
      *      updatedAt: Date,
      *      roomMemberIdSet: (Array.<string> | Set.<string>)
      * }} data
-     * @return {Room} //entity
+     * @return {Room}
      */
     generateRoom: function(data) {
         data.roomMemberIdSet = new Set(data.roomMemberIdSet);
-        return new Room(data);
+        var room =  new Room(data);
+        this.generate(room);
+        return room;
     },
 
     /**
