@@ -44,14 +44,6 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
             <div class="box-body">\
                 <table id="{{id}}">\
                 <tr>\
-                  <td>\
-                    <label for="doc">Document</label>\
-                  </td><td>\
-                    <select id="doc" size="1">\
-                    </select>\
-                  </td>\
-                </tr>\
-                <tr>\
                   <td >\
                     <label for="mode">Mode</label>\
                   </td><td>\
@@ -88,8 +80,8 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
             //   '<option value="ace/theme/tomorrow">Tomorrow</option>\
             //   <option value="ace/theme/xcode">XCode</option>\
             // </optgroup>\
-            '<optgroup label="Dark">' +
-            //   <option value="ace/theme/ambiance">Ambiance</option>\
+            '<optgroup label="Dark">\
+               <option value="ace/theme/ambiance">Ambiance</option>' +
             //   <option value="ace/theme/chaos">Chaos</option>\
             //   <option value="ace/theme/clouds_midnight">Clouds Midnight</option>\
             //   <option value="ace/theme/cobalt">Cobalt</option>\
@@ -194,12 +186,17 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
                 </tr>\
                 <tr>\
                   <td >\
-                    <label for="show_hscroll">Persistent HScroll</label>\
-                  </td><td>\
-                    <input type="checkbox" name="show_hscroll" id="show_hscroll">\
+                      <label for="show_hscroll">Persistent HScroll</label>\
+                      <input type="checkbox" name="show_hscroll" id="show_hscroll">\
                   </td>\
                 </tr>\
                 <tr>\
+                  <td>\
+                      <label for="show_vscroll">VScroll</label>\
+                    <input type="checkbox" name="show_vscroll" id="show_vscroll">\
+                  </td>\
+                </tr>' +
+                '<tr>\
                   <td >\
                     <label for="animate_scroll">Animate scrolling</label>\
                   </td><td>\
@@ -249,6 +246,22 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
                   </td>\
                   <td>\
                     <input type="checkbox" id="fade_fold_widgets">\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td >\
+                    <label for="elastic_tabstops">Enable Elastic Tabstops</label>\
+                  </td>\
+                  <td>\
+                    <input type="checkbox" id="elastic_tabstops">\
+                  </td>\
+                </tr>\
+                <tr>\
+                  <td >\
+                    <label for="isearch">Incremental Search</label>\
+                  </td>\
+                  <td>\
+                    <input type="checkbox" id="isearch">\
                   </td>\
                 </tr>\
                 <tr>\
