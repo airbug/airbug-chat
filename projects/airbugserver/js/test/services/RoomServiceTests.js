@@ -18,6 +18,7 @@
 //@Require('airbugserver.SessionManager')
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserManager')
+//@Require('bugdelta.DeltaBuilder')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
@@ -57,6 +58,7 @@ var Session                 = bugpack.require('airbugserver.Session');
 var SessionManager          = bugpack.require('airbugserver.SessionManager');
 var User                    = bugpack.require('airbugserver.User');
 var UserManager             = bugpack.require('airbugserver.UserManager');
+var DeltaBuilder            = bugpack.require('bugdelta.DeltaBuilder');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -219,6 +221,18 @@ var roomServiceCreateRoomTest = {
                     if (!throwable) {
                         test.assertEqual(room.getName(), _this.testName,
                             "Assert that room#getName returns testName");
+                        test.assertTrue(!!room.getId(),
+                            "Assert that an id has been generated for the room");
+                        test.assertEqual(room.getRoomMemberIdSet().getCount(), 1,
+                            "Assert that the room has 1 room member");
+                        var roomMember = room.getRoomMemberSet().toArray()[0];
+                        test.assertTrue(room.getRoomMemberIdSet().contains(roomMember.getId()),
+                            "Assert that the roomMemberIdSet contains the new roomMember's id");
+
+                        var deltaBuilder    = new DeltaBuilder();
+                        var testDelta       = deltaBuilder.buildDelta(room.getDeltaDocument(), room.getDeltaDocument().getPreviousDocument());
+                        test.assertEqual(testDelta.getChangeCount(), 0,
+                            "Assert that the Entity has been committed and there are no pending changes");
                     }
                     flow.complete(throwable);
                 });
