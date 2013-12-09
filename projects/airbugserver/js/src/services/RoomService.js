@@ -145,7 +145,7 @@ var RoomService = Class.extend(Obj, {
                     _this.meldUserWithRoom(meldManager, user, room);
                     _this.meldRoomMemberUsersWithUserAndRoomMember(meldManager, room, user, roomMember);
                     _this.pushRoom(meldManager, room);
-                    _this.meldService.pushEntity(meldManager, "User", "owner", user);
+                    _this.meldService.pushEntity(meldManager, user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -195,7 +195,7 @@ var RoomService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.meldUserWithRoom(meldManager, currentUser, room);
                     _this.pushRoom(meldManager, room);
-                    _this.meldService.pushEntity(meldManager, "User", "owner", currentUser);
+                    _this.meldService.pushEntity(meldManager, currentUser);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -293,9 +293,9 @@ var RoomService = Class.extend(Obj, {
                 }),
                 //melds
                 $task(function(flow) {
-                    meldService.unpushEntity(meldManager, "RoomMember", "basic", roomMember);
+                    meldService.unpushEntity(meldManager, roomMember);
                     _this.pushRoom(meldManager, room);
-                    meldService.pushEntity(meldManager, "User", ["basic", "owner"], user);
+                    meldService.pushEntity(meldManager, user);
                     meldManager.commitTransaction(function(throwable) {
                         flow.complete(throwable);
                     });
