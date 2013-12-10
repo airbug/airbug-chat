@@ -114,7 +114,7 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
                 .attributes({type: "primary", align: "left"})
                 .children([
                     view(IconView)
-                        .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
+                        .attributes({type: IconView.Type.HOME, color: IconView.Color.WHITE})
                         .appendTo('*[id|="button"]'),
                     view(TextView)
                         .attributes({text: "Home"})
