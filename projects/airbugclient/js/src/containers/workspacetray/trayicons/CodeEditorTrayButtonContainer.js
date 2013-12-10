@@ -10,7 +10,7 @@
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -33,7 +33,7 @@ var Class                       = bugpack.require('Class');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule               = bugpack.require('airbug.CommandModule');
-var ImageView                   = bugpack.require('airbug.ImageView');
+var TextView                    = bugpack.require('airbug.TextView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
@@ -80,7 +80,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
         this.commandModule              = null;
 
@@ -89,7 +89,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.ButtonView}
+         * @type {ButtonView}
          */
         this.buttonView                 = null;
 
@@ -125,11 +125,12 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
         this.buttonView =
             view(ButtonView)
-                .attributes({})
+                .id("code-editor-button")
+                .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
                 .children([
-                    view(ImageView)
-                        .attributes({source: "img/"}) //TODO
-                        .appendTo('*[id|="button"]')
+                    view(TextView)
+                        .attributes({text:'<C/>'})
+                        .appendTo("#code-editor-button")
                 ])
                 .build();
 
@@ -164,9 +165,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     hearButtonClickedEvent: function(event) {
-        event.stopPropagation();
-        this.commandModule.relayCommand(CommandModule.CommandType.DISPLAY.CODE_EDITOR, {});
-        this.commandModule.relayCommand(CommandModule.CommandType.TOGGLE.WORKSPACE, {});
+
     }
 
 });
