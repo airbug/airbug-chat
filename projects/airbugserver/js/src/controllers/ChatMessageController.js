@@ -82,10 +82,10 @@ var ChatMessageController = Class.extend(EntityController, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/chatMessages/:id', function(request, response){
+        expressApp.get('/app/chatMessages/:id', function(request, response) {
             var requestContext      = request.requestContext;
             var chatMessageId       = request.params.id;
-            chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity){
+            chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity) {
                 var chatMessageJson = null;
                 if (entity) {
                     chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
@@ -98,10 +98,10 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/chatMessages', function(request, response){
+        expressApp.post('/app/chatMessages', function(request, response) {
             var requestContext      = request.requestContext;
             var chatMessage         = request.body;
-            chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity){
+            chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity) {
                 var chatMessageJson = null;
                 if (entity) {
                     chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
@@ -114,11 +114,11 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.put('/app/chatMessages/:id', function(request, response){
+        expressApp.put('/app/chatMessages/:id', function(request, response) {
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
             var updates         = request.body;
-            chatMessageService.updateChatMessage(requestContext, chatMessageId, updates, function(throwable, entity){
+            chatMessageService.updateChatMessage(requestContext, chatMessageId, updates, function(throwable, entity) {
                 var chatMessageJson = null;
                 if (entity) {
                     chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
@@ -131,11 +131,11 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.delete('/app/chatMessages/:id', function(request, response){
+        expressApp.delete('/app/chatMessages/:id', function(request, response) {
             var _this = this;
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
-            chatMessageService.deleteChatMessage(requestContext, chatMessageId, function(throwable){
+            chatMessageService.deleteChatMessage(requestContext, chatMessageId, function(throwable) {
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else {
