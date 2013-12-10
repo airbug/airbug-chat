@@ -11,7 +11,6 @@
 //@Require('airbug.CodeEditorContainer')
 //@Require('airbug.CodeEditorSettingsContainer')
 //@Require('airbug.CommandModule')
-//@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -35,7 +34,6 @@ var BoxView                             = bugpack.require('airbug.BoxView');
 var CodeEditorContainer                 = bugpack.require('airbug.CodeEditorContainer');
 var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
-var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
