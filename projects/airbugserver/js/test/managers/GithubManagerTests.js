@@ -64,11 +64,11 @@ var setupGithubManager = function(setupObject) {
     setupObject.githubManager           = new GithubManager(setupObject.entityManagerStore,
         setupObject.schemaManager, setupObject.mongoDataStore);
     setupObject.githubManager.setEntityType("Github");
-    setupObject.testUserId = '528ad6c3859c7f16a4000001';
-    setupObject.testGithubAuthCode = 'a1b75646f9ec91dee2dd4270f76e49ef2ebb9575';
-    setupObject.testGithubId = '12345';
-    setupObject.testGithubLogin = 'dicegame';
-    setupObject.testGithub = new Github({
+    setupObject.testUserId              = '528ad6c3859c7f16a4000001';
+    setupObject.testGithubAuthCode      = 'a1b75646f9ec91dee2dd4270f76e49ef2ebb9575';
+    setupObject.testGithubId            = '12345';
+    setupObject.testGithubLogin         = 'dicegame';
+    setupObject.testGithub              = new Github({
         userId: setupObject.testUserId,
         githubAuthCode: setupObject.testGithubAuthCode,
         githubId: setupObject.testGithubId,

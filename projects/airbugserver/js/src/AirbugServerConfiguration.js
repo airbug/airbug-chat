@@ -638,8 +638,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @param {UserService} userService
      * @return {GithubService}
      */
-    githubService: function(sessionManager, githubManager, githubApi, userService) {
-        this._githubService = new GithubService(sessionManager, githubManager, githubApi, userService);
+    githubService: function(sessionManager, githubManager, githubApi, userService, userManager) {
+        this._githubService = new GithubService(sessionManager, githubManager, githubApi, userService, userManager);
         return this._githubService;
     },
 
@@ -1019,7 +1019,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
                 arg().ref("sessionManager"),
                 arg().ref("githubManager"),
                 arg().ref("githubApi"),
-                arg().ref("userService")
+                arg().ref("userService"),
+                arg().ref("userManager")
             ]),
         module("meldService")
             .args([

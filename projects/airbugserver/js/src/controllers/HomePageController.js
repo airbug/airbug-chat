@@ -83,6 +83,7 @@ var HomePageController = Class.extend(Obj, {
             var session                 = requestContext.get("session");
             var configObject            = _this.airbugClientConfig.toObject();
             configObject.github.state   = session.getData().githubState;
+            configObject.github.emails  = session.getData().githubEmails;
             response.render('home', {
                 locals: {
                     config: StringUtil.escapeString(JSON.stringify(configObject))

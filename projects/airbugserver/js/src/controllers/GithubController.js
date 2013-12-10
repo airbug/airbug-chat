@@ -108,10 +108,15 @@ var GithubController = Class.extend(Obj, {
 
         expressApp.get(GithubDefines.RedirectUris.LOGIN, function(request, response) {
             var requestContext      = request.requestContext;
+            var session             = requestContext.get("session");
+            var emails              = session.getData().githubEmails;
+            var currentUser         = requestContext.get("currentUser");
             var query               = request.query;
             githubService.loginUserWithGithub(requestContext, query.code, query.state, query.error, function(throwable) {
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
+                } else if (emails && currentUser.isAnonymous()) {
+                    _this.sendRedirectResponse(response, "/app#githubLogin");
                 } else {
                     _this.sendRedirectResponse(response, "/app");
                 }

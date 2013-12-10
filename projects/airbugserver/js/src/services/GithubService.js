@@ -11,6 +11,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
+//@Require('airbugserver.Github')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
@@ -32,6 +33,7 @@ var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var TypeUtil                = bugpack.require('TypeUtil');
 var UuidGenerator           = bugpack.require('UuidGenerator');
+var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -65,7 +67,7 @@ var GithubService = Class.extend(Obj, {
      * @param {GithubManager} githubManager
      * @param {GithubApi} githubApi
      */
-    _constructor: function(sessionManager, githubManager, githubApi, userService) {
+    _constructor: function(sessionManager, githubManager, githubApi, userService, userManager) {
 
         this._super();
 
@@ -97,6 +99,12 @@ var GithubService = Class.extend(Obj, {
          * @type {UserService}
          */
         this.userService            = userService;
+
+        /**
+         * @private
+         * @type {UserManager}
+         */
+        this.userManager            = userManager;
     },
 
 
@@ -133,18 +141,19 @@ var GithubService = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     loginUserWithGithub: function(requestContext, code, state, error, callback) {
-        var _this = this;
-        var session = requestContext.get("session");
-        var authToken = undefined;
-        var githubUser = undefined;
-        //TODO BRN: If an error comes in, then something is borked with the github integration. Log the error so we can monitor
-        // TODO - dkk - we should be checking to see if the current user is anonymous or not
+        var _this           = this;
+        var session         = requestContext.get("session");
+        var currentUser     = requestContext.get("currentUser");
+        var authToken       = undefined;
+        var githubUser      = undefined;
+        var emails          = undefined;
+        var githubEntity    = undefined;
+
         if (error) {
             // bad_verification_code - user has
             // incorrect_client_credentials - client_id or client_secret is not set properly.
             callback(new Exception("GithubError"));
         } else if (state !== session.getData().githubState) {
-            //TODO BRN: Verify that state's match
             callback(new Exception("badState"));
         } else {
             $series([
@@ -163,50 +172,80 @@ var GithubService = Class.extend(Obj, {
                         githubUser = githubUserObject;
                         flow.complete(throwable);
                     });
-                })
-            ]).execute(function(throwable) {
-                if (throwable) {
-                    callback(throwable);
-                } else {
+                }),
+                $task(function(flow) {
                     var githubId = githubUser.id;
-                    // TODO - dkk - are we currently logged in?
-                        // if we are logged in, then we wouldn't have gotten here from the login page. We are here
-                        // because we are linking. We still need to make sure that the github id is
                     if (!TypeUtil.isNumber(githubId)) {
-                        callback(new Error("NotFound"));
+                        flow.complete(new Error("NotFound"));
                     } else {
-                        // TODO - dkk - attempt to load the Github record having this github id
                         _this.githubManager.retrieveGithubByGithubId(githubId, function(throwable, github) {
                             if (throwable) {
                                 callback(throwable);
                             } else {
                                 if (github) {
+                                    githubEntity = github;
                                     _this.githubManager.populateGithub(github, ["user"], function(throwable) {
                                         _this.userService.loginUser(requestContext, github.getUser(), function(throwable, user) {
-                                            callback(throwable);
+                                            flow.complete(throwable);
                                         });
                                     });
                                 } else {
-                                    // No github record found. Send them off to register.
-                                    _this.addGithubDataToSession(session, githubUser.id, authToken, githubUser.login, function() {
-                                        callback();
-                                    })
+                                    flow.complete();
                                 }
                             }
                         });
                     }
-                    // TODO - dkk - if the id exists then we need to load the user associated with this github id
-                    // TODO - dkk - if the id is not found, attempt to find emails and name. these may not be available.
-                    // TODO - dkk - Store in the session that we are doing a github registration
+                }),
+                $task(function(flow) {
+                    var githubEmail = githubUser.email;
+                    if (githubEmail) {
+                        _this.userManager.retrieveUserByEmail(githubEmail, function(throwable, user) {
+                            if (user) {
+                                if (emails === undefined) {
+                                    emails = [];
+                                }
+                                emails.push(githubEmail);
+                            }
+                            flow.complete();
+                        })
+                    } else {
+                        flow.complete();
+                    }
+                }),
+                $task(function(flow) {
+                    // Link to current user if they are logged in and there isn't an existing github entity
+                    if (currentUser.isNotAnonymous() && !githubEntity) {
+                        var github = new Github({
+                            userId: currentUser.id,
+                            githubAuthToken: authToken,
+                            githubId: githubUser.id,
+                            githubLogin: githubUser.login
+                        });
+                        _this.githubManager.createGithub(github, function(throwable, github) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.complete();
+                    }
+                }),
+                $task(function(flow) {
+                    // No github record found. Add data to session so that we can use it when the user logs in or registers
+                    if (!githubEntity) {
+                        _this.addGithubDataToSession(session, githubUser.id, authToken, githubUser.login, emails, function() {
+                            flow.complete();
+                        });
+                    } else {
+                        flow.complete();
+                    }
+                })
+            ]).execute(function(throwable) {
+                if (throwable) {
+                    callback(throwable);
+                } else {
+                    callback();
                 }
             });
         }
-
-        //DONE BRN: Make a request to the github api to retrieve the access token
-        //TODO BRN: Lookup
-        //TODO BRN: Look at the currentUser,
-        // TODO: if anonymous we need to register to collect email and first/last name. NOT password.
-        // TODO: if logged in currently then
     },
 
 
@@ -233,11 +272,12 @@ var GithubService = Class.extend(Obj, {
      * @param {Session} session
      * @param {function(Throwable)} callback
      */
-    addGithubDataToSession: function(session, githubId, authToken, githubLogin, callback) {
+    addGithubDataToSession: function(session, githubId, authToken, githubLogin, emails, callback) {
         var sessionData = session.getData();
         sessionData.githubId = githubId;
         sessionData.githubAuthToken = authToken;
         sessionData.githubLogin = githubLogin;
+        sessionData.githubEmails = emails;
         this.sessionManager.updateSession(session, function(throwable, session) {
             callback(throwable);
         });
