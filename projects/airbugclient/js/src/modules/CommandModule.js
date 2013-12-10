@@ -89,7 +89,7 @@ CommandModule.CommandType = {
     DISPLAY: {
         CODE:                   "CommandModuleCommand::display::code",
         CODE_EDITOR:            "CommandModuleCommand::display::codeEditor",
-        PICTURE_EDITOR:         "CommandModuleCommand::display::pictureEditor"
+        IMAGE_EDITOR:         "CommandModuleCommand::display::imageEditor"
     },
     HIDE: {
         WORKSPACE:              "CommandModuleCommand::hide::workspace"

@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.CodeEditorWidgetContainer')
 //@Require('airbug.CommandModule')
+//@Require('airbug.ImageEditorWidgetContainer')
 //@Require('airbug.PanelView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -31,6 +32,7 @@ var bugpack = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var CodeEditorWidgetContainer   = bugpack.require('airbug.CodeEditorWidgetContainer');
 var CommandModule               = bugpack.require('airbug.CommandModule');
+var ImageEditorWidgetContainer  = bugpack.require('airbug.ImageEditorWidgetContainer');
 var PanelView                   = bugpack.require('airbug.PanelView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
@@ -77,7 +79,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {airbug.CommandModule}
+         * @type {CommandModule}
          */
         this.commandModule                  = null;
 
@@ -88,7 +90,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.PanelView}
+         * @type {PanelView}
          */
         this.panelView                      = null;
 
@@ -98,15 +100,15 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.CodeEditorWidgetContainer}
+         * @type {CodeEditorWidgetContainer}
          */
         this.codeEditorWidgetContainer      = null;
 
         /**
          * @private
-         * @type {airbug.PictureEditorWidgetContainer}
+         * @type {ImageEditorWidgetContainer}
          */
-        this.pictureEditorWidgetContainer   = null;
+        this.imageEditorWidgetContainer   = null;
 
     },
 
@@ -153,10 +155,9 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.codeEditorWidgetContainer      = new CodeEditorWidgetContainer();
+        this.imageEditorWidgetContainer     = new ImageEditorWidgetContainer();
         this.addContainerChild(this.codeEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
-        //TODO
-        // this.pictureEditorWidgetContainer   = new PictureEditorWidgetContainer();
-        // this.addContainerChild(this.pictureEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
+        this.addContainerChild(this.imageEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
     },
 
     /**
@@ -164,6 +165,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeCommandSubscriptions();
     },
 
 
@@ -173,7 +175,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        // this.commandModule.subscribe(CommandType.DISPLAY.PICTURE_EDITOR, this.handleDisplayPictureEditorCommand, this);
+        this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
 
     },
 
@@ -185,19 +187,13 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      * @param {PublisherMessage} message
      */
     handleDisplayCodeEditorCommand: function(message) {
-        // var topic               = message.getTopic();
-        // var data                = message.getMessage();
-
         this.handleDisplayCommand("#code-editor-widget");
     },
 
     /**
      * @param {PublisherMessage} message
      */
-    handleDisplayPictureEditorCommand: function(message) {
-        // var topic               = message.getTopic();
-        // var data                = message.getMessage();
-
+    handleDisplayImageEditorCommand: function(message) {
         this.handleDisplayCommand("#image-editor-widget");
     },
 
@@ -205,10 +201,10 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      * @param {string} widgetId //in CSS format
      */
     handleDisplayCommand: function(widgetId) {
+        var widget              = this.viewTop.$el.find(widgetId);
         var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
-        var codeEditorWidget    = this.viewTop.$el.find("#code-editor-widget");
 
-        codeEditorWidget.show();
+        widget.show();
         workspaceWidgets.not(widgetId).hide();
     }
 
