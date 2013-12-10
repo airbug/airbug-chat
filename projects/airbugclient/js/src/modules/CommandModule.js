@@ -91,6 +91,9 @@ CommandModule.CommandType = {
         CODE_EDITOR:            "CommandModuleCommand::display::codeEditor",
         PICTURE_EDITOR:         "CommandModuleCommand::display::pictureEditor"
     },
+    HIDE: {
+        WORKSPACE:              "CommandModuleCommand::hide::workspace"
+    },
     SUBMIT: {
         CHAT_MESSAGE:            "CommandmoduleCommand::submit::chatMessage"
     }

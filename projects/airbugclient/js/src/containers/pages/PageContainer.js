@@ -175,8 +175,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
-        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        this.commandModule.subscribe(CommandType.HIDE.WORKSPACE,        this.handleHideWorkspaceCommand,        this);
+        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,     this);
+        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
     },
 
     deinitializeCommandSubscriptions: function() {
@@ -196,10 +197,22 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
             workspace.toggleClass("workspace-open");
             if(workspace.hasClass("workspace-open")){
-                workspace.addClass("span3").show();
+                workspace.show();
             } else {
-                workspace.removeClass("span3").hide();
+                workspace.hide();
             }
+            this.updateColumnSpans();
+        }
+    },
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
+    handleHideWorkspaceCommand: function(message) {
+        if(this.viewTop){
+            var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+            workspace.removeClass("workspace-open span3").hide();
             this.updateColumnSpans();
         }
     },
@@ -246,19 +259,21 @@ var PageContainer = Class.extend(ApplicationContainer, {
             if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span5");
+                workspace.addClass("span3");
             } else {
                 roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span8");
-                workspace.removeClass("span 3");
+                workspace.removeClass("span3");
             }
         } else {
             if (workspaceIsOpen) {
                 roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span8");
+                workspace.addClass("span3");
             } else {
                 roomspace.removeClass("span11 span8 span5");
                 roomspace.addClass("span11");
-                workspace.removeClass("span 3");
+                workspace.removeClass("span3");
             }
         }
     }
