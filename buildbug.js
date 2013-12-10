@@ -322,7 +322,11 @@ buildTarget('local').buildFlow(
                         task.updateProperties({
                             file: packedNodePackage.getFilePath(),
                             options: {
-                                acl: 'public-read'
+
+                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
+
+                                acl: 'public-read',
+                                encrypt: true
                             }
                         });
                     },
@@ -518,7 +522,11 @@ buildTarget('prod').buildFlow(
                         task.updateProperties({
                             file: packedNodePackage.getFilePath(),
                             options: {
-                                acl: 'public-read'
+
+                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
+
+                                acl: 'public-read',
+                                encrypt: true
                             }
                         });
                     },
