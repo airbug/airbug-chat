@@ -125,6 +125,7 @@ IconView.Type = {
     RESIZE_FULL:    "resize-full",
     SCREENSHOT:     "screenshot",
     SEARCH:         "search",
+    SEND:           "send", //3.0.0 only
     SHARE:          "share",
     SHARE_ALT:      "share-alt",
     STAR:           "star",
