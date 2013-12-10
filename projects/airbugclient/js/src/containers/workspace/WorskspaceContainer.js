@@ -198,7 +198,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         // var topic               = message.getTopic();
         // var data                = message.getMessage();
 
-        this.handleDisplayCommand("#picture-editor-widget");
+        this.handleDisplayCommand("#image-editor-widget");
     },
 
     /**

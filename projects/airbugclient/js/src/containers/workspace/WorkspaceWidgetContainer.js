@@ -9,7 +9,6 @@
 //@Require('Class')
 //@Require('airbug.PanelView')
 //@Require('airbug.WorkspaceContainer')
-//@Require('airbug.WorkspaceTrayContainer')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -28,7 +27,6 @@ var bugpack = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var PanelView                   = bugpack.require('airbug.PanelView');
 var WorkspaceContainer          = bugpack.require('airbug.WorkspaceContainer');
-var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
 var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -73,7 +71,7 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.PanelView}
+         * @type {PanelView}
          */
         this.panelView                  = null;
 
@@ -83,7 +81,7 @@ var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {airbug.WorkspaceContainer}
+         * @type {WorkspaceContainer}
          */
         this.workspaceContainer         = null;
     },
