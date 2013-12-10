@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('CodeEditorSettingsButtonContainer')
+//@Export('CodeEditorCloseButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -53,7 +53,7 @@ var view                    = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
+var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -64,7 +64,7 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      */
     _constructor: function() {
 
-        this._super("CodeEditorSettingsButton");
+        this._super("CodeEditorCloseButton");
 
 
         //-------------------------------------------------------------------------------
@@ -98,18 +98,17 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
 
         this.buttonView =
             view(ButtonView)
-                .id("code-editor-settings-button")
                 .attributes({
                     align: "right",
                     size: ButtonView.Size.MINI,
-                    type: "primary"
+                    type: "danger"
                 })
                 .children([
                     view(IconView)
                         .attributes({
-                            type: IconView.Type.COG
+                            type: IconView.Type.REMOVE
                         })
-                        .appendTo('#code-editor-settings-button')
+                        .appendTo('*[id|="button"]')
                 ])
                 .build();
 
@@ -125,7 +124,7 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorCloseButtonClickedEvent, this);
     },
 
 
@@ -137,8 +136,8 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearCodeEditorButtonClickedEvent: function(event) {
-        this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
+    hearCodeEditorCloseButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.HIDE.WORKSPACE, {});
     }
 });
 
@@ -147,4 +146,4 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CodeEditorSettingsButtonContainer", CodeEditorSettingsButtonContainer);
+bugpack.export("airbug.CodeEditorCloseButtonContainer", CodeEditorCloseButtonContainer);

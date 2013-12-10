@@ -13,8 +13,10 @@
 //@Require('ace.AceSnippets')
 //@Require('ace.AceThemes')
 //@Require('ace.KitchenSink')
+//@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorCloseButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CommandModule')
@@ -44,8 +46,10 @@ var AceModes                            = bugpack.require('ace.AceModes');
 var AceSnippets                         = bugpack.require('ace.AceSnippets');
 var AceThemes                           = bugpack.require('ace.AceThemes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
+var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorCloseButtonContainer      = bugpack.require('airbug.CodeEditorCloseButtonContainer');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
@@ -118,7 +122,9 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         // Containers
         //-------------------------------------------------------------------------------
 
+        this.closeButton                = null;
 
+        this.settingsButton             = null;
     },
 
 
@@ -159,12 +165,16 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
                             classes: ""
                         })
                         .appendTo(".code-editor-header"),
+                    view(ButtonGroupView)
+                        .attributes({
+                            align: "right"
+                        })
+                        .appendTo(".code-editor-header"),
                     view(ButtonView)
                         .id("embed-code-button")
                         .attributes({
                             type: "default",
                             size: ButtonView.Size.LARGE,
-                            align: "right"
                         })
                         .children([
                             view(TextView)
@@ -185,8 +195,10 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
+        this.closeButton        = new CodeEditorCloseButtonContainer();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
-        this.addContainerChild(this.settingsButton, ".code-editor-header");
+        this.addContainerChild(this.closeButton, ".btn-group");
+        this.addContainerChild(this.settingsButton, ".btn-group");
     },
 
     /**

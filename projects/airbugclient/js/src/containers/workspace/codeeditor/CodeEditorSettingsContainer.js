@@ -7,6 +7,7 @@
 //@Export('CodeEditorSettingsContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsView')
@@ -31,6 +32,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonGroupView             = bugpack.require('airbug.ButtonGroupView');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsView      = bugpack.require('airbug.CodeEditorSettingsView');
@@ -134,18 +136,25 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
             view(CodeEditorSettingsView)
                 .id("code-editor-settings")
                 .children([
-                    view(ButtonView)
-                        .id("back-to-code-editor-button")
+                    view(ButtonGroupView)
                         .attributes({
-                            type: "link",
                             align: "right"
                         })
                         .children([
-                            view(IconView)
+                            view(ButtonView)
+                                .id("back-to-code-editor-button")
                                 .attributes({
-                                    type: IconView.Type.CHEVRON_RIGHT
+                                    size: ButtonView.Size.MINI,
+                                    type: "danger",
+                                    align: "right"
                                 })
-                                .appendTo("#back-to-code-editor-button")
+                                .children([
+                                    view(IconView)
+                                        .attributes({
+                                            type: IconView.Type.REMOVE
+                                        })
+                                        .appendTo("#back-to-code-editor-button")
+                                ])
                         ])
                         .appendTo(".box-header"),
                     view(ButtonView)
