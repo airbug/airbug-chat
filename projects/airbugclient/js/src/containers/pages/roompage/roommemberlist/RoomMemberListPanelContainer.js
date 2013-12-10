@@ -7,10 +7,8 @@
 //@Export('RoomMemberListPanelContainer')
 
 //@Require('Class')
-//@Require('airbug.AddRoomMemberButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.ListView')
 //@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.RoomMemberListContainer')
 //@Require('airbug.TextView')
@@ -30,10 +28,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var AddRoomMemberButtonContainer    = bugpack.require('airbug.AddRoomMemberButtonContainer');
 var ButtonView                      = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-var ListView                        = bugpack.require('airbug.ListView');
 var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
 var RoomMemberListContainer         = bugpack.require('airbug.RoomMemberListContainer');
 var TextView                        = bugpack.require('airbug.TextView');
@@ -136,19 +132,11 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
-        this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
-        this.addContainerChild(this.addRoomMemberButtonContainer,   "#panel-header-nav-" + this.panelView.getCid());
         this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.getCid());
     },
 
     initializeContainer: function() {
         this._super();
-        this.addRoomMemberButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearAddRoomMemberButtonClickedEvent, this);
-
-    },
-
-    hearAddRoomMemberButtonClickedEvent: function() {
-
     }
 });
 
