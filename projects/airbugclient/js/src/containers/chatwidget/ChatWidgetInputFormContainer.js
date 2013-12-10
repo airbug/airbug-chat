@@ -9,9 +9,10 @@
 //@Require('Class')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.FormViewEvent')
 //@Require('airbug.ChatWidgetInputFormView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.FormViewEvent')
+//@Require('airbug.IconView')
 //@Require('airbug.MultiColumnView')
 //@Require('airbug.TextView')
 //@Require('airbug.ThreeColumnView')
@@ -39,6 +40,7 @@ var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var ChatWidgetInputFormView = bugpack.require('airbug.ChatWidgetInputFormView');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var IconView                = bugpack.require('airbug.IconView');
 var MultiColumnView         = bugpack.require('airbug.MultiColumnView');
 var TextView                = bugpack.require('airbug.TextView');
 var ThreeColumnView         = bugpack.require('airbug.ThreeColumnView');
@@ -141,13 +143,15 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                     view(ChatWidgetInputFormView)
                         .id("chatWidgetInputForm")
                         .appendTo(".column1of3"),
-                    //TODO Make real image button
                     view(ButtonView)
+                        .id("choose-or-upload-image-button")
                         .appendTo(".column2of3")
                         .children([
-                            view(TextView)
-                                .attributes({text: "img"})
-                                .appendTo('*[id|="button"]')
+                            view(IconView)
+                                .attributes({
+                                    type: IconView.Type.CAMERA
+                                })
+                                .appendTo("#choose-or-upload-image-button")
                         ]),
                     view(ButtonView)
                         .appendTo(".column3of3")
