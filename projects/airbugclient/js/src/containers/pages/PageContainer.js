@@ -191,16 +191,12 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     handleToggleWorkspaceCommand: function(message) {
         console.log("PageContainer#handleToggleWorkspaceCommand");
-        /** */
+        /* source is the css style id of the button */
         var source = message.getData().source;
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
         var workspaceWidgetIsOpen   = workspace.hasClass("workspace-open");
         var codeEditorWidgetIsOpen  = this.viewTop.$el.find("#code-editor-widget").hasClass("workspace-widget-open");
         var imageEditorWidgetIsOpen = this.viewTop.$el.find("#image-editor-widget").hasClass("workspace-widget-open");
-
-        console.log("source:", source);
-        console.log("codeEditorWidgetIsOpen:", codeEditorWidgetIsOpen);
-        console.log("imageEditorWidgetIsOpen:", imageEditorWidgetIsOpen);
 
         if(workspaceWidgetIsOpen){
             if((source === "#code-editor-button" && codeEditorWidgetIsOpen) || (source === "#image-editor-button" && imageEditorWidgetIsOpen)) {
