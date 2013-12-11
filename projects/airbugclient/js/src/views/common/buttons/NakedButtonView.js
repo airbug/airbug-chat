@@ -168,7 +168,7 @@ var NakedButtonView = Class.extend(MustacheView, {
  * @static
  * @enum {number}
  */
-ButtonView.Size = {
+NakedButtonView.Size = {
     LARGE: 1,
     NORMAL: 2,
     SMALL: 3,
