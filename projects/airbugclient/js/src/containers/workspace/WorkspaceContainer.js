@@ -204,8 +204,8 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         var widget              = this.viewTop.$el.find(widgetId);
         var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
 
-        widget.show();
-        workspaceWidgets.not(widgetId).hide();
+        workspaceWidgets.not(widgetId).removeClass("workspace-widget-open").hide();
+        widget.addClass("workspace-widget-open").show();
     }
 
 });

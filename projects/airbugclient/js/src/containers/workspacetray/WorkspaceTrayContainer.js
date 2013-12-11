@@ -191,16 +191,16 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
      *
      */
     hearCodeEditorButtonClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {source: "#code-editor-button"});
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
-        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {});
     },
 
     /**
      *
      */
     hearImageEditorButtonClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {source: "#image-editor-button"});
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_EDITOR, {});
-        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {});
     }
 });
 

@@ -190,19 +190,31 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleWorkspaceCommand: function(message) {
-        console.log("viewTop:", this.viewTop);
+        console.log("PageContainer#handleToggleWorkspaceCommand");
+        var source = message.getData().source;
+        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+        var workspaceWidgetIsOpen   = workspace.hasClass("workspace-open");
+        var codeEditorWidgetIsOpen  = this.viewTop.$el.find("#code-editor-widget").hasClass("workspace-widget-open");
+        var imageEditorWidgetIsOpen = this.viewTop.$el.find("#image-editor-widget").hasClass("workspace-widget-open");
 
-        if(this.viewTop){
-            var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+        console.log("source:", source);
+        console.log("codeEditorWidgetIsOpen:", codeEditorWidgetIsOpen);
+        console.log("imageEditorWidgetIsOpen:", imageEditorWidgetIsOpen);
 
-            workspace.toggleClass("workspace-open");
-            if(workspace.hasClass("workspace-open")){
-                workspace.show();
-            } else {
-                workspace.hide();
+        if(workspaceWidgetIsOpen){
+            if((source === "#code-editor-button" && codeEditorWidgetIsOpen) || (source === "#image-editor-button" && imageEditorWidgetIsOpen)) {
+                workspace.toggleClass("workspace-open");
             }
-            this.updateColumnSpans();
+        } else {
+            workspace.toggleClass("workspace-open");
         }
+
+        if(workspace.hasClass("workspace-open")){
+            workspace.show();
+        } else {
+            workspace.hide();
+        }
+        this.updateColumnSpans();
     },
 
     /**
@@ -210,11 +222,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleHideWorkspaceCommand: function(message) {
-        if(this.viewTop){
-            var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
-            workspace.removeClass("workspace-open span3").hide();
-            this.updateColumnSpans();
-        }
+        var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
+        workspace.removeClass("workspace-open span3").hide();
+        this.updateColumnSpans();
     },
 
     /**
@@ -222,13 +232,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleHamburgerLeftCommand: function(message) {
-        console.log("viewTop:", this.viewTop);
-
-        if(this.viewTop){
-            var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
-            hamburgerLeft.toggleClass("hamburger-panel-hidden");
-            this.updateColumnSpans();
-        }
+        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
+        hamburgerLeft.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
     },
 
     /**
@@ -236,13 +242,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleHamburgerRightCommand: function(message) {
-        console.log("viewTop:", this.viewTop);
-
-        if(this.viewTop){
-            var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
-            hamburgerRight.toggleClass("hamburger-panel-hidden");
-            this.updateColumnSpans();
-        }
+        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
+        hamburgerRight.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
     },
 
     /**
