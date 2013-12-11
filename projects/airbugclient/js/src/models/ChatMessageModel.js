@@ -85,7 +85,7 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
      * @return {MeldDocument}
      */
     getSenderUserMeldDocument: function() {
-        return this.getMeldDocoument("senderUser");
+        return this.getMeldDocument("senderUser");
     },
 
     /**
