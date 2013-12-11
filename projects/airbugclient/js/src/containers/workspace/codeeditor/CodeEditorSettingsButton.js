@@ -8,9 +8,9 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.IconView')
 //@Require('airbug.TextView')
 //@Require('carapace.ViewBuilder')
@@ -29,9 +29,9 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule           = bugpack.require('airbug.CommandModule');
+var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
 var IconView                = bugpack.require('airbug.IconView');
 var TextView                = bugpack.require('airbug.TextView');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
@@ -97,12 +97,11 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.buttonView =
-            view(ButtonView)
+            view(NakedButtonView)
                 .id("code-editor-settings-button")
                 .attributes({
                     align: "right",
-                    size: ButtonView.Size.MINI,
-                    type: "primary"
+                    size: NakedButtonView.Size.MINI
                 })
                 .children([
                     view(IconView)

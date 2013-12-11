@@ -191,6 +191,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     handleToggleWorkspaceCommand: function(message) {
         console.log("PageContainer#handleToggleWorkspaceCommand");
+        /** */
         var source = message.getData().source;
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
         var workspaceWidgetIsOpen   = workspace.hasClass("workspace-open");

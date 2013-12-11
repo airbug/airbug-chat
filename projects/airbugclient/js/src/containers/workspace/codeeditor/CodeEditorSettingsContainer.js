@@ -8,10 +8,10 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -33,10 +33,10 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var ButtonGroupView             = bugpack.require('airbug.ButtonGroupView');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsView      = bugpack.require('airbug.CodeEditorSettingsView');
 var CommandModule               = bugpack.require('airbug.CommandModule');
+var NakedButtonView             = bugpack.require('airbug.NakedButtonView');
 var TextView                    = bugpack.require('airbug.TextView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
@@ -141,10 +141,10 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                             align: "right"
                         })
                         .children([
-                            view(ButtonView)
+                            view(NakedButtonView)
                                 .id("back-to-code-editor-button")
                                 .attributes({
-                                    size: ButtonView.Size.MINI,
+                                    size: NakedButtonView.Size.MINI,
                                     align: "right"
                                 })
                                 .children([
