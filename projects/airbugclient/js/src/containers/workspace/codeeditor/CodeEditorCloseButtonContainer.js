@@ -100,8 +100,7 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
             view(ButtonView)
                 .attributes({
                     align: "right",
-                    size: ButtonView.Size.MINI,
-                    type: "danger"
+                    size: ButtonView.Size.MINI
                 })
                 .children([
                     view(IconView)

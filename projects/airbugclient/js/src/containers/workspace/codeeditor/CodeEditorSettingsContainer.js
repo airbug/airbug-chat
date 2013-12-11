@@ -145,7 +145,6 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                                 .id("back-to-code-editor-button")
                                 .attributes({
                                     size: ButtonView.Size.MINI,
-                                    type: "danger",
                                     align: "right"
                                 })
                                 .children([
