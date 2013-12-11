@@ -190,7 +190,6 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @param {PublisherMessage} message
      */
     handleToggleWorkspaceCommand: function(message) {
-        console.log("PageContainer#handleToggleWorkspaceCommand");
         /* source is the css style id of the button */
         var source = message.getData().source;
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
