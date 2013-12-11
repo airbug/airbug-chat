@@ -305,16 +305,14 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
     configureAceEditor: function() {
         AceExts.loadAll();
-//        AceModes.loadAll();
-        Css.load();
-        Html.load();
-        Javascript.load();
+        AceModes.loadAll();
         AceThemes.loadAll();
         AceSnippets.loadAll();
         KitchenSink.load();
         Ace.require("kitchen-sink/demo"); //TODO SUNG update html ids to avoid naming conflicts
 
         this.aceEditor  = Ace.edit("code-editor-container-body");
+        this.aceEditor.getSession().setMode("ace/mode/javascript");
         this.aceEditor.setTheme("ace/theme/twilight");
     },
 
