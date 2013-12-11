@@ -13,6 +13,9 @@
 //@Require('ace.AceSnippets')
 //@Require('ace.AceThemes')
 //@Require('ace.KitchenSink')
+//@Require('acemodes.Css')
+//@Require('acemodes.Html')
+//@Require('acemodes.Javascript')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
@@ -46,6 +49,9 @@ var AceModes                            = bugpack.require('ace.AceModes');
 var AceSnippets                         = bugpack.require('ace.AceSnippets');
 var AceThemes                           = bugpack.require('ace.AceThemes');
 var KitchenSink                         = bugpack.require('ace.KitchenSink');
+var Css                                 = bugpack.require('acemodes.Css');
+var Html                                = bugpack.require('acemodes.Html');
+var Javascript                          = bugpack.require('acemodes.Javascript');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
@@ -299,7 +305,10 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
 
     configureAceEditor: function() {
         AceExts.loadAll();
-        AceModes.loadAll();
+//        AceModes.loadAll();
+        Css.load();
+        Html.load();
+        Javascript.load();
         AceThemes.loadAll();
         AceSnippets.loadAll();
         KitchenSink.load();
