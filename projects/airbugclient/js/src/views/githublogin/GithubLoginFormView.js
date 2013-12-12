@@ -138,4 +138,4 @@ var GithubLoginFormView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.GithubLoginFormView", LoginFormView);
+bugpack.export("airbug.GithubLoginFormView", GithubLoginFormView);
