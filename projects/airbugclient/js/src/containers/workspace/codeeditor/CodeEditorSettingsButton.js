@@ -100,7 +100,6 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
             view(NakedButtonView)
                 .id("code-editor-settings-button")
                 .attributes({
-                    align: "right",
                     size: NakedButtonView.Size.MINI
                 })
                 .children([
