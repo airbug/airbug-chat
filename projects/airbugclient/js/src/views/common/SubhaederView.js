@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('SubHeaderView')
+//@Export('SubheaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,22 +29,22 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SubHeaderView = Class.extend(MustacheView, {
+var SubheaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
     template:   '<div id="{{id}}-wrapper" class="subheader-wrapper">' +
-                    '<div id="{{id}}" class="subheader">' +
-                        '<div class="subheader-left">' +
-                        '</div>' +
-                        '<div class="subheader-center">' +
-                        '</div>' +
-                        '<div class="subheader-right">' +
-                        '</div>' +
-                    '</div>' +
-                '</div>',
+        '<div id="{{id}}" class="subheader">' +
+        '<div class="subheader-left">' +
+        '</div>' +
+        '<div class="subheader-center">' +
+        '</div>' +
+        '<div class="subheader-right">' +
+        '</div>' +
+        '</div>' +
+        '</div>',
 
     /**
      * @return {Object}
@@ -61,4 +61,4 @@ var SubHeaderView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SubHeaderView", SubHeaderView);
+bugpack.export("airbug.SubheaderView", SubheaderView);
