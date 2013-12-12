@@ -40,7 +40,7 @@ var FormWithSubmitButtonView = Class.extend(MustacheView, {
         '<div class="form-wrapper">' +
             '<form class="{{classes}}">' +
                 '<div class="control-group">' +
-                '<button id="submit-button-{{cid}}" type="button" class="btn"></button>' +
+                '<button id="submit-button-{{cid}}" type="submit" class="btn">{{name}}</button>' +
                 '</div>' +
             '</form>' +
         '</div>',
@@ -76,6 +76,20 @@ var FormWithSubmitButtonView = Class.extend(MustacheView, {
             event.stopPropagation();
             return false;
         });
+    },
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data = this._super();
+        data.name = this.attributes.name;
+        data.classes = this.attributes.classes;
+        return data;
     },
 
     //-------------------------------------------------------------------------------
