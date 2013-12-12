@@ -180,7 +180,7 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
                         .id("embed-code-button")
                         .attributes({
                             type: "default",
-                            size: ButtonView.Size.LARGE,
+                            size: ButtonView.Size.LARGE
                         })
                         .children([
                             view(TextView)

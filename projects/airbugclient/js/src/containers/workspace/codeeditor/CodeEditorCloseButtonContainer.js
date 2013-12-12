@@ -99,7 +99,6 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
         this.buttonView =
             view(NakedButtonView)
                 .attributes({
-                    align: "right",
                     size: NakedButtonView.Size.MINI
                 })
                 .children([

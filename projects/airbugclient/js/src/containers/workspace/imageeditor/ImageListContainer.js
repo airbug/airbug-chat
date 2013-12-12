@@ -142,7 +142,6 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                         .children([
                             view(NakedButtonView)
                                 .attributes({
-                                    align: "right",
                                     size: NakedButtonView.Size.SMALL
                                 })
                                 .children([
@@ -154,13 +153,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                 ]),
                             view(NakedButtonView)
                                 .attributes({
-                                    align: "right",
                                     size: NakedButtonView.Size.SMALL
                                 })
                                 .children([
                                     view(IconView)
                                         .attributes({
-                                            type: IconView.Type.PLUS
+                                            type: IconView.Type.UPLOAD
                                         })
                                         .appendTo('*[id|="button"]')
                                 ])
@@ -173,7 +171,6 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                         .children([
                             view(NakedButtonView)
                                 .attributes({
-                                    align: "right",
                                     size: NakedButtonView.Size.LARGE
                                 })
                                 .children([
@@ -183,7 +180,6 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                 ]),
                             view(NakedButtonView)
                                 .attributes({
-                                    align: "right",
                                     size: NakedButtonView.Size.LARGE
                                 })
                                 .children([
