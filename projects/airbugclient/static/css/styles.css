@@ -795,14 +795,6 @@ li.add-roommember-container {
     margin: 46px 0px;
 }
 
-.code-editor-footer button {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
 .code-editor-body.ace_editor {
     position: absolute;
 }
