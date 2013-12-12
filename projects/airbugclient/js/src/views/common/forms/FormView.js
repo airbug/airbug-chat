@@ -47,7 +47,7 @@ var FormView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "input-" + this.getCid();
-        data.inputClasses = this.attribute.classes || "";
+        data.inputClasses = this.attributes.classes || "";
         return data;
     }
 });
