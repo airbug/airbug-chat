@@ -126,7 +126,12 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
         this.buttonView =
             view(ButtonView)
                 .id("code-editor-button")
-                .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
+                .attributes({
+                    size: ButtonView.Size.LARGE,
+                    type: "primary",
+                    align: "center",
+                    block: true
+                })
                 .children([
                     view(TextView)
                         .attributes({text:'<C/>'})

@@ -126,7 +126,12 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
         this.buttonView =
             view(ButtonView)
                 .id("image-editor-button")
-                .attributes({size: ButtonView.Size.LARGE, type: "primary", align: "center"})
+                .attributes({
+                    size: ButtonView.Size.LARGE,
+                    type: "primary",
+                    align: "center",
+                    block: true
+                })
                 .children([
                     view(IconView)
                         .attributes({
