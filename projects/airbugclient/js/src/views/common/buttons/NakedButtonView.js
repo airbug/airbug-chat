@@ -140,6 +140,11 @@ var NakedButtonView = Class.extend(MustacheView, {
                 data.buttonClasses += " pull-right";
                 break;
         }
+        switch (this.attributes.block) {
+            case true:
+                data.buttonClasses += " btn-block";
+                break
+        }
 
         return data;
     },

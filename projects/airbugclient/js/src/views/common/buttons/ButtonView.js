@@ -137,6 +137,11 @@ var ButtonView = Class.extend(MustacheView, {
                 data.buttonClasses += " btn-link";
                 break;
         }
+        switch (this.attributes.block) {
+            case true:
+                data.buttonClasses += " btn-block";
+                break
+        }
 
         data.buttonWrapperClasses = "";
         switch (this.attributes.align) {
