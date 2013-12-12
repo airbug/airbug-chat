@@ -41,12 +41,12 @@ var BoxView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "input-" + this.getCid();
-        data.inputClasses = this.attributes.classes || "";
-        data.inputType = "";
-        data.inputName = this.attributes.name;
-        data.inputPlaceholder = this.attributes.placeholder;
+        var data                = this._super();
+        data.id                 = this.getId() || "input-" + this.getCid();
+        data.inputClasses       = this.attributes.classes || "";
+        data.inputType          = this.attributes.type || "text";
+        data.inputName          = this.attributes.name;
+        data.inputPlaceholder   = this.attributes.placeholder;
 
         switch (this.attributes.size) {
             case InputView.Size.XXLARGE:
@@ -63,11 +63,6 @@ var BoxView = Class.extend(MustacheView, {
                 break;
             case InputView.Size.MINI:
                 data.inputClasses += " input-mini";
-                break;
-        }
-        switch (this.attributes.type) {
-            case InputView.Type.TEXT:
-                data.inputType += "text";
                 break;
         }
 
@@ -87,6 +82,7 @@ InputView.Size = {
 InputView.Type = {
     TEXT: "text"
 };
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
