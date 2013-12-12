@@ -145,9 +145,9 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-        this.imageEditorContainer   = new ImageEditorContainer();
+//        this.imageEditorContainer   = new ImageEditorContainer();
         this.imageListContainer     = new ImageListContainer();
-        this.addContainerChild(this.imageEditorContainer,       "#image-editor-widget");
+//        this.addContainerChild(this.imageEditorContainer,       "#image-editor-widget");
         this.addContainerChild(this.imageListContainer,         "#image-editor-widget");
     },
 

@@ -123,6 +123,7 @@ var ImageEditorContainer = Class.extend(CarapaceContainer, {
 
         this.boxView =
             view(BoxView)
+                .id("image-editor-container")
                 .build();
 
         // Wire Up Views
