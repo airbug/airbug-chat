@@ -43,7 +43,7 @@ var BoxView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "input-" + this.getCid();
-        data.inputClasses = this.attribute.classes || "";
+        data.inputClasses = this.attributes.classes || "";
         data.inputType = "";
         data.inputName = this.attributes.name;
         data.inputPlaceholder = this.attributes.placeholder;
