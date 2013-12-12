@@ -18,7 +18,7 @@
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.RoomsHamburgerButtonContainer')
-//@Require('airbug.SubHeaderView')
+//@Require('airbug.SubheaderView')
 //@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -50,7 +50,7 @@ var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
 var RoomMemberListPanelContainer    = bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomNameView                    = bugpack.require('airbug.RoomNameView');
 var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
-var SubHeaderView                   = bugpack.require('airbug.SubHeaderView');
+var SubheaderView                   = bugpack.require('airbug.SubheaderView');
 var TwoColumnView                   = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
@@ -195,7 +195,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.boxWithHeaderView =
             view(BoxWithHeaderView)
                 .children([
-                    view(SubHeaderView)
+                    view(SubheaderView)
                     .id("room-chatbox-header")
                     .appendTo(".box-header")
                     .children([
