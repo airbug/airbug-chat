@@ -12,6 +12,10 @@ html, body {
     position: relative;
 }
 
+.btn-toolbar .btn-group:first-child {
+    margin-left: 10px;
+}
+
 /* Application CSS
 *******************************************************************/
 
@@ -805,6 +809,21 @@ li.add-roommember-container {
 
 .code-editor-settings .box-body {
     margin: 0px;
+}
+
+/* ImageList CSS
+*******************************************************************/
+
+#image-list-container .box-footer .btn-group {
+    width: 100%;
+}
+
+#image-list-container .box-footer .btn-group .btn:first-child {
+    width: 20%;
+}
+
+#image-list-container .box-footer .btn-group .btn:last-child {
+    width: 80%
 }
 
 /* Twitter Bootstrap Overrides

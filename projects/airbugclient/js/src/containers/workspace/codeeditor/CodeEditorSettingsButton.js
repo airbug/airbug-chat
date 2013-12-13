@@ -100,12 +100,17 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
             view(NakedButtonView)
                 .id("code-editor-settings-button")
                 .attributes({
-                    size: NakedButtonView.Size.MINI
+                    size: NakedButtonView.Size.SMALL
                 })
                 .children([
                     view(IconView)
                         .attributes({
                             type: IconView.Type.COG
+                        })
+                        .appendTo('#code-editor-settings-button'),
+                    view(TextView)
+                        .attributes({
+                            text: "Settings"
                         })
                         .appendTo('#code-editor-settings-button')
                 ])

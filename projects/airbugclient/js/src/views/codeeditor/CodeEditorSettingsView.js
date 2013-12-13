@@ -39,7 +39,6 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
     template:
         '<div id="{{id}}-wrapper" class="code-editor-settings box">\
             <div class="box-header">\
-                Settings\
             </div>\
             <div class="box-body">\
                 <table id="{{id}}">\

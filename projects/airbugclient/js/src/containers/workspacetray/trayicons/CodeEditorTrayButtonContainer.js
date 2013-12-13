@@ -125,7 +125,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
         this.buttonView =
             view(ButtonView)
-                .id("code-editor-button")
+                .id("code-editor-tray-button")
                 .attributes({
                     size: ButtonView.Size.LARGE,
                     type: "primary",
@@ -133,9 +133,23 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
                     block: true
                 })
                 .children([
+                    view(IconView)
+                        .attributes({
+                            type: IconView.Type.CHEVRON_LEFT,
+                            color: IconView.Color.WHITE
+                        })
+                        .appendTo("#code-editor-tray-button"),
                     view(TextView)
-                        .attributes({text:'<C/>'})
-                        .appendTo("#code-editor-button")
+                        .attributes({
+                            text: "c/"
+                        })
+                        .appendTo("#code-editor-tray-button"),
+                    view(IconView)
+                        .attributes({
+                            type: IconView.Type.CHEVRON_RIGHT,
+                            color: IconView.Color.WHITE
+                        })
+                        .appendTo("#code-editor-tray-button")
                 ])
                 .build();
 

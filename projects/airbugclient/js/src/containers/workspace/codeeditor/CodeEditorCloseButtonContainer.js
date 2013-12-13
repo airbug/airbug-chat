@@ -99,12 +99,17 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
         this.buttonView =
             view(NakedButtonView)
                 .attributes({
-                    size: NakedButtonView.Size.MINI
+                    size: NakedButtonView.Size.SMALL
                 })
                 .children([
                     view(IconView)
                         .attributes({
                             type: IconView.Type.REMOVE
+                        })
+                        .appendTo('*[id|="button"]'),
+                    view(TextView)
+                        .attributes({
+                            text: "Close"
                         })
                         .appendTo('*[id|="button"]')
                 ])

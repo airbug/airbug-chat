@@ -136,30 +136,81 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
             view(CodeEditorSettingsView)
                 .id("code-editor-settings")
                 .children([
-                    view(ButtonGroupView)
-                        .attributes({
-                            align: "right"
-                        })
+                    view(ButtonToolbarView)
+                        .id("code-editor-settings-toolbar")
+                        .appendTo(".box-header")
                         .children([
-                            view(NakedButtonView)
-                                .id("back-to-code-editor-button")
-                                .attributes({
-                                    size: NakedButtonView.Size.MINI,
-                                    align: "right"
-                                })
+                            view(ButtonGroupView)
+                                .appendTo('#code-editor-settings-toolbar')
                                 .children([
-                                    view(IconView)
+                                    view(NakedButtonView)
                                         .attributes({
-                                            type: IconView.Type.REMOVE
+                                            size: NakedButtonView.Size.NORMAL,
+                                            disabled: true,
+                                            type: NakedButtonView.Type.INVERSE
                                         })
-                                        .appendTo("#back-to-code-editor-button")
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.COG,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: " Settings"
+                                                })
+                                                .appendTo('*[id|="button"]')
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .children([
+                                    view(NakedButtonView)
+                                        .id("back-to-code-editor-button")
+                                        .attributes({
+                                            size: NakedButtonView.Size.SMALL
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_LEFT
+                                                })
+                                                .appendTo("#back-to-code-editor-button"),
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_RIGHT
+                                                })
+                                                .appendTo("#back-to-code-editor-button"),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Editor"
+                                                })
+                                                .appendTo("#back-to-code-editor-button")
+                                        ]),
+                                    view(NakedButtonView)
+                                        .id("close-code-editor-settings-button")
+                                        .attributes({
+                                            size: NakedButtonView.Size.SMALL
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.REMOVE
+                                                })
+                                                .appendTo("#close-code-editor-settings-button"),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Close"
+                                                })
+                                                .appendTo("#close-code-editor-settings-button")
+                                        ])
                                 ])
-                        ])
-                        .appendTo(".box-header"),
+                                .appendTo('#code-editor-settings-toolbar')
+                        ]),
                     view(ButtonView)
                         .id("apply-code-editor-settings-button")
                         .attributes({
-                            align: "right"
+                            block: true
                         })
                         .children([
                             view(TextView)

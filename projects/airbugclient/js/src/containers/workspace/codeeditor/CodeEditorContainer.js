@@ -17,12 +17,14 @@
 //@Require('acemodes.Html')
 //@Require('acemodes.Javascript')
 //@Require('airbug.ButtonGroupView')
+//@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorCloseButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -53,12 +55,14 @@ var Css                                 = bugpack.require('acemodes.Css');
 var Html                                = bugpack.require('acemodes.Html');
 var Javascript                          = bugpack.require('acemodes.Javascript');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorCloseButtonContainer      = bugpack.require('airbug.CodeEditorCloseButtonContainer');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
+var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
@@ -165,17 +169,42 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
             view(CodeEditorView)
                 .id("code-editor-container")
                 .children([
-                    view(TextView)
-                        .attributes({
-                            text: "Code Editor",
-                            classes: ""
-                        })
-                        .appendTo(".code-editor-header"),
-                    view(ButtonGroupView)
-                        .attributes({
-                            align: "right"
-                        })
-                        .appendTo(".code-editor-header"),
+                    view(ButtonToolbarView)
+                        .id("code-editor-toolbar")
+                        .appendTo(".code-editor-header")
+                        .children([
+                            view(ButtonGroupView)
+                                .appendTo('#code-editor-toolbar')
+                                .children([
+                                    view(NakedButtonView)
+                                        .attributes({
+                                            size: NakedButtonView.Size.NORMAL,
+                                            disabled: true,
+                                            type: NakedButtonView.Type.INVERSE
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_LEFT,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_RIGHT,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: 'Editor'
+                                                })
+                                                .appendTo('*[id|="button"]')
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .appendTo('#code-editor-toolbar')
+                        ]),
                     view(ButtonView)
                         .id("embed-code-button")
                         .attributes({
@@ -204,8 +233,8 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.closeButton        = new CodeEditorCloseButtonContainer();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
-        this.addContainerChild(this.closeButton, ".btn-group");
-        this.addContainerChild(this.settingsButton, ".btn-group");
+        this.addContainerChild(this.settingsButton, ".btn-group:last-child");
+        this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
     /**

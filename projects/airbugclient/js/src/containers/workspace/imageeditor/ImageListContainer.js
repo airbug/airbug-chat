@@ -9,7 +9,9 @@
 //@Require('Class')
 //@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonGroupView')
+//@Require('airbug.ButtonToolbarView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -31,8 +33,9 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
-var BoxView                             = bugpack.require('airbug.BoxWithHeaderAndFooterView');
+var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
@@ -132,43 +135,84 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
             view(BoxWithHeaderAndFooterView)
                 .id("image-list-container")
                 .children([
-                    view(TextView)
-                        .attributes({text: "Image List"})
-                        .appendTo(".box-header"),
+                    view(ButtonToolbarView)
+                        .id("image-list-toolbar")
+                        .appendTo(".box-header")
+                        .children([
+                            view(ButtonGroupView)
+                                .appendTo('#image-list-toolbar')
+                                .children([
+                                    view(NakedButtonView)
+                                        .attributes({
+                                            size: NakedButtonView.Size.NORMAL,
+                                            disabled: true,
+                                            type: NakedButtonView.Type.INVERSE
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.PICTURE,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: " Image List"
+                                                })
+                                                .appendTo('*[id|="button"]')
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .children([
+                                    view(NakedButtonView)
+                                        .attributes({
+                                            size: NakedButtonView.Size.SMALL
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.UPLOAD
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Upload"
+                                                })
+                                                .appendTo('*[id|="button"]')
+                                        ]),
+                                    view(NakedButtonView)
+                                        .attributes({
+                                            size: NakedButtonView.Size.SMALL
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.REMOVE
+                                                })
+                                                .appendTo('*[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Close"
+                                                })
+                                                .appendTo('*[id|="button"]')
+                                        ])
+                                ])
+                                .appendTo('#image-list-toolbar')
+                        ]),
                     view(ButtonGroupView)
-                        .attributes({
-                            align: "right"
-                        })
                         .children([
                             view(NakedButtonView)
                                 .attributes({
-                                    size: NakedButtonView.Size.SMALL
+                                    size: NakedButtonView.Size.LARGE,
+                                    type: NakedButtonView.Type.DANGER
                                 })
                                 .children([
                                     view(IconView)
                                         .attributes({
-                                            type: IconView.Type.REMOVE
+                                            type: IconView.Type.TRASH
                                         })
                                         .appendTo('*[id|="button"]')
                                 ]),
-                            view(NakedButtonView)
-                                .attributes({
-                                    size: NakedButtonView.Size.SMALL
-                                })
-                                .children([
-                                    view(IconView)
-                                        .attributes({
-                                            type: IconView.Type.UPLOAD
-                                        })
-                                        .appendTo('*[id|="button"]')
-                                ])
-                        ])
-                        .appendTo(".box-header"),
-                    view(ButtonGroupView)
-                        .attributes({
-                            align: "right"
-                        })
-                        .children([
                             view(NakedButtonView)
                                 .attributes({
                                     size: NakedButtonView.Size.LARGE
@@ -176,17 +220,6 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                 .children([
                                     view(TextView)
                                         .attributes({text: "SEND"})
-                                        .appendTo('*[id|="button"]')
-                                ]),
-                            view(NakedButtonView)
-                                .attributes({
-                                    size: NakedButtonView.Size.LARGE
-                                })
-                                .children([
-                                    view(IconView)
-                                        .attributes({
-                                            type: IconView.Type.TRASH
-                                        })
                                         .appendTo('*[id|="button"]')
                                 ])
                         ])

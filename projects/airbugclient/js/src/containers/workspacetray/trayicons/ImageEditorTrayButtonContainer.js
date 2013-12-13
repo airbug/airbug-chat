@@ -125,7 +125,7 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
         this.buttonView =
             view(ButtonView)
-                .id("image-editor-button")
+                .id("image-editor-tray-button")
                 .attributes({
                     size: ButtonView.Size.LARGE,
                     type: "primary",
@@ -138,7 +138,7 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
                             type: IconView.Type.PICTURE,
                             color: IconView.Color.WHITE
                         })
-                        .appendTo("#image-editor-button")
+                        .appendTo("#image-editor-tray-button")
                 ])
                 .build();
 
