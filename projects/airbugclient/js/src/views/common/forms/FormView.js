@@ -41,14 +41,95 @@ var FormView = Class.extend(MustacheView, {
             '<form class="{{classes}}">' +
             '</form>' +
         '</div>',
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    deinitializeView: function() {
+        this._super();
+        this.$el.find('.submit-button').off();
+        this.$el.find('form').off();
+    },
+
+    /**
+     * @protected
+     */
+    initializeView: function() {
+        this._super();
+        var _this = this;
+        this.$el.find('form').on('submit', function(event) {
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
+        this.$el.find('.submit-button').on('click', function(event) {
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
+    },
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "input-" + this.getCid();
-        data.inputClasses = this.attributes.classes || "";
+        var data = this._super();
+        data.classes = this.attributes.classes;
         return data;
+    },
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @return {Object}
+     */
+    getFormData: function() {
+
+        // TODO BRN: This won't work for multiple check boxes. Will need to improve this if we have a form with more than
+        // one checkbox.
+
+        var formData = {};
+        var formInputs = this.$el.find("form").serializeArray();
+        formInputs.forEach(function(formInput) {
+            formData[formInput.name] = formInput.value;
+        });
+        return formData;
+    },
+
+    /**
+     * @protected
+     */
+    submitForm: function() {
+        var formData = this.getFormData();
+        console.log("formData:", formData);
+        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
+            formData: formData
+        }));
+    },
+
+    //-------------------------------------------------------------------------------
+    // View Event Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {jquery.Event} event
+     */
+    handleSubmit: function(event) {
+        this.submitForm();
     }
 });
 
