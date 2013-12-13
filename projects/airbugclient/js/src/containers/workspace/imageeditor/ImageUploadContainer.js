@@ -4,14 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('ImageEditorWidgetContainer')
+//@Export('ImageUploadContainer')
 
 //@Require('Class')
 //@Require('airbug.BoxView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageEditorContainer')
-//@Require('airbug.ImageListContainer')
-//@Require('airbug.ImageUploadContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -33,9 +30,6 @@ var bugpack = require('bugpack').context();
 var Class                               = bugpack.require('Class');
 var BoxView                             = bugpack.require('airbug.BoxView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
-var ImageEditorContainer                = bugpack.require('airbug.ImageEditorContainer');
-var ImageListContainer                  = bugpack.require('airbug.ImageListContainer');
-var ImageUploadContainer                = bugpack.require('airbug.ImageUploadContainer');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -55,7 +49,7 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
+var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -77,6 +71,11 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -85,23 +84,12 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxView}
          */
-        this.boxView                      = null;
+        this.boxView                    = null;
 
 
         // Containers
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {ImageEditorContainer}
-         */
-        this.imageEditorContainer            = null;
-
-        /**
-         * @private
-         * @type {ImageListContainer}
-         */
-        this.imageListContainer    = null;
 
     },
 
@@ -135,8 +123,7 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
         this.boxView =
             view(BoxView)
-                .id("image-editor-widget")
-                .attributes({classes: "workspace-widget"})
+                .id("image-upload-container")
                 .build();
 
         // Wire Up Views
@@ -147,12 +134,6 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-//        this.imageEditorContainer   = new ImageEditorContainer();
-        this.imageListContainer     = new ImageListContainer();
-//        this.imageUploadContainer   = new ImageUploadContainer();
-//        this.addContainerChild(this.imageEditorContainer,       "#image-editor-widget");
-        this.addContainerChild(this.imageListContainer,         "#image-editor-widget");
-//        this.addContainerChild(this.imageUploadContainer, "#image-editor-widget");
     },
 
     /**
@@ -200,7 +181,7 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ImageEditorWidgetContainer).with(
+bugmeta.annotate(ImageUploadContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule")
     ])
@@ -211,4 +192,4 @@ bugmeta.annotate(ImageEditorWidgetContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageEditorWidgetContainer", ImageEditorWidgetContainer);
+bugpack.export("airbug.ImageUploadContainer", ImageUploadContainer);
