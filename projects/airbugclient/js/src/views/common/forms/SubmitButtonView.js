@@ -7,7 +7,7 @@
 //@Export('SubmitButtonView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.ButtonView')
 
 
 //-------------------------------------------------------------------------------
@@ -22,31 +22,30 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var MustacheView    = bugpack.require('airbug.ButtonView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SubmitButtonView = Class.extend(MustacheView, {
+var SubmitButtonView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="control-group">' +
-        '<button id="submit-button-{{cid}}" type="submit" class="btn summit-button {{classes}}">{{name}}</button>' +
+    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
+        '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}"></button>' +
         '</div>',
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data        = this._super();
-        data.id         = this.getId() || "submit-button-" + this.getCid();
-        data.name       = this.attributes.name;
-        data.classes    = this.attributes.classes;
+        var id      = this.getId() || "submit-button-" + this.getCid();
+        var data    = this._super();
+        data.id     = id;
         return data;
     }
 });
