@@ -7,7 +7,6 @@
 //@Export('ButtonGroupView')
 
 //@Require('Class')
-//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.MustacheView')
 
 
@@ -23,7 +22,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ButtonViewEvent = bugpack.require('airbug.ButtonViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
@@ -77,6 +75,7 @@ var ButtonGroupView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
+        data.id     = this.getId() || "button-group-" + this.getCid();
 
         data.buttonGroupClasses = "";
         switch (this.attributes.align) {

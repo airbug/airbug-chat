@@ -47,7 +47,7 @@ var IconView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.id = this.getId() || "";
+        data.id = this.getId() || "icon-" + this.cid;
         data.iconColorClass = "";
         switch (this.attributes.color) {
             case IconView.Color.WHITE:
