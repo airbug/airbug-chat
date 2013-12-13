@@ -133,6 +133,9 @@ var ButtonView = Class.extend(MustacheView, {
             case "danger":
                 data.buttonClasses += " btn-danger";
                 break;
+            case "inverse":
+                data.buttonClasses += " btn-inverse";
+                break;
             case "link":
                 data.buttonClasses += " btn-link";
                 break;
@@ -140,6 +143,11 @@ var ButtonView = Class.extend(MustacheView, {
         switch (this.attributes.block) {
             case true:
                 data.buttonClasses += " btn-block";
+                break
+        }
+        switch (this.attributes.disabled) {
+            case true:
+                data.buttonClasses += " disabled";
                 break
         }
 
@@ -184,6 +192,19 @@ ButtonView.Size = {
     MINI: 4
 };
 
+/**
+ * @static
+ * @enum {string}
+ */
+ButtonView.Type = {
+    PRIMARY:    "primary",
+    INFO:       "info",
+    SUCCESS:    "sucess",
+    WARNING:    "warning",
+    DANGER:     "danger",
+    INVERSE:    "inverse",
+    LINK:       "link"
+};
 
 //-------------------------------------------------------------------------------
 // Exports
