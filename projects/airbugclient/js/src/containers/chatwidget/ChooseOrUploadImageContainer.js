@@ -123,6 +123,44 @@ var ChooseOrUploadImageContainer = Class.extend(CarapaceContainer, {
 
         this.boxView =
             view(BoxView)
+                .id("choose-or-upload-image-container")
+                .attributes({})
+                .children([
+                    view(BoxView)
+                        .children([
+                            view(ButtonView)
+                                .attributes({
+                                    block: true,
+                                    size: ButtonView.Size.LARGE
+                                })
+                                .children([
+                                    view(TextView)
+                                        .attributes({
+                                            text: "CHOOSE"
+                                        })
+                                        .appendTo('*[id|="button"]')
+                                ])
+                                .appendTo('*[id|="box"]')
+                        ])
+                        .appendTo('#choose-or-upload-image-container'),
+                    view(BoxView)
+                        .children([
+                            view(ButtonView)
+                                .attributes({
+                                    block: true,
+                                    size: ButtonView.Size.LARGE
+                                })
+                                .children([
+                                    view(TextView)
+                                        .attributes({
+                                            text: "UPLOAD"
+                                        })
+                                        .appendTo('*[id|="button"]')
+                                ])
+                                .appendTo('*[id|="box"]')
+                        ])
+                        .appendTo('#choose-or-upload-image-container')
+                ])
                 .build();
 
         // Wire Up Views
