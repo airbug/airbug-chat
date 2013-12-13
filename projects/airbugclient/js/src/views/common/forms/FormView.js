@@ -38,7 +38,7 @@ var FormView = Class.extend(MustacheView, {
 
     template:
         '<div class="form-wrapper">' +
-            '<form class="{{classes}}">' +
+            '<form class="{{classes}}" id="{{id}}">' +
             '</form>' +
         '</div>',
 
@@ -83,8 +83,9 @@ var FormView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this._super();
-        data.classes = this.attributes.classes;
+        var data            = this._super();
+        data.classes        = this.attributes.classes;
+        data.id             = this.getId() || "form-" + this.cid;
         return data;
     },
 

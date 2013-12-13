@@ -56,6 +56,20 @@ var AirbugClientConfig = Class.extend(Config, {
     },
 
     /**
+     * @returns {*}
+     */
+    getGithubEmails: function() {
+        return this.getProperty("github.emails");
+    },
+
+    /**
+     * @param {array} emails
+     */
+    setGithubEmails: function(emails) {
+        this.setProperty('github.emails', emails);
+    },
+
+    /**
      * @returns {string}
      */
     getGithubScope: function() {
