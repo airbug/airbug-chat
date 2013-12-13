@@ -818,6 +818,10 @@ li.add-roommember-container {
     width: 100%;
 }
 
+#image-list-container .box-footer .btn-group .btn {
+    height: 45px;
+}
+
 #image-list-container .box-footer .btn-group .btn:first-child {
     width: 20%;
 }
