@@ -10,6 +10,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugClientConfig')
+//@Require('airbugserver.AssetController')
+//@Require('airbugserver.AssetService')
 //@Require('airbugserver.CallService')
 //@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.ChatMessageService')
@@ -74,6 +76,8 @@ var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var AirbugClientConfig      = bugpack.require('airbug.AirbugClientConfig');
 var AirbugServerConfig      = bugpack.require('airbug.AirbugServerConfig');
+var AssetController         = bugpack.require('airbugserver.AssetController');
+var AssetService            = bugpack.require('airbugserver.AssetService');
 var CallService             = bugpack.require('airbugserver.CallService');
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var ChatMessageService      = bugpack.require('airbugserver.ChatMessageService');
@@ -474,6 +478,25 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      */
     apiAirbugSocketIoManager: function(socketIoServer) {
         return new SocketIoManager(socketIoServer, '/api/airbug');
+    },
+
+    /**
+     * @param {ExpressApp} expressApp
+     * @param {BugCallRouter} bugCallRouter
+     * @param {AssetService} assetService
+     * @return {AssetController}
+     */
+    assetController: function(expressApp, bugCallRouter, assetService) {
+        return new AssetController(expressApp, bugCallRouter, assetService);
+    },
+
+    /**
+     * @param {AssetManager} assetManager
+     * @return {AssetService}
+     */
+    assetService: function(assetManager) {
+        return new AssetService(assetManager);
+        return this._assetService;
     },
 
     /**
@@ -944,6 +967,12 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Controllers
         //-------------------------------------------------------------------------------
 
+        module("assetController")
+            .args([
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("assetService")
+            ]),
         module("chatMessageController")
             .args([
                 arg().ref("expressApp"),
@@ -991,6 +1020,10 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Services
         //-------------------------------------------------------------------------------
 
+        module("assetService")
+            .args([
+                arg().ref("assetManager")
+            ]),
         module("chatMessageService")
             .args([
                 arg().ref("chatMessageManager"),
