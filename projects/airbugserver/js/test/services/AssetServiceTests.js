@@ -58,7 +58,7 @@ var setupAssetService = function(setupObject) {
             callback();
         },
         generateAsset: function(assetObject) {
-            return new User(assetObject);
+            return new Asset(assetObject);
         },
         retrieveAsset: function(assetId, callback) {
             var asset = new Asset({
@@ -72,7 +72,7 @@ var setupAssetService = function(setupObject) {
     setupObject.testAssetService.logger     = setupObject.logger;
 };
 
-var userServiceUploadAssetTest = {
+var assetServiceUploadAssetTest = {
 
     async: true,
 
@@ -94,7 +94,7 @@ var userServiceUploadAssetTest = {
     }
 };
 
-var userServiceAddAssetFromUrlTest = {
+var assetServiceAddAssetFromUrlTest = {
 
     async: true,
 
@@ -116,7 +116,7 @@ var userServiceAddAssetFromUrlTest = {
     }
 };
 
-var userServiceDeleteAssetTest = {
+var assetServiceDeleteAssetTest = {
 
     async: true,
 
@@ -140,14 +140,14 @@ var userServiceDeleteAssetTest = {
     }
 };
 
-bugmeta.annotate(userServiceUploadAssetTest).with(
+bugmeta.annotate(assetServiceUploadAssetTest).with(
     test().name("AssetService - Upload Asset Test")
 );
 
-bugmeta.annotate(userServiceAddAssetFromUrlTest).with(
+bugmeta.annotate(assetServiceAddAssetFromUrlTest).with(
     test().name("AssetService - Add Asset From Url Test")
 );
 
-bugmeta.annotate(userServiceDeleteAssetTest).with(
+bugmeta.annotate(assetServiceDeleteAssetTest).with(
     test().name("AssetService - Delete Asset Test")
 );
