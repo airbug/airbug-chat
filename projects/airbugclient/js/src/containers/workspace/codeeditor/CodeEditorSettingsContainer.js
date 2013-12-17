@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorCloseButtonContainer')
 //@Require('airbug.CodeEditorSettingsView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.NakedButtonView')
@@ -31,18 +32,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ButtonGroupView             = bugpack.require('airbug.ButtonGroupView');
-var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
-var CodeEditorSettingsView      = bugpack.require('airbug.CodeEditorSettingsView');
-var CommandModule               = bugpack.require('airbug.CommandModule');
-var NakedButtonView             = bugpack.require('airbug.NakedButtonView');
-var TextView                    = bugpack.require('airbug.TextView');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var ButtonGroupView                 = bugpack.require('airbug.ButtonGroupView');
+var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorCloseButtonContainer  = bugpack.require('airbug.CodeEditorCloseButtonContainer');
+var CodeEditorSettingsView          = bugpack.require('airbug.CodeEditorSettingsView');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
+var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
+var TextView                        = bugpack.require('airbug.TextView');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -164,6 +166,7 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                                         ])
                                 ]),
                             view(ButtonGroupView)
+                                .appendTo('#code-editor-settings-toolbar')
                                 .children([
                                     view(NakedButtonView)
                                         .id("back-to-code-editor-button")
@@ -186,26 +189,8 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                                                     text: "Editor"
                                                 })
                                                 .appendTo("#back-to-code-editor-button")
-                                        ]),
-                                    view(NakedButtonView)
-                                        .id("close-code-editor-settings-button")
-                                        .attributes({
-                                            size: NakedButtonView.Size.SMALL
-                                        })
-                                        .children([
-                                            view(IconView)
-                                                .attributes({
-                                                    type: IconView.Type.REMOVE
-                                                })
-                                                .appendTo("#close-code-editor-settings-button"),
-                                            view(TextView)
-                                                .attributes({
-                                                    text: "Close"
-                                                })
-                                                .appendTo("#close-code-editor-settings-button")
                                         ])
                                 ])
-                                .appendTo('#code-editor-settings-toolbar')
                         ]),
                     view(ButtonView)
                         .id("apply-code-editor-settings-button")
@@ -233,6 +218,8 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
+        this.codeEditorCloseButtonContainer = new CodeEditorCloseButtonContainer();
+        this.addContainerChild(this.codeEditorCloseButtonContainer, "#code-editor-settings-toolbar .btn-group:last-child");
     },
 
     /**
