@@ -71,11 +71,13 @@ var assetManagerCreateAssetTest = {
         this.assetManager           = new AssetManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore);
         this.assetManager.setEntityType("Asset");
         this.testMimeType           = "image/png";
+        this.testName               = "testName";
         this.testThumbMimeType      = "image/png";
         this.testThumbUrl           = "http://host/image_t.png";
         this.testUrl                = "http://host/image.png";
         this.testAsset              = new Asset({
             mimeType: this.testMimeType,
+            name: this.testName,
             thumbMimeType: this.testThumbMimeType,
             thumbUrl: this.testThumbUrl,
             url: this.testUrl
@@ -100,10 +102,12 @@ var assetManagerCreateAssetTest = {
                 });
             }),
             $task(function(flow) {
-                _this.assetManager.createAsset(_this.testAsset, function(throwable) {
+                _this.assetManager.createAsset(_this.testAsset, function(throwable, asset) {
                     if (!throwable) {
-                        test.assertTrue(!! _this.testAsset.getId(),
-                            "Newly created asset should have an id");
+                        test.assertTrue(!! asset.getId(),
+                            'Newly created asset should have an id');
+                        test.assertEqual(asset.getName(), _this.testName,
+                            'Name should match test name');
                     }
                     flow.complete(throwable);
                 });

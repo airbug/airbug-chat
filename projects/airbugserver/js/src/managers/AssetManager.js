@@ -60,7 +60,7 @@ var AssetManager = Class.extend(EntityManager, {
     /**
      * @param {Asset} asset
      * @param {(Array.<string> | function(Throwable, Asset))} dependencies
-     * @param {function(Asset, Throwable)=} callback
+     * @param {function(Throwable, Asset)=} callback
      */
     createAsset: function(asset, dependencies, callback) {
         if (TypeUtil.isFunction(dependencies)) {
@@ -83,6 +83,7 @@ var AssetManager = Class.extend(EntityManager, {
      * @param {{
      *      createdAt: Date,
      *      mimeType: string,
+     *      name: string,
      *      thumbMimeType: string,
      *      thumbUrl: string,
      *      updatedAt: Date,

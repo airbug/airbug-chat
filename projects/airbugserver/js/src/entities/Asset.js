@@ -76,6 +76,20 @@ var Asset = Class.extend(Entity, {
     /*
      * @return {string}
      */
+    getName: function() {
+        return this.deltaDocument.getData().name;
+    },
+
+    /*
+     * @param {string} name
+     */
+    setName: function(name) {
+        this.deltaDocument.getData().name = name;
+    },
+
+    /*
+     * @return {string}
+     */
     getThumbMimeType: function() {
         return this.deltaDocument.getData().thumbMimeType;
     },
@@ -130,6 +144,7 @@ bugmeta.annotate(Asset).with(
     entity("Asset").properties([
         property("createdAt").type("date"),
         property("mimeType").type("string"),
+        property("name").type("string"),
         property("thumbMimeType").type("string"),
         property("thumbUrl").type("string"),
         property("updatedAt").type("date"),
