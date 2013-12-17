@@ -154,12 +154,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                                     type: IconView.Type.PICTURE,
                                                     color: IconView.Color.WHITE
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(TextView)
                                                 .attributes({
                                                     text: " Image List"
                                                 })
-                                                .appendTo('*[id|="button"]')
+                                                .appendTo('button[id|="button"]')
                                         ])
                                 ]),
                             view(ButtonGroupView)
@@ -173,12 +173,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                                 .attributes({
                                                     type: IconView.Type.UPLOAD
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(TextView)
                                                 .attributes({
                                                     text: "Upload"
                                                 })
-                                                .appendTo('*[id|="button"]')
+                                                .appendTo('button[id|="button"]')
                                         ]),
                                     view(NakedButtonView)
                                         .attributes({
@@ -189,12 +189,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                                 .attributes({
                                                     type: IconView.Type.REMOVE
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(TextView)
                                                 .attributes({
                                                     text: "Close"
                                                 })
-                                                .appendTo('*[id|="button"]')
+                                                .appendTo('button[id|="button"]')
                                         ])
                                 ])
                                 .appendTo('#image-list-toolbar')
@@ -211,7 +211,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                         .attributes({
                                             type: IconView.Type.TRASH
                                         })
-                                        .appendTo('*[id|="button"]')
+                                        .appendTo('button[id|="button"]')
                                 ]),
                             view(NakedButtonView)
                                 .attributes({
@@ -220,7 +220,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                 .children([
                                     view(TextView)
                                         .attributes({text: "SEND"})
-                                        .appendTo('*[id|="button"]')
+                                        .appendTo('button[id|="button"]')
                                 ])
                         ])
                         .appendTo(".box-footer")

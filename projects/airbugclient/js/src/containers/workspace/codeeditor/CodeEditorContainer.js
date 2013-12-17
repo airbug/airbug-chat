@@ -188,18 +188,18 @@ var CodeEditorContainer = Class.extend(CarapaceContainer, {
                                                     type: IconView.Type.CHEVRON_LEFT,
                                                     color: IconView.Color.WHITE
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(IconView)
                                                 .attributes({
                                                     type: IconView.Type.CHEVRON_RIGHT,
                                                     color: IconView.Color.WHITE
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(TextView)
                                                 .attributes({
                                                     text: 'Editor'
                                                 })
-                                                .appendTo('*[id|="button"]')
+                                                .appendTo('button[id|="button"]')
                                         ])
                                 ]),
                             view(ButtonGroupView)

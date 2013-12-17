@@ -162,7 +162,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                         .children([
                             view(TextView)
                                 .attributes({text: "Send"})
-                                .appendTo('*[id|="button"]')
+                                .appendTo('button[id|="button"]')
                         ])
                 ])
                 .build();

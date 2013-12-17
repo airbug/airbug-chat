@@ -130,10 +130,10 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
                 .children([
                     view(IconView)
                         .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
-                        .appendTo('*[id|="button"]'),
+                        .appendTo('button[id|="button"]'),
                     view(TextView)
                         .attributes({text: "Back"})
-                        .appendTo('*[id|="button"]')
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 

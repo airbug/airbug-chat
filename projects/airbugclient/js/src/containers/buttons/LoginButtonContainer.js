@@ -116,7 +116,7 @@ var LoginButtonContainer = Class.extend(ButtonContainer, {
                 .children([
                     view(TextView)
                         .attributes({text: "Login"})
-                        .appendTo('*[id|="button"]')
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 

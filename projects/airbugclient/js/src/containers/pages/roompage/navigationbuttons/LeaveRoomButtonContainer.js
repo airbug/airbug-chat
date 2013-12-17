@@ -129,7 +129,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
                 .children([
                     view(TextView)
                         .attributes({text: "Exit"})
-                        .appendTo('*[id|="button"]')
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 

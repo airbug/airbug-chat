@@ -155,12 +155,12 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                                                     type: IconView.Type.COG,
                                                     color: IconView.Color.WHITE
                                                 })
-                                                .appendTo('*[id|="button"]'),
+                                                .appendTo('button[id|="button"]'),
                                             view(TextView)
                                                 .attributes({
                                                     text: " Settings"
                                                 })
-                                                .appendTo('*[id|="button"]')
+                                                .appendTo('button[id|="button"]')
                                         ])
                                 ]),
                             view(ButtonGroupView)

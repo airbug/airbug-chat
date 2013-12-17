@@ -94,7 +94,7 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
                 .children([
                     view(IconView)
                     .attributes({type: IconView.Type.ALIGN_JUSTIFY, color: IconView.Color.WHITE})
-                    .appendTo('*[id|="button"]')
+                    .appendTo('button[id|="button"]')
                 ])
                 .build();
 
