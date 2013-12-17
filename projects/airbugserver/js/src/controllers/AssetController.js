@@ -43,7 +43,7 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserController = Class.extend(EntityController, {
+var AssetController = Class.extend(EntityController, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -127,7 +127,9 @@ var UserController = Class.extend(EntityController, {
             addAssetFromUrl: function(request, responder, callback) {
                 console.log("AssetController#addAssetFromUrl");
                 var requestContext = request.requestContext;
-                assetService.addAssetFromUrl(requestContext, function(throwable, asset) {
+                // TODO - dkk - extract url from request
+                var url = "";
+                assetService.addAssetFromUrl(requestContext, url, function(throwable, asset) {
                     _this.processCreateResponse(responder, throwable, asset, callback);
                 });
             },
@@ -140,6 +142,8 @@ var UserController = Class.extend(EntityController, {
             deleteAsset: function(request, responder, callback) {
                 console.log("AssetController#deleteAsset");
                 var requestContext = request.requestContext;
+                // TODO - dkk - get asset id from request
+                // TODO - dkk - we should not be making this request as assets are not owned by users.
                 assetService.deleteAsset(requestContext, function(throwable, asset) {
                     if (!throwable) {
                         _this.sendSuccessResponse(responder, {}, callback);
@@ -157,4 +161,4 @@ var UserController = Class.extend(EntityController, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.UserController', UserController);
+bugpack.export('airbugserver.AssetController', AssetController);
