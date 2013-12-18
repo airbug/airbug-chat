@@ -73,6 +73,14 @@ var CurrentUser = Class.extend(Obj, {
     /**
      * @return {string}
      */
+    getFullName: function() {
+        var data = this.meldDocument.getData();
+        return data.firstName + " " + data.lastName;
+    },
+
+    /**
+     * @return {string}
+     */
     getId: function() {
         return this.meldDocument.getData().id;
     },
