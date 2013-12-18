@@ -67,25 +67,31 @@ var ApiRequest = Class.extend(EventDispatcher, {
          * @private
          * @type {List.<function(Throwable=)>}
          */
-        this.callbackList   = new List();
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.requestData    = requestData;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.requestType    = requestType;
+        this.callbackList           = new List();
 
         /**
          * @private
          * @type {boolean}
          */
-        this.sent           = false;
+        this.processingResponse     = false;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.requestData            = requestData;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.requestType            = requestType;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.sent                   = false;
     },
 
 
@@ -115,6 +121,13 @@ var ApiRequest = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @return {boolean}
+     */
+    getProcessingResponse: function() {
+        return this.processingResponse;
+    },
+
+    /**
      * @return {*}
      */
     getRequestData: function() {
@@ -138,6 +151,13 @@ var ApiRequest = Class.extend(EventDispatcher, {
     /**
      * @return {boolean}
      */
+    isProcessingResponse: function() {
+        return this.getProcessingResponse();
+    },
+
+    /**
+     * @return {boolean}
+     */
     isSent: function() {
         return this.getSent();
     },
@@ -151,7 +171,11 @@ var ApiRequest = Class.extend(EventDispatcher, {
      * @param {function(Throwable=)} callback
      */
     addCallback: function(callback) {
-        this.callbackList.add(callback);
+        if (!this.isProcessingResponse()) {
+            this.callbackList.add(callback);
+        } else {
+            throw new Bug("InvalidState", {}, "Cannot add a callback after the response has started processing");
+        }
     },
 
     /**
@@ -176,6 +200,15 @@ var ApiRequest = Class.extend(EventDispatcher, {
      */
     completeRequest: function() {
         this.dispatchEvent(new Event(ApiRequest.EventTypes.REQUEST_COMPLETE));
+    },
+
+    /**
+     * @protected
+     * @param {Throwable} throwable
+     * @param {CallResponse} callResponse
+     */
+    doProcessResponse: function(throwable, callResponse) {
+        this.fireCallbacks(throwable, callResponse);
     },
 
     /**
@@ -213,7 +246,13 @@ var ApiRequest = Class.extend(EventDispatcher, {
      * @param {CallResponse} callResponse
      */
     processResponse: function(throwable, callResponse) {
-        this.fireCallbacks(throwable, callResponse);
+        if (!this.isProcessingResponse()) {
+            this.processingResponse = true;
+            this.dispatchEvent(new Event(ApiRequest.EventTypes.PROCESSING_RESPONSE));
+            this.doProcessResponse(throwable, callResponse);
+        } else {
+            throw new Bug("Error", {}, "Response already processing");
+        }
     }
 });
 
@@ -227,6 +266,7 @@ var ApiRequest = Class.extend(EventDispatcher, {
  * @enum {string}
  */
 ApiRequest.EventTypes = {
+    PROCESSING_RESPONSE: "ApiRequest:ProcessingResponse",
     REQUEST_COMPLETE: "ApiRequest:RequestComplete"
 };
 

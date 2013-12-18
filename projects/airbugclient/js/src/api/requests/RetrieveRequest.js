@@ -125,24 +125,10 @@ var RetrieveRequest = Class.extend(ApiRequest, {
 
     /**
      * @protected
-     */
-    processRequest: function() {
-        var meldKey         = this.meldBuilder.generateMeldKey(this.entityType, this.entityId);
-        var meldDocument    = this.meldStore.getMeld(meldKey);
-        if (meldDocument) {
-            this.fireCallbacks(null, meldDocument);
-            this.completeRequest();
-        } else {
-            this.doSendRequest();
-        }
-    },
-
-    /**
-     * @protected
      * @param {Throwable} throwable
      * @param {CallResponse} callResponse
      */
-    processResponse: function(throwable, callResponse) {
+    doProcessResponse: function(throwable, callResponse) {
         if (!throwable)  {
             var responseType    = callResponse.getType();
             var data            = callResponse.getData();
@@ -162,6 +148,20 @@ var RetrieveRequest = Class.extend(ApiRequest, {
             }
         } else {
             this.fireCallbacks(throwable);
+        }
+    },
+
+    /**
+     * @protected
+     */
+    processRequest: function() {
+        var meldKey         = this.meldBuilder.generateMeldKey(this.entityType, this.entityId);
+        var meldDocument    = this.meldStore.getMeld(meldKey);
+        if (meldDocument) {
+            this.fireCallbacks(null, meldDocument);
+            this.completeRequest();
+        } else {
+            this.doSendRequest();
         }
     }
 });

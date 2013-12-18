@@ -206,6 +206,10 @@ var RoomPageContainer = Class.extend(PageContainer, {
         // this.addContainerChild(blackoutLoaderContainer);
 
         this.roomManagerModule.retrieveRoom(roomId, function(throwable, roomMeldDocument) {
+
+            //TEST
+            console.log("Room loaded - roomMeldDocument:", roomMeldDocument);
+
             if (!throwable) {
                 _this.roomModel.setMeldDocument(roomMeldDocument);
                 //TODO stop loading animation

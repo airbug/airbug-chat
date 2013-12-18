@@ -383,7 +383,7 @@ var ManagerModule = Class.extend(Obj, {
      */
     addRetrieveRequest: function(request) {
         var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityId());
-        request.addEventListener(ApiRequest.EventTypes.REQUEST_COMPLETE, this.hearApiRequestComplete, this);
+        request.addEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRetrieveRequestProcessingResponse, this);
         this.activeRetrieveRequestMap.put(key, request);
     },
 
@@ -426,8 +426,8 @@ var ManagerModule = Class.extend(Obj, {
      * @param {RetrieveRequest} request
      */
     removeRetrieveRequest: function(request) {
-        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityType());
-        request.removeEventListener(ApiRequest.EventTypes.REQUEST_COMPLETE, this.hearApiRequestComplete, this);
+        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityId());
+        request.removeEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRetrieveRequestProcessingResponse, this);
         this.activeRetrieveRequestMap.remove(key);
     },
 
@@ -514,7 +514,7 @@ var ManagerModule = Class.extend(Obj, {
      * @private
      * @param {Event} event
      */
-    hearApiRetrieveRequestComplete: function(event) {
+    hearApiRetrieveRequestProcessingResponse: function(event) {
         var request = event.getTarget();
         this.removeRetrieveRequest(request);
     }
