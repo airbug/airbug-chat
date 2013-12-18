@@ -19,7 +19,6 @@
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.CodeEditorCloseButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CodeEditorWidgetView')
@@ -27,6 +26,7 @@
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
+//@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -59,7 +59,6 @@ var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupVie
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
-var CodeEditorCloseButtonContainer      = bugpack.require('airbug.CodeEditorCloseButtonContainer');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
 var CodeEditorWidgetView                = bugpack.require('airbug.CodeEditorWidgetView');
@@ -67,6 +66,7 @@ var CommandModule                       = bugpack.require('airbug.CommandModule'
 var IconView                            = bugpack.require('airbug.IconView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
+var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -143,8 +143,16 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Containers
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {WorkspaceCloseButtonContainer}
+         */
         this.closeButton                = null;
 
+        /**
+         * @private
+         * @type {CodeEditorSettingsButtonContainer}
+         */
         this.settingsButton             = null;
     },
 
@@ -250,7 +258,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-        this.closeButton        = new CodeEditorCloseButtonContainer();
+        this.closeButton        = new WorkspaceCloseButtonContainer();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
         this.addContainerChild(this.settingsButton, ".btn-group:last-child");
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
@@ -359,7 +367,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         //AceSnippets.loadAll();
         //KitchenSink.load();
         //Ace.require("kitchen-sink/demo"); //TODO SUNG update html ids to avoid naming conflicts
-;
+
         this.aceEditor.getSession().setMode("ace/mode/javascript");
         this.aceEditor.setTheme("ace/theme/twilight");
     },

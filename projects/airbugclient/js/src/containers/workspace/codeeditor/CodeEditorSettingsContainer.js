@@ -9,11 +9,11 @@
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.CodeEditorCloseButtonContainer')
 //@Require('airbug.CodeEditorSettingsView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
+//@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -35,11 +35,11 @@ var bugpack = require('bugpack').context();
 var Class                           = bugpack.require('Class');
 var ButtonGroupView                 = bugpack.require('airbug.ButtonGroupView');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-var CodeEditorCloseButtonContainer  = bugpack.require('airbug.CodeEditorCloseButtonContainer');
 var CodeEditorSettingsView          = bugpack.require('airbug.CodeEditorSettingsView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
 var TextView                        = bugpack.require('airbug.TextView');
+var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -103,6 +103,11 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         // Containers
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {WorkspaceCloseButtonContainer}
+         */
+        this.closeButtonContainer               = null;
 
     },
 
@@ -218,8 +223,8 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-        this.codeEditorCloseButtonContainer = new CodeEditorCloseButtonContainer();
-        this.addContainerChild(this.codeEditorCloseButtonContainer, "#code-editor-settings-toolbar .btn-group:last-child");
+        this.closeButtonContainer = new WorkspaceCloseButtonContainer();
+        this.addContainerChild(this.closeButtonContainer, "#code-editor-settings-toolbar .btn-group:last-child");
     },
 
     /**

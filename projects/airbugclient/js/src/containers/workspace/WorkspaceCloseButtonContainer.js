@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('CodeEditorCloseButtonContainer')
+//@Export('WorkspaceCloseButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -53,7 +53,7 @@ var view                    = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
+var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -64,7 +64,7 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
      */
     _constructor: function() {
 
-        this._super("CodeEditorCloseButton");
+        this._super("WorkspaceCloseButton");
 
 
         //-------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorCloseButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearWorkspaceCloseButtonClickedEvent, this);
     },
 
 
@@ -139,7 +139,7 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearCodeEditorCloseButtonClickedEvent: function(event) {
+    hearWorkspaceCloseButtonClickedEvent: function(event) {
         this.getCommandModule().relayCommand(CommandType.HIDE.WORKSPACE, {});
     }
 });
@@ -149,4 +149,4 @@ var CodeEditorCloseButtonContainer = Class.extend(ButtonContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CodeEditorCloseButtonContainer", CodeEditorCloseButtonContainer);
+bugpack.export("airbug.WorkspaceCloseButtonContainer", WorkspaceCloseButtonContainer);
