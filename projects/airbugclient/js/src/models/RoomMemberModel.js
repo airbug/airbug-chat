@@ -51,8 +51,12 @@ var RoomMemberModel = Class.extend(MappedMeldModel, /** @lends {RoomMemberModel.
      */
     _constructor: function(dataObject, roomMemberMeldDocument, userMeldDocument) {
         var meldDocumentMap = new Map();
-        meldDocumentMap.put("roomMember", roomMemberMeldDocument);
-        meldDocumentMap.put("user", userMeldDocument);
+        if (roomMemberMeldDocument) {
+            meldDocumentMap.put("roomMember", roomMemberMeldDocument);
+        }
+        if (userMeldDocument) {
+            meldDocumentMap.put("user", userMeldDocument);
+        }
         this._super(dataObject, meldDocumentMap);
     },
 

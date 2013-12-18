@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('CodeEditorView')
+//@Export('CodeEditorWidgetView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,14 +29,29 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorView = Class.extend(MustacheView, {
+var CodeEditorWidgetView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="code-editor" class="code-editor {{attributes.classes}}">' +
-        '</div>'
+    template:   '<div id="{{id}}" class="code-editor-widget box {{attributes.classes}}">' +
+            '<div id="code-editor-widget-header" class="code-editor-workspace-header box-header">' +
+            '</div>' +
+            '<div id="code-editor-widget-body" class="code-editor-widget-body box-body">' +
+            '</div>' +
+            '<div id="code-editor-widget-footer" class="code-editor-widget-footer box-footer">' +
+            '</div>' +
+        '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "code-editor-widget-" + this.getCid();
+        return data;
+    }
 });
 
 
@@ -44,4 +59,4 @@ var CodeEditorView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.CodeEditorView", CodeEditorView);
+bugpack.export("airbug.CodeEditorWidgetView", CodeEditorWidgetView);

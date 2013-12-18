@@ -194,7 +194,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
         var source = message.getData().source;
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
         var workspaceWidgetIsOpen   = workspace.hasClass("workspace-open");
-        var codeEditorWidgetIsOpen  = this.viewTop.$el.find("#code-editor-widget").hasClass("workspace-widget-open");
+        var codeEditorWidgetIsOpen  = this.viewTop.$el.find("#code-editor-workspace").hasClass("workspace-widget-open");
         var imageEditorWidgetIsOpen = this.viewTop.$el.find("#image-editor-widget").hasClass("workspace-widget-open");
 
         if(workspaceWidgetIsOpen){

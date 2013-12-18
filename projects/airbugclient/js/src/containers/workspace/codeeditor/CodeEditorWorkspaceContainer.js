@@ -4,13 +4,13 @@
 
 //@Package('airbug')
 
-//@Export('WorkspaceContainer')
+//@Export('CodeEditorWorkspaceContainer')
 
 //@Require('Class')
-//@Require('airbug.CodeEditorWorkspaceContainer')
+//@Require('airbug.BoxView')
+//@Require('airbug.CodeEditorWidgetContainer')
+//@Require('airbug.CodeEditorSettingsContainer')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageEditorWidgetContainer')
-//@Require('airbug.PanelView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -22,41 +22,38 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                           = bugpack.require('Class');
-var CodeEditorWorkspaceContainer    = bugpack.require('airbug.CodeEditorWorkspaceContainer');
-var CommandModule                   = bugpack.require('airbug.CommandModule');
-var ImageEditorWidgetContainer      = bugpack.require('airbug.ImageEditorWidgetContainer');
-var PanelView                       = bugpack.require('airbug.PanelView');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var BoxView                             = bugpack.require('airbug.BoxView');
+var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
+var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
+var CommandModule                       = bugpack.require('airbug.CommandModule');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                   = AutowiredAnnotation.autowired;
-var bugmeta                     = BugMeta.context();
-var CommandType                 = CommandModule.CommandType;
-var property                    = PropertyAnnotation.property;
-var view                        = ViewBuilder.view;
+var CommandType = CommandModule.CommandType;
+var view        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var WorkspaceContainer = Class.extend(CarapaceContainer, {
+var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -79,20 +76,19 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         /**
+         * @private
          * @type {CommandModule}
          */
-        this.commandModule                  = null;
-
+        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
 
-
         /**
          * @private
-         * @type {PanelView}
+         * @type {BoxView}
          */
-        this.panelView                      = null;
+        this.boxView                    = null;
 
 
         // Containers
@@ -100,15 +96,15 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {CodeEditorWorkspaceContainer}
+         * @type {CodeEditorWidgetContainer}
          */
-        this.codeEditorWorkspaceContainer      = null;
+        this.codeEditorWidgetContainer        = null;
 
         /**
          * @private
-         * @type {ImageEditorWidgetContainer}
+         * @type {CodeEditorSettingsContainer}
          */
-        this.imageEditorWidgetContainer   = null;
+        this.codeEditorSettingsContainer    = null;
 
     },
 
@@ -140,24 +136,24 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelView)
-                .id("workspace-container")
+        this.boxView =
+            view(BoxView)
+                .id("code-editor-workspace")
+                .attributes({classes: "workspace-widget"})
                 .build();
-
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxView);
     },
 
     createContainerChildren: function() {
         this._super();
-        this.codeEditorWorkspaceContainer   = new CodeEditorWorkspaceContainer();
-        this.imageEditorWidgetContainer     = new ImageEditorWidgetContainer();
-        this.addContainerChild(this.codeEditorWorkspaceContainer, "#panel-body-" + this.panelView.cid);
-        this.addContainerChild(this.imageEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
+        this.codeEditorWidgetContainer      = new CodeEditorWidgetContainer();
+        this.codeEditorSettingsContainer    = new CodeEditorSettingsContainer();
+        this.addContainerChild(this.codeEditorWidgetContainer,      "#code-editor-workspace");
+        this.addContainerChild(this.codeEditorSettingsContainer,    "#code-editor-workspace");
     },
 
     /**
@@ -166,17 +162,33 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.initializeCommandSubscriptions();
+        this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
     },
 
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeCommandSubscriptions();
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
+        this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
+    },
 
+    /**
+     * @private
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
     },
 
     //-------------------------------------------------------------------------------
@@ -184,30 +196,25 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @private
      * @param {PublisherMessage} message
      */
-    handleDisplayCodeEditorCommand: function(message) {
-        this.handleDisplayCommand("#code-editor-workspace");
-    },
+    handleToggleCodeEditorSettingsCommand: function(message) {
+        console.log("viewTop:", this.getViewTop());
 
-    /**
-     * @param {PublisherMessage} message
-     */
-    handleDisplayImageEditorCommand: function(message) {
-        this.handleDisplayCommand("#image-editor-widget");
-    },
+        if(this.getViewTop()) {
+            var codeEditorWidget = this.getViewTop().$el.find("#code-editor-widget");
+            var codeEditorSettings  = this.getViewTop().$el.find("#code-editor-settings-wrapper");
 
-    /**
-     * @param {string} widgetId //in CSS format
-     */
-    handleDisplayCommand: function(widgetId) {
-        var widget              = this.viewTop.$el.find(widgetId);
-        var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
-
-        workspaceWidgets.not(widgetId).removeClass("workspace-widget-open").hide();
-        widget.addClass("workspace-widget-open").show();
+            if (codeEditorWidget.is(":hidden")) {
+                codeEditorWidget.show();
+                codeEditorSettings.hide();
+            } else {
+                codeEditorSettings.show();
+                codeEditorWidget.hide();
+            }
+        }
     }
-
 });
 
 
@@ -215,7 +222,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(WorkspaceContainer).with(
+bugmeta.annotate(CodeEditorWorkspaceContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule")
     ])
@@ -226,4 +233,4 @@ bugmeta.annotate(WorkspaceContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.WorkspaceContainer", WorkspaceContainer);
+bugpack.export("airbug.CodeEditorWorkspaceContainer", CodeEditorWorkspaceContainer);

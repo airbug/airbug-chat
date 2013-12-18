@@ -57,8 +57,12 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
      */
     _constructor: function(dataObject, chatMessageMeldDocument, senderUserMeldDocument) {
         var meldDocumentMap = new Map();
-        meldDocumentMap.put("chatMessage", chatMessageMeldDocument);
-        meldDocumentMap.put("senderUser", senderUserMeldDocument);
+        if (chatMessageMeldDocument) {
+            meldDocumentMap.put("chatMessage", chatMessageMeldDocument);
+        }
+        if (senderUserMeldDocument) {
+            meldDocumentMap.put("senderUser", senderUserMeldDocument);
+        }
         this._super(dataObject, meldDocumentMap);
     },
 

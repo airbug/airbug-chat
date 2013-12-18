@@ -7,10 +7,26 @@
 //@Export('CodeEditorWidgetContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
-//@Require('airbug.CodeEditorContainer')
-//@Require('airbug.CodeEditorSettingsContainer')
+//@Require('ace.Ace')
+//@Require('ace.AceExts')
+//@Require('ace.AceModes')
+//@Require('ace.AceThemes')
+//@Require('ace.KitchenSink')
+//@Require('acemodes.Css')
+//@Require('acemodes.Html')
+//@Require('acemodes.Javascript')
+//@Require('airbug.ButtonGroupView')
+//@Require('airbug.ButtonToolbarView')
+//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorCloseButtonContainer')
+//@Require('airbug.CodeEditorSettingsButtonContainer')
+//@Require('airbug.CodeEditorView')
+//@Require('airbug.CodeEditorWidgetView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.IconView')
+//@Require('airbug.NakedButtonView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -30,10 +46,27 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
-var BoxView                             = bugpack.require('airbug.BoxView');
-var CodeEditorContainer                 = bugpack.require('airbug.CodeEditorContainer');
-var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
+var Ace                                 = bugpack.require('ace.Ace');
+var AceExts                             = bugpack.require('ace.AceExts');
+var AceModes                            = bugpack.require('ace.AceModes');
+//var AceSnippets                         = bugpack.require('ace.AceSnippets');
+var AceThemes                           = bugpack.require('ace.AceThemes');
+var KitchenSink                         = bugpack.require('ace.KitchenSink');
+var Css                                 = bugpack.require('acemodes.Css');
+var Html                                = bugpack.require('acemodes.Html');
+var Javascript                          = bugpack.require('acemodes.Javascript');
+var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
+var ButtonView                          = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorCloseButtonContainer      = bugpack.require('airbug.CodeEditorCloseButtonContainer');
+var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
+var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
+var CodeEditorWidgetView                = bugpack.require('airbug.CodeEditorWidgetView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
+var IconView                            = bugpack.require('airbug.IconView');
+var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
+var TextView                            = bugpack.require('airbug.TextView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -45,7 +78,10 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -68,44 +104,48 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {Ace}
+         */
+        this.aceEditor                  = null;
+
+
         // Models
         //-------------------------------------------------------------------------------
+
+        /**
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
 
         // Modules
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {CommandModule}
-         */
-        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {BoxView}
+         * @type {CodeEditorView}
          */
-        this.boxView                    = null;
+        this.codeEditorView             = null;
+
+        /**
+         * @private
+         * @type {CodeEditorWidgetView}
+         */
+        this.codeEditorWidgetView       = null;
 
 
         // Containers
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {airbug.CodeEditorContainer}
-         */
-        this.codeEditorContainer        = null;
+        this.closeButton                = null;
 
-        /**
-         * @private
-         * @type {airbug.CodeEditorSettingsContainer}
-         */
-        this.codeEditorSettingsContainer    = null;
-
+        this.settingsButton             = null;
     },
 
 
@@ -119,7 +159,6 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-
     },
 
     /**
@@ -136,24 +175,85 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxView =
-            view(BoxView)
+        this.codeEditorWidgetView =
+            view(CodeEditorWidgetView)
                 .id("code-editor-widget")
-                .attributes({classes: "workspace-widget"})
+                .children([
+                    view(ButtonToolbarView)
+                        .id("code-editor-widget-toolbar")
+                        .appendTo("#code-editor-widget-header")
+                        .children([
+                            view(ButtonGroupView)
+                                .appendTo('#code-editor-widget-toolbar')
+                                .children([
+                                    view(NakedButtonView)
+                                        .attributes({
+                                            size: NakedButtonView.Size.NORMAL,
+                                            disabled: true,
+                                            type: NakedButtonView.Type.INVERSE
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_LEFT,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('button[id|="button"]'),
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CHEVRON_RIGHT,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                                .appendTo('button[id|="button"]'),
+                                            view(TextView)
+                                                .attributes({
+                                                    text: 'Editor'
+                                                })
+                                                .appendTo('button[id|="button"]')
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .appendTo('#code-editor-widget-toolbar')
+                        ]),
+                    view(CodeEditorView)
+                        .id("code-editor-view")
+                        .attributes({
+                            width: "300px",
+                            height: "200px"
+                        })
+                        .appendTo("#code-editor-widget-body"),
+                    view(ButtonView)
+                        .id("embed-code-button")
+                        .attributes({
+                            type: "default",
+                            size: ButtonView.Size.LARGE,
+                            block: true
+                        })
+                        .children([
+                            view(TextView)
+                                .attributes({text: "embed"})
+                                .appendTo("#embed-code-button")
+                        ])
+                        .appendTo("#code-editor-widget-footer")
+                ])
                 .build();
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.boxView);
+        this.setViewTop(this.codeEditorWidgetView);
+        this.embedButtonView    = this.findViewById("embed-code-button");
+        this.codeEditorView     = this.findViewById("code-editor-view");
+        this.aceEditor          = Ace.edit(this.codeEditorView.$el.get(0));
     },
 
     createContainerChildren: function() {
         this._super();
-        this.codeEditorContainer            = new CodeEditorContainer();
-        this.codeEditorSettingsContainer    = new CodeEditorSettingsContainer();
-        this.addContainerChild(this.codeEditorContainer,            "#code-editor-widget");
-        this.addContainerChild(this.codeEditorSettingsContainer,    "#code-editor-widget");
+        this.closeButton        = new CodeEditorCloseButtonContainer();
+        this.settingsButton     = new CodeEditorSettingsButtonContainer();
+        this.addContainerChild(this.settingsButton, ".btn-group:last-child");
+        this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
     /**
@@ -161,15 +261,17 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
-        this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
+        this.configureAceEditor();
     },
 
     /**
-     * @protected
+     *
      */
     deinitializeContainer: function() {
         this._super();
+        this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
     },
 
@@ -178,41 +280,124 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     *
      */
-    initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
+    initializeEventListeners: function() {
+        this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
     },
 
     /**
-     * @private
+     *
+     */
+    deinitializeEventListeners: function() {
+        this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+    },
+
+    /**
+     *
+     */
+    initializeCommandSubscriptions: function() {
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+    },
+
+    /**
+     *
      */
     deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, this.handleToggleCodeEditorSettingsCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
     },
+
+    /**
+     * @param {ButtonViewEvent} event
+     */
+    hearEmbedButtonClickedEvent: function(event) {
+        this.handleEmbedButtonClickedEvent(event);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {PublisherMessage} message
+     * @type {PublisherMessage} message
      */
-    handleToggleCodeEditorSettingsCommand: function(message) {
-        console.log("viewTop:", this.viewTop);
+    handleDisplayCodeCommand: function(message) {
+        var code = message.getData().code;
+        this.setEditorText(code);
+    },
 
-        if(this.viewTop){
-            var codeEditor          = this.viewTop.$el.find("#code-editor-container");
-            var codeEditorSettings  = this.viewTop.$el.find("#code-editor-settings-wrapper");
+    /**
+     * @param {ButtonViewEvent} event
+     */
+    handleEmbedButtonClickedEvent: function(event) {
+        var code            = this.getEditorText();
+        var codeLanguage    = this.getEditorLanguage();
+        var chatMessageObject = {
+            code: code,
+            type: "code",
+            codeLanguage: codeLanguage
+        };
 
-            if (codeEditor.is(":hidden")) {
-                codeEditor.show();
-                codeEditorSettings.hide();
-            } else {
-                codeEditorSettings.show();
-                codeEditor.hide();
-            }
+        console.log("code:", code);
+        console.log("codeLanguage:", codeLanguage);
+        console.log("chatMessageObject:", chatMessageObject);
+
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        event.stopPropagation();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Ace Config and Helper Methods
+    //-------------------------------------------------------------------------------
+
+    configureAceEditor: function() {
+        AceExts.loadAll();
+        AceModes.loadAll();
+        AceThemes.loadAll();
+        //AceSnippets.loadAll();
+        //KitchenSink.load();
+        //Ace.require("kitchen-sink/demo"); //TODO SUNG update html ids to avoid naming conflicts
+;
+        this.aceEditor.getSession().setMode("ace/mode/javascript");
+        this.aceEditor.setTheme("ace/theme/twilight");
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorLanguage: function() {
+        var mode = this.aceEditor.getSession().getMode().$id;
+        return mode.substring(mode.lastIndexOf("/") + 1);
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorText: function() {
+        if (this.aceEditor) {
+            return this.aceEditor.getValue();
+        } else {
+            return "";
+        }
+    },
+
+    /**
+     * @param {string} value
+     */
+    setEditorText: function(value) {
+        if (this.aceEditor) {
+            this.aceEditor.setValue(value);
+        }
+    },
+
+    /**
+     *
+     */
+    setEditorToReadOnly: function() {
+        if (this.aceEditor) {
+            this.aceEditor.setReadOnly(true);
         }
     }
 });

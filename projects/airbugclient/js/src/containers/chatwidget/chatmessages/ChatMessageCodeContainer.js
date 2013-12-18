@@ -85,6 +85,8 @@ var ChatMessageCodeContainer = Class.extend(ChatMessageContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
+        var codeBlock = this.getChatMessageView().$el.find("pre").get()[0];
+        hljs.highlightBlock(codeBlock);
     },
 
     /**

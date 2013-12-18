@@ -90,7 +90,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
                 .children([
                     view(TextView)
                         .attributes({text: "reply"})
-                        .appendTo('*[id|="button"]')
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 

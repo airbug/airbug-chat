@@ -791,16 +791,20 @@ li.add-roommember-container {
 /* CodeEditor and CodeEditorSettings CSS (borrows from Box CSS)
 *******************************************************************/
 
-.code-editor.box {
+.code-editor-widget.box {
     position: relative;
 }
 
-.code-editor .box-body {
-    margin: 46px 0px;
+.code-editor-widget .box-body {
+    margin: 46px 0px 62px 0px;
 }
 
-.code-editor-body.ace_editor {
+.code-editor-widget-body.ace_editor {
     position: absolute;
+}
+
+.code-editor-widget-footer {
+    height: 62px;
 }
 
 .code-editor-settings .box-header, .code-editor-settings .box-body, .code-editor-settings .box-footer {
@@ -810,6 +814,12 @@ li.add-roommember-container {
 .code-editor-settings .box-body {
     margin: 0px;
 }
+
+.code-editor {
+    width: 100%;
+    height: 100%;
+}
+
 
 /* ImageList CSS
 *******************************************************************/

@@ -184,7 +184,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     createChatMessageContainer: function(chatMessageModel) {
         if (!this.chatMessageModelToChatMessageContainerMap.containsKey(chatMessageModel)) {
-            var type = chatMessageModel.get("type");
+            var type = chatMessageModel.getProperty("type");
             /** @type {ChatMessageContainer} */
             var chatMessageContainer = undefined;
             switch (type) {
