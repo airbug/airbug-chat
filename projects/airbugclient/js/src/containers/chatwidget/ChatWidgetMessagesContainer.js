@@ -17,6 +17,11 @@
 //@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
 //@Require('airbug.PanelView')
+//TEMP
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//TEMP
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -43,6 +48,11 @@ var ChatMessageTextContainer        = bugpack.require('airbug.ChatMessageTextCon
 var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
 var PanelView                       = bugpack.require('airbug.PanelView');
+//TEMP
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+//TEMP
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -51,6 +61,9 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var bugmeta                     = BugMeta.context();
+var autowired                   = AutowiredAnnotation.autowired;
+var property                    = PropertyAnnotation.property;
 var view                            = ViewBuilder.view;
 
 
@@ -100,6 +113,13 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
          * @type {PanelView}
          */
         this.chatWidgetMessagesView                     = null;
+
+        //TEMP
+        this.currentUserManagerModule                   = null;
+
+        this.currentUser                                = null;
+        //TEMP
+
     },
 
 
@@ -112,7 +132,15 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      * @param {Array<*>} routerArgs
      */
     activateContainer: function(routerArgs) {
+        var _this = this;
         this._super(routerArgs);
+        //TEMP
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser){
+            if(!throwable && currentUser) {
+                _this.currentUser = currentUser.getFullName();
+            }
+        });
+        //TEMP
     },
 
     /**
@@ -176,6 +204,8 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
         //TODO:
         //make the transition time dynamic to fit the length of the message and the speed of incoming messages
+        //NOTE: SUNG I think we should make automatic scrolling only occur while the user is active.
+        // Forcing user scrolling for messages that were recieved while away would help us as well as the user to keep track of read and unread messages.
     },
 
     /**
@@ -183,6 +213,12 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      * @param {ChatMessageModel} chatMessageModel
      */
     createChatMessageContainer: function(chatMessageModel) {
+        //TEMP
+        var time = new Date().toString();
+        chatMessageModel.setProperty("sentBy", this.currentUser);
+        chatMessageModel.setProperty("createdAt", time.substring(16,24) + time.substring(33));
+        //TEMP
+
         if (!this.chatMessageModelToChatMessageContainerMap.containsKey(chatMessageModel)) {
             var type = chatMessageModel.getProperty("type");
             /** @type {ChatMessageContainer} */
@@ -252,6 +288,17 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     }
 });
 
+//TEMP
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatWidgetMessagesContainer).with(
+    autowired().properties([
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+    ])
+);
+//TEMP
 
 //-------------------------------------------------------------------------------
 // Exports
