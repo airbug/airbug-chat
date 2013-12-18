@@ -137,6 +137,17 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    activateContainer: function() {
+        this._super();
+        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
+        fauxTextArea.on("click", function() {
+            fauxTextArea.selectText();
+        });
+    },
+
+    /**
+     * @protected
+     */
     createContainer: function() {
         this._super();
 
@@ -191,6 +202,29 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.destroyZeroClipboard();
+        this.dropdownItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.createZeroClipboard();
+        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
      * @private
      */
     createZeroClipboard: function() {
@@ -242,38 +276,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      */
     destroyZeroClipboard: function() {
         this.clip = null;
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.createZeroClipboard();
-        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
-    },
-
-    activateContainer: function() {
-        this._super();
-        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
-        fauxTextArea.on("click", function() {
-            fauxTextArea.selectText();
-        });
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.destroyZeroClipboard();
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
 });
 
 

@@ -181,6 +181,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
     },
 
     deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.HIDE.WORKSPACE,        this.handleHideWorkspaceCommand,        this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
     },

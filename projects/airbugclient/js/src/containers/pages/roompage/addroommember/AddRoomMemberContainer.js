@@ -131,8 +131,19 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
+        fauxTextArea.on("click", function() {
+            fauxTextArea.selectText();
+        });
+    },
 
     /**
      * @protected
@@ -191,6 +202,29 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.destroyZeroClipboard();
+        this.dropdownItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.createZeroClipboard();
+        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
      * @private
      */
     createZeroClipboard: function() {
@@ -198,7 +232,7 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
         var currentUrl  = this.windowUtil.getUrl();
         var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
         var options     = {
-              moviePath: "/zeroclipboard/ZeroClipboard.swf"
+            moviePath: "/zeroclipboard/ZeroClipboard.swf"
         };
 
         this.clip        = new ZeroClipboard(button, options);
@@ -242,31 +276,6 @@ var AddRoomMemberContainer = Class.extend(CarapaceContainer, {
      */
     destroyZeroClipboard: function() {
         this.clip = null;
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.createZeroClipboard();
-        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
-    },
-
-    activateContainer: function() {
-        this._super();
-        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
-        fauxTextArea.on("click", function() {
-            fauxTextArea.selectText();
-        });
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.destroyZeroClipboard();
     },
 
 

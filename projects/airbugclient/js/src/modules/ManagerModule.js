@@ -223,9 +223,15 @@ var ManagerModule = Class.extend(Obj, {
         entityId    = args.entityId;
         callback    = args.callback;
 
-        var request = this.generateRetrieveRequest(entityType, entityId);
-        request.addCallback(callback);
-        this.airbugApi.sendRequest(request);
+        var meldKey         = this.meldBuilder.generateMeldKey(entityType, entityId);
+        var meldDocument    = this.meldStore.getMeld(meldKey);
+        if (meldDocument) {
+           callback(null, meldDocument);
+        } else {
+            var request = this.generateRetrieveRequest(entityType, entityId);
+            request.addCallback(callback);
+            this.airbugApi.sendRequest(request);
+        }
     },
 
     /**
@@ -401,6 +407,7 @@ var ManagerModule = Class.extend(Obj, {
 
         //TEST
         console.log("this.activeRetrieveRequestMap.containsKey(key):", this.activeRetrieveRequestMap.containsKey(key));
+
 
         if (this.activeRetrieveRequestMap.containsKey(key)) {
             return this.activeRetrieveRequestMap.get(key);

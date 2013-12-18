@@ -114,7 +114,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -152,6 +152,9 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.panelView);
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
         this.codeEditorWorkspaceContainer   = new CodeEditorWorkspaceContainer();
@@ -163,6 +166,13 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeCommandSubscriptions();
+    },
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.initializeCommandSubscriptions();
@@ -170,14 +180,25 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Private Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
+    },
+
+    /**
+     * @private
+     */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
-
     },
+
 
     //-------------------------------------------------------------------------------
     // Event Handlers

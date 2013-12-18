@@ -150,6 +150,7 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
     deinitializeContainer: function() {
         this._super();
         this.pageStateModule.putState(BackButtonContainer.STATE_KEY, this.goBackId);
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
     },
 
     /**

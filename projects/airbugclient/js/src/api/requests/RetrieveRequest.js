@@ -149,20 +149,6 @@ var RetrieveRequest = Class.extend(ApiRequest, {
         } else {
             this.fireCallbacks(throwable);
         }
-    },
-
-    /**
-     * @protected
-     */
-    processRequest: function() {
-        var meldKey         = this.meldBuilder.generateMeldKey(this.entityType, this.entityId);
-        var meldDocument    = this.meldStore.getMeld(meldKey);
-        if (meldDocument) {
-            this.fireCallbacks(null, meldDocument);
-            this.completeRequest();
-        } else {
-            this.doSendRequest();
-        }
     }
 });
 

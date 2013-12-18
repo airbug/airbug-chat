@@ -256,12 +256,24 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this.aceEditor          = Ace.edit(this.codeEditorView.$el.get(0));
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
         this.closeButton        = new WorkspaceCloseButtonContainer();
         this.settingsButton     = new CodeEditorSettingsButtonContainer();
         this.addContainerChild(this.settingsButton, ".btn-group:last-child");
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeEventListeners();
+        this.deinitializeCommandSubscriptions();
     },
 
     /**
@@ -274,57 +286,42 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this.configureAceEditor();
     },
 
-    /**
-     *
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
-    },
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
      */
     initializeEventListeners: function() {
         this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
     },
 
     /**
-     *
+     * @private
      */
     deinitializeEventListeners: function() {
         this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
     },
 
     /**
-     *
+     * @private
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
     },
 
     /**
-     *
+     * @private
      */
     deinitializeCommandSubscriptions: function() {
         this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
     },
 
-    /**
-     * @param {ButtonViewEvent} event
-     */
-    hearEmbedButtonClickedEvent: function(event) {
-        this.handleEmbedButtonClickedEvent(event);
-    },
-
 
     //-------------------------------------------------------------------------------
-    // Event Handlers
+    // Message Handlers
     //-------------------------------------------------------------------------------
 
     /**
@@ -335,10 +332,15 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this.setEditorText(code);
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
     /**
      * @param {ButtonViewEvent} event
      */
-    handleEmbedButtonClickedEvent: function(event) {
+    hearEmbedButtonClickedEvent: function(event) {
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
