@@ -196,18 +196,7 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
                                                 .appendTo("#back-to-code-editor-button")
                                         ])
                                 ])
-                        ]),
-                    view(ButtonView)
-                        .id("apply-code-editor-settings-button")
-                        .attributes({
-                            block: true
-                        })
-                        .children([
-                            view(TextView)
-                                .attributes({text: "Apply"})
-                                .appendTo("#apply-code-editor-settings-button")
                         ])
-                        .appendTo(".box-footer")
                 ])
                 .build();
 
@@ -218,7 +207,6 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.codeEditorSettingsView);
 
         this.backButtonView = this.findViewById("back-to-code-editor-button");
-        this.applyButtonView = this.findViewById("apply-code-editor-settings-button");
     },
 
     createContainerChildren: function() {
@@ -246,12 +234,10 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
 
     initializeEventListeners: function() {
         this.backButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
-        this.applyButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleApplyButtonClickedEvent, this);
     },
 
     deinitializeEventListeners: function() {
         this.backButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
-        this.applyButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleApplyButtonClickedEvent, this);
     },
 
 
