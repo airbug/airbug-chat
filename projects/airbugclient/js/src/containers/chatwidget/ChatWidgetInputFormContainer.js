@@ -183,7 +183,6 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
         this.twoColumnView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
-
     },
 
 

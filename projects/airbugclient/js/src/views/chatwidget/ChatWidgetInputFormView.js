@@ -107,8 +107,9 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
             formData: formData
         }));
-        this.$el.find('#text-area-' + this.cid).val("");
+        this.$el.find('#text-area-' + this.getCid()).val("");
     },
+
 
     //-------------------------------------------------------------------------------
     // View Event Handlers
@@ -118,7 +119,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
      * @param {jQuery.Event} event
      */
     handleEnterKeyPress: function(event) {
-        var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.cid).prop("checked");
+        var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.getCid()).prop("checked");
         if (submitOnEnter) {
             this.submitForm();
             event.preventDefault();
@@ -131,9 +132,10 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
      * @param {jQuery.Event} event
      */
     handleKeyPress: function(event) {
-        var key = event.which;
-        var ctl = event.ctrlKey;
-        if (key === 13 && !ctl) {
+        var key     = event.which;
+        var ctl     = event.ctrlKey;
+        var shift   = event.shiftKey;
+        if (key === 13 && !ctl && !shift) {
             this.handleEnterKeyPress(event);
         }
     },
