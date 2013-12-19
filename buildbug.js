@@ -107,6 +107,7 @@ buildProperties({
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/bootstrap2/static",
             "../bugjs/external/jquery/js/src",
+            "../bugjs/external/jquery-plugins/js/src/fileupload",
             "../bugjs/external/jquery-plugins/js/src/selectText",
             "../bugjs/external/jquery-plugins/js/src/validator",
             "../bugjs/external/mustache/js/src",
