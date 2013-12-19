@@ -180,6 +180,7 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+        this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
     },
 
     /**
@@ -187,6 +188,7 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeCommandSubscriptions: function() {
         this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
     },
 
     //-------------------------------------------------------------------------------
@@ -201,6 +203,17 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
         imageEditor.hide();
         imageList.hide();
         imageUpload.show();
+    },
+
+    handleDisplayImageListCommand: function() {
+        var imageEditor = this.viewTop.$el.find("#image-editor-container");
+        var imageList   = this.viewTop.$el.find("#image-list-container");
+        var imageUpload = this.viewTop.$el.find("#image-upload-container");
+
+        imageEditor.hide();
+        imageUpload.hide();
+        imageList.show();
+
     }
 });
 

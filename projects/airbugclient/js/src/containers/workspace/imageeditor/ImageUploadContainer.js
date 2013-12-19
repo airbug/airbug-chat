@@ -13,6 +13,7 @@
 //@Require('airbug.IconView')
 //@Require('airbug.ImageUploadView')
 //@Require('airbug.NakedButtonView')
+//@Require('airbug.TextView')
 //@Require('airbug.UploadView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('bugioc.AutowiredAnnotation')
@@ -42,6 +43,7 @@ var CommandModule                       = bugpack.require('airbug.CommandModule'
 var IconView                            = bugpack.require('airbug.IconView');
 var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
+var TextView                            = bugpack.require('airbug.TextView');
 var UploadView                          = bugpack.require('airbug.UploadView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
@@ -101,6 +103,8 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
          * @type {ImageUploadView}
          */
         this.imageUploadView            = null;
+
+        this.imageListLinkButtonView    = null;
 
 
         // Containers
@@ -175,17 +179,18 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                                 .appendTo(".btn-toolbar")
                                 .children([
                                     view(NakedButtonView)
+                                        .id("image-list-link-button")
                                         .attributes({
                                             size: NakedButtonView.Size.SMALL
                                         })
                                         .children([
                                             view(IconView)
-                                                .appendTo('button[id|="button"]')
+                                                .appendTo('#image-list-link-button')
                                                 .attributes({
                                                     type: IconView.Type.PICTURE
                                                 }),
                                             view(TextView)
-                                                .appendTo('button[id|="button"]')
+                                                .appendTo('#image-list-link-button')
                                                 .attributes({
                                                     text: "Image List"
                                                 })
@@ -199,6 +204,8 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.imageUploadView);
+
+        this.imageListLinkButtonView = this.findViewById("image-list-link-button");
     },
 
     createContainerChildren: function() {
@@ -212,8 +219,9 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeUploadWidget();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
+        this.initializeUploadWidget();
     },
 
     /**
@@ -221,8 +229,9 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeUploadWidget();
+        this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
+        this.deinitializeUploadWidget();
     },
 
     initializeUploadWidget: function() {
@@ -250,6 +259,14 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
+    initializeEventListeners: function() {
+        this.imageListLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+    },
+
+    deinitializeEventListeners: function() {
+
+    },
+
     /**
      * @private
      */
@@ -262,12 +279,15 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeCommandSubscriptions: function() {
 
-    }
+    },
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    handleUploadListLinkButtonClicked: function() {
+        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_LIST, {});
+    }
 });
 
 
