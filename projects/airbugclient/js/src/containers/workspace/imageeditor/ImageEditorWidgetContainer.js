@@ -149,10 +149,10 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this._super();
 //        this.imageEditorContainer   = new ImageEditorContainer();
         this.imageListContainer     = new ImageListContainer();
-//        this.imageUploadContainer   = new ImageUploadContainer();
+        this.imageUploadContainer   = new ImageUploadContainer();
 //        this.addContainerChild(this.imageEditorContainer,       "#image-editor-widget");
         this.addContainerChild(this.imageListContainer,         "#image-editor-widget");
-//        this.addContainerChild(this.imageUploadContainer, "#image-editor-widget");
+        this.addContainerChild(this.imageUploadContainer, "#image-editor-widget");
     },
 
     /**
@@ -179,20 +179,29 @@ var ImageEditorWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     initializeCommandSubscriptions: function() {
-
+        this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
     },
 
     /**
      * @private
      */
     deinitializeCommandSubscriptions: function() {
-
-    }
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+    },
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    handleDisplayImageUploadCommand: function() {
+        var imageEditor = this.viewTop.$el.find("#image-editor-container");
+        var imageList   = this.viewTop.$el.find("#image-list-container");
+        var imageUpload = this.viewTop.$el.find("#image-upload-container");
+
+        imageEditor.hide();
+        imageList.hide();
+        imageUpload.show();
+    }
 });
 
 

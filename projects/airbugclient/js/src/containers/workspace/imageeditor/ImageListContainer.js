@@ -10,10 +10,12 @@
 //@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
+//@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -36,10 +38,12 @@ var Class                               = bugpack.require('Class');
 var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
+var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -96,11 +100,20 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
          */
         this.boxView                    = null;
 
+        /**
+         * @private
+         * @type {NakedButtonView}
+         */
+        this.imageUploadLinkButtonView  = null;
 
         // Containers
         //-------------------------------------------------------------------------------
 
-
+        /**
+         * @private
+         * @type {WorkspaceCloseButtonContainer}
+         */
+        this.closeButton                = null;
     },
 
 
@@ -165,6 +178,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                             view(ButtonGroupView)
                                 .children([
                                     view(NakedButtonView)
+                                        .id("image-upload-link-button")
                                         .attributes({
                                             size: NakedButtonView.Size.SMALL
                                         })
@@ -173,28 +187,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                                 .attributes({
                                                     type: IconView.Type.UPLOAD
                                                 })
-                                                .appendTo('button[id|="button"]'),
+                                                .appendTo('#image-upload-link-button'),
                                             view(TextView)
                                                 .attributes({
                                                     text: "Upload"
                                                 })
-                                                .appendTo('button[id|="button"]')
-                                        ]),
-                                    view(NakedButtonView)
-                                        .attributes({
-                                            size: NakedButtonView.Size.SMALL
-                                        })
-                                        .children([
-                                            view(IconView)
-                                                .attributes({
-                                                    type: IconView.Type.REMOVE
-                                                })
-                                                .appendTo('button[id|="button"]'),
-                                            view(TextView)
-                                                .attributes({
-                                                    text: "Close"
-                                                })
-                                                .appendTo('button[id|="button"]')
+                                                .appendTo('#image-upload-link-button')
                                         ])
                                 ])
                                 .appendTo('#image-list-toolbar')
@@ -231,10 +229,14 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.boxView);
+
+        this.imageUploadLinkButtonView = this.findViewById("image-upload-link-button")
     },
 
     createContainerChildren: function() {
         this._super();
+        this.closeButton = new WorkspaceCloseButtonContainer();
+        this.addContainerChild(this.closeButton, "#image-list-toolbar .btn-group:last-child")
     },
 
     /**
@@ -242,6 +244,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
     },
 
@@ -250,12 +253,21 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
     },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    initializeEventListeners: function() {
+        this.imageUploadLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadImageLinkButtonClicked, this);
+    },
+
+    deinitializeEventListeners: function() {
+
+    },
 
     /**
      * @private
@@ -269,12 +281,15 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeCommandSubscriptions: function() {
 
-    }
+    },
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    handleUploadImageLinkButtonClicked: function(event) {
+        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
+    }
 });
 
 
