@@ -136,6 +136,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {AirbugClientConfig}
+         */
+        this._airbugClientConfig    = null;
+
+        /**
+         * @private
          * @type {BugCallClient}
          */
         this._bugCallClient         = null;
@@ -163,12 +169,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
          * @type {SocketIoConfig}
          */
         this._socketIoConfig        = null;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.trackingEnabled        = false;
 
         /**
          * @private
@@ -224,36 +224,45 @@ var AirbugClientConfiguration = Class.extend(Obj, {
         ]).execute(callback);
     },
 
+    /**
+     * @private
+     * @param {function(Throwable=)} callback
+     */
     initializeTracking: function(callback) {
         var sonarbugClient      = this._sonarbugClient;
         var trackerModule       = this._trackerModule;
         var carapaceApplication = this._carapaceApplication;
 
-        carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event) {
-            var data = event.getData();
-            trackerModule.track("RoutingRequest.Result", data);
-        });
-
-        $series([
-            $task(function(flow) {
-                sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error) {
-                    if (!error) {
-                        console.log('SonarBugClient configured');
-                    }
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                trackerModule.initialize(function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (!error) {
-                console.log("tracking initialized");
-            }
-            callback(error);
-        });
+        if (this._airbugClientConfig.getEnableTracking()) {
+            carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event) {
+                var data = event.getData();
+                trackerModule.track("RoutingRequest.Result", data);
+            });
+            trackerModule.setTrackingEnabled(true);
+            $series([
+                $task(function(flow) {
+                    sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error) {
+                        if (!error) {
+                            console.log('SonarBugClient configured');
+                        }
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    trackerModule.initialize(function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                if (!error) {
+                    console.log("tracking initialized");
+                }
+                callback(error);
+            });
+        } else {
+            trackerModule.setTrackingEnabled(false);
+            callback();
+        }
     },
 
 
@@ -274,7 +283,8 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @returns {AirbugClientConfig}
      */
     airbugClientConfig: function() {
-        return new AirbugClientConfig(JSON.parse(_appConfig));
+        this._airbugClientConfig = new AirbugClientConfig(JSON.parse(_appConfig));
+        return this._airbugClientConfig;
     },
 
     /**

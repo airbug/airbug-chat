@@ -7,6 +7,7 @@
 //@Export('MessageContentTextView')
 
 //@Require('Class')
+//@Require('HtmlUtil')
 //@Require('airbug.MustacheView')
 
 
@@ -22,6 +23,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var HtmlUtil        = bugpack.require('HtmlUtil');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
@@ -35,7 +37,23 @@ var MessageContentTextView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="message-text-{{cid}}" class="message-text">{{model.body}}</div>',
+    template: '<div id="message-text-{{cid}}" class="message-text">{{{model.body}}}</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data = this._super();
+        if (data.model.body) {
+            data.model.body = HtmlUtil.stringToHtml(data.model.body);
+        }
+        return data;
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -50,8 +68,8 @@ var MessageContentTextView = Class.extend(MustacheView, {
     renderModelProperty: function(propertyName, propertyValue) {
         this._super(propertyName, propertyValue);
         switch (propertyName) {
-            case "message":
-                this.findElement('#message-text-' + this.getCid()).text(propertyValue);
+            case "body":
+                this.findElement('#message-text-' + this.getCid()).html(HtmlUtil.stringToHtml(propertyValue));
                 break;
         }
     }

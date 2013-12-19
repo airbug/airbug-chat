@@ -124,7 +124,7 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     /**
      * @protected
      */
-    processMeldDcoument: function() {
+    processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
         this.setProperty("id", data.id);

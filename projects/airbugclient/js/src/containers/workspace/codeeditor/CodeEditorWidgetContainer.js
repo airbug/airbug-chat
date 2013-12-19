@@ -349,10 +349,6 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
             codeLanguage: codeLanguage
         };
 
-        console.log("code:", code);
-        console.log("codeLanguage:", codeLanguage);
-        console.log("chatMessageObject:", chatMessageObject);
-
         this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
         event.stopPropagation();
     },

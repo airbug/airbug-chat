@@ -77,9 +77,6 @@ var ChatMessageView = Class.extend(MustacheView, {
     renderModelProperty: function(propertyName, propertyValue) {
         this._super(propertyName, propertyValue);
         switch (propertyName) {
-            case "message":
-                this.findElement('#message-message-' + this.cid).text(propertyValue);
-                break;
             case "sentAt":
                 this.findElement('#message-created-at-' + this.cid).text(this.renderSentAgo(propertyValue));
                 break;

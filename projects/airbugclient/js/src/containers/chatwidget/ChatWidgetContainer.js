@@ -102,7 +102,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {Map.<string, ChatMessageModel>}
          */
-        this.chatMessageIdToChatMessageModelMap     = new Map();
+        this.chatMessageIdToChatMessageModelMap         = new Map();
+
+        /**
+         * @private
+         * @type {Map.<string, ChatMessageModel>}
+         */
+        this.chatMessageTryUuidToChatMessageModelMap    = new Map();
 
 
         // Models
@@ -112,13 +118,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationModel}
          */
-        this.conversationModel                      = conversationModel;
+        this.conversationModel                          = conversationModel;
 
         /**
          * @private
          * @type {ChatMessageList}
          */
-        this.chatMessageList                        = null;
+        this.chatMessageList                            = null;
 
 
         // Views
@@ -128,19 +134,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatWidgetView}
          */
-        this.chatWidgetView                         = null;
+        this.chatWidgetView                             = null;
 
         /**
          * @private
          * @type {ChatWidgetInputFormContainer}
          */
-        this.chatWidgetInputFormContainer           = null;
+        this.chatWidgetInputFormContainer               = null;
 
         /**
          * @private
          * @type {ChatWidgetMessagesContainer}
          */
-        this.chatWidgetMessagesContainer            = null;
+        this.chatWidgetMessagesContainer                = null;
 
 
         // Modules
@@ -150,25 +156,25 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatMessageManagerModule}
          */
-        this.chatMessageManagerModule               = null;
+        this.chatMessageManagerModule                   = null;
 
         /**
          * @private
          * @type {CommandModule}
          */
-         this.commandModule                         = null;
+         this.commandModule                             = null;
 
         /**
          * @private
          * @type {CurrentUserManagerModule}
          */
-        this.currentUserManagerModule               = null;
+        this.currentUserManagerModule                   = null;
 
         /**
          * @private
          * @type {UserManagerModule}
          */
-        this.userManagerModule                      = null;
+        this.userManagerModule                          = null;
 
     },
 
@@ -227,6 +233,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+        this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
+        this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
+        this.conversationModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemovePropertyChange, this)
+        this.conversationModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
+        this.conversationModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.deinitializeCommandSubscriptions();
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
@@ -250,12 +269,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     buildChatMessageModel: function(data, chatMessageMeldDocument, senderUserMeldDocument) {
         var chatMessageModel = this.chatMessageManagerModule.generateChatMessageModel(data, chatMessageMeldDocument, senderUserMeldDocument);
-        this.chatMessageIdToChatMessageModelMap.put(chatMessageModel.getProperty("id"), chatMessageModel);
-
-        //TEST
-        console.log("Adding chatMessageModel - ", chatMessageModel);
-
-        this.chatMessageList.add(chatMessageModel);
+        if (!this.chatMessageIdToChatMessageModelMap.containsKey(chatMessageModel.getProperty("id")) && !this.chatMessageTryUuidToChatMessageModelMap.containsKey(chatMessageModel.getProperty("tryUuid"))) {
+            this.chatMessageIdToChatMessageModelMap.put(chatMessageModel.getProperty("id"), chatMessageModel);
+            this.chatMessageList.add(chatMessageModel);
+        }
     },
 
     /**
@@ -263,6 +280,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     clearChatMessageList: function() {
         this.chatMessageList.clear();
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
     },
 
     /**
@@ -384,13 +408,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     sendChatMessage: function(chatMessageData) {
         var _this = this;
-        var chatMessageObject = this.chatMessageManagerModule.generateChatMessageObject(Obj.merge(chatMessageData, {
+
+        //TODO BRN: If the conversation hasn't loaded yet, then this id will not be available. Might need to figure out a way to wait for the conversation to be ready.
+
+        var chatMessageObject = this.chatMessageManagerModule.generateChatMessageObject(Obj.merge({
             conversationId: this.conversationModel.getProperty("id"),
             sentAt: new Date().toString()
-        }));
+        }, chatMessageData));
+
         /** @type {ChatMessageModel} */
         var chatMessageModel = this.chatMessageManagerModule.generateChatMessageModel(chatMessageObject);
         this.chatMessageList.add(chatMessageModel);
+
+        this.chatMessageTryUuidToChatMessageModelMap.put(chatMessageModel.getProperty("tryUuid"), chatMessageModel);
 
         /** @type {CurrentUser} */
         var currentUser             = undefined;

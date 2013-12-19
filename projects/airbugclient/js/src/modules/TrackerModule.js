@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('airbug.CommandModule')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -26,6 +27,7 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var TypeUtil                = bugpack.require('TypeUtil');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 
 
@@ -65,7 +67,26 @@ var TrackerModule = Class.extend(Obj, {
          * @private
          * @type {boolean}
          */
-        this.trackingEnabled    = trackingEnabled;
+        this.trackingEnabled    = TypeUtil.isBoolean(trackingEnabled) ? trackingEnabled : true;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    getTrackingEnabled: function() {
+        return this.trackingEnabled;
+    },
+
+    /**
+     * @param {boolean} trackingEnabled
+     */
+    setTrackingEnabled: function(trackingEnabled) {
+        this.trackingEnabled = trackingEnabled;
     },
 
 

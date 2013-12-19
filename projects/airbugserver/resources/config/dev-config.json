@@ -1,4 +1,5 @@
 {
+    "enableTracking": false,
     "github": {
         "clientId": "8ef98e2b5b851fde7b12",
         "clientSecret": "dbf78265f62dc3bc5a0d96b83a712fc32cbc7c41"

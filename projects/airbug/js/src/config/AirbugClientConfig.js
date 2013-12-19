@@ -42,6 +42,20 @@ var AirbugClientConfig = Class.extend(Config, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {boolean}
+     */
+    getEnableTracking: function() {
+        return this.getProperty("enableTracking");
+    },
+
+    /**
+     * @param {boolean} enableTracking
+     */
+    setEnableTracking: function(enableTracking) {
+        this.setProperty("enableTracking", enableTracking);
+    },
+
+    /**
      * @returns {string}
      */
     getGithubClientId: function() {

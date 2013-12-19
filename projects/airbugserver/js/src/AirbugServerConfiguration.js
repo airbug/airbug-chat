@@ -840,6 +840,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      */
     buildConfigs: function(config) {
         this._airbugClientConfig.absorbConfig(config, [
+            "enableTracking",
             "github.clientId",
             "github.redirectUri",
             "github.scope"
