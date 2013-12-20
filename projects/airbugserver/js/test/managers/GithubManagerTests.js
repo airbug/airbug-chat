@@ -89,10 +89,10 @@ var initializeManagers = function(setupObject, test) {
             });
         })
     ]).execute(function(throwable) {
-            if (throwable) {
-                test.error(throwable);
-            }
-        });
+        if (throwable) {
+            test.error(throwable);
+        }
+    });
 
 };
 
@@ -108,10 +108,10 @@ var setupGithubEntity = function(setupObject, test) {
             });
         })
     ]).execute(function(throwable) {
-            if (throwable) {
-                test.error(throwable);
-            }
-        });
+        if (throwable) {
+            test.error(throwable);
+        }
+    });
 };
 
 //-------------------------------------------------------------------------------
