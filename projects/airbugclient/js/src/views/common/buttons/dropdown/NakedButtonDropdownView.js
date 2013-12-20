@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ButtonDropdownView')
+//@Export('NakedButtonDropdownView')
 
 //@Require('Class')
 //@Require('airbug.ButtonView')
@@ -29,20 +29,18 @@ var ButtonView  = bugpack.require('airbug.ButtonView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ButtonDropdownView = Class.extend(ButtonView, {
+var NakedButtonDropdownView = Class.extend(ButtonView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="button-wrapper {{buttonWrapperClasses}}">' +
-                    '<div class="btn-group">' +
-                        '<button id="{{id}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
-                        '</button>' +
-                        '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
-                        '</ul>' +
-                    '</div>' +
-                '</div>'
+    template: '<div id="{{id}}-wrapper" class="btn-group">' +
+        '<button id="{{id}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
+        '</button>' +
+        '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
+        '</ul>' +
+        '</div>'
 });
 
 
@@ -50,4 +48,4 @@ var ButtonDropdownView = Class.extend(ButtonView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ButtonDropdownView", ButtonDropdownView);
+bugpack.export("airbug.NakedButtonDropdownView", NakedButtonDropdownView);

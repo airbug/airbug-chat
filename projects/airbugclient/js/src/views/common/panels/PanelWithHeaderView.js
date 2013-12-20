@@ -37,8 +37,9 @@ var PanelWithHeaderView = Class.extend(MustacheView, {
     template:   '<div id="{{id}}-wrapper" class="panel-wrapper">' +
                     '<div id="{{id}}" class="panel">' +
                         '<div id="panel-header-{{cid}}" class="panel-header">' +
+                            '<span id="panel-header-nav-left-{{cid}}" class="panel-header-nav-left"></span>' +
                             '<span class="panel-header-title text text-header">{{attributes.headerTitle}}</span>' +
-                            '<span id="panel-header-nav-{{cid}}" class="panel-header-nav pull-right"></span>' +
+                            '<span id="panel-header-nav-right-{{cid}}" class="panel-header-nav-right"></span>' +
                         '</div>' +
                         '<div id="panel-body-{{cid}}" class="panel-body">' +
                         '</div>' +

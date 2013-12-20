@@ -636,6 +636,34 @@ html, body {
     background-color: rgb(207, 226, 243); /* Old browsers */
 }
 
+#room-chatbox-header .subheader-center .room-name {
+    position: relative;
+    text-align: center;
+}
+
+#room-chatbox-header .subheader-center .btn-group {
+    position: relative;
+    margin-left: 10px;
+}
+
+#room-chatbox-header .subheader-center .btn-group button {
+    padding: 0;
+    margin-top: 4px;
+    margin-left: 3px;
+}
+
+#roommember-list-panel-container .panel-header .btn-group {
+    display: inline-block;
+    width: 15%;
+    padding: 0px;
+    margin: 0px;
+}
+
+#roommember-list-panel-container .panel-header .panel-header-nav-right {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+}
 
 /* Message CSS
 *******************************************************************/
@@ -853,8 +881,26 @@ li.add-roommember-container {
 /* ImageUpload CSS
 *******************************************************************/
 
-#image-upload-container .box-body .box {
-    padding: 150px 94px;
+#image-upload-container .box-body .box span {
+    margin: 0% 33%;
+}
+
+#image-upload-add-by-url-container {
+    margin-top: 6px;
+    margin-bottom: 0px;
+    padding-left: 0px;
+}
+
+#image-upload-add-by-url-container .controls {
+    margin-left: 33%;
+}
+
+#image-upload-add-by-url-container .controls input {
+    width: 80%;
+}
+
+#file-upload-widget {
+    overflow-y: scroll;
 }
 
 #file-upload-widget .control-group {
@@ -863,6 +909,10 @@ li.add-roommember-container {
 
 #file-upload-widget .control-group .control-label {
     width: 30%;
+}
+
+#file-upload-widget .btn-toolbar:last-child .btn-group {
+    width: 75.5%;
 }
 
 @charset "UTF-8";

@@ -7,6 +7,7 @@
 //@Export('RoomMemberListPanelContainer')
 
 //@Require('Class')
+//@Require('airbug.AddRoomMemberButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.PanelWithHeaderView')
@@ -28,6 +29,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
+var AddRoomMemberButtonContainer    = bugpack.require('airbug.AddRoomMemberButtonContainer');
 var ButtonView                      = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
@@ -78,15 +80,9 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
-         */
-        // this.addRoomMemberButtonView    = null;
-
-        /**
-         * @private
          * @type {PanelView}
          */
-        this.panelView                  = null;
+        this.panelView                      = null;
 
 
         // Containers
@@ -94,9 +90,15 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {AddRoomMemberButtonContainer}
+         */
+        this.addRoomMemberButtonContainer   = null;
+
+        /**
+         * @private
          * @type {RoomMemberListContainer}
          */
-        this.roomMemberListContainer    = null;
+        this.roomMemberListContainer        = null;
     },
 
 
@@ -116,6 +118,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
         this.panelView =
             view(PanelWithHeaderView)
+                .id("roommember-list-panel-container")
                 .attributes({headerTitle: "Room Members"})
                 .build();
 
@@ -131,8 +134,10 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
+        this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
         this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
         this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.getCid());
+        this.prependContainerChildTo(this.addRoomMemberButtonContainer, ".panel-header-nav-right");
     },
 
     initializeContainer: function() {

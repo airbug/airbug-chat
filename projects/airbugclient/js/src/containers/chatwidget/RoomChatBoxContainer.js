@@ -18,6 +18,7 @@
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.RoomsHamburgerButtonContainer')
+//@Require('airbug.ShareRoomButtonContainer')
 //@Require('airbug.SubheaderView')
 //@Require('airbug.TwoColumnView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -50,6 +51,7 @@ var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
 var RoomMemberListPanelContainer    = bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomNameView                    = bugpack.require('airbug.RoomNameView');
 var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
+var ShareRoomButtonContainer        = bugpack.require('airbug.ShareRoomButtonContainer');
 var SubheaderView                   = bugpack.require('airbug.SubheaderView');
 var TwoColumnView                   = bugpack.require('airbug.TwoColumnView');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
@@ -122,6 +124,11 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          */
         this.roomsHamburgerButtonContainer  = null;
 
+        /**
+         * @private
+         * @type {ShareRoomButtonContainer}
+         */
+        this.shareRoomButtonContainer       = null;
 
         // Models
         //-------------------------------------------------------------------------------
@@ -225,15 +232,17 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
+        this.chatWidgetContainer                    = new ChatWidgetContainer(this.conversationModel);
         this.leaveRoomButtonContainer               = new LeaveRoomButtonContainer(this.roomModel);
         this.roomsHamburgerButtonContainer          = new RoomsHamburgerButtonContainer();
         this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
-        this.chatWidgetContainer                    = new ChatWidgetContainer(this.conversationModel);
+        this.shareRoomButtonContainer               = new ShareRoomButtonContainer(this.roomModel);
 
+        this.addContainerChild(this.chatWidgetContainer,            "#room-chatbox-row-container>.column2of2");
         this.addContainerChild(this.leaveRoomButtonContainer,       ".subheader-right");
         this.addContainerChild(this.roomsHamburgerButtonContainer,  ".subheader-left");
-        this.addContainerChild(this.roomMemberListPanelContainer,   ".column1of2");
-        this.addContainerChild(this.chatWidgetContainer,            ".column2of2");
+        this.addContainerChild(this.roomMemberListPanelContainer,   "#room-chatbox-row-container>.column1of2");
+        this.addContainerChild(this.shareRoomButtonContainer,       ".subheader-center")
     },
 
     /**

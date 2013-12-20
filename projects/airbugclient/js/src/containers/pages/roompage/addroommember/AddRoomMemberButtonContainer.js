@@ -9,10 +9,10 @@
 //@Require('Class')
 //@Require('airbug.AddRoomMemberContainer')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonDropdownView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
+//@Require('airbug.NakedButtonDropdownView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -33,10 +33,10 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var AddRoomMemberContainer  = bugpack.require('airbug.AddRoomMemberContainer');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonDropdownView      = bugpack.require('airbug.ButtonDropdownView');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var IconView                = bugpack.require('airbug.IconView');
+var NakedButtonDropdownView = bugpack.require('airbug.NakedButtonDropdownView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -114,12 +114,16 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.buttonView =
-            view(ButtonDropdownView)
-                .id("addRoomMemberButtonView")
+            view(NakedButtonDropdownView)
+                .attributes({
+                    type: ButtonView.Type.LINK
+                })
                 .children([
                     view(IconView)
-                        .attributes({type: IconView.Type.PLUS})
-                        .appendTo('*[id|="button"]')
+                        .attributes({
+                            type: IconView.Type.PLUS,
+                        })
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 

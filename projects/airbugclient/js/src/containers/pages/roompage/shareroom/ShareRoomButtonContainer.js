@@ -8,10 +8,10 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
+//@Require('airbug.NakedButtonDropdownView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -31,10 +31,10 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var IconView                = bugpack.require('airbug.IconView');
+var NakedButtonDropdownView = bugpack.require('airbug.NakedButtonDropdownView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -113,13 +113,12 @@ var ShareRoomButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.buttonView =
-            view(ButtonView)
-                .id("shareRoomButton")
+            view(NakedButtonDropdownView)
                 .attributes({type: "link"})
                 .children([
                     view(IconView)
                         .attributes({type: IconView.Type.SHARE_ALT})
-                        .appendTo('*[id|="button"]')
+                        .appendTo('button[id|="button"]')
                 ])
                 .build();
 
