@@ -4,17 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('TextInputView')
+//@Export('CheckBoxInputView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.InputView')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -22,28 +22,45 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var InputView       = bugpack.require('airbug.InputView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TextInputView = Class.extend(MustacheView, {
+var CheckBoxInputView = Class.extend(InputView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<input id="{{id}}" type="text" placeholder="{{attributes.placeholder}}">',
+    template: '<input id="{{id}}" class="{{classes}}" type="checkbox" name="{{inputName}}" placeholder="{{inputPlaceholder}}" {{checked}}>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "text-input-" + this.cid;
+        var data                = this._super();
+        data.checked            = this.attributes.checked ? "checked" : "";
         return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    isChecked: function() {
+        return this.$el.is(':checked');
     }
 });
 
@@ -52,4 +69,4 @@ var TextInputView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.TextInputView", TextInputView);
+bugpack.export("airbug.CheckBoxInputView", CheckBoxInputView);

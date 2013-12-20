@@ -35,7 +35,7 @@ var FormControlGroupView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="{{id}}" class="control-group"> </div>',
+    template: '<div id="{{id}}" class="control-group {{attributes.classes}}"> </div>',
 
     /**
      * @return {Object}

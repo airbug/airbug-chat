@@ -4,10 +4,9 @@
 
 //@Package('airbug')
 
-//@Export('TextAreaView')
+//@Export('LabelView')
 
 //@Require('Class')
-//@Require('TypeUtil')
 //@Require('airbug.MustacheView')
 
 
@@ -15,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,7 +22,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var TypeUtil        = bugpack.require('TypeUtil');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
@@ -31,28 +29,25 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TextAreaView = Class.extend(MustacheView, {
+var LabelView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<textarea id="{{id}}" rows="{{attributes.rows}}"" value="{{attributes.value}}">{{attributes.placeholder}}</textarea>',
+    template: '<label id="{{id}}" class="{{classes}}">{{text}}</label>',
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this._super();
-        data.id = this.getId() || "text-area-" + this.cid;
-        if (!TypeUtil.isNumber(data.attributes.rows)) {
-            data.attributes.rows = 2;
-        }
+        var data                = this._super();
+        data.text               = this.attributes.text;
         return data;
     }
 });
@@ -62,4 +57,4 @@ var TextAreaView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.TextAreaView", TextAreaView);
+bugpack.export("airbug.LabelView", LabelView);

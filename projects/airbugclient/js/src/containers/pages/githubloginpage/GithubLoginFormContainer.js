@@ -13,7 +13,7 @@
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.GithubLoginFormView')
 //@Require('airbug.FormControlGroupView')
-//@Require('airbug.FormView')
+//@Require('airbug.FormViewWithWrapper')
 //@Require('airbug.SelectOptionView')
 //@Require('airbug.SelectView')
 //@Require('airbug.SubmitButtonView')
@@ -43,7 +43,7 @@ var BoxView                     = bugpack.require('airbug.BoxView');
 var InputView                   = bugpack.require('airbug.InputView');
 var GithubLoginFormView         = bugpack.require('airbug.GithubLoginFormView');
 var FormControlGroupView        = bugpack.require('airbug.FormControlGroupView');
-var FormView                    = bugpack.require('airbug.FormView');
+var FormViewWithWrapper         = bugpack.require('airbug.FormViewWithWrapper');
 var SelectOptionView            = bugpack.require('airbug.SelectOptionView');
 var SelectView                  = bugpack.require('airbug.SelectView');
 var SubmitButtonView            = bugpack.require('airbug.SubmitButtonView');
@@ -159,7 +159,7 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
                 .build();
 
         this.githubLoginFormView =
-            view(FormView)
+            view(FormViewWithWrapper)
                 .attributes({classes: "form-horizontal", name: "Login"})
                 .build();
 

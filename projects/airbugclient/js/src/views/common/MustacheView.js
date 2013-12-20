@@ -65,10 +65,12 @@ var MustacheView = Class.extend(CarapaceView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = {};
-        data.model = this.model ? LiteralUtil.convertToLiteral(this.model) : {};
-        data.attributes = this.attributes;
-        data.cid = this.cid;
+        var data            = {};
+        data.model          = this.model ? LiteralUtil.convertToLiteral(this.model) : {};
+        data.attributes     = this.attributes;
+        data.cid            = this.getCid();
+        data.id             = this.getId() || "input-" + this.getCid();
+        data.classes        = this.getAttribute("classes");
         return data;
     }
 });

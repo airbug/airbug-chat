@@ -35,34 +35,39 @@ var InputView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<input id="{{id}}" class="{{inputClasses}}" type="{{inputType}}" name="{{inputName}}" placeholder="{{inputPlaceholder}}">',
+    template: '<input id="{{id}}" class="{{classes}}" type="{{inputType}}" name="{{inputName}}" placeholder="{{inputPlaceholder}}">',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
 
     /**
+     * @protected
      * @return {Object}
      */
     generateTemplateData: function() {
         var data                = this._super();
         data.id                 = this.getId() || "input-" + this.getCid();
-        data.inputClasses       = this.attributes.classes || "";
         data.inputType          = this.attributes.type || "text";
         data.inputName          = this.attributes.name;
         data.inputPlaceholder   = this.attributes.placeholder;
 
         switch (this.attributes.size) {
             case InputView.Size.XXLARGE:
-                data.inputClasses += " input-xxlarge";
+                data.classes += " input-xxlarge";
                 break;
             case InputView.Size.XLARGE:
-                data.inputClasses += " input-xlarge";
+                data.classes += " input-xlarge";
                 break;
             case InputView.Size.LARGE:
-                data.inputClasses += " input-large";
+                data.classes += " input-large";
                 break;
             case InputView.Size.SMALL:
-                data.inputClasses += " input-small";
+                data.classes += " input-small";
                 break;
             case InputView.Size.MINI:
-                data.inputClasses += " input-mini";
+                data.classes += " input-mini";
                 break;
         }
 
@@ -70,6 +75,15 @@ var InputView = Class.extend(MustacheView, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @enum {number}
+ */
 InputView.Size = {
     XXLARGE: 1,
     XLARGE: 2,
@@ -79,9 +93,15 @@ InputView.Size = {
     MINI: 6
 };
 
+/**
+ * @static
+ * @enum {string}
+ */
 InputView.Type = {
+    CHECKBOX: "checkbox",
     TEXT: "text"
 };
+
 
 //-------------------------------------------------------------------------------
 // Exports

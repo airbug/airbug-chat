@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ChatWidgetInputFormView')
+//@Export('FormViewWithWrapper')
 
 //@Require('Class')
 //@Require('airbug.FormViewEvent')
@@ -26,29 +26,26 @@ var Class           = bugpack.require('Class');
 var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatWidgetInputFormView = Class.extend(MustacheView, {
+var FormViewWithWrapper = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
     template:
-                        '<form id="chat-widget-input-form-{{cid}}" class="form-horizontal">' +
-                            '<div class="control-group control-group-textarea">' +
-                                '<textarea form="chat-widget-input-form-{{cid}}" id="text-area-{{cid}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>' +
-                            '</div>' +
-                            '<div class="control-group control-group-checkbox">' +
-                                '<input id="submit-on-enter-toggle-{{cid}}" type="checkbox" checked="checked" class="checkbox"> Press enter to send</button>' +
-                            '</div>' +
-                        '</form>',
+        '<div class="form-wrapper">' +
+            '<form class="{{classes}}" id="{{id}}">' +
+            '</form>' +
+        '</div>',
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -56,7 +53,7 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('#text-area-' + this.cid).off();
+        this.$el.find('.submit-button').off();
         this.$el.find('form').off();
     },
 
@@ -66,15 +63,35 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('#text-area-' + this.cid).on('keypress', function(event) {
-            _this.handleKeyPress(event);
-        });
         this.$el.find('form').on('submit', function(event) {
+            _this.handleSubmit(event);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
+        this.$el.find('.submit-button').on('click', function(event) {
+            _this.handleSubmit(event);
             event.preventDefault();
             event.stopPropagation();
             return false;
         });
     },
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data            = this._super();
+        data.classes        = this.attributes.classes;
+        data.id             = this.getId() || "form-" + this.cid;
+        return data;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Protected Methods
@@ -90,11 +107,10 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         // one checkbox.
 
         var formData = {};
-        var value = this.$el.find("textarea").val();
-        formData.body = value;
-        if(!formData.type){
-            formData.type = "text";
-        }
+        var formInputs = this.$el.find("form").serializeArray();
+        formInputs.forEach(function(formInput) {
+            formData[formInput.name] = formInput.value;
+        });
         return formData;
     },
 
@@ -107,7 +123,6 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
         this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
             formData: formData
         }));
-        this.$el.find('#text-area-' + this.getCid()).val("");
     },
 
 
@@ -116,40 +131,17 @@ var ChatWidgetInputFormView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {jQuery.Event} event
-     */
-    handleEnterKeyPress: function(event) {
-        var submitOnEnter = this.$el.find("#submit-on-enter-toggle-" + this.getCid()).prop("checked");
-        if (submitOnEnter) {
-            this.submitForm();
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
-        }
-    },
-
-    /**
-     * @param {jQuery.Event} event
-     */
-    handleKeyPress: function(event) {
-        var key     = event.which;
-        var ctl     = event.ctrlKey;
-        var shift   = event.shiftKey;
-        if (key === 13 && !ctl && !shift) {
-            this.handleEnterKeyPress(event);
-        }
-    },
-
-    /**
-     * @param {jQuery.Event} event
+     * @private
+     * @param {jquery.Event} event
      */
     handleSubmit: function(event) {
         this.submitForm();
     }
 });
 
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbug.ChatWidgetInputFormView', ChatWidgetInputFormView);
+bugpack.export("airbug.FormViewWithWrapper", FormViewWithWrapper);

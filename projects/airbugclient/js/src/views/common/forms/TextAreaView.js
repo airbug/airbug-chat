@@ -4,10 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('FormView')
+//@Export('TextAreaView')
 
 //@Require('Class')
-//@Require('airbug.FormViewEvent')
+//@Require('TypeUtil')
+//@Require('airbug.KeyBoardEvent')
 //@Require('airbug.MustacheView')
 
 
@@ -23,7 +24,8 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
+var TypeUtil        = bugpack.require('TypeUtil');
+var KeyBoardEvent   = bugpack.require('airbug.KeyBoardEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
@@ -31,19 +33,35 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var FormView = Class.extend(MustacheView, {
+var TextAreaView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:
-        '<form class="{{classes}}" id="{{id}}">' +
-        '</form>',
+    template:   '<textarea id="{{id}}" name="{{attributes.name}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>',
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data = this._super();
+        data.id = this.getId() || "text-area-" + this.getCid();
+        if (!TypeUtil.isNumber(data.attributes.rows)) {
+            data.attributes.rows = 2;
+        }
+        return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -51,8 +69,7 @@ var FormView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.$el.find('.submit-button').off();
-        this.$el.find('form').off();
+        this.$el.off();
     },
 
     /**
@@ -61,33 +78,15 @@ var FormView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.$el.find('form').on('submit', function(event) {
-            _this.handleSubmit(event);
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
+        this.$el.on('keydown', function(event) {
+            _this.handleKeyDown(event);
         });
-        this.$el.find('.submit-button').on('click', function(event) {
-            _this.handleSubmit(event);
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
+        this.$el.on('keypress', function(event) {
+            _this.handleKeyPress(event);
         });
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data            = this._super();
-        data.classes        = this.attributes.classes;
-        data.id             = this.getId() || "form-" + this.cid;
-        return data;
+        this.$el.on('keyup', function(event) {
+            _this.handleKeyUp(event);
+        });
     },
 
 
@@ -96,48 +95,52 @@ var FormView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @returns {*}
      */
-    getFormData: function() {
-
-        // TODO BRN: This won't work for multiple check boxes. Will need to improve this if we have a form with more than
-        // one checkbox.
-
-        var formData = {};
-        var formInputs = this.$el.serializeArray();
-        formInputs.forEach(function(formInput) {
-            formData[formInput.name] = formInput.value;
-        });
-        return formData;
+    getValue: function() {
+        return this.$el.val();
     },
 
     /**
-     *
+     * @param {*} value
      */
-    submitForm: function() {
-        var formData = this.getFormData();
-        console.log("formData:", formData);
-        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
-            formData: formData
-        }));
+    setValue: function(value) {
+        this.$el.val(value);
     },
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Event Handlers
     //-------------------------------------------------------------------------------
 
     /**
      * @private
-     * @param {jquery.Event} event
+     * @param {jQuery.Event} event
      */
-    handleSubmit: function(event) {
-        this.submitForm();
+    handleKeyDown: function(event) {
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_DOWN, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
+    },
+
+    /**
+     * @private
+     * @param {jQuery.Event} event
+     */
+    handleKeyPress: function(event) {
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_PRESS, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
+    },
+
+    /**
+     * @private
+     * @param {jQuery.Event} event
+     */
+    handleKeyUp: function(event) {
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_UP, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.FormView", FormView);
+bugpack.export("airbug.TextAreaView", TextAreaView);

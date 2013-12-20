@@ -35,15 +35,55 @@ var TextView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="{{id}}" class="text">{{attributes.text}}</span>',
+    template:   '<span id="{{id}}" class="text">{{text}}</span>',
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    renderView: function() {
+        this._super();
+        var data = this.generateTemplateData();
+        this.$el.text(data.text);
+        this.$el.attr("id", data.id);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "text-" + this.cid;
+        data.id     = this.getId() || "text-" + this.getCid();
+        data.text   = this.getText();
         return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getText: function() {
+        return this.getAttribute("text");
+    },
+
+    /**
+     * @param {string} text
+     */
+    setText: function(text) {
+        this.setAttribute("text", text);
     }
 });
 
