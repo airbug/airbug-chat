@@ -211,7 +211,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.closeButton = new WorkspaceCloseButtonContainer();
-        this.addContainerChild(this.closeButton, ".btn-toolbar .btn-group:last-child")
+        this.addContainerChild(this.closeButton, ".box-header .btn-toolbar .btn-group:last-child")
     },
 
     /**
@@ -236,18 +236,23 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     initializeUploadWidget: function() {
         var _this = this;
-        $('#file-upload-widget').fileupload({
-            url: '/imageupload',
+        $('#file-upload-widget-input').fileupload({
+            url: '/app/uploadAsset',
             type: "POST",
             dropzone: _this.viewTop.$el.find("#image-upload-container"),
             pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
             autoupload: false,
             formData: {script: true},
-            dataType: 'json'
-        }).on('fileuploadadd', function (e, data) {
-            console.log("data:", data);
-            var uploadFileView = new UploadView();
-            _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container table");
+            dataType: 'json',
+            add: function (e, data) {
+                console.log("file upload add");
+                console.log("data:", data);
+                var uploadFileView = new UploadView();
+                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container table");
+            },
+            done: function(e, data) {
+                console.log("file upload done");
+            }
         });
     },
 
