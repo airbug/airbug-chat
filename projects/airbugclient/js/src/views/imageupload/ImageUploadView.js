@@ -39,7 +39,7 @@ var ImageUploadView = Class.extend(MustacheView, {
             <div class="box-header">\
             </div>\
             <div class="box-body">\
-                <form id="file-upload-widget" class="form-horizontal" action="/app/uploadAsset" method="POST" enctype="multipart/form-data">\
+                <div id="file-upload-widget" class="form-horizontal">\
                     <!-- The fileinput-button span is used to style the file input field as button -->\
                     <div class="btn-toolbar">\
                         <div class="btn-group">\
@@ -68,15 +68,15 @@ var ImageUploadView = Class.extend(MustacheView, {
                             <div id="image-upload-add-by-url-container" class="control-group btn btn-large btn-inverse disabled">\
                                 <label class="control-label" for="url">URL:</label>\
                                 <div class="controls">\
-                                <input type="text" name="url">\
+                                    <input type="text" name="url">\
+                                    <button class="btn btn-success btn-small">\
+                                        <i class="icon-plus icon-white"></i>\
+                                    </button>\
                                 </div>\
-                                <button class="btn btn-success btn-small">\
-                                    <i class="icon-plus icon-white"></i>\
-                                </button>\
                             </div>\
                         </div>\
                     </div>\
-                </form>\
+                </div>\
                 <div class="box">\
                     <span>\
                         Drag and Drop\
