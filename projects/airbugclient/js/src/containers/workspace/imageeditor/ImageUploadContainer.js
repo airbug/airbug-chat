@@ -257,7 +257,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     },
 
     deinitializeUploadWidget: function() {
-        $('#file-upload-widget').fileupload('destroy');
+        $('#file-upload-widget-input').fileupload('destroy');
     },
 
     //-------------------------------------------------------------------------------
