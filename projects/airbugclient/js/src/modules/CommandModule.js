@@ -91,13 +91,15 @@ CommandModule.CommandType = {
         CODE_EDITOR:            "CommandModuleCommand::display::codeEditor",
         IMAGE_EDITOR:           "CommandModuleCommand::display::imageEditor",
         IMAGE_LIST:             "CommandModuleCommand::display::imageList",
-        IMAGE_UPLOAD:           "CommandModuleCommand::display::imageUpload"
+        IMAGE_UPLOAD:           "CommandModuleCommand::display::imageUpload",
+        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::display::shareRoomOverlay"
     },
     HIDE: {
-        WORKSPACE:              "CommandModuleCommand::hide::workspace"
+        WORKSPACE:              "CommandModuleCommand::hide::workspace",
+        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay"
     },
     SUBMIT: {
-        CHAT_MESSAGE:            "CommandmoduleCommand::submit::chatMessage"
+        CHAT_MESSAGE:           "CommandmoduleCommand::submit::chatMessage"
     }
 };
 

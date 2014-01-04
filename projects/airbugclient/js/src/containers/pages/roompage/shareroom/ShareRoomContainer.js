@@ -11,10 +11,9 @@
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CopyToClipboardButtonView')
-//@Require('airbug.DropdownItemView')
-//@Require('airbug.DropdownViewEvent')
 //@Require('airbug.FauxTextAreaView')
 //@Require('airbug.IconView')
+//@Require('airbug.OverlayView')
 //@Require('airbug.ParagraphView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
@@ -41,10 +40,9 @@ var BoxView                     = bugpack.require('airbug.BoxView');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CopyToClipboardButtonView   = bugpack.require('airbug.CopyToClipboardButtonView');
-var DropdownItemView            = bugpack.require('airbug.DropdownItemView');
-var DropdownViewEvent           = bugpack.require('airbug.DropdownViewEvent');
 var FauxTextAreaView            = bugpack.require('airbug.FauxTextAreaView');
 var IconView                    = bugpack.require('airbug.IconView');
+var OverlayView                 = bugpack.require('airbug.OverlayView');
 var ParagraphView               = bugpack.require('airbug.ParagraphView');
 var TextView                    = bugpack.require('airbug.TextView');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
@@ -118,9 +116,9 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {DropdownItemView}
+         * @type {OverlayView}
          */
-        this.dropdownItemView   = null;
+        this.overlayView        = null;
 
         /**
          * @private
@@ -139,7 +137,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function() {
         this._super();
-        var fauxTextArea = this.dropdownItemView.$el.find(".faux-textarea p");
+        var fauxTextArea = this.overlayView.$el.find(".faux-textarea p");
         fauxTextArea.on("click", function() {
             fauxTextArea.selectText();
         });
@@ -156,8 +154,13 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
         var currentUrl = this.windowUtil.getUrl();
 
-        this.dropdownItemView =
-            view(DropdownItemView)
+        this.overlayView =
+            view(OverlayView)
+                .attributes({
+                    classes: "share-room-overlay",
+                    size: OverlayView.Size.ONE_THIRD,
+                    type: OverlayView.Type.PAGE
+                })
                 .children([
                     //TODO BRN: This needs to be encapsulated in it's own view so that it can react to model changes
                     view(BoxView)
@@ -184,13 +187,14 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
                                         .appendTo('*[id|="button"]')
                                 ])
                         ])
+                        .appendTo(".overlay")
                 ])
                 .build();
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.dropdownItemView);
+        this.setViewTop(this.overlayView);
     },
 
     /**
@@ -207,7 +211,6 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
     deinitializeContainer: function() {
         this._super();
         this.destroyZeroClipboard();
-        this.dropdownItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
     },
 
     /**
@@ -216,7 +219,6 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.createZeroClipboard();
-        this.dropdownItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearDropdownItemClickedEvent, this);
     },
 
 

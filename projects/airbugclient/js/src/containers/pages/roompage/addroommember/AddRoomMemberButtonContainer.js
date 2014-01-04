@@ -7,12 +7,12 @@
 //@Export('AddRoomMemberButtonContainer')
 
 //@Require('Class')
-//@Require('airbug.AddRoomMemberContainer')
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('airbug.NakedButtonDropdownView')
+//@Require('airbug.NakedButtonView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -31,12 +31,12 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var AddRoomMemberContainer  = bugpack.require('airbug.AddRoomMemberContainer');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var IconView                = bugpack.require('airbug.IconView');
-var NakedButtonDropdownView = bugpack.require('airbug.NakedButtonDropdownView');
+var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -49,6 +49,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 var autowired   = AutowiredAnnotation.autowired;
 var bugmeta     = BugMeta.context();
+var CommandType = CommandModule.CommandType;
 var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
@@ -84,9 +85,9 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {CommandModule}
          */
-        this.navigationModule   = null;
+        this.commandModule      = null;
 
 
         // Views
@@ -114,14 +115,14 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.buttonView =
-            view(NakedButtonDropdownView)
+            view(NakedButtonView)
                 .attributes({
                     type: ButtonView.Type.LINK
                 })
                 .children([
                     view(IconView)
                         .attributes({
-                            type: IconView.Type.PLUS,
+                            type: IconView.Type.PLUS
                         })
                         .appendTo('button[id|="button"]')
                 ])
@@ -139,8 +140,6 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.addRoomMemberContainer        = new AddRoomMemberContainer(this.roomModel);
-        this.addContainerChild(this.addRoomMemberContainer,   "#dropdown-list-" + this.buttonView.getCid());
     },
 
     /**
@@ -148,7 +147,16 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.$el.find("li:first-child").addClass("add-roommember-container");
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+    deinitializeContainer: function() {
+        this.super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+    hearButtonClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, {});
     }
 });
 
@@ -159,7 +167,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
 
 bugmeta.annotate(AddRoomMemberButtonContainer).with(
     autowired().properties([
-        property("navigationModule").ref("navigationModule")
+        property("commandModule").ref("commandModule")
     ])
 );
 

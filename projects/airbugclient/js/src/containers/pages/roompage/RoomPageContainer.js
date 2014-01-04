@@ -8,12 +8,15 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.RoomModel')
+//@Require('airbug.ShareRoomContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -33,12 +36,15 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Exception                   = bugpack.require('Exception');
+var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent')
+var CommandModule               = bugpack.require('airbug.CommandModule');
 var HomeButtonContainer         = bugpack.require('airbug.HomeButtonContainer');
 var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
 var PageContainer               = bugpack.require('airbug.PageContainer');
 var RoomChatBoxContainer        = bugpack.require('airbug.RoomChatBoxContainer');
 var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
 var RoomModel                   = bugpack.require('airbug.RoomModel');
+var ShareRoomContainer          = bugpack.require('airbug.ShareRoomContainer');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
@@ -49,8 +55,9 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                     = BugMeta.context();
 var autowired                   = AutowiredAnnotation.autowired;
+var bugmeta                     = BugMeta.context();
+var CommandType                 = CommandModule.CommandType;
 var property                    = PropertyAnnotation.property;
 var view                        = ViewBuilder.view;
 
@@ -113,6 +120,12 @@ var RoomPageContainer = Class.extend(PageContainer, {
          */
         this.roomsHamburgerButtonContainer          = null;
 
+        /**
+         * @private
+         * @type {ShareRoomContainer}
+         */
+        this.shareRoomContainer                     = null;
+
 
         // Models
         //-------------------------------------------------------------------------------
@@ -130,6 +143,11 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @type {CommandModule}
+         */
+        this.commandModule                          = null;
 
         /**
          * @type {NavigationModule}
@@ -182,12 +200,59 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
         this.roomListPanelContainer                 = new RoomListPanelContainer();
 
+        this.shareRoomContainer                     = new ShareRoomContainer(this.roomModel);
+        this.addContainerChild(this.shareRoomContainer,             "#page-row-container");
+
+
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
         this.addContainerChild(this.roomListPanelContainer,         ".column1of4");
         this.addContainerChild(this.roomChatBoxContainer,           ".column2of4");
     },
 
+    initializeContainer: function() {
+        this._super();
+        this.initializeEventListeners();
+        this.initializeCommandSubscriptions();
+    },
+
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeEventListeners();
+        this.deinitializeCommandSubscriptions();
+    },
+
+    initializeEventListeners: function() {
+        var overlayView  = this.shareRoomContainer.getViewTop();
+        overlayView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+    },
+
+    deinitializeEventListeners: function() {
+        var overlayView  = this.shareRoomContainer.getViewTop();
+        overlayView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+    },
+
+    initializeCommandSubscriptions: function() {
+        this.commandModule.subscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
+        this.commandModule.subscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
+    },
+
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
+        this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
+    },
+
+    hearOverlayBackgroundClickedEvent: function() {
+        this.viewTop.$el.find(".share-room-overlay").hide();
+    },
+
+    handleDisplayShareRoomOverlayCommand: function() {
+        this.viewTop.$el.find(".share-room-overlay").show();
+    },
+
+    handleHideShareRoomOverlayCommand: function() {
+        this.viewTop.$el.find(".share-room-overlay").hide();
+    },
 
     //-------------------------------------------------------------------------------
     // Protected Class Methods
@@ -240,6 +305,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
 bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
     ])

@@ -141,6 +141,23 @@ var ShareRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+    /**
+     * @private
+     */
+    hearButtonClickedEvent: function(event) {
+        console.log("ShareRoomButtonContainer#hearButtonClickedEvent");
+        this.commandModule.relayCommand(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, {});
     }
 });
 
