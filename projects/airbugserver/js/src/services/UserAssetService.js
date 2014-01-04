@@ -67,13 +67,13 @@ var RoomService = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                 = null;
+        this.logger                     = null;
 
         /**
          * @private
          * @type {UserAssetManager}
          */
-        this.userAssetManager            = userAssetManager;
+        this.userAssetManager           = userAssetManager;
     },
 
 
@@ -87,7 +87,7 @@ var RoomService = Class.extend(Obj, {
      * @param {Function(Throwable, UserAsset)} callback
      */
     createUserAsset: function(requestContext, userAssetObject, callback) {
-
+        var userAssetManager = this.userAssetManager;
     },
 
     /**
@@ -97,7 +97,10 @@ var RoomService = Class.extend(Obj, {
      * @param {function(Throwable, UserAsset)} callback
      */
     renameUserAsset: function(requestContext, userAssetId, userAssetName, callback) {
-
+        // retrieve user asset by user asset id
+        // verify that the current user is the same as the user on the userasset
+        // update the name
+        // use the manager to save the user asset
     },
 
     /**

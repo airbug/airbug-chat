@@ -97,8 +97,13 @@ var AssetManager = Class.extend(EntityManager, {
         return asset;
     },
 
+    /**
+     * @param {Asset} asset
+     * @param {Array.<string>} properties
+     * @param {function(Throwable, Asset)} callback
+     */
     populateAsset: function(asset, properties, callback) {
-        //TODO: dkk - anything needed here?
+        this.populate(asset, {}, properties, callback);
     },
 
     /**
