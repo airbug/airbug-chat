@@ -156,6 +156,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
     },
 
@@ -164,6 +165,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
     },
 
@@ -171,17 +173,25 @@ var PageContainer = Class.extend(ApplicationContainer, {
     // Private Instance Methods
     //-------------------------------------------------------------------------------
 
+    initializeEventListeners: function() {
+
+    },
+
+    deinitializeEventListeners: function() {
+
+    },
+
     /**
      * @private
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.HIDE.WORKSPACE,        this.handleHideWorkspaceCommand,        this);
+        this.commandModule.subscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,       this);
         this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,     this);
         this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
     },
 
     deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.HIDE.WORKSPACE,        this.handleHideWorkspaceCommand,        this);
+        this.commandModule.unsubscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,        this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
     },

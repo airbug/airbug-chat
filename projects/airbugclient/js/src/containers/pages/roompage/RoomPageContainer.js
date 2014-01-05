@@ -212,32 +212,32 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
     },
 
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
     },
 
     initializeEventListeners: function() {
+        this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
     },
 
     deinitializeEventListeners: function() {
+        this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
     },
 
     initializeCommandSubscriptions: function() {
+        this._super();
         this.commandModule.subscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.subscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
     },
 
     deinitializeCommandSubscriptions: function() {
+        this._super();
         this.commandModule.unsubscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
     },
