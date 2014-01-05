@@ -201,7 +201,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.roomListPanelContainer                 = new RoomListPanelContainer();
 
         this.shareRoomContainer                     = new ShareRoomContainer(this.roomModel);
-        this.addContainerChild(this.shareRoomContainer,             "#page-row-container");
+        this.addContainerChild(this.shareRoomContainer,             ".page");
 
 
         this.addContainerChild(this.logoutButtonContainer,          "#header-right");

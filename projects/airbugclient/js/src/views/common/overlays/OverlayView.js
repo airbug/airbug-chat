@@ -79,17 +79,20 @@ var OverlayView = Class.extend(MustacheView, {
         data.id     = this.getId() || "overlay-" + this.getCid();
 
         if(this.attributes.classes){
-            data.overlayWrapperClasses = this.attributes.classes + " overlay-wrapper";
+            data.overlayWrapperClasses = this.attributes.classes + " overlay";
         } else {
-            data.overlayWrapperClasses = "overlay-wrapper";
+            data.overlayWrapperClasses = "overlay";
         }
-        data.overlayClasses = "overlay";
+        data.overlayClasses = "overlay-body";
         switch (this.attributes.type) {
+            case OverlayView.Type.APPLICATION:
+                data.overlayWrapperClasses += " application-overlay";
+                break;
             case OverlayView.Type.PAGE:
                 data.overlayWrapperClasses += " page-overlay";
                 break;
-            case OverlayView.Type.APPLICATION:
-                data.overlayWrapperClasses += " application-overlay";
+            case OverlayView.Type.PANEL:
+                data.overlayWrapperClasses += " panel-overlay";
                 break;
         }
         switch (this.attributes.size) {
@@ -122,7 +125,8 @@ var OverlayView = Class.extend(MustacheView, {
 
 OverlayView.Type = {
     APPLICATION: "application-overlay",
-    PAGE: "page-overlay"
+    PAGE: "page-overlay",
+    PANEL: "panel-overlay"
 };
 
 OverlayView.Size = {

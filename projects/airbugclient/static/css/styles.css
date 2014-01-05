@@ -167,32 +167,49 @@ html, body {
 /* Overlay CSS
 *******************************************************************/
 
-div.overlay-wrapper, div.overlay-background {
-    position: fixed;
+div.overlay {
+    display: none;
+}
+
+div.overlay, div.overlay-background {
     top: 0;
+    right: 0;
+    bottom: 0;
     left: 0;
     width: 100%;
     height: 100%;
 }
 
-div.overlay-wrapper {
-    display: none;
-}
-
-div.application-overlay.overlay-wrapper {
+div.application-overlay.overlay {
+    position: fixed;
     z-index: 199;
 }
 
 div.application-overlay .overlay-background {
+    position: fixed;
     z-index: 200;
 }
 
-div.page-overlay.overlay-wrapper {
+div.page-overlay.overlay {
+    position: absolute;
     z-index: 99;
 }
 
 div.page-overlay .overlay-background {
+    position: absolute;
     z-index: 100;
+    background: black;
+    opacity: 0.65;
+}
+
+div.panel-overlay.overlay {
+    position: absolute;
+    z-index: 89;
+}
+
+div.panel-overlay .overlay-background {
+    position: absolute;
+    z-index: 90;
     background: black;
     opacity: 0.65;
 }
@@ -202,7 +219,7 @@ div.overlay-background {
     opacity: 0.65;
 }
 
-.overlay {
+.overlay-body {
     background-color: white;
     padding: 14px;
     border-style: solid;
@@ -211,15 +228,19 @@ div.overlay-background {
     border-radius: 10px;
 }
 
-.application-overlay .overlay {
+.application-overlay .overlay-body {
     z-index: 201;
 }
 
-.page-overlay .overlay {
+.page-overlay .overlay-body {
     z-index: 101;
 }
 
-.overlay.one-quarter-overlay {
+.panel-overlay .overlay-body {
+    z-index: 91;
+}
+
+.overlay-body.one-quarter-overlay {
     position: fixed;
     top: 25%;
     left: 37.5%;
@@ -228,7 +249,7 @@ div.overlay-background {
     width: 25%;
 }
 
-.overlay.one-third-overlay {
+.overlay-body.one-third-overlay {
     position: fixed;
     top: 33%;
     left: 33%;
@@ -237,7 +258,7 @@ div.overlay-background {
     width: 33%;
 }
 
-.overlay.one-half-overlay {
+.overlay-body.one-half-overlay {
     position: fixed;
     top: 25%;
     left: 25%;
@@ -246,7 +267,7 @@ div.overlay-background {
     width: 50%;
 }
 
-.overlay.fullscreen-overlay {
+.overlay-body.fullscreen-overlay {
     position: fixed;
     top: 0;
     right: 0;

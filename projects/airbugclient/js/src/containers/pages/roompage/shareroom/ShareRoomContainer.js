@@ -187,7 +187,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
                                         .appendTo('*[id|="button"]')
                                 ])
                         ])
-                        .appendTo(".overlay")
+                        .appendTo(".overlay-body")
                 ])
                 .build();
 
