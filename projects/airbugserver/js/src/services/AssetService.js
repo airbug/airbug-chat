@@ -83,7 +83,7 @@ var AssetService = Class.extend(Obj, {
         this.awsUploader = null;
 
         var _this = this;
-
+/*
         $series([
             $task(function(flow) {
                 var configPath = path.resolve(__dirname, '..') + '/../resources/config/aws-config.json';
@@ -105,6 +105,7 @@ var AssetService = Class.extend(Obj, {
                 console.log('AwsUploader failed to initialize');
             }
         });
+        */
     },
 
     //-------------------------------------------------------------------------------
