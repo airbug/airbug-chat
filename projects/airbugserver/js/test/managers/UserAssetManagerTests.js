@@ -189,6 +189,174 @@ var userAssetManagerCreateUserAssetTest = {
     }
 };
 
+var userAssetManagerDeleteUserAssetTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerGenerateUserAssetTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerPopulateUserAssetTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerRetrieveUserAssetTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerRetrieveUserAssetsTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerRetrieveUserAssetsByUserIdTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
+var userAssetManagerUpdateUserAssetTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserAssetManager(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        initializeManagers(this, test);
+        createEntities(this, test);
+    }
+};
+
 bugmeta.annotate(userAssetManagerCreateUserAssetTest).with(
     test().name("UserAssetManager - #createUserAsset Test")
 );

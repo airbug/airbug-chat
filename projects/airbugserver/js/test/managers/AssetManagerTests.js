@@ -380,8 +380,29 @@ var assetManagerUpdateAssetTest = {
         var _this = this;
         initializeManagers(_this, test);
         createEntities(this, test);
-        test.complete();
-        // TODO - dkk - update values and test
+        var createdAsset = _this.createdAsset;
+        createdAsset.setMimeType('image/gif');
+        createdAsset.setName('newTestName');
+        createdAsset.setThumbMimeType('image/gif');
+        createdAsset.setThumbUrl('http://host/image_t.gif');
+        createdAsset.setUrl('http://host/image.gif');
+        _this.assetManager.updateAsset(createdAsset, function(throwable, asset) {
+            if (throwable) {
+                test.error();
+            } else {
+                test.assertEqual(asset.getMimeType(), 'image/gif',
+                    'mime type should match on updated asset');
+                test.assertEqual(asset.getName(), 'newTestName',
+                    'name should match on updated asset');
+                test.assertEqual(asset.getThumbMimeType(), 'image/gif',
+                    'thumb mime type should match on updated asset');
+                test.assertEqual(asset.getThumbUrl(), 'http://host/image_t.gif',
+                    'thumb url should match on updated asset');
+                test.assertEqual(asset.getUrl(), 'http://host/image.gif',
+                    'url should match on updated asset');
+                test.complete();
+            }
+        });
     }
 };
 

@@ -119,6 +119,15 @@ var RoomService = Class.extend(Obj, {
      */
     retrieveUserAssets: function(requestContext, userAssetIds, callback) {
 
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {function(Throwable, Map.<string, Room>)} callback
+     */
+    retrieveUserAssetsByUserId: function(requestContext, userId, callback) {
+
     }
 });
 

@@ -41,12 +41,14 @@ buildProperties({
             version: "0.0.1",
             main: "./lib/AirBugServer.js",
             dependencies: {
+                "aws-sdk": "0.9.x",
                 bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
                 "buffer-crc32": "0.2.x",
                 connect: "2.x",
                 cookie: "0.1.x",
                 "cookie-signature": "1.0.x",
                 express: "3.2.x",
+                imagemagick: "0.1.x",
                 mu2express: "0.0.x",
                 mongodb: "1.3.x",
                 mongoose: "3.8.2",
@@ -62,6 +64,7 @@ buildProperties({
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
+            "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
