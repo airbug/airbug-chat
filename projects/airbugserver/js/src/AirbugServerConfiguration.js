@@ -161,11 +161,18 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          */
         this._airbugClientConfig        = null;
 
+
         /**
          * @private
-         * @type {AirbugServerConfig}
+         * @type {AssetController}
          */
-        this._airbugServerConfig        = null;
+        this._assetController           = null;
+
+        /**
+         * @private
+         * @type {AssetService}
+         */
+        this._assetService              = null;
 
         /**
          * @private
@@ -414,6 +421,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
             //-------------------------------------------------------------------------------
 
             $task(function(flow) {
+                _this._assetController.configure();
+                console.log("assetController configured");
                 _this._chatMessageController.configure();
                 console.log("chatMessageController configured");
                 _this._conversationController.configure();
@@ -487,7 +496,8 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {AssetController}
      */
     assetController: function(expressApp, bugCallRouter, assetService) {
-        return new AssetController(expressApp, bugCallRouter, assetService);
+        this._assetController = new AssetController(expressApp, bugCallRouter, assetService);
+        return this._assetController;
     },
 
     /**
@@ -495,7 +505,7 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      * @return {AssetService}
      */
     assetService: function(assetManager) {
-        return new AssetService(assetManager);
+        this._assetService = new AssetService(assetManager);
         return this._assetService;
     },
 
