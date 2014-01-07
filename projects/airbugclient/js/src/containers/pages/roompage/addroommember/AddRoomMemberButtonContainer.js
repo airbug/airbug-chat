@@ -151,7 +151,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
     },
 
     deinitializeContainer: function() {
-        this.super();
+        this._super();
         this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
