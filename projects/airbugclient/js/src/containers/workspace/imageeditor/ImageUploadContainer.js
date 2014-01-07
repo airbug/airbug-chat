@@ -128,7 +128,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-
+        this.initializeUploadWidget();
     },
 
     /**
@@ -221,7 +221,6 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.initializeEventListeners();
         this.initializeCommandSubscriptions();
-        this.initializeUploadWidget();
     },
 
     /**
@@ -236,24 +235,40 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     initializeUploadWidget: function() {
         var _this = this;
-        $('#file-upload-widget-input').fileupload({
-            url: '/app/uploadAsset',
-            type: "POST",
-            dropzone: _this.viewTop.$el.find("#image-upload-container"),
-            pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
-            autoupload: false,
-            formData: {script: true},
+        var initializedUploadWidget = $('#file-upload-widget-input').fileupload({
+            url: 'app/uploadAsset',
+            type: 'POST',
+            sequentialUploads: true,
             dataType: 'json',
-            add: function (e, data) {
-                console.log("file upload add");
-                console.log("data:", data);
-                var uploadFileView = new UploadView();
-                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container table");
-            },
-            done: function(e, data) {
-                console.log("file upload done");
+            dropzone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+            pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+            done: function (e, data) {
+                console.log("e:", e, "data:", data);
+                $.each(data.result.files, function (index, file) {
+                    console.log("file upload done:", file.name);
+                });
             }
         });
+
+        console.log("initialized file-upload-widget-input:", initializedUploadWidget);
+
+//            url: '/app/uploadAsset',
+//            type: "POST",
+//            sequentialUploads: true
+//            dropzone: _this.viewTop.$el.find("#image-upload-container"),
+//            pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+//            autoupload: false,
+//            formData: {script: true},
+//            dataType: 'json',
+//            add: function (e, data) {
+//                console.log("file upload add");
+//                console.log("data:", data);
+//                var uploadFileView = new UploadView();
+//                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container table");
+//            },
+//            done: function(e, data) {
+//                console.log("file upload done");
+//            }
     },
 
     deinitializeUploadWidget: function() {
