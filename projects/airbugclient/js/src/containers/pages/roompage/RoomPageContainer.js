@@ -243,7 +243,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     },
 
     hearOverlayBackgroundClickedEvent: function() {
-        this.viewTop.$el.find(".share-room-overlay").hide();
+        this.hideShareRoomOverlay();
     },
 
     handleDisplayShareRoomOverlayCommand: function() {
@@ -251,6 +251,10 @@ var RoomPageContainer = Class.extend(PageContainer, {
     },
 
     handleHideShareRoomOverlayCommand: function() {
+        this.hideShareRoomOverlay();
+    },
+
+    hideShareRoomOverlay: function() {
         this.viewTop.$el.find(".share-room-overlay").hide();
     },
 

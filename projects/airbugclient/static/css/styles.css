@@ -254,7 +254,7 @@ div.overlay-background {
     top: 33%;
     left: 33%;
     min-height: 100px;
-    max-height: 33%;
+    max-height: 50%;
     width: 33%;
 }
 
@@ -905,15 +905,15 @@ div.overlay-background {
     .copy-to-clipboard.zeroclipboard-is-active { background-color:#aaa; }
 
 
-/* AddRoomMemberContainer
+/* ShareRoomContainer
 *******************************************************************/
 
-li.add-roommember-container {
-    padding-left: 3px;
-    padding-right: 3px;
+.share-room-overlay .box .box-body {
+    margin-top: 20px;
 }
-.add-roommember-container textarea {
-    display: block;
+
+.share-room-overlay .overlay-body {
+    height: 120px;
 }
 
 .faux-textarea {
@@ -1000,8 +1000,10 @@ li.add-roommember-container {
 }
 
 #image-upload-add-by-url-container {
-    margin-top: 6px;
+    margin-top: 0px;
     margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding-left: 0px;
 }
 
@@ -1025,6 +1027,14 @@ li.add-roommember-container {
 
 #file-upload-widget {
     overflow-y: scroll;
+}
+
+#file-upload-widget .btn-toolbar:first-child {
+    margin-bottom: 0px;
+}
+
+#file-upload-widget .btn-toolbar:last-child {
+    margin-top: 5px;
 }
 
 #file-upload-widget .control-group {
