@@ -19,6 +19,7 @@
 //@Require('aws.S3Api')
 //@Require('aws.S3Bucket')
 //@Require('bugflow.BugFlow')
+//@Require('bugfs.Path')
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -46,6 +47,7 @@ var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var AwsConfig               = bugpack.require('aws.AwsConfig');
 var AwsUploader             = bugpack.require('aws.AwsUploader');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var Path                    = bugpack.require('bugfs.Path');
 
 
 //-------------------------------------------------------------------------------
@@ -130,10 +132,19 @@ var AssetService = Class.extend(Obj, {
         var name = file.name;
         var mimeType = file.type;
         var path = file.path;
+        var thumbnailPath = file.path + '_t';
         var size = file.size;
         var asset = null;
         var url = null;
         var thumbnailUrl = null;
+        var namePath = new Path(name);
+        var extName = namePath.getExtName();
+        var s3Key = UuidGenerator.generateUuid();
+        var thumbnailS3Key = s3Key + '_t';
+        if (extName) {
+            s3Key = s3Key + '.' + extName;
+            thumbnailS3Key = thumbnailS3Key + '.' + extName;
+        }
 
         $series([
             $task(function(flow) {
@@ -141,15 +152,14 @@ var AssetService = Class.extend(Obj, {
                 flow.complete();
             }),
             $task(function(flow) {
-                // TODO - dkk - upload file to s3
-                // TODO - dkk - add new upload method letting user specify local path and remote key.
-                _this.awsUploader.upload(path, function(error) {
+                _this.awsUploader.upload(path, s3Key, mimeType, function(error, returnedS3Object) {
                     flow.complete(error);
-                })
+                });
             }),
             $task(function(flow) {
-                // TODO - dkk - upload thumbnail to s3
-                flow.complete();
+                _this.awsUploader.upload(thumbnailPath, thumbnailS3Key, mimeType, function(error, returnedS3Object) {
+                    flow.complete(error);
+                });
             }),
             $task(function(flow) {
                 var newAsset = _this.assetManager.generateAsset({
@@ -223,7 +233,6 @@ var AssetService = Class.extend(Obj, {
         ]).execute(function(throwable) {
             callback(throwable);
         });
-        this.assetManager.deleteAsset()
     }
 });
 
