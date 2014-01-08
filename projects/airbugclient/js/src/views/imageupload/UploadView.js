@@ -35,12 +35,12 @@ var UploadView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:       '<tr class="template-upload fade">\
+    template:       '<tr id="{{id}}" class="template-upload fade">\
         <td>\
             <span class="preview"></span>\
         </td>\
         <td>\
-            <p class="name">{{fileName}}</p>\
+            <p class="name">{{filename}}</p>\
             <strong class="error"></strong>\
         </td>\
         <td>\
@@ -59,6 +59,7 @@ var UploadView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "upload-" + this.getCid();
+        data.filename = this.attributes.filename;
         return data;
     }
 });
