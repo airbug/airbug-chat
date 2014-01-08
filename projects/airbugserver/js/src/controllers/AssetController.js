@@ -107,7 +107,11 @@ var AssetController = Class.extend(EntityController, {
                 console.log("AssetController#/app/uploadAsset entities = ", entities);
                 var assetJson = null;
                 if (entities) {
-                    assetJson = {"files": LiteralUtil.convertToLiteral(entities.toObject())};
+                    var assetObjects = [];
+                    for (var entity in entities) {
+                        assetObjects.push(LiteralUtil.convertToLiteral(entity.toObject()));
+                    }
+                    assetJson = {"files": assetObjects};
                 }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
