@@ -107,7 +107,7 @@ var AssetController = Class.extend(EntityController, {
                 console.log("AssetController#/app/uploadAsset entities = ", entities);
                 var assetJson = null;
                 if (entities) {
-                    assetJson = LiteralUtil.convertToLiteral(entities.toObject());
+                    assetJson = {"files": LiteralUtil.convertToLiteral(entities.toObject())};
                 }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
@@ -115,6 +115,40 @@ var AssetController = Class.extend(EntityController, {
                     response.json(assetJson);
                 }
             });
+
+//          EXPECTED SUCCESS RESPONSE FORMAT
+//            {"files": [
+//                {
+//                    "name": "picture1.jpg",
+//                    "size": 902604,
+//                    "url": "http:\/\/example.org\/files\/picture1.jpg",
+//                    "thumbnailUrl": "http:\/\/example.org\/files\/thumbnail\/picture1.jpg",
+//                    "deleteUrl": "http:\/\/example.org\/files\/picture1.jpg",
+//                    "deleteType": "DELETE"
+//                },
+//                {
+//                    "name": "picture2.jpg",
+//                    "size": 841946,
+//                    "url": "http:\/\/example.org\/files\/picture2.jpg",
+//                    "thumbnailUrl": "http:\/\/example.org\/files\/thumbnail\/picture2.jpg",
+//                    "deleteUrl": "http:\/\/example.org\/files\/picture2.jpg",
+//                    "deleteType": "DELETE"
+//                }
+//            ]}
+//
+//          EXPECTED ERROR RESPONSE FORMAT
+//            {"files": [
+//                {
+//                    "name": "picture1.jpg",
+//                    "size": 902604,
+//                    "error": "Filetype not allowed"
+//                },
+//                {
+//                    "name": "picture2.jpg",
+//                    "size": 841946,
+//                    "error": "Filetype not allowed"
+//                }
+//            ]}
         });
 
 
@@ -136,8 +170,9 @@ var AssetController = Class.extend(EntityController, {
                 assetService.addAssetFromUrl(requestContext, url, function(throwable, asset) {
                     _this.processCreateResponse(responder, throwable, asset, callback);
                 });
-            },
-
+            }
+            // ,
+            //
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder

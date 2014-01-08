@@ -85,7 +85,7 @@ var AssetManager = Class.extend(EntityManager, {
      *      mimeType: string,
      *      name: string,
      *      thumbMimeType: string,
-     *      thumbUrl: string,
+     *      thumbnailUrl: string,
      *      updatedAt: Date,
      *      url: string
      * }} data

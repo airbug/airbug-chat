@@ -63,13 +63,13 @@ var setupAssetTests = function(setupObject) {
     setupObject.testMimeType           = "image/png";
     setupObject.testName               = "testName";
     setupObject.testThumbMimeType      = "image/png";
-    setupObject.testThumbUrl           = "http://host/image_t.png";
+    setupObject.testThumbnailUrl           = "http://host/image_t.png";
     setupObject.testUrl                = "http://host/image.png";
     setupObject.testAssetData          = {
         mimeType: setupObject.testMimeType,
         name: setupObject.testName,
         thumbMimeType: setupObject.testThumbMimeType,
-        thumbUrl: setupObject.testThumbUrl,
+        thumbnailUrl: setupObject.testThumbnailUrl,
         url: setupObject.testUrl
     };
     setupObject.testAsset              = new Asset(setupObject.testAssetData);
@@ -78,7 +78,7 @@ var setupAssetTests = function(setupObject) {
         mimeType: 'image/jpeg',
         name: 'testJpeg',
         thumbMimeType: 'image/jpeg',
-        thumbUrl: 'http://host/image_t.jpg',
+        thumbnailUrl: 'http://host/image_t.jpg',
         url: 'http://host/image.jpg'
     };
     setupObject.testAsset2             = new Asset(setupObject.testAssetData2);
@@ -241,7 +241,7 @@ var assetManagerGenerateAssetTest = {
             'name should match on generated asset');
         test.assertEqual(asset.getThumbMimeType(), 'image/png',
             'thumb mime type should match on generated asset');
-        test.assertEqual(asset.getThumbUrl(), 'http://host/image_t.png',
+        test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.png',
             'thumb url should match on generated asset');
         test.assertEqual(asset.getUrl(), 'http://host/image.png',
             'url should match on generated asset');
@@ -311,7 +311,7 @@ var assetManagerRetrieveAssetTest = {
                     'name should match on generated asset');
                 test.assertEqual(asset.getThumbMimeType(), 'image/png',
                     'thumb mime type should match on generated asset');
-                test.assertEqual(asset.getThumbUrl(), 'http://host/image_t.png',
+                test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.png',
                     'thumb url should match on generated asset');
                 test.assertEqual(asset.getUrl(), 'http://host/image.png',
                     'url should match on generated asset');
@@ -384,7 +384,7 @@ var assetManagerUpdateAssetTest = {
         createdAsset.setMimeType('image/gif');
         createdAsset.setName('newTestName');
         createdAsset.setThumbMimeType('image/gif');
-        createdAsset.setThumbUrl('http://host/image_t.gif');
+        createdAsset.setThumbnailUrl('http://host/image_t.gif');
         createdAsset.setUrl('http://host/image.gif');
         _this.assetManager.updateAsset(createdAsset, function(throwable, asset) {
             if (throwable) {
@@ -396,7 +396,7 @@ var assetManagerUpdateAssetTest = {
                     'name should match on updated asset');
                 test.assertEqual(asset.getThumbMimeType(), 'image/gif',
                     'thumb mime type should match on updated asset');
-                test.assertEqual(asset.getThumbUrl(), 'http://host/image_t.gif',
+                test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.gif',
                     'thumb url should match on updated asset');
                 test.assertEqual(asset.getUrl(), 'http://host/image.gif',
                     'url should match on updated asset');

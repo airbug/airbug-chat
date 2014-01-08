@@ -50,12 +50,12 @@ var assetBasicsTest = {
     setup: function(test) {
         this.testMimeType = "image/png";
         this.testThumbMimeType = "image/png";
-        this.testThumbUrl = "http://host/image_t.png";
+        this.testThumbnailUrl = "http://host/image_t.png";
         this.testUrl = "http://host/image.png";
         this.testAsset = new Asset({
             mimeType: this.testMimeType,
             thumbMimeType: this.testThumbMimeType,
-            thumbUrl: this.testThumbUrl,
+            thumbnailUrl: this.testThumbnailUrl,
             url: this.testUrl
         });
     },
@@ -71,8 +71,8 @@ var assetBasicsTest = {
             "Assert Asset.mimeType was set correctly");
         test.assertEqual(this.testAsset.getThumbMimeType(), this.testThumbMimeType,
             "Assert Asset.mimeType was set correctly");
-        test.assertEqual(this.testAsset.getThumbUrl(), this.testThumbUrl,
-            "Assert Asset.thumbUrl was set correctly");
+        test.assertEqual(this.testAsset.getThumbnailUrl(), this.testThumbnailUrl,
+            "Assert Asset.thumbnailUrl was set correctly");
         test.assertEqual(this.testAsset.getUrl(), this.testUrl,
             "Assert Asset.url was set correctly");
 
@@ -83,9 +83,9 @@ var assetBasicsTest = {
         this.testAsset.setThumbMimeType("image/jpeg");
         test.assertEqual(this.testAsset.getThumbMimeType(), "image/jpeg",
             "Assert Asset.setThumbMimeType works correctly");
-        this.testAsset.setThumbUrl("http://otherhost/image_t.jpg");
-        test.assertEqual(this.testAsset.getThumbUrl(), "http://otherhost/image_t.jpg",
-            "Assert Asset.setThumbUrl works correctly");
+        this.testAsset.setThumbnailUrl("http://otherhost/image_t.jpg");
+        test.assertEqual(this.testAsset.getThumbnailUrl(), "http://otherhost/image_t.jpg",
+            "Assert Asset.setThumbnailUrl works correctly");
         this.testAsset.setUrl("http://otherhost/image.jpg");
         test.assertEqual(this.testAsset.getUrl(), "http://otherhost/image.jpg",
             "Assert Asset.setUrl works correctly");

@@ -130,9 +130,10 @@ var AssetService = Class.extend(Obj, {
         var name = file.name;
         var mimeType = file.type;
         var path = file.path;
+        var size = file.size;
         var asset = null;
         var url = null;
-        var thumbUrl = null;
+        var thumbnailUrl = null;
 
         $series([
             $task(function(flow) {
@@ -154,12 +155,14 @@ var AssetService = Class.extend(Obj, {
                 var newAsset = _this.assetManager.generateAsset({
                     mimeType: mimeType,
                     name: name,
+                    size: size,
                     thumbMimeType: mimeType,
-                    thumbUrl: thumbUrl,
+                    thumbnailUrl: thumbnailUrl,
                     url: url
                 });
                 _this.assetManager.createAsset(newAsset, function(throwable, createdAsset) {
                     asset = createdAsset;
+                    console.log("createdAsset:", createdAsset);
                     flow.complete();
                 });
             })
