@@ -45,8 +45,6 @@ var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var AwsConfig               = bugpack.require('aws.AwsConfig');
 var AwsUploader             = bugpack.require('aws.AwsUploader');
-//var S3Api                   = bugpack.require('aws.S3Api');
-//var S3Bucket                = bugpack.require('aws.S3Bucket');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 
 
@@ -58,6 +56,7 @@ var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 var $iterableParallel       = BugFlow.$iterableParallel;
+var $forEachParallel        = BugFlow.$forEachParallel;
 
 
 //-------------------------------------------------------------------------------
@@ -70,42 +69,21 @@ var AssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(assetManager) {
+    _constructor: function(assetManager, awsUploader) {
 
         this._super();
 
         /**
          * @private
-         * type {AssetManager}
+         * @type {AssetManager}
          */
         this.assetManager = assetManager;
 
-        this.awsUploader = null;
-
-        var _this = this;
-/*
-        $series([
-            $task(function(flow) {
-                var configPath = path.resolve(__dirname, '..') + '/../resources/config/aws-config.json';
-                console.log('awsUploader configPath = ', configPath);
-                _this.awsUploader = new AwsUploader(configPath);
-                _this.awsUploader.initialize(function(error){
-                    if (!error) {
-                        console.log("awsUploader initialized");
-                    } else {
-                        console.log("awsUploader failed to initialize. error = ", error);
-                    }
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (!error) {
-                console.log('AwsUploader successfully initialized');
-            } else {
-                console.log('AwsUploader failed to initialize');
-            }
-        });
-        */
+        /**
+         * @private
+         * @type {AwsUploader}
+         */
+        this.awsUploader = awsUploader;
     },
 
     //-------------------------------------------------------------------------------
@@ -114,13 +92,28 @@ var AssetService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {Array<Object>} files
-     * @param {string} assetName
-     * @param {string} contentType
-     * @param {function(Throwable, Entity)} callback
+     * @param {Array<{
+     *      name: string,
+     *      type: string,
+     *      path: string
+     * }>} files
+     * @param {function(Throwable, Array<Entity>)} callback
      */
-    uploadAssets: function(requestContext, files, assetName, contentType, callback) {
-        // iterate over files and make calls to uploadAsset
+    uploadAssets: function(requestContext, files, callback) {
+        var _this = this;
+        var assets = [];
+        $forEachParallel(files, function(flow, file) {
+            _this.uploadAsset(requestContext, file, function(throwable, asset) {
+                assets.push(asset);
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (throwable) {
+                callback(throwable, undefined)
+            } else {
+                callback(undefined, assets);
+            }
+        });
     },
 
     /**
@@ -130,21 +123,55 @@ var AssetService = Class.extend(Obj, {
      *      type: string,
      *      path: string
      * }} file
-     * @param {string} assetName
-     * @param {string} contentType
      * @param {function(Throwable, Entity)} callback
      */
-    uploadAsset: function(requestContext, file, assetName, contentType, callback) {
-        // make thumbnail
-        // upload to s3
-        // create asset
-        // call callback
+    uploadAsset: function(requestContext, file, callback) {
+        var _this = this;
+        var name = file.name;
+        var mimeType = file.type;
+        var path = file.path;
+        var asset = null;
+        var url = null;
+        var thumbUrl = null;
+
+        $series([
+            $task(function(flow) {
+                // TODO - dkk - make thumbnail
+                flow.complete();
+            }),
+            $task(function(flow) {
+                // TODO - dkk - upload file to s3
+                // TODO - dkk - add new upload method letting user specify local path and remote key.
+                _this.awsUploader.upload(path, function(error) {
+                    flow.complete(error);
+                })
+            }),
+            $task(function(flow) {
+                // TODO - dkk - upload thumbnail to s3
+                flow.complete();
+            }),
+            $task(function(flow) {
+                var newAsset = _this.assetManager.generateAsset({
+                    mimeType: mimeType,
+                    name: name,
+                    thumbMimeType: mimeType,
+                    thumbUrl: thumbUrl,
+                    url: url
+                });
+                _this.assetManager.createAsset(newAsset, function(throwable, createdAsset) {
+                    asset = createdAsset;
+                    flow.complete();
+                });
+            })
+        ]).execute(function(throwable) {
+            callback(throwable, asset);
+        });
     },
 
     /**
      * @param {RequestContext} requestContext
      * @param {string} url
-     * @param {function(Throwable, Asset)} callback
+     * @param {function(Throwable, Entity)} callback
      */
     addAssetFromUrl: function(requestContext, url, callback) {
         var contentType = undefined;
@@ -159,7 +186,12 @@ var AssetService = Class.extend(Obj, {
             response.pipe(file);
             file.on('finish', function() {
                 file.close();
-                this.uploadAsset(requestContext, fileName, assetName, contentType, callback);
+                var fileObject = {
+                    name: "someName", // TODO - dkk - get name
+                    path: "getPath" + fileName, // TODO - dkk - get complete path of file that was created
+                    type: "someType" // TODO - dkk - attempt to get mime type
+                };
+                this.uploadAsset(requestContext, fileObject, callback);
             });
         });
         // TODO - dkk - handle errors

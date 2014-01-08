@@ -68,6 +68,7 @@ var setupAssetService = function(setupObject) {
         }
     };
     setupObject.logger                      = new Logger();
+    // TODO - dkk - pass in awsUploader when creating asset service
     setupObject.testAssetService            = new AssetService(dummyAssetManager);
     setupObject.testAssetService.logger     = setupObject.logger;
 };

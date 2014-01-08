@@ -99,11 +99,15 @@ var AssetController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var data                = request.body;
             var files               = request.files;
-            // TODO: need to iterate over files list. We can (and should) do these in parallel.
-            assetService.uploadAsset(requestContext, file, function(throwable, entity) {
+            // TODO - dkk - check to see if files is an object and has a files property. Any other cases?
+            console.log("AssetController#/app/uploadAsset data = ", data);
+            console.log("AssetController#/app/uploadAsset files = ", files);
+            console.log("AssetController#/app/uploadAsset files.files = ", files.files);
+            assetService.uploadAssets(requestContext, files.files, function(throwable, entities) {
+                console.log("AssetController#/app/uploadAsset entities = ", entities);
                 var assetJson = null;
-                if (entity) {
-                    assetJson = LiteralUtil.convertToLiteral(entity.toObject());
+                if (entities) {
+                    assetJson = LiteralUtil.convertToLiteral(entities.toObject());
                 }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
@@ -139,7 +143,7 @@ var AssetController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              * @param {function(Throwable)} callback
              */
-            deleteAsset: function(request, responder, callback) {
+            /*deleteAsset: function(request, responder, callback) {
                 console.log("AssetController#deleteAsset");
                 var requestContext = request.requestContext;
                 // TODO - dkk - get asset id from request
@@ -151,7 +155,7 @@ var AssetController = Class.extend(EntityController, {
                         _this.processThrowable(responder, throwable, callback);
                     }
                 });
-            }
+            }*/
         });
     }
 });

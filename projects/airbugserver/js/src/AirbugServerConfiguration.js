@@ -30,6 +30,8 @@
 //@Require('airbugserver.SessionServiceConfig')
 //@Require('airbugserver.UserController')
 //@Require('airbugserver.UserService')
+//@Require('aws.AwsConfig')
+//@Require('aws.AwsUploader')
 //@Require('bugcall.BugCallRequestProcessor')
 //@Require('bugcall.BugCallServer')
 //@Require('bugcall.CallServer')
@@ -96,6 +98,8 @@ var SessionService          = bugpack.require('airbugserver.SessionService');
 var SessionServiceConfig    = bugpack.require('airbugserver.SessionServiceConfig');
 var UserController          = bugpack.require('airbugserver.UserController');
 var UserService             = bugpack.require('airbugserver.UserService');
+var AwsConfig               = bugpack.require('aws.AwsConfig');
+var AwsUploader             = bugpack.require('aws.AwsUploader');
 var BugCallRequestProcessor = bugpack.require('bugcall.BugCallRequestProcessor');
 var BugCallServer           = bugpack.require('bugcall.BugCallServer');
 var CallServer              = bugpack.require('bugcall.CallServer');
@@ -173,6 +177,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
          * @type {AssetService}
          */
         this._assetService              = null;
+
+        /**
+         * @private
+         * @type {AwsUploader}
+         */
+        this._awsUploader               = null;
 
         /**
          * @private
@@ -415,6 +425,16 @@ var AirbugServerConfiguration = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
+            $task(function(flow) {
+                _this._awsUploader.initialize(function(error) {
+                    if (!error) {
+                        console.log("awsUploader initialized successfully");
+                    } else {
+                        console.log("awsUploader failed to initialize. error = ", error);
+                    }
+                    flow.complete(error);
+                });
+            }),
 
             //-------------------------------------------------------------------------------
             // Controllers
@@ -507,6 +527,17 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     assetService: function(assetManager) {
         this._assetService = new AssetService(assetManager);
         return this._assetService;
+    },
+
+    /**
+     * @return {AwsUploader}
+     */
+    awsUploader: function() {
+        var configPath = path.resolve(__dirname, '..') + '/resources/config/aws-config.json';
+        // TODO - dkk - check to see if configPath exists
+        // TODO - dkk - figure out a better way of configuring this
+        this._awsUploader = new AwsUploader(configPath);
+        return this._awsUploader;
     },
 
     /**
@@ -930,6 +961,12 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
 
         //-------------------------------------------------------------------------------
+        // BugJs
+        //-------------------------------------------------------------------------------
+
+        module('awsUploader'),
+
+        //-------------------------------------------------------------------------------
         // Util
         //-------------------------------------------------------------------------------
 
@@ -1033,7 +1070,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("assetService")
             .args([
-                arg().ref("assetManager")
+                arg().ref("assetManager"),
+                arg().ref("awsUploader")
             ]),
         module("chatMessageService")
             .args([
