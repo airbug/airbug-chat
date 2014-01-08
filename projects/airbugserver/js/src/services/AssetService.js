@@ -26,7 +26,7 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
-var path                    = require("path");
+var path                    = require('path');
 var http                    = require('http');
 var https                   = require('https');
 var fs                      = require('fs');
@@ -95,14 +95,68 @@ var AssetService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     * @param s3Object
+     * @param {RequestContext} requestContext
+     * @param {string} url
+     * @param {function(Throwable, Entity)} callback
+     */
+    addAssetFromUrl: function(requestContext, url, callback) {
+        var contentType = undefined;
+        var assetName = '';
+
+        // TODO - dkk - Parse URL to get filename. If no filename then generate one
+        var fileName = '';
+        // TODO - dkk - get content type on get request.
+
+        var file = fs.createWriteStream(fileName);
+        var request = http.get(url, function(response) {
+            response.pipe(file);
+            file.on('finish', function() {
+                file.close();
+                var fileObject = {
+                    name: 'someName', // TODO - dkk - get name
+                    path: 'getPath' + fileName, // TODO - dkk - get complete path of file that was created
+                    type: 'someType' // TODO - dkk - attempt to get mime type
+                };
+                this.uploadAsset(requestContext, fileObject, callback);
+            });
+        });
+        // TODO - dkk - handle errors
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} assetId
+     * @param {function(Throwable, asset)} callback
+     */
+    deleteAsset: function(requestContext, assetId, callback) {
+        var _this = this;
+        var asset = undefined;
+        $series([
+            $task(function(flow) {
+                _this.assetManager.retrieveAsset(assetId, function(throwable, retrievedAsset) {
+                    asset = retrievedAsset;
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.assetManager.deleteAsset(asset, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+                callback(throwable);
+            });
+    },
+
+    /**
+     * @param {S3Object} s3Object
+     * @return {string}
      */
     getObjectUrl: function(s3Object) {
         var props = this.awsUploader.getProps();
         var awsConfig = new AwsConfig(props.awsConfig);
         var s3Bucket = new S3Bucket({
-            name: props.bucket || props["local-bucket"]
+            name: props.bucket || props['local-bucket']
         });
         var s3Api = new S3Api(awsConfig);
         return s3Api.getObjectURL(s3Object, s3Bucket);
@@ -127,7 +181,7 @@ var AssetService = Class.extend(Obj, {
             });
         }).execute(function(throwable) {
             if (throwable) {
-                callback(throwable, undefined)
+                callback(throwable, undefined);
             } else {
                 callback(undefined, assets);
             }
@@ -190,66 +244,12 @@ var AssetService = Class.extend(Obj, {
                 });
                 _this.assetManager.createAsset(newAsset, function(throwable, createdAsset) {
                     asset = createdAsset;
-                    console.log("createdAsset:", createdAsset);
+                    console.log('createdAsset:', createdAsset);
                     flow.complete();
                 });
             })
         ]).execute(function(throwable) {
             callback(throwable, asset);
-        });
-    },
-
-    /**
-     * @param {RequestContext} requestContext
-     * @param {string} url
-     * @param {function(Throwable, Entity)} callback
-     */
-    addAssetFromUrl: function(requestContext, url, callback) {
-        var contentType = undefined;
-        var assetName = "";
-
-        // TODO - dkk - Parse URL to get filename. If no filename then generate one
-        var fileName = "";
-        // TODO - dkk - get content type on get request.
-
-        var file = fs.createWriteStream(fileName);
-        var request = http.get(url, function(response) {
-            response.pipe(file);
-            file.on('finish', function() {
-                file.close();
-                var fileObject = {
-                    name: "someName", // TODO - dkk - get name
-                    path: "getPath" + fileName, // TODO - dkk - get complete path of file that was created
-                    type: "someType" // TODO - dkk - attempt to get mime type
-                };
-                this.uploadAsset(requestContext, fileObject, callback);
-            });
-        });
-        // TODO - dkk - handle errors
-    },
-
-    /**
-     * @param {RequestContext} requestContext
-     * @param {string} assetId
-     * @param {function(Throwable, asset)} callback
-     */
-    deleteAsset: function(requestContext, assetId, callback) {
-        var _this = this;
-        var asset = undefined;
-        $series([
-            $task(function(flow) {
-                _this.assetManager.retrieveAsset(assetId, function(throwable, retrievedAsset) {
-                    asset = retrievedAsset;
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.assetManager.deleteAsset(asset, function(throwable) {
-                    flow.complete(throwable);
-                })
-            })
-        ]).execute(function(throwable) {
-            callback(throwable);
         });
     }
 });
