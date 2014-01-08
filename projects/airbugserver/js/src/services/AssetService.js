@@ -128,22 +128,22 @@ var AssetService = Class.extend(Obj, {
      * @param {function(Throwable, Entity)} callback
      */
     uploadAsset: function(requestContext, file, callback) {
-        var _this = this;
-        var name = file.name;
-        var mimeType = file.type;
-        var path = file.path;
-        var thumbnailPath = file.path + '_t';
-        var size = file.size;
-        var asset = null;
-        var url = null;
-        var thumbnailUrl = null;
-        var namePath = new Path(name);
-        var extName = namePath.getExtName();
-        var s3Key = UuidGenerator.generateUuid();
-        var thumbnailS3Key = s3Key + '_t';
+        var _this           = this;
+        var name            = file.name;
+        var mimeType        = file.type;
+        var path            = file.path;
+        var thumbnailPath   = file.path + '_t';
+        var size            = file.size;
+        var asset           = null;
+        var url             = null;
+        var thumbnailUrl    = null;
+        var namePath        = new Path(name);
+        var extName         = namePath.getExtName();
+        var s3Key           = UuidGenerator.generateUuid();
+        var thumbnailS3Key  = s3Key + '_t';
         if (extName) {
-            s3Key = s3Key + '.' + extName;
-            thumbnailS3Key = thumbnailS3Key + '.' + extName;
+            s3Key           = s3Key + '.' + extName;
+            thumbnailS3Key  = thumbnailS3Key + '.' + extName;
         }
 
         $series([
