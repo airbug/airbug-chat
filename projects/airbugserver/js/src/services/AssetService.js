@@ -46,6 +46,8 @@ var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var AwsConfig               = bugpack.require('aws.AwsConfig');
 var AwsUploader             = bugpack.require('aws.AwsUploader');
+var S3Api                   = bugpack.require('aws.S3Api');
+var S3Bucket                = bugpack.require('aws.S3Bucket');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var Path                    = bugpack.require('bugfs.Path');
 
@@ -91,6 +93,20 @@ var AssetService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     *
+     * @param s3Object
+     */
+    getObjectUrl: function(s3Object) {
+        var props = this.awsUploader.getProps();
+        var awsConfig = new AwsConfig(props.awsConfig);
+        var s3Bucket = new S3Bucket({
+            name: props.bucket || props["local-bucket"]
+        });
+        var s3Api = new S3Api(awsConfig);
+        return s3Api.getObjectURL(s3Object, s3Bucket);
+    },
 
     /**
      * @param {RequestContext} requestContext
@@ -153,11 +169,13 @@ var AssetService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 _this.awsUploader.upload(path, s3Key, mimeType, function(error, returnedS3Object) {
+                    url = _this.getObjectUrl(returnedS3Object);
                     flow.complete(error);
                 });
             }),
             $task(function(flow) {
                 _this.awsUploader.upload(thumbnailPath, thumbnailS3Key, mimeType, function(error, returnedS3Object) {
+                    thumbnailUrl = _this.getObjectUrl(returnedS3Object);
                     flow.complete(error);
                 });
             }),
