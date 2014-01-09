@@ -29,3 +29,5 @@ buildbug.json
 
 #bugunit
 .bugunit
+
+aws-config.json
