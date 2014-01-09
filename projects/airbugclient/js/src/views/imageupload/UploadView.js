@@ -35,23 +35,28 @@ var UploadView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:       '<tr id="{{id}}" class="template-upload fade">\
-        <td>\
-            <span class="preview"></span>\
-        </td>\
-        <td>\
-            <p class="name">{{filename}}</p>\
-            <strong class="error"></strong>\
-        </td>\
-        <td>\
-            <p class="size">Processing...</p>\
-            <div class="progress"></div>\
-        </td>\
-        <td>\
-            <button class="start">Start</button>\
-            <button class="cancel">Cancel</button>\
-        </td>\
-    </tr>',
+    template:       '<div id="{{id}}" class="file-upload-item">\
+            <div class="preview">\
+            </div>\
+            <div class="filename">\
+                <p class="">{{filename}}</p>\
+            </div>\
+            <div class="success-indicator pull-right" style="display: none">\
+                <i class="icon-ok"></i>\
+            </div>\
+            <div class="cancel-button pull-right">\
+                <button class="btn btn-warning"><i class="icon-ban-circle icon-white"></i></button>\
+            </div>\
+            <div class="progress progress-striped active">\
+                <div class="bar" style="width: 10%">\
+                </div>\
+            </div>\
+            <div>\
+                <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>\
+                <button class="btn btn-success"><i class="icon-download icon-white"></i> Save</button>\
+                <button class="btn btn-primary"><i class="icon-envelope icon-white"></i> Send</button>\
+            </div>\
+    <div>',
 
     /**
      * @return {Object}

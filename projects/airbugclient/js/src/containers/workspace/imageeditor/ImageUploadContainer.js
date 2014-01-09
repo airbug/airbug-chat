@@ -104,6 +104,10 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
          */
         this.imageUploadView            = null;
 
+        /**
+         * @private
+         * @type {NakedButtonView}
+         */
         this.imageListLinkButtonView    = null;
 
 
@@ -205,7 +209,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
         this.setViewTop(this.imageUploadView);
 
-        this.imageListLinkButtonView = this.findViewById("image-list-link-button");
+        this.imageListLinkButtonView    = this.findViewById("image-list-link-button");
     },
 
     createContainerChildren: function() {
@@ -235,40 +239,99 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     initializeUploadWidget: function() {
         var _this = this;
-        var initializedUploadWidget = $('#file-upload-widget-input').fileupload({
+        $('#file-upload-widget').fileupload({
             url: 'app/uploadAsset',
             type: 'POST',
+            singleFileUploads: true,
             sequentialUploads: true,
             dataType: 'json',
             dropzone: _this.viewTop.$el.find("#image-upload-container .box-body"),
             pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
-            done: function (e, data) {
-                console.log("e:", e, "data:", data);
-                $.each(data.result.files, function (index, file) {
-                    console.log("file upload done:", file.name);
-                });
-            }
-        });
-
-        console.log("initialized file-upload-widget-input:", initializedUploadWidget);
-
-//            url: '/app/uploadAsset',
-//            type: "POST",
-//            sequentialUploads: true
-//            dropzone: _this.viewTop.$el.find("#image-upload-container"),
-//            pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 5000000, // 5 MB
+            // Enable image resizing, except for Android and Opera,
+            // which actually support image resizing, but fail to
+            // send Blob objects via XHR requests:
+            disableImageResize: /Android(?!.*Chrome)|Opera/
+                .test(window.navigator.userAgent),
+//            previewMaxWidth: 100,
+//            previewMaxHeight: 100,
+//            previewCrop: true,
 //            autoupload: false,
 //            formData: {script: true},
-//            dataType: 'json',
-//            add: function (e, data) {
-//                console.log("file upload add");
-//                console.log("data:", data);
-//                var uploadFileView = new UploadView();
-//                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container table");
-//            },
-//            done: function(e, data) {
-//                console.log("file upload done");
-//            }
+            progressInterval: 100,
+            add: function (e, data) {
+                console.log("file upload add");
+                console.log("index:", data.index);
+                console.log("data:", data);
+
+                _this.viewTop.$el.find(".box-body .box>span").hide();
+                var filename = data.files[0].name;
+                console.log("filename:", filename);
+
+                var uploadFileView = view(UploadView).attributes({filename: filename}).build();
+                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container .box-body .box");
+                data.context = uploadFileView.$el;
+                if (data.autoUpload || (data.autoUpload !== false &&
+                    $(this).fileupload('option', 'autoUpload'))) {
+                    data.process().done(function () {
+                        data.submit();
+                    });
+                }
+            },
+            done: function (event, data) {
+                console.log("event:", event, "data:", data);
+                console.log("context:", data.context); //in the form of an array.
+                if(data.result.files){
+                    $.each(data.result.files, function (index, file) {
+                        console.log("file upload done:", file.name);
+                        $(data.context[index]).find(".success-indicator").attr("style", "");
+                        $(data.context[index]).find(".progress").hide();
+                    });
+                }
+            },
+            process: function (e, data) {
+                    console.log('Processing ' + data.files[data.index].name + '...');
+            },
+            progress: function (event, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
+                data.context.find(".bar").attr("style", "width: " + progress);
+                if(progress === "100%"){
+                    data.context.find(".cancel-button").hide();
+                }
+            },
+            progressall: function (event, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
+                console.log("progressall:", progress);
+            }
+        }).on("fileuploadprocessalways", function (e, data) {
+            var index = data.index,
+                file = data.files[index],
+                node = $(data.context.children()[index]);
+            console.log("processalways:", "index:", index, "file:", file, "node:", node);
+//                if (file.preview) {
+//                    node
+//                        .prepend('<br>')
+//                        .prepend(file.preview);
+//                }
+//                if (file.error) {
+//                    node
+//                        .append('<br>')
+//                        .append($('<span class="text-danger"/>').text(file.error));
+//                }
+//                if (index + 1 === data.files.length) {
+//                    data.context.find('button')
+//                        .text('Upload')
+//                        .prop('disabled', !!data.files.error);
+//                }
+        });
+//        $("#file-upload-widget .btn-toolbar:first-child .btn-primary").on('click', function(event){
+//            var filesList = _this.viewTop.$el.find("form").serializeData();
+//            console.log("files:", filesList);
+//            $('#file-upload-widget').fileupload('send', {files: filesList});
+//            event.stopPropagation();
+//            event.preventDefault();
+//        });
     },
 
     deinitializeUploadWidget: function() {
