@@ -104,14 +104,13 @@ var AssetController = Class.extend(EntityController, {
             console.log("AssetController#/app/uploadAsset files = ", files);
             console.log("AssetController#/app/uploadAsset files.files = ", files.files);
             assetService.uploadAssets(requestContext, files.files, function(throwable, entities) {
-                console.log("AssetController#/app/uploadAsset entities = ", entities);
+                console.log("AssetController#/app/uploadAsset entities:", entities);
                 var assetJson = null;
                 if (entities) {
-                    var assetObjects = [];
-                    for (var entity in entities) {
-                        assetObjects.push(LiteralUtil.convertToLiteral(entity.toObject()));
-                    }
-                    assetJson = {"files": assetObjects};
+                    entities = entities.map(function(entity){
+                        return entity.toObject();
+                    })
+                    assetJson = {"files": LiteralUtil.convertToLiteral(entities)};
                 }
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
