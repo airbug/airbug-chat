@@ -218,9 +218,12 @@ var AssetService = Class.extend(Obj, {
         var s3Key           = UuidGenerator.generateUuid();
         var thumbnailS3Key  = s3Key + '_t';
         if (extName) {
-            s3Key           = s3Key + '.' + extName;
-            thumbnailS3Key  = thumbnailS3Key + '.' + extName;
+            s3Key           = s3Key + extName;
+            thumbnailS3Key  = thumbnailS3Key + extName;
         }
+        var props = this.awsUploader.getProps();
+        props.options = props.options || {};
+        props.options.acl = 'public-read';
 
         $series([
             $task(function(flow) {
