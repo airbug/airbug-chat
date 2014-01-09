@@ -66,6 +66,7 @@ var connect                 = require('connect');
 var express                 = require('express');
 var github                  = require('github');
 var https                   = require('https');
+var imagemagick             = require('imagemagick');
 var mongoose                = require('mongoose');
 var mu2express              = require('mu2express');
 var path                    = require('path');
@@ -522,10 +523,12 @@ var AirbugServerConfiguration = Class.extend(Obj, {
 
     /**
      * @param {AssetManager} assetManager
+     * @param {AssetUploader} assetUploader
+     * @param {imagemagick} imagemagick
      * @return {AssetService}
      */
-    assetService: function(assetManager) {
-        this._assetService = new AssetService(assetManager);
+    assetService: function(assetManager, awsUploader, imagemagick) {
+        this._assetService = new AssetService(assetManager, awsUploader, imagemagick);
         return this._assetService;
     },
 
@@ -733,6 +736,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {*}
+     */
+    imagemagick: function() {
+        return imagemagick;
+    },
+
+    /**
      * @returns {Logger}
      */
     logger: function() {
@@ -930,6 +940,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         //-------------------------------------------------------------------------------
 
         module("https"),
+        module("imagemagick"),
         module("github"),
         module("mongoose"),
         module("mongoDataStore")
@@ -1071,7 +1082,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         module("assetService")
             .args([
                 arg().ref("assetManager"),
-                arg().ref("awsUploader")
+                arg().ref("awsUploader"),
+                arg().ref("imagemagick")
             ]),
         module("chatMessageService")
             .args([

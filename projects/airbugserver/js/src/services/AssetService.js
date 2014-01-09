@@ -73,7 +73,7 @@ var AssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(assetManager, awsUploader) {
+    _constructor: function(assetManager, awsUploader, imagemagick) {
 
         this._super();
 
@@ -88,6 +88,12 @@ var AssetService = Class.extend(Obj, {
          * @type {AwsUploader}
          */
         this.awsUploader = awsUploader;
+
+        /**
+         * @private
+         * @type {imagemagick}
+         */
+        this.imagemagick = imagemagick;
     },
 
     //-------------------------------------------------------------------------------
@@ -218,17 +224,28 @@ var AssetService = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                // TODO - dkk - make thumbnail
-                flow.complete();
+                var im = this.imagemagick;
+                im.resize({srcPath: path, dstPath: thumbnailPath, width: 80}, function(error) {
+                    if (error) {
+                        console.log("error resizing image: ", error);
+                    }
+                    flow.complete(error);
+                })
             }),
             $task(function(flow) {
                 _this.awsUploader.upload(path, s3Key, mimeType, function(error, returnedS3Object) {
+                    if (error) {
+                        console.log("error uploading asset: ", error);
+                    }
                     url = _this.getObjectUrl(returnedS3Object);
                     flow.complete(error);
                 });
             }),
             $task(function(flow) {
                 _this.awsUploader.upload(thumbnailPath, thumbnailS3Key, mimeType, function(error, returnedS3Object) {
+                    if (error) {
+                        console.log("error uploading asset thumbnail: ", error);
+                    }
                     thumbnailUrl = _this.getObjectUrl(returnedS3Object);
                     flow.complete(error);
                 });
