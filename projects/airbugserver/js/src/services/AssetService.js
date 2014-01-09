@@ -150,8 +150,8 @@ var AssetService = Class.extend(Obj, {
                 });
             })
         ]).execute(function(throwable) {
-                callback(throwable);
-            });
+            callback(throwable);
+        });
     },
 
     /**
@@ -224,7 +224,7 @@ var AssetService = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                var im = this.imagemagick;
+                var im = _this.imagemagick;
                 im.resize({srcPath: path, dstPath: thumbnailPath, width: 80}, function(error) {
                     if (error) {
                         console.log("error resizing image: ", error);
