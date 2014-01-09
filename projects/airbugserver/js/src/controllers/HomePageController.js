@@ -5,26 +5,44 @@
 //@Package('airbugserver')
 
 //@Export('HomePageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
 //@Require('StringUtil')
+//@Require('airbugserver.Controller')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var StringUtil      = bugpack.require('StringUtil');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var StringUtil          = bugpack.require('StringUtil');
+var Controller          = bugpack.require('airbugserver.Controller');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -33,9 +51,9 @@ var StringUtil      = bugpack.require('StringUtil');
 
 /**
  * @constructor
- * @extends {Obj}
+ * @extends {Controller}
  */
-var HomePageController = Class.extend(Obj, {
+var HomePageController = Class.extend(Controller, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -43,12 +61,12 @@ var HomePageController = Class.extend(Obj, {
 
     /**
      * @constructs
-     * @param {AirbugClientConfig} airbugClientConfig
      * @param {ExpressApp} expressApp
+     * @param {AirbugClientConfig} airbugClientConfig
      */
-    _constructor: function(airbugClientConfig, expressApp) {
+    _constructor: function(controllerManager, expressApp, airbugClientConfig) {
 
-        this._super();
+        this._super(controllerManager, expressApp);
 
 
         //-------------------------------------------------------------------------------
@@ -60,12 +78,6 @@ var HomePageController = Class.extend(Obj, {
          * @type {AirbugClientConfig}
          */
         this.airbugClientConfig     = airbugClientConfig;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp             = expressApp;
     },
 
 
@@ -74,11 +86,11 @@ var HomePageController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this = this;
-        this.expressApp.get('/app', function(request, response) {
+        this.getExpressApp().get('/app', function(request, response) {
             var requestContext          = request.requestContext;
             var session                 = requestContext.get("session");
             var configObject            = _this.airbugClientConfig.toObject();
@@ -98,8 +110,24 @@ var HomePageController = Class.extend(Obj, {
                 }
             });
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(HomePageController).with(
+    module("homePageController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("airbugClientConfig")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('AssetService')
+//@Autoload
 
 //@Require('Bug')
 //@Require('Class')
@@ -20,6 +21,10 @@
 //@Require('aws.S3Bucket')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.Path')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -50,12 +55,18 @@ var S3Api                   = bugpack.require('aws.S3Api');
 var S3Bucket                = bugpack.require('aws.S3Bucket');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var Path                    = bugpack.require('bugfs.Path');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
 var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -95,6 +106,7 @@ var AssetService = Class.extend(Obj, {
          */
         this.imagemagick = imagemagick;
     },
+
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -273,6 +285,19 @@ var AssetService = Class.extend(Obj, {
         });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AssetService).with(
+    module("assetService")
+        .args([
+            arg().ref("assetManager")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

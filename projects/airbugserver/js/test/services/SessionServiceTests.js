@@ -73,7 +73,8 @@ var sessionServiceShakeItTest = {
                 return _this.testUnsignedCookie;
             }
         };
-        this.testSessionService = new SessionService(this.dummyConfig, this.dummyCookieParser, this.dummyCookieSigner, {});
+        this.testSessionService = new SessionService(this.dummyCookieParser, this.dummyCookieSigner, {});
+        this.testSessionService.setConfig(this.dummyConfig);
         this.testHandShakeData = {
             headers: {
                 cookie: this.testCookieString

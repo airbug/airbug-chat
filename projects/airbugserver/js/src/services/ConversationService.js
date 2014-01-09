@@ -5,49 +5,61 @@
 //@Package('airbugserver')
 
 //@Export('ConversationService')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Exception   = bugpack.require('Exception');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
+var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
+var Obj                     = bugpack.require('Obj');
+var EntityService           = bugpack.require('airbugserver.EntityService');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $task       = BugFlow.$task;
-var $series     = BugFlow.$series;
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
+var $task                   = BugFlow.$task;
+var $series                 = BugFlow.$series;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConversationService = Class.extend(Obj, {
+var ConversationService = Class.extend(EntityService, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(conversationManager, meldService) {
+    _constructor: function(conversationManager, conversationPusher) {
 
         this._super();
 
@@ -64,9 +76,9 @@ var ConversationService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {MeldService}
+         * @type {ConversationPusher}
          */
-        this.meldService            = meldService;
+        this.conversationPusher     = conversationPusher;
     },
 
 
@@ -100,8 +112,8 @@ var ConversationService = Class.extend(Obj, {
     retrieveConversation: function(requestContext, conversationId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
-        var conversation        = undefined;
+        var callManager         = requestContext.get("callManager");
+        var conversation        = null;
 
         if (!currentUser.isAnonymous()) {
             $series([
@@ -122,19 +134,18 @@ var ConversationService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    if(conversation){
-                        _this.meldUserWithConversation(meldManager, currentUser, conversation);
-                        _this.meldConversation(meldManager, conversation);
-                        meldManager.commitTransaction(function(throwable) {
-                            flow.complete(throwable);
-                        });
-                    } else {
-                        flow.error(new Exception("Conversation does not exist"));
-                    }
+                    _this.conversationPusher.meldCallWithConversation(callManager.getCallUuid(), conversation, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.conversationPusher.pushConversationToCall(conversation, callManager.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(undefined, conversation);
+                    callback(null, conversation);
                 } else {
                     callback(throwable);
                 }
@@ -211,48 +222,21 @@ var ConversationService = Class.extend(Obj, {
                 callback(throwable);
             }
         });
-    },
-
-
-    // Convenience Meld Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {Conversation} conversation
-     */
-    meldConversation: function(meldManager, conversation) {
-        this.meldService.pushEntity(meldManager, conversation);
-    },
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {Conversation} conversation
-     * @param {string=} reason
-     */
-    meldUserWithConversation: function(meldManager, user, conversation, reason) {
-        var conversationMeldKey     = this.meldService.generateMeldKeyFromEntity(conversation);
-        var meldKeys                = [conversationMeldKey];
-        reason                      = reason ? reason : conversation.getId();
-
-        this.meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
-    },
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {Conversation} conversation
-     * @param {string=} reason
-     */
-    unmeldUserWithConversation: function(meldManager, user, conversation, reason) {
-        var conversationMeldKey     = this.meldService.generateMeldKeyFromEntity(conversation);
-        var meldKeys                = [conversationMeldKey];
-        reason                      = reason ? reason : conversation.getId();
-
-        this.meldService.unmeldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ConversationService).with(
+    module("conversationService")
+        .args([
+            arg().ref("conversationManager"),
+            arg().ref("conversationPusher")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

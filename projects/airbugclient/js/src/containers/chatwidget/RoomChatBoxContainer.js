@@ -32,43 +32,43 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
+var bugpack                                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                           = bugpack.require('Class');
-var ClearChange                     = bugpack.require('ClearChange');
-var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
-var SetPropertyChange               = bugpack.require('SetPropertyChange');
-var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView');
-var ChatWidgetContainer             = bugpack.require('airbug.ChatWidgetContainer');
-var ConversationModel               = bugpack.require('airbug.ConversationModel');
-var LeaveRoomButtonContainer        = bugpack.require('airbug.LeaveRoomButtonContainer');
-var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
-var RoomMemberListPanelContainer    = bugpack.require('airbug.RoomMemberListPanelContainer');
-var RoomNameView                    = bugpack.require('airbug.RoomNameView');
-var RoomsHamburgerButtonContainer   = bugpack.require('airbug.RoomsHamburgerButtonContainer');
-var ShareRoomButtonContainer        = bugpack.require('airbug.ShareRoomButtonContainer');
-var SubheaderView                   = bugpack.require('airbug.SubheaderView');
-var TwoColumnView                   = bugpack.require('airbug.TwoColumnView');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var Class                                   = bugpack.require('Class');
+var ClearChange                             = bugpack.require('ClearChange');
+var RemovePropertyChange                    = bugpack.require('RemovePropertyChange');
+var SetPropertyChange                       = bugpack.require('SetPropertyChange');
+var BoxWithHeaderView                       = bugpack.require('airbug.BoxWithHeaderView');
+var ChatWidgetContainer                     = bugpack.require('airbug.ChatWidgetContainer');
+var ConversationModel                       = bugpack.require('airbug.ConversationModel');
+var LeaveRoomButtonContainer                = bugpack.require('airbug.LeaveRoomButtonContainer');
+var MultiColumnView                         = bugpack.require('airbug.MultiColumnView');
+var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
+var RoomNameView                            = bugpack.require('airbug.RoomNameView');
+var RoomsHamburgerButtonContainer           = bugpack.require('airbug.RoomsHamburgerButtonContainer');
+var ShareRoomButtonContainer                = bugpack.require('airbug.ShareRoomButtonContainer');
+var SubheaderView                           = bugpack.require('airbug.SubheaderView');
+var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
+var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                       = AutowiredAnnotation.autowired;
-var bugmeta                         = BugMeta.context();
-var property                        = PropertyAnnotation.property;
-var view                            = ViewBuilder.view;
+var autowired                               = AutowiredAnnotation.autowired;
+var bugmeta                                 = BugMeta.context();
+var property                                = PropertyAnnotation.property;
+var view                                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationManagerModule}
          */
-        this.conversationManagerModule      = null;
+        this.conversationManagerModule              = null;
 
 
         // Containers
@@ -104,31 +104,32 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatWidgetContainer}
          */
-        this.chatWidgetContainer            = null;
+        this.chatWidgetContainer                    = null;
 
         /**
          * @private
          * @type {LeaveRoomButtonContainer}
          */
-        this.leaveRoomButtonContainer       = null;
+        this.leaveRoomButtonContainer               = null;
 
         /**
          * @private
          * @type {RoomMemberListPanelContainer}
          */
-        this.roomMemberListPanelContainer   = null;
+        this.roomMemberListPanelContainer           = null;
 
         /**
          * @private
          * @type {RoomsHamburgerButtonContainer}
          */
-        this.roomsHamburgerButtonContainer  = null;
+        this.roomsHamburgerButtonContainer          = null;
 
         /**
          * @private
          * @type {ShareRoomButtonContainer}
          */
-        this.shareRoomButtonContainer       = null;
+        this.shareRoomButtonContainer               = null;
+
 
         // Models
         //-------------------------------------------------------------------------------
@@ -137,13 +138,13 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ConversationModel}
          */
-        this.conversationModel              = null;
+        this.conversationModel                      = null;
 
         /**
          * @private
          * @type {RoomModel}
          */
-        this.roomModel                      = roomModel;
+        this.roomModel                              = roomModel;
 
 
         // Views
@@ -153,7 +154,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderView}
          */
-        this.boxWithHeaderView              = null;
+        this.boxWithHeaderView                      = null;
     },
 
 
@@ -162,7 +163,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @returns {ConversationModel}
+     * @return {ConversationModel}
      */
     getConversationModel: function() {
         return this.conversationModel;
@@ -193,7 +194,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.conversationModel  = this.conversationManagerModule.generateConversationModel({});
+        this.conversationModel      = this.conversationManagerModule.generateConversationModel({});
 
 
         // Create Views
@@ -272,16 +273,8 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
      * @param {string} conversationId
      */
     loadConversation: function(conversationId) {
-
-        //TEST
-        console.log("RoomChatBoxContainer#loadConversation - conversationId:", conversationId);
-
         var _this = this;
         this.conversationManagerModule.retrieveConversation(conversationId, function(throwable, conversationMeldDocument) {
-
-            //TEST
-            console.log("RoomChatBoxContainer#loadConversation (after retrieveConversation) - conversationId:", conversationId);
-
             if (!throwable) {
                 if (conversationMeldDocument) {
                     _this.conversationModel.setConversationMeldDocument(conversationMeldDocument);

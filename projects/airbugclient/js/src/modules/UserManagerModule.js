@@ -5,24 +5,40 @@
 //@Package('airbug')
 
 //@Export('UserManagerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Class                           = bugpack.require('Class');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +68,20 @@ var UserManagerModule = Class.extend(ManagerModule, {
         this.retrieveEach("User", userIds, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserManagerModule).with(
+    module("userManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

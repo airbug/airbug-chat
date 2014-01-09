@@ -133,10 +133,15 @@ var RetrieveRequest = Class.extend(ApiRequest, {
             var responseType    = callResponse.getType();
             var data            = callResponse.getData();
             if (responseType === EntityDefines.Responses.SUCCESS) {
-                var objectId            = data.objectId;
-                var returnedMeldKey     = this.meldBuilder.generateMeldKey(this.entityType, objectId);
-                var meldDocument        = this.meldStore.getMeld(returnedMeldKey);
-                this.fireCallbacks(null, meldDocument);
+                var objectId                    = data.objectId;
+                var returnedMeldDocumentKey     = this.meldBuilder.generateMeldDocumentKey(this.entityType, objectId);
+                var meldDocument                = this.meldStore.getMeldDocumentByMeldDocumentKey(returnedMeldDocumentKey);
+                if (meldDocument) {
+                    this.fireCallbacks(null, meldDocument);
+                } else {
+                    // NOTE BRN: Looks like this meld doc may have been removed before we could get our hands on it
+                    this.fireCallbacks(new Exception("NotFound"));
+                }
             } else if (responseType === EntityDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions
                 this.fireCallbacks(new Exception(data.exception));

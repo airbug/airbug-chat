@@ -5,10 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('RoomController')
+//@Autoload
 
 //@Require('Class')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +29,18 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -48,9 +64,9 @@ var RoomController = Class.extend(EntityController, {
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
      */
-    _constructor: function(expressApp, bugCallRouter, roomService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, roomService) {
 
-        this._super(expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -82,9 +98,9 @@ var RoomController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this           = this;
         var expressApp      = this.getExpressApp();
         var roomService     = this.getRoomService();
@@ -92,7 +108,7 @@ var RoomController = Class.extend(EntityController, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/rooms/:id', function(request, response){
+        expressApp.get('/api/v1/room/:id', function(request, response){
             var requestContext      = request.requestContext;
             var roomId              = request.params.id;
             roomService.retrieveRoom(requestContext, roomId, function(throwable, entity){
@@ -108,7 +124,7 @@ var RoomController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/rooms', function(request, response){
+        expressApp.post('/api/v1/room', function(request, response){
             var requestContext      = request.requestContext;
             var room                = request.body;
             roomService.createRoom(requestContext, room, function(throwable, entity){
@@ -124,7 +140,7 @@ var RoomController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.put('/app/rooms/:id', function(request, response){
+        expressApp.put('/api/v1/room/:id', function(request, response){
             var requestContext  = request.requestContext;
             var roomId          = request.params.id;
             var updates         = request.body;
@@ -141,7 +157,7 @@ var RoomController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.delete('/app/rooms/:id', function(request, response){
+        expressApp.delete('/api/v1/room/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var roomId          = request.params.id;
@@ -259,8 +275,24 @@ var RoomController = Class.extend(EntityController, {
                 });
             }
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomController).with(
+    module("roomController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("roomService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

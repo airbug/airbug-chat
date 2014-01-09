@@ -84,7 +84,8 @@ buildProperties({
             "../bugjs/projects/redis/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
-            "../meldbug/projects/meldbug/js/src",
+            "../meldbug/projects/meldbug/bugjars/core/js/src",
+            "../meldbug/projects/meldbug/bugjars/server/js/src",
             "../meldbug/projects/meldbugserver/js/src"
         ],
         scriptPaths: [
@@ -134,7 +135,7 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/client/js/src",
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
-            "../meldbug/projects/meldbug/js/src",
+            "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../bugpack/projects/bugpack-client/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
@@ -186,7 +187,7 @@ buildProperties({
             "../bugjs/projects/handshaker/js/test",
             "../bugjs/projects/mongo/js/test",
             "../bugjs/projects/socketio/bugjars/socket/js/test",
-            "../meldbug/projects/meldbug/js/test",
+            "../meldbug/projects/meldbug/bugjars/core/js/test",
             "../meldbug/projects/meldbugserver/js/test"
         ]
     },

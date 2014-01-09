@@ -44,16 +44,19 @@ var test                    = TestAnnotation.test;
 var assetControllerInstantiationTest = {
 
     setup: function() {
+        this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.assetService           = {};
-        this.assetController        = new AssetController(this.expressApp, this.bugCallRouter,
+        this.assetController        = new AssetController(this.controllerManager, this.expressApp, this.bugCallRouter,
             this.assetService);
     },
 
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.assetController, EntityController),
             "Assert assetController extends EntityController");
+        test.assertEqual(this.assetController.getControllerManager(), this.controllerManager,
+            "Assert controllerManager has been set properly");
         test.assertEqual(this.assetController.getExpressApp(), this.expressApp,
             "Assert expressApp has been set to assetController's expressApp property");
         test.assertEqual(this.assetController.getBugCallRouter(), this.bugCallRouter,

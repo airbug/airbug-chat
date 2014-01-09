@@ -5,28 +5,44 @@
 //@Package('airbug')
 
 //@Export('RoomMemberManagerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.RoomMemberList')
 //@Require('airbug.RoomMemberModel')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var ManagerModule       = bugpack.require('airbug.ManagerModule');
-var RoomMemberList      = bugpack.require('airbug.RoomMemberList');
-var RoomMemberModel     = bugpack.require('airbug.RoomMemberModel');
+var Class                           = bugpack.require('Class');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var RoomMemberList                  = bugpack.require('airbug.RoomMemberList');
+var RoomMemberModel                 = bugpack.require('airbug.RoomMemberModel');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -63,7 +79,7 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomMemberId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveRoomMember: function(roomMemberId, callback) {
         this.retrieve("RoomMember", roomMemberId, callback);
@@ -71,12 +87,26 @@ var RoomMemberManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} roomMemberIds
-     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     * @param {function(Throwable, Map.<string, Melddocument>=)} callback
      */
     retrieveRoomMembers: function(roomMemberIds, callback) {
         this.retrieveEach("RoomMember", roomMemberIds, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomMemberManagerModule).with(
+    module("roomMemberManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

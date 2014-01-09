@@ -5,28 +5,44 @@
 //@Package('airbug')
 
 //@Export('ConversationManagerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ConversationList')
 //@Require('airbug.ConversationModel')
 //@Require('airbug.ManagerModule')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ConversationList        = bugpack.require('airbug.ConversationList');
-var ConversationModel       = bugpack.require('airbug.ConversationModel');
-var ManagerModule           = bugpack.require('airbug.ManagerModule');
+var Class                           = bugpack.require('Class');
+var ConversationList                = bugpack.require('airbug.ConversationList');
+var ConversationModel               = bugpack.require('airbug.ConversationModel');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -58,12 +74,34 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveConversation: function(conversationId, callback) {
         this.retrieve("Conversation", conversationId, callback);
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, MeldDocument=)} callback
+     */
+    retrieveConversationChatMessageSteam: function(conversationId, callback) {
+        this.retrieve("Conversation")
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ConversationManagerModule).with(
+    module("conversationManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

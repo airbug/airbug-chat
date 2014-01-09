@@ -5,28 +5,44 @@
 //@Package('airbug')
 
 //@Export('RoomManagerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.RoomList')
 //@Require('airbug.RoomModel')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
-var RoomList        = bugpack.require('airbug.RoomList');
-var RoomModel       = bugpack.require('airbug.RoomModel');
+var Class                           = bugpack.require('Class');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var RoomList                        = bugpack.require('airbug.RoomList');
+var RoomModel                       = bugpack.require('airbug.RoomModel');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -111,6 +127,20 @@ var RoomManagerModule = Class.extend(ManagerModule, {
         this.retrieveEach("Room", roomIds, callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RoomManagerModule).with(
+    module("roomManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

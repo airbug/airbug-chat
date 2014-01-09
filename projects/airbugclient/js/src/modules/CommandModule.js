@@ -5,24 +5,37 @@
 //@Package('airbug')
 
 //@Export('CommandModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('Publisher')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Publisher       = bugpack.require('Publisher');
+var Class                           = bugpack.require('Class');
+var Publisher                       = bugpack.require('Publisher');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -30,24 +43,6 @@ var Publisher       = bugpack.require('Publisher');
 //-------------------------------------------------------------------------------
 
 var CommandModule = Class.extend(Publisher, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    _constructor: function() {
-
-        this._super();
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-    },
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -110,6 +105,15 @@ CommandModule.CommandType = {
 CommandModule.MessageType = {
     BUTTON_CLICKED:             "CommandModuleMessage::ButtonClicked"
 };
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CommandModule).with(
+    module("commandModule")
+);
 
 
 //-------------------------------------------------------------------------------

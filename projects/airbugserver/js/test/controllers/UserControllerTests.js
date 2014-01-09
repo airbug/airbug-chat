@@ -44,15 +44,18 @@ var test                    = TestAnnotation.test;
 var userControllerInstantiationTest = {
 
     setup: function() {
+        this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.userService            = {};
-        this.userController         = new UserController(this.expressApp, this.bugCallRouter, this.userService);
+        this.userController         = new UserController(this.controllerManager, this.expressApp, this.bugCallRouter, this.userService);
     },
 
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.userController, EntityController),
             "Assert userController extends EntityController");
+        test.assertEqual(this.userController.getControllerManager(), this.controllerManager,
+            "Assert controllerManager has been set properly");
         test.assertEqual(this.userController.getExpressApp(), this.expressApp,
             "Assert expressApp has been set to userController's expressApp property");
         test.assertEqual(this.userController.getBugCallRouter(), this.bugCallRouter,

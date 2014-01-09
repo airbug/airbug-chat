@@ -5,10 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageController')
+//@Autoload
 
 //@Require('Class')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +29,18 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -33,14 +49,13 @@ var EntityController    = bugpack.require('airbugserver.EntityController');
 
 var ChatMessageController = Class.extend(EntityController, {
 
-
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, chatMessageService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, chatMessageService) {
 
-        this._super(expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -68,13 +83,13 @@ var ChatMessageController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
-    // Public  Methods
+    // Controller Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this               = this;
         var expressApp          = this.getExpressApp();
         var chatMessageService  = this.getChatMessageService();
@@ -82,7 +97,7 @@ var ChatMessageController = Class.extend(EntityController, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/chatMessages/:id', function(request, response) {
+        expressApp.get('/api/v1/chatmessage/:id', function(request, response) {
             var requestContext      = request.requestContext;
             var chatMessageId       = request.params.id;
             chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity) {
@@ -98,7 +113,7 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/chatMessages', function(request, response) {
+        expressApp.post('/api/v1/chatmessage', function(request, response) {
             var requestContext      = request.requestContext;
             var chatMessage         = request.body;
             chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity) {
@@ -114,7 +129,7 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.put('/app/chatMessages/:id', function(request, response) {
+        expressApp.put('/api/v1/chatmessage/:id', function(request, response) {
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
             var updates         = request.body;
@@ -131,7 +146,7 @@ var ChatMessageController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.delete('/app/chatMessages/:id', function(request, response) {
+        expressApp.delete('/api/v1/chatmessage/:id', function(request, response) {
             var _this = this;
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
@@ -149,7 +164,7 @@ var ChatMessageController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             createChatMessage: function(request, responder, callback) {
                 var data                = request.getData();
@@ -164,7 +179,7 @@ var ChatMessageController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveChatMessage: function(request, responder, callback) {
                 var data                = request.getData();
@@ -179,7 +194,7 @@ var ChatMessageController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveChatMessages: function(request, responder, callback) {
                 var data                = request.getData();
@@ -189,10 +204,41 @@ var ChatMessageController = Class.extend(EntityController, {
                 chatMessageService.retrieveChatMessages(requestContext, chatMessageIds, function(throwable, chatMessageMap) {
                     _this.processRetrieveEachResponse(responder, throwable, chatMessageIds, chatMessageMap, callback);
                 });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveChatMessagesByConversationId: function(request, responder, callback) {
+                var data                = request.getData();
+                var conversationId      = data.conversationId;
+                var requestContext      = request.requestContext;
+
+                chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
+                    _this.processRetrieveEachResponse(responder, throwable, chatMessageIds, chatMessageMap, callback);
+                });
             }
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatMessageController).with(
+    module("chatMessageController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("chatMessageService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

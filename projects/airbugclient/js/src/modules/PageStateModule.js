@@ -5,26 +5,42 @@
 //@Package('airbug')
 
 //@Export('PageStateModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Map     = bugpack.require('Map');
-var Obj     = bugpack.require('Obj');
+var Class                           = bugpack.require('Class');
+var Map                             = bugpack.require('Map');
+var Obj                             = bugpack.require('Obj');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -37,7 +53,7 @@ var PageStateModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(carapaceRouter) {
 
         this._super();
 
@@ -50,7 +66,7 @@ var PageStateModule = Class.extend(Obj, {
          * @private
          * @type {CarapaceRouter}
          */
-        this.carapaceRouter             = null;
+        this.carapaceRouter             = carapaceRouter;
 
         /**
          * @private
@@ -98,6 +114,18 @@ var PageStateModule = Class.extend(Obj, {
         return stateKey;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(PageStateModule).with(
+    module("pageStateModule")
+        .args([
+            arg("carapaceRouter").ref("carapaceRouter")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

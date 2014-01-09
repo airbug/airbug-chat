@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('SessionService')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
@@ -14,6 +15,9 @@
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('handshaker.IHand')
 
 
@@ -40,6 +44,9 @@ var Cookie                  = bugpack.require('airbugserver.Cookie');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var IHand                   = bugpack.require('handshaker.IHand');
 
 
@@ -47,6 +54,9 @@ var IHand                   = bugpack.require('handshaker.IHand');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
 var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -62,7 +72,7 @@ var SessionService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, cookieParser, cookieSigner, sessionManager) {
+    _constructor: function(cookieParser, cookieSigner, sessionManager) {
 
         this._super();
 
@@ -75,7 +85,7 @@ var SessionService = Class.extend(Obj, {
          * @private
          * @type {SessionServiceConfig}
          */
-        this.config         = config;
+        this.config         = null;
 
         /**
          * @private
@@ -98,6 +108,19 @@ var SessionService = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    getConfig: function() {
+        return this.config;
+    },
+
+    setConfig: function(config) {
+        this.config = config;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // IBuildRequestContext Implementation
     //-------------------------------------------------------------------------------
 
@@ -112,6 +135,11 @@ var SessionService = Class.extend(Obj, {
         } else {
             sessionId = requestContext.getRequest().sessionId;
         }
+
+
+        //TEST
+        console.log("SessionService#buildRequestContext - sessionId:", sessionId);
+
 
         if (!sessionId) {
             this.generateSession({}, function(throwable, session) {
@@ -398,6 +426,20 @@ var SessionService = Class.extend(Obj, {
 
 Class.implement(SessionService, IHand);
 Class.implement(SessionService, IBuildRequestContext);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SessionService).with(
+    module("sessionService")
+        .args([
+            arg().ref("cookieParser"),
+            arg().ref("cookieSigner"),
+            arg().ref("sessionManager")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

@@ -101,30 +101,12 @@ var setupUserService = function(setupObject, userManager) {
 
         }
     };
-    setupObject.testMeldManager     = {
-        commitTransaction: function(callback) {
+    setupObject.dummyUserPusher = {
+        unmeldUserWithEntity: function(user, entity, callback) {
             callback();
         }
-    };
-    setupObject.testMeldKey         = {};
-    setupObject.dummyMeldService    = {
-        factoryManager: function() {
-            return setupObject.testMeldManager;
-        },
-        generateMeldKeyFromEntity: function() {
-            return setupObject.testMeldKey;
-        },
-        meldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
-        },
-        unmeldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
-        },
-        pushEntity: function(meldManager, type, filter, entity) {
-
-        },
-        unpushEntity: function(meldManager, type, filter, entity) {
-
-        }
-    };
+    }
+    setupObject.testMeldDocumentKey         = {};
     setupObject.sessionService      = {
         regenerateSession: function(session, callback) {
             callback(undefined, setupObject.testSession);
@@ -135,65 +117,21 @@ var setupUserService = function(setupObject, userManager) {
             callback();
         }
     };
-    setupObject.testUserService     = new UserService(setupObject.dummySessionManager, setupObject.dummyUserManager,
-        setupObject.dummyMeldService, setupObject.sessionService);
-    setupObject.testUserService.logger = setupObject.logger;
+    setupObject.dummyGithubManager = {
+
+    };
+    setupObject.dummyCallService = {
+
+    };
+    //logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher
+    setupObject.testUserService     = new UserService(setupObject.logger, setupObject.dummySessionManager, setupObject.dummyUserManager,
+        setupObject.sessionService, setupObject.dummyCallService, setupObject.dummyGithubManager, setupObject.dummyUserPusher);
 };
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
-
-var userServiceMeldCurrentUserWithCurrentUserTest = {
-
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-
-        //_constructor: function(sessionManager, userManager, meldService, sessionService)
-        var _this = this;
-        this.testId = "testId";
-        this.testCurrentUser = {
-            getId: function() {
-                return _this.testId;
-            }
-        };
-        this.testCalled = false;
-        this.testMeldManager = {};
-        this.testMeldKey = {};
-        this.dummyMeldService   = {
-            generateMeldKeyFromEntity: function() {
-                return _this.testMeldKey;
-            },
-            meldUserWithKeysAndReason: function(meldManager, currentUser, keyArray, reason) {
-                _this.testCalled = true;
-                test.assertEqual(meldManager, _this.testMeldManager,
-                    "Assert meldManager is testMeldManager");
-                test.assertEqual(currentUser, _this.testCurrentUser,
-                    "Assert currentUser is testCurrentUser");
-                test.assertEqual(keyArray[0], _this.testMeldKey,
-                    "Assert keyArray had testMeldKey");
-                test.assertEqual(reason, "currentUser",
-                    "Assert reason was currentUser");
-            }
-        };
-        this.testUserService    = new UserService({}, {}, this.dummyMeldService, {});
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        this.testUserService.meldCurrentUserWithCurrentUser(this.testMeldManager, this.testCurrentUser);
-        test.assertTrue(this.testCalled,
-            "Assert test function was called");
-    }
-};
 
 var userServiceRegisterUserWitNonExistingEmailTest = {
 
@@ -577,10 +515,6 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
     }
 };
 
-
-bugmeta.annotate(userServiceMeldCurrentUserWithCurrentUserTest).with(
-    test().name("UserService #meldCurrentUserWithCurrentUser Test")
-);
 
 bugmeta.annotate(userServiceRegisterUserWitNonExistingEmailTest).with(
     test().name("UserService - register user with non-existing email test")

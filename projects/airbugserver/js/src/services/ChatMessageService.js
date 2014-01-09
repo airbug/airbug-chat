@@ -5,52 +5,70 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageService')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Map')
 //@Require('MappedThrowable')
 //@Require('Obj')
+//@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var MappedThrowable     = bugpack.require('MappedThrowable');
-var Obj                 = bugpack.require('Obj');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
+var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
+var Map                     = bugpack.require('Map');
+var MappedThrowable         = bugpack.require('MappedThrowable');
+var Obj                     = bugpack.require('Obj');
+var EntityService           = bugpack.require('airbugserver.EntityService');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
+var $iterableParallel       = BugFlow.$iterableParallel;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageService = Class.extend(Obj, {
+/**
+ * @class
+ * @extends {EntityService}
+ */
+var ChatMessageService = Class.extend(EntityService, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(chatMessageManager, conversationManager, meldService, conversationService, roomService) {
+    _constructor: function(chatMessageManager, conversationManager, chatMessageStreamManager, chatMessagePusher) {
 
         this._super();
 
@@ -63,36 +81,30 @@ var ChatMessageService = Class.extend(Obj, {
          * @private
          * @type {ChatMessageManager}
          */
-        this.chatMessageManager     = chatMessageManager;
+        this.chatMessageManager             = chatMessageManager;
+
+        /**
+         * @private
+         * @type {ChatMessagePusher}
+         */
+        this.chatMessagePusher              = chatMessagePusher;
+
+        /**
+         * @private
+         * @type {ChatMessageStreamManager}
+         */
+        this.chatMessageStreamManager       = chatMessageStreamManager;
 
         /**
          * @private
          * @type {ConversationManager}
          */
-        this.conversationManager    = conversationManager;
-
-        /**
-         * @private
-         * @type {ConversationService}
-         */
-        this.conversationService    = conversationService;
-
-        /**
-         * @private
-         * @type {MeldService}
-         */
-        this.meldService            = meldService;
-
-        /**
-         * @private
-         * @type {RoomService}
-         */
-        this.roomService            = roomService;
+        this.conversationManager            = conversationManager;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -102,17 +114,17 @@ var ChatMessageService = Class.extend(Obj, {
      *      senderUserId: ObjectId
      *      body: string
      * }} chatMessageObject
-     * @param {function(Throwable, ChatMessage)} callback
+     * @param {function(Throwable, ChatMessage=)} callback
      */
     createChatMessage: function(requestContext, chatMessageObject, callback) {
         var _this = this;
         var chatMessage     = this.chatMessageManager.generateChatMessage(chatMessageObject);
+        var callManager     = requestContext.get("callManager");
         var currentUser     = requestContext.get("currentUser");
-        var meldManager     = this.meldService.factoryManager();
 
         if (currentUser.isNotAnonymous() && currentUser.getId() === chatMessage.getSenderUserId()) {
 
-            var conversation = undefined;
+            var conversation = null;
             $series([
                 $task(function(flow) {
                     _this.conversationManager.retrieveConversation(chatMessage.getConversationId(), function(throwable, returnedConversation) {
@@ -154,31 +166,15 @@ var ChatMessageService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    conversation.getChatMessageIdSet().add(chatMessage.getId());
-                    _this.conversationManager.updateConversation(conversation, function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.conversationManager.populateConversation(conversation, ["owner"], function(throwable) {
-                        flow.complete(throwable);
+                    var chatMessageStream = _this.chatMessageStreamManager.generateChatMessageStream({
+                        id: conversation.getId()
                     });
-                }),
-                $task(function(flow) {
-                    _this.roomService.dbPopulateRoomAndRoomMembers(conversation.getOwner(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
-                    _this.conversationService.meldUserWithConversation(meldManager, currentUser, conversation);
-                    conversation.getOwner().getRoomMemberSet().forEach(function(roomMember) {
-                        _this.conversationService.meldUserWithConversation(meldManager, roomMember.getUser(), conversation);
-                        _this.meldUserWithChatMessage(meldManager, roomMember.getUser(), chatMessage);
-                    });
-                    _this.meldChatMessage(meldManager, chatMessage);
-                    _this.conversationService.meldConversation(meldManager, conversation);
-                    meldManager.commitTransaction(function(throwable) {
+                    _this.chatMessagePusher.streamChatMessage(chatMessageStream, chatMessage, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -196,19 +192,21 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {function(Throwable} callback
      */
     deleteChatMessage: function(requestContext, chatMessageId, callback) {
-        //TODO
+        //TODO BRN: Implement
+        callback(new Exception("UnauthorizedAccess"));
     },
 
     /*
      * @param {RequestContext} requestContext
      * @param {string} chatMessageId
-     * @param {function(Throwable, ChatMessage} callback
+     * @param {function(Throwable, ChatMessage=} callback
      */
     retrieveChatMessage: function(requestContext, chatMessageId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
-        var chatMessage         = undefined;
+        var callManager         = requestContext.get("callManager");
+        /** @type {ChatMessage} */
+        var chatMessage         = null;
         var chatMessageManager  = this.chatMessageManager;
 
         if (currentUser.isNotAnonymous()) {
@@ -216,27 +214,34 @@ var ChatMessageService = Class.extend(Obj, {
                 $task(function(flow){
                     chatMessageManager.retrieveChatMessage(chatMessageId, function(throwable, returnedChatMessage){
                         chatMessage = returnedChatMessage;
+                        if (!throwable) {
+                            if (!chatMessage) {
+                                flow.error(new Exception("NotFound"));
+                            } else {
+                                flow.complete();
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    if(chatMessage){
-                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
-                        _this.meldChatMessage(meldManager, chatMessage);
-                        meldManager.commitTransaction(function(throwable) {
-                            flow.complete(throwable);
-                        });
-                    } else {
-                        flow.error(new Exception("ChatMessage does not exist"));
-                    }
+                    _this.chatMessagePusher.pushChatMessageToCall(chatMessage, callManager.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
                 })
             ]).execute(function(throwable) {
-                    if (!throwable) {
-                        callback(undefined, chatMessage);
-                    } else {
-                        callback(throwable);
-                    }
-                });
+                if (!throwable) {
+                    callback(null, chatMessage);
+                } else {
+                    callback(throwable);
+                }
+            });
         } else {
             callback(new Exception("UnauthorizedAccess"));
         }
@@ -250,36 +255,48 @@ var ChatMessageService = Class.extend(Obj, {
     retrieveChatMessages: function(requestContext, chatMessageIds, callback) {
         var _this               = this;
         /** @type {Map.<string, ChatMessage>} */
-        var chatMessageMap      = undefined;
+        var chatMessageMap      = null;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
+        var callManager         = requestContext.get("callManager");
         var chatMessageManager  = this.chatMessageManager;
+        var mappedException     = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
                     chatMessageManager.retrieveChatMessages(chatMessageIds, function(throwable, returnedChatMessageMap) {
                         if (!throwable) {
-                            chatMessageMap = returnedChatMessageMap;
-                            if (!chatMessageMap) {
+                            if (!returnedChatMessageMap) {
                                 throwable = new Exception(""); //TODO
+                            } else {
+                                chatMessageMap = returnedChatMessageMap.clone();
+                                returnedChatMessageMap.forEach(function(chatMessage, key) {
+                                    if (chatMessage === null) {
+                                        chatMessageMap.remove(key);
+                                        if (!mappedException) {
+                                            mappedException = new MappedThrowable(MappedThrowable.MAPPED);
+                                        }
+                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
+                                    }
+                                });
                             }
                         }
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    chatMessageMap.forEach(function(chatMessage) {
-                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
-                        _this.meldChatMessage(meldManager, chatMessage);
+                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
+                        flow.complete(throwable);
                     });
-                    meldManager.commitTransaction(function(throwable) {
+                }),
+                $task(function(flow) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(undefined, chatMessageMap);
+                    callback(mappedException, chatMessageMap);
                 } else {
                     callback(throwable);
                 }
@@ -292,18 +309,17 @@ var ChatMessageService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
-     * @param {function(Throwable, ChatMessage)} callback
+     * @param {function(Throwable, Map.<string, ChatMessage>=)} callback
      */
     retrieveChatMessagesByConversationId: function(requestContext, conversationId, callback) {
         var _this = this;
         var currentUser     = requestContext.get("currentUser");
-        var meldManager     = this.meldService.factoryManager();
-
+        var callManager     = requestContext.get("callManager");
         if (currentUser.isNotAnonymous()) {
 
-            var chatMessageMap  = undefined;
-            var conversation    = undefined;
-            var mappedException = undefined;
+            var chatMessageMap  = null;
+            var conversation    = null;
+            var mappedException = null;
 
             $series([
                 $task(function(flow) {
@@ -324,27 +340,23 @@ var ChatMessageService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessageManager.retrieveChatMessages(conversation.getChatMessageIdSet(), function(throwable, returnedChatMessageMap) {
+                    _this.chatMessageManager.retrieveChatMessagesByConversationId(conversation.getId(), function(throwable, returnedChatMessageSet) {
                         if (!throwable) {
-                            chatMessageMap = returnedChatMessageMap;
-                            chatMessageMap.forEach(function(chatMessage, key) {
-                                if (chatMessage === null) {
-                                    if (!mappedException) {
-                                        mappedException = new MappedThrowable(MappedThrowable.MAPPED);
-                                    }
-                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
-                                }
+                            chatMessageMap = new Map();
+                            returnedChatMessageSet.forEach(function(chatMessage) {
+                                chatMessageMap.put(chatMessage.getId(), chatMessage);
                             });
                         }
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    chatMessageMap.forEach(function(chatMessage) {
-                        _this.meldUserWithChatMessage(meldManager, currentUser, chatMessage);
-                        _this.meldChatMessage(meldManager, chatMessage);
+                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
+                        flow.complete(throwable);
                     });
-                    meldManager.commitTransaction(function(throwable) {
+                }),
+                $task(function(flow) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -367,48 +379,25 @@ var ChatMessageService = Class.extend(Obj, {
      * @param {function(Throwable, ChatMessage} callback
      */
     updateChatMessage: function(requestContext, chatMessageId, updates, callback) {
-        //TODO
-    },
-
-    // Convenience Meld Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {ChatMessage} chatMessage
-     */
-    meldChatMessage: function(meldManager, chatMessage) {
-        this.meldService.pushEntity(meldManager, chatMessage);
-    },
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {ChatMessage} chatMessage
-     * @param {string=} reason
-     */
-    meldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
-        var chatMessageMeldKey      = this.meldService.generateMeldKeyFromEntity(chatMessage);
-        var meldKeys                = [chatMessageMeldKey];
-        reason                      = reason ? reason : chatMessage.getId();
-
-        this.meldService.meldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
-    },
-
-    /**
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {ChatMessage} chatMessage
-     * @param {string=} reason
-     */
-    unmeldUserWithChatMessage: function(meldManager, user, chatMessage, reason) {
-        var chatMessageMeldKey      = this.meldService.generateMeldKeyFromEntity(chatMessage);
-        var meldKeys                = [chatMessageMeldKey];
-        reason                      = reason ? reason : chatMessage.getId();
-
-        this.meldService.unmeldUserWithKeysAndReason(meldManager, user, meldKeys, reason);
+        //TODO BRN: Implement
+        callback(new Exception("UnauthorizedAccess"));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatMessageService).with(
+    module("chatMessageService")
+        .args([
+            arg().ref("chatMessageManager"),
+            arg().ref("conversationManager"),
+            arg().ref("chatMessageStreamManager"),
+            arg().ref("chatMessagePusher")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

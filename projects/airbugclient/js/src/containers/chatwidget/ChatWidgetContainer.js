@@ -116,6 +116,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ChatMessageStreamModel}
+         */
+        this.chatMessageStreamModel                     = null;
+
+        /**
+         * @private
          * @type {ConversationModel}
          */
         this.conversationModel                          = conversationModel;
@@ -160,6 +166,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ChatMessageStreamManagerModule}
+         */
+        this.chatMessageStreamManagerModule              = null;
+
+        /**
+         * @private
          * @type {CommandModule}
          */
          this.commandModule                             = null;
@@ -180,6 +192,18 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {ChatMessageStreamModel}
+     */
+    getChatMessageStreamModel: function() {
+        return this.chatMessageStreamModel;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
 
@@ -190,7 +214,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
         if (this.conversationModel.getProperty("chatMessageIdSet")) {
-            this.loadChatMessageList(this.conversationModel.getProperty("chatMessageIdSet"));
+            this.loadChatMessageList(this.conversationModel.getProperty("id"));
+            this.loadChatMessageStream(this.conversationModel.getProperty("id"));
         }
     },
 
@@ -203,14 +228,15 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
-        this.chatMessageList    = this.chatMessageManagerModule.generateChatMessageList();
+        this.chatMessageStreamModel     = this.chatMessageStreamManagerModule.generateChatMessageStreamModel({});
+        this.chatMessageList            = this.chatMessageManagerModule.generateChatMessageList();
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetView     = view(ChatWidgetView)
-                                    .build();
+        this.chatWidgetView             = view(ChatWidgetView)
+                                            .build();
 
 
         // Wire Up Views
@@ -235,11 +261,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
         this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
-        this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
-        this.conversationModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemovePropertyChange, this)
-        this.conversationModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
-        this.conversationModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
+        this.chatMessageStreamModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
         this.deinitializeCommandSubscriptions();
     },
 
@@ -248,11 +273,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.conversationModel.observe(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
         this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
-        this.conversationModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
-        this.conversationModel.observe(RemovePropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemovePropertyChange, this)
-        this.conversationModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
-        this.conversationModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
+        this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
         this.initializeCommandSubscriptions();
     },
 
@@ -302,9 +326,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     loadChatMessage: function(chatMessageId) {
         var _this                       = this;
-        var chatMessageMeldDocument     = undefined;
-        var senderUserMeldDocument      = undefined;
-        var senderUserId                = undefined;
+        var chatMessageMeldDocument     = null;
+        var senderUserMeldDocument      = null;
+        var senderUserId                = null;
         $series([
             $task(function(flow) {
                 _this.chatMessageManagerModule.retrieveChatMessage(chatMessageId, function(throwable, retrievedChatMessageMeldDocument) {
@@ -335,9 +359,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {Array.<string>} chatMessageIdSet
+     * @param {string} conversationId
      */
-    loadChatMessageList: function(chatMessageIdSet) {
+    loadChatMessageList: function(conversationId) {
 
         var _this                       = this;
         var chatMessageMeldDocumentSet  = new Set();
@@ -345,7 +369,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var senderUserIdSet             = new Set();
         $series([
             $task(function(flow) {
-               _this.chatMessageManagerModule.retrieveChatMessages(chatMessageIdSet.toArray(), function(throwable, retrievedChatMessageMeldDocumentMap) {
+               _this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(throwable, retrievedChatMessageMeldDocumentMap) {
                     if (!throwable) {
                         retrievedChatMessageMeldDocumentMap.forEach(function(chatMessageMeldDocument, id) {
                             if (chatMessageMeldDocument) {
@@ -388,16 +412,34 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
+     * @param {string} conversationId
+     */
+    loadChatMessageStream: function(conversationId) {
+        var _this                           = this;
+        $series([
+            $task(function(flow) {
+                _this.chatMessageManagerModule.retrieveChatMessage(conversationId, function(throwable, chatMessageStreamMeldDocument) {
+                    if (!throwable) {
+                        _this.chatMessageStreamModel.setConversationChatMessageStreamMeldDocument(chatMessageStreamMeldDocument);
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (throwable) {
+                console.error(throwable.message, throwable.stack);
+            }
+        });
+    },
+
+    /**
+     * @protected
      * @param {string} chatMessageId
      */
     removeChatMessage: function(chatMessageId) {
         var chatMessageModel = this.chatMessageIdToChatMessageModelMap.get(chatMessageId);
         if (chatMessageModel) {
             this.chatMessageIdToChatMessageModelMap.remove(chatMessageId);
-
-            //TEST
-            console.log("Removing chatMessageModel - ", chatMessageModel);
-
             this.chatMessageList.remove(chatMessageModel);
         }
     },
@@ -497,27 +539,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
-     * @param {SetPropertyChange} change
-     */
-    observeChatMessageIdSetSetPropertyChange: function(change) {
-        this.clearChatMessageList();
-        this.loadChatMessageList(change.getPropertyValue());
-    },
-
-    /**
-     * @private
-     * @param {RemovePropertyChange} change
-     */
-    observeChatMessageIdSetRemovePropertyChange: function(change) {
-        this.clearChatMessageList();
-    },
-
-    /**
-     * @private
      * @param {ClearChange} change
      */
     observeConversationModelClearChange: function(change) {
         this.clearChatMessageList();
+    },
+
+    /**
+     * @private
+     * @param {SetPropertyChange} change
+     */
+    observeConversationModelIdSetPropertyChange: function(change) {
+        this.clearChatMessageList();
+        this.loadChatMessageList(change.getPropertyValue());
     }
 });
 
@@ -529,6 +563,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ChatWidgetContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
+        property("chatMessageStreamManagerModule").ref("chatMessageStreamManagerModule"),
         property("commandModule").ref("commandModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("userManagerModule").ref("userManagerModule")

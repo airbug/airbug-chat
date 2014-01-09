@@ -97,17 +97,22 @@ var UserMediaServerConfiguration = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Configuration Lifecycle
+    // IConfiguration Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
-        */
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeConfiguration: function(callback) {
+        callback();
+    },
+
+    /**
+     * @param {function(Throwable)} callback
+     */
     initializeConfiguration: function(callback) {
         var _this = this;
         this._expressApp.configure(function() {
-            //TEST
-            console.log("made it " + (process.env.PORT || 8000));
             //_this._expressApp.set('root', __dirname);
             _this._expressApp.set('port', (process.env.PORT || 8000));
             _this._expressApp.use(express.logger('dev'));
@@ -165,7 +170,7 @@ Class.implement(UserMediaServerConfiguration, IConfiguration);
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(UserMediaServerConfiguration).with(
-    configuration().modules([
+    configuration("userMediaServerConfiguration").modules([
         module("expressApp"),
         module("expressServer")
             .args([

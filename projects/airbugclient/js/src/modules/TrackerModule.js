@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('TrackerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
@@ -12,6 +13,9 @@
 //@Require('airbug.CommandModule')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,10 +29,22 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var TypeUtil                = bugpack.require('TypeUtil');
-var CommandModule           = bugpack.require('airbug.CommandModule');
+var Class                           = bugpack.require('Class');
+var Obj                             = bugpack.require('Obj');
+var TypeUtil                        = bugpack.require('TypeUtil');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -223,6 +239,19 @@ var TrackerModule = Class.extend(Obj, {
         this.sonarbugClient.track(eventName, data);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(TrackerModule).with(
+    module("trackerModule")
+        .args([
+            arg().ref("sonarbugClient"),
+            arg().ref("commandModule")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

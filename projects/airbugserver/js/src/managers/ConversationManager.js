@@ -81,7 +81,6 @@ var ConversationManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
-     *      chatMessageIdSet: (Array.<string> | Set.<string>),
      *      createdAt: Date,
      *      id: string,
      *      ownerId: string,
@@ -90,7 +89,6 @@ var ConversationManager = Class.extend(EntityManager, {
      * @return {Conversation}
      */
     generateConversation: function(data) {
-        data.chatMessageIdSet = new Set(data.chatMessageIdSet);
         var conversation = new Conversation(data);
         this.generate(conversation);
         return conversation;
@@ -104,9 +102,9 @@ var ConversationManager = Class.extend(EntityManager, {
     populateConversation: function(conversation, properties, callback) {
         var options = {
             chatMessageSet: {
-                idGetter:   conversation.getChatMessageIdSet,
-                getter:     conversation.getChatMessageSet,
-                setter:     conversation.setChatMessageSet
+                idGetter: conversation.getId,
+                retriever: "retrieveChatMessagesByConversationId",
+                setter: conversation.setChatMessageSet
             },
             owner: {
                 idGetter:   conversation.getOwnerId,
@@ -127,7 +125,7 @@ var ConversationManager = Class.extend(EntityManager, {
 
     /**
      * @param {Array.<string>} conversationIds
-     * @param {function(Throwable, Map.<string, Conversation>)} callback
+     * @param {function(Throwable, Map.<string, Conversation>=)} callback
      */
     retrieveConversations: function(conversationIds, callback) {
         this.retrieveEach(conversationIds, callback);

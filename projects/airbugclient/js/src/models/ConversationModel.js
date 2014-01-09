@@ -73,29 +73,15 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "ownerId", "chatMessageIdSet"])
+                .in(["id", "ownerId"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "ownerId", "chatMessageIdSet"])
+                .in(["id", "ownerId"])
                 .call(this.hearMeldPropertyRemovedChange, this);
-            this.getMeldDocument()
-                .on(MeldDocumentEvent.EventTypes.CHANGE)
-                .where("data.changeType")
-                .in([MeldDocument.ChangeTypes.ADDED_TO_SET])
-                .where("data.deltaChange.path")
-                .in(["chatMessageIdSet"])
-                .call(this.hearMeldAddedToSetChange, this);
-            this.getMeldDocument()
-                .on(MeldDocumentEvent.EventTypes.CHANGE)
-                .where("data.changeType")
-                .in([MeldDocument.ChangeTypes.REMOVED_FROM_SET])
-                .where("data.deltaChange.path")
-                .in(["chatMessageIdSet"])
-                .call(this.hearMeldRemovedFromSetChange, this);
         }
     },
 
@@ -109,10 +95,6 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertyRemovedChange, this);
-            this.getMeldDocument()
-                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldAddedToSetChange, this);
-            this.getMeldDocument()
-                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldAddedToSetChange, this);
         }
     },
 
@@ -128,7 +110,6 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
         this._super();
         var data    = this.getMeldDocument().getData();
         this.setProperty("id", data.id);
-        this.setProperty("chatMessageIdSet", data.chatMessageIdSet);
         this.setProperty("ownerId", data.ownerId);
     },
 
@@ -138,7 +119,6 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
     unprocessMeldDocument: function() {
         this._super();
         this.removeProperty("id");
-        this.removeProperty("chatMessageIdSet");
         this.removeProperty("ownerId");
     },
 
@@ -166,28 +146,6 @@ var ConversationModel = Class.extend(MeldModel, /** @lends {ConversationModel.pr
         var deltaChange     = event.getData().deltaChange;
         var propertyName    = deltaChange.getPropertyName();
         this.removeProperty(propertyName);
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearMeldAddedToSetChange: function(event) {
-        var deltaChange         = event.getData().deltaChange;
-        var setValue            = deltaChange.getSetValue();
-        var chatMessageIdSet    = this.getProperty("chatMessageIdSet");
-        chatMessageIdSet.add(setValue);
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearMeldRemovedFromSetChange: function(event) {
-        var deltaChange         = event.getData().deltaChange;
-        var setValue            = deltaChange.getSetValue();
-        var chatMessageIdSet    = this.getProperty("chatMessageIdSet");
-        chatMessageIdSet.remove(setValue);
     }
 });
 

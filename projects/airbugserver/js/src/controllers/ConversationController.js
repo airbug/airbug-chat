@@ -5,10 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('ConversationController')
+//@Autoload
 
 //@Require('Class')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +29,18 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -38,9 +54,9 @@ var ConversationController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, conversationService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, conversationService) {
 
-        this._super(expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -72,9 +88,9 @@ var ConversationController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this               = this;
         var expressApp          = this.getExpressApp();
         var conversationService = this.getConversationService();
@@ -82,7 +98,7 @@ var ConversationController = Class.extend(EntityController, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/conversations/:id', function(request, response) {
+        expressApp.get('/api/v1/conversation/:id', function(request, response) {
             var requestContext      = request.requestContext;
             var conversationId      = request.params.id;
             conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity) {
@@ -98,7 +114,7 @@ var ConversationController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/conversations', function(request, response) {
+        expressApp.post('/api/v1/conversation', function(request, response) {
             var requestContext      = request.requestContext;
             var conversation        = request.body;
             conversationService.createConversation(requestContext, conversation, function(throwable, entity) {
@@ -114,7 +130,7 @@ var ConversationController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.put('/app/conversations/:id', function(request, response) {
+        expressApp.put('/api/conversation/:id', function(request, response) {
             var requestContext  = request.requestContext;
             var conversationId          = request.params.id;
             var updates         = request.body;
@@ -131,7 +147,7 @@ var ConversationController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.delete('/app/conversations/:id', function(request, response) {
+        expressApp.delete('/api/conversation/:id', function(request, response) {
             var _this = this;
             var requestContext  = request.requestContext;
             var conversationId  = request.params.id;
@@ -149,7 +165,7 @@ var ConversationController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveConversation: function(request, responder, callback) {
                 var data                = request.getData();
@@ -159,10 +175,41 @@ var ConversationController = Class.extend(EntityController, {
                 conversationService.retrieveConversation(requestContext, conversationId, function(throwable, conversation) {
                     _this.processRetrieveResponse(responder, throwable, conversation, callback);
                 });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveConversationChatMessageStream: function(request, responder, callback) {
+                var data                = request.getData();
+                var conversationId      = data.objectId;
+                var requestContext      = request.requestContext;
+
+                conversationService.retrieveConversationChatMessageStream(requestContext, conversationId, function(throwable) {
+                    _this.processRetrieveResponse(responder, throwable, callback);
+                });
             }
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ConversationController).with(
+    module("conversationController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("conversationService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

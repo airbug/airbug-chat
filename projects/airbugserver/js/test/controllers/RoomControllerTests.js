@@ -54,15 +54,18 @@ var test                    = TestAnnotation.test;
 var roomControllerInstantiationTest = {
 
     setup: function() {
+        this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.roomService            = {};
-        this.roomController         = new RoomController(this.expressApp, this.bugCallRouter, this.roomService);
+        this.roomController         = new RoomController(this.controllerManager, this.expressApp, this.bugCallRouter, this.roomService);
     },
 
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.roomController, EntityController),
             "Assert roomController extends EntityController");
+        test.assertEqual(this.roomController.getControllerManager(), this.controllerManager,
+            "Assert controllerManager has been set properly");
         test.assertEqual(this.roomController.getExpressApp(), this.expressApp,
             "Assert expressApp has been set to roomController's expressApp property");
         test.assertEqual(this.roomController.getBugCallRouter(), this.bugCallRouter,
@@ -141,8 +144,9 @@ var roomControllerJoinRoomTest = {
             }
         };
         this.dummyRoomServiceSpy    = spyOnObject(this.dummyRoomService);
-        this.roomController         = new RoomController(this.dummyExpressApp, this.testBugCallRouter, this.dummyRoomService);
-        this.roomController.configure();
+        this.dummyControllerManager = {};
+        this.roomController         = new RoomController(this.dummyControllerManager, this.dummyExpressApp, this.testBugCallRouter, this.dummyRoomService);
+        this.roomController.configure(function() {});
     },
 
     test: function(test) {
@@ -235,8 +239,9 @@ var roomControllerCreateRoomTest = {
             }
         };
         this.dummyRoomServiceSpy    = spyOnObject(this.dummyRoomService);
-        this.roomController         = new RoomController(this.dummyExpressApp, this.testBugCallRouter, this.dummyRoomService);
-        this.roomController.configure();
+        this.dummyControllerManager = {};
+        this.roomController         = new RoomController(this.dummyControllerManager, this.dummyExpressApp, this.testBugCallRouter, this.dummyRoomService);
+        this.roomController.configure(function() {});
     },
 
     test: function(test) {

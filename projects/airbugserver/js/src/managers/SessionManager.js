@@ -210,7 +210,7 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, Set.<Session>)} callback
+     * @param {function(Throwable, Set.<Session>=)} callback
      */
     retrieveSessionsByUserId: function(userId, callback) {
         var _this = this;
@@ -222,9 +222,9 @@ var SessionManager = Class.extend(EntityManager, {
                     session.commitDelta();
                     newSet.add(session);
                 });
-                callback(undefined, newSet);
+                callback(null, newSet);
             } else {
-                callback(throwable, undefined);
+                callback(throwable);
             }
         });
     },

@@ -5,12 +5,17 @@
 //@Package('airbugserver')
 
 //@Export('GithubController')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
 //@Require('airbug.GithubDefines')
+//@Require('airbugserver.Controller')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -28,13 +33,20 @@ var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Obj                 = bugpack.require('Obj');
 var GithubDefines       = bugpack.require('airbug.GithubDefines');
+var Controller          = bugpack.require('airbugserver.Controller');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -45,17 +57,17 @@ var $task               = BugFlow.$task;
 
 /**
  * @constructor
- * @extends {Obj}
+ * @extends {Controller}
  */
-var GithubController = Class.extend(Obj, {
+var GithubController = Class.extend(Controller, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, githubService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, githubService) {
 
-        this._super();
+        this._super(controllerManager, expressApp);
 
 
         //-------------------------------------------------------------------------------
@@ -87,9 +99,9 @@ var GithubController = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this           = this;
         var expressApp      = this.expressApp;
         var githubService   = this.githubService;
@@ -132,6 +144,8 @@ var GithubController = Class.extend(Obj, {
 
             //NOTE BRN: This is where api calls for accessing github data will go
         });
+
+        callback();
     },
 
 
@@ -199,6 +213,21 @@ var GithubController = Class.extend(Obj, {
         response.redirect(url);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(GithubController).with(
+    module("githubController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("githubService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

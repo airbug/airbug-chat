@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserService')
+//@Autoload
 
 //@Require('Bug')
 //@Require('Class')
@@ -16,6 +17,9 @@
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -40,12 +44,18 @@ var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
 var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -62,7 +72,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionManager, userManager, meldService, sessionService, callService, githubManager) {
+    _constructor: function(logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher) {
 
         this._super();
 
@@ -87,13 +97,7 @@ var UserService = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                 = null;
-
-        /**
-         * @private
-         * @type {MeldService}
-         */
-        this.meldService            = meldService;
+        this.logger                 = logger;
 
         /**
          * @private
@@ -106,6 +110,12 @@ var UserService = Class.extend(Obj, {
          * @type {UserManager}
          */
         this.userManager            = userManager;
+
+        /**
+         * @private
+         * @type {UserPusher}
+         */
+        this.userPusher             = userPusher;
 
         /**
          * @private
@@ -256,7 +266,7 @@ var UserService = Class.extend(Obj, {
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
         var session         = requestContext.get("session");
-        var meldManager     = this.meldService.factoryManager();
+
 
         this.logger.debug("Logging user in - userId:", user.getId());
         $series([
@@ -276,13 +286,7 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                //unmeld anonymous user
-                _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, currentUser);
-
-                // NOTE BRN: We don't try to meld the logged in user here. Instead we depend on the client side to make
-                // another request to retrieve the current user
-
-                meldManager.commitTransaction(function(throwable) {
+                _this.userPusher.unmeldUserWithEntity(currentUser, currentUser, function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -348,10 +352,9 @@ var UserService = Class.extend(Obj, {
     registerUser: function(requestContext, formData, callback) {
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
-        var github      = undefined;
-        var meldManager = this.meldService.factoryManager();
+        var github      = null;
         var session     = requestContext.get("session");
-        var user        = undefined;
+        var user        = null;
         var userEmail   = formData.email;
         var userObject  = formData;
 
@@ -410,8 +413,7 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.unmeldCurrentUserFromCurrentUser(meldManager, currentUser, user);
-                meldManager.commitTransaction(function(throwable) {
+                _this.userPusher.unmeldUserWithEntity(currentUser, user, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
@@ -463,14 +465,17 @@ var UserService = Class.extend(Obj, {
     retrieveCurrentUser: function(requestContext, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
+        var callManager         = requestContext.get("callManager");
 
         this.logger.debug("Starting retrieveCurrentUser - currentUser.getId():", currentUser.getId());
         $series([
             $task(function(flow) {
-                _this.meldCurrentUserWithCurrentUser(meldManager, currentUser);
-                _this.pushUser(meldManager, currentUser);
-                meldManager.commitTransaction(function(throwable) {
+                _this.userPusher.meldCallWithUser(callManager.getCallUuid(), currentUser, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.pushUserToCall(currentUser, callManager.getCallUuid(), function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -491,7 +496,7 @@ var UserService = Class.extend(Obj, {
     retrieveUser: function(requestContext, userId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
+        var callManager         = requestContext.get("callManager");
         /** @type {User} */
         var user                = null;
 
@@ -499,21 +504,27 @@ var UserService = Class.extend(Obj, {
         $series([
             $task(function(flow) {
                 _this.dbRetrieveUser(userId, function(throwable, returnedUser){
-                    user = returnedUser;
+                    if (!throwable) {
+                        if (returnedUser) {
+                            user = returnedUser;
+                            flow.complete();
+                        } else {
+                            flow.error(new Exception("NotFound"));
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.meldCallWithUser(callManager.getCallUuid(), user, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                if (user && currentUser) {
-                    _this.meldUserWithCurrentUser(meldManager, user, currentUser);
-                    _this.pushUser(meldManager, user);
-                    meldManager.commitTransaction(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                } else {
-                    flow.complete(new Exception("User does not exist"));
-                }
-
+                _this.userPusher.pushUserToCall(user, callManager.getCallUuid(), function(throwable) {
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable) {
             if (!throwable) {
@@ -527,12 +538,12 @@ var UserService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {Array.<string>} userIds
-     * @param {function(Throwable, Map.<string, User>)} callback
+     * @param {function(Throwable, Map.<string, User>=)} callback
      */
     retrieveUsers: function(requestContext, userIds, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var meldManager         = this.meldService.factoryManager();
+        var callManager         = requestContext.get("callManager");
         var userMap             = undefined;
 
         $series([
@@ -548,17 +559,18 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                userMap.getValueCollection().forEach(function(user) {
-                    _this.meldUserWithCurrentUser(meldManager, user, currentUser);
-                    _this.pushUser(meldManager, user);
+                _this.userPusher.meldCallWithUsers(callManager.getCallUuid(), userMap.getValueArray(), function(throwable) {
+                    flow.complete(throwable);
                 });
-                meldManager.commitTransaction(function(throwable) {
+            }),
+            $task(function(flow) {
+                _this.userPusher.pushUsersToCall(userMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                callback(undefined, userMap);
+                callback(null, userMap);
             } else {
                 callback(throwable);
             }
@@ -746,66 +758,6 @@ var UserService = Class.extend(Obj, {
         ]).execute(function(throwable) {
             callback(throwable, user);
         });
-    },
-
-    // Private Meld Methods
-    //-------------------------------------------------------------------------------
-
-
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} currentUser
-     */
-    meldCurrentUserWithCurrentUser: function(meldManager, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKeyFromEntity(currentUser);
-        var reason = "currentUser"; //TODO
-        this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
-    },
-
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {User} currentUser
-     */
-    meldUserWithCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
-        var reason = ""; //TODO
-        this.meldService.meldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
-    },
-
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     */
-    pushUser: function(meldManager, user) {
-        this.meldService.pushEntity(meldManager, user);
-    },
-
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {User} currentUser
-     */
-    unmeldUserFromCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
-        var reason = "currentUser"; //TODO
-        this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
-    },
-
-    /**
-     * @private
-     * @param {MeldManager} meldManager
-     * @param {User} user
-     * @param {User} currentUser
-     */
-    unmeldCurrentUserFromCurrentUser: function(meldManager, user, currentUser) {
-        var userMeldKey = this.meldService.generateMeldKeyFromEntity(user);
-        var reason = ""; //TODO
-        this.meldService.unmeldUserWithKeysAndReason(meldManager, currentUser, [userMeldKey], reason);
     }
 });
 
@@ -815,6 +767,24 @@ var UserService = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(UserService, IBuildRequestContext);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserService).with(
+    module("userService")
+        .args([
+            arg().ref("logger"),
+            arg().ref("sessionManager"),
+            arg().ref("userManager"),
+            arg().ref("sessionService"),
+            arg().ref("callService"),
+            arg().ref("githubManager"),
+            arg().ref("userPusher")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

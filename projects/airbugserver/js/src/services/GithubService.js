@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('GithubService')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
@@ -15,6 +16,9 @@
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -37,12 +41,18 @@ var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -66,6 +76,8 @@ var GithubService = Class.extend(Obj, {
      * @param {SessionManager} sessionManager
      * @param {GithubManager} githubManager
      * @param {GithubApi} githubApi
+     * @param {UserService} userService
+     * @param {UserManager} userManager
      */
     _constructor: function(sessionManager, githubManager, githubApi, userService, userManager) {
 
@@ -298,6 +310,22 @@ var GithubService = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(GithubService, IBuildRequestContext);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(GithubService).with(
+    module("githubService")
+        .args([
+            arg().ref("sessionManager"),
+            arg().ref("githubManager"),
+            arg().ref("githubApi"),
+            arg().ref("userService"),
+            arg().ref("userManager")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

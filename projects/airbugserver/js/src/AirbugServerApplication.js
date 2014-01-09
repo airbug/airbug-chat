@@ -13,9 +13,9 @@
 //@Require('bugentity.EntityManagerScan')
 //@Require('bugioc.ConfigurationAnnotationProcessor')
 //@Require('bugioc.ConfigurationScan')
+//@Require('bugioc.IocContext')
 //@Require('bugioc.ModuleAnnotationProcessor')
 //@Require('bugioc.ModuleScan')
-//@Require('bugioc.IocContext')
 
 
 //-------------------------------------------------------------------------------
@@ -33,9 +33,9 @@ var Class                               = bugpack.require('Class');
 var Obj                                 = bugpack.require('Obj');
 var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
 var EntityManagerScan                   = bugpack.require('bugentity.EntityManagerScan');
-var IocContext                          = bugpack.require('bugioc.IocContext');
 var ConfigurationAnnotationProcessor    = bugpack.require('bugioc.ConfigurationAnnotationProcessor');
 var ConfigurationScan                   = bugpack.require('bugioc.ConfigurationScan');
+var IocContext                          = bugpack.require('bugioc.IocContext');
 var ModuleAnnotationProcessor           = bugpack.require('bugioc.ModuleAnnotationProcessor');
 var ModuleScan                          = bugpack.require('bugioc.ModuleScan');
 
@@ -56,7 +56,7 @@ var AirbugServerApplication = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -86,7 +86,7 @@ var AirbugServerApplication = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -98,6 +98,13 @@ var AirbugServerApplication = Class.extend(Obj, {
         this.moduleScan.scanAll();
         this.iocContext.process();
         this.iocContext.initialize(callback);
+    },
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    stop: function(callback) {
+        this.iocContext.deinitialze(callback);
     }
 });
 

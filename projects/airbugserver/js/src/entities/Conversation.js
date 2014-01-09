@@ -80,20 +80,6 @@ var Conversation = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Set.<string>}
-     */
-    getChatMessageIdSet: function() {
-        return this.deltaDocument.getData().chatMessageIdSet;
-    },
-
-    /**
-     * @param {Set.<string>} chatMessageIdSet
-     */
-    setChatMessageIdSet: function(chatMessageIdSet) {
-        this.deltaDocument.getData().chatMessageIdSet = chatMessageIdSet;
-    },
-
-    /**
      * @return {string}
      */
     getOwnerId: function() {
@@ -113,42 +99,6 @@ var Conversation = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} chatMessageId
-     */
-    addChatMessageId: function(chatMessageId) {
-        var chatMessageIdSet = this.getChatMessageIdSet();
-        if (!chatMessageIdSet) {
-            chatMessageIdSet = new Set();
-            this.setChatMessageIdSet(chatMessageIdSet);
-        }
-        chatMessageIdSet.add(chatMessageId);
-    },
-
-    /**
-     * @param {string} chatMessageId
-     */
-    removeChatMessageId: function(chatMessageId) {
-        var chatMessageIdSet = this.getChatMessageIdSet();
-        if (!chatMessageIdSet) {
-            chatMessageIdSet = new Set();
-            this.setChatMessageIdSet(chatMessageIdSet);
-        }
-        chatMessageIdSet.remove(chatMessageId);
-    },
-
-    /**
-     * @param {ChatMessage} chatMessage
-     */
-    addChatMessage: function(chatMessage) {
-        if (chatMessage.getId()) {
-            this.chatMessageSet.add(chatMessage);
-            this.addChatMessageId(chatMessage.getId());
-        } else {
-            throw new Error("chatMessage must have an id before it can be added");
-        }
-    },
-
-    /**
      * @return {Set.<ChatMessage>}
      */
     getChatMessageSet: function() {
@@ -156,15 +106,10 @@ var Conversation = Class.extend(Entity, {
     },
 
     /**
-     * @param {ChatMessage} chatMessage
+     * @param {Set.<ChatMessage>} chatMessageSet
      */
-    removeChatMessage: function(chatMessage) {
-        if (chatMessage.getId()) {
-            this.chatMessageSet.remove(chatMessage);
-            this.removeChatMessageId(chatMessage.getId());
-        } else {
-            throw new Error("chatMessage must have an id before it can be removed");
-        }
+    setChatMessageSet: function(chatMessageSet) {
+        this.chatMessageSet = chatMessageSet;
     },
 
     /**
@@ -194,10 +139,6 @@ var Conversation = Class.extend(Entity, {
 
 bugmeta.annotate(Conversation).with(
     entity("Conversation").properties([
-        property("chatMessageIdSet")
-            .type("Set")
-            .collectionOf("string")
-            .id(),
         property("chatMessageSet")
             .type("Set")
             .collectionOf("ChatMessage")

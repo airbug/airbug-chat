@@ -5,30 +5,46 @@
 //@Package('airbug')
 
 //@Export('NavigationModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
 //@Require('Url')
 //@Require('TypeUtil')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var Url         = bugpack.require('Url');
-var TypeUtil    = bugpack.require('TypeUtil');
+var Class                           = bugpack.require('Class');
+var Map                             = bugpack.require('Map');
+var Obj                             = bugpack.require('Obj');
+var Url                             = bugpack.require('Url');
+var TypeUtil                        = bugpack.require('TypeUtil');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -41,7 +57,7 @@ var NavigationModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(carapaceRouter, window) {
 
         this._super();
 
@@ -54,7 +70,7 @@ var NavigationModule = Class.extend(Obj, {
          * @private
          * @type {CarapaceRouter}
          */
-        this.carapaceRouter         = null;
+        this.carapaceRouter         = carapaceRouter;
 
         /**
          * @private
@@ -78,7 +94,7 @@ var NavigationModule = Class.extend(Obj, {
          * @private
          * @type {Window}
          */
-        this.window                 = undefined;
+        this.window                 = window;
     },
 
 
@@ -151,6 +167,19 @@ var NavigationModule = Class.extend(Obj, {
         this.finalDestination = finalDestination;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(NavigationModule).with(
+    module("navigationModule")
+        .args([
+            arg("carapaceRouter").ref("carapaceRouter"),
+            arg("window").ref("window")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

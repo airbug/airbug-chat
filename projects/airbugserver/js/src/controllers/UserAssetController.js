@@ -5,12 +5,16 @@
 //@Package('airbugserver')
 
 //@Export('UserAssetController')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -29,12 +33,18 @@ var Exception           = bugpack.require('Exception');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -49,9 +59,9 @@ var UserAssetController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, userAssetService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService) {
 
-        this._super(expressApp, bugCallRouter, userAssetService);
+        this._super(controllerManager, expressApp, bugCallRouter, userAssetService);
 
         //-------------------------------------------------------------------------------
         // Private Properties
@@ -82,9 +92,9 @@ var UserAssetController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this               = this;
         //var expressApp          = this.getExpressApp();
         var userAssetService    = this.getUserAssetService();
@@ -161,8 +171,24 @@ var UserAssetController = Class.extend(EntityController, {
                 });
             }
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserAssetController).with(
+    module("userAssetController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("userAssetService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

@@ -5,10 +5,10 @@
 //@TestFile
 
 //@Require('Class')
-//@require('airbugserver.CallService')
+//@Require('airbugserver.CallService')
+//@Require('airbugserver.ChatMessageStreamManager')
 //@Require('airbugserver.Conversation')
 //@Require('airbugserver.ConversationManager')
-//@Require('airbugserver.MeldService')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomManager')
 //@Require('airbugserver.RoomMember')
@@ -18,6 +18,7 @@
 //@Require('airbugserver.SessionManager')
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserManager')
+//@Require('bugcall.CallManager')
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
@@ -29,7 +30,7 @@
 //@Require('meldbug.MeldBuilder')
 //@Require('meldbug.MeldStore')
 //@Require('meldbugserver.MeldManagerFactory')
-//@Require('meldbugserver.MeldMirrorStore')
+//@Require('meldbugserver.MeldBucketStore')
 //@Require('mongo.DummyMongoDataStore')
 
 
@@ -37,50 +38,47 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var CallService             = bugpack.require('airbugserver.CallService');
-var Conversation            = bugpack.require('airbugserver.Conversation');
-var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
-var MeldService             = bugpack.require('airbugserver.MeldService');
-var Room                    = bugpack.require('airbugserver.Room');
-var RoomManager             = bugpack.require('airbugserver.RoomManager');
-var RoomMember              = bugpack.require('airbugserver.RoomMember');
-var RoomMemberManager       = bugpack.require('airbugserver.RoomMemberManager');
-var RoomService             = bugpack.require('airbugserver.RoomService');
-var Session                 = bugpack.require('airbugserver.Session');
-var SessionManager          = bugpack.require('airbugserver.SessionManager');
-var User                    = bugpack.require('airbugserver.User');
-var UserManager             = bugpack.require('airbugserver.UserManager');
-var DeltaBuilder            = bugpack.require('bugdelta.DeltaBuilder');
-var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
-var SchemaManager           = bugpack.require('bugentity.SchemaManager');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var Logger                  = bugpack.require('loggerbug.Logger');
-var MeldBucket              = bugpack.require('meldbug.MeldBucket');
-var MeldBuilder             = bugpack.require('meldbug.MeldBuilder');
-var MeldStore               = bugpack.require('meldbug.MeldStore');
-var MeldManagerFactory      = bugpack.require('meldbugserver.MeldManagerFactory');
-var MeldMirrorStore         = bugpack.require('meldbugserver.MeldMirrorStore');
-var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
+var Class                       = bugpack.require('Class');
+var CallService                 = bugpack.require('airbugserver.CallService');
+var ChatMessageStreamManager    = bugpack.require('airbugserver.ChatMessageStreamManager');
+var Conversation                = bugpack.require('airbugserver.Conversation');
+var ConversationManager         = bugpack.require('airbugserver.ConversationManager');
+var Room                        = bugpack.require('airbugserver.Room');
+var RoomManager                 = bugpack.require('airbugserver.RoomManager');
+var RoomMember                  = bugpack.require('airbugserver.RoomMember');
+var RoomMemberManager           = bugpack.require('airbugserver.RoomMemberManager');
+var RoomService                 = bugpack.require('airbugserver.RoomService');
+var Session                     = bugpack.require('airbugserver.Session');
+var SessionManager              = bugpack.require('airbugserver.SessionManager');
+var User                        = bugpack.require('airbugserver.User');
+var UserManager                 = bugpack.require('airbugserver.UserManager');
+var CallManager                 = bugpack.require('bugcall.CallManager');
+var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
+var EntityManagerStore          = bugpack.require('bugentity.EntityManagerStore');
+var SchemaManager               = bugpack.require('bugentity.SchemaManager');
+var BugFlow                     = bugpack.require('bugflow.BugFlow');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation              = bugpack.require('bugunit-annotate.TestAnnotation');
+var Logger                      = bugpack.require('loggerbug.Logger');
+var MeldBuilder                 = bugpack.require('meldbug.MeldBuilder');
+var DummyMongoDataStore         = bugpack.require('mongo.DummyMongoDataStore');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
+var bugmeta                     = BugMeta.context();
+var test                        = TestAnnotation.test;
+var $series                     = BugFlow.$series;
+var $task                       = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -97,13 +95,22 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     setupObject.dummyBugCallServer      = {
         on: function() {}
     };
+    setupObject.roomPusher              = {
+        meldCallWithRoom: function(callUuid, room, callback) {
+            callback();
+        },
+        pushRoomToCall: function(room, callUuid, callback) {
+            callback();
+        }
+    };
+    setupObject.userPusher              = {
+
+    };
+    setupObject.roomMemberPusher        = {};
+    setupObject.chatMessageStreamManager = new ChatMessageStreamManager();
+    setupObject.dummyRedisClient        = {};
     setupObject.callService             = new CallService(setupObject.dummyBugCallServer);
-    setupObject.meldBucket              = new MeldBucket();
-    setupObject.meldStore               = new MeldStore(setupObject.meldBucket);
     setupObject.meldBuilder             = new MeldBuilder();
-    setupObject.meldMirrorStore         = new MeldMirrorStore();
-    setupObject.meldManagerFactory      = new MeldManagerFactory(setupObject.meldStore, setupObject.meldMirrorStore);
-    setupObject.meldService             = new MeldService(setupObject.meldManagerFactory, setupObject.meldBuilder, setupObject.callService);
     setupObject.entityManagerStore      = new EntityManagerStore();
     setupObject.mongoDataStore          = new DummyMongoDataStore();
     setupObject.schemaManager           = new SchemaManager();
@@ -117,17 +124,20 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     setupObject.conversationManager.setEntityType("Conversation");
     setupObject.sessionManager          = new SessionManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
     setupObject.sessionManager.setEntityType("Session");
-    setupObject.roomService             = new RoomService(setupObject.roomManager, setupObject.userManager ,setupObject.roomMemberManager, setupObject.meldService);
+    setupObject.roomService             = new RoomService(setupObject.roomManager, setupObject.userManager ,setupObject.roomMemberManager, setupObject.chatMessageStreamManager, setupObject.roomPusher, setupObject.userPusher, setupObject.roomMemberPusher);
     setupObject.roomService.logger      = new Logger();
 
     setupObject.testCurrentUser = setupObject.userManager.generateUser(currentUserObject);
     setupObject.testSession     = setupObject.sessionManager.generateSession(sessionObject);
+    setupObject.testCallManager = new CallManager(sessionObject.testCallUuid);
     setupObject.testRequestContext  = {
         get: function(key) {
             if (key === "currentUser") {
                 return setupObject.testCurrentUser;
             } else if (key === "session") {
                 return setupObject.testSession;
+            } else if (key === "callManager") {
+                return setupObject.testCallManager;
             }
             return undefined;
         },
@@ -161,6 +171,7 @@ var roomServiceCreateRoomTest = {
 
             }
         };
+        this.testCallUuid = "abc123";
         setupRoomService(this, this.testCurrentUserObject, this.testSessionObject);
         this.testName       = "testName";
         this.testRoomData   = {

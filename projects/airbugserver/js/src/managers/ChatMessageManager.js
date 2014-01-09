@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Set')
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessage')
 //@Require('bugentity.EntityManager')
@@ -29,6 +30,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
@@ -59,13 +61,13 @@ var ChatMessageManager = Class.extend(EntityManager, {
     /**
      * @param {ChatMessage} chatMessage
      * @param {(Array.<string> | function(Throwable, ChatMessage))} dependencies
-     * @param {function(Throwable, ChatMessage)=} callback
+     * @param {function(Throwable, ChatMessage=)=} callback
      */
     createChatMessage: function(chatMessage, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(chatMessage, options, dependencies, callback);
     },
@@ -141,7 +143,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      * @param {string} senderUserId
      * @param {string} conversationId
      * @param {string} tryUuid
-     * @param {function(Throwable, ChatMessage)} callback
+     * @param {function(Throwable, ChatMessage=)} callback
      */
     retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid: function(senderUserId, conversationId, tryUuid, callback) {
         var _this = this;
@@ -159,11 +161,32 @@ var ChatMessageManager = Class.extend(EntityManager, {
                             entityObject.commitDelta();
                         }
                     }
-                    callback(undefined, entityObject);
+                    callback(null, entityObject);
                 } else {
                     callback(throwable);
                 }
             });
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, Set.<ChatMessage>=)} callback
+     */
+    retrieveChatMessagesByConversationId: function(conversationId, callback) {
+        var _this = this;
+        this.dataStore.find({conversationId: conversationId}).lean(true).exec(function(throwable, dbObjects) {
+            if (!throwable) {
+                var newSet = new Set();
+                dbObjects.forEach(function(dbObject) {
+                    var chatMessage = _this.convertDbObjectToEntity(dbObject);
+                    chatMessage.commitDelta();
+                    newSet.add(chatMessage);
+                });
+                callback(null, newSet);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**

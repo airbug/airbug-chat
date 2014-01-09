@@ -44,15 +44,18 @@ var test = TestAnnotation.test;
 var chatMessageControllerInstantiationTest = {
 
     setup: function() {
+        this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.chatMessageService     = {};
-        this.chatMessageController  = new ChatMessageController(this.expressApp, this.bugCallRouter, this.chatMessageService);
+        this.chatMessageController  = new ChatMessageController(this.controllerManager, this.expressApp, this.bugCallRouter, this.chatMessageService);
     },
 
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.chatMessageController, EntityController),
             "Assert chatMessageController extends EntityController");
+        test.assertEqual(this.chatMessageController.getControllerManager(), this.controllerManager,
+            "Assert controllerManager has been set properly");
         test.assertEqual(this.chatMessageController.getExpressApp(), this.expressApp,
             "Assert expressApp has been set to chatMessageController's expressApp property");
         test.assertEqual(this.chatMessageController.getBugCallRouter(), this.bugCallRouter,

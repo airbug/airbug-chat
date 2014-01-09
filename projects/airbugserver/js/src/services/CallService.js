@@ -5,35 +5,60 @@
 //@Package('airbugserver')
 
 //@Export('CallService')
+//@Autoload
 
 //@Require('Class')
 //@Require('DualMultiSetMap')
 //@Require('Obj')
 //@Require('Set')
+//@Require('airbugserver.IBuildRequestContext')
+//@Require('airbugserver.RequestContext')
 //@Require('bugcall.CallEvent')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var DualMultiSetMap     = bugpack.require('DualMultiSetMap');
-var Obj                 = bugpack.require('Obj');
-var CallEvent           = bugpack.require('bugcall.CallEvent');
+var Class                   = bugpack.require('Class');
+var DualMultiSetMap         = bugpack.require('DualMultiSetMap');
+var Obj                     = bugpack.require('Obj');
+var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
+var RequestContext          = bugpack.require('airbugserver.RequestContext');
+var CallEvent               = bugpack.require('bugcall.CallEvent');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ * @implements {IBuildRequestContext}
+ */
 var CallService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -69,7 +94,25 @@ var CallService = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // IBuildRequestContext Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {function(Throwable=)} callback
+     */
+    buildRequestContext: function(requestContext, callback) {
+        var callManager = null;
+        if (requestContext.getType() === RequestContext.Types.BUGCALL) {
+            callManager = requestContext.getRequest().getCallManager();
+        }
+        requestContext.set("callManager", callManager);
+        callback();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -97,7 +140,7 @@ var CallService = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -151,6 +194,25 @@ var CallService = Class.extend(Obj, {
         this.registerCallManager(sessionId, callManager);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(CallService, IBuildRequestContext);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CallService).with(
+    module("callService")
+        .args([
+            arg().ref("bugCallServer")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

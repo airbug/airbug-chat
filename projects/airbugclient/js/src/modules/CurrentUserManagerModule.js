@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('CurrentUserManagerModule')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
@@ -13,34 +14,45 @@
 //@Require('airbug.CurrentUserModel')
 //@Require('airbug.ManagerModule')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var TypeUtil            = bugpack.require('TypeUtil');
-var CurrentUser         = bugpack.require('airbug.CurrentUser');
-var CurrentUserModel    = bugpack.require('airbug.CurrentUserModel');
-var ManagerModule       = bugpack.require('airbug.ManagerModule');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
+var Class                           = bugpack.require('Class');
+var Exception                       = bugpack.require('Exception');
+var TypeUtil                        = bugpack.require('TypeUtil');
+var CurrentUser                     = bugpack.require('airbug.CurrentUser');
+var CurrentUserModel                = bugpack.require('airbug.CurrentUserModel');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -53,7 +65,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter) {
+    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter, logger) {
 
         this._super(airbugApi, meldStore, meldBuilder);
 
@@ -78,7 +90,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          * @private
          * @type {null}
          */
-        this.logger             = null;
+        this.logger             = logger;
 
         /**
          * @private
@@ -95,10 +107,20 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
 
     //-------------------------------------------------------------------------------
-    // Configuration
+    // IInitializeModule Implementation
     //-------------------------------------------------------------------------------
 
-    configure: function() {
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeModule: function(callback) {
+        callback();
+    },
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    initializeModule: function(callback) {
         var _this = this;
         var airbugApi = this.airbugApi;
         this.bugCallRouter.addAll({
@@ -121,8 +143,8 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
              */
-             //NOTE: SUNG Does this need to be done on the server side to ensure disconnect.
-             // If so, how do we deal with the default reconnect behavior?
+            //NOTE: SUNG Does this need to be done on the server side to ensure disconnect.
+            // If so, how do we deal with the default reconnect behavior?
             refreshConnectionForLogout: function(request, responder, callback) {
                 console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                 console.log("CurrentUserManagerModule refreshConnectionForLogout route");
@@ -155,6 +177,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             }
         });
+        callback();
     },
 
 
@@ -344,6 +367,31 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         ]).execute(callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(CurrentUserManagerModule, IInitializeModule);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CurrentUserManagerModule).with(
+    module("currentUserManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder"),
+            arg().ref("userManagerModule"),
+            arg().ref("navigationModule"),
+            arg().ref("bugCallRouter"),
+            arg().ref("logger")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

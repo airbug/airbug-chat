@@ -44,15 +44,18 @@ var test                    = TestAnnotation.test;
 var sessionControllerInstantiationTest = {
 
     setup: function() {
+        this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.sessionService            = {};
-        this.sessionController      = new SessionController(this.expressApp, this.bugCallRouter, this.sessionService);
+        this.sessionController      = new SessionController(this.controllerManager, this.expressApp, this.bugCallRouter, this.sessionService);
     },
 
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.sessionController, EntityController),
             "Assert sessionController extends EntityController");
+        test.assertEqual(this.sessionController.getControllerManager(), this.controllerManager,
+            "Assert controllerManager has been set properly");
         test.assertEqual(this.sessionController.getExpressApp(), this.expressApp,
             "Assert expressApp has been set to sessionController's expressApp property");
         test.assertEqual(this.sessionController.getBugCallRouter(), this.bugCallRouter,

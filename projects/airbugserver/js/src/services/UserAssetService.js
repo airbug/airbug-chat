@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserAssetService')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
@@ -12,42 +13,51 @@
 //@Require('Set')
 //@Require('airbugserver.UserAsset')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
-var UserAsset           = bugpack.require('airbugserver.UserAsset');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
+var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
+var UserAsset               = bugpack.require('airbugserver.UserAsset');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
-var $iterableParallel   = BugFlow.$iterableParallel;
+var arg                     = ArgAnnotation.arg;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
+var $parallel               = BugFlow.$parallel;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
+var $iterableParallel       = BugFlow.$iterableParallel;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RoomService = Class.extend(Obj, {
+var UserAssetService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -131,6 +141,17 @@ var RoomService = Class.extend(Obj, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserAssetService).with(
+    module("userAssetService")
+        .args([
+            arg().ref("userAssetManager")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

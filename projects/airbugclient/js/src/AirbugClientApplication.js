@@ -90,7 +90,7 @@ var AirbugClientApplication = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     start: function(callback) {
         this.autowiredScan.scanAll();

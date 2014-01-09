@@ -5,8 +5,11 @@
 //@Package('airbug')
 
 //@Export('ChatMessageManagerModule')
+//@Autoload
 
+//@Require('ArgUtil')
 //@Require('Class')
+//@Require('Map')
 //@Require('UuidGenerator')
 //@Require('airbug.ChatMessageList')
 //@Require('airbug.ChatMessageModel')
@@ -14,27 +17,44 @@
 //@Require('airbug.ImageChatMessageModel')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.TextChatMessageModel')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var UuidGenerator           = bugpack.require('UuidGenerator');
-var ChatMessageList         = bugpack.require('airbug.ChatMessageList');
-var ChatMessageModel        = bugpack.require('airbug.ChatMessageModel');
-var CodeChatMessageModel    = bugpack.require('airbug.CodeChatMessageModel');
-var ImageChatMessageModel   = bugpack.require('airbug.ImageChatMessageModel');
-var ManagerModule           = bugpack.require('airbug.ManagerModule');
-var TextChatMessageModel    = bugpack.require('airbug.TextChatMessageModel');
+var ArgUtil                         = bugpack.require('ArgUtil');
+var Class                           = bugpack.require('Class');
+var Map                             = bugpack.require('Map');
+var UuidGenerator                   = bugpack.require('UuidGenerator');
+var ChatMessageList                 = bugpack.require('airbug.ChatMessageList');
+var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
+var CodeChatMessageModel            = bugpack.require('airbug.CodeChatMessageModel');
+var ImageChatMessageModel           = bugpack.require('airbug.ImageChatMessageModel');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var TextChatMessageModel            = bugpack.require('airbug.TextChatMessageModel');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -241,11 +261,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         return textChatMessageObject;
     },
 
-
-
     /**
      * @param {string} chatMessageId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveChatMessage: function(chatMessageId, callback) {
         this.retrieve("ChatMessage", chatMessageId, callback);
@@ -253,12 +271,50 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Array.<string>} chatMessageIds
-     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
      */
     retrieveChatMessages: function(chatMessageIds, callback) {
         this.retrieveEach("ChatMessage", chatMessageIds, callback);
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
+     */
+    retrieveChatMessagesByConversationId: function(conversationId, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "conversationId", optional: false, type: "string"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        conversationId  = args.conversationId;
+        callback        = args.callback;
+
+        var _this       = this;
+        var retrievedMeldMap   = new Map();
+
+        var requestData = {conversationId: conversationId};
+        var requestType = "retrieveChatMessagesByConversationId";
+        this.request(requestType, requestData, function(throwable, callResponse) {
+            _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, "ChatMessage", callback);
+        });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatMessageManagerModule).with(
+    module("ChatMessageManagerModule")
+        .args([
+            arg().ref("airbugApi"),
+            arg().ref("meldStore"),
+            arg().ref("meldBuilder"),
+            arg().ref("currentUserManagerModule"),
+            arg().ref("conversationManagerModule")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

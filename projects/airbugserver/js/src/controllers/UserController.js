@@ -5,12 +5,16 @@
 //@Package('airbugserver')
 
 //@Export('UserController')
+//@Autoload
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -29,12 +33,18 @@ var Exception           = bugpack.require('Exception');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -49,9 +59,9 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, userService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, userService) {
 
-        this._super(expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -83,9 +93,9 @@ var UserController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this           = this;
         var expressApp      = this.getExpressApp();
         var userService     = this.getUserService();
@@ -149,7 +159,7 @@ var UserController = Class.extend(EntityController, {
         // REST API
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/app/users/:id', function(request, response){
+        expressApp.get('/api/v1/user/:id', function(request, response){
             var requestContext      = request.requestContext;
             var userId              = request.params.id;
             userService.retrieveUser(requestContext, userId, function(throwable, entity){
@@ -165,7 +175,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/users', function(request, response){
+        expressApp.post('/api/v1/user', function(request, response){
             var requestContext      = request.requestContext;
             var user                = request.body;
             userService.createUser(requestContext, user, function(throwable, entity){
@@ -181,7 +191,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.put('/app/users/:id', function(request, response){
+        expressApp.put('/api/v1/user/:id', function(request, response){
             var requestContext  = request.requestContext;
             var userId          = request.params.id;
             var updates         = request.body;
@@ -198,7 +208,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.delete('/app/users/:id', function(request, response){
+        expressApp.delete('/api/v1/user/:id', function(request, response){
             var _this = this;
             var requestContext  = request.requestContext;
             var userId          = request.params.id;
@@ -262,8 +272,24 @@ var UserController = Class.extend(EntityController, {
                 });
             }
         });
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserController).with(
+    module("userController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("userService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

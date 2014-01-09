@@ -5,10 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('SessionController')
+//@Autoload
 
 //@Require('Class')
 //@Require('airbugserver.EntityController')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -25,12 +29,18 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                 = ArgAnnotation.arg;
+var bugmeta             = BugMeta.context();
+var module              = ModuleAnnotation.module;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -45,9 +55,9 @@ var SessionController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp, bugCallRouter, sessionService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, sessionService) {
 
-        this._super(expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter);
 
 
         //-------------------------------------------------------------------------------
@@ -79,11 +89,11 @@ var SessionController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    configure: function() {
+    configureController: function(callback) {
         var _this       = this;
-        var expressApp  = this.expressApp;
+        var expressApp  = this.getExpressApp();
 
         //-------------------------------------------------------------------------------
         // Express Routes
@@ -94,9 +104,24 @@ var SessionController = Class.extend(EntityController, {
         // BugCall Routes
         //-------------------------------------------------------------------------------
 
-
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SessionController).with(
+    module("sessionController")
+        .args([
+            arg().ref("controllerManager"),
+            arg().ref("expressApp"),
+            arg().ref("bugCallRouter"),
+            arg().ref("sessionService")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

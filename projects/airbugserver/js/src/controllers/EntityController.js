@@ -13,6 +13,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('airbug.EntityDefines')
+//@Require('airbugserver.Controller')
 
 
 //-------------------------------------------------------------------------------
@@ -33,6 +34,7 @@ var MappedThrowable     = bugpack.require('MappedThrowable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 var EntityDefines       = bugpack.require('airbug.EntityDefines');
+var Controller          = bugpack.require('airbugserver.Controller');
 
 
 //-------------------------------------------------------------------------------
@@ -41,9 +43,9 @@ var EntityDefines       = bugpack.require('airbug.EntityDefines');
 
 /**
  * @constructor
- * @extends {Obj}
+ * @extends {Controller}
  */
-var EntityController = Class.extend(Obj, {
+var EntityController = Class.extend(Controller, {
 
 
     //-------------------------------------------------------------------------------
@@ -55,9 +57,9 @@ var EntityController = Class.extend(Obj, {
      * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      */
-    _constructor: function(expressApp, bugCallRouter) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter) {
 
-        this._super();
+        this._super(controllerManager, expressApp);
 
 
         //-------------------------------------------------------------------------------
@@ -69,12 +71,6 @@ var EntityController = Class.extend(Obj, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter              = bugCallRouter;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp                 = expressApp;
     },
 
 
@@ -90,13 +86,6 @@ var EntityController = Class.extend(Obj, {
         return this.bugCallRouter;
     },
 
-    /**
-     * @return {ExpressApp}
-     */
-    getExpressApp: function() {
-        return this.expressApp;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -109,6 +98,20 @@ var EntityController = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     processCreateResponse: function(responder, throwable, entity, callback) {
+        if (!throwable) {
+            this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
+        } else {
+            this.processThrowable(responder, throwable, callback);
+        }
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {Entity} entity
+     * @param {function(Throwable=)} callback
+     */
+    processDeleteResponse: function(responder, throwable, entity, callback) {
         if (!throwable) {
             this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
         } else {
@@ -162,12 +165,39 @@ var EntityController = Class.extend(Obj, {
      * @param {CallResponder} responder
      * @param {Throwable} throwable
      * @param {Entity} entity
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     processRetrieveResponse: function(responder, throwable, entity, callback) {
         console.log("EntityController#processRetrieveResponse");
         if (!throwable) {
             this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
+        } else {
+            this.processThrowable(responder, throwable, callback);
+        }
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {Entity} entity
+     * @param {function(Throwable=)} callback
+     */
+    processUpdateResponse: function(responder, throwable, entity, callback) {
+        if (!throwable) {
+            this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
+        } else {
+            this.processThrowable(responder, throwable, callback);
+        }
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {function(Throwable=)} callback
+     */
+    processResponse: function(responder, throwable, callback) {
+        if (!throwable) {
+            this.sendSuccessResponse(responder, {}, callback);
         } else {
             this.processThrowable(responder, throwable, callback);
         }

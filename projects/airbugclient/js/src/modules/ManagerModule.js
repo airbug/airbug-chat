@@ -5,6 +5,7 @@
 //@Package('airbug')
 
 //@Export('ManagerModule')
+//@Autoload
 
 //@Require('ArgUtil')
 //@Require('Class')
@@ -122,8 +123,8 @@ var ManagerModule = Class.extend(Obj, {
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
                     var data        = callResponse.getData();
                     var objectId    = data.objectId;
-                    var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId);
-                    var meldDocument  = _this.get(meldKey);
+                    var meldDocumentKey     = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                    var meldDocument  = _this.get(meldDocumentKey);
                     if (meldDocument) {
                         callback(undefined, meldDocument);
                     } else {
@@ -172,8 +173,8 @@ var ManagerModule = Class.extend(Obj, {
                     var objectIds       = data.objectIds;
                     var meldDocumentSet   = new Set();
                     objectIds.forEach(function(objectId) {
-                        var meldKey     = _this.meldBuilder.generateMeldKey(type, objectId);
-                        var meldDocument  = _this.get(meldKey);
+                        var meldDocumentKey     = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                        var meldDocument  = _this.get(meldDocumentKey);
                         meldDocumentSet.add(meldDocument);
                     });
                     callback(undefined, meldDocumentSet);
@@ -200,7 +201,7 @@ var ManagerModule = Class.extend(Obj, {
     request: function(requestType, requestData, callback) {
         this.airbugApi.request(requestType, requestData, function(throwable, callResponse) {
             if (!throwable) {
-                callback(undefined, callResponse);
+                callback(null, callResponse);
             }  else {
                 callback(throwable);
             }
@@ -211,7 +212,7 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} entityType
      * @param {string} entityId
-     * @param {function(Throwable, Meld)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieve: function(entityType, entityId, callback) {
         var args = ArgUtil.process(arguments, [
@@ -223,8 +224,8 @@ var ManagerModule = Class.extend(Obj, {
         entityId    = args.entityId;
         callback    = args.callback;
 
-        var meldKey         = this.meldBuilder.generateMeldKey(entityType, entityId);
-        var meldDocument    = this.meldStore.getMeld(meldKey);
+        var meldDocumentKey         = this.meldBuilder.generateMeldDocumentKey(entityType, entityId);
+        var meldDocument            = this.meldStore.getMeldDocumentByMeldDocumentKey(meldDocumentKey);
         if (meldDocument) {
            callback(null, meldDocument);
         } else {
@@ -237,9 +238,9 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<string>} ids
-     * @param {function(Throwable, Map.<string, Meld>)} callback
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
      */
-    retrieveEach: function(type, ids, filter, callback) {
+    retrieveEach: function(type, ids, callback) {
         var args = ArgUtil.process(arguments, [
             {name: "type", optional: false, type: "string"},
             {name: "ids", optional: false, type: "array"},
@@ -254,8 +255,8 @@ var ManagerModule = Class.extend(Obj, {
         var unretrievedIds     = [];
 
         ids.forEach(function(id) {
-            var meldKey         = _this.meldBuilder.generateMeldKey(type, id);
-            var meldDocument    = _this.get(meldKey);
+            var meldDocumentKey         = _this.meldBuilder.generateMeldDocumentKey(type, id);
+            var meldDocument    = _this.get(meldDocumentKey);
             if (meldDocument) {
                 retrievedMeldMap.put(id, meldDocument);
             } else {
@@ -270,7 +271,7 @@ var ManagerModule = Class.extend(Obj, {
                 _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, type, callback);
             });
         } else {
-            callback(undefined, retrievedMeldMap);
+            callback(null, retrievedMeldMap);
         }
     },
 
@@ -278,7 +279,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} type
      * @param {string} id
      * @param {*} changeObject
-     * @param {function(Throwable, Meld)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     update: function(type, id, changeObject, callback) {
         var args = ArgUtil.process(arguments, [
@@ -302,8 +303,8 @@ var ManagerModule = Class.extend(Obj, {
             if (!throwable)  {
                 var data = callResponse.getData();
                 if (callResponse.getType() === EntityDefines.Responses.SUCCESS) {
-                    var returnedMeldKey     = _this.meldBuilder.generateMeldKey(type, id);
-                    var meldDocument        = _this.get(returnedMeldKey);
+                    var returnedMeldDocumentKey     = _this.meldBuilder.generateMeldDocumentKey(type, id);
+                    var meldDocument        = _this.get(returnedMeldDocumentKey);
                     callback(undefined, meldDocument);
                 } else if (callResponse.getType() === EntityDefines.Responses.EXCEPTION) {
                     //TODO BRN: Handle common exceptions
@@ -324,7 +325,7 @@ var ManagerModule = Class.extend(Obj, {
      * @param {string} type
      * @param {Array.<string>} ids
      * @param {Array.<Object>} changeObjects
-     * @param {function(Throwable, List.<Meld>=)} callback
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
      */
     updateEach: function(type, ids, changeObjects, callback) {
         var args = ArgUtil.process(arguments, [
@@ -345,17 +346,17 @@ var ManagerModule = Class.extend(Obj, {
         };
         var requestType = "update" + StringUtil.pluralize(type);
         this.airbugApi.request(requestType, requestData, function(throwable, data) {
-            var extentMeldKeys      = [];
-            var destroyedMeldKeys    = [];
+            var extentMeldDocumentKeys      = [];
+            var destroyedMeldDocumentKeys    = [];
             ids.forEach(function(id) {
-                var meldKey = _this.meldBuilder.generateMeldKey(type, id);
+                var meldDocumentKey = _this.meldBuilder.generateMeldDocumentKey(type, id);
                 if (data.objectIds[id]) {
-                    extentMeldKeys.push(meldKey);
+                    extentMeldDocumentKeys.push(meldDocumentKey);
                 } else {
-                    destroyedMeldKeys.push(meldKey);
+                    destroyedMeldDocumentKeys.push(meldDocumentKey);
                 }
             });
-            var updatedMeldDocuments = _this.getEach(extentMeldKeys);
+            var updatedMeldDocuments = _this.getEach(extentMeldDocumentKeys);
             callback(throwable, updatedMeldDocuments);
         });
     },
@@ -363,7 +364,7 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {string} id
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     destroy: function(type, id, callback) {
         //TODO
@@ -372,7 +373,7 @@ var ManagerModule = Class.extend(Obj, {
     /**
      * @param {string} type
      * @param {Array.<string>} ids
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     destroyEach: function(type, ids, callback) {
         //TODO
@@ -440,20 +441,20 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {MeldKey} meldKey
-     * @return {Meld}
+     * @param {MeldDocumentKey} meldDocumentKey
+     * @return {MeldDocument}
      */
-    get: function(meldKey) {
-        return this.meldStore.getMeld(meldKey);
+    get: function(meldDocumentKey) {
+        return this.meldStore.getMeldDocumentByMeldDocumentKey(meldDocumentKey);
     },
 
     /**
      * @private
-     * @param {Array.<string>} meldKeys
-     * @return {List.<Meld>}
+     * @param {Array.<string>} meldDocumentKeys
+     * @return {List.<MeldDocument>}
      */
-    getEach: function(meldKeys) {
-        return this.meldStore.getEachMeld(meldKeys);
+    getEach: function(meldDocumentKeys) {
+        return this.meldStore.getEachMeldDocumentByMeldDocumentKey(meldDocumentKeys);
     },
 
 
@@ -461,9 +462,9 @@ var ManagerModule = Class.extend(Obj, {
      * @private
      * @param {Throwable} throwable
      * @param {CallResponse} callResponse
-     * @param {(Map.<string, Meld> | function(Throwable, Map.<string, Meld>=))} retrievedMeldMap
+     * @param {(Map.<string, MeldDocument> | function(Throwable, Map.<string, MeldDocument>=))} retrievedMeldMap
      * @param {string} type
-     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
      */
     processMappedRetrieveResponse: function(throwable, callResponse, retrievedMeldMap, type, callback) {
         if (TypeUtil.isFunction(retrievedMeldMap)) {
@@ -478,8 +479,8 @@ var ManagerModule = Class.extend(Obj, {
                 var dataMap     = data.map;
                 Obj.forIn(dataMap, function(objectId, success) {
                     if (success) {
-                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId);
-                        var meldDocument    = _this.get(returnedMeldKey);
+                        var returnedMeldDocumentKey = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                        var meldDocument    = _this.get(returnedMeldDocumentKey);
                         retrievedMeldMap.put(objectId, meldDocument);
                     } else {
                         retrievedMeldMap.put(objectId, null);
@@ -490,8 +491,8 @@ var ManagerModule = Class.extend(Obj, {
                 var dataMap     = data.map;
                 Obj.forIn(dataMap, function(objectId, success) {
                     if (success) {
-                        var returnedMeldKey = _this.meldBuilder.generateMeldKey(type, objectId);
-                        var meldDocument    = _this.get(returnedMeldKey);
+                        var returnedMeldDocumentKey = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                        var meldDocument    = _this.get(returnedMeldDocumentKey);
                         retrievedMeldMap.put(objectId, meldDocument);
                     } else {
                         retrievedMeldMap.put(objectId, null);
