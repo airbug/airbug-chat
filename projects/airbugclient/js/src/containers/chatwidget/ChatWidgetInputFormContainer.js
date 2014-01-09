@@ -288,7 +288,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
     processEnterKey: function() {
         var submitOnEnter = this.submitOnEnterCheckBoxView.isChecked();
         if (submitOnEnter) {
-            this.submitForm();
+            this.relayChatMessage();
         }
     },
 

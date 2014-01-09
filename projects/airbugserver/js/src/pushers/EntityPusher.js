@@ -6,6 +6,7 @@
 
 //@Export('EntityPusher')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
@@ -24,6 +25,7 @@ var bugpack             = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Obj                 = bugpack.require('Obj');
@@ -125,7 +127,7 @@ var EntityPusher = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // public Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -162,7 +164,7 @@ var EntityPusher = Class.extend(Obj, {
         var _this               = this;
         var meldDocumentKeys    = [];
         entities.forEach(function(entity) {
-            var meldDocumentKey = this.generateMeldDocumentKeyFromEntity(entity);
+            var meldDocumentKey = _this.generateMeldDocumentKeyFromEntity(entity);
             meldDocumentKeys.push(meldDocumentKey);
         });
         $series([
@@ -179,6 +181,34 @@ var EntityPusher = Class.extend(Obj, {
      */
     push: function() {
         return this.pushManager.push();
+    },
+
+    /**
+     * @param {Entity} entity
+     * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
+     * @param {function(Throwable=)=} callback
+     */
+    pushEntity: function(entity, waitForCallUuids, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "entity", optional: false, type: "object"},
+            {name: "waitForCallUuids", optional: true, type: "array", default: []},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        entity              = args.entity;
+        waitForCallUuids    = args.waitForCallUuids;
+        callback            = args.callback;
+
+        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(entity);
+        var data                = this.filterEntity(entity);
+        var push                = this.getPushManager().push();
+        push
+            .toAll()
+            .setDocument(meldDocumentKey, data)
+
+        if (waitForCallUuids.length > 0) {
+            push.waitFor(waitForCallUuids);
+        }
+        push.exec(callback);
     },
 
     /**
@@ -227,6 +257,20 @@ var EntityPusher = Class.extend(Obj, {
                 });
             })
         ]).execute(callback);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Entity} entity
+     * @return {Object}
+     */
+    filterEntity: function(entity) {
+        return entity.toObject();
     }
 });
 

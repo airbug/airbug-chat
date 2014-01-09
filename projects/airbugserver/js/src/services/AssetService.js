@@ -294,7 +294,9 @@ var AssetService = Class.extend(Obj, {
 bugmeta.annotate(AssetService).with(
     module("assetService")
         .args([
-            arg().ref("assetManager")
+            arg().ref("assetManager"),
+            arg().ref("awsUploader"),
+            arg().ref("imagemagick")
         ])
 );
 

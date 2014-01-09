@@ -86,6 +86,12 @@ var AirbugInitializer = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {AwsUploader}
+         */
+        this.awsUploader                        = null;
+
+        /**
+         * @private
          * @type {BugCallRouter}
          */
         this.bugCallRouter                      = null;
@@ -280,6 +286,16 @@ var AirbugInitializer = Class.extend(Obj, {
                     flow.complete(error);
                 });
             }),
+            $task(function(flow) {
+                _this.awsUploader.initialize(function(error) {
+                    if (!error) {
+                        console.log("awsUploader initialized successfully");
+                    } else {
+                        console.log("awsUploader failed to initialize. error = ", error);
+                    }
+                    flow.complete(error);
+                });
+            }),
 
 
             //-------------------------------------------------------------------------------
@@ -371,6 +387,7 @@ bugmeta.annotate(AirbugInitializer).with(
         .properties([
             property("airbugClientConfig").ref("airbugClientConfig"),
             property("airbugServerConfig").ref("airbugServerConfig"),
+            property("awsUploader").ref("awsUploader"),
             property("bugCallRouter").ref("bugCallRouter"),
             property("bugCallServer").ref("bugCallServer"),
             property("callService").ref("callService"),

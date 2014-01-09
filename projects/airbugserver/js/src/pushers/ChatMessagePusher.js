@@ -58,7 +58,7 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
     /**
      * @param {string} callUuid
      * @param {ChatMessage} chatMessage
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     meldCallWithChatMessage: function(callUuid, chatMessage, callback) {
         this.meldCallWithEntity(callUuid, chatMessage, callback);
@@ -75,22 +75,17 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
 
     /**
      * @param {ChatMessage} chatMessage
-     * @param {function(Throwable)} callback
+     * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
+     * @param {function(Throwable=)} callback
      */
-    pushChatMessage: function(chatMessage, callback) {
-        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(chatMessage);
-        var data                = this.filterChatMessage(chatMessage);
-        var push                = this.getPushManager().push();
-        push
-            .toAll()
-            .setDocument(meldDocumentKey, data)
-            .exec(callback);
+    pushChatMessage: function(chatMessage, waitForCallUuids, callback) {
+        this.pushEntity(chatMessage, waitForCallUuids, callback);
     },
 
     /**
      * @param {ChatMessage} chatMessage
      * @param {string} callUuid
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     pushChatMessageToCall: function(chatMessage, callUuid, callback) {
         var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(chatMessage);

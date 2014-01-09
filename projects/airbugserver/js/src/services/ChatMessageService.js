@@ -123,64 +123,76 @@ var ChatMessageService = Class.extend(EntityService, {
         var currentUser     = requestContext.get("currentUser");
 
         if (currentUser.isNotAnonymous() && currentUser.getId() === chatMessage.getSenderUserId()) {
+            if (chatMessage.getConversationId()) {
+                var conversation = null;
+                $series([
+                    $task(function(flow) {
+                        _this.conversationManager.retrieveConversation(chatMessage.getConversationId(), function(throwable, returnedConversation) {
+                            if (!throwable) {
+                                if (returnedConversation) {
 
-            var conversation = null;
-            $series([
-                $task(function(flow) {
-                    _this.conversationManager.retrieveConversation(chatMessage.getConversationId(), function(throwable, returnedConversation) {
-                        if (!throwable) {
+                                    //NOTE BRN: Validate that the user is a member of this room
 
-                            //NOTE BRN: Validate that the user is a member of this room
-
-                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                conversation = returnedConversation;
-                                flow.complete();
+                                    if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                        conversation = returnedConversation;
+                                        flow.complete();
+                                    } else {
+                                        flow.error(new Exception("UnauthorizedAccess"));
+                                    }
+                                } else {
+                                    flow.error(new Exception("NotFound"));
+                                }
                             } else {
-                                flow.error(new Exception("UnauthorizedAccess"));
+                                flow.error(throwable);
                             }
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
+                        });
+                    }),
+                    $task(function(flow) {
 
-                    //NOTE BRN: Make sure that this chat message does not already exist (in the case of retry or a message sent twice)
+                        //NOTE BRN: Make sure that this chat message does not already exist (in the case of retry or a message sent twice)
 
-                    _this.chatMessageManager.retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid(chatMessage.getSenderUserId(),
-                        chatMessage.getConversationId(), chatMessage.getTryUuid(), function(throwable, chatMessage) {
-                        if (!throwable) {
-                            if (chatMessage) {
-                                flow.error(new Exception("ChatMessage already exists"));
+                        _this.chatMessageManager.retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid(chatMessage.getSenderUserId(),
+                            chatMessage.getConversationId(), chatMessage.getTryUuid(), function(throwable, chatMessage) {
+                            if (!throwable) {
+                                if (chatMessage) {
+                                    flow.error(new Exception("ChatMessage already exists"));
+                                } else {
+                                    flow.complete();
+                                }
                             } else {
-                                flow.complete();
+                                flow.error(throwable);
                             }
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessageManager.createChatMessage(chatMessage, function(throwable, chatMessage) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    var chatMessageStream = _this.chatMessageStreamManager.generateChatMessageStream({
-                        id: conversation.getId()
-                    });
-                    _this.chatMessagePusher.streamChatMessage(chatMessageStream, chatMessage, function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                callback(throwable, chatMessage);
-            });
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.chatMessageManager.createChatMessage(chatMessage, function(throwable, chatMessage) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.chatMessagePusher.pushChatMessage(chatMessage, [callManager.getCallUuid()], function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        var chatMessageStream = _this.chatMessageStreamManager.generateChatMessageStream({
+                            id: conversation.getId()
+                        });
+                        _this.chatMessagePusher.streamChatMessage(chatMessageStream, chatMessage, function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    })
+                ]).execute(function(throwable) {
+                    callback(throwable, chatMessage);
+                });
+            } else {
+                callback(new Exception("BadRequest"));
+            }
         } else {
             callback(new Exception("UnauthorizedAccess"));
         }

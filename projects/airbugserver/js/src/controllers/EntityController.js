@@ -150,14 +150,20 @@ var EntityController = Class.extend(Controller, {
      */
     processRetrieveEachResponse: function(responder, throwable, entityIds, entityMap, callback) {
         var dataMap             = new Map();
-        entityIds.forEach(function(entityId) {
-            var entity = entityMap.get(entityId);
-            if (!TypeUtil.isNull(entity) && !TypeUtil.isUndefined(entity)) {
-                dataMap.put(entityId, true);
-            } else {
-                dataMap.put(entityId, false);
-            }
-        });
+        if (entityIds) {
+            entityIds.forEach(function(entityId) {
+                if (entityMap) {
+                    var entity = entityMap.get(entityId);
+                    if (!TypeUtil.isNull(entity) && !TypeUtil.isUndefined(entity)) {
+                        dataMap.put(entityId, true);
+                    } else {
+                        dataMap.put(entityId, false);
+                    }
+                } else {
+                    dataMap.put(entityId, false);
+                }
+            });
+        }
         this.processMappedResponse(responder, throwable, dataMap, callback);
     },
 
@@ -237,7 +243,7 @@ var EntityController = Class.extend(Controller, {
             error: error
         });
         responder.sendResponse(response);
-        callback();
+        callback(error);
     },
 
     /**

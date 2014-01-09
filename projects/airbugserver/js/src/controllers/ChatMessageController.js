@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('LiteralUtil')
+//@Require('Set')
 //@Require('airbugserver.EntityController')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -28,6 +29,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var LiteralUtil         = bugpack.require('LiteralUtil');
+var Set                 = bugpack.require('Set');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
@@ -217,6 +219,10 @@ var ChatMessageController = Class.extend(EntityController, {
                 var requestContext      = request.requestContext;
 
                 chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
+                    var chatMessageIds = new Set();
+                    if (chatMessageMap) {
+                        chatMessageIds.addAll(chatMessageMap.getKeyArray());
+                    }
                     _this.processRetrieveEachResponse(responder, throwable, chatMessageIds, chatMessageMap, callback);
                 });
             }

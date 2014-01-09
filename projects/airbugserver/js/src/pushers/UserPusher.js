@@ -78,16 +78,11 @@ var UserPusher = Class.extend(EntityPusher, {
     /**
      * @protected
      * @param {User} user
+     * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
      * @param {function(Throwable=)} callback
      */
-    pushUser: function(user, callback) {
-        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(user);
-        var data                = this.filterUser(user);
-        var push                = this.getPushManager().push();
-        push
-            .toAll()
-            .setDocument(meldDocumentKey, data)
-            .exec(callback);
+    pushUser: function(user, waitForCallUuids, callback) {
+        this.pushEntity(user, waitForCallUuids, callback);
     },
 
     /**
@@ -98,7 +93,7 @@ var UserPusher = Class.extend(EntityPusher, {
      */
     pushUserToCall: function(user, callUuid, callback) {
         var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(user);
-        var data                = this.filterUser(user);
+        var data                = this.filterEntity(user);
         var push                = this.getPushManager().push();
         push
             .to([callUuid])
@@ -121,7 +116,7 @@ var UserPusher = Class.extend(EntityPusher, {
             .waitFor([callUuid]);
         users.forEach(function(user) {
             var meldDocumentKey     = _this.generateMeldDocumentKeyFromEntity(user);
-            var data                = _this.filterUser(user);
+            var data                = _this.filterEntity(user);
             push.setDocument(meldDocumentKey, data)
         });
         push.exec(callback);
@@ -129,16 +124,17 @@ var UserPusher = Class.extend(EntityPusher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // EntityPusher Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {User} user
+     * @override
+     * @protected
+     * @param {Entity} entity
      * @return {Object}
      */
-    filterUser: function(user) {
-        return Obj.pick(user.toObject(), [
+    filterEntity: function(entity) {
+        return Obj.pick(entity.toObject(), [
             "anonymous",
             "email",
             "firstName",

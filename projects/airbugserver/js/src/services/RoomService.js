@@ -233,7 +233,12 @@ var RoomService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.roomPusher.pushRoomToCall(room, callManager.getCallUuid(), function(throwable) {
+                    _this.roomPusher.pushRoom(room, [callManager.getCallUuid()], function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.userPusher.pushUser(currentUser, [callManager.getCallUuid()], function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -382,11 +387,15 @@ var RoomService = Class.extend(EntityService, {
             $series([
                 $task(function(flow) {
                     _this.dbRetrievePopulatedRoom(roomId, function(throwable, returnedRoom) {
-                        if (room) {
-                            room = returnedRoom;
-                            flow.complete(throwable);
+                        if (!throwable) {
+                            if (returnedRoom) {
+                                room = returnedRoom;
+                                flow.complete(throwable);
+                            } else {
+                                flow.error(new Exception('NotFound'));
+                            }
                         } else {
-                            flow.error(new Exception('NotFound'));
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -430,19 +439,21 @@ var RoomService = Class.extend(EntityService, {
             $series([
                 $task(function(flow) {
                     roomManager.retrieveRooms(roomIds, function(throwable, returnedRoomMap) {
-                        if (!returnedRoomMap) {
-                            throwable = new Exception(""); //TODO
-                        } else {
-                            roomMap = returnedRoomMap.clone();
-                            returnedRoomMap.forEach(function(room, key) {
-                                if (room === null) {
-                                    roomMap.remove(key);
-                                    if (!mappedException) {
-                                        mappedException = new MappedThrowable(MappedThrowable.MAPPED);
+                        if (!throwable) {
+                            if (!returnedRoomMap) {
+                                throwable = new Exception(""); //TODO
+                            } else {
+                                roomMap = returnedRoomMap.clone();
+                                returnedRoomMap.forEach(function(room, key) {
+                                    if (room === null) {
+                                        roomMap.remove(key);
+                                        if (!mappedException) {
+                                            mappedException = new MappedThrowable(MappedThrowable.MAPPED);
+                                        }
+                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
                                     }
-                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
-                                }
-                            });
+                                });
+                            }
                         }
                         flow.complete(throwable);
                     });

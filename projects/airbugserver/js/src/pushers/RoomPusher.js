@@ -7,6 +7,7 @@
 //@Export('RoomPusher')
 //@Autoload
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbugserver.EntityPusher')
@@ -27,6 +28,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var EntityPusher        = bugpack.require('airbugserver.EntityPusher');
@@ -78,16 +80,11 @@ var RoomPusher = Class.extend(EntityPusher, {
     /**
      * @protected
      * @param {Room} room
-     * @param {function(Throwable=)} callback
+     * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
+     * @param {function(Throwable=)=} callback
      */
-    pushRoom: function(room, callback) {
-        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(room);
-        var data                = this.filterRoom(room);
-        var push                = this.getPushManager().push();
-        push
-            .toAll()
-            .setDocument(meldDocumentKey, data)
-            .exec(callback);
+    pushRoom: function(room, waitForCallUuids, callback) {
+        this.pushEntity(room, waitForCallUuids, callback);
     },
 
     /**
@@ -98,7 +95,7 @@ var RoomPusher = Class.extend(EntityPusher, {
      */
     pushRoomToCall: function(room, callUuid, callback) {
         var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(room);
-        var data                = this.filterRoom(room);
+        var data                = this.filterEntity(room);
         var push                = this.getPushManager().push();
         push
             .to([callUuid])
@@ -121,7 +118,7 @@ var RoomPusher = Class.extend(EntityPusher, {
             .waitFor([callUuid]);
         rooms.forEach(function(room) {
             var meldDocumentKey     = _this.generateMeldDocumentKeyFromEntity(room);
-            var data                = _this.filterRoom(room);
+            var data                = _this.filterEntity(room);
             push.setDocument(meldDocumentKey, data)
         });
         push.exec(callback);
@@ -138,16 +135,16 @@ var RoomPusher = Class.extend(EntityPusher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // EntityPusher Methods
     //-------------------------------------------------------------------------------
-
+   
     /**
-     * @private
-     * @param {Room} room
+     * @protected
+     * @param {Entity} entity
      * @return {Object}
      */
-    filterRoom: function(room) {
-        return Obj.pick(room.toObject(), [
+    filterEntity: function(entity) {
+        return Obj.pick(entity.toObject(), [
             "conversationId",
             "id",
             "name",

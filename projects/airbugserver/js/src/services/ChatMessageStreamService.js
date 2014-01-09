@@ -135,14 +135,16 @@ var ChatMessageStreamService = Class.extend(EntityService, {
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    _this.dbRetrievePopulatedConversation(entityId, function(throwable, returnedConversation) {
-
-                        //TODO BRN: Is it ok for non-room members to retrieve a conversation?
+                    _this.conversationManager.retrieveConversation(entityId, function(throwable, returnedConversation) {
                         if (!throwable) {
-                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                flow.complete();
+                            if (returnedConversation) {
+                                if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                    flow.complete();
+                                } else {
+                                    flow.error(new Exception("UnauthorizedAccess", {objectId: entityId}));
+                                }
                             } else {
-                                flow.error(new Exception("UnauthorizedAccess", {objectId: entityId}));
+                                flow.error(new Exception("NotFound", {objectId: entityId}));
                             }
                         } else {
                             flow.error(throwable);
@@ -182,47 +184,12 @@ var ChatMessageStreamService = Class.extend(EntityService, {
      */
     updateChatMessageStream: function(requestContext, chatMessageId, updates, callback) {
         callback(new Exception("UnauthorizedAccess"));
-    },
+    }
 
 
     //-------------------------------------------------------------------------------
     // Protected Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} conversationId
-     * @param {function(Throwable, Conversation=)} callback
-     */
-    dbRetrievePopulatedConversation: function(conversationId, callback) {
-        var _this               = this;
-        var conversation        = null;
-        var conversationManager = this.conversationManager;
-        $series([
-            $task(function(flow) {
-                conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
-                    if (!throwable) {
-                        if (returnedConversation) {
-                            conversation = returnedConversation;
-                        } else {
-                            throwable = new Exception("NotFound", {objectId: conversationId});
-                        }
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.dbPopulateConversation(conversation, function(throwable) {
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
-                if (!throwable) {
-                    callback(null, conversation);
-                } else {
-                    callback(throwable);
-                }
-            });
-    }
 });
 
 

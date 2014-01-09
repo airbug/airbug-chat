@@ -281,6 +281,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
                 }
             } else {
                 //TODO: Either show an error panel or automatically retry the call
+                throw throwable;
             }
         });
     },

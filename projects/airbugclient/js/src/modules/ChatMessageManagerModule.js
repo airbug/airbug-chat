@@ -7,6 +7,7 @@
 //@Export('ChatMessageManagerModule')
 //@Autoload
 
+//@Require('ArgumentBug')
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Map')
@@ -33,6 +34,7 @@ var bugpack                         = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgumentBug                     = bugpack.require('ArgumentBug');
 var ArgUtil                         = bugpack.require('ArgUtil');
 var Class                           = bugpack.require('Class');
 var Map                             = bugpack.require('Map');
@@ -112,6 +114,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      */
     createChatMessage: function(chatMessageObject, callback) {
         var _this = this;
+        if (!chatMessageObject.conversationId) {
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "chatMessageObject", chatMessageObject, "parameter must be an object and must supply the conversationId property");
+        }
         this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
             if (!throwable) {
                 chatMessageObject.senderUserId = currentUser.getId();
@@ -306,7 +311,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(ChatMessageManagerModule).with(
-    module("ChatMessageManagerModule")
+    module("chatMessageManagerModule")
         .args([
             arg().ref("airbugApi"),
             arg().ref("meldStore"),

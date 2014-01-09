@@ -101,10 +101,15 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
         },
         pushRoomToCall: function(room, callUuid, callback) {
             callback();
+        },
+        pushRoom: function(room, waitForCallUuids, callback) {
+            callback();
         }
     };
     setupObject.userPusher              = {
-
+        pushUser: function(user, waitForCallUuids, callback) {
+            callback();
+        }
     };
     setupObject.roomMemberPusher        = {};
     setupObject.chatMessageStreamManager = new ChatMessageStreamManager();

@@ -227,7 +227,7 @@ var RoomMemberController = Class.extend(EntityController, {
                 var roomMemberIds       = data.objectIds;
                 var requestContext      = request.requestContext;
 
-                roomMemberService.retrieveRooms(requestContext, roomMemberIds, function(throwable, roomMemberMap) {
+                roomMemberService.retrieveRoomMembers(requestContext, roomMemberIds, function(throwable, roomMemberMap) {
                     _this.processRetrieveEachResponse(responder, throwable, roomMemberIds, roomMemberMap, callback);
                 });
             },

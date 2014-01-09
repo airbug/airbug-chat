@@ -213,7 +213,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-        if (this.conversationModel.getProperty("chatMessageIdSet")) {
+        if (this.conversationModel.getProperty("id")) {
             this.loadChatMessageList(this.conversationModel.getProperty("id"));
             this.loadChatMessageStream(this.conversationModel.getProperty("id"));
         }
@@ -418,7 +418,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var _this                           = this;
         $series([
             $task(function(flow) {
-                _this.chatMessageManagerModule.retrieveChatMessage(conversationId, function(throwable, chatMessageStreamMeldDocument) {
+                _this.chatMessageStreamManagerModule.retrieveChatMessageSteam(conversationId, function(throwable, chatMessageStreamMeldDocument) {
                     if (!throwable) {
                         _this.chatMessageStreamModel.setConversationChatMessageStreamMeldDocument(chatMessageStreamMeldDocument);
                     }
@@ -492,13 +492,15 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 flow.complete();
             })
         ]).execute(function(throwable) {
-            if (Class.doesExtend(throwable, RequestFailedException)) {
-                chatMessageModel.setProperty({
-                    failed: true,
-                    pending: false
-                });
-            } else {
-                console.log("ERROR - unhandled throwable:", throwable);
+            if (throwable) {
+                if (Class.doesExtend(throwable, RequestFailedException)) {
+                    chatMessageModel.setProperty({
+                        failed: true,
+                        pending: false
+                    });
+                } else {
+                    console.log("ERROR - unhandled throwable:", throwable);
+                }
             }
         });
     },
@@ -552,6 +554,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     observeConversationModelIdSetPropertyChange: function(change) {
         this.clearChatMessageList();
         this.loadChatMessageList(change.getPropertyValue());
+        this.loadChatMessageStream(change.getPropertyValue());
     }
 });
 

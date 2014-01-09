@@ -78,14 +78,6 @@ var ConversationManagerModule = Class.extend(ManagerModule, {
      */
     retrieveConversation: function(conversationId, callback) {
         this.retrieve("Conversation", conversationId, callback);
-    },
-
-    /**
-     * @param {string} conversationId
-     * @param {function(Throwable, MeldDocument=)} callback
-     */
-    retrieveConversationChatMessageSteam: function(conversationId, callback) {
-        this.retrieve("Conversation")
     }
 });
 

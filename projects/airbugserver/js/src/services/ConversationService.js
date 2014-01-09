@@ -122,11 +122,15 @@ var ConversationService = Class.extend(EntityService, {
 
                         //TODO BRN: Is it ok for non-room members to retrieve a conversation?
                         if (!throwable) {
-                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                conversation = returnedConversation;
-                                flow.complete();
+                            if (returnedConversation) {
+                                if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                    conversation = returnedConversation;
+                                    flow.complete();
+                                } else {
+                                    flow.error(new Exception("UnauthorizedAccess", {objectId: conversationId}));
+                                }
                             } else {
-                                flow.error(new Exception("UnauthorizedAccess", {objectId: conversationId}));
+                                flow.error(new Exception("NotFound"));
                             }
                         } else {
                             flow.error(throwable);
