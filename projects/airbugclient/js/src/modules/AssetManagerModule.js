@@ -102,7 +102,7 @@ var AssetManagerModule = Class.extend(ManagerModule, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(AssetManagerModule).with(
-    module("chatMessageManagerModule")
+    module("assetManagerModule")
         .args([
             arg().ref("airbugApi"),
             arg().ref("meldStore"),
