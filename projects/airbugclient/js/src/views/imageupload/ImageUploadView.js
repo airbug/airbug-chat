@@ -35,7 +35,7 @@ var ImageUploadView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="{{id}}" class="box box-with-header box-with-footer">\
+    template: '<div id="{{id}}" class="box box-with-header">\
             <div class="box-header">\
             </div>\
             <div class="box-body">\
@@ -45,33 +45,20 @@ var ImageUploadView = Class.extend(MustacheView, {
                             <button class="btn btn-success fileinput-button">\
                                 <i class="icon-plus icon-white"></i>\
                                 <span>Add</span>\
-                                <input id="file-upload-widget-input" type="file" name="files[]" multiple>\
+                                <input id="file-upload-widget-input" type="file" name="files[]" multiple="">\
                             </button>\
                         </div>\
                         <div class="btn-group">\
-                            <button type="" class="btn btn-primary">\
+                            <button type="" class="btn btn-primary disabled">\
                                 <i class="icon-upload icon-white"></i>\
                                 <span>Upload</span>\
                             </button>\
                         </div>\
                         <div class="btn-group">\
-                            <button type="reset" class="btn btn-warning">\
+                            <button type="" class="btn btn-warning">\
                                 <i class="icon-ban-circle icon-white"></i>\
                                 <span>Cancel</span>\
                             </button>\
-                        </div>\
-                    </div>\
-                    <div class="btn-toolbar">\
-                        <div class="btn-group">\
-                            <div id="image-upload-add-by-url-container" class="control-group btn btn-large btn-inverse disabled">\
-                                <label class="control-label" for="url">URL:</label>\
-                                <div class="controls">\
-                                    <input type="url" name="url">\
-                                    <button class="btn btn-success btn-small">\
-                                        <i class="icon-plus icon-white"></i>\
-                                    </button>\
-                                </div>\
-                            </div>\
                         </div>\
                     </div>\
                 </form>\
@@ -79,20 +66,6 @@ var ImageUploadView = Class.extend(MustacheView, {
                     <span>\
                         Drag and Drop\
                     </span>\
-                </div>\
-            </div>\
-            <div class="box-footer">\
-                <div class="btn-toolbar">\
-                    <div class="btn-group">\
-                        <button type="" class="btn btn-success">\
-                            <i class="icon-download icon-white"></i>\
-                            <span>Save All</span>\
-                        </button>\
-                        <button type="" class="btn btn-primary">\
-                            <i class="icon-envelope icon-white"></i>\
-                            <span>Send All</span>\
-                        </button>\
-                    </div>\
                 </div>\
             </div>\
         </div>',

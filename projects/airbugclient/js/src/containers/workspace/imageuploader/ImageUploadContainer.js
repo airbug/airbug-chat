@@ -11,6 +11,7 @@
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
+//@Require('airbug.ImageUploadAddByUrlContainer')
 //@Require('airbug.ImageUploadView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
@@ -41,6 +42,7 @@ var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupVie
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
+var ImageUploadAddByUrlContainer        = bugpack.require('airbug.ImageUploadAddByUrlContainer');
 var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
@@ -58,9 +60,12 @@ var jQuery                              = bugpack.require('jquery.JQuery');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $           = jQuery;
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
+var $                                   = jQuery;
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var CommandType                         = CommandModule.CommandType;
+var property                            = PropertyAnnotation.property;
+var view                                = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -91,9 +96,15 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {AssetManagerModule}
+         */
+        this.assetManagerModule             = null;
+
+        /**
+         * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                  = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -102,13 +113,13 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ImageUploadView}
          */
-        this.imageUploadView            = null;
+        this.imageUploadView                = null;
 
         /**
          * @private
          * @type {NakedButtonView}
          */
-        this.imageListLinkButtonView    = null;
+        this.imageListLinkButtonView        = null;
 
 
         // Containers
@@ -116,9 +127,15 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ImageUploadAddByUrlContainer}
+         */
+        this.imageUploadAddByUrlContainer   = null;
+
+        /**
+         * @private
          * @type {WorkspaceCloseButtonContainer}
          */
-        this.closeButton                = null;
+        this.closeButton                    = null;
     },
 
 
@@ -133,6 +150,12 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
         this.initializeUploadWidget();
+    },
+
+    deactivateContainer: function() {
+        this._super();
+        //TODO SUNG Make sure deactivateContainer is called.
+        this.deinitializeUploadWidget();
     },
 
     /**
@@ -215,6 +238,8 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.closeButton = new WorkspaceCloseButtonContainer();
+        this.imageUploadAddByUrlContainer = new ImageUploadAddByUrlContainer();
+        this.addContainerChild(this.imageUploadAddByUrlContainer, "#file-upload-widget");
         this.addContainerChild(this.closeButton, ".box-header .btn-toolbar .btn-group:last-child")
     },
 
@@ -234,7 +259,6 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
-        this.deinitializeUploadWidget();
     },
 
     initializeUploadWidget: function() {
@@ -347,7 +371,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     },
 
     deinitializeEventListeners: function() {
-
+        this.imageListLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
     },
 
     /**
@@ -380,7 +404,8 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageUploadContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
+        property("assetManagerModule").ref("assetManagerModule")
     ])
 );
 
