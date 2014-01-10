@@ -39,7 +39,7 @@ var UploadView = Class.extend(MustacheView, {
             <div class="preview">\
             </div>\
             <div class="filename">\
-                <p class="">{{filename}}</p>\
+                <span class="">{{filename}}</span>\
             </div>\
             <div class="success-indicator pull-right" style="display: none">\
                 <i class="icon-ok"></i>\
@@ -51,10 +51,16 @@ var UploadView = Class.extend(MustacheView, {
                 <div class="bar" style="width: 10%">\
                 </div>\
             </div>\
-            <div>\
-                <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>\
-                <button class="btn btn-success"><i class="icon-download icon-white"></i> Save</button>\
-                <button class="btn btn-primary"><i class="icon-envelope icon-white"></i> Send</button>\
+            <div class="btn-toolbar">\
+                    <div class="btn-group">\
+                        <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>\
+                    </div>\
+                    <div class="btn-group">\
+                        <button class="btn btn-success"><i class="icon-download icon-white"></i> Save</button>\
+                    </div>\
+                    <div class="btn-group">\
+                        <button class="btn btn-primary"><i class="icon-envelope icon-white"></i> Send</button>\
+                    </div>\
             </div>\
     <div>',
 
