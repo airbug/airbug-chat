@@ -94,6 +94,20 @@ var UserAsset = Class.extend(Entity, {
     /*
      * @return {string}
      */
+    getName: function() {
+        return this.deltaDocument.getData().name;
+    },
+
+    /*
+     * @param {string} name
+     */
+    setName: function(name) {
+        this.deltaDocument.getData().name = name;
+    },
+
+    /*
+     * @return {string}
+     */
     getUserId: function() {
         return this.deltaDocument.getData().userId;
     },
@@ -161,6 +175,8 @@ bugmeta.annotate(UserAsset).with(
         property("asset")
             .type("Asset")
             .populates(true),
+        property("name")
+            .type("string"),
         property("userId")
             .type("string"),
         property("user")

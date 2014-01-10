@@ -83,6 +83,7 @@ var UserAssetManager = Class.extend(EntityManager, {
      * @param {{
      *      assetId: string,
      *      createdAt: Date,
+     *      name: string,
      *      updatedAt: Date,
      *      userId: string
      * }} data
@@ -119,7 +120,7 @@ var UserAssetManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {Array.<string>} userAssetId
+     * @param {string} userAssetId
      * @param {function(Throwable, UserAsset)} callback
      */
     retrieveUserAsset: function(userAssetId, callback) {
@@ -127,7 +128,7 @@ var UserAssetManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {string} userAssetIds
+     * @param {Array.<string>} userAssetIds
      * @param {function(Throwable, Map.<string, UserAsset>)} callback
      */
     retrieveUserAssets: function(userAssetIds, callback) {

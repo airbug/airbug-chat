@@ -31,6 +31,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var UserAssetSchema = new Schema({
     assetId: {type: ObjectId, index: true, required: true},
     createdAt: Date,
+    name: {type: String},
     updatedAt: Date,
     userId: {type: ObjectId, index: true, required: true}
 });

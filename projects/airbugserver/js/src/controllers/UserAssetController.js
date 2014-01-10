@@ -96,7 +96,6 @@ var UserAssetController = Class.extend(EntityController, {
      */
     configureController: function(callback) {
         var _this               = this;
-        //var expressApp          = this.getExpressApp();
         var userAssetService    = this.getUserAssetService();
 
 
@@ -125,19 +124,32 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable)} callback
+             */
+            deleteUserAsset: function(request, responder, callback) {
+                console.log("UserAssetController#deleteUserAsset");
+                var data                = request.getData();
+                var userAssetObject     = data.object;
+                var requestContext      = request.requestContext;
+                userAssetService.deleteUserAsset(requestContext, userAssetObject, function(throwable, userAsset) {
+                    _this.processDeleteResponse(responder, throwable, userAsset, callback);
+                });
+             },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
              * @param {function(Throwable, UserAsset)} callback
              */
             renameUserAsset: function(request, responder, callback) {
-                console.log("UserAssetController#createUserAsset");
+                console.log("UserAssetController#renameUserAsset");
                 var data                = request.getData();
                 var userAssetId         = data.userAssetId;
                 var userAssetName       = data.userAssetName;
                 var requestContext      = request.requestContext;
                 userAssetService.renameUserAsset(requestContext, userAssetId, userAssetName, function(throwable, userAsset) {
-                    // TODO - dkk - figure out how to respond
-                    _this.processCreateResponse(responder, throwable, userAsset, callback);
+                    _this.processUpdateResponse(responder, throwable, userAsset, callback);
                 });
-
             },
 
             /**
@@ -146,13 +158,13 @@ var UserAssetController = Class.extend(EntityController, {
              * @param {function(Throwable)} callback
              */
             retrieveUserAsset: function(request, responder, callback) {
-                console.log("UserController#retrieveUser");
+                console.log("UserAssetController#retrieveUserAsset");
                 var data                = request.getData();
                 var userAssetId         = data.objectId;
                 var requestContext      = request.requestContext;
                 console.log("data", data);
                 console.log("userAssetId ", userAssetId);
-                userAssetService.retrieveUser(requestContext, userAssetId, function(throwable, userAsset) {
+                userAssetService.retrieveUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
                     _this.processRetrieveResponse(responder, throwable, userAsset, callback);
                 });
             },
@@ -163,13 +175,33 @@ var UserAssetController = Class.extend(EntityController, {
              * @param {function(Throwable)} callback
              */
             retrieveUserAssets: function(request, responder, callback) {
+                console.log("UserAssetController#retrieveUserAssets");
                 var data                = request.getData();
                 var userAssetIds        = data.objectIds;
                 var requestContext      = request.requestContext;
                 userAssetService.retrieveUserAssets(requestContext, userAssetIds, function(throwable, userAssetMap) {
                     _this.processRetrieveEachResponse(responder, throwable, userAssetIds, userAssetMap, callback);
                 });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveUserAssetsForCurrentUser: function(request, responder, callback) {
+                console.log("UserAssetController#retrieveUserAssets");
+                var data                = request.getData();
+                var requestContext      = request.requestContext;
+                var currentUser         = requestContext.get('currentUser');
+                var currentUserId       = currentUser.getId();
+
+                userAssetService.retrieveUserAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetMap) {
+                    var userAssetIds = userAssetMap.getKeyArray();
+                    _this.processRetrieveEachResponse(responder, throwable, userAssetIds, userAssetMap, callback);
+                });
             }
+
         });
         callback();
     }
