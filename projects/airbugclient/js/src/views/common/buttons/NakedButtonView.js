@@ -168,7 +168,7 @@ var NakedButtonView = Class.extend(MustacheView, {
      */
     handleButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED));
+        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED, {}));
     }
 });
 
