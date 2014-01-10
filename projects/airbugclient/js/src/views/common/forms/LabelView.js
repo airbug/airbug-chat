@@ -35,7 +35,7 @@ var LabelView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<label id="{{id}}" class="{{classes}}">{{text}}</label>',
+    template: '<label id="{{id}}" class="{{classes}}" for="{{for}}">{{text}}</label>',
 
 
     //-------------------------------------------------------------------------------
@@ -47,7 +47,10 @@ var LabelView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data                = this._super();
+        data.id                 = this.getId() || "label-" + this.getCid();
         data.text               = this.attributes.text;
+        data.for                = this.attributes.for;
+        data.classes            = this.attributes.classes;
         return data;
     }
 });
