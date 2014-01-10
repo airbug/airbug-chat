@@ -14,6 +14,7 @@
 //@Require('airbug.ControlsView')
 //@Require('airbug.FormControlGroupView')
 //@Require('airbug.IconView')
+//@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.InputView')
 //@Require('airbug.LabelView')
 //@Require('airbug.NakedButtonView')
@@ -46,6 +47,7 @@ var CommandModule                       = bugpack.require('airbug.CommandModule'
 var ControlsView                        = bugpack.require('airbug.ControlsView');
 var FormControlGroupView                = bugpack.require('airbug.FormControlGroupView');
 var IconView                            = bugpack.require('airbug.IconView');
+var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
 var InputView                           = bugpack.require('airbug.InputView');
 var LabelView                           = bugpack.require('airbug.LabelView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
@@ -279,7 +281,7 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
             }
         });
 
-        event.getData().uploadFileView = view(UploadView).attributes({filename: url}).build();
+        event.getData().imageUploadItemContainer = new ImageUploadItemContainer(url);
     },
 
     /**

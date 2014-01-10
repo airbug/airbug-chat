@@ -13,10 +13,10 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.ImageUploadAddByUrlContainer')
+//@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.ImageUploadView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
-//@Require('airbug.UploadView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -45,10 +45,10 @@ var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarV
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
 var ImageUploadAddByUrlContainer        = bugpack.require('airbug.ImageUploadAddByUrlContainer');
+var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
 var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
-var UploadView                          = bugpack.require('airbug.UploadView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
@@ -293,11 +293,11 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
                 _this.viewTop.$el.find(".box-body .box>span").hide();
                 var filename = data.files[0].name;
-                console.log("filename:", filename);
 
-                var uploadFileView = view(UploadView).attributes({filename: filename}).build();
-                _this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container .box-body .box");
-                data.context = uploadFileView.$el;
+                var imageUploadItemContainer = new ImageUploadItemContainer(filename);
+                _this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
+
+                data.context = imageUploadItemContainer.getViewTop().$el;
                 if (data.autoUpload || (data.autoUpload !== false &&
                     $(this).fileupload('option', 'autoUpload'))) {
                     data.process().done(function () {
@@ -404,10 +404,10 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     handleAddByUrlButtonClicked: function(event) {
         var data = event.getData();
-        var uploadFileView = data.uploadFileView;
+        var imageUploadItemContainer = data.imageUploadItemContainer;
 
         this.getViewTop().$el.find(".box-body .box>span").hide();
-        this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container .box-body .box");
+        this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
     },
 
     handleAddByUrlCompletedEvent: function(event) {
