@@ -7,6 +7,7 @@
 //@Export('ImageUploadContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.CommandModule')
@@ -38,6 +39,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
@@ -368,10 +370,14 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     initializeEventListeners: function() {
         this.imageListLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().addEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
     },
 
     deinitializeEventListeners: function() {
         this.imageListLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
     },
 
     /**
@@ -392,8 +398,31 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     // Event Handlers
     //-------------------------------------------------------------------------------
 
-    handleUploadListLinkButtonClicked: function() {
+    handleUploadListLinkButtonClicked: function(event) {
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_LIST, {});
+    },
+
+    handleAddByUrlButtonClicked: function(event) {
+        var data = event.getData();
+        var uploadFileView = data.uploadFileView;
+
+        this.getViewTop().$el.find(".box-body .box>span").hide();
+        this.imageUploadView.addViewChild(uploadFileView, "#image-upload-container .box-body .box");
+    },
+
+    handleAddByUrlCompletedEvent: function(event) {
+        var data = event.getData();
+        var url = data.url;
+        var selector = '.file-upload-item:contains(' + url + ')';
+        var node = $(selector);
+        node.find(".bar").attr("style", "width: 100%");
+        node.find(".cancel-button").hide();
+        node.find(".success-indicator").attr("style", "");
+        node.find(".progress").hide();
+    },
+
+    handleAddByUrlFailedEvent: function(event) {
+
     }
 });
 

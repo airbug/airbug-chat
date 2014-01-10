@@ -7,6 +7,7 @@
 //@Export('ImageUploadAddByUrlContainer')
 
 //@Require('Class')
+//@Require('Event')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.CommandModule')
@@ -38,6 +39,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
+var Event                               = bugpack.require('Event');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
@@ -244,7 +246,7 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
     },
 
     deinitializeEventListeners: function() {
-
+        this.submitButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSubmitButtonClicked, this);
     },
 
     /**
@@ -266,12 +268,26 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     handleSubmitButtonClicked: function(event) {
-        var url = this.inputView.$el[0].value;
+        var _this = this;
+        var url = this.getInputValue();
         //add file-upload-item view
         this.assetManagerModule.addAssetFromUrl(url, function(throwable, meldDocument){
             console.log("addAssetFromUrl callback");
             console.log("throwable:", throwable, "meldDocument:", meldDocument);
+            if(!throwable && meldDocument) {
+                _this.getViewTop().dispatchEvent(new Event("AddByUrlCompleted", {url: url}));
+            }
         });
+
+        event.getData().uploadFileView = view(UploadView).attributes({filename: url}).build();
+    },
+
+    /**
+     * @private
+     * @returns {string}
+     */
+    getInputValue: function() {
+        return this.inputView.$el[0].value;
     }
 });
 
