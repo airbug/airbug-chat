@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('UploadView')
+//@Export('ImageUploadItemView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,13 +29,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UploadView = Class.extend(MustacheView, {
+var ImageUploadItemView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:       '<div id="{{id}}" class="file-upload-item">\
+    template:       '<div id="{{id}}" class="image-upload-item file-upload-item">\
             <div class="preview">\
             </div>\
             <div class="filename">\
@@ -51,17 +51,6 @@ var UploadView = Class.extend(MustacheView, {
                 <div class="bar" style="width: 10%">\
                 </div>\
             </div>\
-            <div class="btn-toolbar">\
-                    <div class="btn-group">\
-                        <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>\
-                    </div>\
-                    <div class="btn-group">\
-                        <button class="btn btn-success"><i class="icon-download icon-white"></i> Save</button>\
-                    </div>\
-                    <div class="btn-group">\
-                        <button class="btn btn-primary"><i class="icon-envelope icon-white"></i> Send</button>\
-                    </div>\
-            </div>\
     <div>',
 
     /**
@@ -69,7 +58,7 @@ var UploadView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "upload-" + this.getCid();
+        data.id     = this.getId() || "image-upload-item-" + this.getCid();
         data.filename = this.attributes.filename;
         return data;
     }
@@ -80,4 +69,4 @@ var UploadView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.UploadView", UploadView);
+bugpack.export("airbug.ImageUploadItemView", ImageUploadItemView);
