@@ -270,7 +270,7 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
     handleSubmitButtonClicked: function(event) {
         var _this = this;
         var url = this.getInputValue();
-        //add file-upload-item view
+
         this.assetManagerModule.addAssetFromUrl(url, function(throwable, meldDocument){
             console.log("addAssetFromUrl callback");
             console.log("throwable:", throwable, "meldDocument:", meldDocument);
