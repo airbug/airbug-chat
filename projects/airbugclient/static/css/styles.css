@@ -1008,7 +1008,7 @@ div.overlay-background {
     width: 89%;
 }
 
-#image-upload-container .box-body .box span {
+#image-upload-container .box-body .box>span:first-child {
     margin: 0% 33%;
 }
 
@@ -1036,10 +1036,11 @@ div.overlay-background {
 #image-upload-add-by-url-container .controls button {
     height: 30px;
     opacity: 1;
+    margin-left: 5px;
 }
 
 #file-upload-widget {
-    overflow-y: scroll;
+    margin-bottom: 10px;
 }
 
 #file-upload-widget .btn-toolbar:first-child {
@@ -1048,6 +1049,7 @@ div.overlay-background {
 
 #file-upload-widget .btn-toolbar:last-child {
     margin-top: 5px;
+    margin-bottom: 0px;
 }
 
 #file-upload-widget .control-group {
@@ -1062,8 +1064,25 @@ div.overlay-background {
     width: 82%;
 }
 
+.file-upload-item {
+    margin-bottom: 8px;
+}
+
+.file-upload-item .btn-toolbar {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.file-upload-item .btn-toolbar:last-child .btn-group:first-child {
+    margin-left: 0px;
+}
+
 .file-upload-item .filename, .image-upload-item .cancel-button, .image-upload-item .success-indicator {
     display: inline-block;
+}
+
+.file-upload-item .progress {
+    margin-bottom: 8px;
 }
 
 @charset "UTF-8";
