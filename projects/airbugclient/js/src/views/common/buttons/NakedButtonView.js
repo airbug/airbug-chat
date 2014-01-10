@@ -195,7 +195,7 @@ NakedButtonView.Size = {
 NakedButtonView.Type = {
     PRIMARY:    "primary",
     INFO:       "info",
-    SUCCESS:    "sucess",
+    SUCCESS:    "success",
     WARNING:    "warning",
     DANGER:     "danger",
     INVERSE:    "inverse",
