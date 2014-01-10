@@ -122,7 +122,7 @@ var AssetController = Class.extend(EntityController, {
                     assetJson = {"files": LiteralUtil.convertToLiteral(entities)};
                 }
                 if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
+                    _this.processAjaxThrowable(throwable, response); //TODO Update this and service layer to match expected response props
                 } else {
                     response.json(assetJson);
                 }
@@ -177,11 +177,24 @@ var AssetController = Class.extend(EntityController, {
             addAssetFromUrl: function(request, responder, callback) {
                 console.log("AssetController#addAssetFromUrl");
                 var requestContext = request.requestContext;
-                // TODO - dkk - extract url from request
-                var url = "";
-                assetService.addAssetFromUrl(requestContext, url, function(throwable, asset) {
-                    _this.processCreateResponse(responder, throwable, asset, callback);
-                });
+                var data = request.getData();
+                var url = data.url;
+
+                if(url){
+                    assetService.addAssetFromUrl(requestContext, url, function(throwable, asset) {
+                        _this.processCreateResponse(responder, throwable, asset, callback);
+                    });
+                } else {
+                    //throw exception
+                }
+            },
+
+            retrieveAsset: function(request, responder, callback) {
+
+            },
+
+            retrieveAssets: function(request, responder, callback) {
+
             }
             // ,
             //

@@ -118,24 +118,36 @@ var AssetService = Class.extend(Obj, {
      * @param {function(Throwable, Entity)} callback
      */
     addAssetFromUrl: function(requestContext, url, callback) {
-        var contentType = undefined;
-        var assetName = '';
+        console.log("AssetService#addAssetFromUrl"); //Cleanup
+        console.log("url:", url); //Cleanup
 
-        // TODO - dkk - Parse URL to get filename. If no filename then generate one
-        var fileName = '';
-        // TODO - dkk - get content type on get request.
+        var _this = this;
+        // TODO - dkk - Parse URL to get filename. If no filename then generate one //Cleanup
+        var filename = url.match(/([^\/]+)(\.\w+$)/)[0];
+        if(!filename){
+            filename = "example"    //TODO SUNG Is it possible for a legitimate image url to not have a filename??
+                                    // Maybe this should actually return an exception
+        }
+        console.log("filename:", filename); //Cleanup
 
-        var file = fs.createWriteStream(fileName);
-        var request = http.get(url, function(response) {
+        var file = fs.createWriteStream(filename);
+
+        http.get(url, function(response) {
+            var type = response.headers['content-type']; //TODO SUNG validate
+            var size = response.headers['content-length']; //TODO SUNG validate that it is within our file size limits
             response.pipe(file);
             file.on('finish', function() {
                 file.close();
+                console.log("file:", file); //Cleanup
+                var path = file.path;
                 var fileObject = {
-                    name: 'someName', // TODO - dkk - get name
-                    path: 'getPath' + fileName, // TODO - dkk - get complete path of file that was created
-                    type: 'someType' // TODO - dkk - attempt to get mime type
+                    name: filename,
+                    path: path,
+                    type: type,
+                    size: size
                 };
-                this.uploadAsset(requestContext, fileObject, callback);
+                console.log("fileObject:", fileObject); //Cleanup
+                _this.uploadAsset(requestContext, fileObject, callback);
             });
         });
         // TODO - dkk - handle errors
