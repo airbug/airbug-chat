@@ -223,6 +223,7 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
         console.log("ImageUploadItemContainer#handleSendImageEvent");
         var chatMessageObject = {
             type: "image",
+            imageUrl: this.getViewTop().$el.find(".image-preview img").attr("src")
         };
         this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
     },

@@ -203,7 +203,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                                                 })
                                                 .appendTo('button[id|="button"]')
                                         ])
-                                    ]),
+                                ]),
                             view(ButtonGroupView)
                                 .appendTo(".btn-toolbar")
                                 .children([
@@ -280,9 +280,9 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
             // send Blob objects via XHR requests:
             disableImageResize: /Android(?!.*Chrome)|Opera/
                 .test(window.navigator.userAgent),
-//            previewMaxWidth: 100,
-//            previewMaxHeight: 100,
-//            previewCrop: true,
+            previewMaxWidth: 100,
+            previewMaxHeight: 100,
+            previewCrop: true,
 //            autoupload: false,
 //            formData: {script: true},
             progressInterval: 100,
@@ -310,14 +310,23 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 console.log("context:", data.context); //in the form of an array.
                 if(data.result.files){
                     $.each(data.result.files, function (index, file) {
-                        console.log("file upload done:", file.name);
+                        var filename = file.name;
+                        var thumbnailUrl = file.thumbnailUrl;
+                        var url = file.url;
+
+                        console.log("file upload done:", filename);
+                        console.log("thumbnailUrl:", thumbnailUrl);
+                        console.log("imageUrl:", url);
+
                         $(data.context[index]).find(".success-indicator").attr("style", "");
                         $(data.context[index]).find(".progress").hide();
+                        $(data.context[index]).find(".image-preview img").attr("src", thumbnailUrl);
+                        $(data.context[index]).find(".image-preview a").attr("href", url).attr("title", filename);
                     });
                 }
             },
             process: function (e, data) {
-                    console.log('Processing ' + data.files[data.index].name + '...');
+                console.log('Processing ' + data.files[data.index].name + '...');
             },
             progress: function (event, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
@@ -331,10 +340,10 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 console.log("progressall:", progress);
             }
         }).on("fileuploadprocessalways", function (e, data) {
-            var index = data.index,
-                file = data.files[index],
-                node = $(data.context.children()[index]);
-            console.log("processalways:", "index:", index, "file:", file, "node:", node);
+                var index = data.index,
+                    file = data.files[index],
+                    node = $(data.context.children()[index]);
+                console.log("processalways:", "index:", index, "file:", file, "node:", node);
 //                if (file.preview) {
 //                    node
 //                        .prepend('<br>')
@@ -350,14 +359,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 //                        .text('Upload')
 //                        .prop('disabled', !!data.files.error);
 //                }
-        });
-//        $("#file-upload-widget .btn-toolbar:first-child .btn-primary").on('click', function(event){
-//            var filesList = _this.viewTop.$el.find("form").serializeData();
-//            console.log("files:", filesList);
-//            $('#file-upload-widget').fileupload('send', {files: filesList});
-//            event.stopPropagation();
-//            event.preventDefault();
-//        });
+            });
     },
 
     deinitializeUploadWidget: function() {

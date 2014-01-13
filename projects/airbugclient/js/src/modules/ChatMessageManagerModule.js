@@ -233,7 +233,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      * }}
      */
     generateImageChatMessageObject: function(chatMessageData) {
-        var codeChatMessageObject = {
+        console.log("chatMessageData:", chatMessageData);
+        var imageChatMessageObject = {
             conversationId: chatMessageData.conversationId,
             imageUrl:       chatMessageData.imageUrl,
             senderUserId:   chatMessageData.senderUserId,
@@ -241,7 +242,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
             type:           chatMessageData.type
         };
-        return codeChatMessageObject;
+        console.log("imageChatMessageObject:", imageChatMessageObject);
+        return imageChatMessageObject;
     },
 
     /**

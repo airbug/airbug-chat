@@ -36,7 +36,8 @@ var ImageUploadItemView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:       '<div id="{{id}}" class="image-upload-item file-upload-item">\
-            <div class="preview">\
+            <div class="image-preview">\
+                <a href="{{fileUrl}}" title="{{filename}}" ><img src="{{thumbnailUrl}}"></a>\
             </div>\
             <div class="filename">\
                 <span class="">{{filename}}</span>\
