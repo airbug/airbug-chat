@@ -28,11 +28,12 @@ var Schema      = mongoose.Schema;
 //-------------------------------------------------------------------------------
 
 var AssetSchema = new Schema({
+    type: {type: String},
     createdAt: Date,
     mimeType: {type: String},
     name: {type: String},
     thumbMimeType: {type: String},
-    thumbUrl: {type: String},
+    thumbnailUrl: {type: String},
     updatedAt: Date,
     url: {type: String, index: true, unique: true, required: true}
 });
