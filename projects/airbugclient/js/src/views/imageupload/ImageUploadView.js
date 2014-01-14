@@ -62,7 +62,7 @@ var ImageUploadView = Class.extend(MustacheView, {
                         </div>\
                     </div>\
                 </form>\
-                <div class="box">\
+                <div class="box image-upload-dropzone">\
                     <span>\
                         Drag and Drop\
                     </span>\

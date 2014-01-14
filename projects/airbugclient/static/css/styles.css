@@ -996,48 +996,8 @@ div.overlay-background {
     width: 80%
 }
 
-/* ImageUpload CSS
+/* FileUpload CSS
 *******************************************************************/
-
-#image-upload-container {
-    overflow: hidden;
-}
-
-#image-upload-container .box-body .box {
-    padding-left: 10px;
-    width: 89%;
-}
-
-#image-upload-container .box-body .box>span:first-child {
-    margin: 0% 33%;
-}
-
-#image-upload-add-by-url-container {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 0px;
-}
-
-#image-upload-add-by-url-container .control-label {
-    width: 17%;
-}
-
-#image-upload-add-by-url-container .controls {
-    margin-left: 0px;
-}
-
-#image-upload-add-by-url-container .controls input {
-    width: 60%;
-    margin-left: 5px;
-}
-
-#image-upload-add-by-url-container .controls button {
-    height: 30px;
-    opacity: 1;
-    margin-left: 5px;
-}
 
 #file-upload-widget {
     margin-bottom: 10px;
@@ -1120,6 +1080,50 @@ div.overlay-background {
         font-size: 100%;
         height: 100%;
     }
+}
+
+/* ImageUpload CSS (see also FileUpload CSS above)
+*******************************************************************/
+
+#image-upload-container {
+    overflow: hidden;
+}
+
+#image-upload-container>.box-body>.box {
+    padding-left: 10px;
+    width: 89%;
+    overflow-y: scroll;
+}
+
+#image-upload-container .box-body .box>span:first-child {
+    margin: 0% 33%;
+}
+
+#image-upload-add-by-url-container {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+}
+
+#image-upload-add-by-url-container .control-label {
+    width: 17%;
+}
+
+#image-upload-add-by-url-container .controls {
+    margin-left: 0px;
+}
+
+#image-upload-add-by-url-container .controls input {
+    width: 60%;
+    margin-left: 5px;
+}
+
+#image-upload-add-by-url-container .controls button {
+    height: 30px;
+    opacity: 1;
+    margin-left: 5px;
 }
 
 /* Twitter Bootstrap Overrides

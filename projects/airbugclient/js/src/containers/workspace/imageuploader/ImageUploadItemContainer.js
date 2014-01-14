@@ -7,7 +7,6 @@
 //@Export('ImageUploadItemContainer')
 
 //@Require('Class')
-//@Require('Event')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.ImageUploadItemView')
@@ -36,7 +35,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                                   = bugpack.require('Class');
-var Event                                   = bugpack.require('Event');
 var CommandModule                           = bugpack.require('airbug.CommandModule');
 var ImageUploadItemButtonToolbarContainer   = bugpack.require('airbug.ImageUploadItemButtonToolbarContainer');
 var ImageUploadItemView                     = bugpack.require('airbug.ImageUploadItemView');
@@ -71,7 +69,7 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(filename) {
+    _constructor: function(imageAssetModel) {
 
         this._super();
 
@@ -82,9 +80,9 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {string}
+         * @type {ImageAssetModel}
          */
-        this.filename                               = filename;
+        this.imageAssetModel                        = imageAssetModel;
 
         // Models
         //-------------------------------------------------------------------------------
@@ -153,7 +151,7 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
         this.imageUploadItemView =
             view(ImageUploadItemView)
-                .attributes({filename: this.filename})
+                .model(this.imageAssetModel)
                 .build();
 
         // Wire Up Views
@@ -221,15 +219,31 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
     handleSendImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleSendImageEvent");
-        var chatMessageObject = {
-            type: "image",
-            imageUrl: this.getViewTop().$el.find(".image-preview img").attr("src")
-        };
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        this.sendImageChatMessage();
     },
 
     handleDeleteImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleDeleteImageEvent");
+    },
+
+    getImageAssetModel: function() {
+        return this.imageAssetModel;
+    },
+
+    sendImageChatMessage: function() {
+        var imageData = this.imageAssetModel.getData();
+        var chatMessageObject = {
+            type: "image",
+            body: {parts: [{
+                type: "image",
+                url: imageData.url,
+                size: imageData.size,
+                mimeType: imageData.mimeType,
+                thumbMimeType: imageData.thumbMimeType,
+                thumbnailUrl: imageData.thumbnailUrl
+            }]}
+        };
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
     }
 });
 

@@ -36,9 +36,8 @@ var ImageUploadItemView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:       '<div id="{{id}}" class="image-upload-item file-upload-item">\
-            </div>\
             <div class="filename">\
-                <span class="">{{filename}}</span>\
+                <span class="">{{model.name}}</span>\
             </div>\
             <div class="success-indicator pull-right" style="display: none">\
                 <i class="icon-ok"></i>\
@@ -58,7 +57,6 @@ var ImageUploadItemView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data    = this._super();
         data.id     = this.getId() || "image-upload-item-" + this.getCid();
-        data.filename = this.attributes.filename;
         return data;
     }
 });

@@ -102,11 +102,7 @@ var ImagePreviewContainer = Class.extend(CarapaceContainer, {
 
         this.imagePreviewView =
             view(ImagePreviewView)
-                .attributes({
-                    filename: this.imageAssetModel.get("name"),
-                    fileUrl: this.imageAssetModel.get("url"),
-                    thumbnailUrl: this.imageAssetModel.get("thumbnailUrl")
-                })
+                .model(this.imageAssetModel)
                 .build();
 
         // Wire Up Views

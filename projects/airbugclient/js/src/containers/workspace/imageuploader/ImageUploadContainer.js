@@ -12,6 +12,7 @@
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
+//@Require('airbug.ImagePreviewContainer')
 //@Require('airbug.ImageUploadAddByUrlContainer')
 //@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.ImageUploadView')
@@ -44,6 +45,7 @@ var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupVie
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
+var ImagePreviewContainer               = bugpack.require('airbug.ImagePreviewContainer');
 var ImageUploadAddByUrlContainer        = bugpack.require('airbug.ImageUploadAddByUrlContainer');
 var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
 var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
@@ -156,7 +158,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     deactivateContainer: function() {
         this._super();
-        //TODO SUNG Make sure deactivateContainer is called.
+        //TODO SUNG Make sure deactivateContainer is called. //Check
         this.deinitializeUploadWidget();
     },
 
@@ -271,7 +273,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
             singleFileUploads: true,
             sequentialUploads: true,
             dataType: 'json',
-            dropzone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+            dropzone: $(".image-upload-dropzone"),
             pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             maxFileSize: 5000000, // 5 MB
@@ -283,25 +285,36 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
             previewMaxWidth: 100,
             previewMaxHeight: 100,
             previewCrop: true,
-//            autoupload: false,
+//            autoupload: false, //default true
 //            formData: {script: true},
             progressInterval: 100,
-            add: function (e, data) {
+            add: function (event, data) {
                 console.log("file upload add");
-                console.log("index:", data.index);
+                console.log("event:", event);
                 console.log("data:", data);
+                console.log("arguments:", arguments);
 
                 _this.viewTop.$el.find(".box-body .box>span").hide();
-                var filename = data.files[0].name;
+                var file = data.files[0];
+                var filename = file.name;
 
-                var imageUploadItemContainer = new ImageUploadItemContainer(filename);
+                var imageAssetModel = _this.assetManagerModule.generateImageAssetModel({name: filename});
+                var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
                 _this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
 
+                //hide send button if this is a drop from the chat messages div
                 data.context = imageUploadItemContainer.getViewTop().$el;
+                data.originalFiles[0].imageUploadItemContainer = imageUploadItemContainer;
+
                 if (data.autoUpload || (data.autoUpload !== false &&
                     $(this).fileupload('option', 'autoUpload'))) {
                     data.process().done(function () {
-                        data.submit();
+                        data.submit().done(function(data, status, jqXHR) {
+                            console.log(" done promise of add. this (data):", this);
+                            console.log("data:", data); //{files: []}
+                            console.log("status:", status); //"success"
+                            console.log("jqXHR", jqXHR);
+                        });
                     });
                 }
             },
@@ -310,23 +323,39 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 console.log("context:", data.context); //in the form of an array.
                 if(data.result.files){
                     $.each(data.result.files, function (index, file) {
-                        var filename = file.name;
-                        var thumbnailUrl = file.thumbnailUrl;
-                        var url = file.url;
+                        var assetId = file._id || file.id;
+                        var imageUploadItemContainer = data.originalFiles[index].imageUploadItemContainer;
+                        var imageAssetModel = imageUploadItemContainer.getImageAssetModel();
 
-                        console.log("file upload done:", filename);
-                        console.log("thumbnailUrl:", thumbnailUrl);
-                        console.log("imageUrl:", url);
+                        console.log("assetId:", assetId);
 
-                        $(data.context[index]).find(".success-indicator").attr("style", "");
-                        $(data.context[index]).find(".progress").hide();
-                        $(data.context[index]).find(".image-preview img").attr("src", thumbnailUrl);
-                        $(data.context[index]).find(".image-preview a").attr("href", url).attr("title", filename);
+                        _this.assetManagerModule.retrieveAsset(assetId, function(throwable, meldDocument){
+                            console.log("assetManagerModule#retrieveAsset callback");
+                            console.log("throwable:", throwable);
+                            console.log("meldDocument:", meldDocument);
+                            console.log("meldDocument data:", meldDocument.getData());
+
+                            $(data.context[index]).find(".progress").hide();
+
+                            if(!throwable){
+                                $(data.context[index]).find(".success-indicator").attr("style", "");
+
+                                imageAssetModel.setAssetMeldDocument(meldDocument);
+                                var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
+                                imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
+
+                                if(data.originalFiles[index].autoSend){
+                                    imageUploadItemContainer.sendImageChatMessage();
+                                }
+
+                                //create userAsset
+                                //add userAsset to image list
+                            } else {
+//                                $(data.context[index]).find(".failed-indicator").attr("style", "");
+                            }
+                        });
                     });
                 }
-            },
-            process: function (e, data) {
-                console.log('Processing ' + data.files[data.index].name + '...');
             },
             progress: function (event, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
@@ -338,32 +367,45 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
             progressall: function (event, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
                 console.log("progressall:", progress);
+            },
+            start: function(event) {
+                console.log("processing started");
+                console.log("event:", event);
+            },
+            send: function(event, data) {
+                console.log("sending");
+                console.log("event:", event);
+                console.log("data:", data);
+            },
+            fail: function(event, data) {
+                console.log("upload failed");
+                console.log("event:", event);
+                console.log("data:", data);
+//                                $(data.context[index]).find(".failed-indicator").attr("style", "");
+            },
+            always: function(event, data) {
+                console.log("always");
+                console.log("event:", event);
+                console.log("data:", data);
+            },
+            drop: function(event, data){
+                console.log("dropped");
+                console.log("event:", event);
+                console.log("data:", data);
+                //check if it's from chatwidget message window, if so, add a callback to send it automatically upon completion
+                console.log("parents:", $(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone"));
+
+                if($(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone")[0]){
+                    data.files[0].autoSend = true;
+                } else {
+                    data.files[0].autoSend = false;
+                }
             }
-        }).on("fileuploadprocessalways", function (e, data) {
-                var index = data.index,
-                    file = data.files[index],
-                    node = $(data.context.children()[index]);
-                console.log("processalways:", "index:", index, "file:", file, "node:", node);
-//                if (file.preview) {
-//                    node
-//                        .prepend('<br>')
-//                        .prepend(file.preview);
-//                }
-//                if (file.error) {
-//                    node
-//                        .append('<br>')
-//                        .append($('<span class="text-danger"/>').text(file.error));
-//                }
-//                if (index + 1 === data.files.length) {
-//                    data.context.find('button')
-//                        .text('Upload')
-//                        .prop('disabled', !!data.files.error);
-//                }
-            });
+        });
     },
 
     deinitializeUploadWidget: function() {
-        $('#file-upload-widget-input').fileupload('destroy');
+        $('#file-upload-widget').fileupload('destroy');
     },
 
     //-------------------------------------------------------------------------------
@@ -435,8 +477,8 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageUploadContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule"),
-        property("assetManagerModule").ref("assetManagerModule")
+        property("assetManagerModule").ref("assetManagerModule"),
+        property("commandModule").ref("commandModule")
     ])
 );
 

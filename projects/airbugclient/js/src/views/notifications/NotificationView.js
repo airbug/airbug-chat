@@ -52,7 +52,7 @@ var NotificationView = Class.extend(MustacheView, {
      */
     flashErrorMessage: function(message) {
         this.flash(
-            '<div id="notification-message" class="notification-message error-notification">' +
+            '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
                 message +
             '</div>');
     },
@@ -62,7 +62,7 @@ var NotificationView = Class.extend(MustacheView, {
      */
     flashExceptionMessage: function(message) {
         this.flash(
-            '<div id="notification-message" class="notification-message error-notification">' +
+            '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
                 message +
             '</div>');
     },

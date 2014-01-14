@@ -137,7 +137,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
         this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
         this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.getCid());
-        this.prependContainerChildTo(this.addRoomMemberButtonContainer, ".panel-header-nav-right");
+        this.addContainerChild(this.addRoomMemberButtonContainer, ".panel-header-nav-right");
     },
 
     initializeContainer: function() {
