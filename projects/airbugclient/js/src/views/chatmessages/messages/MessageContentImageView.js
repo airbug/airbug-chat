@@ -35,14 +35,23 @@ var MessageContentImageView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="message-image-{{cid}}" class="message-image">' +
-            '<img id="image-{{cid}}" src={{model.imageUrl}} />' +
+    template:   '<div id="message-image-{{cid}}" class="message-image image-preview">' +
+            '<a> <img id="image-{{cid}}" src={{thumbnailUrl}} /> </a>' +
         '</div>',
 
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data = this._super();
+        data.thumbnailUrl = data.model.body.parts[0].thumbnailUrl; //CLEANUP create helper methods.
+        return data;
+    },
 
     /**
      * @protected
@@ -52,10 +61,9 @@ var MessageContentImageView = Class.extend(MustacheView, {
     renderModelProperty: function(propertyName, propertyValue) {
         this._super(propertyName, propertyValue);
         switch (propertyName) {
-            //TODO BRN: figure out which attribute will hold the image url or if we need to load the asset data from somewhere else
-            /*case "message":
-                this.findElement('#message-text-' + this.cid).text(attributeValue);
-                break;*/
+            case "thumbnailUrl":
+                this.findElement('#image-' + this.getCid()).attr("src", propertyValue);
+                break;
         }
     }
 });

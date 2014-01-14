@@ -50,14 +50,14 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["imageUrl"])
+                .in(["body"])
                 .call(this.hearImagePropertySetChange, this);
             this.getChatMessageMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["imageUrl"])
+                .in(["body"])
                 .call(this.hearImagePropertyRemovedChange, this);
         }
     },
@@ -89,7 +89,10 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
             var chatData    = meldDocument.getData();
-            this.setProperty("imageUrl", chatData.imageUrl);
+            var imageData   = chatData.body.parts[0];
+            this.setProperty("filename",        imageData.name);
+            this.setProperty("url",             imageData.url);
+            this.setProperty("thumbnailUrl",    imageData.thumbnailUrl);
         }
     },
 
@@ -101,7 +104,9 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
     unprocessMeldDocument: function(key, meldDocument) {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
-            this.removeProperty("imageUrl");
+            this.removeProperty("filename");
+            this.removeProperty("url");
+            this.removeProperty("thumbnailUrl");
         }
     },
 
@@ -129,7 +134,9 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
         var deltaChange     = event.getData().deltaChange;
         var propertyName    = deltaChange.getPropertyName();
         this.removeProperty(propertyName);
-    }
+    },
+
+
 });
 
 //-------------------------------------------------------------------------------

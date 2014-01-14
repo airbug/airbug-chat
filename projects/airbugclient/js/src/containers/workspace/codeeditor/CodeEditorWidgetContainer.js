@@ -344,9 +344,12 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
-            code: code,
             type: "code",
-            codeLanguage: codeLanguage
+            body: {parts: [{
+                code: code,
+                type: "code",
+                codeLanguage: codeLanguage
+            }]}
         };
 
         this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);

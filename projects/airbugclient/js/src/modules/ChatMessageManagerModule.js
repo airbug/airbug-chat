@@ -106,9 +106,11 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {{
-     *      conversationId: {string},
-     *      senderUserId: {string},
-     *      messageBody: {string}
+     *      body: {parts: Array.<{*}>}
+     *      senderUserId:   string,
+     *      sentAt:         Date,
+     *      tryUuid:        string,
+     *      type:           string
      * }} chatMessageObject
      * @param {function(Throwable, Meld=)} callback
      */
@@ -212,8 +214,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      */
     generateCodeChatMessageObject: function(chatMessageData) {
         var codeChatMessageObject = {
-            code:           chatMessageData.code,
-            codeLanguage:   chatMessageData.codeLanguage,
+            body:           chatMessageData.body,
             conversationId: chatMessageData.conversationId,
             senderUserId:   chatMessageData.senderUserId,
             sentAt:         chatMessageData.sentAt,
@@ -229,7 +230,20 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      * @param {Object} chatMessageData
      * @return {{
      *      conversationId: string,
-     *      imageUrl:       string,
+     *      body:           {
+     *          parts: Array.<{
+     *          id: string
+     *          createdAt: Date,
+     *          mimeType: string,
+     *          name: string,
+     *          thumbMimeType: string,
+     *          thumbnailUrl: string,
+     *          type: string,
+     *          updatedAt: Date,
+     *          url: string,
+     *          thumbnailUrl: string
+     *          }>
+     *      },
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
@@ -241,8 +255,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
     generateImageChatMessageObject: function(chatMessageData) {
         console.log("chatMessageData:", chatMessageData);
         var imageChatMessageObject = {
+            body:           chatMessageData.body,
             conversationId: chatMessageData.conversationId,
-            imageUrl:       chatMessageData.imageUrl,
             senderUserId:   chatMessageData.senderUserId,
             sentAt:         chatMessageData.sentAt,
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
@@ -255,10 +269,19 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {Object} chatMessageData
+     * @param {{
+     *      type: string
+     *      body: string
+     * }} chatMessageData
      * @return {{
-     *      body:           string,
      *      conversationId: string,
+     *      body:           {
+     *          parts: Array.<{
+     *          id: string
+     *          type: string,
+     *          text: string
+     *          }>
+     *      },
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
@@ -266,7 +289,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      pending:        boolean,
      *      failed:         boolean
      * }}
-     */
+     * */
     generateTextChatMessageObject: function(chatMessageData) {
         var textChatMessageObject = {
             body:           chatMessageData.body,

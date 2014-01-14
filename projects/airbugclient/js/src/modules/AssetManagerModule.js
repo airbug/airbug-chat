@@ -8,6 +8,7 @@
 //@Export('AssetManagerModule')
 
 //@Require('Class')
+//@Require('airbug.ImageAssetModel')
 //@Require('airbug.ManagerModule')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -25,8 +26,9 @@ var bugpack         = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var ManagerModule   = bugpack.require('airbug.ManagerModule');
+var Class                           = bugpack.require('Class');
+var ImageAssetModel                 = bugpack.require('airbug.ImageAssetModel');
+var ManagerModule                   = bugpack.require('airbug.ManagerModule');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -79,6 +81,15 @@ var AssetManagerModule = Class.extend(ManagerModule, {
 //    generateAssetModel: function(assetObject, assetMeldDocument) {
 //        return new AssetModel(assetObject, assetMeldDocument);
 //    },
+
+    /**
+     * @param {Object=} assetObject
+     * @param {MeldDocument=} assetMeldDocument
+     * @returns {AssetModel}
+     */
+    generateImageAssetModel: function(assetObject, assetMeldDocument) {
+        return new ImageAssetModel(assetObject, assetMeldDocument);
+    },
 
     /**
      * @param {string} roomId

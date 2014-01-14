@@ -86,10 +86,12 @@ var TextChatMessageModel    = Class.extend(ChatMessageModel, {
      * @param {MeldDocument} meldDocument
      */
     processMeldDocument: function(key, meldDocument) {
+        console.log("TextChatMessageModel#processMeldDocument");
         this._super(key, meldDocument);
         if (key === "chatMessage") {
             var chatData    = meldDocument.getData();
-            this.setProperty("body", chatData.body);
+            var textData    = chatData.body.parts[0];
+            this.setProperty("text", textData.text);
         }
     },
 
@@ -101,7 +103,7 @@ var TextChatMessageModel    = Class.extend(ChatMessageModel, {
     unprocessMeldDocument: function(key, meldDocument) {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
-            this.removeProperty("body");
+            this.removeProperty("text");
         }
     },
 

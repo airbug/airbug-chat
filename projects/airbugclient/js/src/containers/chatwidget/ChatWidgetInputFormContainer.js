@@ -194,7 +194,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                                     view(TextAreaView)
                                         .id("chatInputTextArea")
                                         .attributes({
-                                            name: "body"
+                                            name: "text"
                                         })
                                 ]),
                             view(FormControlGroupView)
@@ -296,15 +296,24 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     relayChatMessage: function() {
+        // currently only supports text chatmessages via this function
         var formData = this.getFormData();
         console.log("formData:", formData);
-        if (formData.body === "") {
-            formData.body = "(y)";
+        if (formData.text === "") {
+            formData.text = "(y)";
         }
         if (!formData.type) {
             formData.type = "text";
         }
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, formData);
+
+        var chatMessageData = {
+            type: formData.type,
+            body: {parts: [{
+                type: "text",
+                text: formData.text
+            }]}
+        };
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageData);
         this.textAreaView.setValue("");
         this.sendButtonTextView.setText("Ok");
     },
@@ -345,7 +354,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
             this.processEnterKey();
         } else {
             var formData  = this.getFormData();
-            if (formData.body === "") {
+            if (formData.text === "") {
                 this.sendButtonTextView.setText("Ok");
             } else {
                 this.sendButtonTextView.setText("Send");

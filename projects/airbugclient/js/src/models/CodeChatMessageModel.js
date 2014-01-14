@@ -54,14 +54,14 @@ var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["code", "codeLanguage"])
+                .in(["body"])
                 .call(this.hearCodePropertySetChange, this);
             this.getChatMessageMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["code", "codeLanguage"])
+                .in(["body"])
                 .call(this.hearCodePropertyRemovedChange, this);
         }
     },
@@ -93,8 +93,9 @@ var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
             var chatData    = meldDocument.getData();
-            this.setProperty("code", chatData.code);
-            this.setProperty("codeLanguage", chatData.codeLanguage);
+            var codeData = chatData.body.parts[0];
+            this.setProperty("code", codeData.code);
+            this.setProperty("codeLanguage", codeData.codeLanguage);
         }
     },
 

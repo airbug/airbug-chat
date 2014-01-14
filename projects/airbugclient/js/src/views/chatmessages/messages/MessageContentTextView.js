@@ -37,7 +37,7 @@ var MessageContentTextView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="message-text-{{cid}}" class="message-text">{{{model.body}}}</div>',
+    template: '<div id="message-text-{{cid}}" class="message-text">{{{text}}}</div>',
 
 
     //-------------------------------------------------------------------------------
@@ -49,9 +49,8 @@ var MessageContentTextView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        if (data.model.body) {
-            data.model.body = HtmlUtil.stringToHtml(data.model.body);
-        }
+        console.log("data:", data);
+        data.text = HtmlUtil.stringToHtml(data.model.body.parts[0].text); //CLEANUP and Why does model not have function getProperty
         return data;
     },
 
