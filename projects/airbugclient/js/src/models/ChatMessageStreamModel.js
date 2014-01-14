@@ -96,6 +96,8 @@ var ChatMessageStreamModel = Class.extend(MeldModel, /** @lends {ChatMessageStre
                 .where("data.deltaChange.path")
                 .in(["chatMessageIdSet"])
                 .call(this.hearMeldRemovedFromSetChange, this);
+            this.getMeldDocument()
+                .on(MeldDocumentEvent.EventTypes.RESET, this.hearMeldReset, this);
         }
     },
 
@@ -127,7 +129,9 @@ var ChatMessageStreamModel = Class.extend(MeldModel, /** @lends {ChatMessageStre
     processMeldDocument: function() {
         this._super();
         var data    = this.getMeldDocument().getData();
-        this.setProperty("chatMessageIdSet", data.chatMessageIdSet);
+        if (data) {
+            this.setProperty("chatMessageIdSet", data.chatMessageIdSet);
+        }
     },
 
     /**
@@ -184,6 +188,13 @@ var ChatMessageStreamModel = Class.extend(MeldModel, /** @lends {ChatMessageStre
         var setValue            = deltaChange.getSetValue();
         var chatMessageIdSet    = this.getProperty("chatMessageIdSet");
         chatMessageIdSet.remove(setValue);
+    },
+
+    /**
+     * @param {Event} event
+     */
+    hearMeldReset: function(event) {
+        this.processMeldDocument();
     }
 });
 

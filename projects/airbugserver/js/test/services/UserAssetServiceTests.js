@@ -233,7 +233,7 @@ var userAssetServiceRetrieveUserAssetsByUserIdTest = {
 
     test: function(test) {
         // TODO - dkk - implement
-        test.complete(throwable);
+        test.complete();
     }
 };
 

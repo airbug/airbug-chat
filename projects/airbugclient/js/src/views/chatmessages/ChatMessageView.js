@@ -47,7 +47,7 @@ var ChatMessageView = Class.extend(MustacheView, {
                         '<div id="message-header-center-{{cid}}" class="subheader-center">' +
                         '</div>' +
                         '<div id="message-header-right-{{cid}}" class="subheader-right">' +
-                            '<div id="message-created-at-{{cid}}"   class="message-created-at">{{model.createdAt}}</div>' +
+                            '<div id="message-created-at-{{cid}}"   class="message-created-at">{{sentAgo}}</div>' +
                         '</div>' +
                     '</div>' +
                     '<div id="message-controls-{{cid}}"     class="message-controls"></div>' +

@@ -9,6 +9,7 @@
 //@Require('AddChange')
 //@Require('Class')
 //@Require('ClearChange')
+//@Require('ISet')
 //@Require('Map')
 //@Require('Obj')
 //@Require('RemoveChange')
@@ -43,6 +44,7 @@ var bugpack                         = require('bugpack').context();
 var AddChange                       = bugpack.require('AddChange');
 var Class                           = bugpack.require('Class');
 var ClearChange                     = bugpack.require('ClearChange');
+var ISet                            = bugpack.require('ISet');
 var Map                             = bugpack.require('Map');
 var Obj                             = bugpack.require('Obj');
 var RemoveChange                    = bugpack.require('RemoveChange');
@@ -265,6 +267,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
         this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
         this.chatMessageStreamModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
         this.deinitializeCommandSubscriptions();
     },
 
@@ -277,6 +280,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
         this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
         this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
         this.initializeCommandSubscriptions();
     },
 
@@ -537,6 +541,19 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     observeChatMessageIdSetRemoveChange: function(change) {
         this.removeChatMessage(change.getValue());
+    },
+
+    /**
+     * @private
+     * @param {SetPropertyChange} change
+     */
+    observeChatMessageIdSetSetPropertyChange: function(change) {
+        var _this = this;
+        if (Class.doesImplement(change.getPropertyValue(), ISet)) {
+            change.getPropertyValue().forEach(function(chatMessageId) {
+                _this.loadChatMessage(chatMessageId);
+            });
+        }
     },
 
     /**

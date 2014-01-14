@@ -124,7 +124,7 @@ var ChatMessageStreamService = Class.extend(EntityService, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} entityId
-     * @param {function(Throwable=)} callback
+     * @param {function(Throwable, ChatMessageStream=)} callback
      */
     retrieveChatMessageStream: function(requestContext, entityId, callback) {
         var _this               = this;
@@ -165,12 +165,12 @@ var ChatMessageStreamService = Class.extend(EntityService, {
                     })
                 })
             ]).execute(function(throwable) {
-                    if (!throwable) {
-                        callback();
-                    } else {
-                        callback(throwable);
-                    }
-                });
+                if (!throwable) {
+                    callback(null, chatMessageStream);
+                } else {
+                    callback(throwable);
+                }
+            });
         } else {
             callback(new Exception("UnauthorizedAccess"));
         }

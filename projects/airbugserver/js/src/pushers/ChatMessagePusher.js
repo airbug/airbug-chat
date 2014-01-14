@@ -127,7 +127,7 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
         var push                    = this.getPushManager().push();
         push
             .toAll()
-            .addToSet(chatMessageStreamKey, "chatMessageIds", chatMessage.getId())
+            .addToSet(chatMessageStreamKey, "chatMessageIdSet", chatMessage.getId())
             .exec(callback);
     },
 
