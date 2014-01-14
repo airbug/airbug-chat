@@ -459,7 +459,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         var chatMessageObject = this.chatMessageManagerModule.generateChatMessageObject(Obj.merge({
             conversationId: this.conversationModel.getProperty("id"),
-            sentAt: new Date().toString()
+            sentAt: new Date().toString(),
+            pending: true,
+            failed: false
         }, chatMessageData));
 
         /** @type {ChatMessageModel} */
@@ -493,15 +495,15 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             $task(function(flow) {
                 chatMessageModel.setChatMessageMeldDocument(chatMessageMeldDocument);
                 chatMessageModel.setSenderUserMeldDocument(currentUser.getMeldDocument());
+                chatMessageModel.setProperty("failed", false);
+                chatMessageModel.setProperty("pending", false);
                 flow.complete();
             })
         ]).execute(function(throwable) {
             if (throwable) {
                 if (Class.doesExtend(throwable, RequestFailedException)) {
-                    chatMessageModel.setProperty({
-                        failed: true,
-                        pending: false
-                    });
+                    chatMessageModel.setProperty("failed", true);
+                    chatMessageModel.setProperty("pending", false);
                 } else {
                     console.log("ERROR - unhandled throwable:", throwable);
                 }

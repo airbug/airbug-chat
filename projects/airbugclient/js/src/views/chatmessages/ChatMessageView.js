@@ -41,25 +41,25 @@ var ChatMessageView = Class.extend(MustacheView, {
 
     template:   '<div id="chat-message-{{cid}}" class="message-wrapper">' +
                     '<div id="message-header-{{cid}}" class="message-header">' +
-                        '<div id="message-header-left-{{cid}} class="subheader-left">' +
-                            '<div id="message-sent-by-{{cid}}"      class="message-sent-by">{{model.sentBy}}</div>' +
+                        '<div id="message-header-left-{{cid}}" class="subheader-left">' +
+                            '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
                         '</div>' +
                         '<div id="message-header-center-{{cid}}" class="subheader-center">' +
                         '</div>' +
                         '<div id="message-header-right-{{cid}}" class="subheader-right">' +
-                            '<div id="message-created-at-{{cid}}"   class="message-created-at">{{sentAgo}}</div>' +
+                            '<div id="message-created-at-{{cid}}" class="message-created-at">{{sentAgo}}</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div id="message-controls-{{cid}}"     class="message-controls"></div>' +
-                    '<div id="message-content-{{cid}}"    class="message-content"></div>' +
+                    '<div id="message-controls-{{cid}}" class="message-controls"></div>' +
+                    '<div id="message-content-{{cid}}" class="message-content"></div>' +
                     '<div class="message-footer">' +
                         '<div class="subheader-left">' +
                         '</div>' +
                         '<div class="subheader-center">' +
                         '</div>' +
                         '<div class="subheader-right">' +
-                            '<div id="message-pending-{{cid}}"      class="message-pending-true"><img src="/img/pending-dark-blue.gif"></div>' +
-                            '<div id="message-failed-{{cid}}"       class="message-failed-false"><button class="btn btn-danger btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
+                            '<div id="message-pending-{{cid}}" class="{{messagePendingClass}}"><img src="/img/pending-dark-blue.gif"></div>' +
+                            '<div id="message-failed-{{cid}}" class="{{messageFailedClass}}"><button class="btn btn-danger btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
                         '</div>' +
                     '</div>' +
                 '</div>',
@@ -107,6 +107,16 @@ var ChatMessageView = Class.extend(MustacheView, {
 
         if (data.model.sentAt) {
             data.sentAgo = this.renderSentAgo(data.model.sentAt);
+        }
+        if (data.model.pending) {
+            data.messagePendingClass = "message-pending-true";
+        } else {
+            data.messagePendingClass = "message-pending-false";
+        }
+        if (data.model.failed) {
+            data.messageFailedClass = "message-failed-true";
+        } else {
+            data.messageFailedClass = "message-failed-false";
         }
         return data;
     },

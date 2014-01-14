@@ -205,7 +205,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
-     *      type:           string
+     *      type:           string,
+     *      pending:        boolean,
+     *      failed:         boolean
      * }}
      */
     generateCodeChatMessageObject: function(chatMessageData) {
@@ -216,7 +218,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             senderUserId:   chatMessageData.senderUserId,
             sentAt:         chatMessageData.sentAt,
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
-            type:           chatMessageData.type
+            type:           chatMessageData.type,
+            failed:         chatMessageData.failed,
+            pending:        chatMessageData.pending
         };
         return codeChatMessageObject;
     },
@@ -229,7 +233,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
-     *      type:           string
+     *      type:           string,
+     *      pending:        boolean,
+     *      failed:         boolean
      * }}
      */
     generateImageChatMessageObject: function(chatMessageData) {
@@ -240,7 +246,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             senderUserId:   chatMessageData.senderUserId,
             sentAt:         chatMessageData.sentAt,
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
-            type:           chatMessageData.type
+            type:           chatMessageData.type,
+            failed:         chatMessageData.failed,
+            pending:        chatMessageData.pending
         };
         console.log("imageChatMessageObject:", imageChatMessageObject);
         return imageChatMessageObject;
@@ -254,17 +262,22 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
-     *      type:           string
+     *      type:           string,
+     *      pending:        boolean,
+     *      failed:         boolean
      * }}
      */
     generateTextChatMessageObject: function(chatMessageData) {
-        var textChatMessageObject = {};
-        textChatMessageObject.body              = chatMessageData.body;
-        textChatMessageObject.conversationId    = chatMessageData.conversationId;
-        textChatMessageObject.senderUserId      = chatMessageData.senderUserId;
-        textChatMessageObject.sentAt            = chatMessageData.sentAt;
-        textChatMessageObject.tryUuid           = chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid();
-        textChatMessageObject.type              = chatMessageData.type;
+        var textChatMessageObject = {
+            body:           chatMessageData.body,
+            conversationId: chatMessageData.conversationId,
+            senderUserId:   chatMessageData.senderUserId,
+            sentAt:         chatMessageData.sentAt,
+            tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
+            type:           chatMessageData.type,
+            failed:         chatMessageData.failed,
+            pending:        chatMessageData.pending
+        };
         return textChatMessageObject;
     },
 
