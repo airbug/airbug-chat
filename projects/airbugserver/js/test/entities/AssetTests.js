@@ -48,12 +48,16 @@ var assetBasicsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testMimeType = "image/png";
+        this.testId         = "testId";
+        this.testMimeType   = "image/png";
+        this.testSize = 12345;
         this.testThumbMimeType = "image/png";
         this.testThumbnailUrl = "http://host/image_t.png";
         this.testUrl = "http://host/image.png";
         this.testAsset = new Asset({
+            id: this.testId,
             mimeType: this.testMimeType,
+            size: this.testSize,
             thumbMimeType: this.testThumbMimeType,
             thumbnailUrl: this.testThumbnailUrl,
             url: this.testUrl
@@ -67,6 +71,10 @@ var assetBasicsTest = {
 
     test: function(test) {
         // Verify instantiation worked properly and values are available.
+        test.assertEqual(this.testAsset.getId(), this.testId,
+            "Assert asset id was set correctly");
+        test.assertEqual(this.testAsset.getSize(), this.testSize,
+            "Assert Asset.mimeType was set correctly");
         test.assertEqual(this.testAsset.getMimeType(), this.testMimeType,
             "Assert Asset.mimeType was set correctly");
         test.assertEqual(this.testAsset.getThumbMimeType(), this.testThumbMimeType,
@@ -80,6 +88,9 @@ var assetBasicsTest = {
         this.testAsset.setMimeType("image/jpeg");
         test.assertEqual(this.testAsset.getMimeType(), "image/jpeg",
             "Assert Asset.setMimeType works correctly");
+        this.testAsset.setMimeType("image/jpeg");
+        test.assertEqual(this.testAsset.getSize(), 12345,
+            "Assert Asset.setSize works correctly");
         this.testAsset.setThumbMimeType("image/jpeg");
         test.assertEqual(this.testAsset.getThumbMimeType(), "image/jpeg",
             "Assert Asset.setThumbMimeType works correctly");
