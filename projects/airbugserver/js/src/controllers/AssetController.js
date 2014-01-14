@@ -189,8 +189,18 @@ var AssetController = Class.extend(EntityController, {
                 }
             },
 
-            retrieveAsset: function(request, responder, callback) {
-
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveAsset:   function(request, responder, callback) {
+                var data                = request.getData();
+                var assetId              = data.objectId;
+                var requestContext      = request.requestContext;
+                assetService.retrieveAsset(requestContext, assetId, function(throwable, asset) {
+                    _this.processRetrieveResponse(responder, throwable, asset, callback);
+                });
             },
 
             retrieveAssets: function(request, responder, callback) {

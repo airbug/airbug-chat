@@ -84,7 +84,7 @@ var AssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(assetManager, awsUploader, imagemagick) {
+    _constructor: function(assetManager, assetPusher, awsUploader, imagemagick) {
 
         this._super();
 
@@ -93,6 +93,12 @@ var AssetService = Class.extend(Obj, {
          * @type {AssetManager}
          */
         this.assetManager = assetManager;
+
+        /**
+         * @private
+         * @type {AssetPusher}
+         */
+        this.assetPusher = assetPusher;
 
         /**
          * @private
@@ -190,6 +196,57 @@ var AssetService = Class.extend(Obj, {
         });
         var s3Api = new S3Api(awsConfig);
         return s3Api.getObjectURL(s3Object, s3Bucket);
+    },
+
+    /*
+     * @param {RequestContext} requestContext
+     * @param {string} assetId
+     * @param {function(Throwable, ChatMessage=} callback
+     */
+    retrieveAsset: function(requestContext, assetId, callback) {
+        var _this           = this;
+        var callManager     = requestContext.get("callManager");
+        var currentUser     = requestContext.get('currentUser');
+
+        /** @type {Asset} */
+        var asset           = null;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    _this.dbRetrieveAsset(assetId, function(throwable, returnedAsset) {
+                        if (!throwable) {
+                            if (returnedAsset) {
+                                asset = returnedAsset;
+                                flow.complete(throwable);
+                            } else {
+                                flow.error(new Exception('NotFound'));
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.assetPusher.meldCallWithAsset(callManager.getCallUuid(), asset, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.assetPusher.pushAssetToCall(asset, callManager.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(null, asset);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        } else {
+            callback(new Exception('UnauthorizedAccess'));
+        }
     },
 
     /**
@@ -295,6 +352,34 @@ var AssetService = Class.extend(Obj, {
         ]).execute(function(throwable) {
             callback(throwable, asset);
         });
+    },
+
+    /**
+     * @private
+     * @param {string} assetId
+     * @param {function(Throwable, Asset=)} callback
+     */
+    dbRetrieveAsset: function(assetId, callback) {
+        var asset           = null;
+        var assetManager    = this.assetManager;
+        $task(function(flow) {
+            assetManager.retrieveAsset(assetId, function(throwable, returnedAsset) {
+                if (!throwable) {
+                    if (returnedAsset) {
+                        asset = returnedAsset;
+                    } else {
+                        throwable = new Exception('NotFound', {objectId: assetId});
+                    }
+                }
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, asset);
+            } else {
+                callback(throwable);
+            }
+        });
     }
 });
 
@@ -307,6 +392,7 @@ bugmeta.annotate(AssetService).with(
     module("assetService")
         .args([
             arg().ref("assetManager"),
+            arg().ref("assetPusher"),
             arg().ref("awsUploader"),
             arg().ref("imagemagick")
         ])
