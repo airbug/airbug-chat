@@ -170,15 +170,20 @@ var UserAsset = Class.extend(Entity, {
 
 bugmeta.annotate(UserAsset).with(
     entity("UserAsset").properties([
+        property("id")
+            .type("string")
+            .primaryId(),
         property("assetId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("asset")
             .type("Asset")
             .populates(true),
         property("name")
             .type("string"),
         property("userId")
-            .type("string"),
+            .type("string")
+            .id(),
         property("user")
             .type("User")
             .populates(true),

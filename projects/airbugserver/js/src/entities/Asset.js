@@ -156,6 +156,9 @@ var Asset = Class.extend(Entity, {
 
 bugmeta.annotate(Asset).with(
     entity("Asset").properties([
+        property("id")
+            .type("string")
+            .primaryId(),
         property("createdAt").type("date"),
         property("mimeType").type("string"),
         property("name").type("string"),
