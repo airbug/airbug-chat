@@ -158,7 +158,6 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
     deactivateContainer: function() {
         this._super();
-        //TODO SUNG Make sure deactivateContainer is called. //Check
         this.deinitializeUploadWidget();
     },
 
@@ -288,13 +287,23 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 //            autoupload: false, //default true
 //            formData: {script: true},
             progressInterval: 100,
+            progress: function (event, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
+                data.context.find(".bar").attr("style", "width: " + progress);
+                if(progress === "100%"){
+                    data.context.find(".cancel-button").hide();
+                }
+            },
+            progressall: function (event, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
+            },
+            // callbacks in chronological order
+            drop: function(event, data){
+                data.files[0].autoSend = !!$(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone")[0];
+            },
             add: function (event, data) {
-                console.log("file upload add");
-                console.log("event:", event);
-                console.log("data:", data);
-                console.log("arguments:", arguments);
+                _this.hideDragAndDropText();
 
-                _this.viewTop.$el.find(".box-body .box>span").hide();
                 var file = data.files[0];
                 var filename = file.name;
 
@@ -309,64 +318,12 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 if (data.autoUpload || (data.autoUpload !== false &&
                     $(this).fileupload('option', 'autoUpload'))) {
                     data.process().done(function () {
+                        /** @type {{files: Array}} data, @type {string} status, @type {{}} jqXHR **/
                         data.submit().done(function(data, status, jqXHR) {
-                            console.log(" done promise of add. this (data):", this);
-                            console.log("data:", data); //{files: []}
-                            console.log("status:", status); //"success"
-                            console.log("jqXHR", jqXHR);
+
                         });
                     });
                 }
-            },
-            done: function (event, data) {
-                console.log("event:", event, "data:", data);
-                console.log("context:", data.context); //in the form of an array.
-                if(data.result.files){
-                    $.each(data.result.files, function (index, file) {
-                        var assetId = file._id || file.id;
-                        var imageUploadItemContainer = data.originalFiles[index].imageUploadItemContainer;
-                        var imageAssetModel = imageUploadItemContainer.getImageAssetModel();
-
-                        console.log("assetId:", assetId);
-
-                        _this.assetManagerModule.retrieveAsset(assetId, function(throwable, meldDocument){
-                            console.log("assetManagerModule#retrieveAsset callback");
-                            console.log("throwable:", throwable);
-                            console.log("meldDocument:", meldDocument);
-                            console.log("meldDocument data:", meldDocument.getData());
-
-                            $(data.context[index]).find(".progress").hide();
-
-                            if(!throwable){
-                                $(data.context[index]).find(".success-indicator").attr("style", "");
-
-                                imageAssetModel.setAssetMeldDocument(meldDocument);
-                                var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
-                                imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
-
-                                if(data.originalFiles[index].autoSend){
-                                    imageUploadItemContainer.sendImageChatMessage();
-                                }
-
-                                //create userAsset
-                                //add userAsset to image list
-                            } else {
-//                                $(data.context[index]).find(".failed-indicator").attr("style", "");
-                            }
-                        });
-                    });
-                }
-            },
-            progress: function (event, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
-                data.context.find(".bar").attr("style", "width: " + progress);
-                if(progress === "100%"){
-                    data.context.find(".cancel-button").hide();
-                }
-            },
-            progressall: function (event, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10) + "%";
-                console.log("progressall:", progress);
             },
             start: function(event) {
                 console.log("processing started");
@@ -388,17 +345,11 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 console.log("event:", event);
                 console.log("data:", data);
             },
-            drop: function(event, data){
-                console.log("dropped");
-                console.log("event:", event);
-                console.log("data:", data);
-                //check if it's from chatwidget message window, if so, add a callback to send it automatically upon completion
-                console.log("parents:", $(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone"));
-
-                if($(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone")[0]){
-                    data.files[0].autoSend = true;
-                } else {
-                    data.files[0].autoSend = false;
+            done: function (event, data) {
+                if(data.result.files){
+                    $.each(data.result.files, function (index, file) {
+                        _this.handleUploadDoneEvent(data, index, file);
+                    });
                 }
             }
         });
@@ -461,12 +412,52 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
         var node = $(selector);
         node.find(".bar").attr("style", "width: 100%");
         node.find(".cancel-button").hide();
-        node.find(".success-indicator").attr("style", "");
-        node.find(".progress").hide();
+
+        var context = {
+            context: [selector],
+            originalFiles: [data]
+        };
+        this.handleUploadDoneEvent(context, 0, data);
+    },
+
+    handleUploadDoneEvent: function(data, index, file) {
+        console.log("data:", data);
+        console.log("index:", index);
+        console.log("file:", file);
+        var assetId = file._id || file.id;
+        var imageUploadItemContainer = data.originalFiles[index].imageUploadItemContainer;
+        var imageAssetModel = imageUploadItemContainer.getImageAssetModel();
+
+        console.log("assetId:", assetId);
+
+        this.assetManagerModule.retrieveAsset(assetId, function(throwable, meldDocument){
+                $(data.context[index]).find(".progress").hide();
+
+                if(!throwable){
+                    $(data.context[index]).find(".success-indicator").attr("style", "");
+
+                    imageAssetModel.setAssetMeldDocument(meldDocument);
+                    var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
+                    imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
+
+                    if(data.originalFiles[index].autoSend){
+                        imageUploadItemContainer.sendImageChatMessage();
+                    }
+
+                    //create userAsset
+                    //add userAsset to image list
+                } else {
+//                                $(data.context[index]).find(".failed-indicator").attr("style", "");
+                }
+        });
     },
 
     handleAddByUrlFailedEvent: function(event) {
 
+    },
+
+    hideDragAndDropText: function() {
+        this.viewTop.$el.find(".box-body .box>span").hide();
     }
 });
 

@@ -273,18 +273,24 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
 
     handleSubmitButtonClicked: function(event) {
         var _this = this;
+        var data = {};
         var url = this.getInputValue();
         var imageAssetModel = new ImageAssetModel({name: url});
+        var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
+        event.getData().imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
 
+        data.url = url;
+        data.imageUploadItemContainer = imageUploadItemContainer;
         this.assetManagerModule.addAssetFromUrl(url, function(throwable, meldDocument){
             console.log("addAssetFromUrl callback");
             console.log("throwable:", throwable, "meldDocument:", meldDocument);
             if(!throwable && meldDocument) {
-                _this.getViewTop().dispatchEvent(new Event("AddByUrlCompleted", {url: url}));
+                var assetId = meldDocument.getData().objectId;
+                data.id = assetId;
+                _this.getViewTop().dispatchEvent(new Event("AddByUrlCompleted", data));
             }
         });
 
-        event.getData().imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
     },
 
     /**
