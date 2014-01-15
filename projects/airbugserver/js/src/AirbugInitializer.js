@@ -158,6 +158,12 @@ var AirbugInitializer = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {RedisConfig}
+         */
+        this.redisConfig                        = null;
+
+        /**
+         * @private
          * @type {RequestContextBuilder}
          */
         this.requestContextBuilder              = null;
@@ -359,6 +365,8 @@ var AirbugInitializer = Class.extend(Obj, {
             "sessionKey"
         ]);
         this.socketIoServerConfig.setResource("/api/socket");
+        this.redisConfig.setHost(config.getProperty("redis.host"));
+        this.redisConfig.setPort(config.getProperty("redis.port"));
     },
 
     /**
@@ -413,6 +421,7 @@ bugmeta.annotate(AirbugInitializer).with(
             property("githubService").ref("githubService"),
             property("handshaker").ref("handshaker"),
             property("mongoDataStore").ref("mongoDataStore"),
+            property("redisConfig").ref("redisConfig"),
             property("requestContextBuilder").ref("requestContextBuilder"),
             property("sessionService").ref("sessionService"),
             property("sessionServiceConfig").ref("sessionServiceConfig"),

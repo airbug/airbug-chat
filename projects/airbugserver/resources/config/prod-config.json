@@ -3,5 +3,8 @@
         "clientId": "93df694dafdb3df46e2d",
         "clientSecret": "499fa9bbe1f13e9fe537b6dda8551174e082f838"
     },
-    "staticUrl": "https://d1jply0oquv2ju.cloudfront.net/airbug/0.0.1/static"
+    "redis": {
+        "host": "redis-us-east-1a.ogttef.0001.use1.cache.amazonaws.com"
+    },
+    "staticUrl": "https://d1jply0oquv2ju.cloudfront.net/airbug/0.0.1/static",
 }

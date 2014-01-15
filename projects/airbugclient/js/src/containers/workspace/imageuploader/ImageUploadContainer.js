@@ -268,7 +268,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     initializeUploadWidget: function() {
         var _this = this;
         $('#file-upload-widget').fileupload({
-            url: 'app/uploadAsset',
+            url: 'api/uploadAsset',
             type: 'POST',
             singleFileUploads: true,
             sequentialUploads: true,
