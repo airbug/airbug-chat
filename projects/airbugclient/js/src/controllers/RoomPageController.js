@@ -129,10 +129,13 @@ var RoomPageController = Class.extend(ApplicationController, {
                             });
                         }
                     } else {
-                        //TODO BRN: Handle
-                        console.log(throwable.message);
-                        console.log(throwable.stack);
-                        routingRequest.reject();
+                        if (throwable.getType() === "NotFound") {
+
+                        } else {
+                            console.log(throwable.message);
+                            console.log(throwable.stack);
+                            routingRequest.reject();
+                        }
                     }
                 });
             } else {

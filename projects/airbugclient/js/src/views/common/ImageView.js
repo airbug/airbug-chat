@@ -35,7 +35,7 @@ var ImageView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<img id="{{id}}" class="{{attributes.size}}" src={{attributes.source}}></img>',
+    template:   '<img id="{{id}}" class="{{attributes.size}}" src="{{attributes.source}}" />',
 
 
     //-------------------------------------------------------------------------------

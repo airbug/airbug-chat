@@ -144,8 +144,6 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
     filterChatMessage: function(chatMessage) {
         return Obj.pick(chatMessage.toObject(), [
             "body",
-            "code",
-            "codeLanguage",
             "conversationId",
             "id",
             "senderUserId",

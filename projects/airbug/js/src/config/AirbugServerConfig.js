@@ -67,6 +67,20 @@ var AirbugServerConfig = Class.extend(Config, {
      */
     setGithubClientSecret: function(clientSecret) {
         this.setProperty("github.clientSecret", clientSecret);
+    },
+
+    /**
+     * @return {string}
+     */
+    getStaticUrl: function() {
+        return this.getProperty("staticUrl");
+    },
+
+    /**
+     * @param {string} staticUrl
+     */
+    setStaticUrl: function(staticUrl) {
+        this.setProperty("staticUrl", staticUrl);
     }
 });
 

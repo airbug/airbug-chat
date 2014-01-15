@@ -49,7 +49,7 @@ var MessageContentImageView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.thumbnailUrl = data.model.body.parts[0].thumbnailUrl; //CLEANUP create helper methods.
+        data.thumbnailUrl = data.model.thumbnailUrl; //CLEANUP create helper methods.
         return data;
     },
 

@@ -7,5 +7,6 @@
     },
     "mongoDbIp": "localhost",
     "port": 8000,
-    "sessionKey": "'airbug.sid'"
+    "sessionKey": "'airbug.sid'",
+    "staticUrl": "http://localhost:8000"
 }

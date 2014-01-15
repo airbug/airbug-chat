@@ -16,17 +16,17 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var DateUtil        = bugpack.require('DateUtil');
-var StringUtil      = bugpack.require('StringUtil');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class                   = bugpack.require('Class');
+var DateUtil                = bugpack.require('DateUtil');
+var StringUtil              = bugpack.require('StringUtil');
+var MustacheView            = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ var ChatMessageView = Class.extend(MustacheView, {
                         '<div class="subheader-center">' +
                         '</div>' +
                         '<div class="subheader-right">' +
-                            '<div id="message-pending-{{cid}}" class="{{messagePendingClass}}"><img src="/img/pending-dark-blue.gif"></div>' +
+                            '<div id="message-pending-{{cid}}" class="{{messagePendingClass}}"><img src="{{{staticUrl}}}/img/pending-dark-blue.gif"></div>' +
                             '<div id="message-failed-{{cid}}" class="{{messageFailedClass}}"><button class="btn btn-danger btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
                         '</div>' +
                     '</div>' +

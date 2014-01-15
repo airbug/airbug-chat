@@ -37,7 +37,7 @@ var BlackoutLoaderView = Class.extend(MustacheView, {
 
     template:   '<div id="blackout-loader-wrapper-{{cid}}" class="blackout-loader-wrapper">' +
                     '<div id="blackout-loader-{{cid}}" class="blackout-loader"> ' +
-                        '<img src="img/ajax-loader.gif">' +
+                        '<img src="{{{staticUrl}}}/img/ajax-loader.gif">' +
                         '</img>' +
                     '</div>' +
                 '</div>'

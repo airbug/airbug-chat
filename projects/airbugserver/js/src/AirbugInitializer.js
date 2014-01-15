@@ -212,9 +212,8 @@ var AirbugInitializer = Class.extend(Obj, {
         var _this = this;
         console.log("Initializing AirbugConfiguration");
 
-        //TODO BRN: This configName should either be passed in via a parameter or set in some non code specific way
         /** @type {string} */
-        var configName  = "dev";
+        var configName  = this.generateConfigName();
         /** @type {Config} */
         var config      = null;
 
@@ -344,12 +343,14 @@ var AirbugInitializer = Class.extend(Obj, {
             "enableTracking",
             "github.clientId",
             "github.redirectUri",
-            "github.scope"
+            "github.scope",
+            "staticUrl"
         ]);
 
         this.airbugServerConfig.absorbConfig(config, [
             "github.clientId",
-            "github.clientSecret"
+            "github.clientSecret",
+            "staticUrl"
         ]);
 
         this.sessionServiceConfig.absorbConfig(config, [
@@ -358,6 +359,19 @@ var AirbugInitializer = Class.extend(Obj, {
             "sessionKey"
         ]);
         this.socketIoServerConfig.setResource("/api/socket");
+    },
+
+    /**
+     * @private
+     * @return {string}
+     */
+    generateConfigName: function() {
+        var configName = "dev";
+        var index = process.argv.indexOf("--config");
+        if (index > -1) {
+            configName = process.argv[index + 1];
+        }
+        return configName;
     },
 
     /**

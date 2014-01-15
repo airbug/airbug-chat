@@ -8,10 +8,10 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
         <meta name="description" content="Collaborative chat for developers">
-        <link rel="stylesheet" href="/css/bootstrap.css" />
-        <link rel="stylesheet" href="/css/bootstrap-responsive.css" />
-        <link rel="stylesheet" href="/css/auth-buttons.css" />
-        <link rel="stylesheet" href="/css/styles.css" />
+        <link rel="stylesheet" href="{{{config.staticUrl}}}/css/bootstrap.css" />
+        <link rel="stylesheet" href="{{{config.staticUrl}}}/css/bootstrap-responsive.css" />
+        <link rel="stylesheet" href="{{{config.staticUrl}}}/css/auth-buttons.css" />
+        <link rel="stylesheet" href="{{{config.staticUrl}}}/css/styles.css" />
 
         <!-- highlight.js -->
         <link rel="stylesheet" href="http://yandex.st/highlightjs/7.5/styles/default.min.css">
@@ -19,9 +19,9 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
     </head>
     <body>
         <script type="text/javascript">
-            var _appConfig = "{{{config}}}";
+            var _appConfig = JSON.parse("{{{config}}}");
         </script>
-        <script type="text/javascript" src="https://s3.amazonaws.com/airbug/bugpack-0.0.1.js"></script>
+        <script type="text/javascript" src="https://d1jply0oquv2ju.cloudfront.net/bugpack-0.0.1.min.js"></script>
 
         <!-- UserVoice JavaScript SDK (only needed once on a page) -->
         <script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/EYy2Up2867d0eT7mVPDhDQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
@@ -29,22 +29,22 @@ NOTE BRN: This file is just temporary for now. The serving of the index page wil
         <!-- UserVoice -->
         <!-- A tab to launch the Classic Widget -->
         <script>
-        UserVoice = window.UserVoice || [];
-        UserVoice.push(['showTab', 'classic_widget', {
-          mode: 'full',
-          primary_color: '#cc6d00',
-          link_color: '#007dbf',
-          default_mode: 'feedback',
-          forum_id: 216715,
-          tab_label: 'Feedback & Support',
-          tab_color: '#cc6d00',
-          tab_position: 'middle-right',
-          tab_inverted: false
-        }]);
+            UserVoice = window.UserVoice || [];
+            UserVoice.push(['showTab', 'classic_widget', {
+              mode: 'full',
+              primary_color: '#cc6d00',
+              link_color: '#007dbf',
+              default_mode: 'feedback',
+              forum_id: 216715,
+              tab_label: 'Feedback & Support',
+              tab_color: '#cc6d00',
+              tab_position: 'middle-right',
+              tab_inverted: false
+            }]);
         </script>
 
         <!-- load airbug application -->
-        <script type="text/javascript" src="/airbug-application-loader.js"></script>
+        <script type="text/javascript" src="{{{config.staticUrl}}}/airbug-application-loader.js"></script>
     </body>
 </html>
 

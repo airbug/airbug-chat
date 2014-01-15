@@ -109,7 +109,7 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      * @returns {AirbugClientConfig}
      */
     airbugClientConfig: function() {
-        return new AirbugClientConfig(JSON.parse(_appConfig));
+        return new AirbugClientConfig(_appConfig);
     },
 
     /**

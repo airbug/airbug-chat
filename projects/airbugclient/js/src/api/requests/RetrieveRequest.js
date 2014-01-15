@@ -144,7 +144,7 @@ var RetrieveRequest = Class.extend(ApiRequest, {
                 }
             } else if (responseType === EntityDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions
-                this.fireCallbacks(new Exception(data.exception));
+                this.fireCallbacks(new Exception(data.exception.type, data.exception.data, data.exception.message, data.exception.causes));
             } else if (responseType === EntityDefines.Responses.ERROR) {
                 //TODO BRN: Handle common errors
                 this.fireCallbacks(new Bug(data.error.type, data.error.data, data.error.message));
