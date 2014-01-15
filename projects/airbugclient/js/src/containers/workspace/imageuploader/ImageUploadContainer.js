@@ -19,6 +19,7 @@
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
+//@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -52,6 +53,7 @@ var ImageUploadView                     = bugpack.require('airbug.ImageUploadVie
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
+var BugFlow                             = bugpack.require('bugflow.BugFlow');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -65,6 +67,8 @@ var jQuery                              = bugpack.require('jquery.JQuery');
 //-------------------------------------------------------------------------------
 
 var $                                   = jQuery;
+var $series                             = BugFlow.$series;
+var $task                               = BugFlow.$task;
 var autowired                           = AutowiredAnnotation.autowired;
 var bugmeta                             = BugMeta.context();
 var CommandType                         = CommandModule.CommandType;
