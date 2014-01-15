@@ -109,7 +109,7 @@ var AssetManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {Array.<string>} assetId
+     * @param {string} assetId
      * @param {function(Throwable, Asset)} callback
      */
     retrieveAsset: function(assetId, callback) {
