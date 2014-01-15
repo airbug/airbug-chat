@@ -378,6 +378,8 @@ var AirbugInitializer = Class.extend(Obj, {
         var index = process.argv.indexOf("--config");
         if (index > -1) {
             configName = process.argv[index + 1];
+        } else if (process.env.CONFIGBUG) {
+            configName = process.env.CONFIGBUG;
         }
         return configName;
     },

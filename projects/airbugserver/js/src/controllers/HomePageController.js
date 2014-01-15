@@ -90,7 +90,7 @@ var HomePageController = Class.extend(Controller, {
      */
     configureController: function(callback) {
         var _this = this;
-        this.getExpressApp().get('/', function(request, response) {
+        this.getExpressApp().get('/app', function(request, response) {
             var requestContext          = request.requestContext;
             var session                 = requestContext.get("session");
             var configObject            = _this.airbugClientConfig.toObject();
@@ -98,7 +98,8 @@ var HomePageController = Class.extend(Controller, {
             configObject.github.emails  = session.getData().githubEmails;
             response.render('home', {
                 locals: {
-                    config: StringUtil.escapeString(JSON.stringify(configObject))
+                    config: StringUtil.escapeString(JSON.stringify(configObject)),
+                    staticUrl: configObject.staticUrl
                 }
             }, function(error, html)  {
                 if (error) {

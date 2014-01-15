@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.1";
+var version             = "0.0.2";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -104,7 +104,6 @@ buildProperties({
             "../sonarbug/projects/sonarbugclient/js/src"
         ]
     },
-
     server: {
         packageJson: {
             name: "airbugserver",
