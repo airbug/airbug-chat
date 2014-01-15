@@ -120,7 +120,7 @@ var UserAssetService = Class.extend(Obj, {
         var userAsset               = null;
         var userAssetManager        = this.userAssetManager;
 
-        if (currentUser.isNotAnonymous()) {
+        if (currentUser.isNotAnonymous() && currentUser.getId() === userAssetData.userId) {
             $series([
                 $task(function(flow) {
                     var newUserAsset = userAssetManager.generateUserAsset(userAssetData);
