@@ -87,14 +87,18 @@ CommandModule.CommandType = {
         IMAGE_EDITOR:           "CommandModuleCommand::display::imageEditor",
         IMAGE_LIST:             "CommandModuleCommand::display::imageList",
         IMAGE_UPLOAD:           "CommandModuleCommand::display::imageUpload",
-        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::display::shareRoomOverlay"
+        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::display::shareRoomOverlay",
+        WORKSPACE:              "CommandModuleCommand::display::workspace"
     },
     HIDE: {
         WORKSPACE:              "CommandModuleCommand::hide::workspace",
         SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay"
     },
     SUBMIT: {
-        CHAT_MESSAGE:           "CommandmoduleCommand::submit::chatMessage"
+        CHAT_MESSAGE:           "CommandModuleCommand::submit::chatMessage"
+    },
+    ADD: {
+        USER_IMAGE_ASSET:       "CommandModuleCommand::add::userImageAsset"
     }
 };
 

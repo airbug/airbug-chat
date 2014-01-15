@@ -185,15 +185,26 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     initializeCommandSubscriptions: function() {
+        this.commandModule.subscribe(CommandType.DISPLAY.WORKSPACE,      this.handleDisplayWorkspaceCommand,    this);
         this.commandModule.subscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,       this);
         this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,     this);
         this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
     },
 
     deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.DISPLAY.WORKSPACE,      this.handleDisplayWorkspaceCommand,    this);
         this.commandModule.unsubscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,        this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+    },
+
+    handleDisplayWorkspaceCommand: function(message){
+        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
+
+        workspace.addClass("workspace-open");
+        workspace.show();
+
+        this.updateColumnSpans();
     },
 
     /**

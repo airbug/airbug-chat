@@ -119,6 +119,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {ButtonView}
+         */
+        this.chooseOrUploadImageButtonView  = null;
+
+        /**
+         * @private
          * @type {FormView}
          */
         this.formView                       = null;
@@ -127,7 +133,13 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {TextView}
          */
-        this.sendButtonTextView                 = null;
+        this.sendButtonTextView             = null;
+
+        /**
+         * @private
+         * @type {ButtonView}
+         */
+        this.sendButtonView                 = null;
 
         /**
          * @private
@@ -227,12 +239,13 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                                 .appendTo("#choose-or-upload-image-button")
                         ]),
                     view(ButtonView)
+                        .id("chat-widget-input-send-button")
                         .appendTo(".column2of2")
                         .children([
                             view(TextView)
                                 .id("sendButtonTextView")
                                 .attributes({text: "Ok"})
-                                .appendTo('button[id|="button"]')
+                                .appendTo('#chat-widget-input-send-button')
                         ])
                 ])
                 .build();
@@ -243,10 +256,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         this.setViewTop(this.twoColumnView);
 
-        this.formView                   = this.findViewById("chatWidgetInputForm");
-        this.sendButtonTextView         = this.findViewById("sendButtonTextView");
-        this.submitOnEnterCheckBoxView  = this.findViewById("submitOnEnterCheckBox");
-        this.textAreaView               = this.findViewById("chatInputTextArea");
+        this.chooseOrUploadImageButtonView  = this.findViewById("choose-or-upload-image-button");
+        this.formView                       = this.findViewById("chatWidgetInputForm");
+        this.sendButtonTextView             = this.findViewById("sendButtonTextView");
+        this.sendButtonView                 = this.findViewById("chat-widget-input-send-button");
+        this.submitOnEnterCheckBoxView      = this.findViewById("submitOnEnterCheckBox");
+        this.textAreaView                   = this.findViewById("chatInputTextArea");
     },
 
     /**
@@ -254,9 +269,10 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.chooseOrUploadImageButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
         this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
         this.twoColumnView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-        this.twoColumnView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
+        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
     },
 
     /**
@@ -264,9 +280,10 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.chooseOrUploadImageButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
         this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
         this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-        this.twoColumnView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleButtonClickedEvent, this);
+        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
     },
 
 
@@ -327,7 +344,18 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    handleButtonClickedEvent: function(event) {
+    handleChooseOrUploadImageViewClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
+        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_EDITOR, {});
+        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
+        //NOTE: This will later show the ChooseOrUploadImageContainer
+    },
+
+    /**
+     * @private
+     * @param {ButtonViewEvent} event
+     */
+    handleSendButtonClickedEvent: function(event) {
         // fires off FormViewEvent.EventType.SUBMIT
         // gets picked up by the handleFormSubmittedEvent event listener function
         this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: "ChatWidgetInputFormSendButton"});
