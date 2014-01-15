@@ -59,18 +59,30 @@ var Asset = Class.extend(Entity, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @returns {string}
+     */
     getMidsizeMimeType: function() {
         return this.deltaDocument.getData().midsizeMimeType;
     },
 
+    /**
+     * @param {string} midsizeMimeType
+     */
     setMidsizeMimeType: function(midsizeMimeType) {
         this.deltaDocument.getData().midsizeMimeType = midsizeMimeType;
     },
 
+    /**
+     * @returns {string}
+     */
     getMidsizeUrl: function() {
         return this.deltaDocument.getData().midsizeUrl;
     },
 
+    /**
+     * @param {string} midsizeUrl
+     */
     setMidsizeUrl: function(midsizeUrl) {
         this.deltaDocument.getData().midsizeUrl = midsizeUrl;
     },
