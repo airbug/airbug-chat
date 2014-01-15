@@ -36,7 +36,7 @@ var ImagePreviewView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:       '<div id="{{id}}" class="image-preview">\
-                <a href="{{model.url}}" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>\
+                <a href="{{model.url}}"  target="_blank" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>\
     <div>',
 
     /**

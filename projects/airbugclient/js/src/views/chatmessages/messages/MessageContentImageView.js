@@ -36,7 +36,7 @@ var MessageContentImageView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div id="message-image-{{cid}}" class="message-image image-preview">' +
-            '<a href="{{}}"> <img id="image-{{cid}}" src={{midsizeUrl}} /> </a>' +
+            '<a href="{{model.url}}"  target="_blank"> <img id="image-{{cid}}" src={{model.midsizeUrl}} /> </a>' +
         '</div>',
 
         //NOTE: SUNG Temporarily using an href for the full size image until we have implemented our own full size view.
@@ -49,9 +49,6 @@ var MessageContentImageView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.midsizeUrl     = data.model.midsizeUrl;
-        data.thumbnailUrl   = data.model.thumbnailUrl;
-        data.url            = data.model.url;
         return data;
     },
 
