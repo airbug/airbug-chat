@@ -90,9 +90,11 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
         if (key === "chatMessage") {
             var chatData    = meldDocument.getData();
             var imageData   = chatData.body.parts[0];
+            console.log("imageData = ", imageData);
             this.setProperty("filename",        imageData.name);
             this.setProperty("url",             imageData.url);
             this.setProperty("thumbnailUrl",    imageData.thumbnailUrl);
+            this.setProperty("midsizeUrl",      imageData.midsizeUrl);
         }
     },
 
@@ -107,6 +109,7 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
             this.removeProperty("filename");
             this.removeProperty("url");
             this.removeProperty("thumbnailUrl");
+            this.removeProperty("midsizeUrl");
         }
     },
 

@@ -36,7 +36,7 @@ var MessageContentImageView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div id="message-image-{{cid}}" class="message-image image-preview">' +
-            '<a> <img id="image-{{cid}}" src={{thumbnailUrl}} /> </a>' +
+            '<a> <img id="image-{{cid}}" src={{midsizeUrl}} /> </a>' +
         '</div>',
 
 
@@ -50,6 +50,7 @@ var MessageContentImageView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         data.thumbnailUrl = data.model.thumbnailUrl; //CLEANUP create helper methods.
+        data.midsizeUrl = data.model.midsizeUrl;
         return data;
     },
 
@@ -61,7 +62,7 @@ var MessageContentImageView = Class.extend(MustacheView, {
     renderModelProperty: function(propertyName, propertyValue) {
         this._super(propertyName, propertyValue);
         switch (propertyName) {
-            case "thumbnailUrl":
+            case "midsizeUrl":
                 this.findElement('#image-' + this.getCid()).attr("src", propertyValue);
                 break;
         }

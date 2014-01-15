@@ -287,26 +287,47 @@ var AssetService = Class.extend(Obj, {
     uploadAsset: function(requestContext, file, callback) {
         var _this           = this;
         var name            = file.name;
+        var midsizePath     = file.path + '_m';
         var mimeType        = file.type;
         var path            = file.path;
         var thumbnailPath   = file.path + '_t';
         var size            = file.size;
         var asset           = null;
+        var assetWidth      = null;
+        var assetHeight     = null;
         var url             = null;
         var thumbnailUrl    = null;
+        var midsizeUrl      = null;
         var namePath        = new Path(name);
         var extName         = namePath.getExtName();
         var s3Key           = UuidGenerator.generateUuid();
         var thumbnailS3Key  = s3Key + '_t';
+        var midsizeS3Key    = s3Key + '_m';
         if (extName) {
             s3Key           = s3Key + extName;
             thumbnailS3Key  = thumbnailS3Key + extName;
+            midsizeS3Key    = midsizeS3Key + extName;
         }
         var props = this.awsUploader.getProps();
         props.options = props.options || {};
         props.options.acl = 'public-read';
 
+        // NOTE - dkk - do all resizes before uploading. The s3 lib deletes files after upload.
         $series([
+            $task(function(flow) {
+                var im = _this.imagemagick;
+                im.identify(path, function(error, features){
+                    // { format: 'JPEG', width: 3904, height: 2622, depth: 8 }
+                    if (error) {
+                        console.log("error getting image features: ", error);
+                    } else {
+                        assetWidth  = features.width;
+                        assetHeight = features.height;
+                    }
+                    flow.complete(error);
+
+                });
+            }),
             $task(function(flow) {
                 var im = _this.imagemagick;
                 im.resize({srcPath: path, dstPath: thumbnailPath, width: 80}, function(error) {
@@ -315,6 +336,21 @@ var AssetService = Class.extend(Obj, {
                     }
                     flow.complete(error);
                 })
+            }),
+            $task(function(flow) {
+                var im = _this.imagemagick;
+                if (assetWidth > 600) {
+                    var newHeight = (600 / assetWidth) * assetHeight;
+                    im.resize({srcPath: path, dstPath: midsizePath, width: 600, height: newHeight}, function(error) {
+                        if (error) {
+                            console.log("error resizing midsize image: ", error);
+                        }
+                        flow.complete(error);
+                    })
+                } else {
+                    // no need to resize, we'll use the full-sized url later on.
+                    flow.complete();
+                }
             }),
             $task(function(flow) {
                 _this.awsUploader.upload(path, s3Key, mimeType, function(error, returnedS3Object) {
@@ -335,7 +371,23 @@ var AssetService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
+                if (assetWidth < 600) {
+                    midsizeUrl = url;
+                    flow.complete();
+                } else {
+                    _this.awsUploader.upload(midsizePath, midsizeS3Key, mimeType, function(error, returnedS3Object) {
+                        if (error) {
+                            console.log("error uploading midsize asset thumbnail: ", error);
+                        }
+                        midsizeUrl = _this.getObjectUrl(returnedS3Object);
+                        flow.complete(error);
+                    });
+                }
+            }),
+            $task(function(flow) {
                 var newAsset = _this.assetManager.generateAsset({
+                    midsizeMimeType: mimeType,
+                    midsizeUrl: midsizeUrl,
                     mimeType: mimeType,
                     name: name,
                     size: size,

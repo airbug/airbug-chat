@@ -74,14 +74,14 @@ var ImageAssetModel = Class.extend(MeldModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
+                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
+                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -111,6 +111,8 @@ var ImageAssetModel = Class.extend(MeldModel, {
         this._super();
         var data    = this.getMeldDocument().getData();
         this.setProperty("id",              data.id);
+        this.setProperty("midsizeMimeType", data.midsizeMimeType);
+        this.setProperty("midsizeUrl",      data.midsizeUrl);
         this.setProperty("mimeType",        data.mimeType);
         this.setProperty("name",            data.name);
         this.setProperty("size",            data.size);
@@ -125,6 +127,8 @@ var ImageAssetModel = Class.extend(MeldModel, {
     unprocessMeldDocument: function() {
         this._super();
         this.removeProperty("id",              data.id);
+        this.removeProperty("midsizeMimeType", data.midsizeMimeType);
+        this.removeProperty("midsizeUrl",      data.midsizeUrl);
         this.removeProperty("mimeType",        data.mimeType);
         this.removeProperty("name",            data.name);
         this.removeProperty("size",            data.size);

@@ -238,6 +238,8 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
                 type: "image",
                 url: imageData.url,
                 size: imageData.size,
+                midsizeMimeType: imageData.midsizeMimeType,
+                midsizeUrl: imageData.midsizeUrl,
                 mimeType: imageData.mimeType,
                 thumbMimeType: imageData.thumbMimeType,
                 thumbnailUrl: imageData.thumbnailUrl

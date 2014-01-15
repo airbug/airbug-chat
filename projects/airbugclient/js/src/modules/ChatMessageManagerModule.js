@@ -234,6 +234,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *          parts: Array.<{
      *          id: string
      *          createdAt: Date,
+     *          midsizeMimeType: string,
+     *          midsizeUrl: string,
      *          mimeType: string,
      *          name: string,
      *          thumbMimeType: string,
