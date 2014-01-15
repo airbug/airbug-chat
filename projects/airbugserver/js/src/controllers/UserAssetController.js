@@ -109,7 +109,7 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             createUserAsset: function(request, responder, callback) {
                 console.log("UserAssetController#createUserAsset");
@@ -124,7 +124,7 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             deleteUserAsset: function(request, responder, callback) {
                 console.log("UserAssetController#deleteUserAsset");
@@ -139,7 +139,7 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable, UserAsset)} callback
+             * @param {function(Throwable=, UserAsset)} callback
              */
             renameUserAsset: function(request, responder, callback) {
                 console.log("UserAssetController#renameUserAsset");
@@ -155,7 +155,7 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveUserAsset: function(request, responder, callback) {
                 console.log("UserAssetController#retrieveUserAsset");
@@ -172,7 +172,7 @@ var UserAssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveUserAssets: function(request, responder, callback) {
                 console.log("UserAssetController#retrieveUserAssets");
