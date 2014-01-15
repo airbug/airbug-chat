@@ -50,6 +50,8 @@ var assetBasicsTest = {
     setup: function(test) {
         this.testId         = "testId";
         this.testMimeType   = "image/png";
+        this.testMidsizeMimeType = "image/png";
+        this.testMidsizeUrl = "http://host/image_m.png";
         this.testSize = 12345;
         this.testThumbMimeType = "image/png";
         this.testThumbnailUrl = "http://host/image_t.png";
@@ -75,6 +77,10 @@ var assetBasicsTest = {
             "Assert asset id was set correctly");
         test.assertEqual(this.testAsset.getSize(), this.testSize,
             "Assert Asset.mimeType was set correctly");
+        test.assertEqual(this.testAsset.getMidsizeMimeType(), this.testMidsizeMimeType,
+            "Assert Asset.midsizeMimeType was set correctly");
+        test.assertEqual(this.testAsset.getMidsizeUrl(), this.testMidsizeUrl,
+            "Assert Asset.midsizeUrl was set correctly");
         test.assertEqual(this.testAsset.getMimeType(), this.testMimeType,
             "Assert Asset.mimeType was set correctly");
         test.assertEqual(this.testAsset.getThumbMimeType(), this.testThumbMimeType,
@@ -85,6 +91,12 @@ var assetBasicsTest = {
             "Assert Asset.url was set correctly");
 
         // Verify setters work
+        this.testAsset.setMidsizeMimeType("image/jpeg");
+        test.assertEqual(this.testAsset.getMidsizeMimeType(), "image/jpeg",
+            "Assert Asset.setMidsizeMimeType works correctly");
+        this.testAsset.setMidsizeUrl("http://otherhost/image_t.jpg");
+        test.assertEqual(this.testAsset.getMidsizeUrl(), "http://otherhost/image_m.jpg",
+            "Assert Asset.setMidsizeUrl works correctly");
         this.testAsset.setMimeType("image/jpeg");
         test.assertEqual(this.testAsset.getMimeType(), "image/jpeg",
             "Assert Asset.setMimeType works correctly");

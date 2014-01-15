@@ -83,6 +83,8 @@ var AssetManager = Class.extend(EntityManager, {
      * @param {{
      *      createdAt: Date,
      *      mimeType: string,
+     *      midsizeMimeType: string,
+     *      midsizeUrl: string,
      *      name: string,
      *      thumbMimeType: string,
      *      thumbnailUrl: string,

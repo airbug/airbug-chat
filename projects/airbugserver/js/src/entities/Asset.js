@@ -59,6 +59,22 @@ var Asset = Class.extend(Entity, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    getMidsizeMimeType: function() {
+        return this.deltaDocument.getData().midsizeMimeType;
+    },
+
+    setMidsizeMimeType: function(midsizeMimeType) {
+        this.deltaDocument.getData().midsizeMimeType = midsizeMimeType;
+    },
+
+    getMidsizeUrl: function() {
+        return this.deltaDocument.getData().midsizeUrl;
+    },
+
+    setMidsizeUrl: function(midsizeUrl) {
+        this.deltaDocument.getData().midsizeUrl = midsizeUrl;
+    },
+
     /**
      * @return {string}
      */
@@ -160,6 +176,8 @@ bugmeta.annotate(Asset).with(
             .type("string")
             .primaryId(),
         property("createdAt").type("date"),
+        property("midsizeMimeType").type("string"),
+        property("midsizeUrl").type("string"),
         property("mimeType").type("string"),
         property("name").type("string"),
         property("size").type("number"),

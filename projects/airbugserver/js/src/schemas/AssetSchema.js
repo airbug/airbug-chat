@@ -30,6 +30,8 @@ var Schema      = mongoose.Schema;
 var AssetSchema = new Schema({
     type: {type: String},
     createdAt: Date,
+    midsizeMimeType: {type: String},
+    midsizeUrl: {type: String},
     mimeType: {type: String},
     name: {type: String},
     thumbMimeType: {type: String},
