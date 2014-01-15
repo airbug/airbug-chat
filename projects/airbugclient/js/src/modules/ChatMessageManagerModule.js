@@ -238,7 +238,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *          midsizeUrl: string,
      *          mimeType: string,
      *          name: string,
-     *          thumbMimeType: string,
+     *          thumbnailMimeType: string,
      *          thumbnailUrl: string,
      *          type: string,
      *          updatedAt: Date,

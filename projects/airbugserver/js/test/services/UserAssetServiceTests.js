@@ -170,13 +170,13 @@ var createEntities = function(setupObject, test) {
         $task(function(flow) {
             setupObject.testMimeType1           = "image/png";
             setupObject.testName1               = "testName";
-            setupObject.testThumbMimeType1      = "image/png";
+            setupObject.testThumbnailMimeType1      = "image/png";
             setupObject.testThumbnailUrl1       = "http://host/image_t.png";
             setupObject.testUrl1                = "http://host/image.png";
             setupObject.testAssetData1          = {
                 mimeType: setupObject.testMimeType1,
                 name: setupObject.testName1,
-                thumbMimeType: setupObject.testThumbMimeType1,
+                thumbnailMimeType: setupObject.testThumbnailMimeType1,
                 thumbnailUrl: setupObject.testThumbnailUrl1,
                 url: setupObject.testUrl1
             };
@@ -195,13 +195,13 @@ var createEntities = function(setupObject, test) {
         $task(function(flow) {
             setupObject.testMimeType2           = "image/png";
             setupObject.testName2               = "testName";
-            setupObject.testThumbMimeType2      = "image/png";
+            setupObject.testThumbnailMimeType2      = "image/png";
             setupObject.testThumbnailUrl2       = "http://host/image_t.png";
             setupObject.testUrl2                = "http://host/image.png";
             setupObject.testAssetData2          = {
                 mimeType: setupObject.testMimeType2,
                 name: setupObject.testName2,
-                thumbMimeType: setupObject.testThumbMimeType2,
+                thumbnailMimeType: setupObject.testThumbnailMimeType2,
                 thumbnailUrl: setupObject.testThumbnailUrl2,
                 url: setupObject.testUrl2
             };

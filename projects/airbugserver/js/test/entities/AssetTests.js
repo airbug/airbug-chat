@@ -53,7 +53,7 @@ var assetBasicsTest = {
         this.testMidsizeMimeType    = 'image/png';
         this.testMidsizeUrl         = 'http://host/image_m.png';
         this.testSize               = 12345;
-        this.testThumbMimeType      = 'image/png';
+        this.testThumbnailMimeType      = 'image/png';
         this.testThumbnailUrl       = 'http://host/image_t.png';
         this.testUrl                = 'http://host/image.png';
         this.testAsset = new Asset({
@@ -62,7 +62,7 @@ var assetBasicsTest = {
             midsizeUrl: this.testMidsizeUrl,
             mimeType: this.testMimeType,
             size: this.testSize,
-            thumbMimeType: this.testThumbMimeType,
+            thumbnailMimeType: this.testThumbnailMimeType,
             thumbnailUrl: this.testThumbnailUrl,
             url: this.testUrl
         });
@@ -85,7 +85,7 @@ var assetBasicsTest = {
             'Assert Asset.midsizeUrl was set correctly');
         test.assertEqual(this.testAsset.getMimeType(), this.testMimeType,
             'Assert Asset.mimeType was set correctly');
-        test.assertEqual(this.testAsset.getThumbMimeType(), this.testThumbMimeType,
+        test.assertEqual(this.testAsset.getThumbnailMimeType(), this.testThumbnailMimeType,
             'Assert Asset.mimeType was set correctly');
         test.assertEqual(this.testAsset.getThumbnailUrl(), this.testThumbnailUrl,
             'Assert Asset.thumbnailUrl was set correctly');
@@ -105,9 +105,9 @@ var assetBasicsTest = {
         this.testAsset.setMimeType('image/jpeg');
         test.assertEqual(this.testAsset.getSize(), 12345,
             'Assert Asset.setSize works correctly');
-        this.testAsset.setThumbMimeType('image/jpeg');
-        test.assertEqual(this.testAsset.getThumbMimeType(), 'image/jpeg',
-            'Assert Asset.setThumbMimeType works correctly');
+        this.testAsset.setThumbnailMimeType('image/jpeg');
+        test.assertEqual(this.testAsset.getThumbnailMimeType(), 'image/jpeg',
+            'Assert Asset.setThumbnailMimeType works correctly');
         this.testAsset.setThumbnailUrl('http://otherhost/image_t.jpg');
         test.assertEqual(this.testAsset.getThumbnailUrl(), 'http://otherhost/image_t.jpg',
             'Assert Asset.setThumbnailUrl works correctly');

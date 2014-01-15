@@ -74,14 +74,14 @@ var ImageAssetModel = Class.extend(MeldModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
+                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbnailMimeType", "thumbnailUrl", "url"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbMimeType", "thumbnailUrl", "url"])
+                .in(["id", "midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbnailMimeType", "thumbnailUrl", "url"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -116,7 +116,7 @@ var ImageAssetModel = Class.extend(MeldModel, {
         this.setProperty("mimeType",        data.mimeType);
         this.setProperty("name",            data.name);
         this.setProperty("size",            data.size);
-        this.setProperty("thumbMimeType",   data.thumbMimeType);
+        this.setProperty("thumbnailMimeType",   data.thumbnailMimeType);
         this.setProperty("thumbnailUrl",    data.thumbnailUrl);
         this.setProperty("url",             data.url);
     },
@@ -132,7 +132,7 @@ var ImageAssetModel = Class.extend(MeldModel, {
         this.removeProperty("mimeType",        data.mimeType);
         this.removeProperty("name",            data.name);
         this.removeProperty("size",            data.size);
-        this.removeProperty("thumbMimeType",   data.thumbMimeType);
+        this.removeProperty("thumbnailMimeType",   data.thumbnailMimeType);
         this.removeProperty("thumbnailUrl",    data.thumbnailUrl);
         this.removeProperty("url",             data.url);
     },

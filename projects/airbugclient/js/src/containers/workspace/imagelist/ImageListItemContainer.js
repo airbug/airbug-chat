@@ -251,7 +251,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
                 midsizeMimeType: imageData.midsizeMimeType,
                 midsizeUrl: imageData.midsizeUrl,
                 mimeType: imageData.mimeType,
-                thumbMimeType: imageData.thumbMimeType,
+                thumbnailMimeType: imageData.thumbnailMimeType,
                 thumbnailUrl: imageData.thumbnailUrl
             }]}
         };

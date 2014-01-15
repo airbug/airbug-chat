@@ -34,7 +34,7 @@ var AssetSchema = new Schema({
     midsizeUrl: {type: String},
     mimeType: {type: String},
     name: {type: String},
-    thumbMimeType: {type: String},
+    thumbnailMimeType: {type: String},
     thumbnailUrl: {type: String},
     updatedAt: Date,
     url: {type: String, index: true, unique: true, required: true}

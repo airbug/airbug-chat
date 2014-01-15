@@ -64,7 +64,7 @@ var setupAssetTests = function(setupObject) {
     setupObject.testMidsizeUrl         = "http://host/image_m.png";
     setupObject.testMimeType           = "image/png";
     setupObject.testName               = "testName";
-    setupObject.testThumbMimeType      = "image/png";
+    setupObject.testThumbnailMimeType      = "image/png";
     setupObject.testThumbnailUrl           = "http://host/image_t.png";
     setupObject.testUrl                = "http://host/image.png";
     setupObject.testAssetData          = {
@@ -72,7 +72,7 @@ var setupAssetTests = function(setupObject) {
         midsizeUrl: setupObject.testMidsizeUrl,
         mimeType: setupObject.testMimeType,
         name: setupObject.testName,
-        thumbMimeType: setupObject.testThumbMimeType,
+        thumbnailMimeType: setupObject.testThumbnailMimeType,
         thumbnailUrl: setupObject.testThumbnailUrl,
         url: setupObject.testUrl
     };
@@ -83,7 +83,7 @@ var setupAssetTests = function(setupObject) {
         midsizeUrl: 'http://host/image_m.jpg',
         mimeType: 'image/jpeg',
         name: 'testJpeg',
-        thumbMimeType: 'image/jpeg',
+        thumbnailMimeType: 'image/jpeg',
         thumbnailUrl: 'http://host/image_t.jpg',
         url: 'http://host/image.jpg'
     };
@@ -249,7 +249,7 @@ var assetManagerGenerateAssetTest = {
             'mime type should match on generated asset');
         test.assertEqual(asset.getName(), 'testName',
             'name should match on generated asset');
-        test.assertEqual(asset.getThumbMimeType(), 'image/png',
+        test.assertEqual(asset.getThumbnailMimeType(), 'image/png',
             'thumb mime type should match on generated asset');
         test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.png',
             'thumb url should match on generated asset');
@@ -323,7 +323,7 @@ var assetManagerRetrieveAssetTest = {
                     'mime type should match on generated asset');
                 test.assertEqual(asset.getName(), 'testName',
                     'name should match on generated asset');
-                test.assertEqual(asset.getThumbMimeType(), 'image/png',
+                test.assertEqual(asset.getThumbnailMimeType(), 'image/png',
                     'thumb mime type should match on generated asset');
                 test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.png',
                     'thumb url should match on generated asset');
@@ -399,7 +399,7 @@ var assetManagerUpdateAssetTest = {
         createdAsset.setMidsizeUrl('http://host/image_m.gif');
         createdAsset.setMimeType('image/gif');
         createdAsset.setName('newTestName');
-        createdAsset.setThumbMimeType('image/gif');
+        createdAsset.setThumbnailMimeType('image/gif');
         createdAsset.setThumbnailUrl('http://host/image_t.gif');
         createdAsset.setUrl('http://host/image.gif');
         _this.assetManager.updateAsset(createdAsset, function(throwable, asset) {
@@ -414,7 +414,7 @@ var assetManagerUpdateAssetTest = {
                     'mime type should match on updated asset');
                 test.assertEqual(asset.getName(), 'newTestName',
                     'name should match on updated asset');
-                test.assertEqual(asset.getThumbMimeType(), 'image/gif',
+                test.assertEqual(asset.getThumbnailMimeType(), 'image/gif',
                     'thumb mime type should match on updated asset');
                 test.assertEqual(asset.getThumbnailUrl(), 'http://host/image_t.gif',
                     'thumb url should match on updated asset');

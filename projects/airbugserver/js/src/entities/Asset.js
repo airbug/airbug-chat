@@ -132,15 +132,15 @@ var Asset = Class.extend(Entity, {
     /**
      * @return {string}
      */
-    getThumbMimeType: function() {
-        return this.deltaDocument.getData().thumbMimeType;
+    getThumbnailMimeType: function() {
+        return this.deltaDocument.getData().thumbnailMimeType;
     },
 
     /**
-     * @param {string} thumbMimeType
+     * @param {string} thumbnailMimeType
      */
-    setThumbMimeType: function(thumbMimeType) {
-        this.deltaDocument.getData().thumbMimeType = thumbMimeType;
+    setThumbnailMimeType: function(thumbnailMimeType) {
+        this.deltaDocument.getData().thumbnailMimeType = thumbnailMimeType;
     },
 
     /**
@@ -193,7 +193,7 @@ bugmeta.annotate(Asset).with(
         property("mimeType").type("string"),
         property("name").type("string"),
         property("size").type("number"),
-        property("thumbMimeType").type("string"),
+        property("thumbnailMimeType").type("string"),
         property("thumbnailUrl").type("string"),
         property("updatedAt").type("date"),
         property("url").type("string")

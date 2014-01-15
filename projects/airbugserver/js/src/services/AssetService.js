@@ -391,7 +391,7 @@ var AssetService = Class.extend(Obj, {
                     mimeType: mimeType,
                     name: name,
                     size: size,
-                    thumbMimeType: mimeType,
+                    thumbnailMimeType: mimeType,
                     thumbnailUrl: thumbnailUrl,
                     url: url
                 });
