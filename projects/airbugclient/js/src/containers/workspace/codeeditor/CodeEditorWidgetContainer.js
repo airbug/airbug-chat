@@ -11,7 +11,6 @@
 //@Require('ace.AceExts')
 //@Require('ace.AceModes')
 //@Require('ace.AceThemes')
-//@Require('ace.KitchenSink')
 //@Require('acemodes.Css')
 //@Require('acemodes.Html')
 //@Require('acemodes.Javascript')
@@ -51,7 +50,6 @@ var AceExts                             = bugpack.require('ace.AceExts');
 var AceModes                            = bugpack.require('ace.AceModes');
 //var AceSnippets                         = bugpack.require('ace.AceSnippets');
 var AceThemes                           = bugpack.require('ace.AceThemes');
-var KitchenSink                         = bugpack.require('ace.KitchenSink');
 var Css                                 = bugpack.require('acemodes.Css');
 var Html                                = bugpack.require('acemodes.Html');
 var Javascript                          = bugpack.require('acemodes.Javascript');
@@ -366,8 +364,6 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         AceModes.loadAll();
         AceThemes.loadAll();
         //AceSnippets.loadAll();
-        //KitchenSink.load();
-        //Ace.require("kitchen-sink/demo"); //TODO SUNG update html ids to avoid naming conflicts
 
         this.aceEditor.getSession().setMode("ace/mode/javascript");
         this.aceEditor.setTheme("ace/theme/twilight");
