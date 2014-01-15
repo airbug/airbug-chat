@@ -143,7 +143,7 @@ var UserAssetManager = Class.extend(EntityManager, {
         var _this = this;
         this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
-                var newMap = Map();
+                var newMap = new Map();
                 dbObjects.forEach(function(dbObject) {
                     var userAsset = _this.convertDbObjectToEntity(dbObject);
                     userAsset.commitDelta();
