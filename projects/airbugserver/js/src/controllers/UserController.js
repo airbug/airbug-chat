@@ -104,7 +104,7 @@ var UserController = Class.extend(EntityController, {
         // Express Routes
         //-------------------------------------------------------------------------------
 
-        expressApp.post('/app/login', function(request, response) {
+        expressApp.post('/api/login', function(request, response) {
             var requestContext      = request.requestContext;
             var data                = request.body;
             userService.loginUserWithEmailAndPassword(requestContext, data.email, data.password, function(throwable) {
@@ -116,7 +116,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/logout', function(request, response) {
+        expressApp.post('/api/logout', function(request, response) {
             var requestContext  = request.requestContext;
             userService.logoutUser(requestContext, function(throwable) {
                 if (throwable) {
@@ -127,7 +127,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/register', function(request, response) {
+        expressApp.post('/api/register', function(request, response) {
             var requestContext  = request.requestContext;
             var userObject      = request.body;
             userService.registerUser(requestContext, userObject, function(throwable) {
@@ -139,7 +139,7 @@ var UserController = Class.extend(EntityController, {
             });
         });
 
-        expressApp.post('/app/user-availability-check-email', function(req, res) {
+        expressApp.post('/api/user-availability-check-email', function(req, res) {
             var requestContext      = req.requestContext;
             var email               = req.body.email;
 

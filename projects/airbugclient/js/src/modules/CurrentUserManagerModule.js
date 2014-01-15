@@ -242,7 +242,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         $series([
             $task(function(flow) {
                 $.ajax({
-                    url: "/app/login",
+                    url: "/api/login",
                     type: "POST",
                     dataType: "json",
                     data: {email: email, password: password},
@@ -291,7 +291,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         $series([
             $task(function(flow) {
                 $.ajax({
-                    url: "/app/logout",
+                    url: "/api/logout",
                     type: "POST",
                     dataType: "json",
                     data: {},
@@ -335,7 +335,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
         $series([
             $task(function(flow) {
                 $.ajax({
-                    url: "/app/register",
+                    url: "/api/register",
                     type: "POST",
                     dataType: "json",
                     data: userObject,

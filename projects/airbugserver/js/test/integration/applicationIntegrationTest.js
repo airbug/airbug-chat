@@ -45,7 +45,7 @@ page.onAlert = function() {
     console.log("page.onAlert");
     printArgs.apply(this, arguments);
 };
-page.open("http://localhost:8000/app", function(status) {
+page.open("http://localhost:8000/", function(status) {
     console.log("status == ", status);
     var title = page.evaluate(function() {
         return document.title;
@@ -55,7 +55,7 @@ page.open("http://localhost:8000/app", function(status) {
     // We really should be looking for the presence of page elements.
     setTimeout(function() {
         page.render('homeScreen.png');
-        page.open("http://localhost:8000/app#login", function(status) {
+        page.open("http://localhost:8000/#login", function(status) {
             console.log(status);
         });
         setTimeout(function() {

@@ -104,16 +104,16 @@ var AssetController = Class.extend(EntityController, {
         // Express Routes
         //-------------------------------------------------------------------------------
 
-        expressApp.post('/app/uploadAsset', function(request, response) {
+        expressApp.post('/api/uploadAsset', function(request, response) {
             var requestContext      = request.requestContext;
             var data                = request.body;
             var files               = request.files;
             // TODO - dkk - check to see if files is an object and has a files property. Any other cases?
-            console.log("AssetController#/app/uploadAsset data = ", data);
-            console.log("AssetController#/app/uploadAsset files = ", files);
-            console.log("AssetController#/app/uploadAsset files.files = ", files.files);
+            console.log("AssetController#/api/uploadAsset data = ", data);
+            console.log("AssetController#/api/uploadAsset files = ", files);
+            console.log("AssetController#/api/uploadAsset files.files = ", files.files);
             assetService.uploadAssets(requestContext, files.files, function(throwable, entities) {
-                console.log("AssetController#/app/uploadAsset entities:", entities);
+                console.log("AssetController#/api/uploadAsset entities:", entities);
                 var assetJson = null;
                 if (entities) {
                     entities = entities.map(function(entity){

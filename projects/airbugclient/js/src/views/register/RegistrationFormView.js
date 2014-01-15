@@ -116,7 +116,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
             rules: {
                 email: {
                     remote: {
-                        url: "app/user-availability-check-email",
+                        url: "/api/user-availability-check-email",
                         type: "post"
                     }
                 },

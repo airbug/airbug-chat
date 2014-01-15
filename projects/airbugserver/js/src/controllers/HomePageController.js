@@ -90,7 +90,7 @@ var HomePageController = Class.extend(Controller, {
      */
     configureController: function(callback) {
         var _this = this;
-        this.getExpressApp().get('/app', function(request, response) {
+        this.getExpressApp().get('/', function(request, response) {
             var requestContext          = request.requestContext;
             var session                 = requestContext.get("session");
             var configObject            = _this.airbugClientConfig.toObject();
