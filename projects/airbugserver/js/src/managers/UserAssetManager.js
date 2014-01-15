@@ -59,7 +59,7 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {UserAsset} userAsset
-     * @param {(Array.<string> | function(Throwable, UserAsset))} dependencies
+     * @param {(Array.<string> | function(Throwable, UserAsset))=} dependencies
      * @param {function(Throwable, UserAsset)} callback
      */
     createUserAsset: function(userAsset, dependencies, callback) {
