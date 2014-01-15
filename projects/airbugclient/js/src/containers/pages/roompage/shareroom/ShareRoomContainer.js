@@ -101,6 +101,12 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {AirbugClientConfig}
+         */
+        this.airbugClientConfig = null;
+
+        /**
+         * @private
          * @type {NavigationModule}
          */
         this.navigationModule   = null;
@@ -242,7 +248,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         var currentUrl  = this.windowUtil.getUrl();
         var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
         var options     = {
-            moviePath: "/zeroclipboard/ZeroClipboard.swf"
+            moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf"
         };
 
         this.clip        = new ZeroClipboard(button, options);
@@ -296,6 +302,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ShareRoomContainer).with(
     autowired().properties([
+        property("airbugClientConfig").ref("airbugClientConfig"),
         property("navigationModule").ref("navigationModule"),
         property("windowUtil").ref("windowUtil")
     ])
