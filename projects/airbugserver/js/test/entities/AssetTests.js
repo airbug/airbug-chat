@@ -48,14 +48,14 @@ var assetBasicsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testId         = "testId";
-        this.testMimeType   = "image/png";
-        this.testMidsizeMimeType = "image/png";
-        this.testMidsizeUrl = "http://host/image_m.png";
-        this.testSize = 12345;
-        this.testThumbMimeType = "image/png";
-        this.testThumbnailUrl = "http://host/image_t.png";
-        this.testUrl = "http://host/image.png";
+        this.testId                 = 'testId';
+        this.testMimeType           = 'image/png';
+        this.testMidsizeMimeType    = 'image/png';
+        this.testMidsizeUrl         = 'http://host/image_m.png';
+        this.testSize               = 12345;
+        this.testThumbMimeType      = 'image/png';
+        this.testThumbnailUrl       = 'http://host/image_t.png';
+        this.testUrl                = 'http://host/image.png';
         this.testAsset = new Asset({
             id: this.testId,
             mimeType: this.testMimeType,
@@ -74,46 +74,46 @@ var assetBasicsTest = {
     test: function(test) {
         // Verify instantiation worked properly and values are available.
         test.assertEqual(this.testAsset.getId(), this.testId,
-            "Assert asset id was set correctly");
+            'Assert asset id was set correctly');
         test.assertEqual(this.testAsset.getSize(), this.testSize,
-            "Assert Asset.mimeType was set correctly");
+            'Assert Asset.mimeType was set correctly');
         test.assertEqual(this.testAsset.getMidsizeMimeType(), this.testMidsizeMimeType,
-            "Assert Asset.midsizeMimeType was set correctly");
+            'Assert Asset.midsizeMimeType was set correctly');
         test.assertEqual(this.testAsset.getMidsizeUrl(), this.testMidsizeUrl,
-            "Assert Asset.midsizeUrl was set correctly");
+            'Assert Asset.midsizeUrl was set correctly');
         test.assertEqual(this.testAsset.getMimeType(), this.testMimeType,
-            "Assert Asset.mimeType was set correctly");
+            'Assert Asset.mimeType was set correctly');
         test.assertEqual(this.testAsset.getThumbMimeType(), this.testThumbMimeType,
-            "Assert Asset.mimeType was set correctly");
+            'Assert Asset.mimeType was set correctly');
         test.assertEqual(this.testAsset.getThumbnailUrl(), this.testThumbnailUrl,
-            "Assert Asset.thumbnailUrl was set correctly");
+            'Assert Asset.thumbnailUrl was set correctly');
         test.assertEqual(this.testAsset.getUrl(), this.testUrl,
-            "Assert Asset.url was set correctly");
+            'Assert Asset.url was set correctly');
 
         // Verify setters work
-        this.testAsset.setMidsizeMimeType("image/jpeg");
-        test.assertEqual(this.testAsset.getMidsizeMimeType(), "image/jpeg",
-            "Assert Asset.setMidsizeMimeType works correctly");
-        this.testAsset.setMidsizeUrl("http://otherhost/image_t.jpg");
-        test.assertEqual(this.testAsset.getMidsizeUrl(), "http://otherhost/image_m.jpg",
-            "Assert Asset.setMidsizeUrl works correctly");
-        this.testAsset.setMimeType("image/jpeg");
-        test.assertEqual(this.testAsset.getMimeType(), "image/jpeg",
-            "Assert Asset.setMimeType works correctly");
-        this.testAsset.setMimeType("image/jpeg");
+        this.testAsset.setMidsizeMimeType('image/jpeg');
+        test.assertEqual(this.testAsset.getMidsizeMimeType(), 'image/jpeg',
+            'Assert Asset.setMidsizeMimeType works correctly');
+        this.testAsset.setMidsizeUrl('http://otherhost/image_t.jpg');
+        test.assertEqual(this.testAsset.getMidsizeUrl(), 'http://otherhost/image_m.jpg',
+            'Assert Asset.setMidsizeUrl works correctly');
+        this.testAsset.setMimeType('image/jpeg');
+        test.assertEqual(this.testAsset.getMimeType(), 'image/jpeg',
+            'Assert Asset.setMimeType works correctly');
+        this.testAsset.setMimeType('image/jpeg');
         test.assertEqual(this.testAsset.getSize(), 12345,
-            "Assert Asset.setSize works correctly");
-        this.testAsset.setThumbMimeType("image/jpeg");
-        test.assertEqual(this.testAsset.getThumbMimeType(), "image/jpeg",
-            "Assert Asset.setThumbMimeType works correctly");
-        this.testAsset.setThumbnailUrl("http://otherhost/image_t.jpg");
-        test.assertEqual(this.testAsset.getThumbnailUrl(), "http://otherhost/image_t.jpg",
-            "Assert Asset.setThumbnailUrl works correctly");
-        this.testAsset.setUrl("http://otherhost/image.jpg");
-        test.assertEqual(this.testAsset.getUrl(), "http://otherhost/image.jpg",
-            "Assert Asset.setUrl works correctly");
+            'Assert Asset.setSize works correctly');
+        this.testAsset.setThumbMimeType('image/jpeg');
+        test.assertEqual(this.testAsset.getThumbMimeType(), 'image/jpeg',
+            'Assert Asset.setThumbMimeType works correctly');
+        this.testAsset.setThumbnailUrl('http://otherhost/image_t.jpg');
+        test.assertEqual(this.testAsset.getThumbnailUrl(), 'http://otherhost/image_t.jpg',
+            'Assert Asset.setThumbnailUrl works correctly');
+        this.testAsset.setUrl('http://otherhost/image.jpg');
+        test.assertEqual(this.testAsset.getUrl(), 'http://otherhost/image.jpg',
+            'Assert Asset.setUrl works correctly');
     }
 };
 bugmeta.annotate(assetBasicsTest).with(
-    test().name("Asset - instantiation and getter/setter Test")
+    test().name('Asset - instantiation and getter/setter Test')
 );
