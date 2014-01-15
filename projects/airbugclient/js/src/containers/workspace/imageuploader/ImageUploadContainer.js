@@ -446,9 +446,15 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                         imageUploadItemContainer.sendImageChatMessage();
                     }
 
-                    _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, _this.createAndAddImageListItem);
-                    //create userAsset
-                    //add userAsset to image list
+                    _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, function(throwable, userAssetId, imageAssetModel){
+                        if(!throwable){
+                            var data = {
+                                userAssetId: userAssetId,
+                                imageAssetModel: imageAssetModel
+                            };
+                            _this.commandModule.relayCommand(CommandType.ADD.USER_IMAGE_ASSET, data);
+                        }
+                    });
                 } else {
 //                                $(data.context[index]).find(".failed-indicator").attr("style", "");
                 }
@@ -476,9 +482,12 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 });
             }),
             $task(function(flow){
-                userAssetManagerModule.createUserAsset(userAssetData, function(throwable, returnedObject){
+                console.log("userAssetData:", userAssetData);
+                userAssetManagerModule.createUserAsset(userAssetData, function(throwable, meldDocument){
+                    var data = meldDocument.getData();
+
                     if(!throwable){
-                        userAssetId = returnedObject.objectId;
+                        userAssetId = data.id;
                     }
 
                     flow.complete(throwable);
@@ -486,18 +495,9 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
             })
         ])
         .execute(function(throwable){
+                console.log("throwable:", throwable, "userAssetId:", userAssetId, "imageAssetModel:", imageAssetModel);
             callback(throwable, userAssetId, imageAssetModel);
         });
-    },
-
-    createAndAddImageListItem: function(throwable, userAssetId, imageAssetModel){
-        if(!throwable){
-            var data = {
-                userAssetId: userAssetId,
-                imageAssetModel: imageAssetModel
-            };
-            this.commandModule.relayCommand(CommandType.ADD.USER_IMAGE_ASSET, data);
-        }
     },
 
     handleAddByUrlFailedEvent: function(event) {

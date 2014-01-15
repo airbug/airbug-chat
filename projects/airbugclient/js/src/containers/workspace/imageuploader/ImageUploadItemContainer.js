@@ -217,19 +217,39 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     handleSendImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleSendImageEvent");
         this.sendImageChatMessage();
     },
 
+    /**
+     *
+     */
     handleDeleteImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleDeleteImageEvent");
+        this.removeUploadItemFromDocument();
     },
 
+    /**
+     *
+     */
     getImageAssetModel: function() {
         return this.imageAssetModel;
     },
 
+    /**
+     *
+     */
+    removeUploadItemFromDocument: function() {
+        this.viewTop.$el.remove();
+    },
+
+    /**
+     *
+     */
     sendImageChatMessage: function() {
         var imageData = this.imageAssetModel.getData();
         var chatMessageObject = {

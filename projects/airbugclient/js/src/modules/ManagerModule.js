@@ -362,12 +362,23 @@ var ManagerModule = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} type
-     * @param {string} id
+     * @param {string} entityType
+     * @param {string} entityId
      * @param {function(Throwable=)} callback
      */
-    destroy: function(type, id, callback) {
-        //TODO
+    delete: function(entityType, entityId, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "entityType", optional: false, type: "string"},
+            {name: "entityId", optional: false, type: "string"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        entityType  = args.entityType;
+        entityId    = args.entityId;
+        callback    = args.callback;
+
+        var requestData = {objectId: entityId};
+        var requestType = "delete" + entityType;
+        this.airbugApi.request(requestType, requestData, callback);
     },
 
     /**

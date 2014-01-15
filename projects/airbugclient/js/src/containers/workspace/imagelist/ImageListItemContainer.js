@@ -109,6 +109,12 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
          */
         this.commandModule                          = null;
 
+        /**
+         * @private
+         * @type {UserAssetManagerModule}
+         */
+        this.userAssetManagerModule                 = null;
+
         // Views
         //-------------------------------------------------------------------------------
 
@@ -171,7 +177,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.imageUploadItemButtonToolbarContainer   = new ImageUploadItemButtonToolbarContainer();
 
-        this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-upload-item")
+        this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-list-item");
     },
 
     /**
@@ -197,8 +203,8 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     initializeEventListeners: function() {
-        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
-        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
+        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
+        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
     },
 
     deinitializeEventListeners: function() {
@@ -223,23 +229,58 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     handleSendImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleSendImageEvent");
         this.sendImageChatMessage();
     },
 
+    /**
+     *
+     */
     handleDeleteImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleDeleteImageEvent");
+        this.deleteUserAsset();
     },
 
+    /**
+     *
+     */
     getUserAssetModel: function() {
         return this.userAssetModel;
     },
 
+    /**
+     *
+     */
     getImageAssetModel: function() {
         return this.imageAssetModel;
     },
 
+    /**
+     *
+     */
+    deleteUserAsset: function() {
+        var _this = this;
+        this.userAssetManagerModule.deleteUserAsset(this.userAssetModel.getProperty("id"), function(throwable){
+            if(!throwable){
+                _this.removeImageListItemFromDocument();
+            }
+        });
+    },
+
+    /**
+     *
+     */
+    removeImageListItemFromDocument: function() {
+        this.viewTop.$el.remove();
+    },
+
+    /**
+     *
+     */
     sendImageChatMessage: function() {
         var imageData = this.imageAssetModel.getData();
         var chatMessageObject = {
@@ -266,8 +307,9 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageListItemContainer).with(
     autowired().properties([
+        property("assetManagerModule").ref("assetManagerModule"),
         property("commandModule").ref("commandModule"),
-        property("assetManagerModule").ref("assetManagerModule")
+        property("userAssetManagerModule").ref("userAssetManagerModule")
     ])
 );
 

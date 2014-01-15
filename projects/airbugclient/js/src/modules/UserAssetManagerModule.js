@@ -66,6 +66,14 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
+     * @param {string} userAssetId
+     * @param {function(Throwable)} callback
+     */
+    deleteUserAsset: function(userAssetId, callback) {
+        this.delete("UserAsset", userAssetId, callback);
+    },
+
+    /**
      * @param {Object=} userAssetObject
      * @param {MeldDocument=} userAssetMeldDocument
      * @returns {UserImageAssetModel}

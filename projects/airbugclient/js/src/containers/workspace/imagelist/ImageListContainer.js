@@ -305,7 +305,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
         userAssetManagerModule.retrieveUserAsset(userAssetId, function(throwable, meldDocument){
             if(!throwable){
-                userAssetModel = userAssetManagerModule.generateUserImageAssetModel(userAssetData, meldDocument);
+                userAssetModel = userAssetManagerModule.generateUserImageAssetModel({}, meldDocument);
                 imageListItemContainer = new ImageListItemContainer(imageAssetModel, userAssetModel);
                 _this.addContainerChild(imageListItemContainer, ".box-body");
             }

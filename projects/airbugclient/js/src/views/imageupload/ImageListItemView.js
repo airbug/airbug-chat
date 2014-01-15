@@ -37,7 +37,7 @@ var ImageListItemView = Class.extend(MustacheView, {
 
     template:       '<div id="{{id}}" class="image-list-item">\
             <div id="{{id}}" class="image-preview">\
-                <a href="{{model.url}}" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>\
+                <a href="{{model.url}}" target="_blank" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>\
             <div>\
             <div class="filename">\
                 <span class="">{{model.name}}</span>\
