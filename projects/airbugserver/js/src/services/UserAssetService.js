@@ -54,6 +54,7 @@ var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 var $iterableParallel       = BugFlow.$iterableParallel;
+var $forEachParallel        = BugFlow.$forEachParallel;
 
 
 //-------------------------------------------------------------------------------
@@ -101,10 +102,16 @@ var UserAssetService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {UserAsset} userAssetObject
+     * @param {{
+     *      assetId: string,
+     *      createdAt: Date,
+     *      name: string,
+     *      updatedAt: Date,
+     *      userId: string
+     * }} userAssetData
      * @param {Function(Throwable, UserAsset)} callback
      */
-    createUserAsset: function(requestContext, userAssetObject, callback) {
+    createUserAsset: function(requestContext, userAssetData, callback) {
         var _this = this;
         var callManager             = requestContext.get('callManager');
         var callManagerCallUuid     = callManager.getCallUuid();
@@ -116,8 +123,8 @@ var UserAssetService = Class.extend(Obj, {
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    var newUserAsset = userAssetManager.generate(userAssetObject);
-                    userAssetManager.createUserAsset(newUserAsset, [], function(throwable, returnedUserAsset) {
+                    var newUserAsset = userAssetManager.generateUserAsset(userAssetData);
+                    userAssetManager.createUserAsset(newUserAsset, function(throwable, returnedUserAsset) {
                         if (!throwable) {
                             if (returnedUserAsset) {
                                 userAsset = returnedUserAsset;
@@ -396,7 +403,7 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetsToCall(userAssetmap.getValueArray(), callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(), callManagerCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -435,7 +442,7 @@ var UserAssetService = Class.extend(Obj, {
                                 throwable = new Exception("No UserAssets Found");
                             } else {
                                 userAssetMap = returnedUserAssetMap;
-                                _this.populateUserAssets(userAssetMap, function(throwable) {
+                                _this.dbPopulateUserAssets(userAssetMap, function(throwable) {
                                     flow.complete(throwable);
                                 });
                             }
@@ -450,7 +457,7 @@ var UserAssetService = Class.extend(Obj, {
                         });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetsToCall(userAssetmap.getValueArray(),
+                    _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(),
                         callManager.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
@@ -459,7 +466,7 @@ var UserAssetService = Class.extend(Obj, {
                 if (!throwable) {
                     callback(mappedException, userAssetMap);
                 } else {
-                    callback(throwable);
+                    callback(throwable, null);
                 }
             });
         } else {
@@ -471,10 +478,15 @@ var UserAssetService = Class.extend(Obj, {
     // Private
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     * @param {Map.<string, UserAsset>} userAssetMap
+     * @param {{function(Throwable)} callback} callback
+     */
     dbPopulateUserAssets: function(userAssetMap, callback) {
-        var _this           = this;
-        var userAssetSet    = userAssetMap.getValues();
-        $iterableParallel(userAssetSet, function(flow, userAsset) {
+        var _this               = this;
+        var userAssetArray      = userAssetMap.getValueArray();
+        $forEachParallel(userAssetArray, function(flow, userAsset) {
             _this.userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
                 if (!throwable) {
                     flow.complete();
