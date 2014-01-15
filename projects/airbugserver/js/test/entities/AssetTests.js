@@ -58,6 +58,8 @@ var assetBasicsTest = {
         this.testUrl                = 'http://host/image.png';
         this.testAsset = new Asset({
             id: this.testId,
+            midsizeMimeType: this.testMidsizeMimeType,
+            midsizeUrl: this.testMidsizeUrl,
             mimeType: this.testMimeType,
             size: this.testSize,
             thumbMimeType: this.testThumbMimeType,
@@ -94,7 +96,7 @@ var assetBasicsTest = {
         this.testAsset.setMidsizeMimeType('image/jpeg');
         test.assertEqual(this.testAsset.getMidsizeMimeType(), 'image/jpeg',
             'Assert Asset.setMidsizeMimeType works correctly');
-        this.testAsset.setMidsizeUrl('http://otherhost/image_t.jpg');
+        this.testAsset.setMidsizeUrl('http://otherhost/image_m.jpg');
         test.assertEqual(this.testAsset.getMidsizeUrl(), 'http://otherhost/image_m.jpg',
             'Assert Asset.setMidsizeUrl works correctly');
         this.testAsset.setMimeType('image/jpeg');
