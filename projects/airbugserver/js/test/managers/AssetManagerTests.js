@@ -60,12 +60,16 @@ var setupAssetTests = function(setupObject) {
     setupObject.assetManager           = new AssetManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
     setupObject.assetManager.setEntityType("Asset");
 
+    setupObject.testMidsizeMimeType    = "image/png";
+    setupObject.testMidsizeUrl         = "http://host/image_m.png";
     setupObject.testMimeType           = "image/png";
     setupObject.testName               = "testName";
     setupObject.testThumbMimeType      = "image/png";
     setupObject.testThumbnailUrl           = "http://host/image_t.png";
     setupObject.testUrl                = "http://host/image.png";
     setupObject.testAssetData          = {
+        midsizeMimeType: setupObject.testMidsizeMimeType,
+        midsizeUrl: setupObject.testMidsizeUrl,
         mimeType: setupObject.testMimeType,
         name: setupObject.testName,
         thumbMimeType: setupObject.testThumbMimeType,
@@ -75,6 +79,8 @@ var setupAssetTests = function(setupObject) {
     setupObject.testAsset              = new Asset(setupObject.testAssetData);
 
     setupObject.testAssetData2         = {
+        midsizeMimeType: 'image/jpeg',
+        midsizeUrl: 'http://host/image_m.jpg',
         mimeType: 'image/jpeg',
         name: 'testJpeg',
         thumbMimeType: 'image/jpeg',
@@ -235,6 +241,10 @@ var assetManagerGenerateAssetTest = {
         var _this = this;
         initializeManagers(_this, test);
         var asset = _this.assetManager.generateAsset(_this.testAssetData);
+        test.assertEqual(asset.getMidsizeMimeType(), 'image/png',
+            'midsize mime type should match on generated asset');
+        test.assertEqual(asset.getMidsizeUrl(), 'http://host/image_m.png',
+            'midsize url should match on generated asset');
         test.assertEqual(asset.getMimeType(), 'image/png',
             'mime type should match on generated asset');
         test.assertEqual(asset.getName(), 'testName',
@@ -305,6 +315,10 @@ var assetManagerRetrieveAssetTest = {
             if (throwable) {
                 test.error();
             } else {
+                test.assertEqual(asset.getMidsizeMimeType(), 'image/png',
+                    'midsize mime type should match on generated asset');
+                test.assertEqual(asset.getMidsizeUrl(), 'http://host/image_m.png',
+                    'midsize url should match on generated asset');
                 test.assertEqual(asset.getMimeType(), 'image/png',
                     'mime type should match on generated asset');
                 test.assertEqual(asset.getName(), 'testName',
@@ -381,6 +395,8 @@ var assetManagerUpdateAssetTest = {
         initializeManagers(_this, test);
         createEntities(this, test);
         var createdAsset = _this.createdAsset;
+        createdAsset.setMidsizeMimeType('image/gif');
+        createdAsset.setMidsizeUrl('http://host/image_m.gif');
         createdAsset.setMimeType('image/gif');
         createdAsset.setName('newTestName');
         createdAsset.setThumbMimeType('image/gif');
@@ -390,6 +406,10 @@ var assetManagerUpdateAssetTest = {
             if (throwable) {
                 test.error();
             } else {
+                test.assertEqual(asset.getMidsizeMimeType(), 'image/gif',
+                    'midsize mime type should match on updated asset');
+                test.assertEqual(asset.getMidsizeUrl(), 'http://host/image_m.gif',
+                    'midsize url should match on updated asset');
                 test.assertEqual(asset.getMimeType(), 'image/gif',
                     'mime type should match on updated asset');
                 test.assertEqual(asset.getName(), 'newTestName',
