@@ -6,5 +6,5 @@
     "redis": {
         "host": "redis-us-east-1a.ogttef.0001.use1.cache.amazonaws.com"
     },
-    "staticUrl": "https://d1jply0oquv2ju.cloudfront.net/airbug/0.0.1/static",
+    "staticUrl": "https://d1jply0oquv2ju.cloudfront.net/airbug/0.0.1/static"
 }
