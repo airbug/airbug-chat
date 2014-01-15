@@ -14,6 +14,7 @@
 //@Require('airbug.ControlsView')
 //@Require('airbug.FormControlGroupView')
 //@Require('airbug.IconView')
+//@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.InputView')
 //@Require('airbug.LabelView')
@@ -47,6 +48,7 @@ var CommandModule                       = bugpack.require('airbug.CommandModule'
 var ControlsView                        = bugpack.require('airbug.ControlsView');
 var FormControlGroupView                = bugpack.require('airbug.FormControlGroupView');
 var IconView                            = bugpack.require('airbug.IconView');
+var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
 var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
 var InputView                           = bugpack.require('airbug.InputView');
 var LabelView                           = bugpack.require('airbug.LabelView');
@@ -272,6 +274,7 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
     handleSubmitButtonClicked: function(event) {
         var _this = this;
         var url = this.getInputValue();
+        var imageAssetModel = new ImageAssetModel({name: url});
 
         this.assetManagerModule.addAssetFromUrl(url, function(throwable, meldDocument){
             console.log("addAssetFromUrl callback");
@@ -281,7 +284,7 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
             }
         });
 
-        event.getData().imageUploadItemContainer = new ImageUploadItemContainer(url);
+        event.getData().imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
     },
 
     /**
