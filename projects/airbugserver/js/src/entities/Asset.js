@@ -59,84 +59,84 @@ var Asset = Class.extend(Entity, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
-    /*
+    /**
      * @return {string}
      */
     getMimeType: function() {
         return this.deltaDocument.getData().mimeType;
     },
 
-    /*
+    /**
      * @param {string} mimeType
      */
     setMimeType: function(mimeType) {
         this.deltaDocument.getData().mimeType = mimeType;
     },
 
-    /*
+    /**
      * @return {string}
      */
     getName: function() {
         return this.deltaDocument.getData().name;
     },
 
-    /*
+    /**
      * @param {string} name
      */
     setName: function(name) {
         this.deltaDocument.getData().name = name;
     },
 
-    /*
+    /**
      * @return {number}
      */
     getSize: function() {
         return this.deltaDocument.getData().size;
     },
 
-    /*
+    /**
      * @param {number} size
      */
     setSize: function(size) {
         this.deltaDocument.getData().size = size;
     },
 
-    /*
+    /**
      * @return {string}
      */
     getThumbMimeType: function() {
         return this.deltaDocument.getData().thumbMimeType;
     },
 
-    /*
+    /**
      * @param {string} thumbMimeType
      */
     setThumbMimeType: function(thumbMimeType) {
         this.deltaDocument.getData().thumbMimeType = thumbMimeType;
     },
 
-    /*
+    /**
      * @return {string}
      */
     getThumbnailUrl: function() {
         return this.deltaDocument.getData().thumbnailUrl;
     },
 
-    /*
+    /**
      * @param {string} thumbUrl
      */
     setThumbnailUrl: function(thumbUrl) {
         this.deltaDocument.getData().thumbnailUrl = thumbUrl;
     },
 
-    /*
+    /**
      * @return {string}
      */
     getUrl: function() {
         return this.deltaDocument.getData().url;
     },
 
-    /*
+    /**
      * @param {string} url
      */
     setUrl: function(url) {
