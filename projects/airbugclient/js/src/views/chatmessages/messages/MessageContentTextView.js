@@ -50,7 +50,7 @@ var MessageContentTextView = Class.extend(MustacheView, {
     generateTemplateData: function() {
         var data = this._super();
         console.log("data:", data);
-        data.text = HtmlUtil.stringToHtml(data.model.body.parts[0].text); //CLEANUP and Why does model not have function getProperty
+        data.text = HtmlUtil.stringToHtml(data.model.text);
         return data;
     },
 
