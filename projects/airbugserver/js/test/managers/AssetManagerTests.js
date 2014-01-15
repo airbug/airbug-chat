@@ -97,7 +97,7 @@ var initializeManagers = function(setupObject, test) {
             _this.assetManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });
-        }),
+        })
     ]).execute(function(throwable) {
         if (throwable) {
             test.error(throwable);
