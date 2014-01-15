@@ -13,6 +13,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
+//@Require('airbug.ImageListItemContainer')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
@@ -41,6 +42,7 @@ var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarV
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
+var ImageListItemContainer              = bugpack.require('airbug.ImageListItemContainer');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
@@ -90,6 +92,12 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
          * @type {CommandModule}
          */
         this.commandModule              = null;
+
+        /**
+         * @private
+         * @type {UserAssetManagerModule}
+         */
+        this.userAssetManagerModule     = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -196,32 +204,33 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
                                         ])
                                 ])
                                 .appendTo('#image-list-toolbar')
-                        ]),
-                    view(ButtonGroupView)
-                        .children([
-                            view(NakedButtonView)
-                                .attributes({
-                                    size: NakedButtonView.Size.LARGE,
-                                    type: NakedButtonView.Type.DANGER
-                                })
-                                .children([
-                                    view(IconView)
-                                        .attributes({
-                                            type: IconView.Type.TRASH
-                                        })
-                                        .appendTo('button[id|="button"]')
-                                ]),
-                            view(NakedButtonView)
-                                .attributes({
-                                    size: NakedButtonView.Size.LARGE
-                                })
-                                .children([
-                                    view(TextView)
-                                        .attributes({text: "SEND"})
-                                        .appendTo('button[id|="button"]')
-                                ])
                         ])
-                        .appendTo(".box-footer")
+//                    ,
+//                    view(ButtonGroupView)
+//                        .children([
+//                            view(NakedButtonView)
+//                                .attributes({
+//                                    size: NakedButtonView.Size.LARGE,
+//                                    type: NakedButtonView.Type.DANGER
+//                                })
+//                                .children([
+//                                    view(IconView)
+//                                        .attributes({
+//                                            type: IconView.Type.TRASH
+//                                        })
+//                                        .appendTo('button[id|="button"]')
+//                                ]),
+//                            view(NakedButtonView)
+//                                .attributes({
+//                                    size: NakedButtonView.Size.LARGE
+//                                })
+//                                .children([
+//                                    view(TextView)
+//                                        .attributes({text: "SEND"})
+//                                        .appendTo('button[id|="button"]')
+//                                ])
+//                        ])
+//                        .appendTo(".box-footer")
                 ])
                 .build();
 
@@ -266,26 +275,42 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
     },
 
     deinitializeEventListeners: function() {
-
+        this.imageUploadLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadImageLinkButtonClicked, this);
     },
 
     /**
      * @private
      */
     initializeCommandSubscriptions: function() {
-
+        this.commandModule.subscribe(CommandType.ADD.USER_IMAGE_ASSET, this.handleAddUserImageAsset, this);
     },
 
     /**
      * @private
      */
     deinitializeCommandSubscriptions: function() {
-
+        this.commandModule.unsubscribe(CommandType.ADD.USER_IMAGE_ASSET, this.handleAddUserImageAsset, this);
     },
 
     //-------------------------------------------------------------------------------
     // Event Handlers
     //-------------------------------------------------------------------------------
+
+    handleAddUserImageAsset: function(message){
+        var _this = this;
+        var data = message.getData();
+        var userAssetManagerModule = this.userAssetManagerModule;
+        var userAssetId = data.userAssetId;
+        var imageAssetModel = data.imageAssetModel;
+
+        userAssetManagerModule.retrieveUserAsset(userAssetId, function(throwable, meldDocument){
+            if(!throwable){
+                userAssetModel = userAssetManagerModule.generateUserImageAssetModel(userAssetData, meldDocument);
+                imageListItemContainer = new ImageListItemContainer(imageAssetModel, userAssetModel);
+                _this.addContainerChild(imageListItemContainer, ".box-body");
+            }
+        });
+    },
 
     handleUploadImageLinkButtonClicked: function(event) {
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
@@ -299,7 +324,8 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageListContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
+        property("userAssetManagerModule").ref("userAssetManagerModule")
     ])
 );
 

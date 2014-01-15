@@ -421,9 +421,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     },
 
     handleUploadDoneEvent: function(data, index, file) {
-        console.log("data:", data);
-        console.log("index:", index);
-        console.log("file:", file);
+        var _this = this;
         var assetId = file._id || file.id;
         var imageUploadItemContainer = data.originalFiles[index].imageUploadItemContainer;
         var imageAssetModel = imageUploadItemContainer.getImageAssetModel();
@@ -444,12 +442,58 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                         imageUploadItemContainer.sendImageChatMessage();
                     }
 
+                    _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, _this.createAndAddImageListItem);
                     //create userAsset
                     //add userAsset to image list
                 } else {
 //                                $(data.context[index]).find(".failed-indicator").attr("style", "");
                 }
         });
+    },
+
+
+    createUserAssetAndUserAssetModel: function(assetId, imageAssetModel, callback){
+        var _this = this;
+        var currentUserManagerModule    = this.currentUserManagerModule;
+        var userAssetManagerModule      = this.userAssetManagerModule;
+        var userAssetData = {
+            assetId: assetId
+        };
+        var userAssetId = null;
+
+        $series([
+            $task(function(flow){
+                currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser){
+                    if(!throwable){
+                        userAssetData.userId = currentUser.getId();
+                    }
+
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow){
+                userAssetManagerModule.createUserAsset(userAssetData, function(throwable, returnedObject){
+                    if(!throwable){
+                        userAssetId = returnedObject.objectId;
+                    }
+
+                    flow.complete(throwable);
+                });
+            })
+        ])
+        .execute(function(throwable){
+            callback(throwable, userAssetId, imageAssetModel);
+        });
+    },
+
+    createAndAddImageListItem: function(throwable, userAssetId, imageAssetModel){
+        if(!throwable){
+            var data = {
+                userAssetId: userAssetId,
+                imageAssetModel: imageAssetModel
+            };
+            this.commandModule.relayCommand(CommandType.ADD.USER_IMAGE_ASSET, data);
+        }
     },
 
     handleAddByUrlFailedEvent: function(event) {
@@ -469,7 +513,9 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ImageUploadContainer).with(
     autowired().properties([
         property("assetManagerModule").ref("assetManagerModule"),
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("userAssetManagerModule").ref("userAssetManagerModule")
     ])
 );
 
