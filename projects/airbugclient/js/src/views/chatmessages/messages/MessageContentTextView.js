@@ -49,7 +49,6 @@ var MessageContentTextView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        console.log("data:", data);
         data.text = HtmlUtil.stringToHtml(data.model.text);
         return data;
     },

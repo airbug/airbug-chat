@@ -221,7 +221,10 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
             type:           chatMessageData.type,
             failed:         chatMessageData.failed,
-            pending:        chatMessageData.pending
+            pending:        chatMessageData.pending,
+            // to populate the codeChatMessageModel properties before meldDocument is set
+            code:           chatMessageData.body.parts[0].code,
+            codeLanguage:   chatMessageData.body.parts[0].codeLanguage
         };
         return codeChatMessageObject;
     },
@@ -264,9 +267,13 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
             type:           chatMessageData.type,
             failed:         chatMessageData.failed,
-            pending:        chatMessageData.pending
+            pending:        chatMessageData.pending,
+            // to populate the imageChatMessageModel properties before meldDocument is set
+            name:           chatMessageData.body.parts[0].name,
+            url:            chatMessageData.body.parts[0].url,
+            thumbnailUrl:   chatMessageData.body.parts[0].thumbnailUrl,
+            midsizeUrl:     chatMessageData.body.parts[0].midsizeUrl
         };
-        console.log("imageChatMessageObject:", imageChatMessageObject);
         return imageChatMessageObject;
     },
 
@@ -301,7 +308,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             tryUuid:        chatMessageData.tryUuid ? chatMessageData.tryUuid : UuidGenerator.generateUuid(),
             type:           chatMessageData.type,
             failed:         chatMessageData.failed,
-            pending:        chatMessageData.pending
+            pending:        chatMessageData.pending,
+            // to populate the textChatMessageModel properties before meldDocument is set
+            text:           chatMessageData.body.parts[0].text
         };
         return textChatMessageObject;
     },
