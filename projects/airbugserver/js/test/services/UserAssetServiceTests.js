@@ -73,11 +73,11 @@ var setupUserAssetService = function(setupObject) {
     setupObject.mongoDataStore          = new DummyMongoDataStore();
     setupObject.schemaManager           = new SchemaManager();
     setupObject.assetManager            = new AssetManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.assetManager.setEntityType("Asset");
+    setupObject.assetManager.setEntityType('Asset');
     setupObject.userManager             = new UserManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.userManager.setEntityType("User");
+    setupObject.userManager.setEntityType('User');
     setupObject.userAssetManager        = new UserAssetManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.userAssetManager.setEntityType("UserAsset");
+    setupObject.userAssetManager.setEntityType('UserAsset');
 
     setupObject.testCurrentUser     = new User({});
     setupObject.testSession         = new Session({});
@@ -91,9 +91,9 @@ var setupUserAssetService = function(setupObject) {
             if (key === 'callManager') {
                 return setupObject.testCallManager;
             }
-            if (key === "currentUser") {
+            if (key === 'currentUser') {
                 return setupObject.testCurrentUser;
-            } else if (key === "session") {
+            } else if (key === 'session') {
                 return setupObject.testSession;
             }
             return undefined;
@@ -161,7 +161,7 @@ var createEntities = function(setupObject, test) {
                 if (!throwable) {
                     var id = user.getId();
                     test.assertTrue(!!id,
-                        "Assert create user has an id. id = " + id);
+                        'Assert create user has an id. id = ' + id);
                     _this.testUser = user;
                     _this.testCurrentUser = user;
                 }
@@ -169,11 +169,11 @@ var createEntities = function(setupObject, test) {
             });
         }),
         $task(function(flow) {
-            setupObject.testMimeType1           = "image/png";
-            setupObject.testName1               = "testName";
-            setupObject.testThumbnailMimeType1      = "image/png";
-            setupObject.testThumbnailUrl1       = "http://host/image_t.png";
-            setupObject.testUrl1                = "http://host/image.png";
+            setupObject.testMimeType1           = 'image/png';
+            setupObject.testName1               = 'testName';
+            setupObject.testThumbnailMimeType1  = 'image/png';
+            setupObject.testThumbnailUrl1       = 'http://host/image_t.png';
+            setupObject.testUrl1                = 'http://host/image.png';
             setupObject.testAssetData1          = {
                 mimeType: setupObject.testMimeType1,
                 name: setupObject.testName1,
@@ -194,11 +194,11 @@ var createEntities = function(setupObject, test) {
             });
         }),
         $task(function(flow) {
-            setupObject.testMimeType2           = "image/png";
-            setupObject.testName2               = "testName";
-            setupObject.testThumbnailMimeType2      = "image/png";
-            setupObject.testThumbnailUrl2       = "http://host/image_t.png";
-            setupObject.testUrl2                = "http://host/image.png";
+            setupObject.testMimeType2           = 'image/png';
+            setupObject.testName2               = 'testName';
+            setupObject.testThumbnailMimeType2  = 'image/png';
+            setupObject.testThumbnailUrl2       = 'http://host/image_t.png';
+            setupObject.testUrl2                = 'http://host/image.png';
             setupObject.testAssetData2          = {
                 mimeType: setupObject.testMimeType2,
                 name: setupObject.testName2,
@@ -282,9 +282,11 @@ var userAssetServiceCreateUserAssetTest = {
         };
         this.testUserAssetService.createUserAsset(this.testRequestContext, userAssetData, function(throwable, userAsset) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #createUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #createUserAsset. throwable = ' +
+                    throwable + ' stack ' + throwable.stack));
             } else {
-                test.assertTrue(!!userAsset.getId(), 'UserAsset id should be set properly after creation.');
+                test.assertTrue(!!userAsset.getId(),
+                    'UserAsset id should be set properly after creation.');
                 test.complete();
             }
         });
@@ -317,9 +319,11 @@ var userAssetServiceDeleteUserAssetTest = {
             $task(function(flow) {
                 _this.testUserAssetService.deleteUserAsset(_this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
                     if (throwable) {
-                        flow.error(new Error('throwable was defined on #deleteUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                        flow.error(new Error('throwable was defined on #deleteUserAsset. throwable = ' +
+                            throwable + ' stack ' + throwable.stack));
                     } else {
-                        test.assertEqual(userAsset.getId(), testUserAssetId, 'UserAsset id should be set properly after deletion.');
+                        test.assertEqual(userAsset.getId(), testUserAssetId,
+                            'UserAsset id should be set properly after deletion.');
                         flow.complete();
                     }
                 });
@@ -327,7 +331,7 @@ var userAssetServiceDeleteUserAssetTest = {
             $task(function(flow) {
                 _this.testUserAssetService.retrieveUserAsset(_this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
                     if (throwable) {
-                        console.log('throwable was defined on #deleteUserAsset. throwable = ' + throwable + " stack " + throwable.stack);
+                        console.log('throwable was defined on #deleteUserAsset. throwable = ' + throwable + ' stack ' + throwable.stack);
                         test.assertEqual(throwable.type, 'NotFound');
                         flow.complete();
                     } else {
@@ -341,7 +345,7 @@ var userAssetServiceDeleteUserAssetTest = {
             } else {
                 test.complete();
             }
-        })
+        });
     }
 };
 
@@ -368,9 +372,11 @@ var userAssetServiceRenameUserAssetTest = {
         var testUserAssetId = this.testUserAsset1.getId();
         this.testUserAssetService.renameUserAsset(this.testRequestContext, testUserAssetId, 'newUserAssetName', function(throwable, userAsset) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #renameUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #renameUserAsset. throwable = ' +
+                    throwable + ' stack ' + throwable.stack));
             } else {
-                test.assertEqual(userAsset.getName(), 'newUserAssetName', 'UserAsset name should be set properly after rename.');
+                test.assertEqual(userAsset.getName(), 'newUserAssetName',
+                    'UserAsset name should be set properly after rename.');
                 test.complete();
             }
         });
@@ -401,7 +407,8 @@ var userAssetServiceRetrieveUserAssetTest = {
         var testUserAssetId = this.testUserAsset1.getId();
         this.testUserAssetService.retrieveUserAsset(this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' +
+                    throwable + ' stack ' + throwable.stack));
             } else {
                 test.assertEqual(userAsset.getId(), testUserAssetId, 'UserAsset id should be set properly after retrieve.');
                 console.log('UserServiceAssetTests#userAssetServiceRetrieveUserAssetTest userAsset = ', userAsset);
@@ -437,8 +444,8 @@ var userAssetServiceRetrieveUserAssetsTest = {
         var userAssetIds = [this.testUserAsset1.getId(), this.testUserAsset2.getId()];
         this.testUserAssetService.retrieveUserAssets(this.testRequestContext, userAssetIds, function(throwable, userAssetMap) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = '
-                    + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' +
+                    throwable + ' stack ' + throwable.stack));
             } else {
                 test.assertEqual(userAssetMap.getCount(), 2, '2 user assets should be retrieved');
                 var userAsset1 = userAssetMap.get(_this.testUserAsset1.getId());
@@ -475,7 +482,7 @@ var userAssetServiceRetrieveUserAssetsByUserIdTest = {
         createEntities(this, test);
         this.testUserAssetService.retrieveUserAssetsByUserId(this.testRequestContext, this.testUser.getId(), function(throwable, userAssetMap) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + ' stack ' + throwable.stack));
             } else {
                 test.assertEqual(userAssetMap.getCount(), 2, '2 user assets should be retrieved');
                 var userAsset1 = userAssetMap.get(_this.testUserAsset1.getId());
@@ -492,25 +499,25 @@ var userAssetServiceRetrieveUserAssetsByUserIdTest = {
 
 
 bugmeta.annotate(userAssetServiceCreateUserAssetTest).with(
-    test().name("UserAssetService - Create UserAsset Test")
+    test().name('UserAssetService - Create UserAsset Test')
 );
 
 bugmeta.annotate(userAssetServiceDeleteUserAssetTest).with(
-    test().name("UserAssetService - Delete UserAsset Test")
+    test().name('UserAssetService - Delete UserAsset Test')
 );
 
 bugmeta.annotate(userAssetServiceRenameUserAssetTest).with(
-    test().name("UserAssetService - Rename UserAsset Test")
+    test().name('UserAssetService - Rename UserAsset Test')
 );
 
 bugmeta.annotate(userAssetServiceRetrieveUserAssetTest).with(
-    test().name("UserAssetService - Retrieve UserAsset Test")
+    test().name('UserAssetService - Retrieve UserAsset Test')
 );
 
 bugmeta.annotate(userAssetServiceRetrieveUserAssetsTest).with(
-    test().name("UserAssetService - Retrieve UserAssets Test")
+    test().name('UserAssetService - Retrieve UserAssets Test')
 );
 
 bugmeta.annotate(userAssetServiceRetrieveUserAssetsByUserIdTest).with(
-    test().name("UserAssetService - Retrieve UserAssets By User Id Test")
+    test().name('UserAssetService - Retrieve UserAssets By User Id Test')
 );

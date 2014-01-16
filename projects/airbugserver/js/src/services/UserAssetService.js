@@ -393,7 +393,7 @@ var UserAssetService = Class.extend(Obj, {
                     userAssetManager.retrieveUserAssets(userAssetIds, function(throwable, returnedUserAssetMap) {
                         if (!throwable) {
                             if (! returnedUserAssetMap) {
-                                throwable = new Exception("No UserAssets Found");
+                                throwable = new Exception('No UserAssets Found');
                             } else {
                                 userAssetMap = returnedUserAssetMap.clone();
                                 returnedUserAssetMap.forEach(function(userAsset, key) {
@@ -402,7 +402,7 @@ var UserAssetService = Class.extend(Obj, {
                                         if (!mappedException) {
                                             mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                         }
-                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
+                                        mappedException.putThrowable(key, new Exception('NotFound', {objectId: key}));
                                     }
                                 });
                                 _this.dbPopulateUserAssets(userAssetMap, function(throwable) {
@@ -455,7 +455,7 @@ var UserAssetService = Class.extend(Obj, {
                     userAssetManager.retrieveUserAssetsByUserId(userId, function(throwable, returnedUserAssetMap) {
                         if (!throwable) {
                             if (! returnedUserAssetMap) {
-                                throwable = new Exception("No UserAssets Found");
+                                throwable = new Exception('No UserAssets Found');
                             } else {
                                 userAssetMap = returnedUserAssetMap;
                                 _this.dbPopulateUserAssets(userAssetMap, function(throwable) {
@@ -522,10 +522,10 @@ var UserAssetService = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(UserAssetService).with(
-    module("userAssetService")
+    module('userAssetService')
         .args([
-            arg().ref("userAssetManager"),
-            arg().ref("userAssetPusher")
+            arg().ref('userAssetManager'),
+            arg().ref('userAssetPusher')
         ])
 );
 
