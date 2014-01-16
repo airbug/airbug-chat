@@ -8,12 +8,6 @@
 
 //@Require('Class')
 //@Require('ace.Ace')
-//@Require('ace.AceExts')
-//@Require('ace.AceModes')
-//@Require('ace.AceThemes')
-//@Require('acemodes.Css')
-//@Require('acemodes.Html')
-//@Require('acemodes.Javascript')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
@@ -46,13 +40,6 @@ var bugpack = require('bugpack').context();
 
 var Class                               = bugpack.require('Class');
 var Ace                                 = bugpack.require('ace.Ace');
-var AceExts                             = bugpack.require('ace.AceExts');
-var AceModes                            = bugpack.require('ace.AceModes');
-//var AceSnippets                         = bugpack.require('ace.AceSnippets');
-var AceThemes                           = bugpack.require('ace.AceThemes');
-var Css                                 = bugpack.require('acemodes.Css');
-var Html                                = bugpack.require('acemodes.Html');
-var Javascript                          = bugpack.require('acemodes.Javascript');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
@@ -360,11 +347,6 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     configureAceEditor: function() {
-        AceExts.loadAll();
-        AceModes.loadAll();
-        AceThemes.loadAll();
-        //AceSnippets.loadAll();
-
         this.aceEditor.getSession().setMode("ace/mode/javascript");
         this.aceEditor.setTheme("ace/theme/twilight");
     },

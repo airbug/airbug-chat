@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.4";
+var version             = "0.0.5";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -66,10 +66,6 @@ buildProperties({
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
             "../bugjs/external/ace/js/src",
-            "../bugjs/external/aceexts/js/src",
-            "../bugjs/external/acemodes/js/src",
-            "../bugjs/external/acethemes/js/src",
-            "../bugjs/external/acesnippets/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/bootstrap2/static",
@@ -102,6 +98,14 @@ buildProperties({
             "../meldbug/projects/meldbugclient/js/src",
             "../bugpack/projects/bugpack-client/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
+        ],
+        serverStickyPaths: [
+            "../bugjs/external/aceexts/js/src",
+            "../bugjs/external/acekeybindings/js/src",
+            "../bugjs/external/acemodes/js/src",
+            "../bugjs/external/acesnippets/js/src",
+            "../bugjs/external/acethemes/js/src",
+            "../bugjs/external/acesnippets/js/src"
         ]
     },
     server: {
@@ -227,7 +231,9 @@ buildTarget('local').buildFlow(
         series([
             targetTask('copyContents', {
                 properties: {
-                    fromPaths: buildProject.getProperty("static.sourcePaths"),
+                    fromPaths: buildProject.getProperty("static.sourcePaths").concat(
+                        buildProject.getProperty("static.serverStickyPaths")
+                    ),
                     intoPath: "{{static.outputPath}}"
                 }
             }),
@@ -327,6 +333,7 @@ buildTarget('prod').buildFlow(
                         scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
                             buildProject.getProperty("unitTest.scriptPaths")
                         ),
+                        staticPaths: buildProject.getProperty("static.serverStickyPaths"),
                         testPaths: buildProject.getProperty("unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths")
                     }
@@ -370,6 +377,7 @@ buildTarget('prod').buildFlow(
                         packageJson: buildProject.getProperty("server.packageJson"),
                         sourcePaths: buildProject.getProperty("server.sourcePaths"),
                         scriptPaths: buildProject.getProperty("server.scriptPaths"),
+                        staticPaths: buildProject.getProperty("static.serverStickyPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths")
                     }
                 }),

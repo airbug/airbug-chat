@@ -256,7 +256,7 @@ var AssetService = Class.extend(Obj, {
      *      type: string,
      *      path: string
      * }>} files
-     * @param {function(Throwable, Array<Entity>)} callback
+     * @param {function(Throwable, Array<Entity>=)} callback
      */
     uploadAssets: function(requestContext, files, callback) {
         var _this = this;
@@ -267,10 +267,10 @@ var AssetService = Class.extend(Obj, {
                 flow.complete(throwable);
             });
         }).execute(function(throwable) {
-            if (throwable) {
-                callback(throwable, undefined);
+            if (!throwable) {
+                callback(null, assets);
             } else {
-                callback(undefined, assets);
+                callback(throwable);
             }
         });
     },
