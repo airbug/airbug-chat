@@ -163,6 +163,7 @@ var createEntities = function(setupObject, test) {
                     test.assertTrue(!!id,
                         "Assert create user has an id. id = " + id);
                     _this.testUser = user;
+                    _this.testCurrentUser = user;
                 }
                 flow.complete(throwable);
             });
@@ -272,10 +273,14 @@ var userAssetServiceCreateUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var _this = this;
         initializeManagers(this, test);
         createEntities(this, test);
-        var userAssetObject = new UserAsset({});
-        this.testUserAssetService.createUserAsset(this.testRequestContext, userAssetObject, function(throwable, userAsset) {
+        var userAssetData = {
+            assetId: this.createdAsset2.getId(),
+            userId: this.testCurrentUser.getId()
+        };
+        this.testUserAssetService.createUserAsset(this.testRequestContext, userAssetData, function(throwable, userAsset) {
             if (throwable) {
                 test.error(new Error('throwable was defined on #createUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
             } else {
@@ -304,18 +309,42 @@ var userAssetServiceDeleteUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var _this = this;
         initializeManagers(this, test);
         createEntities(this, test);
-        this.testUserAssetService.deleteUserAsset(this.testRequestContext, 'testId', function(throwable, userAsset) {
+        var testUserAssetId = this.testUserAsset1.getId();
+        $series([
+            $task(function(flow) {
+                _this.testUserAssetService.deleteUserAsset(_this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
+                    if (throwable) {
+                        flow.error(new Error('throwable was defined on #deleteUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                    } else {
+                        test.assertEqual(userAsset.getId(), testUserAssetId, 'UserAsset id should be set properly after deletion.');
+                        flow.complete();
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.testUserAssetService.retrieveUserAsset(_this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
+                    if (throwable) {
+                        console.log('throwable was defined on #deleteUserAsset. throwable = ' + throwable + " stack " + throwable.stack);
+                        test.assertEqual(throwable.type, 'NotFound');
+                        flow.complete();
+                    } else {
+                        flow.error('expected not to find this user.');
+                    }
+                });
+            })
+        ]).execute(function(throwable) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #deleteUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(throwable);
             } else {
-                test.assertEqual(userAsset.getId(), 'testId', 'UserAsset id should be set properly after deletion.');
                 test.complete();
             }
-        });
+        })
     }
 };
+
 
 var userAssetServiceRenameUserAssetTest = {
 
@@ -336,8 +365,8 @@ var userAssetServiceRenameUserAssetTest = {
     test: function(test) {
         initializeManagers(this, test);
         createEntities(this, test);
-        var userAssetId = 'testId';
-        this.testUserAssetService.renameUserAsset(this.testRequestContext, userAssetId, 'newUserAssetName', function(throwable, userAsset) {
+        var testUserAssetId = this.testUserAsset1.getId();
+        this.testUserAssetService.renameUserAsset(this.testRequestContext, testUserAssetId, 'newUserAssetName', function(throwable, userAsset) {
             if (throwable) {
                 test.error(new Error('throwable was defined on #renameUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
             } else {
@@ -366,14 +395,18 @@ var userAssetServiceRetrieveUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var _this = this;
         initializeManagers(this, test);
         createEntities(this, test);
-        var userAssetId = 'testId';
-        this.testUserAssetService.retrieveUserAsset(this.testRequestContext, userAssetId, function(throwable, userAsset) {
+        var testUserAssetId = this.testUserAsset1.getId();
+        this.testUserAssetService.retrieveUserAsset(this.testRequestContext, testUserAssetId, function(throwable, userAsset) {
             if (throwable) {
                 test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
             } else {
-                test.assertEqual(userAsset.getId(), userAssetId, 'UserAsset id should be set properly after retrieve.');
+                test.assertEqual(userAsset.getId(), testUserAssetId, 'UserAsset id should be set properly after retrieve.');
+                console.log('UserServiceAssetTests#userAssetServiceRetrieveUserAssetTest userAsset = ', userAsset);
+                test.assertEqual(userAsset.getUser().getId(), _this.testUserAsset1.getUserId(),
+                    'user ids should match');
                 test.complete();
             }
         });
@@ -398,14 +431,22 @@ var userAssetServiceRetrieveUserAssetsTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var _this = this;
         initializeManagers(this, test);
         createEntities(this, test);
         var userAssetIds = [this.testUserAsset1.getId(), this.testUserAsset2.getId()];
         this.testUserAssetService.retrieveUserAssets(this.testRequestContext, userAssetIds, function(throwable, userAssetMap) {
             if (throwable) {
-                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
+                test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = '
+                    + throwable + " stack " + throwable.stack));
             } else {
                 test.assertEqual(userAssetMap.getCount(), 2, '2 user assets should be retrieved');
+                var userAsset1 = userAssetMap.get(_this.testUserAsset1.getId());
+                test.assertEqual(userAsset1.getId(), _this.testUserAsset1.getId(),
+                    'make sure we are getting back the right user asset');
+                var userAsset2 = userAssetMap.get(_this.testUserAsset2.getId());
+                test.assertEqual(userAsset2.getId(), _this.testUserAsset2.getId(),
+                    'make sure we are getting back the right user asset');
                 test.complete();
             }
         });
@@ -429,6 +470,7 @@ var userAssetServiceRetrieveUserAssetsByUserIdTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var _this = this;
         initializeManagers(this, test);
         createEntities(this, test);
         this.testUserAssetService.retrieveUserAssetsByUserId(this.testRequestContext, this.testUser.getId(), function(throwable, userAssetMap) {
@@ -436,13 +478,19 @@ var userAssetServiceRetrieveUserAssetsByUserIdTest = {
                 test.error(new Error('throwable was defined on #retrieveUserAsset. throwable = ' + throwable + " stack " + throwable.stack));
             } else {
                 test.assertEqual(userAssetMap.getCount(), 2, '2 user assets should be retrieved');
+                var userAsset1 = userAssetMap.get(_this.testUserAsset1.getId());
+                test.assertEqual(userAsset1.getId(), _this.testUserAsset1.getId(),
+                    'make sure we are getting back the right user asset');
+                var userAsset2 = userAssetMap.get(_this.testUserAsset2.getId());
+                test.assertEqual(userAsset2.getId(), _this.testUserAsset2.getId(),
+                    'make sure we are getting back the right user asset');
                 test.complete();
             }
         });
     }
 };
 
-/*
+
 bugmeta.annotate(userAssetServiceCreateUserAssetTest).with(
     test().name("UserAssetService - Create UserAsset Test")
 );
@@ -466,5 +514,3 @@ bugmeta.annotate(userAssetServiceRetrieveUserAssetsTest).with(
 bugmeta.annotate(userAssetServiceRetrieveUserAssetsByUserIdTest).with(
     test().name("UserAssetService - Retrieve UserAssets By User Id Test")
 );
-
-*/

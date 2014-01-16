@@ -133,23 +133,39 @@ var UserAssetService = Class.extend(Obj, {
                                 flow.error(new Exception('NotFound'));
                             }
                         } else {
+                            console.log('UserAssetService#createUserAsset createUserAsset throwable = ', throwable);
                             flow.error(throwable);
                         }
                     });
                 }),
                 $task(function(flow) {
                     userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
-                        flow.complete(throwable);
+                        if (throwable) {
+                            console.log('UserAssetService#createUserAsset populateUserAsset throwable = ', throwable);
+                            flow.error(throwable);
+                        } else {
+                            flow.complete(throwable);
+                        }
                     });
                 }),
                 $task(function(flow) {
                     _this.userAssetPusher.meldCallWithUserAsset(callManagerCallUuid, userAsset, function(throwable) {
-                        flow.complete(throwable);
+                        if (throwable) {
+                            console.log('UserAssetService#createUserAsset meldCallWithUserAsset throwable = ', throwable);
+                            flow.error(throwable);
+                        } else {
+                            flow.complete(throwable);
+                        }
                     });
                 }),
                 $task(function(flow) {
                     _this.userAssetPusher.pushUserAssetToCall(userAsset, callManagerCallUuid, function(throwable) {
-                        flow.complete(throwable);
+                        if (throwable) {
+                            console.log('UserAssetService#createUserAsset pushUserAssetToCall throwable = ', throwable);
+                            flow.error(throwable);
+                        } else {
+                            flow.complete(throwable);
+                        }
                     });
                 })
             ]).execute(function(throwable) {
