@@ -321,15 +321,15 @@ var ChatMessageService = Class.extend(EntityService, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} conversationId
-     * @param {function(Throwable, Map.<string, ChatMessage>=)} callback
+     * @param {function(Throwable, List.<string, ChatMessage>=)} callback
      */
-    retrieveChatMessagesByConversationId: function(requestContext, conversationId, callback) {
+    retrieveChatMessagesByConversationIdSortBySentAt: function(requestContext, conversationId, callback) {
         var _this = this;
         var currentUser     = requestContext.get("currentUser");
         var callManager     = requestContext.get("callManager");
         if (currentUser.isNotAnonymous()) {
 
-            var chatMessageMap  = null;
+            var chatMessageList = null;
             var conversation    = null;
             var mappedException = null;
 
@@ -352,29 +352,26 @@ var ChatMessageService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessageManager.retrieveChatMessagesByConversationId(conversation.getId(), function(throwable, returnedChatMessageSet) {
+                    _this.chatMessageManager.retrieveChatMessagesByConversationIdSortBySentAt(conversation.getId(), function(throwable, returnedChatMessageList) {
                         if (!throwable) {
-                            chatMessageMap = new Map();
-                            returnedChatMessageSet.forEach(function(chatMessage) {
-                                chatMessageMap.put(chatMessage.getId(), chatMessage);
-                            });
+                            chatMessageList = returnedChatMessageList;
                         }
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageList.toArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), callManager.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(mappedException, chatMessageMap);
+                    callback(mappedException, chatMessageList);
                 } else {
                     callback(throwable);
                 }

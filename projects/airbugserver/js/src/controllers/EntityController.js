@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('List')
 //@Require('Map')
 //@Require('MappedThrowable')
 //@Require('Obj')
@@ -29,6 +30,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
+var List                = bugpack.require('List');
 var Map                 = bugpack.require('Map');
 var MappedThrowable     = bugpack.require('MappedThrowable');
 var Obj                 = bugpack.require('Obj');
@@ -122,6 +124,20 @@ var EntityController = Class.extend(Controller, {
     /**
      * @param {CallResponder} responder
      * @param {Throwable} throwable
+     * @param {List.<string>} entityIdList
+     * @param {function(Throwable=)} callback
+     */
+    processListResponse: function(responder, throwable, entityIdList, callback) {
+        if (!throwable) {
+            this.sendListSuccessResponse(responder, entityIdList, callback);
+        } else {
+            this.processThrowable(responder, throwable, callback);
+        }
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
      * @param {Map.<string, *>} map
      * @param {function(Throwable=)} callback
      */
@@ -165,6 +181,24 @@ var EntityController = Class.extend(Controller, {
             });
         }
         this.processMappedResponse(responder, throwable, dataMap, callback);
+    },
+
+    /**
+     * @param {CallResponder} responder
+     * @param {Throwable} throwable
+     * @param {IList.<string>} entityList
+     * @param {function(Throwable=)} callback
+     */
+    processRetrieveListResponse: function(responder, throwable, entityList, callback) {
+        var dataList             = new List();
+        if (entityList) {
+            entityList.forEach(function(entity) {
+                if (entity) {
+                    dataList.add(entity.getId());
+                }
+            });
+        }
+        this.processListResponse(responder, throwable, dataList, callback);
     },
 
     /**
@@ -242,8 +276,7 @@ var EntityController = Class.extend(Controller, {
         var response = responder.response(EntityDefines.Responses.ERROR, {
             error: error
         });
-        responder.sendResponse(response);
-        callback(error);
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -262,8 +295,19 @@ var EntityController = Class.extend(Controller, {
         var response = responder.response(EntityDefines.Responses.EXCEPTION, {
             exception: exception.toObject()
         });
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
+    },
+    /**
+     *
+     * @param {CallResponder} responder
+     * @param {List.<string>} entityIdList
+     * @param {function(Throwable=)} callback
+     */
+    sendListSuccessResponse: function(responder, entityIdList, callback) {
+        var response = responder.response(EntityDefines.Responses.LIST_SUCCESS, {
+            list: entityIdList.toArray()
+        });
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -283,8 +327,7 @@ var EntityController = Class.extend(Controller, {
         var response = responder.response(EntityDefines.Responses.MAPPED_EXCEPTION, {
             mappedException: mappedThrowable.toObject()
         });
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -296,8 +339,7 @@ var EntityController = Class.extend(Controller, {
         var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS, {
             map: map.toObject()
         });
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -311,8 +353,7 @@ var EntityController = Class.extend(Controller, {
             mappedException: mappedThrowable.toObject(),
             map: map.toObject()
         });
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -323,8 +364,7 @@ var EntityController = Class.extend(Controller, {
     sendSuccessResponse: function(responder, data, callback) {
         console.log("EntityController#sendSuccessResponse");
         var response = responder.response(EntityDefines.Responses.SUCCESS, data);
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
     },
 
     /**
@@ -338,8 +378,7 @@ var EntityController = Class.extend(Controller, {
             exception: exception,
             data: data
         });
-        responder.sendResponse(response);
-        callback();
+        responder.sendResponse(response, callback);
     },
 
     //-------------------------------------------------------------------------------

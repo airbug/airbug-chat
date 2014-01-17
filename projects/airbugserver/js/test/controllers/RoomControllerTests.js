@@ -109,8 +109,8 @@ var roomControllerJoinRoomTest = {
                     "Assert responseType was success");
                 return {};
             },
-            sendResponse: function(response) {
-
+            sendResponse: function(response, callback) {
+                callback();
             }
         };
         this.testCallback           = function(throwable) {
@@ -198,8 +198,8 @@ var roomControllerCreateRoomTest = {
                     "Assert data.objectId was set to the testRoomId");
                 return {};
             },
-            sendResponse: function(response) {
-
+            sendResponse: function(response, callback) {
+                callback();
             }
         };
         this.testCallback           = function(throwable) {

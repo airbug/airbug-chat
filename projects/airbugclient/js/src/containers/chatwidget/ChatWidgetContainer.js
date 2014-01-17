@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('ClearChange')
 //@Require('ISet')
+//@Require('List')
 //@Require('Map')
 //@Require('Obj')
 //@Require('RemoveChange')
@@ -368,16 +369,16 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     loadChatMessageList: function(conversationId) {
 
         var _this                       = this;
-        var chatMessageMeldDocumentSet  = new Set();
+        var chatMessageMeldDocumentList = new List();
         var senderUserMeldDocumentMap   = new Map();
         var senderUserIdSet             = new Set();
         $series([
             $task(function(flow) {
-               _this.chatMessageManagerModule.retrieveChatMessagesByConversationId(conversationId, function(throwable, retrievedChatMessageMeldDocumentMap) {
+               _this.chatMessageManagerModule.retrieveChatMessagesByConversationIdSortBySentAt(conversationId, function(throwable, retrievedChatMessageMeldDocumentList) {
                     if (!throwable) {
-                        retrievedChatMessageMeldDocumentMap.forEach(function(chatMessageMeldDocument, id) {
+                        retrievedChatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
                             if (chatMessageMeldDocument) {
-                                chatMessageMeldDocumentSet.add(chatMessageMeldDocument);
+                                chatMessageMeldDocumentList.add(chatMessageMeldDocument);
                                 senderUserIdSet.add(chatMessageMeldDocument.getData().senderUserId);
                             } else {
                                 //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
@@ -403,7 +404,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                chatMessageMeldDocumentSet.forEach(function(chatMessageMeldDocument) {
+                chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
                     var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
                     _this.buildChatMessageModel({
                             pending: false,

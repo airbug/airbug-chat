@@ -213,17 +213,13 @@ var ChatMessageController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              * @param {function(Throwable=)} callback
              */
-            retrieveChatMessagesByConversationId: function(request, responder, callback) {
+            retrieveChatMessagesByConversationIdSortBySentAt: function(request, responder, callback) {
                 var data                = request.getData();
                 var conversationId      = data.conversationId;
                 var requestContext      = request.requestContext;
 
-                chatMessageService.retrieveChatMessagesByConversationId(requestContext, conversationId, function(throwable, chatMessageMap) {
-                    var chatMessageIds = new Set();
-                    if (chatMessageMap) {
-                        chatMessageIds.addAll(chatMessageMap.getKeyArray());
-                    }
-                    _this.processRetrieveEachResponse(responder, throwable, chatMessageIds, chatMessageMap, callback);
+                chatMessageService.retrieveChatMessagesByConversationIdSortBySentAt(requestContext, conversationId, function(throwable, chatMessageList) {
+                    _this.processRetrieveListResponse(responder, throwable, chatMessageList, callback);
                 });
             }
         });

@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('List')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessage')
@@ -30,6 +31,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var List                        = bugpack.require('List');
 var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
@@ -174,7 +176,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      */
     retrieveChatMessagesByConversationId: function(conversationId, callback) {
         var _this = this;
-        this.dataStore.find({conversationId: conversationId}).lean(true).exec(function(throwable, dbObjects) {
+        this.getDataStore().find({conversationId: conversationId}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newSet = new Set();
                 dbObjects.forEach(function(dbObject) {
@@ -183,6 +185,27 @@ var ChatMessageManager = Class.extend(EntityManager, {
                     newSet.add(chatMessage);
                 });
                 callback(null, newSet);
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, List.<ChatMessage>=)} callback
+     */
+    retrieveChatMessagesByConversationIdSortBySentAt: function(conversationId, callback) {
+        var _this = this;
+        this.dataStore.find({conversationId: conversationId}).sort({sentAt: 1}).lean(true).exec(function(throwable, dbObjects) {
+            if (!throwable) {
+                var newList = new List();
+                dbObjects.forEach(function(dbObject) {
+                    var chatMessage = _this.convertDbObjectToEntity(dbObject);
+                    chatMessage.commitDelta();
+                    newList.add(chatMessage);
+                });
+                callback(null, newList);
             } else {
                 callback(throwable);
             }

@@ -441,7 +441,7 @@ var ManagerModule = Class.extend(Obj, {
     },
 
     /**
-     * @private
+     * @protected
      * @param {RetrieveRequest} request
      */
     removeRetrieveRequest: function(request) {
@@ -451,7 +451,7 @@ var ManagerModule = Class.extend(Obj, {
     },
 
     /**
-     * @private
+     * @protected
      * @param {MeldDocumentKey} meldDocumentKey
      * @return {MeldDocument}
      */
@@ -460,7 +460,7 @@ var ManagerModule = Class.extend(Obj, {
     },
 
     /**
-     * @private
+     * @protected
      * @param {Array.<string>} meldDocumentKeys
      * @return {List.<MeldDocument>}
      */
@@ -468,9 +468,46 @@ var ManagerModule = Class.extend(Obj, {
         return this.meldStore.getEachMeldDocumentByMeldDocumentKey(meldDocumentKeys);
     },
 
+    /**
+     * @protected
+     * @param {Throwable} throwable
+     * @param {CallResponse} callResponse
+     * @param {string} type
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
+     */
+    processListRetrieveResponse: function(throwable, callResponse, type, callback) {
+        var _this               = this;
+        var retrievedMeldList   = new List();
+        var dataList            = null;
+        if (!throwable) {
+            var responseType    = callResponse.getType();
+            var data            = callResponse.getData();
+            if (responseType === EntityDefines.Responses.LIST_SUCCESS) {
+                dataList     = data.list;
+                dataList.forEach(function(objectId) {
+                    var returnedMeldDocumentKey = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                    var meldDocument    = _this.get(returnedMeldDocumentKey);
+                    if (meldDocument) {
+                        retrievedMeldList.add(meldDocument);
+                    }
+                });
+                callback(null, retrievedMeldList);
+            } else if (responseType === EntityDefines.Responses.EXCEPTION) {
+                //TODO BRN: Handle common exceptions
+                callback(new Exception(data.exception));
+            } else if (responseType === EntityDefines.Responses.ERROR) {
+                //TODO BRN: Handle common errors
+                callback(new Error(data.error));
+            } else {
+                callback(null, callResponse);
+            }
+        } else {
+            callback(throwable);
+        }
+    },
 
     /**
-     * @private
+     * @protected
      * @param {Throwable} throwable
      * @param {CallResponse} callResponse
      * @param {(Map.<string, MeldDocument> | function(Throwable, Map.<string, MeldDocument>=))} retrievedMeldMap

@@ -333,9 +333,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
      */
-    retrieveChatMessagesByConversationId: function(conversationId, callback) {
+    retrieveChatMessagesByConversationIdSortBySentAt: function(conversationId, callback) {
         var args = ArgUtil.process(arguments, [
             {name: "conversationId", optional: false, type: "string"},
             {name: "callback", optional: false, type: "function"}
@@ -344,12 +344,10 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         callback        = args.callback;
 
         var _this       = this;
-        var retrievedMeldMap   = new Map();
-
         var requestData = {conversationId: conversationId};
-        var requestType = "retrieveChatMessagesByConversationId";
+        var requestType = "retrieveChatMessagesByConversationIdSortBySentAt";
         this.request(requestType, requestData, function(throwable, callResponse) {
-            _this.processMappedRetrieveResponse(throwable, callResponse, retrievedMeldMap, "ChatMessage", callback);
+            _this.processListRetrieveResponse(throwable, callResponse, "ChatMessage", callback);
         });
     }
 });
