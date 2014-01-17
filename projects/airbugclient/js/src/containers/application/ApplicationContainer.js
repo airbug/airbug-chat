@@ -10,6 +10,7 @@
 //@Require('airbug.ApplicationView')
 //@Require('airbug.BodyView')
 //@Require('airbug.ApplicationHeaderView')
+//@Require('airbug.ErrorNotificationOverlayContainer')
 //@Require('airbug.NotificationView')
 //@Require('carapace.CarapaceContainer')
 
@@ -25,12 +26,13 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ApplicationView         = bugpack.require('airbug.ApplicationView');
-var BodyView                = bugpack.require('airbug.BodyView');
-var ApplicationHeaderView   = bugpack.require('airbug.ApplicationHeaderView');
-var NotificationView        = bugpack.require('airbug.NotificationView');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var Class                               = bugpack.require('Class');
+var ApplicationView                     = bugpack.require('airbug.ApplicationView');
+var BodyView                            = bugpack.require('airbug.BodyView');
+var ApplicationHeaderView               = bugpack.require('airbug.ApplicationHeaderView');
+var ErrorNotificationOverlayContainer   = bugpack.require('airbug.ErrorNotificationOverlayContainer');
+var NotificationView                    = bugpack.require('airbug.NotificationView');
+var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -198,6 +200,25 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      */
     initializeApplication: function() {
         this.initializeContainer();
+        this.initializeCatchAllUncaughtErrorsFunction();
+    },
+
+    initializeCatchAllUncaughtErrorsFunction: function() {
+        var _this = this;
+        var oldOnError = window.onerror;
+        window.onerror = function(errorMessage, url, lineNumber){
+            if(oldOnError){ //uncaught execption
+                var errorObject = {
+                    errorMessage: errorMessage,
+                    url: url,
+                    lineNumber: lineNumber
+                };
+              var errorNotificationOverlayContainer = new ErrorNotificationOverlayContainer(errorObject);
+                _this.addContainerChild(errorNotificationOverlayContainer, "body");
+            }
+
+        return false;
+        };
     }
 });
 
