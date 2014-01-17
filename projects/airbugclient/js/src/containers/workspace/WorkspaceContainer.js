@@ -228,7 +228,6 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         workspaceWidgets.not(widgetId).removeClass("workspace-widget-open").hide();
         widget.addClass("workspace-widget-open").show();
     }
-
 });
 
 

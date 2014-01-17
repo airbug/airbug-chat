@@ -303,6 +303,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
     },
 
     /**
@@ -310,6 +311,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeCommandSubscriptions: function() {
         this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
     },
 
 
@@ -323,6 +325,10 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     handleDisplayCodeCommand: function(message) {
         var code = message.getData().code;
         this.setEditorText(code);
+    },
+
+    handleDisplayCodeEditorCommand: function(message) {
+        this.focusOnAceEditor();
     },
 
 
@@ -394,6 +400,14 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         if (this.aceEditor) {
             this.aceEditor.setReadOnly(true);
         }
+    },
+
+    focusOnAceEditor: function() {
+        var aceEditor = this.aceEditor;
+        var session = aceEditor.getSession();
+        var count = session.getLength();
+        aceEditor.focus();
+        aceEditor.gotoLine(count, session.getLine(count-1).length);
     }
 });
 
