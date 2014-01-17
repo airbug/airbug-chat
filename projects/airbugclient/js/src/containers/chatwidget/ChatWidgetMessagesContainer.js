@@ -82,6 +82,17 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
          */
         this.chatMessageModelToChatMessageContainerMap  = new Map();
 
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.resetTimer                                 = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.timerIsSet                                 = false;
 
         // Models
         //-------------------------------------------------------------------------------
@@ -180,9 +191,37 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    setAnimationTimer: function() {
+        var _this = this;
+        setTimeout(function() {
+            _this.timerAnimationHandler();
+        }, 50);
+    },
+
+    /**
+     * @protected
+     */
+    timerAnimationHandler: function() {
+        if (this.resetTimer === true) {
+            this.resetTimer = false;
+            this.setAnimationTimer();
+        } else {
+            this.timerIsSet = false;
+            var panelBody = this.chatWidgetMessagesView.$el.find(".panel-body");
+            panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
+        }
+    },
+
+    /**
+     * @protected
+     */
     animateChatMessageCollectionAdd: function() {
-        var panelBody = this.chatWidgetMessagesView.$el.find(".panel-body");
-        panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
+        if (this.timerIsSet) {
+            this.resetTimer = true;
+        } else {
+            this.timerIsSet = true;
+            this.setAnimationTimer();
+        }
         //TODO:
         //make the transition time dynamic to fit the length of the message and the speed of incoming messages
         //NOTE: SUNG I think we should make automatic scrolling only occur while the user is active.
