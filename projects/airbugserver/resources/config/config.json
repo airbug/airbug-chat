@@ -12,5 +12,6 @@
         "port": 6379
     },
     "sessionKey": "'airbug.sid'",
-    "staticUrl": "http://localhost:8000"
+    "staticUrl": "/static",
+    "stickyStaticUrl": "/static"
 }

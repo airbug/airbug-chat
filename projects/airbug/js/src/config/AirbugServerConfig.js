@@ -81,6 +81,20 @@ var AirbugServerConfig = Class.extend(Config, {
      */
     setStaticUrl: function(staticUrl) {
         this.setProperty("staticUrl", staticUrl);
+    },
+
+    /**
+     * @return {string}
+     */
+    getStickyStaticUrl: function() {
+        return this.getProperty("stickyStaticUrl");
+    },
+
+    /**
+     * @param {string} stickyStaticUrl
+     */
+    setStickyStaticUrl: function(stickyStaticUrl) {
+        this.setProperty("stickyStaticUrl", stickyStaticUrl);
     }
 });
 

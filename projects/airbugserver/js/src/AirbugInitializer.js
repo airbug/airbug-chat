@@ -262,7 +262,7 @@ var AirbugInitializer = Class.extend(Obj, {
                     _this.expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
                     _this.expressApp.use(express.bodyParser());
                     _this.expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
-                    _this.expressApp.use(express.static(path.resolve(__dirname, '../static')));
+                    _this.expressApp.use('/static', express.static(path.resolve(__dirname, '../static')));
                     _this.expressApp.use(_this.expressApp.getApp().router);
                 });
 
@@ -350,13 +350,15 @@ var AirbugInitializer = Class.extend(Obj, {
             "github.clientId",
             "github.redirectUri",
             "github.scope",
-            "staticUrl"
+            "staticUrl",
+            "stickyStaticUrl"
         ]);
 
         this.airbugServerConfig.absorbConfig(config, [
             "github.clientId",
             "github.clientSecret",
-            "staticUrl"
+            "staticUrl",
+            "stickyStaticUrl"
         ]);
 
         this.sessionServiceConfig.absorbConfig(config, [

@@ -108,6 +108,12 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         // Modules
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {AirbugClientConfig}
+         */
+        this.airbugClientConfig         = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -238,6 +244,8 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         this.setViewTop(this.codeEditorWidgetView);
         this.embedButtonView    = this.findViewById("embed-code-button");
         this.codeEditorView     = this.findViewById("code-editor-view");
+
+        Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
         this.aceEditor          = Ace.edit(this.codeEditorView.$el.get(0));
     },
 
@@ -396,6 +404,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(CodeEditorWidgetContainer).with(
     autowired().properties([
+        property("airbugClientConfig").ref("airbugClientConfig"),
         property("commandModule").ref("commandModule")
     ])
 );

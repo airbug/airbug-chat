@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.5";
+var version             = "0.0.6";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -105,7 +105,7 @@ buildProperties({
             "../bugjs/external/acemodes/js/src",
             "../bugjs/external/acesnippets/js/src",
             "../bugjs/external/acethemes/js/src",
-            "../bugjs/external/acesnippets/js/src"
+            "../bugjs/external/aceworkers/js/src"
         ]
     },
     server: {
