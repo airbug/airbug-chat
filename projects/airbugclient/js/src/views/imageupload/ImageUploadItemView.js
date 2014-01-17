@@ -42,9 +42,6 @@ var ImageUploadItemView = Class.extend(MustacheView, {
             <div class="success-indicator pull-right" style="display: none">\
                 <i class="icon-ok"></i>\
             </div>\
-            <div class="cancel-button pull-right">\
-                <button class="btn btn-warning"><i class="icon-ban-circle icon-white"></i></button>\
-            </div>\
             <div class="progress progress-striped active">\
                 <div class="bar" style="width: 10%">\
                 </div>\
