@@ -330,7 +330,7 @@ var RoomService = Class.extend(EntityService, {
                 }),
                 //deletes and removes
                 $task(function(flow) {
-                    _this.dbRemoveUserFromRoom(user, room, function(throwable) {
+                    _this.dbRemoveUserFromRoom(user, room, roomMember, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
@@ -588,7 +588,7 @@ var RoomService = Class.extend(EntityService, {
 
         $parallel([
             $task(function(flow) {
-                _this.roomManager.retrieveRoomMemberByUserIdAndRoomId(userId, roomId, function(throwable, returnedRoomMember) {
+                _this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(userId, roomId, function(throwable, returnedRoomMember) {
                     if (!throwable) {
                         roomMember = returnedRoomMember;
                     }
@@ -665,7 +665,7 @@ var RoomService = Class.extend(EntityService, {
 
         $parallel([
             $task(function(flow) {
-                _this.roomManager.retrieveRoomMemberByUserIdAndRoomId(userId, roomId, function(throwable, returnedRoomMember) {
+                _this.roomMemberManager.retrieveRoomMemberByUserIdAndRoomId(userId, roomId, function(throwable, returnedRoomMember) {
                     if (!throwable) {
                         roomMember = returnedRoomMember;
                     }
@@ -767,10 +767,10 @@ var RoomService = Class.extend(EntityService, {
      * @private
      * @param {User} user
      * @param {Room} room
+     * @param {RoomMember} roomMember
      * @param {function(Throwable, User, Room)} callback
      */
-    dbRemoveUserFromRoom: function(user, room, callback) {
-        console.log('RoomService#dbRemoveUserFromRoom');
+    dbRemoveUserFromRoom: function(user, room, roomMember, callback) {
         var roomManager         = this.roomManager;
         var userManager         = this.userManager;
         var roomMemberManager   = this.roomMemberManager;
