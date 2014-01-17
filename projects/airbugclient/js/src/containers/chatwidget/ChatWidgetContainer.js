@@ -422,7 +422,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var _this                           = this;
         $series([
             $task(function(flow) {
-                _this.chatMessageStreamManagerModule.retrieveChatMessageSteam(conversationId, function(throwable, chatMessageStreamMeldDocument) {
+                _this.chatMessageStreamManagerModule.retrieveChatMessageStream(conversationId, function(throwable, chatMessageStreamMeldDocument) {
                     if (!throwable) {
                         _this.chatMessageStreamModel.setConversationChatMessageStreamMeldDocument(chatMessageStreamMeldDocument);
                     }

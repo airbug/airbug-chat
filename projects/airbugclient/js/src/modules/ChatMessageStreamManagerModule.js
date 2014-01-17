@@ -66,7 +66,7 @@ var ChatMessageStreamManagerModule = Class.extend(ManagerModule, {
      * @param {string} conversationId
      * @param {function(Throwable, MeldDocument=)} callback
      */
-    retrieveChatMessageSteam: function(conversationId, callback) {
+    retrieveChatMessageStream: function(conversationId, callback) {
         this.retrieve("ChatMessageStream", conversationId, callback);
     }
 });
