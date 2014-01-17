@@ -10,7 +10,11 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('airbug.TextView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -29,7 +33,11 @@ var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var TextView                = bugpack.require('airbug.TextView');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -37,6 +45,10 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired               = AutowiredAnnotation.autowired;
+var bugmeta                 = BugMeta.context();
+var CommandType             = CommandModule.CommandType;
+var property                = PropertyAnnotation.property;
 var view                    = ViewBuilder.view;
 
 
@@ -68,6 +80,15 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
          * @type {ButtonView}
          */
         this.buttonView         = null;
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule      = null;
     },
 
 
@@ -120,9 +141,20 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
      */
     hearChatMessageReplyButtonClickedEvent: function(event) {
         //TODO
+        this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
+        this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
     }
 });
 
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(ChatMessageReplyButtonContainer).with(
+    autowired().properties([
+        property("commandModule").ref("commandModule")
+    ])
+);
 
 //-------------------------------------------------------------------------------
 // Exports
