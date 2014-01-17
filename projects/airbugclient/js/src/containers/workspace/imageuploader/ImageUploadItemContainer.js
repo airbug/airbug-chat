@@ -192,11 +192,10 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
     initializeEventListeners: function() {
         this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
-        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
     },
 
     deinitializeEventListeners: function() {
-
+        this.imageUploadItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
     },
 
     /**
@@ -228,23 +227,8 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
     /**
      *
      */
-    handleDeleteImageEvent: function(event) {
-        console.log("ImageUploadItemContainer#handleDeleteImageEvent");
-        this.removeUploadItemFromDocument();
-    },
-
-    /**
-     *
-     */
     getImageAssetModel: function() {
         return this.imageAssetModel;
-    },
-
-    /**
-     *
-     */
-    removeUploadItemFromDocument: function() {
-        this.viewTop.$el.remove();
     },
 
     /**

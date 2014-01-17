@@ -4,10 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('ImageUploadItemButtonToolbarContainer')
+//@Export('ImageListItemButtonToolbarContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonToolbarView')
+//@Require('airbug.DeleteImageButtonGroupContainer')
 //@Require('airbug.SendImageButtonGroupContainer')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -27,6 +28,7 @@ var bugpack = require('bugpack').context();
 var Class                               = bugpack.require('Class');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+var DeleteImageButtonGroupContainer     = bugpack.require('airbug.DeleteImageButtonGroupContainer');
 var SendImageButtonGroupContainer       = bugpack.require('airbug.SendImageButtonGroupContainer');
 var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
@@ -42,7 +44,7 @@ var view                                = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
+var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,6 +70,12 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
         // Containers
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {DeleteImageButtonGroupContainer}
+         */
+        this.deleteImageButtonGroupContainer    = null;
 
         /**
          * @private
@@ -109,8 +117,10 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
+        this.deleteImageButtonGroupContainer    = new DeleteImageButtonGroupContainer();
         this.sendImageButtonGroupContainer      = new SendImageButtonGroupContainer();
 
+        this.addContainerChild(this.deleteImageButtonGroupContainer,    ".btn-toolbar");
         this.addContainerChild(this.sendImageButtonGroupContainer,      ".btn-toolbar");
     }
 });
@@ -120,4 +130,4 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageUploadItemButtonToolbarContainer", ImageUploadItemButtonToolbarContainer);
+bugpack.export("airbug.ImageListItemButtonToolbarContainer", ImageListItemButtonToolbarContainer);

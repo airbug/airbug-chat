@@ -13,7 +13,7 @@
 //@Require('airbug.ImageViewEvent')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
-//@Require('airbug.ImageUploadItemButtonToolbarContainer')
+//@Require('airbug.ImageListItemButtonToolbarContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -36,7 +36,7 @@ var bugpack = require('bugpack').context();
 
 var Class                                   = bugpack.require('Class');
 var CommandModule                           = bugpack.require('airbug.CommandModule');
-var ImageUploadItemButtonToolbarContainer   = bugpack.require('airbug.ImageUploadItemButtonToolbarContainer');
+var ImageListItemButtonToolbarContainer     = bugpack.require('airbug.ImageListItemButtonToolbarContainer');
 var ImageListItemView                       = bugpack.require('airbug.ImageListItemView');
 var ImageViewEvent                          = bugpack.require('airbug.ImageViewEvent');
 var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
@@ -129,9 +129,9 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ImageUploadItemButtonToolbarContainer}
+         * @type {ImageListItemButtonToolbarContainer}
          */
-        this.imageUploadItemButtonToolbarContainer  = null;
+        this.imageListItemButtonToolbarContainer    = null;
     },
 
 
@@ -175,9 +175,9 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-        this.imageUploadItemButtonToolbarContainer   = new ImageUploadItemButtonToolbarContainer();
+        this.imageListItemButtonToolbarContainer   = new ImageListItemButtonToolbarContainer();
 
-        this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-list-item");
+        this.addContainerChild(this.imageListItemButtonToolbarContainer, ".image-list-item");
     },
 
     /**
