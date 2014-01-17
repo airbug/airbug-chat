@@ -692,7 +692,7 @@ div.overlay-background {
     margin: 0;
 }
 
-.chat-widget-input textarea {
+.chat-widget-input .column1of2 textarea {
     height: 3em;
     margin-left: 2px;
     margin-right: 2px;
@@ -703,7 +703,7 @@ div.overlay-background {
     left: 0;
     top: 0;
     bottom: 30px;
-    width: auto;
+    width: 97%;
     background-color: rgb(255, 255, 255);
     border-color: rgb(196, 196, 196);
     border-width: 1px;
@@ -717,14 +717,14 @@ div.overlay-background {
     padding: 0px;
 }
 
-.chat-widget-input .button-wrapper:first-child {
+#choose-or-upload-image-button-wrapper {
     left: 0;
     width: 33%;
 }
 
-.chat-widget-input .button-wrapper:last-child {
+#chat-widget-input-send-button-wrapper {
     right: -9%;
-    width: 77%;
+    width: 74%;
 }
 
 .chat-widget-input .btn {
@@ -736,7 +736,14 @@ div.overlay-background {
     height: 50px;
     border-radius: 10px;
     box-shadow: 2px 2px 2px 2px #888888;
+}
 
+#choose-or-upload-image-button {
+    width: 98%;
+}
+
+#chat-widget-input-send-button {
+    width: 97%;
 }
 
 .chat-widget-input .control-group-checkbox {
