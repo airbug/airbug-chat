@@ -100,11 +100,6 @@ var SendImageNakedButtonContainer = Class.extend(CarapaceContainer, {
                     type: NakedButtonView.Type.PRIMARY
                 })
                 .children([
-                    view(IconView)
-                        .attributes({
-                            type: IconView.Type.ENVELOPE,
-                            color: IconView.Color.WHITE
-                        }),
                     view(TextView)
                         .attributes({
                             text: " Send"

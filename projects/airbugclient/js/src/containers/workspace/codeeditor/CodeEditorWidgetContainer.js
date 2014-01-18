@@ -230,7 +230,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
                         })
                         .children([
                             view(TextView)
-                                .attributes({text: "embed"})
+                                .attributes({text: "Send"})
                                 .appendTo("#embed-code-button")
                         ])
                         .appendTo("#code-editor-widget-footer")
