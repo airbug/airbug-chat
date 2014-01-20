@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('LeaveRoomButtonContainer')
+//@Export('ExitRoomButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -57,7 +57,7 @@ var view        = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
+var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -65,7 +65,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function(roomModel) {
 
-        this._super("LeaveRoomButton");
+        this._super("ExitRoomButton");
 
 
         //-------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLeaveRoomButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearExitRoomButtonClickedEvent, this);
     },
 
 
@@ -157,21 +157,10 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearLeaveRoomButtonClickedEvent: function(event) {
-        var _this = this;
-        if (this.roomModel.getProperty("id")) {
-            this.roomManagerModule.leaveRoom(this.roomModel.getProperty("id"), function(throwable) {
-                if (!throwable) {
-                    _this.navigationModule.navigate("home", {
-                        trigger: true
-                    });
-                } else {
-                    //TODO
-                }
-            });
-        } else {
-            console.warn("Room id not set yet. Cannot send leaveRoom command");
-        }
+    hearExitRoomButtonClickedEvent: function(event) {
+        this.navigationModule.navigate("home", {
+            trigger: true
+        });
     }
 });
 
@@ -180,7 +169,7 @@ var LeaveRoomButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(LeaveRoomButtonContainer).with(
+bugmeta.annotate(ExitRoomButtonContainer).with(
     autowired().properties([
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
@@ -192,4 +181,4 @@ bugmeta.annotate(LeaveRoomButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LeaveRoomButtonContainer", LeaveRoomButtonContainer);
+bugpack.export("airbug.ExitRoomButtonContainer", ExitRoomButtonContainer);
