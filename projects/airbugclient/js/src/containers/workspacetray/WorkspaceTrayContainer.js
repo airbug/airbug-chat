@@ -201,6 +201,7 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
     hearImageEditorButtonClickedEvent: function(event) {
         this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {source: "#image-editor-button"});
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_EDITOR, {});
+        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_LIST, {});
     }
 });
 
