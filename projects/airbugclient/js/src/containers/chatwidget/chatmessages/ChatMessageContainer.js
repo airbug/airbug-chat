@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
-//@Require('airbug.ChatMessageReplyButtonContainer')
+//@Require('airbug.ChatMessageTinkerButtonContainer')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.ListItemView')
@@ -32,19 +32,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                           = bugpack.require('Class');
-var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-var ChatMessageReplyButtonContainer = bugpack.require('airbug.ChatMessageReplyButtonContainer');
-var ChatMessageView                 = bugpack.require('airbug.ChatMessageView');
-var CommandModule                   = bugpack.require('airbug.CommandModule');
-var ListItemView                    = bugpack.require('airbug.ListItemView');
-var PanelView                       = bugpack.require('airbug.PanelView');
-var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var ChatMessageTinkerButtonContainer    = bugpack.require('airbug.ChatMessageTinkerButtonContainer');
+var ChatMessageView                     = bugpack.require('airbug.ChatMessageView');
+var CommandModule                       = bugpack.require('airbug.CommandModule');
+var ListItemView                        = bugpack.require('airbug.ListItemView');
+var PanelView                           = bugpack.require('airbug.PanelView');
+var RequestFailedException              = bugpack.require('bugcall.RequestFailedException');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -94,14 +94,23 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatMessageView}
          */
-        this.chatMessageView            = null;
+        this.chatMessageView                    = null;
 
         /**
          * @private
          * @type {ListItemView}
          */
-        this.listItemView               = null;
+        this.listItemView                       = null;
 
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ChatMessageTinkerButtonContainer}
+         */
+        this.chatMessageTinkerButtonContainer   = null;
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -110,19 +119,19 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ChatMessageManagerModule}
          */
-        this.chatMessageManagerModule   = null;
+        this.chatMessageManagerModule           = null;
 
         /**
          * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                      = null;
 
         /**
          * @private
          * @type {UserManagerModule}
          */
-        this.userManagerModule          = null;
+        this.userManagerModule                  = null;
     },
 
 
@@ -201,8 +210,8 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         var type = this.chatMessageModel.getProperty("type");
         if (type === "code") {
-            this.chatMessageReplyButton = new ChatMessageReplyButtonContainer();
-            this.addContainerChild(this.chatMessageReplyButton, ".message-controls");
+            this.chatMessageTinkerButtonContainer = new ChatMessageTinkerButtonContainer();
+            this.addContainerChild(this.chatMessageTinkerButtonContainer, ".message-controls");
         }
     },
 
@@ -220,7 +229,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 _this.handleChatMessageRetry();
                 return false;
             });
-        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageReply, this);
+        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
     },
 
 
@@ -284,7 +293,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    handleChatMessageReply: function(event) {
+    handleChatMessageTinker: function(event) {
         var chatMessageId = this.chatMessageModel.getProperty("id");
         if (this.chatMessageModel.getProperty("type") === "code") {
             var code = this.chatMessageModel.getProperty("code");

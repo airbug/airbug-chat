@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ChatMessageReplyButtonContainer')
+//@Export('ChatMessageTinkerButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -56,7 +56,7 @@ var view                    = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
+var ChatMessageTinkerButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -64,7 +64,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function() {
 
-        this._super("ChatMessageReplyButton");
+        this._super("ChatMessageTinkerButton");
 
 
         //-------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
                 .attributes({type: "link", align: "right"})
                 .children([
                     view(TextView)
-                        .attributes({text: "reply"})
+                        .attributes({text: "tinker"})
                         .appendTo('button[id|="button"]')
                 ])
                 .build();
@@ -127,7 +127,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearChatMessageReplyButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearChatMessageTinkerButtonClickedEvent, this);
     },
 
 
@@ -139,7 +139,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearChatMessageReplyButtonClickedEvent: function(event) {
+    hearChatMessageTinkerButtonClickedEvent: function(event) {
         //TODO
         this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
@@ -150,7 +150,7 @@ var ChatMessageReplyButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ChatMessageReplyButtonContainer).with(
+bugmeta.annotate(ChatMessageTinkerButtonContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule")
     ])
@@ -160,4 +160,4 @@ bugmeta.annotate(ChatMessageReplyButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ChatMessageReplyButtonContainer", ChatMessageReplyButtonContainer);
+bugpack.export("airbug.ChatMessageTinkerButtonContainer", ChatMessageTinkerButtonContainer);
