@@ -12,7 +12,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CloseShareRoomOverlayButtonContainer')
 //@Require('airbug.CopyToClipboardButtonView')
-//@Require('airbug.FauxTextAreaView')
+//@Require('airbug.FauxTextFieldView')
 //@Require('airbug.IconView')
 //@Require('airbug.OverlayView')
 //@Require('airbug.ParagraphView')
@@ -42,7 +42,7 @@ var ButtonView                              = bugpack.require('airbug.ButtonView
 var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
 var CloseShareRoomOverlayButtonContainer    = bugpack.require('airbug.CloseShareRoomOverlayButtonContainer');
 var CopyToClipboardButtonView               = bugpack.require('airbug.CopyToClipboardButtonView');
-var FauxTextAreaView                        = bugpack.require('airbug.FauxTextAreaView');
+var FauxTextFieldView                       = bugpack.require('airbug.FauxTextFieldView');
 var IconView                                = bugpack.require('airbug.IconView');
 var OverlayView                             = bugpack.require('airbug.OverlayView');
 var ParagraphView                           = bugpack.require('airbug.ParagraphView');
@@ -146,9 +146,9 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
     activateContainer: function() {
         this._super();
         this.createZeroClipboard();
-        var fauxTextArea = this.overlayView.$el.find(".faux-textarea p");
+        var fauxTextArea = this.overlayView.$el.find("input");
         fauxTextArea.on("click", function() {
-            fauxTextArea.selectText();
+            fauxTextArea.select();
         });
     },
 
@@ -177,13 +177,10 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
                             view(ParagraphView)
                                 .attributes({text: "Share room " + this.roomModel.getProperty("name")})
                                 .appendTo('.box-body'),
-                            view(FauxTextAreaView)
-                                .children([
-                                    view(ParagraphView)
-                                        .attributes({
-                                            text: currentUrl + "#room/" + this.roomModel.getProperty("id")
-                                        })
-                                ])
+                            view(FauxTextFieldView)
+                                .attributes({
+                                    value: currentUrl + "#room/" + this.roomModel.getProperty("id")
+                                })
                                 .appendTo('.box-body'),
                             view(CopyToClipboardButtonView)
                                 .id("copy-room-link-button")

@@ -919,44 +919,20 @@ div.overlay-background {
 /* ShareRoomContainer
 *******************************************************************/
 
-.share-room-overlay .box .box-body {
+.share-room-overlay .box>.box-body {
     margin-top: 20px;
 }
 
-.share-room-overlay .overlay-body {
+.share-room-overlay>.overlay-body {
     height: 120px;
 }
 
-.faux-textarea {
-    -moz-appearance: textfield-multiline;
-    -webkit-appearance: textarea;
-    background-color: white;
-    border: 1px solid gray;
-    font: medium -moz-fixed;
-    font: -webkit-small-control;
-    height: 1em;
-    overflow: scroll;
-    padding: 2px;
-    resize: both;
-    width: auto;
-    position: relative;
-    margin-bottom: 1em;
-    right: 0;
-    left: 0;
+.share-room-overlay input.faux-textfield {
+    width: 95%;
 }
 
-.faux-input {
-    -moz-appearance: textfield;
-    -webkit-appearance: textfield;
-    background-color: white;
-    background-color: -moz-field;
-    border: 1px solid darkgray;
-    box-shadow: 1px 1px 1px 0 lightgray inset;
-    font: -moz-field;
-    font: -webkit-small-control;
-    margin-top: 5px;
-    padding: 2px 3px;
-    width: 398px;
+input[readonly].faux-textfield, textarea[readonly].faux-textarea {
+    cursor: pointer;
 }
 
 /* CodeEditor and CodeEditorSettings CSS (borrows from Box CSS)

@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('FauxTextAreaView')
+//@Export('FauxTextFieldView')
 
 //@Require('Class')
 //@Require('TypeUtil')
@@ -31,13 +31,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var FauxTextAreaView = Class.extend(MustacheView, {
+var FauxTextFieldView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<textarea id="{{id}}" class="{{classes}}" rows="{{rows}}" cols="{{columns}}" readonly="readonly">{{value}}</textarea>',
+    template:   '<input id="{{id}}" class="{{classes}}" type="text" value="{{value}}" readonly="readonly" >',
 
 
     //-------------------------------------------------------------------------------
@@ -48,15 +48,10 @@ var FauxTextAreaView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this._super();
-        data.id = this.getId() || "faux-textarea-" + this.getCid();
-        if (!TypeUtil.isNumber(data.attributes.rows)) {
-            data.attributes.rows = 2;
-        }
-        data.columns    = this.attributes.columns;
-        data.rows       = this.attributes.rows;
+        var data        = this._super();
+        data.id         = this.getId() || "faux-textfield-" + this.getCid();
         data.value      = this.attributes.value;
-        data.classes    = this.attributes.classes ? "faux-textarea" + this.attributes.classes : "faux-textarea";
+        data.classes    = this.attributes.classes ? "faux-textfield" + this.attributes.classes : "faux-textfield";
         return data;
     }
 });
@@ -66,4 +61,4 @@ var FauxTextAreaView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.FauxTextAreaView", FauxTextAreaView);
+bugpack.export("airbug.FauxTextFieldView", FauxTextFieldView);
