@@ -316,7 +316,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // currently only supports text chatmessages via this function
         var formData = this.getFormData();
         console.log("formData:", formData);
-        if (formData.text === "") {
+        if (!/\S/.test(formData.text)) {
             formData.text = "(y)";
         }
         if (!formData.type) {
@@ -382,7 +382,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
             this.processEnterKey();
         } else {
             var formData  = this.getFormData();
-            if (formData.text === "") {
+            if (!/\S/.test(formData.text)) {
                 this.sendButtonTextView.setText("Ok");
             } else {
                 this.sendButtonTextView.setText("Send");
