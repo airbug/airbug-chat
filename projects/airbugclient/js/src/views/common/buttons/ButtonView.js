@@ -197,6 +197,7 @@ ButtonView.Size = {
  * @enum {string}
  */
 ButtonView.Type = {
+    DEFAULT:    "default",
     PRIMARY:    "primary",
     INFO:       "info",
     SUCCESS:    "sucess",

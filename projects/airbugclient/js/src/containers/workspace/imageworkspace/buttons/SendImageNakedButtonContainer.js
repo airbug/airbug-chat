@@ -97,7 +97,7 @@ var SendImageNakedButtonContainer = Class.extend(CarapaceContainer, {
         this.buttonView =
             view(NakedButtonView)
                 .attributes({
-                    type: NakedButtonView.Type.PRIMARY
+                    type: NakedButtonView.Type.DEFAULT
                 })
                 .children([
                     view(TextView)

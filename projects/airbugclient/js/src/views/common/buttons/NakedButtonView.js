@@ -193,6 +193,7 @@ NakedButtonView.Size = {
  * @enum {string}
  */
 NakedButtonView.Type = {
+    DEFAULT:    "default",
     PRIMARY:    "primary",
     INFO:       "info",
     SUCCESS:    "success",
