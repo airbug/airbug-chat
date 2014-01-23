@@ -169,7 +169,7 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
         var githubUrl = new Url({
             protocol: "https",
             host: "github.com",
-            path: "login/oauth/authorize"
+            path: "/login/oauth/authorize"
         })
             .addUrlQuery("client_id", this.airbugClientConfig.getGithubClientId())
             .addUrlQuery("redirect_uri", githubRedirectUri)
