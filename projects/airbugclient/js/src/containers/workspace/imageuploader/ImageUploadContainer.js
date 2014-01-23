@@ -313,7 +313,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
                 var imageAssetModel = _this.assetManagerModule.generateImageAssetModel({name: filename});
                 var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
-                _this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
+                _this.addContainerChild(imageUploadItemContainer, "#image-upload-container>.box-body>.box")
 
                 //hide send button if this is a drop from the chat messages div
                 data.context = imageUploadItemContainer.getViewTop().$el;
@@ -441,6 +441,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                     imageAssetModel.setAssetMeldDocument(meldDocument);
                     var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
                     imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
+                    imageUploadItemContainer.addToolbarContainer();
 
                     if(data.originalFiles[index].autoSend){
                         imageUploadItemContainer.sendImageChatMessage();
@@ -448,11 +449,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
                     _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, function(throwable, userAssetId, imageAssetModel){
                         if(!throwable){
-                            var data = {
-                                userAssetId: userAssetId,
-                                imageAssetModel: imageAssetModel
-                            };
-                            _this.commandModule.relayCommand(CommandType.ADD.USER_IMAGE_ASSET, data);
+                            console.log("user asset created");
                         }
                     });
                 } else {
@@ -463,7 +460,6 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
 
     createUserAssetAndUserAssetModel: function(assetId, imageAssetModel, callback){
-        var _this = this;
         var currentUserManagerModule    = this.currentUserManagerModule;
         var userAssetManagerModule      = this.userAssetManagerModule;
         var userAssetData = {
@@ -501,7 +497,7 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     },
 
     handleAddByUrlFailedEvent: function(event) {
-
+        //TODO: SUNG
     },
 
     hideDragAndDropText: function() {

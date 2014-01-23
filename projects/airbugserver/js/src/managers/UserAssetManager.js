@@ -8,6 +8,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('List')
 //@Require('Map')
 //@Require('TypeUtil')
 //@Require('airbugserver.UserAsset')
@@ -28,6 +29,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var List                        = bugpack.require('List');
 var Map                         = bugpack.require('Map');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var UserAsset                   = bugpack.require('airbugserver.UserAsset');
@@ -137,19 +139,41 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, Map.<string, UserAsset>)} callback
+     * @param {function(Throwable, List.<UserAsset>)} callback
      */
     retrieveUserAssetsByUserId: function(userId, callback) {
         var _this = this;
         this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
-                var newMap = new Map();
+                var newList = new List();
                 dbObjects.forEach(function(dbObject) {
                     var userAsset = _this.convertDbObjectToEntity(dbObject);
                     userAsset.commitDelta();
-                    newMap.put(userAsset.getId(), userAsset);
+                    newList.add(userAsset);
                 });
-                callback(undefined, newMap);
+                callback(undefined, newList);
+            } else {
+                callback(throwable, undefined);
+            }
+        });
+    },
+
+    /**
+     * @param {string} userId
+     * @param {function(Throwable, List.<UserAsset>)} callback
+     */
+    retrieveUserImageAssetsByUserId: function(userId, callback) {
+        //TODO NOTE:UserAssets currently do not have a type
+        var _this = this;
+        this.dataStore.find({userId: userId, type: "image"}).lean(true).exec(function(throwable, dbObjects) {
+            if (!throwable) {
+                var newList = new List();
+                dbObjects.forEach(function(dbObject) {
+                    var userAsset = _this.convertDbObjectToEntity(dbObject);
+                    userAsset.commitDelta();
+                    newList.add(userAsset);
+                });
+                callback(undefined, newList);
             } else {
                 callback(throwable, undefined);
             }

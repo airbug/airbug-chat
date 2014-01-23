@@ -127,6 +127,21 @@ var UserAssetPusher = Class.extend(EntityPusher, {
         push.exec(callback);
     },
 
+    /**
+     *
+     * @param {UserImageAssetStream} userImageAssetStream
+     * @param {UserAsset} userImageAsset
+     * @param {function(Throwable=)} callback
+     */
+    streamUserImageAsset: function(userImageAssetStream, userImageAsset, callback) {
+        var userImageAssetStreamKey     = this.generateMeldDocumentKeyFromEntity(userImageAssetStream);
+        var push                        = this.getPushManager().push();
+        push
+            .toAll()
+            .addToSet(userImageAssetStreamKey, "userImageAssetIdSet", userImageAsset.getId())
+            .exec(callback);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods

@@ -1076,13 +1076,13 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     overflow: hidden;
 }
 
-#image-upload-container>.box-body>.box {
+#image-upload-container.box>.box-body>.box {
     padding-left: 10px;
     width: 89%;
     overflow-y: scroll;
 }
 
-#image-upload-container .box-body .box>span:first-child {
+#image-upload-container.box>.box-body .box>span:first-child {
     margin: 0% 33%;
 }
 

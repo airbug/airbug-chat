@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
+//@Require('airbug.UserImageAssetList')
 //@Require('airbug.UserImageAssetModel')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -28,6 +29,7 @@ var bugpack         = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var UserImageAssetList              = bugpack.require('airbug.UserImageAssetList');
 var UserImageAssetModel             = bugpack.require('airbug.UserImageAssetModel');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
@@ -74,6 +76,14 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
+     * @param {IList=} dataList
+     * @returns {UserImageAssetList}
+     */
+    generateUserImageAssetList: function(dataList) {
+        return new UserImageAssetList(dataList);
+    },
+
+    /**
      * @param {Object=} userAssetObject
      * @param {MeldDocument=} userAssetMeldDocument
      * @returns {UserImageAssetModel}
@@ -94,8 +104,50 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
      * @param {Array.<string>} userAssetIds
      * @param {function(Throwable, Map.<string, Meld>=)} callback
      */
-    retrieveAssets: function(userAssetIds, callback) {
+    retrieveUserAssets: function(userAssetIds, callback) {
         this.retrieveEach("UserAsset", userAssetIds, callback);
+    },
+
+    /**
+     * @param {function(Throwable, List.<Meld>=)} callback
+     */
+    retrieveUserAssetsForCurrentUser: function(callback) {
+        var _this = this;
+        this.request("retrieveUserAssetsForCurrentUser", {}, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "UserAsset", callback);
+        });
+    },
+
+    /**
+     * @param {function(Throwable, List.<Meld>=)} callback
+     */
+    retrieveUserImageAssetsForCurrentUser: function(callback) {
+        var _this = this;
+        this.request("retrieveUserImageAssetsForCurrentUser", {}, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "UserAsset", callback);
+        });
+    },
+
+    /**
+     * @param {Array.<string>} userId
+     * @param {function(Throwable, List.<Meld>=)} callback
+     */
+    retrieveUserAssetsByUserId: function(userId, callback) {
+        var _this = this;
+        this.request("retrieveUserAssetsByUserId", {objectId: userId}, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "UserAsset", callback);
+        });
+    },
+
+    /**
+     * @param {Array.<string>} userId
+     * @param {function(Throwable, List.<Meld>=)} callback
+     */
+    retrieveUserImageAssetsByUserId: function(userId, callback) {
+        var _this = this;
+        this.request("retrieveUserImageAssetsByUserId", {objectId: userId}, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "UserAsset", callback);
+        });
     }
 });
 

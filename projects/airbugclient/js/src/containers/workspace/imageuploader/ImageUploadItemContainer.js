@@ -164,7 +164,12 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.imageUploadItemButtonToolbarContainer   = new ImageUploadItemButtonToolbarContainer();
+    },
 
+    /**
+     * @protected
+     */
+    addToolbarContainer: function() {
         this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-upload-item")
     },
 
@@ -220,7 +225,6 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
      *
      */
     handleSendImageEvent: function(event) {
-        console.log("ImageUploadItemContainer#handleSendImageEvent");
         this.sendImageChatMessage();
     },
 

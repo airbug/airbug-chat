@@ -6,17 +6,30 @@
 
 //@Export('ImageListContainer')
 
+//@Require('AddChange')
 //@Require('Class')
+//@Require('ClearChange')
+//@Require('ISet')
+//@Require('List')
+//@Require('Map')
+//@Require('Obj')
+//@Require('RemoveChange')
+//@Require('RemovePropertyChange')
+//@Require('Set')
+//@Require('SetPropertyChange')
 //@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('airbug.ImageListItemContainer')
+//@Require('airbug.ImageAssetModel')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
+//@Require('airbug.UserImageAssetContainer')
+//@Require('airbug.UserImageAssetList')
 //@Require('airbug.WorkspaceCloseButtonContainer')
+//@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -35,17 +48,29 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var AddChange                           = bugpack.require('AddChange');
 var Class                               = bugpack.require('Class');
+var ClearChange                         = bugpack.require('ClearChange');
+var ISet                                = bugpack.require('ISet');
+var Map                                 = bugpack.require('Map');
+var Obj                                 = bugpack.require('Obj');
+var RemoveChange                        = bugpack.require('RemoveChange');
+var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
+var Set                                 = bugpack.require('Set');
+var SetPropertyChange                   = bugpack.require('SetPropertyChange');
 var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var IconView                            = bugpack.require('airbug.IconView');
-var ImageListItemContainer              = bugpack.require('airbug.ImageListItemContainer');
+var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
+var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
+var UserImageAssetList                  = bugpack.require('airbug.UserImageAssetList');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
+var BugFlow                             = bugpack.require('bugflow.BugFlow');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -57,9 +82,10 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
-
+var CommandType                         = CommandModule.CommandType;
+var view                                = ViewBuilder.view;
+var $series                             = BugFlow.$series;
+var $task                               = BugFlow.$task;
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -80,8 +106,26 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {Map}
+         */
+        this.userImageAssetIdToContainerMap     = new Map();
+
         // Models
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {UserImageAssetStreamModel}
+         */
+        this.userImageAssetStreamModel          = null;
+
+        /**
+         * @private
+         * @type {UserImageAssetList}
+         */
+        this.userImageAssetList                 = null;
 
 
         // Modules
@@ -89,15 +133,33 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {AssetManagerModule}
+         */
+        this.assetManagerModule                 = null;
+
+        /**
+         * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                      = null;
+
+        /**
+         * @private
+         * @type {CurrentUserManagerModule}
+         */
+        this.currentUserManagerModule           = null;
 
         /**
          * @private
          * @type {UserAssetManagerModule}
          */
-        this.userAssetManagerModule     = null;
+        this.userAssetManagerModule             = null;
+
+        /**
+         * @private
+         * @type {UserImageAssetStreamManagerModule}
+         */
+        this.userImageAssetStreamManagerModule  = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -106,13 +168,13 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxWithHeaderAndFooterView}
          */
-        this.boxView                    = null;
+        this.boxView                            = null;
 
         /**
          * @private
          * @type {NakedButtonView}
          */
-        this.imageUploadLinkButtonView  = null;
+        this.imageUploadLinkButtonView          = null;
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -121,7 +183,7 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {WorkspaceCloseButtonContainer}
          */
-        this.closeButton                = null;
+        this.closeButton                        = null;
     },
 
 
@@ -135,7 +197,8 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
-
+        this.loadAndProcessUserImageAssetList();
+        this.loadUserImageAssetStream();
     },
 
     /**
@@ -148,6 +211,8 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
         // Create Models
         //-------------------------------------------------------------------------------
 
+        this.userImageAssetStreamModel  = this.userImageAssetStreamManagerModule.generateUserImageAssetStreamModel({});
+        this.userImageAssetList         = this.userAssetManagerModule.generateUserImageAssetList();
 
         // Create Views
         //-------------------------------------------------------------------------------
@@ -272,10 +337,16 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
     initializeEventListeners: function() {
         this.imageUploadLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadImageLinkButtonClicked, this);
+        this.userImageAssetStreamModel.observe(AddChange.CHANGE_TYPE,           "userImageAssetIdSet", this.observeUserImageAssetIdSetAddChange, this);
+        this.userImageAssetStreamModel.observe(RemoveChange.CHANGE_TYPE,        "userImageAssetIdSet", this.observeUserImageAssetIdSetRemoveChange, this);
+        this.userImageAssetStreamModel.observe(SetPropertyChange.CHANGE_TYPE,   "userImageAssetIdSet", this.observeUserImageAssetIdSetPropertyChange, this);
     },
 
     deinitializeEventListeners: function() {
         this.imageUploadLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadImageLinkButtonClicked, this);
+        this.userImageAssetStreamModel.unobserve(AddChange.CHANGE_TYPE,         "userImageAssetIdSet", this.observeUserImageAssetIdSetAddChange, this);
+        this.userImageAssetStreamModel.unobserve(RemoveChange.CHANGE_TYPE,      "userImageAssetIdSet", this.observeUserImageAssetIdSetRemoveChange, this);
+        this.userImageAssetStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "userImageAssetIdSet", this.observeUserImageAssetIdSetPropertyChange, this);
     },
 
     /**
@@ -305,15 +376,210 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
         userAssetManagerModule.retrieveUserAsset(userAssetId, function(throwable, meldDocument){
             if(!throwable){
-                userAssetModel = userAssetManagerModule.generateUserImageAssetModel({}, meldDocument);
-                imageListItemContainer = new ImageListItemContainer(imageAssetModel, userAssetModel);
-                _this.addContainerChild(imageListItemContainer, ".box-body");
+                var userImageAssetModel = userAssetManagerModule.generateUserImageAssetModel({}, meldDocument);
+                _this.assetManagerModule.retrieveAsset(userImageAssetModel.getProperty("assetId"), function(throwable, assetMeldDocument){
+                    var imageAssetModel = new ImageAssetModel({}, assetMeldDocument);
+                    var userImageAssetContainer = _this.initializeUserImageAssetContainer(userImageAssetModel, imageAssetModel);
+                    _this.addContainerChild(userImageAssetContainer, ".box-body");
+                });
             }
         });
     },
 
     handleUploadImageLinkButtonClicked: function(event) {
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
+    },
+
+    //-------------------------------------------------------------------------------
+    // UserImageAsset
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {UserImageAssetModel} userImageAssetModel
+     */
+    deinitializeUserImageAsset: function(userImageAssetModel) {
+        this.userImageAssetList.remove(userImageAssetModel);
+    },
+
+    /**
+     * @private
+     * @param {UserImageAssetContainer} userImageAssetContainer
+     */
+    destroyUserImageAssetContainer: function(userImageAssetContainer) {
+        userImageAssetContainer.deactivateContainer();
+        userImageAssetContainer.deinitializeContainer();
+        userImageAssetContainer.destroyContainer();
+    },
+
+    /**
+     * @private
+     * @param {Object} data
+     * @param {Meld} userAssetMeldDocument
+     * @return {UserImageAssetModel}
+     */
+    generateUserImageAssetModel: function(data, userAssetMeldDocument) {
+        return this.userAssetManagerModule.generateUserImageAssetModel(data, userAssetMeldDocument);
+    },
+
+    /**
+     * @private
+     * @return {UserImageAssetContainer}
+     */
+    initializeUserImageAssetContainer: function(userImageAssetModel, imageAssetModel) {
+        var userImageAssetId = userImageAssetModel.getProperty("id");
+        var userImageAssetContainer = new UserImageAssetContainer(userImageAssetModel, imageAssetModel);
+        this.userImageAssetIdToContainerMap.put(userImageAssetId, userImageAssetContainer);
+        return userImageAssetContainer;
+    },
+
+    /**
+     * @param {string} userImageAssetId
+     */
+    loadUserImageAsset: function(userImageAssetId) {
+        var _this = this;
+        this.userAssetManagerModule.retrieveUserAsset(userImageAssetId, function(throwable, retrievedUserImageAssetMeldDocument) {
+            if (!throwable) {
+                var userImageAssetModel = _this.generateUserImageAssetModel({}, retrievedUserImageAssetMeldDocument);
+                _this.userImageAssetList.add(userImageAssetModel);
+                _this.processUserImageAsset(userImageAssetModel);
+            }
+        });
+    },
+
+    /**
+     *
+     * @param {UserImageAssetModel} userImageAssetModel
+     */
+    processUserImageAsset: function(userImageAssetModel) {
+        var _this = this;
+        this.assetManagerModule.retrieveAsset(userImageAssetModel.getProperty("assetId"), function(throwable, assetMeldDocument){
+            var imageAssetModel = new ImageAssetModel({}, assetMeldDocument);
+            var userImageAssetContainer = _this.initializeUserImageAssetContainer(userImageAssetModel, imageAssetModel);
+            _this.addContainerChild(userImageAssetContainer, ".box-body");
+        });
+    },
+
+    /**
+     *
+     */
+    removeUserImageAsset: function(userImageAssetId) {
+        var userImageAssetContainer = this.userImageAssetIdToContainerMap.get(userImageAssetId);
+        var userImageAssetModel = userImageAssetContainer.getUserImageAssetModel();
+        this.deinitializeUserImageAsset(userImageAssetModel);
+        this.destroyUserImageAssetContainer(userImageAssetContainer);
+        this.userImageAssetIdToContainerMap.remove(userImageAssetId);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // UserImageAssetList
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    loadAndProcessUserImageAssetList: function() {
+        var _this = this;
+        this.userAssetManagerModule.retrieveUserAssetsForCurrentUser(function(throwable, retrievedUserAssetMeldDocumentList) {
+            if (!throwable) {
+                _this.loadUserImageAssetList(retrievedUserAssetMeldDocumentList);
+                _this.processUserImageAssetList();
+            }
+        });
+    },
+
+    /**
+     *
+     * @param {List.<Meld>=} userAssetMeldDocumentList
+     */
+    loadUserImageAssetList: function(userAssetMeldDocumentList) {
+        var _this = this;
+        userAssetMeldDocumentList.forEach(function(userAssetMeldDocument) {
+            if (userAssetMeldDocument) {
+                var userImageAssetModel = _this.generateUserImageAssetModel({}, userAssetMeldDocument);
+                console.log("userImageAssetModel:", userImageAssetModel);
+                _this.userImageAssetList.add(userImageAssetModel);
+            } else {
+                //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
+            }
+        });
+    },
+
+    /**
+     *
+     */
+    processUserImageAssetList: function() {
+        var _this = this;
+        this.userImageAssetList.forEach(function(userImageAssetModel) {
+            _this.processUserImageAsset(userImageAssetModel);
+        });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // UserImageAssetStream
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    loadUserImageAssetStream: function() {
+        var _this = this;
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser){
+            if(!throwable) {
+                var userId = currentUser.getId();
+                console.log("userId:", userId);
+                _this.userImageAssetStreamManagerModule.retrieveUserImageAssetStream(userId, function(throwable, meldDocument){
+                    console.log("retrieveUserImageAssetStream");
+                    console.log("throwable:", throwable);
+                    console.log("meldDocument:", meldDocument);
+
+                    if(!throwable) {
+                        _this.userImageAssetStreamModel.setUserImageAssetStreamMeldDocument(meldDocument);
+                    }
+                });
+            } else {
+                //TODO
+            }
+        });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Model Observers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {AddChange} change
+     */
+    observeUserImageAssetIdSetAddChange: function(change) {
+        console.log("ImageListContainer#observeUserImageAssetIdSetAddChange");
+        this.loadUserImageAsset(change.getValue());
+    },
+
+    /**
+     * @private
+     * @param {RemoveChange} change
+     */
+    observeUserImageAssetIdSetRemoveChange: function(change) {
+        console.log("ImageListContainer#observeUserImageAssetIdSetRemoveChange");
+        this.removeUserImageAsset(change.getValue());
+    },
+
+    /**
+     * @private
+     * @param {SetPropertyChange} change
+     */
+    observeUserImageAssetIdSetPropertyChange: function(change) {
+        console.log("ImageListContainer#observeUserImageAssetIdSetPropertyChange");
+        var _this = this;
+        if (Class.doesImplement(change.getPropertyValue(), ISet)) {
+            change.getPropertyValue().forEach(function(userAssetId) {
+                _this.loadUserImageAsset(userAssetId);
+            });
+        }
     }
 });
 
@@ -324,8 +590,11 @@ var ImageListContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageListContainer).with(
     autowired().properties([
+        property("assetManagerModule").ref("assetManagerModule"),
         property("commandModule").ref("commandModule"),
-        property("userAssetManagerModule").ref("userAssetManagerModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("userAssetManagerModule").ref("userAssetManagerModule"),
+        property("userImageAssetStreamManagerModule").ref("userImageAssetStreamManagerModule")
     ])
 );
 

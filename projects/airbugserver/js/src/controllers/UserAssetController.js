@@ -129,9 +129,9 @@ var UserAssetController = Class.extend(EntityController, {
             deleteUserAsset: function(request, responder, callback) {
                 console.log("UserAssetController#deleteUserAsset");
                 var data                = request.getData();
-                var userAssetObject     = data.object;
+                var userAssetId         = data.objectId;
                 var requestContext      = request.requestContext;
-                userAssetService.deleteUserAsset(requestContext, userAssetObject, function(throwable, userAsset) {
+                userAssetService.deleteUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
                     _this.processDeleteResponse(responder, throwable, userAsset, callback);
                 });
              },
@@ -190,15 +190,65 @@ var UserAssetController = Class.extend(EntityController, {
              * @param {function(Throwable=)} callback
              */
             retrieveUserAssetsForCurrentUser: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserAssets");
+                console.log("UserAssetController#retrieveUserAssetsForCurrentUser");
                 var data                = request.getData();
                 var requestContext      = request.requestContext;
                 var currentUser         = requestContext.get('currentUser');
                 var currentUserId       = currentUser.getId();
 
-                userAssetService.retrieveUserAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetMap) {
-                    var userAssetIds = userAssetMap.getKeyArray();
-                    _this.processRetrieveEachResponse(responder, throwable, userAssetIds, userAssetMap, callback);
+                userAssetService.retrieveUserAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
+                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveUserImageAssetsForCurrentUser: function(request, responder, callback) {
+                console.log("UserAssetController#retrieveUserImageAssetsForCurrentUser");
+                var data                = request.getData();
+                var requestContext      = request.requestContext;
+                var currentUser         = requestContext.get('currentUser');
+                var currentUserId       = currentUser.getId();
+
+                userAssetService.retrieveUserImageAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
+                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveUserAssetsByUserId: function(request, responder, callback) {
+                console.log("UserAssetController#retrieveUserAssetsByUserId");
+                var data                = request.getData();
+                var userId              = data.objectId;
+                var requestContext      = request.requestContext;
+                var currentUser         = requestContext.get('currentUser');
+
+                userAssetService.retrieveUserAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
+                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            retrieveUserImageAssetsByUserId: function(request, responder, callback) {
+                console.log("UserAssetController#retrieveUserImageAssetsByUserId");
+                var data                = request.getData();
+                var userId              = data.objectId;
+                var requestContext      = request.requestContext;
+                var currentUser         = requestContext.get('currentUser');
+
+                userAssetService.retrieveUserImageAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
+                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
                 });
             }
 

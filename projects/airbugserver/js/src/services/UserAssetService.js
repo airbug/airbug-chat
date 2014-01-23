@@ -67,7 +67,7 @@ var UserAssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(userAssetManager, userAssetPusher) {
+    _constructor: function(userAssetManager, userAssetPusher, userImageAssetStreamManager, userImageAssetStreamPusher) {
 
         this._super();
 
@@ -80,19 +80,31 @@ var UserAssetService = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                     = null;
+        this.logger                         = null;
 
         /**
          * @private
          * @type {UserAssetManager}
          */
-        this.userAssetManager           = userAssetManager;
+        this.userAssetManager               = userAssetManager;
 
         /**
          * @private
          * @type {UserAssetPusher}
          */
-        this.userAssetPusher            = userAssetPusher;
+        this.userAssetPusher                = userAssetPusher;
+
+        /**
+         * @private
+         * @type {UserImageAssetStreamManager}
+         */
+        this.userImageAssetStreamManager    = userImageAssetStreamManager;
+
+        /**
+         * @private
+         * @type {UserImageAssetStreamPusher}
+         */
+        this.userImageAssetStreamPusher     = userImageAssetStreamPusher;
     },
 
 
@@ -116,6 +128,7 @@ var UserAssetService = Class.extend(Obj, {
         var callManager             = requestContext.get('callManager');
         var callManagerCallUuid     = callManager.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
+        var currentUserId           = currentUser.getId();
         /** @type {UserAsset} */
         var userAsset               = null;
         var userAssetManager        = this.userAssetManager;
@@ -166,6 +179,16 @@ var UserAssetService = Class.extend(Obj, {
                         } else {
                             flow.complete(throwable);
                         }
+                    });
+                }),
+                $task(function(flow) {
+                    //TODO SUNG: Run this task only if the userAsset is of type "image" once we implement different types
+
+                    var userImageAssetStream = _this.userImageAssetStreamManager.generateUserImageAssetStream({
+                        id: currentUserId
+                    });
+                    _this.userAssetPusher.streamUserImageAsset(userImageAssetStream, userAsset, function(throwable) {
+                        flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
@@ -438,7 +461,7 @@ var UserAssetService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} userId
-     * @param {function(Throwable, Map.<string, UserAsset>)} callback
+     * @param {function(Throwable, List.<UserAsset>)} callback
      */
     retrieveUserAssetsByUserId: function(requestContext, userId, callback) {
         var _this = this;
@@ -446,41 +469,34 @@ var UserAssetService = Class.extend(Obj, {
         var callManager = requestContext.get('callManager');
         var mappedException = null;
         var userAssetManager = this.userAssetManager;
-        /** @type {Map.<string, UserAsset>} */
-        var userAssetMap = null;
+        /** @type {List.<UserAsset>} */
+        var userAssetList = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    userAssetManager.retrieveUserAssetsByUserId(userId, function(throwable, returnedUserAssetMap) {
+                    userAssetManager.retrieveUserAssetsByUserId(userId, function(throwable, returnedUserAssetList) {
                         if (!throwable) {
-                            if (! returnedUserAssetMap) {
-                                throwable = new Exception('No UserAssets Found');
-                            } else {
-                                userAssetMap = returnedUserAssetMap;
-                                _this.dbPopulateUserAssets(userAssetMap, function(throwable) {
-                                    flow.complete(throwable);
-                                });
-                            }
+                            userAssetList = returnedUserAssetList;
                         }
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
                     _this.userAssetPusher.meldCallWithUserAssets(callManager.getCallUuid(),
-                        userAssetMap.getValueArray(), function(throwable) {
+                        userAssetList.toArray(), function(throwable) {
                            flow.complete(throwable);
                         });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(),
+                    _this.userAssetPusher.pushUserAssetsToCall(userAssetList.toArray(),
                         callManager.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
-                    callback(mappedException, userAssetMap);
+                    callback(mappedException, userAssetList);
                 } else {
                     callback(throwable, null);
                 }
@@ -490,12 +506,59 @@ var UserAssetService = Class.extend(Obj, {
         }
     },
 
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {function(Throwable, List.<UserAsset>)} callback
+     */
+    retrieveUserImageAssetsByUserId: function(requestContext, userId, callback) {
+        var _this = this;
+        var currentUser = requestContext.get('currentUser');
+        var callManager = requestContext.get('callManager');
+        var mappedException = null;
+        var userAssetManager = this.userAssetManager;
+        /** @type {List.<UserAsset>} */
+        var userImageAssetList = null;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    userAssetManager.retrieveUserImageAssetsByUserId(userId, function(throwable, returnedImageUserAssetList) {
+                        if (!throwable) {
+                            userImageAssetList = returnedImageUserAssetList;
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.userAssetPusher.meldCallWithUserAssets(callManager.getCallUuid(),
+                        userImageAssetList.toArray(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                }),
+                $task(function(flow) {
+                    _this.userAssetPusher.pushUserAssetsToCall(userImageAssetList.toArray(),
+                        callManager.getCallUuid(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(mappedException, userImageAssetList);
+                    } else {
+                        callback(throwable, null);
+                    }
+                });
+        } else {
+            callback(new Exception('UnauthorizedAccess'));
+        }
+    },
     //-------------------------------------------------------------------------------
     // Private
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
      * @param {Map.<string, UserAsset>} userAssetMap
      * @param {{function(Throwable)} callback} callback
      */
@@ -503,7 +566,7 @@ var UserAssetService = Class.extend(Obj, {
         var _this               = this;
         var userAssetArray      = userAssetMap.getValueArray();
         $forEachParallel(userAssetArray, function(flow, userAsset) {
-            _this.userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
+            _this.userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable, userAsset) {
                 if (!throwable) {
                     flow.complete();
                 } else {
@@ -525,7 +588,8 @@ bugmeta.annotate(UserAssetService).with(
     module('userAssetService')
         .args([
             arg().ref('userAssetManager'),
-            arg().ref('userAssetPusher')
+            arg().ref('userAssetPusher'),
+            arg().ref('userImageAssetStreamManager')
         ])
 );
 

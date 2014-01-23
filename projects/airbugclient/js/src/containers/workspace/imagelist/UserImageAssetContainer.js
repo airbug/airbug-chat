@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ImageListItemContainer')
+//@Export('UserImageAssetContainer')
 
 //@Require('Class')
 //@Require('airbug.CommandModule')
@@ -63,13 +63,13 @@ var view                                = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageListItemContainer = Class.extend(CarapaceContainer, {
+var UserImageAssetContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(imageAssetModel, userAssetModel) {
+    _constructor: function(userImageAssetModel, imageAssetModel) {
 
         this._super();
 
@@ -80,15 +80,16 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ImageAssetModel}
+         * @type {UserImageAssetModel}
          */
-        this.imageAssetModel                        = imageAssetModel;
+        this.userImageAssetModel                        = userImageAssetModel;
 
         /**
          * @private
-         * @type {UserAssetModel}
+         * @type {ImageAssetModel}
          */
-        this.userAssetModel                         = userAssetModel;
+        this.imageAssetModel                            = imageAssetModel;
+
 
         // Models
         //-------------------------------------------------------------------------------
@@ -134,6 +135,13 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
         this.imageListItemButtonToolbarContainer    = null;
     },
 
+    getUserImageAssetModel: function() {
+        return this.userImageAssetModel;
+    },
+
+    getImageAssetModel: function() {
+        return this.imageAssetModel;
+    },
 
     //-------------------------------------------------------------------------------
     // CarapaceController Implementation
@@ -202,13 +210,20 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     */
     initializeEventListeners: function() {
         this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
         this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
     },
 
+    /**
+     * @private
+     */
     deinitializeEventListeners: function() {
-
+        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
+        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
     },
 
     /**
@@ -230,7 +245,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
      */
     handleSendImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleSendImageEvent");
@@ -238,7 +253,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @private
      */
     handleDeleteImageEvent: function(event) {
         console.log("ImageUploadItemContainer#handleDeleteImageEvent");
@@ -246,14 +261,14 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @return {UserImageAssetModel}
      */
-    getUserAssetModel: function() {
-        return this.userAssetModel;
+    getUserImageAssetModel: function() {
+        return this.userImageAssetModel;
     },
 
     /**
-     *
+     * @return {ImageAssetModel}
      */
     getImageAssetModel: function() {
         return this.imageAssetModel;
@@ -264,7 +279,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
      */
     deleteUserAsset: function() {
         var _this = this;
-        this.userAssetManagerModule.deleteUserAsset(this.userAssetModel.getProperty("id"), function(throwable){
+        this.userAssetManagerModule.deleteUserAsset(this.userImageAssetModel.getProperty("id"), function(throwable){
             if(!throwable){
                 _this.removeImageListItemFromDocument();
             }
@@ -272,14 +287,14 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @private
      */
     removeImageListItemFromDocument: function() {
         this.viewTop.$el.remove();
     },
 
     /**
-     *
+     * @private
      */
     sendImageChatMessage: function() {
         var imageData = this.imageAssetModel.getData();
@@ -305,7 +320,7 @@ var ImageListItemContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ImageListItemContainer).with(
+bugmeta.annotate(UserImageAssetContainer).with(
     autowired().properties([
         property("assetManagerModule").ref("assetManagerModule"),
         property("commandModule").ref("commandModule"),
@@ -318,4 +333,4 @@ bugmeta.annotate(ImageListItemContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageListItemContainer", ImageListItemContainer);
+bugpack.export("airbug.UserImageAssetContainer", UserImageAssetContainer);
