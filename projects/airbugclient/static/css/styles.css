@@ -3,6 +3,10 @@ html, body {
     line-height: 120%;
 }
 
+#uvTab {
+    top: 83px!important;
+    margin-top: 0px!important;
+}
 .center {
     text-align: center;
 }
