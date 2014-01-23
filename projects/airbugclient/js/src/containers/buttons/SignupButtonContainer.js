@@ -146,7 +146,7 @@ var SignupButtonContainer = Class.extend(ButtonContainer, {
      * @param {ButtonViewEvent} event
      */
     hearSignupButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("", {
+        this.navigationModule.navigate("signup", {
             trigger: true
         });
     }

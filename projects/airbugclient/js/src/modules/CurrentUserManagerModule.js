@@ -156,7 +156,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     airbugApi.refreshConnection();
                     //Do I need to wait for connection_established to navigate?? CurrentUser may not be available.
                     //May need to add eventListener to airbugApi.bugCallClient.callClient
-                    _this.navigationModule.navigate("login", {
+                    _this.navigationModule.navigate("", {
                         trigger: true
                     });
                     callback(error);

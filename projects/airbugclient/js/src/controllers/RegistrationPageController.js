@@ -110,7 +110,7 @@ var RegistrationPageController = Class.extend(ApplicationController, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(RegistrationPageController).with(
-    controller().route("")
+    controller().route("signup")
 );
 
 

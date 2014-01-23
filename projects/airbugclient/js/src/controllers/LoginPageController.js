@@ -115,7 +115,7 @@ var LoginPageController = Class.extend(ApplicationController, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(LoginPageController).with(
-    controller().route("login")
+    controller().route("")
 );
 
 

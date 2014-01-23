@@ -145,7 +145,7 @@ var LoginButtonContainer = Class.extend(ButtonContainer, {
      * @param {ButtonViewEvent} event
      */
     hearLoginButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("login", {
+        this.navigationModule.navigate("", {
             trigger: true
         });
     }
