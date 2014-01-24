@@ -241,6 +241,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     createZeroClipboard: function() {
+        var _this       = this;
         var button      = this.getViewTop().$el.find('.btn.copy-to-clipboard')[0];
         var currentUrl  = this.windowUtil.getUrl();
         var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
@@ -248,8 +249,8 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
             moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf"
         };
 
-        this.clip        = new ZeroClipboard(button, options);
-        var clip = this.clip;
+        this.clip       = new ZeroClipboard(button, options);
+        var clip        = this.clip;
 
         clip.on( 'dataRequested',   function(client, args) {
             clip.setText(copyText);
@@ -259,6 +260,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         });
 
         clip.on( 'complete',        function(client, args) {
+            _this.showCopiedNotification();
         });
 
         clip.on( 'mouseover',       function(client, args) {
@@ -289,6 +291,15 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      */
     destroyZeroClipboard: function() {
         this.clip = null;
+    },
+
+    /**
+     * @private
+     */
+    showCopiedNotification: function() {
+        var parentContainer         = this.getContainerParent();
+        var notificationView        = parentContainer.getNotificationView();
+        notificationView.flashMessage("Room url copied to clipboard.", 1000);
     }
 });
 
