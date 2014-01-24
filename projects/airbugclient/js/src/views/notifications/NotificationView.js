@@ -49,35 +49,62 @@ var NotificationView = Class.extend(MustacheView, {
 
     /**
      * @param {string} message
+     * @param {number=} delay
      */
-    flashErrorMessage: function(message) {
+    flashErrorMessage: function(message, delay) {
         this.flash(
             '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
                 message +
-            '</div>');
+            '</div>', delay);
     },
 
     /**
      * @param {string} message
+     * @param {number=} delay
      */
-    flashExceptionMessage: function(message) {
+    flashExceptionMessage: function(message, delay) {
         this.flash(
             '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
                 message +
-            '</div>');
+            '</div>', delay);
     },
 
     /**
-     * @param {string} html
+     * @param {string} message
+     * @param {number=} delay
      */
-    flash: function(html) {
+    flashSuccessMessage: function(message, delay) {
+        this.flash(
+            '<div id="notification-message" class="notification-message alert alert-success">' +
+                message +
+            '</div>', delay);
+    },
+
+    /**
+     * @param {string} message
+     * @param {number=} delay
+     */
+    flashMessage: function(message, delay) {
+        this.flash(
+            '<div id="notification-message" class="notification-message alert alert-info">' +
+                message +
+                '</div>', delay);
+    },
+
+    /**
+     * @private
+     * @param {string} html
+     * @param {number=} delay
+     */
+    flash: function(html, delay) {
+        var delay = delay || 5000;
         var notificationContainer = $(this.$el[0]);
         notificationContainer.prepend(html).show();
         setTimeout(function() {
             notificationContainer.fadeOut(500, function() {
                 notificationContainer.children("div").remove();
             });
-        }, 5000);
+        }, delay);
     }
 });
 
