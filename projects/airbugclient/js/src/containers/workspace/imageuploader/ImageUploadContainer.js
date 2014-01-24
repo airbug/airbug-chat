@@ -319,9 +319,10 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
                 data.context = imageUploadItemContainer.getViewTop().$el;
                 data.originalFiles[0].imageUploadItemContainer = imageUploadItemContainer;
 
-                if (data.autoUpload || (data.autoUpload !== false &&
-                    $(this).fileupload('option', 'autoUpload'))) {
+                if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
                     data.process().done(function () {
+
+                        imageUploadItemContainer.getViewTop().$el.find(".status-message").text("uploading...");
                         /** @type {{files: Array}} data, @type {string} status, @type {{}} jqXHR **/
                         data.submit().done(function(data, status, jqXHR) {
 
@@ -425,17 +426,20 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
     },
 
     handleUploadDoneEvent: function(data, index, file) {
-        var _this = this;
-        var assetId = file._id || file.id;
-        var imageUploadItemContainer = data.originalFiles[index].imageUploadItemContainer;
-        var imageAssetModel = imageUploadItemContainer.getImageAssetModel();
+        var _this                       = this;
+        var assetId                     = file._id || file.id;
+        var imageUploadItemContainer    = data.originalFiles[index].imageUploadItemContainer;
+        var imageAssetModel             = imageUploadItemContainer.getImageAssetModel();
+        var statusMessage               = imageUploadItemContainer.getViewTop().$el.find(".status-message");
 
         console.log("assetId:", assetId);
 
         this.assetManagerModule.retrieveAsset(assetId, function(throwable, meldDocument){
-                $(data.context[index]).find(".progress").hide();
+            $(data.context[index]).find(".progress").hide();
+            statusMessage.text("adding to your image list...");
 
-                if(!throwable){
+
+            if(!throwable){
                     $(data.context[index]).find(".success-indicator").attr("style", "");
 
                     imageAssetModel.setAssetMeldDocument(meldDocument);
@@ -449,12 +453,20 @@ var ImageUploadContainer = Class.extend(CarapaceContainer, {
 
                     _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, function(throwable, userAssetId, imageAssetModel){
                         if(!throwable){
-                            console.log("user asset created");
+                            setTimeout(function() {
+                                statusMessage.text("completed");
+                                statusMessage.fadeOut(3000, function() {
+                                    statusMessage.remove();
+                                });
+                            },2000);
+                        } else {
+                            //TODO SUNG
                         }
                     });
-                } else {
+            } else {
+                statusMessage.text("upload failed!");
 //                                $(data.context[index]).find(".failed-indicator").attr("style", "");
-                }
+            }
         });
     },
 
