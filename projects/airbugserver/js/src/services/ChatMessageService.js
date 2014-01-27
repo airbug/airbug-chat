@@ -259,6 +259,75 @@ var ChatMessageService = Class.extend(EntityService, {
         }
     },
 
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} conversationId
+     * @param {number} index
+     * @param {number} batchSize
+     * @param {string | number} order
+     * @param {function(Throwable, List.<string, ChatMessage>=)} callback
+     */
+    retrieveChatMessageBatchByConversationId: function(requestContext, conversationId, index, batchSize, order, callback) {
+        console.log("ChatMessageService#retrieveChatMessageBatchByConversationId");
+        console.log("conversationId:", conversationId, "index:", index, "batchSize:", batchSize, "order", order);
+
+        var _this           = this;
+        var currentUser     = requestContext.get("currentUser");
+        var callManager     = requestContext.get("callManager");
+        if (currentUser.isNotAnonymous()) {
+
+            var chatMessageList = null;
+            var conversation    = null;
+            var mappedException = null;
+
+            $series([
+                $task(function(flow) {
+                    _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
+                        if (!throwable) {
+
+                            //NOTE BRN: Validate that the user is a member of this room
+
+                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
+                                conversation = returnedConversation;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("UnauthorizedAccess"));
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.chatMessageManager.retrieveChatMessageBatchByConversationId(conversation.getId(), index, batchSize, order, function(throwable, returnedChatMessageList) {
+                        if (!throwable) {
+                            chatMessageList = returnedChatMessageList;
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageList.toArray(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), callManager.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(mappedException, chatMessageList);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        } else {
+            callback(new Exception("UnauthorizedAccess"));
+        }
+    },
+
     /*
      * @param {RequestContext} requestContext
      * @param {string} chatMessageIds

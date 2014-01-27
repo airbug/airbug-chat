@@ -131,14 +131,14 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "sentAt", "conversationId", "tryUuid", "type"])
+                .in(["id", "index", "sentAt", "conversationId", "tryUuid", "type"])
                 .call(this.hearMeldPropertySetChange, this);
             this.getChatMessageMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
-                .in(["id", "sentAt", "conversationId", "tryUuid", "type"])
+                .in(["id", "index", "sentAt", "conversationId", "tryUuid", "type"])
                 .call(this.hearMeldPropertyRemovedChange, this);
         }
     },
@@ -177,6 +177,7 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
         if (key === "chatMessage") {
             var chatMessageData    = meldDocument.getData();
             this.setProperty("id", chatMessageData.id);
+            this.setProperty("index", chatMessageData.index);
             this.setProperty("sentAt", chatMessageData.sentAt);
             this.setProperty("conversationId", chatMessageData.conversationId);
             this.setProperty("type", chatMessageData.type);
@@ -196,6 +197,7 @@ var ChatMessageModel = Class.extend(MappedMeldModel, {
         this._super();
         if (key === "chatMessage") {
             this.removeProperty("id");
+            this.removeProperty("index");
             this.removeProperty("sentAt");
             this.removeProperty("conversationId");
             this.removeProperty("type");

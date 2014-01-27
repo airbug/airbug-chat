@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('ImageView')
+//@Export('PreviousMessagesLoaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -29,39 +29,31 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageView = Class.extend(MustacheView, {
+var PreviousMessagesLoaderView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<img id="{{id}}" class="{{attributes.size}}" src="{{attributes.source}}" />',
-
-
-    //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
+    template:   '<div id="{{id}}" class="previous-messages-loader">' +
+            '<img src="{{{staticUrl}}}/img/loader-line-large.gif">' +
+            '</img>' +
+            '<p>retrieving previous messages...</p>'+
+        '</div>',
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data = this._super();
-        data.id = this.getId() || "image-" + this.getCid();
+        var data            = this._super();
+        data.id             = this.getId() || "previous-messages-loader-" + this.getCid();
         return data;
     }
 });
-
-/**
- * @enum {string}
- */
-ImageView.size = {
-
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageView", ImageView);
+bugpack.export("airbug.PreviousMessagesLoaderView", PreviousMessagesLoaderView);

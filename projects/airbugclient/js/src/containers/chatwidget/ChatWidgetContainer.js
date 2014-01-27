@@ -17,11 +17,13 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
+//@Require('Throwable')
 //@Require('airbug.ChatWidgetInputFormContainer')
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.PanelView')
+//@Require('airbug.ScrollEvent')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredAnnotation')
@@ -46,17 +48,20 @@ var AddChange                       = bugpack.require('AddChange');
 var Class                           = bugpack.require('Class');
 var ClearChange                     = bugpack.require('ClearChange');
 var ISet                            = bugpack.require('ISet');
+var List                            = bugpack.require('List');
 var Map                             = bugpack.require('Map');
 var Obj                             = bugpack.require('Obj');
 var RemoveChange                    = bugpack.require('RemoveChange');
 var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
 var Set                             = bugpack.require('Set');
 var SetPropertyChange               = bugpack.require('SetPropertyChange');
+var Throwable                       = bugpack.require('Throwable');
 var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
 var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var PanelView                       = bugpack.require('airbug.PanelView');
+var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
 var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
@@ -264,11 +269,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
-        this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
-        this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
-        this.chatMessageStreamModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
-        this.chatMessageStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
+        this.deinitializeEventListeners();
+        this.deinitializeObservers();
         this.deinitializeCommandSubscriptions();
     },
 
@@ -277,38 +279,45 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
+        this.initializeObservers();
+        this.initializeCommandSubscriptions();
+    },
+
+    /**
+     *
+     */
+    initializeEventListeners: function() {
+        this.chatWidgetMessagesContainer.getViewTop().addEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this, true);
+    },
+
+    /**
+     *
+     */
+    deinitializeEventListeners: function() {
+        this.chatWidgetMessagesContainer.getViewTop().removeEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this);
+    },
+
+    /**
+     *
+     */
+    initializeObservers: function() {
         this.conversationModel.observe(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
         this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
         this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
         this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
         this.chatMessageStreamModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
-        this.initializeCommandSubscriptions();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Object} data
-     * @param {MeldDocument} chatMessageMeldDocument
-     * @param {MeldDocument} senderUserMeldDocument
-     */
-    buildChatMessageModel: function(data, chatMessageMeldDocument, senderUserMeldDocument) {
-        var chatMessageModel = this.chatMessageManagerModule.generateChatMessageModel(data, chatMessageMeldDocument, senderUserMeldDocument);
-        if (!this.chatMessageIdToChatMessageModelMap.containsKey(chatMessageModel.getProperty("id")) && !this.chatMessageTryUuidToChatMessageModelMap.containsKey(chatMessageModel.getProperty("tryUuid"))) {
-            this.chatMessageIdToChatMessageModelMap.put(chatMessageModel.getProperty("id"), chatMessageModel);
-            this.chatMessageList.add(chatMessageModel);
-        }
     },
 
     /**
-     * @protected
+     *
      */
-    clearChatMessageList: function() {
-        this.chatMessageList.clear();
+    deinitializeObservers: function() {
+        this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
+        this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
+        this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
+        this.chatMessageStreamModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
     },
 
     /**
@@ -323,6 +332,71 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Object} data
+     * @param {MeldDocument} chatMessageMeldDocument
+     * @param {MeldDocument} senderUserMeldDocument
+     * @return {ChatMessageModel}
+     */
+    buildChatMessageModel: function(data, chatMessageMeldDocument, senderUserMeldDocument) {
+        return this.chatMessageManagerModule.generateChatMessageModel(data, chatMessageMeldDocument, senderUserMeldDocument);
+    },
+
+    /**
+     * @protected
+     * @param {Object} data
+     * @param {MeldDocument} chatMessageMeldDocument
+     * @param {MeldDocument} senderUserMeldDocument
+     */
+    buildAndAppendChatMessageModel: function(data, chatMessageMeldDocument, senderUserMeldDocument) {
+        var chatMessageModel = this.buildChatMessageModel(data, chatMessageMeldDocument, senderUserMeldDocument);
+        this.appendChatMessageModel(chatMessageModel);
+    },
+
+    /**
+     * @param {ChatMessageModel} chatMessageModel
+     */
+    appendChatMessageModel: function(chatMessageModel) {
+        if (!this.chatMessageIdToChatMessageModelMap.containsKey(chatMessageModel.getProperty("id")) && !this.chatMessageTryUuidToChatMessageModelMap.containsKey(chatMessageModel.getProperty("tryUuid"))) {
+            this.chatMessageIdToChatMessageModelMap.put(chatMessageModel.getProperty("id"), chatMessageModel);
+            this.chatMessageList.add(chatMessageModel);
+        }
+    },
+
+    /**
+     * @param {ChatMessageModel} chatMessageModel
+     */
+    prependChatMessageModel: function(chatMessageModel) {
+        if (!this.chatMessageIdToChatMessageModelMap.containsKey(chatMessageModel.getProperty("id")) && !this.chatMessageTryUuidToChatMessageModelMap.containsKey(chatMessageModel.getProperty("tryUuid"))) {
+            this.chatMessageIdToChatMessageModelMap.put(chatMessageModel.getProperty("id"), chatMessageModel);
+            this.chatMessageList.prepend(chatMessageModel);
+        }
+    },
+
+    /**
+     * @param {List.<ChatMessageModel>} chatMessageModels
+     */
+    prependChatMessageModels: function(chatMessageModels) {
+        var _this = this;
+        for(var i = chatMessageModels.getCount() - 1; i >= 0; i--){
+            var chatMessageModel = chatMessageModels.getAt(i);
+            _this.prependChatMessageModel(chatMessageModel);
+        }
+    },
+
+    /**
+     * @protected
+     */
+    clearChatMessageList: function() {
+        this.chatMessageList.clear();
     },
 
     /**
@@ -354,12 +428,81 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                _this.buildChatMessageModel({
+                _this.buildAndAppendChatMessageModel({
                     pending: false,
                     failed: false
                 }, chatMessageMeldDocument, senderUserMeldDocument);
             }
         });
+    },
+
+    /**
+     *
+     * @param {function(Throwable)} callback
+     */
+    loadPreviousChatMessageBatch: function(callback) {
+        var _this                       = this;
+        var conversationId              = this.conversationModel.getProperty("id");
+        var chatMessageMeldDocumentList = new List();
+        var senderUserMeldDocumentMap   = new Map();
+        var senderUserIdSet             = new Set();
+
+        if(!conversationId) {
+            callback(new Throwable("Missing data", {}, "conversationId is undefined", []));
+        } else {
+            this.chatWidgetMessagesContainer.showPreviousMessagesLoader();
+            $series([
+                $task(function(flow) {
+                    var topChatMessageModel = _this.chatMessageList.getAt(0);
+                    var index = topChatMessageModel.getProperty("index");
+                    _this.chatMessageManagerModule.retrieveChatMessageBatchByConversationId(conversationId, index, function(throwable, retrievedChatMessageMeldDocumentList) {
+                        if (!throwable) {
+                            retrievedChatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
+                                if (chatMessageMeldDocument) {
+                                    chatMessageMeldDocumentList.add(chatMessageMeldDocument);
+                                    senderUserIdSet.add(chatMessageMeldDocument.getData().senderUserId);
+                                } else {
+                                    //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
+                                }
+                            });
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.userManagerModule.retrieveUsers(senderUserIdSet.toArray(), function(throwable, userMeldDocumentMap) {
+                        if (!throwable) {
+                            userMeldDocumentMap.forEach(function(userMeldDocument, id) {
+                                if (userMeldDocument) {
+                                    senderUserMeldDocumentMap.put(id, userMeldDocument);
+                                } else {
+                                    //TODO BRN: Couldn't find this meld. Make a repeat call for it. If we can't find it again, log it to the server so we know there's a problem.
+                                }
+                            });
+                        }
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                    _this.chatWidgetMessagesContainer.hidePreviousMessagesLoader();
+                    if (!throwable) {
+                        var chatMessageModels = new List();
+                        chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
+                            var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
+                            var chatMessageModel = _this.buildChatMessageModel({
+                                pending: false,
+                                failed: false
+                            }, chatMessageMeldDocument, senderUserMeldDocument);
+
+                            chatMessageModels.add(chatMessageModel);
+                        });
+                        _this.prependChatMessageModels(chatMessageModels);
+                        callback(undefined);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        }
     },
 
     /**
@@ -373,7 +516,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         var senderUserIdSet             = new Set();
         $series([
             $task(function(flow) {
-               _this.chatMessageManagerModule.retrieveChatMessagesByConversationIdSortBySentAt(conversationId, function(throwable, retrievedChatMessageMeldDocumentList) {
+                var index = -1;
+               _this.chatMessageManagerModule.retrieveChatMessageBatchByConversationId(conversationId, index, function(throwable, retrievedChatMessageMeldDocumentList) {
                     if (!throwable) {
                         retrievedChatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
                             if (chatMessageMeldDocument) {
@@ -402,10 +546,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 });
             })
         ]).execute(function(throwable) {
-            if (!throwable) {
+                if (!throwable) {
                 chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
                     var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
-                    _this.buildChatMessageModel({
+                    _this.buildAndAppendChatMessageModel({
                             pending: false,
                             failed: false
                         }, chatMessageMeldDocument, senderUserMeldDocument);
@@ -511,10 +655,17 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         });
     },
 
+    //-------------------------------------------------------------------------------
+    // Handlers
+    //-------------------------------------------------------------------------------
 
-    //-------------------------------------------------------------------------------
-    // Message Handlers
-    //-------------------------------------------------------------------------------
+    handleChatWidgetMessagesScrollToTopEvent: function(event) {
+        var _this = this;
+        this.loadPreviousChatMessageBatch(function(throwable){
+            console.log("finished loading previous chatmessage batch");
+            _this.chatWidgetMessagesContainer.getViewTop().addEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this, true);
+        });
+    },
 
     /**
      * @param {PublisherMessage} message

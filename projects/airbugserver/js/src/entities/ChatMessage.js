@@ -106,6 +106,20 @@ var ChatMessage = Class.extend(Entity, {
     },
 
     /**
+     * @return {number}
+     */
+    getIndex: function() {
+        return this.deltaDocument.getData().index;
+    },
+
+    /**
+     * @param {number} index
+     */
+    setIndex: function(index) {
+        this.deltaDocument.getData().index = index;
+    },
+
+    /**
      * @return {string}
      */
     getSenderUserId: function() {
@@ -215,6 +229,8 @@ bugmeta.annotate(ChatMessage).with(
         property("id")
             .type("string")
             .primaryId(),
+        property("index")
+            .type("number"),
         property("senderUserId")
             .type("string")
             .id(),

@@ -146,6 +146,7 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
             "body",
             "conversationId",
             "id",
+            "index",
             "senderUserId",
             "sentAt",
             "tryUuid",

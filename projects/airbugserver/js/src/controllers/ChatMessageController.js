@@ -178,6 +178,21 @@ var ChatMessageController = Class.extend(EntityController, {
                 });
             },
 
+            retrieveChatMessageBatchByConversationId: function(request, responder, callback) {
+                console.log("ChatMessageController#retrieveChatMessageBatchByConversationId");
+                var data                = request.getData();
+                var conversationId      = data.conversationId;
+                var index               = data.index;
+                var batchSize           = data.batchSize;
+                var order               = data.order; //asc vs. desc
+                var requestContext      = request.requestContext;
+
+                console.log("conversationId:", conversationId, "index:", index, "batchSize:", batchSize, "order", order);
+                chatMessageService.retrieveChatMessageBatchByConversationId(requestContext, conversationId, index, batchSize, order, function(throwable, chatMessageList) {
+                    _this.processRetrieveListResponse(responder, throwable, chatMessageList, callback);
+                });
+            },
+
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder

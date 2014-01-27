@@ -349,6 +349,33 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         this.request(requestType, requestData, function(throwable, callResponse) {
             _this.processListRetrieveResponse(throwable, callResponse, "ChatMessage", callback);
         });
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
+     */
+    retrieveChatMessageBatchByConversationId: function(conversationId, index, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "conversationId", optional: false, type: "string"},
+            {name: "index", optional: false, type: "number"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        conversationId  = args.conversationId;
+        index           = args.index;
+        callback        = args.callback;
+
+        var _this       = this;
+        var requestData = {
+            conversationId: conversationId,
+            index:          index,
+            batchSize:      50,
+            order:          'asc'
+        };
+        var requestType = "retrieveChatMessageBatchByConversationId";
+        this.request(requestType, requestData, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "ChatMessage", callback);
+        });
     }
 });
 

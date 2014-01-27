@@ -886,6 +886,11 @@ div.overlay-background {
     margin-left: 2px;
 }
 
+div.previous-messages-loader {
+    text-align: center;
+}
+
+
 #roomChatBoxRowContainer .column1of2 .dropdown-menu {
     background-color: rgb(207, 226, 243); /* Old browsers */
 }

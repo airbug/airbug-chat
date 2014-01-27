@@ -4,10 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('ImageView')
+//@Export('ScrollEvent')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
@@ -21,42 +21,27 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class = bugpack.require('Class');
+var Event = bugpack.require('Event');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageView = Class.extend(MustacheView, {
-
-    //-------------------------------------------------------------------------------
-    // Template
-    //-------------------------------------------------------------------------------
-
-    template:   '<img id="{{id}}" class="{{attributes.size}}" src="{{attributes.source}}" />',
+var ScrollEvent = Class.extend(Event, {});
 
 
-    //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data = this._super();
-        data.id = this.getId() || "image-" + this.getCid();
-        return data;
-    }
-});
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
 
 /**
  * @enum {string}
  */
-ImageView.size = {
-
+ScrollEvent.EventType = {
+    SCROLL_TO_TOP: "ScrollEvent::ScrollToTop",
+    SCROLL_TO_BOTTOM: "FormViewEvent::ScrollToBottom"
 };
 
 
@@ -64,4 +49,4 @@ ImageView.size = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageView", ImageView);
+bugpack.export("airbug.ScrollEvent", ScrollEvent);

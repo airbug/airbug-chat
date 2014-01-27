@@ -300,7 +300,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
             //TODO Future Feature Figure out a way to remember the reference to the original chatMessage
-            //Diplay Code command will overwrite whatever is currently inside the ace editor
+            //Display Code command will overwrite whatever is currently inside the ace editor
             //May want to provide a warning or option to create a new code editor tab/workspace
             //Or at least explain it in the demo video
         }
