@@ -12,6 +12,7 @@
         "port": 6379
     },
     "sessionKey": "'airbug.sid'",
+    "sslEnabled": false,
     "staticUrl": "/static",
     "stickyStaticUrl": "/static"
 }

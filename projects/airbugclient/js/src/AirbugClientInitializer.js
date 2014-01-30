@@ -15,6 +15,7 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.RoutingRequest')
+//@Require('zeroclipboard.ZeroClipboard')
 
 
 //-------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation')
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var RoutingRequest                  = bugpack.require('carapace.RoutingRequest');
+var ZeroClipboard                   = bugpack.require('zeroclipboard.ZeroClipboard');
 
 
 //-------------------------------------------------------------------------------
@@ -160,6 +162,16 @@ var AirbugClientInitializer = Class.extend(Obj, {
 
         console.log("airbugApi.connect call");
         _this.airbugApi.connect();
+
+
+        ZeroClipboard.config({
+            allowScriptAccess: "always",
+            moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf",
+            trustedDomains: [
+                this.windowUtil.getHost()
+            ],
+            forceHandCursor: true
+        });
 
         controllerScan.scan();
 

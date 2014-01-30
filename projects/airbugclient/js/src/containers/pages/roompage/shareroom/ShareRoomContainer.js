@@ -245,11 +245,8 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         var button      = this.getViewTop().$el.find('.btn.copy-to-clipboard')[0];
         var currentUrl  = this.windowUtil.getUrl();
         var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
-        var options     = {
-            moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf"
-        };
 
-        this.clip       = new ZeroClipboard(button, options);
+        this.clip       = new ZeroClipboard(button);
         var clip        = this.clip;
 
         clip.on( 'load',            function(client, args) {

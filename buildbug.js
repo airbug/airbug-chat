@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.9";
+var version             = "0.0.10";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -78,6 +78,7 @@ buildProperties({
             "../bugjs/external/socialbuttons/static",
             "../bugjs/external/underscore/js/src",
             "../bugjs/external/zeroclipboard/js/src",
+            "../bugjs/external/zeroclipboard/static",
             "../bugjs/projects/bugcall/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugflow/js/src",
