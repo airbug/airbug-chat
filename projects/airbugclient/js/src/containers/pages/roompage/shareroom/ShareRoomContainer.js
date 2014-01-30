@@ -12,10 +12,10 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CloseShareRoomOverlayButtonContainer')
 //@Require('airbug.CopyToClipboardButtonView')
-//@Require('airbug.FauxTextFieldView')
 //@Require('airbug.IconView')
 //@Require('airbug.OverlayView')
-//@Require('airbug.ParagraphView')
+//@Require('airbug.RoomLinkFauxTextFieldView')
+//@Require('airbug.ShareRoomTextView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -29,7 +29,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -42,10 +42,10 @@ var ButtonView                              = bugpack.require('airbug.ButtonView
 var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
 var CloseShareRoomOverlayButtonContainer    = bugpack.require('airbug.CloseShareRoomOverlayButtonContainer');
 var CopyToClipboardButtonView               = bugpack.require('airbug.CopyToClipboardButtonView');
-var FauxTextFieldView                       = bugpack.require('airbug.FauxTextFieldView');
 var IconView                                = bugpack.require('airbug.IconView');
 var OverlayView                             = bugpack.require('airbug.OverlayView');
-var ParagraphView                           = bugpack.require('airbug.ParagraphView');
+var RoomLinkFauxTextFieldView               = bugpack.require('airbug.RoomLinkFauxTextFieldView');
+var ShareRoomTextView                       = bugpack.require('airbug.ShareRoomTextView');
 var TextView                                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
@@ -59,10 +59,10 @@ var ZeroClipboard                           = bugpack.require('zeroclipboard.Zer
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired                               = AutowiredAnnotation.autowired;
+var bugmeta                                 = BugMeta.context();
+var property                                = PropertyAnnotation.property;
+var view                                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -92,9 +92,10 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {zeroclipboard.ZeroClipboard}
+         * @type {ZeroClipboard}
          */
         this.clip               = null;
+
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -129,6 +130,12 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         this.overlayView        = null;
 
         /**
+         * @pruvate
+         * @type {BoxWithHeaderView}
+         */
+        this.shareRoomBoxView   = null;
+
+        /**
          * @private
          * @type {ButtonView}
          */
@@ -161,8 +168,6 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        var currentUrl = this.windowUtil.getUrl();
-
         this.overlayView =
             view(OverlayView)
                 .attributes({
@@ -171,23 +176,20 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
                     type: OverlayView.Type.PAGE
                 })
                 .children([
-                    //TODO BRN: This needs to be encapsulated in it's own view so that it can react to model changes
                     view(BoxWithHeaderView)
+                        .id("shareRoomBox")
                         .children([
-                            view(ParagraphView)
-                                .attributes({text: "Share room " + this.roomModel.getProperty("name")})
+                            view(ShareRoomTextView)
+                                .model(this.roomModel)
                                 .appendTo('.box-body'),
-                            view(FauxTextFieldView)
-                                .attributes({
-                                    value: currentUrl + "#room/" + this.roomModel.getProperty("id")
-                                })
+                            view(RoomLinkFauxTextFieldView)
+                                .model(this.roomModel)
                                 .appendTo('.box-body'),
                             view(CopyToClipboardButtonView)
-                                .id("copy-room-link-button")
                                 .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
                                 .children([
                                     view(TextView)
-                                        .attributes({text: " Copy Link"})
+                                        .attributes({text: "Copy Link"})
                                         .appendTo('*[id|="button"]'),
                                     view(IconView)
                                         .attributes({
@@ -205,6 +207,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.overlayView);
+        this.shareRoomBoxView = this.findViewById("shareRoomBox");
     },
 
     /**

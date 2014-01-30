@@ -4,17 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('TextView')
+//@Export('ShareRoomTextView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.TextView')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -22,46 +22,31 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var TextView        = bugpack.require('airbug.TextView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var TextView = Class.extend(MustacheView, {
+var ShareRoomTextView = Class.extend(TextView, {
 
     //-------------------------------------------------------------------------------
-    // Template
-    //-------------------------------------------------------------------------------
-
-    template:   '<span id="{{id}}" class="text">{{text}}</span>',
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {$}
-     */
-    getTextElement: function() {
-        return this.$el;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceView Methods
+    // BugView Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @protected
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderView: function() {
-        this._super();
-        var data = this.generateTemplateData();
-        this.$el.text(data.text);
-        this.$el.attr("id", data.id);
+    renderModelProperty: function(propertyName, propertyValue) {
+        this._super(propertyName, propertyValue);
+        switch (propertyName) {
+            case "name":
+                this.getTextElement().text(this.generateText(propertyValue));
+                break;
+        }
     },
 
 
@@ -70,32 +55,27 @@ var TextView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @protected
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "text-" + this.getCid();
-        data.text   = this.getText();
+        var data            = this._super();
+        data.text           = this.generateText(this.getModel().getProperty("name"));
         return data;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
+     * @private
+     * @param {string} roomName
      * @return {string}
      */
-    getText: function() {
-        return this.getAttribute("text");
-    },
-
-    /**
-     * @param {string} text
-     */
-    setText: function(text) {
-        this.setAttribute("text", text);
+    generateText: function(roomName) {
+        return "Share room " + roomName;
     }
 });
 
@@ -104,4 +84,4 @@ var TextView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.TextView", TextView);
+bugpack.export("airbug.ShareRoomTextView", ShareRoomTextView);
