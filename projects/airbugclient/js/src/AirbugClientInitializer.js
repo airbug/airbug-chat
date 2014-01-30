@@ -173,6 +173,10 @@ var AirbugClientInitializer = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 carapaceApplication.start(function(error) {
+                    if (!error) {
+                        var spinner = JQuery("#application-loading-spinner");
+                        spinner.hide();
+                    }
                     flow.complete(error);
                 });
             })
