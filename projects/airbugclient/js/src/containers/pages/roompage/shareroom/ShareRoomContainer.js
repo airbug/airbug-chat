@@ -252,33 +252,35 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         this.clip       = new ZeroClipboard(button, options);
         var clip        = this.clip;
 
-        clip.on( 'dataRequested',   function(client, args) {
-            clip.setText(copyText);
-        });
-
         clip.on( 'load',            function(client, args) {
-        });
+            clip.on( 'dataRequested',   function(client, args) {
+                clip.setText(copyText);
+            });
 
-        clip.on( 'complete',        function(client, args) {
-            _this.showCopiedNotification();
-        });
+            clip.on( 'complete',        function(client, args) {
+                _this.showCopiedNotification();
+            });
 
-        clip.on( 'mouseover',       function(client, args) {
-        });
+            clip.on( 'mouseover',       function(client, args) {
+            });
 
-        clip.on( 'mouseout',        function(client, args) {
-        });
+            clip.on( 'mouseout',        function(client, args) {
+            });
 
-        clip.on( 'mousedown',       function(client, args) {
-        });
+            clip.on( 'mousedown',       function(client, args) {
+            });
 
-        clip.on( 'mouseup',         function(client, args) {
-        });
+            clip.on( 'mouseup',         function(client, args) {
+            });
 
-        clip.on( 'noflash',         function(client, args) {
-        });
+            clip.on( 'noflash',         function(client, args) {
+                console.warn("NO flash version");
+                //TODO BRN: Hide copy link button
+            });
 
-        clip.on( 'wrongflash',      function(client, args) {
+            clip.on( 'wrongflash',      function(client, args) {
+                console.warn("Unsupported flash version");
+            });
         });
 
         // botton.on("resize", function(event){
