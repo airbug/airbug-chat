@@ -1242,6 +1242,15 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     margin-left: 5px;
 }
 
+
+/* Other
+*******************************************************************/
+
+.gist-embed {
+    border: none;
+}
+
+
 /* Twitter Bootstrap Overrides
 *******************************************************************/
 @media (max-width: 979px) {
