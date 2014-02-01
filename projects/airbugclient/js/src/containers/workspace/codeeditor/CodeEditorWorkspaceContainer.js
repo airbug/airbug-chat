@@ -11,6 +11,7 @@
 //@Require('airbug.CodeEditorWidgetContainer')
 //@Require('airbug.CodeEditorSettingsContainer')
 //@Require('airbug.CommandModule')
+//@Require('airbug.FormViewEvent')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -34,6 +35,7 @@ var BoxView                             = bugpack.require('airbug.BoxView');
 var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
 var CodeEditorSettingsContainer         = bugpack.require('airbug.CodeEditorSettingsContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
+var FormViewEvent                       = bugpack.require('airbug.FormViewEvent');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -161,6 +163,7 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.initializeEventListeners();
         this.initializeCommandSubscriptions();
         this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
     },
@@ -170,12 +173,27 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
     },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    initializeEventListeners: function() {
+        this.codeEditorSettingsContainer.getViewTop().addEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
+    },
+
+    /**
+     * @private
+     */
+    deinitializeEventListeners: function() {
+        this.codeEditorSettingsContainer.getViewTop().removeEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
+    },
 
     /**
      * @private
@@ -213,6 +231,34 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
                 codeEditorSettings.show();
                 codeEditorWidget.hide();
             }
+        }
+    },
+
+    handleSettingsChangeEvent: function(event) {
+        var data = event.getData();
+        var setting = data.setting;
+
+        switch(setting) {
+            case "mode":
+                var mode        = data.mode;
+                this.codeEditorWidgetContainer.setEditorMode(mode);
+                break;
+            case "theme":
+                var theme       = data.theme;
+                this.codeEditorWidgetContainer.setEditorTheme(theme);
+                break;
+            case "fontSize":
+                var fontSize    = data.fontSize;
+                this.codeEditorWidgetContainer.setEditorFontSize(fontSize);
+                break;
+            case "tabSize":
+                var tabSize     = data.tabSize;
+                this.codeEditorWidgetContainer.setEditorTabSize(tabSize);
+                break;
+            case "tabType":
+                var tabType     = data.tabType;
+                this.codeEditorWidgetContainer.setEditorTabType(tabType);
+                break;
         }
     }
 });

@@ -11,6 +11,7 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.FormViewEvent')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
@@ -19,6 +20,7 @@
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -37,6 +39,7 @@ var ButtonGroupView                 = bugpack.require('airbug.ButtonGroupView');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsView          = bugpack.require('airbug.CodeEditorSettingsView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
+var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
 var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
 var TextView                        = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
@@ -45,12 +48,14 @@ var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var JQuery                          = bugpack.require('jquery.JQuery');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var $           = JQuery;
 var autowired   = AutowiredAnnotation.autowired;
 var bugmeta     = BugMeta.context();
 var CommandType = CommandModule.CommandType;
@@ -234,10 +239,20 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
 
     initializeEventListeners: function() {
         this.backButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.getViewTop().$el.find("select#code-editor-mode").change(       {context: this}, this.handleModeSelectionEvent);
+        this.getViewTop().$el.find("select#code-editor-theme").change(      {context: this}, this.handleThemeSelectionEvent);
+//        this.getViewTop().$el.find("select#code-editor-fontsize").change(   {context: this}, this.handleFontSizeSelectionEvent);
+        this.getViewTop().$el.find("select#code-editor-tabsize").change(    {context: this}, this.handleTabSizeSelectionEvent);
+//        this.getViewTop().$el.find("select#code-editor-tabtype").change(    {context: this}, this.handleTabTypeSelectionEvent);
     },
 
     deinitializeEventListeners: function() {
         this.backButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.getViewTop().$el.find("select#code-editor-mode").off();
+        this.getViewTop().$el.find("select#code-editor-theme").off();
+//        this.getViewTop().$el.find("select#code-editor-fontsize").off();
+        this.getViewTop().$el.find("select#code-editor-tabsize").off();
+//        this.getViewTop().$el.find("select#code-editor-tabtype").off();
     },
 
 
@@ -249,8 +264,59 @@ var CodeEditorSettingsContainer = Class.extend(CarapaceContainer, {
         this.commandModule.relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
     },
 
-    handleApplyButtonClickedEvent: function() {
-        this.commandModule.relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
+    handleModeSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "mode",
+            mode: $("select#code-editor-mode").val()
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
+    },
+
+    handleThemeSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "theme",
+            theme: $("select#code-editor-theme").val()
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
+    },
+
+    handleFontSizeSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "fontSize",
+            fontSize: $("select#code-editor-fontsize").val()
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
+    },
+
+    handleTabSizeSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "tabSize",
+            tabSize: $("select#code-editor-tabsize").val()
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
+    },
+
+    handleTabTypeSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "tabType",
+            tabType: $("select#code-editor-tabtype").val().match(/\-(.*)/)[1]
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     }
 });
 

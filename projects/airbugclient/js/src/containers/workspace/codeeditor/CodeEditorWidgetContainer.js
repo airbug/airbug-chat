@@ -222,7 +222,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
                         })
                         .appendTo("#code-editor-widget-body"),
                     view(ButtonView)
-                        .id("embed-code-button")
+                        .id("send-code-button")
                         .attributes({
                             type: "default",
                             size: ButtonView.Size.LARGE,
@@ -231,7 +231,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
                         .children([
                             view(TextView)
                                 .attributes({text: "Send"})
-                                .appendTo("#embed-code-button")
+                                .appendTo("#send-code-button")
                         ])
                         .appendTo("#code-editor-widget-footer")
                 ])
@@ -242,7 +242,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.codeEditorWidgetView);
-        this.embedButtonView    = this.findViewById("embed-code-button");
+        this.sendButtonView     = this.findViewById("send-code-button");
         this.codeEditorView     = this.findViewById("code-editor-view");
 
         Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
@@ -288,14 +288,14 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     initializeEventListeners: function() {
-        this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
     },
 
     /**
      * @private
      */
     deinitializeEventListeners: function() {
-        this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
     },
 
     /**
@@ -339,7 +339,7 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     /**
      * @param {ButtonViewEvent} event
      */
-    hearEmbedButtonClickedEvent: function(event) {
+    hearSendButtonClickedEvent: function(event) {
         var code            = this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
@@ -360,9 +360,37 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     // Ace Config and Helper Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     configureAceEditor: function() {
-        this.aceEditor.getSession().setMode("ace/mode/javascript");
+        this.aceEditor.getSession().setMode("ace/mode/plain_text");
         this.aceEditor.setTheme("ace/theme/twilight");
+        this.aceEditor.getSession().setTabSize(4);
+        this.aceEditor.getSession().setUseSoftTabs(true);
+        this.aceEditor.setFontSize(12);
+    },
+
+    /**
+     * @return {Ace}
+     */
+    getEditor: function() {
+        return this.aceEditor;
+    },
+
+    /**
+     * @returns {Document}
+     */
+    getEditorDocument: function() {
+        return this.aceEditor.getSession().getDocument();
+    },
+
+    /**
+     * @param {number} fontSize
+     */
+    setEditorFontSize: function(fontSize) {
+        this.aceEditor.setFontSize(fontSize);
+
     },
 
     /**
@@ -371,6 +399,41 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     getEditorLanguage: function() {
         var mode = this.aceEditor.getSession().getMode().$id;
         return mode.substring(mode.lastIndexOf("/") + 1);
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorMode: function() {
+        return this.aceEditor.getSession().getMode().$id;
+    },
+
+    /**
+     * @param {string} mode
+     */
+    setEditorMode: function(mode) {
+        this.aceEditor.getSession().setMode(mode);
+    },
+
+    /**
+     * @param {number} tabSize
+     */
+    setEditorTabSize: function(tabSize) {
+        this.aceEditor.getSession().setTabSize(tabSize);
+        console.log("tab size has been set to", this.aceEditor.getSession().getTabSize()); //maybe make these into notifications
+    },
+
+    /**
+     * @param {string | boolean} tabType
+     */
+    setEditorTabType: function(tabType) {
+        if(tabType === "soft") {
+            tabType = true;
+        } else if(tabType === "hard") {
+            tabType = false;
+        }
+        this.aceEditor.getSession().setUseSoftTabs(tabType);
+        console.log("tabs have been set to", '"' + this.aceEditor.getSession().getTabString() + '"'); //maybe make these into notifications
     },
 
     /**
@@ -394,6 +457,21 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @return {string}
+     */
+    getEditorTheme: function() {
+        return this.aceEditor.getTheme();
+    },
+
+    /**
+     * @param {string} theme
+     */
+    setEditorTheme: function(theme) {
+        this.aceEditor.setTheme(theme);
+        console.log("theme has been set to", this.getEditorTheme());
+    },
+
+    /**
      *
      */
     setEditorToReadOnly: function() {
@@ -402,6 +480,16 @@ var CodeEditorWidgetContainer = Class.extend(CarapaceContainer, {
         }
     },
 
+    /**
+     *
+     */
+    resizeEditor: function() {
+        this.aceEditor.resize();
+    },
+
+    /**
+     *
+     */
     focusOnAceEditor: function() {
         var aceEditor = this.aceEditor;
         var session = aceEditor.getSession();

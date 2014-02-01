@@ -35,8 +35,17 @@ var CodeEditorView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="code-editor" class="code-editor {{attributes.classes}}">' +
-        '</div>'
+    template:   '<div id="{{id}}" class="code-editor {{attributes.classes}}">' +
+        '</div>',
+
+    /**
+     * @return {Object}
+     */
+    generateTemplateData: function() {
+        var data    = this._super();
+        data.id     = this.getId() || "code-editor";
+        return data;
+    }
 });
 
 
