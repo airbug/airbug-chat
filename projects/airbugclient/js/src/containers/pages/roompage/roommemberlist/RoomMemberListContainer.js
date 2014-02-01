@@ -15,6 +15,7 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
+//@Require('airbug.CommandModule')
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
 //@Require('airbug.RoomMemberListItemContainer')
@@ -46,6 +47,7 @@ var RemoveChange                    = bugpack.require('RemoveChange');
 var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
 var Set                             = bugpack.require('Set');
 var SetPropertyChange               = bugpack.require('SetPropertyChange');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListViewEvent                   = bugpack.require('airbug.ListViewEvent');
 var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
@@ -63,6 +65,7 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 var bugmeta                         = BugMeta.context();
 var autowired                       = AutowiredAnnotation.autowired;
+var CommandType                     = CommandModule.CommandType;
 var property                        = PropertyAnnotation.property;
 var view                            = ViewBuilder.view;
 var $series                         = BugFlow.$series;
@@ -119,6 +122,12 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule                          = null;
 
         /**
          * @private
@@ -316,6 +325,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
      * @param {Set.<string>} idSet
      */
     loadRoomMemberList: function(idSet) {
+        console.log("RoomMemberListContainer#loadRoomMemberList");
         var _this               = this;
         var roomMemberMeldDocumentSet   = new Set();
         var userMeldDocumentMap         = new Map();
@@ -337,6 +347,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
                 });
             }),
             $task(function(flow) {
+                console.log("retrieveUsers. ids:", userIdSet.toArray());
                 _this.userManagerModule.retrieveUsers(userIdSet.toArray(), function(throwable, meldDocumentMap) {
                     if (!throwable) {
                         meldDocumentMap.forEach(function(meldDocument, id) {
@@ -364,12 +375,10 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
                 }
             }
         });
@@ -497,6 +506,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(RoomMemberListContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomMemberManagerModule").ref("roomMemberManagerModule"),
         property("userManagerModule").ref("userManagerModule")

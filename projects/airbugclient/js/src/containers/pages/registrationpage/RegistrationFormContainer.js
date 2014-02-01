@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('airbug.CommandModule')
 //@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
@@ -31,6 +32,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
@@ -47,6 +49,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 var bugmeta                 = BugMeta.context();
 var autowired               = AutowiredAnnotation.autowired;
+var CommandType             = CommandModule.CommandType;
 var property                = PropertyAnnotation.property;
 var view                    = ViewBuilder.view;
 
@@ -72,6 +75,12 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
         /**
          * @private
@@ -169,12 +178,10 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
                 }
             }
         });
@@ -188,6 +195,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(RegistrationFormContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule")
     ])

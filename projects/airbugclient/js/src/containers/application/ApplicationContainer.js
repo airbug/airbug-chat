@@ -11,7 +11,7 @@
 //@Require('airbug.BodyView')
 //@Require('airbug.ApplicationHeaderView')
 //@Require('airbug.ErrorNotificationOverlayContainer')
-//@Require('airbug.NotificationView')
+//@Require('airbug.NotificationContainer')
 //@Require('carapace.CarapaceContainer')
 
 
@@ -31,7 +31,7 @@ var ApplicationView                     = bugpack.require('airbug.ApplicationVie
 var BodyView                            = bugpack.require('airbug.BodyView');
 var ApplicationHeaderView               = bugpack.require('airbug.ApplicationHeaderView');
 var ErrorNotificationOverlayContainer   = bugpack.require('airbug.ErrorNotificationOverlayContainer');
-var NotificationView                    = bugpack.require('airbug.NotificationView');
+var NotificationContainer               = bugpack.require('airbug.NotificationContainer');
 var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
 
 
@@ -58,7 +58,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Views
         //-------------------------------------------------------------------------------
 
         /**
@@ -79,11 +79,15 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
          */
         this.applicationHeaderView  = null;
 
+        //-------------------------------------------------------------------------------
+        // Containers
+        //-------------------------------------------------------------------------------
+
         /**
          * @private
-         * @type {NotificationView}
+         * @type {NotificationContainer}
          */
-        this.notificationView       = null;
+        this.notificationContainer  = null;
     },
 
 
@@ -110,13 +114,6 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      */
     getApplicationHeaderView: function() {
         return this.applicationHeaderView;
-    },
-
-    /**
-     * return {NotificationView}
-     */
-    getNotificationView: function() {
-        return this.notificationView;
     },
 
 
@@ -151,11 +148,9 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
         this.applicationHeaderView  = new ApplicationHeaderView({id: "application-header"});
         this.applicationView        = new ApplicationView({id: "application"});
-        this.notificationView       = new NotificationView({id: "notification-container"});
 
         this.bodyView.addViewChild(this.applicationHeaderView);
         this.bodyView.addViewChild(this.applicationView);
-        this.bodyView.addViewChild(this.notificationView);
 
         this.setViewTop(this.bodyView);
     },
@@ -165,6 +160,8 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
      */
     createContainerChildren: function() {
         this._super();
+        this.notificationContainer = new NotificationContainer();
+        this.addContainerChild(this.notificationContainer, "body");
     },
 
     /**
@@ -174,7 +171,6 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     destroyContainer: function() {
         this.applicationHeaderView.dispose();
         this.applicationView.dispose();
-        this.notificationView.dispose();
         this.viewTop = null;
     },
 

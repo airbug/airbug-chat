@@ -94,6 +94,12 @@ CommandModule.CommandType = {
         WORKSPACE:              "CommandModuleCommand::hide::workspace",
         SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay"
     },
+    FLASH: {
+        ERROR:                  "CommandModuleCommand::flash::error",
+        EXCEPTION:              "CommandModuleCommand::flash::exception",
+        MESSAGE:                "CommandModuleCommand::flash::message",
+        SUCCESS:                "CommandModuleCommand::flash::success"
+    },
     SUBMIT: {
         CHAT_MESSAGE:           "CommandModuleCommand::submit::chatMessage"
     },

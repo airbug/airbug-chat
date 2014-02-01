@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.BoxView')
+//@Require('airbug.CommandModule')
 //@Require('airbug.InputView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.GithubLoginFormView')
@@ -40,6 +41,7 @@ var bugpack                 = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Exception                   = bugpack.require('Exception');
 var BoxView                     = bugpack.require('airbug.BoxView');
+var CommandModule               = bugpack.require('airbug.CommandModule');
 var InputView                   = bugpack.require('airbug.InputView');
 var GithubLoginFormView         = bugpack.require('airbug.GithubLoginFormView');
 var FormControlGroupView        = bugpack.require('airbug.FormControlGroupView');
@@ -62,6 +64,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var CommandType             = CommandModule.CommandType;
 var autowired               = AutowiredAnnotation.autowired;
 var property                = PropertyAnnotation.property;
 var view                    = ViewBuilder.view;
@@ -93,7 +96,13 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {AirbugClientConfig}
          */
-        this.airbugClientConfig = null;
+        this.airbugClientConfig         = null;
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
         /**
          * @private
@@ -275,12 +284,10 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure
                 // out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
                 }
             }
         });
@@ -295,6 +302,7 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(GithubLoginFormContainer).with(
     autowired().properties([
         property("airbugClientConfig").ref("airbugClientConfig"),
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule")
     ])

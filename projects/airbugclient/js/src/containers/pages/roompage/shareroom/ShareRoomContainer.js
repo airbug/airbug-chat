@@ -11,6 +11,7 @@
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CloseShareRoomOverlayButtonContainer')
+//@Require('airbug.CommandModule')
 //@Require('airbug.CopyToClipboardButtonView')
 //@Require('airbug.IconView')
 //@Require('airbug.OverlayView')
@@ -41,6 +42,7 @@ var BoxWithHeaderView                       = bugpack.require('airbug.BoxWithHea
 var ButtonView                              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
 var CloseShareRoomOverlayButtonContainer    = bugpack.require('airbug.CloseShareRoomOverlayButtonContainer');
+var CommandModule                           = bugpack.require('airbug.CommandModule');
 var CopyToClipboardButtonView               = bugpack.require('airbug.CopyToClipboardButtonView');
 var IconView                                = bugpack.require('airbug.IconView');
 var OverlayView                             = bugpack.require('airbug.OverlayView');
@@ -61,6 +63,7 @@ var ZeroClipboard                           = bugpack.require('zeroclipboard.Zer
 
 var autowired                               = AutowiredAnnotation.autowired;
 var bugmeta                                 = BugMeta.context();
+var CommandType                             = CommandModule.CommandType;
 var property                                = PropertyAnnotation.property;
 var view                                    = ViewBuilder.view;
 
@@ -105,6 +108,12 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
          * @type {AirbugClientConfig}
          */
         this.airbugClientConfig = null;
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule      = null;
 
         /**
          * @private
@@ -299,9 +308,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     showCopiedNotification: function() {
-        var parentContainer         = this.getContainerParent();
-        var notificationView        = parentContainer.getNotificationView();
-        notificationView.flashMessage("Room url copied to clipboard.", 1000);
+        this.commandModule.relayCommand(CommandType.FLASH.MESSAGE, {message: "Room url copied to clipboard.", delay: 1000});
     }
 });
 
@@ -313,6 +320,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ShareRoomContainer).with(
     autowired().properties([
         property("airbugClientConfig").ref("airbugClientConfig"),
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("windowUtil").ref("windowUtil")
     ])

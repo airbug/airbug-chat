@@ -11,6 +11,7 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -34,6 +35,7 @@ var Exception               = bugpack.require('Exception');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
 var TextView                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -47,6 +49,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 var autowired               = AutowiredAnnotation.autowired;
 var bugmeta                 = BugMeta.context();
+var CommandType             = CommandModule.CommandType;
 var property                = PropertyAnnotation.property;
 var view                    = ViewBuilder.view;
 
@@ -163,12 +166,10 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
 
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
                 }
             }
         });
@@ -183,6 +184,7 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
 
 bugmeta.annotate(LogoutButtonContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule")
     ])

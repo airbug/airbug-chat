@@ -15,6 +15,7 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
+//@Require('airbug.CommandModule')
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
 //@Require('airbug.PanelWithHeaderView')
@@ -49,6 +50,7 @@ var RemoveChange                = bugpack.require('RemoveChange');
 var RemovePropertyChange        = bugpack.require('RemovePropertyChange');
 var Set                         = bugpack.require('Set');
 var SetPropertyChange           = bugpack.require('SetPropertyChange');
+var CommandModule               = bugpack.require('airbug.CommandModule');
 var ListView                    = bugpack.require('airbug.ListView');
 var ListViewEvent               = bugpack.require('airbug.ListViewEvent');
 var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
@@ -69,6 +71,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 var bugmeta                     = BugMeta.context();
 var autowired                   = AutowiredAnnotation.autowired;
+var CommandType                 = CommandModule.CommandType;
 var property                    = PropertyAnnotation.property;
 var view                        = ViewBuilder.view;
 var $series                     = BugFlow.$series;
@@ -125,6 +128,12 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         // Modules
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule      = null;
 
         /**
          * @private
@@ -348,7 +357,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {Set.<string>} roomIdSet
      */
     loadRoomList: function(roomIdSet) {
-
         var _this                       = this;
         var roomMeldDocumentSet         = new Set();
         $series([
@@ -379,12 +387,10 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
                 }
             }
         });
@@ -513,6 +519,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(RoomListPanelContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")

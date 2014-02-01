@@ -283,15 +283,16 @@ var RoomPageContainer = Class.extend(PageContainer, {
                 //TODO stop loading animation
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
-                var parentContainer     = _this.getContainerParent();
-                var notificationView    = parentContainer.getNotificationView();
                 if (Class.doesExtend(throwable, Exception)) {
-                    notificationView.flashExceptionMessage(throwable.getMessage());
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                     setTimeout(function() {
                         _this.navigationModule.navigate("home", {trigger: true});
                     }, 1500);
                 } else {
-                    notificationView.flashErrorMessage("Sorry an error has occurred");
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
+                    setTimeout(function() {
+                        _this.navigationModule.navigate("home", {trigger: true});
+                    }, 1500);
                 }
             }
         });
