@@ -119,7 +119,6 @@ var FormViewWithWrapper = Class.extend(MustacheView, {
      */
     submitForm: function() {
         var formData = this.getFormData();
-        console.log("formData:", formData);
         this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
             formData: formData
         }));
