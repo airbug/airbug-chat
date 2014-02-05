@@ -33,15 +33,17 @@ var ObjectId                = mongoose.Schema.Types.ObjectId;
 
 var ChatMessageSchema = new Schema({
     body: {type: Mixed},
-    conversationId: {type: ObjectId, index: true, required: true},
-    createdAt: Date, //UPDATE to required: true, default: Date.now and remove checks from the managers
-    index: {type: Number, index: true, required: true, unique: true},
-    senderUserId: {type: ObjectId, index: true, required: true},
-    sentAt: {type: Date, index: true, required: true},
-    tryUuid: {type: String, index: true, required: true},
-    type: {type: String, required: true},
-    updatedAt: Date
+    conversationId: {type: ObjectId,    index: true,    required: true},
+    createdAt:      {type: Date,                        required: true, default: Date.now}, //UPDATE remove checks from the managers
+    index:          {type: Number,      index: true,    required: true, unique: false},
+    senderUserId:   {type: ObjectId,    index: true,    required: true},
+    sentAt:         {type: Date,        index: true,    required: true},
+    tryUuid:        {type: String,      index: true,    required: true},
+    type:           {type: String,                      required: true},
+    updatedAt:      {type: Date,                        required: true, default: Date.now}
 });
+
+ChatMessageSchema.index({conversationId: 1, index: 1}, {unique: true});
 
 /**
  * @return {number}
@@ -52,10 +54,14 @@ ChatMessageSchema.statics.getNextIndexByConversationId = function(conversationId
         { $inc: { count: 1 } },
         { new: true, upsert: true},
         function(error, chatMessageCounter){
-            if(chatMessageCounter){
-                callback(error, chatMessageCounter.count);
-            } else {
+            if(error){
                 callback(error);
+            } else {
+                if(chatMessageCounter){
+                    callback(undefined, chatMessageCounter.count);
+                } else {
+                    callback(new Error("No chatMessageCounter found"));
+                }
             }
         }
     );

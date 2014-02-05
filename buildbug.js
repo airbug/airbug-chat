@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.12";
+var version             = "0.0.13";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -123,6 +123,7 @@ buildProperties({
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
+            "./projects/airbugserver/js/migrations",
             "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
             "../bugjs/projects/bugcall/bugjars/server/js/src",
