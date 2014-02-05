@@ -148,7 +148,7 @@ var Cookie = Class.extend(Obj, {
      * @return {number}
      */
     getOriginalMaxAge: function() {
-        return this.data.originalMaxAge;
+        return this.originalMaxAge;
     },
 
     /**

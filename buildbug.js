@@ -34,7 +34,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.11";
+var version             = "0.0.12";
 var dependencies        = {
     "aws-sdk": "1.17.1",
     bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
@@ -79,11 +79,13 @@ buildProperties({
             "../bugjs/external/underscore/js/src",
             "../bugjs/external/zeroclipboard/js/src",
             "../bugjs/external/zeroclipboard/static",
-            "../bugjs/projects/bugcall/js/src",
+            "../bugjs/projects/bugcall/bugjars/client/js/src",
+            "../bugjs/projects/bugcall/bugjars/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugmvc/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
@@ -97,7 +99,6 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/socket/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
-            "../bugpack/projects/bugpack-client/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
         ],
         serverStickyPaths: [
@@ -123,15 +124,18 @@ buildProperties({
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
             "../bugjs/projects/aws/js/src",
-            "../bugjs/projects/bugcall/js/src",
+            "../bugjs/projects/bugcall/bugjars/core/js/src",
+            "../bugjs/projects/bugcall/bugjars/server/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugjs/js/src",
+            "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
+            "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/configbug/js/src",
             "../bugjs/projects/cookies/js/src",
@@ -173,14 +177,17 @@ buildProperties({
         ],
         testPaths: [
             "./projects/airbugserver/js/test",
-            "../bugjs/projects/bugcall/js/test",
+            "../bugjs/projects/bugcall/bugjars/core/js/test",
+            "../bugjs/projects/bugcall/bugjars/server/js/test",
             "../bugjs/projects/bugdelta/js/test",
             "../bugjs/projects/bugentity/js/test",
             "../bugjs/projects/bugflow/js/test",
             "../bugjs/projects/bugioc/js/test",
             "../bugjs/projects/bugjs/js/test",
+            "../bugjs/projects/bugmarsh/js/test",
             "../bugjs/projects/bugmeta/js/test",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
+            "../bugjs/projects/bugsub/js/test",
             "../bugjs/projects/bugtrace/js/test",
             "../bugjs/projects/configbug/js/test",
             "../bugjs/projects/handshaker/js/test",
@@ -420,6 +427,9 @@ buildTarget('prod').buildFlow(
                     }
                 })
             ]),
+
+            // Create static contents folder and upload contents to S3
+
             series([
                 targetTask('copyContents', {
                     properties: {
@@ -459,7 +469,9 @@ buildTarget('marketing').buildFlow(
             properties: {
                 file: buildProject.getProperty("marketingContent.emailFacebookIcon"),
                 options: {
-                    acl: 'public-read'
+                    acl: 'public-read',
+                    gzip: true,
+                    cacheControl: "max-age=31536000, public"
                 },
                 bucket: "{{prod-static-bucket}}"
             }
@@ -468,7 +480,9 @@ buildTarget('marketing').buildFlow(
             properties: {
                 file: buildProject.getProperty("marketingContent.emailTwitterIcon"),
                 options: {
-                    acl: 'public-read'
+                    acl: 'public-read',
+                    gzip: true,
+                    cacheControl: "max-age=31536000, public"
                 },
                 bucket: "{{prod-static-bucket}}"
             }
@@ -477,7 +491,9 @@ buildTarget('marketing').buildFlow(
             properties: {
                 file: buildProject.getProperty("marketingContent.emailLogoImage320x120"),
                 options: {
-                    acl: 'public-read'
+                    acl: 'public-read',
+                    gzip: true,
+                    cacheControl: "max-age=31536000, public"
                 },
                 bucket: "{{prod-static-bucket}}"
             }
@@ -486,7 +502,9 @@ buildTarget('marketing').buildFlow(
             properties: {
                 file: buildProject.getProperty("marketingContent.emailLogoImage200x70"),
                 options: {
-                    acl: 'public-read'
+                    acl: 'public-read',
+                    gzip: true,
+                    cacheControl: "max-age=31536000, public"
                 },
                 bucket: "{{prod-static-bucket}}"
             }

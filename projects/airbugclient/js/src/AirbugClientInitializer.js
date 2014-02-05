@@ -15,7 +15,10 @@
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.RoutingRequest')
+//@Require('jquery.JQuery')
 //@Require('zeroclipboard.ZeroClipboard')
+
+
 
 
 //-------------------------------------------------------------------------------
@@ -37,6 +40,7 @@ var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation')
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var RoutingRequest                  = bugpack.require('carapace.RoutingRequest');
+var JQuery                          = bugpack.require('jquery.JQuery');
 var ZeroClipboard                   = bugpack.require('zeroclipboard.ZeroClipboard');
 
 
@@ -160,10 +164,6 @@ var AirbugClientInitializer = Class.extend(Obj, {
         socketIoConfig.setResource("api/socket");
         socketIoConfig.setPort(port);
 
-        console.log("airbugApi.connect call");
-        _this.airbugApi.connect();
-
-
         ZeroClipboard.config({
             allowScriptAccess: "always",
             moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf",
@@ -178,6 +178,12 @@ var AirbugClientInitializer = Class.extend(Obj, {
         this.bugCallClient.registerRequestProcessor(this.bugCallRouter);
 
         $series([
+            $task(function(flow) {
+                console.log("airbugApi.connect call");
+                _this.airbugApi.connect(null, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
             $task(function(flow) {
                 _this.initializeTracking(function(error) {
                     flow.complete(error);

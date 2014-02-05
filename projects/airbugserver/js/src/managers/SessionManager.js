@@ -153,7 +153,7 @@ var SessionManager = Class.extend(EntityManager, {
     },
 
     /**
-     * @param {function(Throwable, Array.<Session>} callback
+     * @param {function(Throwable, Array.<Session>)} callback
      */
     retrieveAllSessions: function(callback) {
         var _this = this;

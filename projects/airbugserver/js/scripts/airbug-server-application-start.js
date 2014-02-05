@@ -24,16 +24,18 @@ var AirbugServerApplication = bugpack.require('airbugserver.AirbugServerApplicat
 //-------------------------------------------------------------------------------
 
 var airbugServerApplication = new AirbugServerApplication();
+//setTimeout(function() {
 airbugServerApplication.start(function(throwable) {
     console.log("Starting airbug server...");
     if (!throwable) {
         console.log("Airbug server successfully started");
     } else {
-        console.error(throwable.message);
-        console.error(throwable.stack);
+        console.log(throwable.message);
+        console.log(throwable.stack);
         process.exit(1);
     }
 });
+//}, 10 * 1000);
 
 var gracefulShutdown = function() {
     airbugServerApplication.stop(function(throwable) {

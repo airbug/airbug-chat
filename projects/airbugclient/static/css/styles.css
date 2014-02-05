@@ -712,7 +712,7 @@ div.overlay-background {
     position: absolute;
 }
 
-.user-status-indicator-available {
+.user-status-indicator-active {
     background-color: rgb(46, 191, 5); /* Old browsers */
     background: -moz-linear-gradient(top, rgb(46, 191, 5) 0%, rgb(217, 234, 211) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(46, 191, 5)), color-stop(100%,rgb(217, 234, 211))); /* Chrome,Safari4+ */
@@ -734,7 +734,7 @@ div.overlay-background {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#DFD812', endColorstr='#FFF2CC',GradientType=0 ); /* IE6-9 */
 }
 
-.user-status-indicator-dnd {
+.user-status-indicator-headsdown {
     background-color: rgb(195, 30, 14);/* Old browsers */
     background: -moz-linear-gradient(top, rgb(195, 30, 14) 0%, rgb(244, 204, 204) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(195, 30, 14)), color-stop(100%,rgb(244, 204, 204))); /* Chrome,Safari4+ */

@@ -90,7 +90,7 @@ var AirbugServerApplication = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     start: function(callback) {
         this.configurationScan.scanAll();
@@ -104,7 +104,7 @@ var AirbugServerApplication = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     stop: function(callback) {
-        this.iocContext.deinitialze(callback);
+        this.iocContext.deinitialize(callback);
     }
 });
 

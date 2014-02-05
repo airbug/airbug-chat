@@ -15,10 +15,6 @@
 //@Require('airbugserver.SessionServiceConfig')
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
-//@Require('bugcall.BugCallCallProcessor')
-//@Require('bugcall.BugCallRequestProcessor')
-//@Require('bugcall.BugCallServer')
-//@Require('bugcall.CallServer')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
@@ -33,7 +29,6 @@
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 //@Require('handshaker.Handshaker')
-//@Require('loggerbug.Logger')
 //@Require('mongo.MongoDataStore')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
@@ -68,10 +63,6 @@ var RequestContextBuilder           = bugpack.require('airbugserver.RequestConte
 var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
 var AwsConfig                       = bugpack.require('aws.AwsConfig');
 var AwsUploader                     = bugpack.require('aws.AwsUploader');
-var BugCallCallProcessor            = bugpack.require('bugcall.BugCallCallProcessor');
-var BugCallRequestProcessor         = bugpack.require('bugcall.BugCallRequestProcessor');
-var BugCallServer                   = bugpack.require('bugcall.BugCallServer');
-var CallServer                      = bugpack.require('bugcall.CallServer');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var BugFs                           = bugpack.require('bugfs.BugFs');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
@@ -86,7 +77,6 @@ var CookieSigner                    = bugpack.require('cookies.CookieSigner');
 var ExpressApp                      = bugpack.require('express.ExpressApp');
 var ExpressServer                   = bugpack.require('express.ExpressServer');
 var Handshaker                      = bugpack.require('handshaker.Handshaker');
-var Logger                          = bugpack.require('loggerbug.Logger');
 var MongoDataStore                  = bugpack.require('mongo.MongoDataStore');
 var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
@@ -132,14 +122,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketIoServer} socketIoServer
-     * @return {SocketIoManager}
-     */
-    apiAirbugSocketIoManager: function(socketIoServer) {
-        return new SocketIoManager(socketIoServer, '/api/airbug');
-    },
-
-    /**
      * @return {AwsUploader}
      */
     awsUploader: function() {
@@ -150,42 +132,10 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {BugCallRequestProcessor}
-     */
-    bugCallRequestProcessor: function() {
-        return new BugCallRequestProcessor();
-    },
-
-    /**
      * @return {BugCallRouter}
      */
     bugCallRouter: function() {
         return new BugCallRouter();
-    },
-
-    /**
-     * @param {CallServer} callServer
-     * @param {BugCallRequestProcessor} requestProcessor
-     * @param {BugCallCallProcessor} callProcessor
-     * @return {BugCallServer}
-     */
-    bugCallServer: function(callServer, requestProcessor, callProcessor) {
-        return new BugCallServer(callServer, requestProcessor, callProcessor);
-    },
-
-    /**
-     * @return {BugCallCallProcessor}
-     */
-    callProcessor: function() {
-        return new BugCallCallProcessor();
-    },
-
-    /**
-     * @param {SocketIoManager} socketIoManager
-     * @return {CallServer}
-     */
-    callServer: function(socketIoManager) {
-        return new CallServer(socketIoManager);
     },
 
     /**
@@ -256,13 +206,6 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @returns {Logger}
-     */
-    logger: function() {
-        return new Logger();
-    },
-
-    /**
      * @return {Mongoose}
      */
     mongoose: function() {
@@ -289,6 +232,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
      */
     sessionServiceConfig: function() {
         return new SessionServiceConfig({});
+    },
+
+    /**
+     * @param {SocketIoServer} socketIoServer
+     * @return {SocketIoManager}
+     */
+    socketIoManager: function(socketIoServer) {
+        return new SocketIoManager(socketIoServer, '/api/airbug');
     },
 
     /**
@@ -368,7 +319,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module("cookieSigner"),
         module("handshaker"),
-        module("logger"),
         module("githubApi")
             .args([
                 arg().ref("https"),
@@ -381,7 +331,7 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Sockets
         //-------------------------------------------------------------------------------
 
-        module("apiAirbugSocketIoManager")
+        module("socketIoManager")
             .args([
                 arg().ref("socketIoServer")
             ]),
@@ -398,19 +348,8 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // BugCall
         //-------------------------------------------------------------------------------
 
-        module("bugCallRequestProcessor"),
-        module("bugCallRouter"),
-        module("bugCallServer")
-            .args([
-                arg().ref("callServer"),
-                arg().ref("bugCallRequestProcessor"),
-                arg().ref("callProcessor")
-            ]),
-        module("callProcessor"),
-        module("callServer")
-            .args([
-                arg().ref("apiAirbugSocketIoManager")
-            ])
+        module("bugCallRouter")
+
     ])
 );
 

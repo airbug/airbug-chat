@@ -53,19 +53,27 @@ var UserManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveUser: function(userId, callback) {
-        console.log("UserManagerModule#retrieveUser");
         this.retrieve("User", userId, callback);
     },
 
     /**
      * @param {Array.<string>} userIds
-     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
      */
     retrieveUsers: function(userIds, callback) {
         this.retrieveEach("User", userIds, callback);
+    },
+
+    /**
+     * @param {string} userId
+     * @param {Object} updateObject
+     * @param {function(Throwable, MeldDocument=)} callback
+     */
+    updateUser: function(userId, updateObject, callback) {
+        this.update("User", userId, updateObject, callback);
     }
 });
 

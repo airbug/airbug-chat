@@ -74,6 +74,12 @@ var AirbugInitializer = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {AirbugCallService}
+         */
+        this.airbugCallService                  = null;
+
+        /**
+         * @private
          * @type {AirbugClientConfig}
          */
         this.airbugClientConfig                 = null;
@@ -101,12 +107,6 @@ var AirbugInitializer = Class.extend(Obj, {
          * @type {BugCallServer}
          */
         this.bugCallServer                      = null;
-
-        /**
-         * @private
-         * @type {CallService}
-         */
-        this.callService                        = null;
 
         /**
          * @private
@@ -271,7 +271,7 @@ var AirbugInitializer = Class.extend(Obj, {
                 _this.bugCallServer.registerRequestPreProcessor(_this.requestContextBuilder);
                 _this.bugCallServer.registerRequestProcessor(_this.bugCallRouter);
 
-                _this.requestContextBuilder.registerRequestContextBuilder(_this.callService);
+                _this.requestContextBuilder.registerRequestContextBuilder(_this.airbugCallService);
                 _this.requestContextBuilder.registerRequestContextBuilder(_this.sessionService);
                 _this.requestContextBuilder.registerRequestContextBuilder(_this.userService);
                 _this.requestContextBuilder.registerRequestContextBuilder(_this.githubService);
@@ -350,6 +350,7 @@ var AirbugInitializer = Class.extend(Obj, {
             "github.clientId",
             "github.redirectUri",
             "github.scope",
+            "googleAnalyticsId",
             "staticUrl",
             "stickyStaticUrl"
         ]);
@@ -411,12 +412,12 @@ Class.implement(AirbugInitializer, IInitializeModule);
 bugmeta.annotate(AirbugInitializer).with(
     module("airbugInitializer")
         .properties([
+            property("airbugCallService").ref("airbugCallService"),
             property("airbugClientConfig").ref("airbugClientConfig"),
             property("airbugServerConfig").ref("airbugServerConfig"),
             property("awsUploader").ref("awsUploader"),
             property("bugCallRouter").ref("bugCallRouter"),
             property("bugCallServer").ref("bugCallServer"),
-            property("callService").ref("callService"),
             property("configbug").ref("configbug"),
             property("controllerManager").ref("controllerManager"),
             property("cookieSigner").ref("cookieSigner"),

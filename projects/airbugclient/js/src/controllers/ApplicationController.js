@@ -108,7 +108,7 @@ var ApplicationController = Class.extend(CarapaceController, {
                     callback(undefined, currentUser);
                 } else {
                     _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
-                    _this.navigationModule.navigate("", {
+                    _this.navigationModule.navigate("login", {
                         trigger: true
                     });
                 }

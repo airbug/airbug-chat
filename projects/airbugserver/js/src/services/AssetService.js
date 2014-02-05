@@ -205,7 +205,7 @@ var AssetService = Class.extend(Obj, {
      */
     retrieveAsset: function(requestContext, assetId, callback) {
         var _this           = this;
-        var callManager     = requestContext.get("callManager");
+        var call     = requestContext.get("call");
         var currentUser     = requestContext.get('currentUser');
 
         /** @type {Asset} */
@@ -228,12 +228,12 @@ var AssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.assetPusher.meldCallWithAsset(callManager.getCallUuid(), asset, function(throwable) {
+                    _this.assetPusher.meldCallWithAsset(call.getCallUuid(), asset, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.assetPusher.pushAssetToCall(asset, callManager.getCallUuid(), function(throwable) {
+                    _this.assetPusher.pushAssetToCall(asset, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })

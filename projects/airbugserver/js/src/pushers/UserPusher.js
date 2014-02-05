@@ -79,7 +79,7 @@ var UserPusher = Class.extend(EntityPusher, {
      * @protected
      * @param {User} user
      * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
-     * @param {function(Throwable=)} callback
+     * @param {function(Throwable=)=} callback
      */
     pushUser: function(user, waitForCallUuids, callback) {
         this.pushEntity(user, waitForCallUuids, callback);

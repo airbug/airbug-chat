@@ -10,14 +10,9 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Url')
-//@Require('airbug.AirbugApi')
 //@Require('airbug.AirbugClientConfig')
 //@Require('airbug.WindowUtil')
-//@Require('bugcall.BugCallCallProcessor')
-//@Require('bugcall.BugCallClient')
-//@Require('bugcall.BugCallRequestProcessor')
-//@Require('bugcall.CallClient')
-//@Require('bugcall.CallManager')
+//@Require('bugcall.Call')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ConfigurationAnnotation')
@@ -28,7 +23,6 @@
 //@Require('carapace.CarapaceApplication')
 //@Require('carapace.CarapaceRouter')
 //@Require('carapace.ControllerScan')
-//@Require('loggerbug.Logger')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
@@ -49,14 +43,9 @@ var bugpack                     = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var Url                         = bugpack.require('Url');
-var AirbugApi                   = bugpack.require('airbug.AirbugApi');
 var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
 var WindowUtil                  = bugpack.require('airbug.WindowUtil');
-var BugCallCallProcessor        = bugpack.require('bugcall.BugCallCallProcessor');
-var BugCallClient               = bugpack.require('bugcall.BugCallClient');
-var BugCallRequestProcessor     = bugpack.require('bugcall.BugCallRequestProcessor');
-var CallClient                  = bugpack.require('bugcall.CallClient');
-var CallManager                 = bugpack.require('bugcall.CallManager');
+var Call                        = bugpack.require('bugcall.Call');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
@@ -67,7 +56,6 @@ var BugCallRouter               = bugpack.require('bugroute:bugcall.BugCallRoute
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
 var CarapaceRouter              = bugpack.require('carapace.CarapaceRouter');
 var ControllerScan              = bugpack.require('carapace.ControllerScan');
-var Logger                      = bugpack.require('loggerbug.Logger');
 var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
 var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
 var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -98,14 +86,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {BugCallClient} bugCallClient
-     * @return {AirbugApi}
-     */
-    airbugApi: function(bugCallClient) {
-        return new AirbugApi(bugCallClient);
-    },
-
-    /**
      * @returns {AirbugClientConfig}
      */
     airbugClientConfig: function() {
@@ -120,16 +100,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {CallClient} callClient
-     * @param {CallManager} callManager
-     * @param {BugCallRequestProcessor} requestProcessor
-     * @return {BugCallClient}
-     */
-    bugCallClient: function(callClient, callManager, requestProcessor) {
-        return new BugCallClient(callClient, callManager, requestProcessor);
-    },
-
-    /**
      * @param {BugCallClient} bugCallRequestEventDispatcher
      * @return {BugCallRouter}
      */
@@ -138,32 +108,10 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param {SocketIoClient} socketIoClient
-     * @return {CallClient}
+     * @return {Call}
      */
-    callClient: function(socketIoClient) {
-        return new CallClient(socketIoClient);
-    },
-
-    /**
-     * @return {CallManager}
-     */
-    callManager: function() {
-        return new CallManager();
-    },
-
-    /**
-     * @return {BugCallCallProcessor}
-     */
-    callProcessor: function() {
-        return new BugCallCallProcessor();
-    },
-
-    /**
-     * @return {BugCallRequestProcessor}
-     */
-    requestProcessor: function() {
-        return new BugCallRequestProcessor();
+    call: function() {
+        return new Call();
     },
 
     /**
@@ -187,13 +135,6 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     controllerScan: function(carapaceApplication) {
         return new ControllerScan(carapaceApplication);
-    },
-
-    /**
-     * @return {Logger}
-     */
-    logger: function() {
-        return new Logger();
     },
 
     /**
@@ -242,28 +183,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
 
 bugmeta.annotate(AirbugClientConfiguration).with(
     configuration("airbugClientConfiguration").modules([
-        module("airbugApi")
-            .args([
-                arg().ref("bugCallClient")
-            ]),
         module("airbugClientConfig"),
         module("browserSocketIoFactory"),
-        module("bugCallClient")
-            .args([
-                arg().ref("callClient"),
-                arg().ref("callManager"),
-                arg().ref("requestProcessor")
-            ]),
         module("bugCallRouter")
             .args([
                 arg().ref("bugCallClient")
             ]),
-        module("callClient")
-            .args([
-                arg().ref("socketIoClient")
-            ]),
-        module("callManager"),
-        module("callProcessor"),
+        module("call"),
         module("carapaceApplication")
             .args([
                 arg().ref("carapaceRouter")
@@ -273,8 +199,6 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("carapaceApplication")
             ]),
-        module("logger"),
-        module("requestProcessor"),
         module("socketIoClient")
             .args([
                 arg().ref("browserSocketIoFactory"),

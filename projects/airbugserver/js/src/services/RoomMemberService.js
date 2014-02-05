@@ -139,7 +139,7 @@ var RoomMemberService = Class.extend(EntityService, {
     retrieveRoomMember: function(requestContext, roomMemberId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         /** @type {RoomMember} */
         var roomMember          = null;
         var roomMemberManager   = this.roomMemberManager;
@@ -161,12 +161,12 @@ var RoomMemberService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.roomMemberPusher.meldCallWithRoomMember(callManager.getCallUuid(), roomMember, function(throwable) {
+                    _this.roomMemberPusher.meldCallWithRoomMember(call.getCallUuid(), roomMember, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.roomMemberPusher.pushRoomMemberToCall(roomMember, callManager.getCallUuid(), function(throwable) {
+                    _this.roomMemberPusher.pushRoomMemberToCall(roomMember, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -192,7 +192,7 @@ var RoomMemberService = Class.extend(EntityService, {
         /** @type {Map.<string, RoomMember>} */
         var roomMemberMap      = null;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         var roomMemberManager  = this.roomMemberManager;
         var mappedException     = null;
 
@@ -219,12 +219,12 @@ var RoomMemberService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.roomMemberPusher.meldCallWithRoomMembers(callManager.getCallUuid(), roomMemberMap.getValueArray(), function(throwable) {
+                    _this.roomMemberPusher.meldCallWithRoomMembers(call.getCallUuid(), roomMemberMap.getValueArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.roomMemberPusher.pushRoomMembersToCall(roomMemberMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
+                    _this.roomMemberPusher.pushRoomMembersToCall(roomMemberMap.getValueArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })

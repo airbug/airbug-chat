@@ -13,6 +13,7 @@
 //@Require('airbug.CurrentUser')
 //@Require('airbug.CurrentUserModel')
 //@Require('airbug.ManagerModule')
+//@Require('bugcall.ResponseEvent')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.IInitializeModule')
@@ -37,6 +38,7 @@ var TypeUtil                        = bugpack.require('TypeUtil');
 var CurrentUser                     = bugpack.require('airbug.CurrentUser');
 var CurrentUserModel                = bugpack.require('airbug.CurrentUserModel');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var ResponseEvent                   = bugpack.require('bugcall.ResponseEvent');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
@@ -107,6 +109,18 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {NavigationModule}
+     */
+    getNavigationModule: function() {
+        return this.navigationModule;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // IInitializeModule Implementation
     //-------------------------------------------------------------------------------
 
@@ -122,26 +136,30 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
      */
     initializeModule: function(callback) {
         var _this = this;
-        var airbugApi = this.airbugApi;
+        var airbugApi = this.getAirbugApi();
         this.bugCallRouter.addAll({
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
              */
             refreshConnectionForLogin: function(request, responder, callback) {
                 var response = responder.response("Success", {});
-                responder.sendResponse(response, function(error){
-                    _this.currentUser = null;
-                    airbugApi.refreshConnection();
-                    callback(error);
+                responder.sendResponse(response, function(throwable, outgoingResponse) {
+                    if (!throwable) {
+                        _this.currentUser = null;
+                        airbugApi.refreshConnection(callback);
+                    } else {
+                        callback(throwable);
+                    }
                 });
-                //redirect to finalDesintation
             },
 
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
              */
             //NOTE: SUNG Does this need to be done on the server side to ensure disconnect.
             // If so, how do we deal with the default reconnect behavior?
@@ -150,16 +168,19 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 console.log("CurrentUserManagerModule refreshConnectionForLogout route");
                 var response = responder.response("Success", {});
                 _this.currentUser = null;
-                //do i need to wait for connection_established event?
-                //ajax call -- http request made on socket connect. should replace cookie if session no longer exists.
-                responder.sendResponse(response, function(error){
-                    airbugApi.refreshConnection();
-                    //Do I need to wait for connection_established to navigate?? CurrentUser may not be available.
-                    //May need to add eventListener to airbugApi.bugCallClient.callClient
-                    _this.navigationModule.navigate("", {
-                        trigger: true
-                    });
-                    callback(error);
+
+                responder.sendResponse(response, function(throwable, outgoingResponse) {
+                    if (!throwable) {
+                        if (outgoingResponse.isSent()) {
+                            _this.refreshConnectionAndNavigateHome(callback);
+                        } else {
+                            outgoingResponse.on(ResponseEvent.Types.SENT, function(event) {
+                                _this.refreshConnectionAndNavigateHome(callback);
+                            });
+                        }
+                    } else {
+                        callback(throwable);
+                    }
                 });
 
             },
@@ -167,13 +188,17 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
              */
             refreshConnectionForRegister: function(request, responder, callback) {
                 var response = responder.response("Success", {});
-                responder.sendResponse(response, function(error){
-                    _this.currentUser = null;
-                    airbugApi.refreshConnection();
-                    callback(error);
+                responder.sendResponse(response, function(throwable, outgoingResponse) {
+                    if (!throwable) {
+                        _this.currentUser = null;
+                        airbugApi.refreshConnection(callback);
+                    } else {
+                        callback(throwable);
+                    }
                 });
             }
         });
@@ -195,27 +220,17 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {function(Throwable, CurrentUser)} callback
+     * @param {function(Throwable, CurrentUser=)} callback
      */
     retrieveCurrentUser: function(callback) {
-
-        console.log("CurrentUserManagerModule#retrieveCurrentUser");
         var _this       = this;
-        console.log("currentUser:", this.currentUser);
         if (this.currentUser) {
-            console.log("user already retrieved");
-            console.log("currentUser:", this.currentUser);
             callback(null, this.currentUser);
         } else {
             this.request("retrieveCurrentUser", {}, function(throwable, callResponse) {
-                console.log("CurrentUserManagerModule#retrieveCurrentUserDefault request retrieve CurrentUser callback");
-                console.log("throwable:", throwable);
-                console.log("callResponse:", callResponse);
-                var data = callResponse.getData();
-                console.log("data:", data);
                 if (!throwable) {
+                    var data = callResponse.getData();
                     var currentUserId   = data.objectId;
-                    console.log("currentUserId:", currentUserId);
                     _this.retrieve("User", currentUserId, function(throwable, currentUserMeldDocument) {
                         if (!throwable) {
                             _this.currentUser = new CurrentUser(currentUserMeldDocument);
@@ -271,8 +286,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             }),
             $task(function(flow) {
                 _this.currentUser = null;
-                _this.airbugApi.refreshConnection();
-                flow.complete();
+                _this.airbugApi.refreshConnection(function(throwable) {
+                    flow.complete(throwable);
+                });
             }),
             $task(function(flow) {
                 console.log("CurrentUserManagerModule#loginUser retrieving current user");
@@ -294,7 +310,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     url: "/api/logout",
                     type: "POST",
                     dataType: "json",
-                    data: {},
+                    data: {
+                        callUuid: _this.getAirbugApi().getCallUuid()
+                    },
                     success: function(data, textStatus, req) {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
                         var error = data.error;
@@ -311,8 +329,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             }),
             $task(function(flow) {
                 _this.currentUser = null;
-                _this.airbugApi.refreshConnection();
-                flow.complete();
+                _this.airbugApi.refreshConnection(function(throwable) {
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable) {
             if (throwable) {
@@ -356,8 +375,9 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             }),
             $task(function(flow) {
                 _this.currentUser = null;
-                _this.airbugApi.refreshConnection();
-                flow.complete();
+                _this.airbugApi.refreshConnection(function(throwable) {
+                    flow.complete(throwable);
+                });
             }),
             $task(function(flow) {
                 _this.retrieveCurrentUser(function(throwable, currentUser) {
@@ -365,6 +385,25 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                 });
             })
         ]).execute(callback);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {function(Throwable=)} callback
+     */
+    refreshConnectionAndNavigateHome: function(callback) {
+        var _this = this;
+        this.getAirbugApi().refreshConnection(function(throwable) {
+            _this.getNavigationModule().navigate("", {
+                trigger: true
+            });
+            callback(throwable);
+        });
     }
 });
 

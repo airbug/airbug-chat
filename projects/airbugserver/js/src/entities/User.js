@@ -83,56 +83,56 @@ var User = Class.extend(Entity, {
      * @return {boolean}
      */
     getAnonymous: function() {
-        return this.deltaDocument.getData().anonymous;
+        return this.getDeltaDocument().getData().anonymous;
     },
 
     /**
      * @param {boolean} anonymous
      */
     setAnonymous: function(anonymous) {
-        this.deltaDocument.getData().anonymous = anonymous;
+        this.getDeltaDocument().getData().anonymous = anonymous;
     },
 
     /**
      * @return {*}
      */
     getEmail: function() {
-        return this.deltaDocument.getData().email;
+        return this.getDeltaDocument().getData().email;
     },
 
     /**
      * @param {string} email
      */
     setEmail: function(email) {
-        this.deltaDocument.getData().email = email;
+        this.getDeltaDocument().getData().email = email;
     },
 
     /**
      * @return {string}
      */
     getFirstName: function() {
-        return this.deltaDocument.getData().firstName;
+        return this.getDeltaDocument().getData().firstName;
     },
 
     /**
      * @param {string} firstName
      */
     setFirstName: function(firstName) {
-        this.deltaDocument.getData().firstName = firstName;
+        this.getDeltaDocument().getData().firstName = firstName;
     },
 
     /**
      * @return {string}
      */
     getLastName: function() {
-        return this.deltaDocument.getData().lastName;
+        return this.getDeltaDocument().getData().lastName;
     },
 
     /**
      * @param {string} lastName
      */
     setLastName: function(lastName) {
-        this.deltaDocument.getData().lastName = lastName;
+        this.getDeltaDocument().getData().lastName = lastName;
     },
 
     /**
@@ -140,7 +140,7 @@ var User = Class.extend(Entity, {
      * @returns {string|*}
      */
     getPasswordHash: function() {
-        return this.deltaDocument.getData().passwordHash;
+        return this.getDeltaDocument().getData().passwordHash;
     },
 
     /**
@@ -148,21 +148,35 @@ var User = Class.extend(Entity, {
      * @param {string} passwordHash
      */
     setPasswordHash: function(passwordHash) {
-        this.deltaDocument.getData().passwordHash = passwordHash;
+        this.getDeltaDocument().getData().passwordHash = passwordHash;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomIdSet: function() {
-        return this.deltaDocument.getData().roomIdSet;
+        return this.getDeltaDocument().getData().roomIdSet;
     },
 
     /**
      * @param {Set.<string>} roomIdSet
      */
     setRoomIdSet: function(roomIdSet) {
-        this.deltaDocument.getData().roomIdSet = roomIdSet;
+        this.getDeltaDocument().getData().roomIdSet = roomIdSet;
+    },
+
+    /**
+     * @return {string}
+     */
+    getStatus: function() {
+        return this.getDeltaDocument().getData().status;
+    },
+
+    /**
+     * @param {string} status
+     */
+    setStatus: function(status) {
+        this.getDeltaDocument().getData().status = status;
     },
 
 

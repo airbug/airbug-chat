@@ -13,7 +13,7 @@
 //@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('airbug.EntityDefines')
+//@Require('airbug.ApiDefines')
 //@Require('airbugserver.Controller')
 
 
@@ -35,7 +35,7 @@ var Map                 = bugpack.require('Map');
 var MappedThrowable     = bugpack.require('MappedThrowable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
-var EntityDefines       = bugpack.require('airbug.EntityDefines');
+var ApiDefines       = bugpack.require('airbug.ApiDefines');
 var Controller          = bugpack.require('airbugserver.Controller');
 
 
@@ -275,7 +275,7 @@ var EntityController = Class.extend(Controller, {
         console.log(error.stack);
 
 
-        var response = responder.response(EntityDefines.Responses.ERROR, {
+        var response = responder.response(ApiDefines.Responses.ERROR, {
             error: error
         });
         responder.sendResponse(response, callback);
@@ -294,8 +294,8 @@ var EntityController = Class.extend(Controller, {
         console.log(exception.message);
         console.log(exception.stack);
 
-        var response = responder.response(EntityDefines.Responses.EXCEPTION, {
-            exception: exception.toObject()
+        var response = responder.response(ApiDefines.Responses.EXCEPTION, {
+            exception: exception
         });
         responder.sendResponse(response, callback);
     },
@@ -306,8 +306,8 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     sendListSuccessResponse: function(responder, entityIdList, callback) {
-        var response = responder.response(EntityDefines.Responses.LIST_SUCCESS, {
-            list: entityIdList.toArray()
+        var response = responder.response(ApiDefines.Responses.LIST_SUCCESS, {
+            list: entityIdList
         });
         responder.sendResponse(response, callback);
     },
@@ -326,8 +326,8 @@ var EntityController = Class.extend(Controller, {
         console.log(mappedThrowable.message);
         console.log(mappedThrowable.stack);
 
-        var response = responder.response(EntityDefines.Responses.MAPPED_EXCEPTION, {
-            mappedException: mappedThrowable.toObject()
+        var response = responder.response(ApiDefines.Responses.MAPPED_EXCEPTION, {
+            mappedException: mappedThrowable
         });
         responder.sendResponse(response, callback);
     },
@@ -338,8 +338,8 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     sendMappedSuccessResponse: function(responder, map, callback) {
-        var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS, {
-            map: map.toObject()
+        var response = responder.response(ApiDefines.Responses.MAPPED_SUCCESS, {
+            map: map
         });
         responder.sendResponse(response, callback);
     },
@@ -351,9 +351,9 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     sendMappedSuccessWithExceptionResponse: function(responder, mappedThrowable, map, callback) {
-        var response = responder.response(EntityDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION, {
-            mappedException: mappedThrowable.toObject(),
-            map: map.toObject()
+        var response = responder.response(ApiDefines.Responses.MAPPED_SUCCESS_WITH_EXCEPTION, {
+            mappedException: mappedThrowable,
+            map: map
         });
         responder.sendResponse(response, callback);
     },
@@ -365,7 +365,7 @@ var EntityController = Class.extend(Controller, {
      */
     sendSuccessResponse: function(responder, data, callback) {
         console.log("EntityController#sendSuccessResponse");
-        var response = responder.response(EntityDefines.Responses.SUCCESS, data);
+        var response = responder.response(ApiDefines.Responses.SUCCESS, data);
         responder.sendResponse(response, callback);
     },
 
@@ -376,7 +376,7 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     sendSuccessWithExceptionResponse: function(responder, exception, data, callback) {
-        var response = responder.response(EntityDefines.Responses.SUCCESS_WITH_EXCEPTION, {
+        var response = responder.response(ApiDefines.Responses.SUCCESS_WITH_EXCEPTION, {
             exception: exception,
             data: data
         });

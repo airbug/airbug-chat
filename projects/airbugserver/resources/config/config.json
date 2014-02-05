@@ -5,6 +5,7 @@
     "github" : {
         "scope": "user, repo, gist, notifications, user:email"
     },
+    "googleAnalyticsId" : "",
     "mongoDbIp": "localhost",
     "port": 8000,
     "redis": {

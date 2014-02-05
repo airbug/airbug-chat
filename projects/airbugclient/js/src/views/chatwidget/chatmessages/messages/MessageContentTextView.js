@@ -101,7 +101,7 @@ var MessageContentTextView = Class.extend(MustacheView, {
         return HtmlUtil.replaceUrls(value, function(match, url) {
             if (url.getHost() === "www.youtube.com" && url.getPath() === "/watch" && url.hasUrlQuery("v")) {
                 var v = url.getUrlQuery("v");
-                return '<br/><iframe id="ytplayer" type="text/html" width="640" height="360" src="https://www.youtube.com/embed/' +
+                return '<br/><iframe id="ytplayer" type="text/html" width="100%" height="360" style="max-width: 640px" src="https://www.youtube.com/embed/' +
                     v + '" frameborder="0" allowfullscreen></iframe><br/>';
             } else if (url.getHost() === "gist.github.com" && !!url.getPath().match(/\/\w.*\/[0-9].*/)) {
 

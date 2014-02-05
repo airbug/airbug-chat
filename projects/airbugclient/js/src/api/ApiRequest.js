@@ -11,7 +11,9 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
+//@Require('Exception')
 //@Require('List')
+//@Require('airbug.ApiDefines')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +32,9 @@ var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Event                   = bugpack.require('Event');
 var EventDispatcher         = bugpack.require('EventDispatcher');
+var Exception               = bugpack.require('Exception');
 var List                    = bugpack.require('List');
+var ApiDefines              = bugpack.require('airbug.ApiDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -179,14 +183,14 @@ var ApiRequest = Class.extend(EventDispatcher, {
     },
 
     /**
-     *
+     * @param {function(Throwable, )} callback
      */
-    sendRequest: function() {
+    sendRequest: function(callback) {
         if (!this.sent) {
             this.sent = true;
-            this.processRequest();
+            this.processRequest(callback);
         } else {
-            throw new Bug("InvalidState", {}, "Request can only be sent once");
+            callback(new Bug("InvalidState", {}, "Request can only be sent once"));
         }
     },
 
@@ -208,18 +212,34 @@ var ApiRequest = Class.extend(EventDispatcher, {
      * @param {CallResponse} callResponse
      */
     doProcessResponse: function(throwable, callResponse) {
-        this.fireCallbacks(throwable, callResponse);
+        if (!throwable)  {
+            var responseType    = callResponse.getType();
+            var data            = callResponse.getData();
+            if (responseType === ApiDefines.Responses.SUCCESS) {
+                this.fireCallbacks();
+            } else if (responseType === ApiDefines.Responses.EXCEPTION) {
+                this.fireCallbacks(new Exception(data.exception.type, data.exception.data, data.exception.message, data.exception.causes));
+            } else if (responseType === ApiDefines.Responses.ERROR) {
+                this.fireCallbacks(new Bug(data.error.type, data.error.data, data.error.message));
+            } else {
+                this.fireCallbacks(null, callResponse);
+            }
+        } else {
+            this.fireCallbacks(throwable);
+        }
     },
 
     /**
      * @protected
+     * @param {function(Throwable, OutgoingRequest=)} callback
      */
-    doSendRequest: function() {
-        var _this = this;
-        this.bugCallClient.request(this.requestType, this.requestData, function(throwable, callResponse) {
-            _this.processResponse(throwable, callResponse);
-            _this.completeRequest();
-        });
+    doSendRequest: function(callback) {
+        var callRequest         = this.bugCallClient.factoryCallRequest(this.requestType, this.requestData);
+        var callResponseHandler = this.bugCallClient.factoryCallResponseHandler(this.handleCallResponse, this);
+
+        //NOTE BRN: The callback here just guarantees that the request was sent or queued. It is not the response.
+
+        this.bugCallClient.sendRequest(callRequest, callResponseHandler, callback);
     },
 
     /**
@@ -235,9 +255,10 @@ var ApiRequest = Class.extend(EventDispatcher, {
 
     /**
      * @protected
+     * @param {function(Throwable, OutgoingRequest=)} callback
      */
-    processRequest: function() {
-        this.doSendRequest();
+    processRequest: function(callback) {
+        this.doSendRequest(callback);
     },
 
     /**
@@ -253,6 +274,21 @@ var ApiRequest = Class.extend(EventDispatcher, {
         } else {
             throw new Bug("Error", {}, "Response already processing");
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Request Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Throwable} throwable
+     * @param {CallResponse} callResponse
+     */
+    handleCallResponse: function(throwable, callResponse) {
+        this.processResponse(throwable, callResponse);
+        this.completeRequest();
     }
 });
 

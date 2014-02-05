@@ -121,12 +121,12 @@ var UserAssetService = Class.extend(Obj, {
      *      updatedAt: Date,
      *      userId: string
      * }} userAssetData
-     * @param {Function(Throwable, UserAsset)} callback
+     * @param {function(Throwable, UserAsset=)} callback
      */
     createUserAsset: function(requestContext, userAssetData, callback) {
         var _this = this;
-        var callManager             = requestContext.get('callManager');
-        var callManagerCallUuid     = callManager.getCallUuid();
+        var call                    = requestContext.get('call');
+        var callCallUuid            = call.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
         var currentUserId           = currentUser.getId();
         /** @type {UserAsset} */
@@ -162,7 +162,7 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAsset(callManagerCallUuid, userAsset, function(throwable) {
+                    _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
                         if (throwable) {
                             console.log('UserAssetService#createUserAsset meldCallWithUserAsset throwable = ', throwable);
                             flow.error(throwable);
@@ -172,7 +172,7 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         if (throwable) {
                             console.log('UserAssetService#createUserAsset pushUserAssetToCall throwable = ', throwable);
                             flow.error(throwable);
@@ -210,8 +210,8 @@ var UserAssetService = Class.extend(Obj, {
      */
     deleteUserAsset: function(requestContext, userAssetId, callback) {
         var _this                   = this;
-        var callManager             = requestContext.get('callManager');
-        var callManagerCallUuid     = callManager.getCallUuid();
+        var call             = requestContext.get('call');
+        var callCallUuid     = call.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
         /** @type {UserAsset} */
         var userAsset               = null;
@@ -248,12 +248,12 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAsset(callManagerCallUuid, userAsset, function(throwable) {
+                    _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -277,8 +277,8 @@ var UserAssetService = Class.extend(Obj, {
      */
     renameUserAsset: function(requestContext, userAssetId, userAssetName, callback) {
         var _this                   = this;
-        var callManager             = requestContext.get('callManager');
-        var callManagerCallUuid     = callManager.getCallUuid();
+        var call             = requestContext.get('call');
+        var callCallUuid     = call.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
         /** @type {UserAsset} */
         var userAsset               = null;
@@ -317,12 +317,12 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAsset(callManagerCallUuid, userAsset, function(throwable) {
+                    _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -345,8 +345,8 @@ var UserAssetService = Class.extend(Obj, {
      */
     retrieveUserAsset: function(requestContext, userAssetId, callback) {
         var _this                   = this;
-        var callManager             = requestContext.get('callManager');
-        var callManagerCallUuid     = callManager.getCallUuid();
+        var call             = requestContext.get('call');
+        var callCallUuid     = call.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
         /** @type {UserAsset} */
         var userAsset               = null;
@@ -374,12 +374,12 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAsset(callManagerCallUuid, userAsset, function(throwable) {
+                    _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -402,8 +402,8 @@ var UserAssetService = Class.extend(Obj, {
      */
     retrieveUserAssets: function(requestContext, userAssetIds, callback) {
         var _this                   = this;
-        var callManager             = requestContext.get('callManager');
-        var callManagerCallUuid     = callManager.getCallUuid();
+        var call             = requestContext.get('call');
+        var callCallUuid     = call.getCallUuid();
         var currentUser             = requestContext.get('currentUser');
         var mappedException         = null;
         var userAssetManager        = this.userAssetManager;
@@ -437,12 +437,12 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAssets(callManagerCallUuid, userAssetMap.getValueArray(), function(throwable) {
+                    _this.userAssetPusher.meldCallWithUserAssets(callCallUuid, userAssetMap.getValueArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(), callManagerCallUuid, function(throwable) {
+                    _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(), callCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -466,7 +466,7 @@ var UserAssetService = Class.extend(Obj, {
     retrieveUserAssetsByUserId: function(requestContext, userId, callback) {
         var _this = this;
         var currentUser = requestContext.get('currentUser');
-        var callManager = requestContext.get('callManager');
+        var call = requestContext.get('call');
         var mappedException = null;
         var userAssetManager = this.userAssetManager;
         /** @type {List.<UserAsset>} */
@@ -483,14 +483,14 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAssets(callManager.getCallUuid(),
+                    _this.userAssetPusher.meldCallWithUserAssets(call.getCallUuid(),
                         userAssetList.toArray(), function(throwable) {
                            flow.complete(throwable);
                         });
                 }),
                 $task(function(flow) {
                     _this.userAssetPusher.pushUserAssetsToCall(userAssetList.toArray(),
-                        callManager.getCallUuid(), function(throwable) {
+                        call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                 })
@@ -514,7 +514,7 @@ var UserAssetService = Class.extend(Obj, {
     retrieveUserImageAssetsByUserId: function(requestContext, userId, callback) {
         var _this = this;
         var currentUser = requestContext.get('currentUser');
-        var callManager = requestContext.get('callManager');
+        var call        = requestContext.get('call');
         var mappedException = null;
         var userAssetManager = this.userAssetManager;
         /** @type {List.<UserAsset>} */
@@ -531,14 +531,14 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAssets(callManager.getCallUuid(),
+                    _this.userAssetPusher.meldCallWithUserAssets(call.getCallUuid(),
                         userImageAssetList.toArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                 }),
                 $task(function(flow) {
                     _this.userAssetPusher.pushUserAssetsToCall(userImageAssetList.toArray(),
-                        callManager.getCallUuid(), function(throwable) {
+                        call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                 })
@@ -560,7 +560,7 @@ var UserAssetService = Class.extend(Obj, {
     /**
      * @private
      * @param {Map.<string, UserAsset>} userAssetMap
-     * @param {{function(Throwable)} callback} callback
+     * @param {function(Throwable=)} callback
      */
     dbPopulateUserAssets: function(userAssetMap, callback) {
         var _this               = this;

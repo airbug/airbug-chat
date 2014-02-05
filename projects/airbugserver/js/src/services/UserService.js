@@ -13,6 +13,7 @@
 //@Require('Obj')
 //@Require('PasswordUtil')
 //@Require('Set')
+//@Require('airbug.UserDefines')
 //@Require('airbugserver.Github')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
@@ -40,6 +41,7 @@ var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var PasswordUtil            = bugpack.require('PasswordUtil');
 var Set                     = bugpack.require('Set');
+var UserDefines             = bugpack.require('airbug.UserDefines');
 var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
@@ -72,7 +74,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher) {
+    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher) {
 
         this._super();
 
@@ -83,45 +85,57 @@ var UserService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {CallService}
+         * @type {AirbugClientRequestPublisher}
          */
-        this.callService            = callService;
+        this.airbugClientRequestPublisher       = airbugClientRequestPublisher;
 
         /**
          * @private
          * @type {GithubManager}
          */
-        this.githubManager          = githubManager;
+        this.githubManager                      = githubManager;
 
         /**
          * @private
          * @type {Logger}
          */
-        this.logger                 = logger;
+        this.logger                             = logger;
 
         /**
          * @private
          * @type {SessionManager}
          */
-        this.sessionManager         = sessionManager;
-
-        /**
-         * @private
-         * @type {UserManager}
-         */
-        this.userManager            = userManager;
-
-        /**
-         * @private
-         * @type {UserPusher}
-         */
-        this.userPusher             = userPusher;
+        this.sessionManager                     = sessionManager;
 
         /**
          * @private
          * @type {SessionService}
          */
-        this.sessionService         = sessionService;
+        this.sessionService                     = sessionService;
+
+        /**
+         * @private
+         * @type {UserManager}
+         */
+        this.userManager                        = userManager;
+
+        /**
+         * @private
+         * @type {UserPusher}
+         */
+        this.userPusher                         = userPusher;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {AirbugClientRequestPublisher}
+     */
+    getAirbugClientRequestPublisher: function() {
+        return this.airbugClientRequestPublisher;
     },
 
 
@@ -136,7 +150,7 @@ var UserService = Class.extend(Obj, {
     buildRequestContext: function(requestContext, callback) {
         var _this       = this;
         var session     = requestContext.get("session");
-        var user        = undefined;
+        var user        = null;
         $series([
             $task(function(flow) {
                 _this.ensureUserOnSession(session, function(throwable, returnedUser) {
@@ -307,32 +321,45 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     logoutUser: function(requestContext, callback) {
-        var _this               = this;
-        var callService         = this.callService;
-        var session             = requestContext.get("session");
-        var currentUser         = requestContext.get("currentUser");
-        var sessionService      = this.sessionService;
-        var sessionSid          = session.getSid();
-        var callManagerSet      = undefined;
+        var _this                           = this;
+        var airbugClientRequestPublisher    = this.airbugClientRequestPublisher;
+        var session                         = requestContext.get("session");
+        var currentUser                     = requestContext.get("currentUser");
+        var sessionService                  = this.sessionService;
+        var sessionSid                      = session.getSid();
+        var data                            = requestContext.getRequest().body;
+        var excludedCallUuids               = [];
+
+        if (data) {
+            if (data.callUuid) {
+                excludedCallUuids.push(data.callUuid);
+            }
+        }
 
         this.logger.debug("Starting user logout - userId:", currentUser.getId(), " sessionSid:", sessionSid);
         $series([
             $task(function(flow) {
-                callManagerSet      = callService.findCallManagerSetBySessionId(sessionSid);
                 sessionService.deleteSession(session, function(throwable){
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                $iterableParallel(callManagerSet, function(flow, callManager) {
-                    callService.request(callManager, "refreshConnectionForLogout", {}, function(throwable, callResponse) {
-                        if (!throwable) {
-                            callService.deregisterCallManager(callManager);
-                        }
-                        flow.complete(throwable);
-                    });
-                }).execute(function(throwable){
+                sessionService.generateSession({}, function(throwable, generatedSession) {
+                    if (!throwable) {
+                        session = generatedSession;
+                        requestContext.set("session", generatedSession);
+                    }
                     flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.ensureUserOnSession(session, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                airbugClientRequestPublisher.publishSessionRequest(sessionSid, "refreshConnectionForLogout", {}, excludedCallUuids, function(mappedThrowable, callResponseMap) {
+                    flow.complete(mappedThrowable);
                 });
             })
         ]).execute(callback);
@@ -378,6 +405,7 @@ var UserService = Class.extend(Obj, {
                 } else if (!PasswordUtil.isValid(userObject.password)) {
                     flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
+                    userObject.status = currentUser.getStatus();
                     user = _this.userManager.generateUser(userObject);
                     bcrypt.genSalt(10, function(err, salt) {
                         if (err) {
@@ -465,17 +493,17 @@ var UserService = Class.extend(Obj, {
     retrieveCurrentUser: function(requestContext, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
 
         this.logger.debug("Starting retrieveCurrentUser - currentUser.getId():", currentUser.getId());
         $series([
             $task(function(flow) {
-                _this.userPusher.meldCallWithUser(callManager.getCallUuid(), currentUser, function(throwable) {
+                _this.userPusher.meldCallWithUser(call.getCallUuid(), currentUser, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.userPusher.pushUserToCall(currentUser, callManager.getCallUuid(), function(throwable) {
+                _this.userPusher.pushUserToCall(currentUser, call.getCallUuid(), function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -496,7 +524,7 @@ var UserService = Class.extend(Obj, {
     retrieveUser: function(requestContext, userId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call                = requestContext.get("call");
         /** @type {User} */
         var user                = null;
 
@@ -517,12 +545,12 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.userPusher.meldCallWithUser(callManager.getCallUuid(), user, function(throwable) {
+                _this.userPusher.meldCallWithUser(call.getCallUuid(), user, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.userPusher.pushUserToCall(user, callManager.getCallUuid(), function(throwable) {
+                _this.userPusher.pushUserToCall(user, call.getCallUuid(), function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -543,7 +571,7 @@ var UserService = Class.extend(Obj, {
     retrieveUsers: function(requestContext, userIds, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         var userMap             = undefined;
 
         $series([
@@ -559,12 +587,12 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.userPusher.meldCallWithUsers(callManager.getCallUuid(), userMap.getValueArray(), function(throwable) {
+                _this.userPusher.meldCallWithUsers(call.getCallUuid(), userMap.getValueArray(), function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
-                _this.userPusher.pushUsersToCall(userMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
+                _this.userPusher.pushUsersToCall(userMap.getValueArray(), call.getCallUuid(), function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -584,7 +612,65 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User)} callback
      */
     updateUser: function(requestContext, userId, updates, callback) {
-        //TODO
+        var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
+        var call         = requestContext.get("call");
+        /** @type {User} */
+        var user                = null;
+
+        $series([
+            $task(function(flow) {
+                _this.dbRetrieveUser(userId, function(throwable, returnedUser){
+                    if (!throwable) {
+                        if (returnedUser) {
+                            if (returnedUser.getId() === userId) {
+                                user = returnedUser;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("UnauthorizedAccess"));
+                            }
+                        } else {
+                            flow.error(new Exception("NotFound"));
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                if (Obj.hasProperty(updates, "email")) {
+                    user.setEmail(updates.email);
+                }
+                if (Obj.hasProperty(updates, "firstName")) {
+                    user.setFirstName(updates.firstName);
+                }
+                if (Obj.hasProperty(updates, "lastName")) {
+                    user.setLastName(updates.lastName);
+                }
+                if (Obj.hasProperty(updates, "status")) {
+                    user.setStatus(updates.status);
+                }
+                _this.userManager.updateUser(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.meldCallWithUser(call.getCallUuid(), user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.pushUser(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, user);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
 
@@ -598,7 +684,10 @@ var UserService = Class.extend(Obj, {
      */
     createAnonymousUser: function(callback) {
         var userManager     = this.userManager;
-        var user            = userManager.generateUser({anonymous: true});
+        var user            = userManager.generateUser({
+            anonymous: true,
+            status: UserDefines.Status.OFFLINE
+        });
         userManager.createUser(user, function(throwable) {
             if (!throwable) {
                 callback(null, user);
@@ -780,7 +869,7 @@ bugmeta.annotate(UserService).with(
             arg().ref("sessionManager"),
             arg().ref("userManager"),
             arg().ref("sessionService"),
-            arg().ref("callService"),
+            arg().ref("airbugClientRequestPublisher"),
             arg().ref("githubManager"),
             arg().ref("userPusher")
         ])

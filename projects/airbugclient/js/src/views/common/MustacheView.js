@@ -106,7 +106,7 @@ var MustacheView = Class.extend(CarapaceView, {
         data.attributes     = this.attributes;
         data.cid            = this.getCid();
         data.id             = this.getId() || "input-" + this.getCid();
-        data.classes        = this.getAttribute("classes");
+        data.classes        = this.getAttribute("classes") || "";
         data.staticUrl      = this.airbugClientConfig.getStaticUrl();
         return data;
     }

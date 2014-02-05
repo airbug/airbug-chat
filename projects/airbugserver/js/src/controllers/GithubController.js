@@ -114,7 +114,7 @@ var GithubController = Class.extend(Controller, {
 
             // If a user clicks on "deny this request"
             if (error === "access_denied") {
-                _this.sendRedirectResponse(response, "/");
+                _this.sendRedirectResponse(response, "/app");
             }
         });
 
@@ -128,9 +128,9 @@ var GithubController = Class.extend(Controller, {
                 if (throwable) {
                     _this.processAjaxThrowable(throwable, response);
                 } else if (emails && currentUser.isAnonymous()) {
-                    _this.sendRedirectResponse(response, "/#githubLogin");
+                    _this.sendRedirectResponse(response, "/app/#githubLogin");
                 } else {
-                    _this.sendRedirectResponse(response, "/");
+                    _this.sendRedirectResponse(response, "/app");
                 }
             });
         });

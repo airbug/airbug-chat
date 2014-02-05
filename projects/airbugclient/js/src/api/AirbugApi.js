@@ -5,35 +5,59 @@
 //@Package('airbug')
 
 //@Export('AirbugApi')
+//@Autoload
 
 //@Require('Class')
+//@Require('EventDispatcher')
 //@Require('List')
-//@Require('Obj')
 //@Require('airbug.ApiRequest')
+//@Require('bugcall.CallClientEvent')
+//@Require('bugflow.BugFlow')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.IInitializeModule')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var List            = bugpack.require('List');
-var Obj             = bugpack.require('Obj');
-var ApiRequest      = bugpack.require('airbug.ApiRequest');
+var Class                           = bugpack.require('Class');
+var EventDispatcher                 = bugpack.require('EventDispatcher');
+var List                            = bugpack.require('List');
+var ApiRequest                      = bugpack.require('airbug.ApiRequest');
+var CallClientEvent                 = bugpack.require('bugcall.CallClientEvent');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var arg                             = ArgAnnotation.arg;
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AirbugApi = Class.extend(Obj, {
+var AirbugApi = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -80,45 +104,59 @@ var AirbugApi = Class.extend(Obj, {
         return this.currentRequestList;
     },
 
+    /**
+     * @returns {string}
+     */
+    getCallUuid: function() {
+        return this.bugCallClient.getCall().getCallUuid();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IInitializeModule Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeModule: function(callback) {
+        this.bugCallClient.removeEventPropagator(this);
+        callback();
+    },
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    initializeModule: function(callback) {
+        this.bugCallClient.addEventPropagator(this);
+        callback();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {*} data
+     * @param {function(Throwable=)} callback
      */
-    connect: function() {
-        this.bugCallClient.openConnection();
+    connect: function(data, callback) {
+        this.bugCallClient.openConnection(data, callback);
     },
 
     /**
-     *
+     * @param {function(Throwable=)} callback
      */
-    disconnect: function() {
-        this.bugCallClient.closeConnection();
+    disconnect: function(callback) {
+        this.bugCallClient.closeConnection(callback);
     },
 
     /**
-     * @return {boolean}
+     * @param {function(Throwable=)} callback
      */
-    isConnected: function() {
-        return this.bugCallClient.isConnected();
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isNotConnected: function() {
-        return !this.bugCallClient.isConnected();
-    },
-
-    /**
-     *
-     */
-    refreshConnection: function() {
-        this.disconnect();
-        this.connect();
+    refreshConnection: function(callback) {
+        this.bugCallClient.refreshCall(callback);
     },
 
     /**
@@ -126,12 +164,19 @@ var AirbugApi = Class.extend(Obj, {
      * @param {*} requestData
      * @param {function(Throwable, CallResponse=)} callback
      */
-    request: function(requestType, requestData, callback) {
-        console.log("AirbugApi#request", requestType);
-        this.bugCallClient.request(requestType, requestData, function(throwable, callResponse) {
-            if (!throwable) {
-                callback(null, callResponse);
-            } else {
+    sendRequest: function(requestType, requestData, callback) {
+        var callRequest             = this.bugCallClient.factoryCallRequest(requestType, requestData);
+        var callResponseHandler     = this.bugCallClient.factoryCallResponseHandler(callback);
+
+        //NOTE BRN: The callback here just guarantees that the request was sent or queued. It is not the response.
+
+        this.bugCallClient.sendRequest(callRequest, callResponseHandler, function(throwable, outgoingRequest) {
+
+            // TODO BRN: We should check for timeouts and failed requests here. If those happen, we should setup this api
+            // to listen for when the connection has been re-established. Once it has, we should retry all of the calls
+            // that were in progress
+
+            if (throwable) {
                 callback(throwable);
             }
         });
@@ -139,11 +184,12 @@ var AirbugApi = Class.extend(Obj, {
 
     /**
      * @param {ApiRequest} apiRequest
+     * @param {function(Throwable, OutgoingRequest=)} callback
      */
-    sendRequest: function(apiRequest) {
+    sendApiRequest: function(apiRequest, callback) {
         if (!apiRequest.isSent() && !this.currentRequestList.contains(apiRequest)) {
             this.addRequest(apiRequest);
-            apiRequest.sendRequest();
+            apiRequest.sendRequest(callback);
         }
     },
 
@@ -186,6 +232,25 @@ var AirbugApi = Class.extend(Obj, {
         this.removeRequest(apiRequest);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(AirbugApi, IInitializeModule);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AirbugApi).with(
+    module("airbugApi")
+        .args([
+            arg().ref("bugCallClient")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

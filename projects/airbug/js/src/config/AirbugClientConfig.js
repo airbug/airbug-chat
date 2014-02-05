@@ -114,6 +114,20 @@ var AirbugClientConfig = Class.extend(Config, {
     /**
      * @return {string}
      */
+    getGoogleAnalyticsId: function() {
+        return this.getProperty("googleAnalyticsId");
+    },
+
+    /**
+     * @param {string} googleAnalyticsId
+     */
+    setGoogleAnalyticsId: function(googleAnalyticsId) {
+        this.setProperty("googleAnalyticsId", googleAnalyticsId);
+    },
+
+    /**
+     * @return {string}
+     */
     getStaticUrl: function() {
         return this.getProperty("staticUrl");
     },

@@ -10,7 +10,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.ApiRequest')
-//@Require('airbug.EntityDefines')
+//@Require('airbug.ApiDefines')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var ApiRequest              = bugpack.require('airbug.ApiRequest');
-var EntityDefines           = bugpack.require('airbug.EntityDefines');
+var ApiDefines           = bugpack.require('airbug.ApiDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ var RetrieveRequest = Class.extend(ApiRequest, {
         if (!throwable)  {
             var responseType    = callResponse.getType();
             var data            = callResponse.getData();
-            if (responseType === EntityDefines.Responses.SUCCESS) {
+            if (responseType === ApiDefines.Responses.SUCCESS) {
                 var objectId                    = data.objectId;
                 var returnedMeldDocumentKey     = this.meldBuilder.generateMeldDocumentKey(this.entityType, objectId);
                 var meldDocument                = this.meldStore.getMeldDocumentByMeldDocumentKey(returnedMeldDocumentKey);
@@ -142,10 +142,10 @@ var RetrieveRequest = Class.extend(ApiRequest, {
                     // NOTE BRN: Looks like this meld doc may have been removed before we could get our hands on it
                     this.fireCallbacks(new Exception("NotFound"));
                 }
-            } else if (responseType === EntityDefines.Responses.EXCEPTION) {
+            } else if (responseType === ApiDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions
                 this.fireCallbacks(new Exception(data.exception.type, data.exception.data, data.exception.message, data.exception.causes));
-            } else if (responseType === EntityDefines.Responses.ERROR) {
+            } else if (responseType === ApiDefines.Responses.ERROR) {
                 //TODO BRN: Handle common errors
                 this.fireCallbacks(new Bug(data.error.type, data.error.data, data.error.message));
             } else {

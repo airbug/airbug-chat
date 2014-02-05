@@ -131,6 +131,8 @@ var RequestContextBuilder = Class.extend(Obj, {
                 req.requestContext = requestContext;
                 next();
             } else {
+                console.log(throwable.message);
+                console.log(throwable.stack);
                 throw throwable;
             }
         });

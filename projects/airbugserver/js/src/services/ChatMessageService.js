@@ -119,7 +119,7 @@ var ChatMessageService = Class.extend(EntityService, {
     createChatMessage: function(requestContext, chatMessageObject, callback) {
         var _this = this;
         var chatMessage     = this.chatMessageManager.generateChatMessage(chatMessageObject);
-        var callManager     = requestContext.get("callManager");
+        var call     = requestContext.get("call");
         var currentUser     = requestContext.get("currentUser");
 
         if (currentUser.isNotAnonymous() && currentUser.getId() === chatMessage.getSenderUserId()) {
@@ -170,12 +170,12 @@ var ChatMessageService = Class.extend(EntityService, {
                         });
                     }),
                     $task(function(flow) {
-                        _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
+                        _this.chatMessagePusher.meldCallWithChatMessage(call.getCallUuid(), chatMessage, function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.chatMessagePusher.pushChatMessage(chatMessage, [callManager.getCallUuid()], function(throwable) {
+                        _this.chatMessagePusher.pushChatMessage(chatMessage, [call.getCallUuid()], function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
@@ -216,7 +216,7 @@ var ChatMessageService = Class.extend(EntityService, {
     retrieveChatMessage: function(requestContext, chatMessageId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         /** @type {ChatMessage} */
         var chatMessage         = null;
         var chatMessageManager  = this.chatMessageManager;
@@ -238,12 +238,12 @@ var ChatMessageService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessage(callManager.getCallUuid(), chatMessage, function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessage(call.getCallUuid(), chatMessage, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessageToCall(chatMessage, callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessagePusher.pushChatMessageToCall(chatMessage, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -269,7 +269,7 @@ var ChatMessageService = Class.extend(EntityService, {
         /** @type {Map.<string, ChatMessage>} */
         var chatMessageMap      = null;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         var chatMessageManager  = this.chatMessageManager;
         var mappedException     = null;
 
@@ -297,12 +297,12 @@ var ChatMessageService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -326,7 +326,7 @@ var ChatMessageService = Class.extend(EntityService, {
     retrieveChatMessagesByConversationIdSortBySentAt: function(requestContext, conversationId, callback) {
         var _this = this;
         var currentUser     = requestContext.get("currentUser");
-        var callManager     = requestContext.get("callManager");
+        var call     = requestContext.get("call");
         if (currentUser.isNotAnonymous()) {
 
             var chatMessageList = null;
@@ -360,12 +360,12 @@ var ChatMessageService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageList.toArray(), function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })

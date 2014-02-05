@@ -5,7 +5,8 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbugserver.CallService')
+//@Require('airbugserver.AirbugCallManager')
+//@Require('airbugserver.AirbugCallService')
 //@Require('airbugserver.ChatMessageStreamManager')
 //@Require('airbugserver.Conversation')
 //@Require('airbugserver.ConversationManager')
@@ -18,7 +19,7 @@
 //@Require('airbugserver.SessionManager')
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserManager')
-//@Require('bugcall.CallManager')
+//@Require('bugcall.Call')
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
@@ -46,7 +47,8 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var CallService                 = bugpack.require('airbugserver.CallService');
+var AirbugCallManager           = bugpack.require('airbugserver.AirbugCallManager');
+var AirbugCallService           = bugpack.require('airbugserver.AirbugCallService');
 var ChatMessageStreamManager    = bugpack.require('airbugserver.ChatMessageStreamManager');
 var Conversation                = bugpack.require('airbugserver.Conversation');
 var ConversationManager         = bugpack.require('airbugserver.ConversationManager');
@@ -59,7 +61,7 @@ var Session                     = bugpack.require('airbugserver.Session');
 var SessionManager              = bugpack.require('airbugserver.SessionManager');
 var User                        = bugpack.require('airbugserver.User');
 var UserManager                 = bugpack.require('airbugserver.UserManager');
-var CallManager                 = bugpack.require('bugcall.CallManager');
+var Call                        = bugpack.require('bugcall.Call');
 var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
 var EntityManagerStore          = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager               = bugpack.require('bugentity.SchemaManager');
@@ -114,7 +116,7 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     setupObject.roomMemberPusher        = {};
     setupObject.chatMessageStreamManager = new ChatMessageStreamManager();
     setupObject.dummyRedisClient        = {};
-    setupObject.callService             = new CallService(setupObject.dummyBugCallServer);
+    setupObject.airbugCallManager       = new AirbugCallManager(setupObject.dummyRedisClient);
     setupObject.meldBuilder             = new MeldBuilder();
     setupObject.entityManagerStore      = new EntityManagerStore();
     setupObject.mongoDataStore          = new DummyMongoDataStore();
@@ -129,20 +131,21 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     setupObject.conversationManager.setEntityType("Conversation");
     setupObject.sessionManager          = new SessionManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
     setupObject.sessionManager.setEntityType("Session");
+    setupObject.airbugCallService       = new AirbugCallService(setupObject.dummyBugCallServer, setupObject.airbugCallManager, setupObject.sessionManager);
     setupObject.roomService             = new RoomService(setupObject.roomManager, setupObject.userManager ,setupObject.roomMemberManager, setupObject.chatMessageStreamManager, setupObject.roomPusher, setupObject.userPusher, setupObject.roomMemberPusher);
     setupObject.roomService.logger      = new Logger();
 
     setupObject.testCurrentUser = setupObject.userManager.generateUser(currentUserObject);
     setupObject.testSession     = setupObject.sessionManager.generateSession(sessionObject);
-    setupObject.testCallManager = new CallManager(sessionObject.testCallUuid);
+    setupObject.testCall = new Call(sessionObject.testCallUuid);
     setupObject.testRequestContext  = {
         get: function(key) {
             if (key === "currentUser") {
                 return setupObject.testCurrentUser;
             } else if (key === "session") {
                 return setupObject.testSession;
-            } else if (key === "callManager") {
-                return setupObject.testCallManager;
+            } else if (key === "call") {
+                return setupObject.testCall;
             }
             return undefined;
         },

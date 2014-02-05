@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbug.EntityDefines')
+//@Require('airbug.ApiDefines')
 //@Require('airbugserver.EntityController')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomController')
@@ -27,7 +27,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var EntityDefines           = bugpack.require('airbug.EntityDefines');
+var ApiDefines              = bugpack.require('airbug.ApiDefines');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var Room                    = bugpack.require('airbugserver.Room');
 var RoomController          = bugpack.require('airbugserver.RoomController');
@@ -105,7 +105,7 @@ var roomControllerJoinRoomTest = {
         };
         this.testResponder           = {
             response: function(responseType, data) {
-                test.assertEqual(responseType, EntityDefines.Responses.SUCCESS,
+                test.assertEqual(responseType, ApiDefines.Responses.SUCCESS,
                     "Assert responseType was success");
                 return {};
             },
@@ -192,7 +192,7 @@ var roomControllerCreateRoomTest = {
         };
         this.testResponder           = {
             response: function(responseType, data) {
-                test.assertEqual(responseType, EntityDefines.Responses.SUCCESS,
+                test.assertEqual(responseType, ApiDefines.Responses.SUCCESS,
                     "Assert responseType was success");
                 test.assertEqual(data.objectId, _this.testRoomId,
                     "Assert data.objectId was set to the testRoomId");

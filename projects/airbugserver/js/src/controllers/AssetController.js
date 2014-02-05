@@ -172,7 +172,7 @@ var AssetController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             addAssetFromUrl: function(request, responder, callback) {
                 console.log("AssetController#addAssetFromUrl");
@@ -180,7 +180,7 @@ var AssetController = Class.extend(EntityController, {
                 var data = request.getData();
                 var url = data.url;
 
-                if(url){
+                if (url) {
                     assetService.addAssetFromUrl(requestContext, url, function(throwable, asset) {
                         _this.processCreateResponse(responder, throwable, asset, callback);
                     });

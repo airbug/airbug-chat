@@ -4,12 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('LoginPageController')
+//@Export('BasePageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.LoginPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -20,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,7 +28,6 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -40,51 +38,21 @@ var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta     = BugMeta.context();
-var autowired   = AutowiredAnnotation.autowired;
-var controller  = ControllerAnnotation.controller;
-var property    = PropertyAnnotation.property;
+var bugmeta                 = BugMeta.context();
+var autowired               = AutowiredAnnotation.autowired;
+var controller              = ControllerAnnotation.controller;
+var property                = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginPageController = Class.extend(ApplicationController, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function() {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @protected
-         * @type {LoginPageContainer}
-         */
-        this.loginPageContainer = null;
-    },
-
+var BasePageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
     // CarapaceController Extensions
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    createController: function() {
-        this._super();
-        this.loginPageContainer = new LoginPageContainer();
-        this.setContainerTop(this.loginPageContainer);
-    },
 
     /**
      * @override
@@ -100,7 +68,9 @@ var LoginPageController = Class.extend(ApplicationController, {
                         trigger: true
                     });
                 } else {
-                    routingRequest.accept();
+                    routingRequest.forward("login", {
+                        trigger: true
+                    });
                 }
             } else {
                 throw throwable;
@@ -114,8 +84,8 @@ var LoginPageController = Class.extend(ApplicationController, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(LoginPageController).with(
-    controller().route("login")
+bugmeta.annotate(BasePageController).with(
+    controller().route("")
 );
 
 
@@ -123,4 +93,4 @@ bugmeta.annotate(LoginPageController).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LoginPageController", LoginPageController);
+bugpack.export("airbug.BasePageController", BasePageController);

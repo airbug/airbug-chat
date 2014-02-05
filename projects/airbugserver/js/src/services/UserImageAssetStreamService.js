@@ -129,7 +129,7 @@ var UserImageAssetStreamService = Class.extend(EntityService, {
     retrieveUserImageAssetStream: function(requestContext, entityId, callback) {
         var _this                   = this;
         var currentUser             = requestContext.get("currentUser");
-        var callManager             = requestContext.get("callManager");
+        var call                    = requestContext.get("call");
         var userImageAssetStream    = null;
 
         if (currentUser.isNotAnonymous() && currentUser.getId() === entityId) {
@@ -138,12 +138,12 @@ var UserImageAssetStreamService = Class.extend(EntityService, {
                     userImageAssetStream = _this.userImageAssetStreamManager.generateUserImageAssetStream({
                         id: entityId
                     });
-                    _this.userImageAssetStreamPusher.meldCallWithUserImageAssetStream(callManager.getCallUuid(), userImageAssetStream, function(throwable) {
+                    _this.userImageAssetStreamPusher.meldCallWithUserImageAssetStream(call.getCallUuid(), userImageAssetStream, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userImageAssetStreamPusher.pushUserImageAssetStreamToCall(userImageAssetStream, callManager.getCallUuid(), function(throwable) {
+                    _this.userImageAssetStreamPusher.pushUserImageAssetStreamToCall(userImageAssetStream, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     })
                 })

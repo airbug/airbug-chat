@@ -230,7 +230,7 @@ var UserController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveCurrentUser: function(request, responder, callback) {
                 console.log("UserController#retrieveCurrentUser");
@@ -243,15 +243,13 @@ var UserController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveUser: function(request, responder, callback) {
-                console.log("UserController#retrieveUser");
                 var data                = request.getData();
                 var userId              = data.objectId;
                 var requestContext      = request.requestContext;
-                console.log("data", data);
-                console.log("userId ", userId);
+
                 userService.retrieveUser(requestContext, userId, function(throwable, user) {
                     _this.processRetrieveResponse(responder, throwable, user, callback);
                 });
@@ -260,7 +258,7 @@ var UserController = Class.extend(EntityController, {
             /**
              * @param {IncomingRequest} request
              * @param {CallResponder} responder
-             * @param {function(Throwable)} callback
+             * @param {function(Throwable=)} callback
              */
             retrieveUsers: function(request, responder, callback) {
                 var data                = request.getData();
@@ -269,6 +267,22 @@ var UserController = Class.extend(EntityController, {
 
                 userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
                     _this.processRetrieveEachResponse(responder, throwable, userIds, userMap, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            updateUser: function(request, responder, callback) {
+                var data                = request.getData();
+                var userId              = data.objectId;
+                var updateObject        = data.updateObject;
+                var requestContext      = request.requestContext;
+
+                userService.updateUser(requestContext, userId, updateObject, function(throwable, user) {
+                    _this.processUpdateResponse(responder, throwable, user, callback);
                 });
             }
         });

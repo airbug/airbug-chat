@@ -156,7 +156,7 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
         var _this = this;
         this.currentUserManagerModule.logout(function(throwable) {
             if (!throwable) {
-                _this.navigationModule.navigate("", {
+                _this.navigationModule.navigate("login", {
                     trigger: true
                 });
             } else {

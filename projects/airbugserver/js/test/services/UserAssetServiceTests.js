@@ -89,15 +89,15 @@ var setupUserAssetService = function(setupObject) {
 
     setupObject.testCurrentUser     = new User({});
     setupObject.testSession         = new Session({});
-    setupObject.testCallManager     = {
+    setupObject.testCall            = {
         getCallUuid: function() {
             return 'testCallUuid';
         }
     };
     setupObject.testRequestContext  = {
         get: function(key) {
-            if (key === 'callManager') {
-                return setupObject.testCallManager;
+            if (key === 'call') {
+                return setupObject.testCall;
             }
             if (key === 'currentUser') {
                 return setupObject.testCurrentUser;

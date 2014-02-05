@@ -203,7 +203,7 @@ var EntityPusher = Class.extend(Obj, {
         var push                = this.getPushManager().push();
         push
             .toAll()
-            .setDocument(meldDocumentKey, data)
+            .setDocument(meldDocumentKey, data);
 
         if (waitForCallUuids.length > 0) {
             push.waitFor(waitForCallUuids);

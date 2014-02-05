@@ -30,12 +30,39 @@ var Schema      = mongoose.Schema;
 //-------------------------------------------------------------------------------
 
 var SessionSchema = new Schema({
-    cookie: {type: Mixed, required: true},
+    cookie: {
+        secure: {
+            type: Boolean
+        },
+        httpOnly: {
+            type: Boolean
+        },
+        path: {
+            type: String
+        },
+        expires: {
+            type: Date
+        }
+    },
     createdAt: Date,
-    data: {type: Mixed, required: true},
-    sid: {type: String, required: true, index: true, unique: true},
+    data: {
+        githubAuthToken: String,
+        githubEmails: [String],
+        githubId: String,
+        githubLogin: String,
+        githubState: String
+    },
+    sid: {
+        type: String,
+        required: true,
+        index: true,
+        unique: true
+    },
     updatedAt: Date,
-    userId: {type: ObjectId, index: true}
+    userId: {
+        type: ObjectId,
+        index: true
+    }
 });
 
 

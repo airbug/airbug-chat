@@ -129,7 +129,7 @@ var ChatMessageStreamService = Class.extend(EntityService, {
     retrieveChatMessageStream: function(requestContext, entityId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call         = requestContext.get("call");
         var chatMessageStream   = null;
 
         if (currentUser.isNotAnonymous()) {
@@ -155,12 +155,12 @@ var ChatMessageStreamService = Class.extend(EntityService, {
                     chatMessageStream = _this.chatMessageStreamManager.generateChatMessageStream({
                         id: entityId
                     });
-                    _this.chatMessageStreamPusher.meldCallWithChatMessageStream(callManager.getCallUuid(), chatMessageStream, function(throwable) {
+                    _this.chatMessageStreamPusher.meldCallWithChatMessageStream(call.getCallUuid(), chatMessageStream, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessageStreamPusher.pushChatMessageStreamToCall(chatMessageStream, callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessageStreamPusher.pushChatMessageStreamToCall(chatMessageStream, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     })
                 })

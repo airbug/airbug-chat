@@ -112,7 +112,7 @@ var ConversationService = Class.extend(EntityService, {
     retrieveConversation: function(requestContext, conversationId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var callManager         = requestContext.get("callManager");
+        var call                = requestContext.get("call");
         var conversation        = null;
 
         if (!currentUser.isAnonymous()) {
@@ -138,12 +138,12 @@ var ConversationService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.conversationPusher.meldCallWithConversation(callManager.getCallUuid(), conversation, function(throwable) {
+                    _this.conversationPusher.meldCallWithConversation(call.getCallUuid(), conversation, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.conversationPusher.pushConversationToCall(conversation, callManager.getCallUuid(), function(throwable) {
+                    _this.conversationPusher.pushConversationToCall(conversation, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
