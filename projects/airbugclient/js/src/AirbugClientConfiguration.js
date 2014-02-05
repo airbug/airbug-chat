@@ -108,10 +108,11 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {Logger} logger
      * @return {Call}
      */
-    call: function() {
-        return new Call();
+    call: function(logger) {
+        return new Call(logger);
     },
 
     /**
@@ -189,7 +190,10 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("bugCallClient")
             ]),
-        module("call"),
+        module("call")
+            .args([
+                arg().ref("logger")
+            ]),
         module("carapaceApplication")
             .args([
                 arg().ref("carapaceRouter")

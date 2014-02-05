@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('DualMultiSetMap')
+//@Require('Exception')
 //@Require('Obj')
 //@Require('Set')
 //@Require('airbug.InteractionStatusDefines')
@@ -35,6 +36,7 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var DualMultiSetMap             = bugpack.require('DualMultiSetMap');
+var Exception                   = bugpack.require('Exception');
 var Obj                         = bugpack.require('Obj');
 var InteractionStatusDefines    = bugpack.require('airbug.InteractionStatusDefines');
 var UserDefines                 = bugpack.require('airbug.UserDefines');
@@ -79,7 +81,7 @@ var InteractionStatusService = Class.extend(Obj, {
      * @param {UserManager} userManager
      * @param {UserPusher} userPusher
      */
-    _constructor: function(logger, bugCallServer, interactionStatusManager, userManager, userPusher) {
+    _constructor: function(logger, bugCallServer, interactionStatusManager, userManager, userPusher, airbugCallManager) {
 
         this._super();
 
@@ -87,6 +89,12 @@ var InteractionStatusService = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {AirbugCallManager}
+         */
+        this.airbugCallManager              = airbugCallManager;
 
         /**
          * @private
@@ -200,6 +208,52 @@ var InteractionStatusService = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {string} callUuid
+     * @param {function(Throwable=)} callback
+     */
+    removeInteractionStatusForCallUuid: function(callUuid, callback) {
+        var _this       = this;
+        var userId      = null;
+        var user        = null;
+        $series([
+            $task(function(flow) {
+                _this.airbugCallManager.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
+                    if (!throwable) {
+                        if (returnedUserId) {
+                            userId = returnedUserId;
+                        } else {
+                            throwable = new Exception("NotFound");
+                        }
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userManager.retrieveUser(userId, function(throwable, returnedUser) {
+                    if (!throwable) {
+                        if (returnedUser) {
+                            user = returnedUser;
+                        } else {
+                            throwable = new Exception("NotFound");
+                        }
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.interactionStatusManager.removeInteractionStatusForCallUuid(callUuid, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.recalculateUserStatus(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(callback);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -268,19 +322,6 @@ var InteractionStatusService = Class.extend(Obj, {
         ]).execute(callback);
     },
 
-    /**
-     * @private
-     * @param {string} callUuid
-     */
-    removeInteractionStatusForCallUuid: function(callUuid) {
-        var _this = this;
-        this.interactionStatusManager.removeInteractionStatusForCallUuid(callUuid, function(throwable) {
-            if (throwable) {
-                _this.logger.error(throwable);
-            }
-        });
-    },
-
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -291,9 +332,14 @@ var InteractionStatusService = Class.extend(Obj, {
      * @param {CallEvent} event
      */
     hearCallClosed: function(event) {
+        var _this           = this;
         var data            = event.getData();
         var call            = data.call;
-        this.removeInteractionStatusForCallUuid(call.getCallUuid());
+        this.removeInteractionStatusForCallUuid(call.getCallUuid(), function(throwable) {
+            if (throwable) {
+                _this.logger.error(throwable);
+            }
+        });
     }
 });
 
@@ -316,7 +362,8 @@ bugmeta.annotate(InteractionStatusService).with(
             arg().ref("bugCallServer"),
             arg().ref("interactionStatusManager"),
             arg().ref("userManager"),
-            arg().ref("userPusher")
+            arg().ref("userPusher"),
+            arg().ref("airbugCallManager")
         ])
 );
 

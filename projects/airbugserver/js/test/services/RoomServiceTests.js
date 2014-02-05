@@ -133,11 +133,11 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     setupObject.sessionManager.setEntityType("Session");
     setupObject.airbugCallService       = new AirbugCallService(setupObject.dummyBugCallServer, setupObject.airbugCallManager, setupObject.sessionManager);
     setupObject.roomService             = new RoomService(setupObject.roomManager, setupObject.userManager ,setupObject.roomMemberManager, setupObject.chatMessageStreamManager, setupObject.roomPusher, setupObject.userPusher, setupObject.roomMemberPusher);
-    setupObject.roomService.logger      = new Logger();
-
+    setupObject.logger                  = new Logger();
+    setupObject.roomService.logger      = setupObject.logger;
     setupObject.testCurrentUser = setupObject.userManager.generateUser(currentUserObject);
     setupObject.testSession     = setupObject.sessionManager.generateSession(sessionObject);
-    setupObject.testCall = new Call(sessionObject.testCallUuid);
+    setupObject.testCall = new Call(setupObject.logger, sessionObject.testCallUuid);
     setupObject.testRequestContext  = {
         get: function(key) {
             if (key === "currentUser") {
