@@ -173,6 +173,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super(routingArgs);
 
         this.loadRoom(this.roomModel.getProperty("id"));
+        this.setDocumentTitle();
     },
 
     /**
@@ -212,10 +213,12 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
     initializeContainer: function() {
         this._super();
+        //EventListeners and and command subscription initialization handled by super
     },
 
     deinitializeContainer: function() {
         this._super();
+        //EventListeners and and command subscription deinitialization handled by super
     },
 
     initializeEventListeners: function() {
@@ -256,6 +259,10 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
     hideShareRoomOverlay: function() {
         this.viewTop.$el.find(".share-room-overlay").hide();
+    },
+
+    setDocumentTitle: function() {
+        document.title = this.roomModel.getProperty("name");
     },
 
     //-------------------------------------------------------------------------------
