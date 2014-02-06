@@ -112,15 +112,7 @@ var RoomController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var roomId              = request.params.id;
             roomService.retrieveRoom(requestContext, roomId, function(throwable, entity){
-                var roomJson = null;
-                if (entity) {
-                    roomJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(roomJson);
-                }
+                _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -128,15 +120,7 @@ var RoomController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var room                = request.body;
             roomService.createRoom(requestContext, room, function(throwable, entity){
-                var roomJson = null;
-                if (entity) {
-                    roomJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(roomJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -145,15 +129,7 @@ var RoomController = Class.extend(EntityController, {
             var roomId          = request.params.id;
             var updates         = request.body;
             roomService.updateRoom(requestContext, roomId, updates, function(throwable, entity){
-                var roomJson = null;
-                if (entity) {
-                    roomJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(roomJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);sponse.json(roomJson);
             });
         });
 
@@ -162,11 +138,7 @@ var RoomController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var roomId          = request.params.id;
             roomService.deleteRoom(requestContext, roomId, function(throwable){
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 

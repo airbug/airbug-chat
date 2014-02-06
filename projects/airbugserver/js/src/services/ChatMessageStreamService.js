@@ -114,7 +114,7 @@ var ChatMessageStreamService = Class.extend(EntityService, {
     /*
      * @param {RequestContext} requestContext
      * @param {string} entityId
-     * @param {function(Throwable} callback
+     * @param {function(Throwable, Entity=} callback
      */
     deleteChatMessageStream: function(requestContext, entityId, callback) {
         //TODO

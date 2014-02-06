@@ -163,15 +163,7 @@ var UserController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var userId              = request.params.id;
             userService.retrieveUser(requestContext, userId, function(throwable, entity){
-                var userJson = null;
-                if (entity) {
-                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(userJson);
-                }
+                _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -179,15 +171,7 @@ var UserController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var user                = request.body;
             userService.createUser(requestContext, user, function(throwable, entity){
-                var userJson = null;
-                if (entity) {
-                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(userJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -196,15 +180,7 @@ var UserController = Class.extend(EntityController, {
             var userId          = request.params.id;
             var updates         = request.body;
             userService.updateUser(requestContext, userId, updates, function(throwable, entity){
-                var userJson = null;
-                if (entity) {
-                    userJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(userJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -213,11 +189,7 @@ var UserController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var userId          = request.params.id;
             userService.deleteUser(requestContext, userId, function(throwable){
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 

@@ -8,7 +8,6 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('LiteralUtil')
 //@Require('Set')
 //@Require('airbugserver.EntityController')
 //@Require('bugioc.ArgAnnotation')
@@ -28,7 +27,6 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var LiteralUtil         = bugpack.require('LiteralUtil');
 var Set                 = bugpack.require('Set');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
@@ -103,15 +101,7 @@ var ChatMessageController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var chatMessageId       = request.params.id;
             chatMessageService.retrieveChatMessage(requestContext, chatMessageId, function(throwable, entity) {
-                var chatMessageJson = null;
-                if (entity) {
-                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(chatMessageJson);
-                }
+                 _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -119,15 +109,7 @@ var ChatMessageController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var chatMessage         = request.body;
             chatMessageService.createChatMessage(requestContext, chatMessage, function(throwable, entity) {
-                var chatMessageJson = null;
-                if (entity) {
-                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(chatMessageJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -136,15 +118,7 @@ var ChatMessageController = Class.extend(EntityController, {
             var chatMessageId   = request.params.id;
             var updates         = request.body;
             chatMessageService.updateChatMessage(requestContext, chatMessageId, updates, function(throwable, entity) {
-                var chatMessageJson = null;
-                if (entity) {
-                    chatMessageJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(chatMessageJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -152,12 +126,8 @@ var ChatMessageController = Class.extend(EntityController, {
             var _this = this;
             var requestContext  = request.requestContext;
             var chatMessageId   = request.params.id;
-            chatMessageService.deleteChatMessage(requestContext, chatMessageId, function(throwable) {
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+            chatMessageService.deleteChatMessage(requestContext, chatMessageId, function(throwable, entity) {
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 

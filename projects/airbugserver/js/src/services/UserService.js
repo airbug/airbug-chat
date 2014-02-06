@@ -318,7 +318,7 @@ var UserService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     logoutUser: function(requestContext, callback) {
         var _this                           = this;
@@ -356,13 +356,25 @@ var UserService = Class.extend(Obj, {
                 _this.ensureUserOnSession(session, function(throwable) {
                     flow.complete(throwable);
                 });
-            }),
-            $task(function(flow) {
-                airbugClientRequestPublisher.publishSessionRequest(sessionSid, "refreshConnectionForLogout", {}, excludedCallUuids, function(mappedThrowable, callResponseMap) {
-                    flow.complete(mappedThrowable);
-                });
             })
-        ]).execute(callback);
+        ]).execute(function(throwable) {
+            if (!throwable) {
+
+                //NOTE BRN:
+                callback();
+                $task(function(flow) {
+                    airbugClientRequestPublisher.publishSessionRequest(sessionSid, "refreshConnectionForLogout", {}, excludedCallUuids, function(mappedThrowable, callResponseMap) {
+                        flow.complete(mappedThrowable);
+                    });
+                }).execute(function(throwable) {
+                    if (throwable) {
+                        _this.logger.error(throwable);
+                    }
+                })
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**

@@ -8,7 +8,6 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -27,7 +26,6 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var LiteralUtil         = bugpack.require('LiteralUtil');
 var EntityController    = bugpack.require('airbugserver.EntityController');
 var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
@@ -102,15 +100,7 @@ var ChatMessageStreamController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var entityId            = request.params.id;
             chatMessageStreamService.retrieveChatMessageStream(requestContext, entityId, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -118,15 +108,7 @@ var ChatMessageStreamController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var entityData          = request.body;
             chatMessageStreamService.createChatMessageStream(requestContext, entityData, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -135,15 +117,7 @@ var ChatMessageStreamController = Class.extend(EntityController, {
             var entityId        = request.params.id;
             var updates         = request.body;
             chatMessageStreamService.updateChatMessageStream(requestContext, entityId, updates, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -151,12 +125,8 @@ var ChatMessageStreamController = Class.extend(EntityController, {
             var _this = this;
             var requestContext  = request.requestContext;
             var entityId        = request.params.id;
-            chatMessageStreamService.deleteChatMessageStream(requestContext, entityId, function(throwable) {
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+            chatMessageStreamService.deleteChatMessageStream(requestContext, entityId, function(throwable, entity) {
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 

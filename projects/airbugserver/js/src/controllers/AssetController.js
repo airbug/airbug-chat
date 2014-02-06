@@ -122,7 +122,7 @@ var AssetController = Class.extend(EntityController, {
                     assetJson = {"files": LiteralUtil.convertToLiteral(entities)};
                 }
                 if (throwable) {
-                    _this.processAjaxThrowable(throwable, response); //TODO Update this and service layer to match expected response props
+                    _this.processAjaxThrowable(response, throwable); //TODO Update this and service layer to match expected response props
                 } else {
                     response.json(assetJson);
                 }

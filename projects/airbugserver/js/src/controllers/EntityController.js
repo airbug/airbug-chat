@@ -59,7 +59,7 @@ var EntityController = Class.extend(Controller, {
      * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, marshaller) {
 
         this._super(controllerManager, expressApp);
 
@@ -73,6 +73,12 @@ var EntityController = Class.extend(Controller, {
          * @type {BugCallRouter}
          */
         this.bugCallRouter              = bugCallRouter;
+
+        /**
+         * @private
+         * @type {Marshaller}
+         */
+        this.marshaller                 = marshaller;
     },
 
 
@@ -86,6 +92,13 @@ var EntityController = Class.extend(Controller, {
      */
     getBugCallRouter: function() {
         return this.bugCallRouter;
+    },
+
+    /**
+     * @return {Marshaller}
+     */
+    getMarshaller: function() {
+        return this.marshaller;
     },
 
 
@@ -210,7 +223,6 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     processRetrieveResponse: function(responder, throwable, entity, callback) {
-        console.log("EntityController#processRetrieveResponse");
         if (!throwable) {
             this.sendSuccessResponse(responder, {objectId: entity.getId()}, callback);
         } else {
@@ -383,33 +395,86 @@ var EntityController = Class.extend(Controller, {
         responder.sendResponse(response, callback);
     },
 
+
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Ajax Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {Throwable} throwable
      * @param {Response} response
+     * @param {Throwable} throwable
+     * @param {Entity} entity
      */
-    processAjaxThrowable: function(throwable, response) {
-        if (Class.doesExtend(throwable, Exception)) {
-            if (throwable.getType() === "NotFound") {
-                this.sendAjaxNotFoundResponse(/** @type {Exception} */ (throwable), response);
-            } else {
-                this.sendAjaxExceptionResponse(/** @type {Exception} */ (throwable), response);
-            }
+    processAjaxCreateResponse: function(response, throwable, entity) {
+        if (!throwable) {
+            this.sendAjaxSuccessResponse(response, this.marshaller.marshalData(entity));
         } else {
-            this.sendAjaxErrorResponse(throwable, response);
+            this.processAjaxThrowable(response, throwable);
         }
     },
 
     /**
-     * @private
-     * @param {Error} error
      * @param {Response} response
+     * @param {Throwable} throwable
+     * @param {Entity} entity
      */
-    sendAjaxErrorResponse: function(error, response) {
+    processAjaxDeleteResponse: function(response, throwable, entity) {
+        if (!throwable) {
+            this.sendAjaxSuccessResponse(response, {objectId: entity.getId()});
+        } else {
+            this.processAjaxThrowable(response, throwable);
+        }
+    },
+
+    /**
+     * @param {Response} response
+     * @param {Throwable} throwable
+     * @param {Entity} entity
+     */
+    processAjaxRetrieveResponse: function(response, throwable, entity) {
+        if (!throwable) {
+            this.sendAjaxSuccessResponse(response, this.marshaller.marshalData(entity));
+        } else {
+            this.processAjaxThrowable(response, throwable);
+        }
+    },
+
+    /**
+     * @param {Response} response
+     * @param {Throwable} throwable
+     * @param {Entity} entity
+     */
+    processAjaxUpdateResponse: function(response, throwable, entity) {
+        if (!throwable) {
+            this.sendAjaxSuccessResponse(response, this.marshaller.marshalData(entity));
+        } else {
+            this.processAjaxThrowable(response, throwable);
+        }
+    },
+
+    /**
+     * @protected
+     * @param {Response} response
+     * @param {Throwable} throwable
+     */
+    processAjaxThrowable: function(response, throwable) {
+        if (Class.doesExtend(throwable, Exception)) {
+            if (throwable.getType() === "NotFound") {
+                this.sendAjaxNotFoundResponse(response, /** @type {Exception} */ (throwable));
+            } else {
+                this.sendAjaxExceptionResponse(response, /** @type {Exception} */ (throwable));
+            }
+        } else {
+            this.sendAjaxErrorResponse(response, throwable);
+        }
+    },
+
+    /**
+     * @protected
+     * @param {Response} response
+     * @param {Error} error
+     */
+    sendAjaxErrorResponse: function(response, error) {
         //TEST
         console.log("Error occurred during request");
         console.log(error.message);
@@ -418,56 +483,52 @@ var EntityController = Class.extend(Controller, {
         response.status(500);
         response.json({
             responseType: "Error",
-            error: {
-                message: error.message
-            }
+            error: this.marshaller.marshalData(error)
         });
+        response.end();
     },
 
     /**
      * @private
-     * @param {Exception} exception
      * @param {Response} response
+     * @param {Exception} exception
      */
-    sendAjaxExceptionResponse: function(exception, response) {
+    sendAjaxExceptionResponse: function(response, exception) {
         response.status(200);
         response.json({
             responseType: "Exception",
-            exception: {
-                type: exception.getType(),
-                data: exception.getData(),
-                message: exception.getMessage()
-            }
+            exception: this.marshaller.marshalData(exception)
         });
+        response.end();
     },
 
     /**
      * @private
-     * @param {Exception} exception
      * @param {Response} response
+     * @param {Exception} exception
      */
-    sendAjaxNotFoundResponse: function(exception, response) {
+    sendAjaxNotFoundResponse: function(response, exception) {
         response.status(404);
         response.json({
             responseType: "Exception",
-            exception: {
-                type: exception.getType(),
-                data: exception.getData(),
-                message: exception.getMessage()
-            }
+            exception: this.marshaller.marshalData(exception)
         });
+        response.end();
     },
 
     /**
-     * @private
+     * @protected
      * @param {Response} response
+     * @param {*=} data
      */
-    sendAjaxSuccessResponse: function(response) {
+    sendAjaxSuccessResponse: function(response, data) {
         response.status(200);
         response.json({
             responseType: "Success",
-            success: true
+            success: true,
+            data: data
         });
+        response.end();
     }
 });
 

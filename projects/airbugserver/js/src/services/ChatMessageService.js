@@ -201,7 +201,7 @@ var ChatMessageService = Class.extend(EntityService, {
     /*
      * @param {RequestContext} requestContext
      * @param {string} chatMessageId
-     * @param {function(Throwable} callback
+     * @param {function(Throwable, Entity=} callback
      */
     deleteChatMessage: function(requestContext, chatMessageId, callback) {
         //TODO BRN: Implement

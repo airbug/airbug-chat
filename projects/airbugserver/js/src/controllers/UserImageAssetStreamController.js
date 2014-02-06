@@ -102,15 +102,7 @@ var UserImageAssetStreamController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var entityId            = request.params.id;
             userImageAssetStreamService.retrieveUserImageAssetStream(requestContext, entityId, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -118,15 +110,7 @@ var UserImageAssetStreamController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var entityData          = request.body;
             userImageAssetStreamService.createUserImageAssetStream(requestContext, entityData, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -135,15 +119,7 @@ var UserImageAssetStreamController = Class.extend(EntityController, {
             var entityId        = request.params.id;
             var updates         = request.body;
             userImageAssetStreamService.updateUserImageAssetStream(requestContext, entityId, updates, function(throwable, entity) {
-                var entityJson = null;
-                if (entity) {
-                    entityJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(entityJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -152,11 +128,7 @@ var UserImageAssetStreamController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var entityId        = request.params.id;
             userImageAssetStreamService.deleteUserImageAssetStream(requestContext, entityId, function(throwable) {
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 

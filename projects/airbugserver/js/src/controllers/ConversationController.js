@@ -102,15 +102,7 @@ var ConversationController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var conversationId      = request.params.id;
             conversationService.retrieveConversation(requestContext, conversationId, function(throwable, entity) {
-                var conversationJson = null;
-                if (entity) {
-                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(conversationJson);
-                }
+                _this.processAjaxRetrieveResponse(response, throwable, entity);
             });
         });
 
@@ -118,15 +110,7 @@ var ConversationController = Class.extend(EntityController, {
             var requestContext      = request.requestContext;
             var conversation        = request.body;
             conversationService.createConversation(requestContext, conversation, function(throwable, entity) {
-                var conversationJson = null;
-                if (entity) {
-                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(conversationJson);
-                }
+                _this.processAjaxCreateResponse(response, throwable, entity);
             });
         });
 
@@ -135,15 +119,7 @@ var ConversationController = Class.extend(EntityController, {
             var conversationId          = request.params.id;
             var updates         = request.body;
             conversationService.updateConversation(requestContext, conversationId, updates, function(throwable, entity) {
-                var conversationJson = null;
-                if (entity) {
-                    conversationJson = LiteralUtil.convertToLiteral(entity.toObject());
-                }
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    response.json(conversationJson);
-                }
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -152,11 +128,7 @@ var ConversationController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             var conversationId  = request.params.id;
             conversationService.deleteConversation(requestContext, conversationId, function(throwable) {
-                if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
-                } else {
-                    _this.sendAjaxSuccessResponse(response);
-                }
+                _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });
 
