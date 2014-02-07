@@ -213,6 +213,9 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
             .children([
                 view(ListView)
                     .id("listView")
+                    .attributes({
+                        placeholder: "You have no rooms"
+                    })
                     .appendTo('*[id|="panel-body"]')
             ])
             .build();
@@ -262,6 +265,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         console.log("Adding roomModel - ", roomModel);
 
         this.roomList.add(roomModel);
+        this.listView.hidePlaceholder();
     },
 
     /**
@@ -376,9 +380,13 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                roomMeldDocumentSet.forEach(function(roomMeldDocument) {
-                    _this.buildRoomModel({}, roomMeldDocument);
-                });
+                if (roomMeldDocumentSet.getCount() > 0) {
+                    roomMeldDocumentSet.forEach(function(roomMeldDocument) {
+                        _this.buildRoomModel({}, roomMeldDocument);
+                    });
+                } else {
+                    _this.listView.showPlaceholder();
+                }
             } else {
                 //TODO Error handling
                 //TODO Error tracking

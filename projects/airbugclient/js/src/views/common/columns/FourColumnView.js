@@ -36,10 +36,10 @@ var FourColumnView = Class.extend(MultiColumnView, {
     //-------------------------------------------------------------------------------
 
     template:       '<div id={{id}} class="{{rowStyle}} column 3column-container">' +
-                        '<div class="{{leftColumnSpan}}  {{leftHamburger}}  column   column1of4"></div>' +
-                        '<div class="{{centerLeftColumnSpan}}               column   column2of4"></div>' +
-                        '<div class="{{centerRightColumnSpan}}              column   column3of4"></div>' +
-                        '<div class="{{rightColumnSpan}} {{rightHamburger}} column   column4of4"></div>' +
+                        '<div class="column column1of4 leftrow {{leftColumnSpan}} {{leftHamburger}}"></div>' +
+                        '<div class="column column2of4 {{centerLeftColumnSpan}}"></div>' +
+                        '<div class="column column3of4 {{centerRightColumnSpan}} "></div>' +
+                        '<div class="column column4of4 rightrow {{rightColumnSpan}} {{rightHamburger}}"></div>' +
                     '</div>',
 
 

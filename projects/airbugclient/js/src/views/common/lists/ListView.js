@@ -35,7 +35,10 @@ var ListView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="{{id}}" class="list"></div>',
+    template:
+        '<div id="{{id}}" class="list">' +
+            '<div id="list-view-placeholder-{{cid}}" class="list-placeholder">{{placeholder}}</div>' +
+        '</div>',
 
 
     //-------------------------------------------------------------------------------
@@ -59,6 +62,13 @@ var ListView = Class.extend(MustacheView, {
         return this.findElement("#" + this.getId());
     },
 
+    /**
+     * @return {$}
+     */
+    getPlaceholderElement: function() {
+        return this.findElement("#list-view-placeholder-{{cid}}");
+    },
+
 
     //-------------------------------------------------------------------------------
     // Mustache Methods
@@ -68,9 +78,35 @@ var ListView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId();
+        var data            = this._super();
+        data.id             = this.getId();
+
+        var placeholder     = this.getAttribute("placeholder");
+        if (placeholder) {
+            data.placeholder    = placeholder;
+        } else {
+            data.placeholder    = "";
+        }
         return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    hidePlaceholder: function() {
+        this.getPlaceholderElement().hide();
+    },
+
+    /**
+     *
+     */
+    showPlaceholder: function() {
+        this.getPlaceholderElement().show();
     }
 });
 

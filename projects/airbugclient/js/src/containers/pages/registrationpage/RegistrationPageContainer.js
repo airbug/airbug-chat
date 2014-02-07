@@ -8,10 +8,12 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.BoxView')
+//@Require('airbug.BoxWithHeaderView')
 //@Require('airbug.LoginButtonContainer')
 //@Require('airbug.PageView')
+//@Require('airbug.PanelView')
 //@Require('airbug.RegistrationFormContainer')
+//@Require('airbug.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -19,27 +21,29 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
-var BoxView                     = bugpack.require('airbug.BoxView');
-var PageView                    = bugpack.require('airbug.PageView');
-var LoginButtonContainer        = bugpack.require('airbug.LoginButtonContainer');
-var RegistrationFormContainer   = bugpack.require('airbug.RegistrationFormContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
+var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView');
+var LoginButtonContainer            = bugpack.require('airbug.LoginButtonContainer');
+var PageView                        = bugpack.require('airbug.PageView');
+var PanelView                       = bugpack.require('airbug.PanelView');
+var RegistrationFormContainer       = bugpack.require('airbug.RegistrationFormContainer');
+var TextView                        = bugpack.require('airbug.TextView');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view                        = ViewBuilder.view;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -118,10 +122,22 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         this.pageView =
             view(PageView)
                 .children([
-                    view(BoxView)
+                    view(BoxWithHeaderView)
                         .id("registrationBoxView")
                         .attributes({classes: "registration-box"})
                         .appendTo('*[id|="page"]')
+                        .children([
+                            view(PanelView)
+                                .appendTo('#box-header-{{cid}}')
+                                .children([
+                                    view(TextView)
+                                        .attributes({
+                                            text: "Join airbug",
+                                            classes: "registration-header-text"
+                                        })
+                                        .appendTo('#panel-body-{{cid}}')
+                                ])
+                        ])
                 ])
                 .build();
 
@@ -141,7 +157,7 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         this.loginButtonContainer       = new LoginButtonContainer();
         this.registrationFormContainer  = new RegistrationFormContainer();
         this.addContainerChild(this.loginButtonContainer, "#header-right");
-        this.addContainerChild(this.registrationFormContainer, "#" + this.boxView.getId());
+        this.addContainerChild(this.registrationFormContainer, "#box-body-" + this.boxView.getCid());
     }
 });
 

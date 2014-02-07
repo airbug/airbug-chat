@@ -26,6 +26,7 @@ var Class           = bugpack.require('Class');
 var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
@@ -36,22 +37,21 @@ var CreateRoomFormView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:
-                    '<div class="form-wrapper">' +
-                        '<div class=""> Create a room' +
+    template:   '<div class="form-wrapper-naked">' +
+                    '<form class="form-horizontal">' +
+                        '<legend>Create a room</legend>' +
+                        '<div class="control-group">' +
+                            '<input class="input-xxlarge" type="text" name="name" placeholder="Room name">' +
                         '</div>' +
-                        '<form class="form-horizontal">' +
-                            '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="text" name="name" placeholder="New Room">' +
-                            '</div>' +
-                            '<div class="control-group">' +
-                                '<button id="submit-button-{{cid}}" type="button" class="btn">Create Room</button>' +
-                            '</div>' +
-                        '</form>' +
-                    '</div>',
+                        '<div class="control-group">' +
+                            '<button id="submit-button-{{cid}}" type="button" class="btn">Create room</button>' +
+                        '</div>' +
+                    '</form>' +
+                '</div>',
+
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**

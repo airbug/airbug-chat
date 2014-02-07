@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -38,13 +38,14 @@ var LoginFormView = Class.extend(MustacheView, {
     template:   '<div class="form-wrapper">' +
                     '<form class="form-horizontal">' +
                         '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' +
+                            '<input class="input-xxlarge" type="email" name="email" placeholder="Email">' +
                         '</div>' +
                         '<div class="control-group">' +
                             '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
                         '</div>' +
                         '<div class="control-group">' +
                             '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
+                            '<span class="help-inline">Not a member yet? <a href="#signup">click here</a></span>' +
                         '</div>' +
                     '</form>' +
                 '</div>',

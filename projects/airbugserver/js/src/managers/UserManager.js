@@ -85,6 +85,7 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
+     *      agreedToTermsDate: Date,
      *      anonymous: boolean,
      *      createdAt: Date,
      *      email: string,

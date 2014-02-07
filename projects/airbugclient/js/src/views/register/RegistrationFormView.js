@@ -40,7 +40,6 @@ var RegistrationFormView = Class.extend(MustacheView, {
 
     template:
                     '<div class="form-wrapper">' +
-                        '<div class=""> Welcome </div>' +
                         '<form class="form-horizontal">' +
                             '<div class="control-group">' +
                                 '<input class="input-xxlarge" type="email" name="email" placeholder="Email (required)" required>' +
@@ -54,11 +53,15 @@ var RegistrationFormView = Class.extend(MustacheView, {
                             '<div class="control-group">' +
                                 '<input class="input-xxlarge" type="password" name="password" id="password" placeholder="Password  (required)" required>' +
                             '</div>' +
-                            '<div class="control-group">' +
+                            '<div class="control-group control-group-space">' +
                                 '<input class="input-xxlarge" type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
                                 '<button id="submit-button-{{cid}}" type="submit" class="btn">Create Account</button>' +
+                                '<span class="help-inline">Already have an account? <a href="#login">click here</a></span>' +
+                            '</div>' +
+                            '<div class="terms-wrapper">' +
+                                '<span class="help-block">By clicking "Create Account" you agree to our <a href="//airbug.com/terms">terms of service</a> and <a href="//airbug.com/privacy">privacy policy</a></span>' +
                             '</div>' +
                         '</form>' +
                     '</div>',

@@ -192,7 +192,11 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.listView           = view(ListView)
-                                    .attributes({trackingId: "roomMemberListContainer", trackingClasses: ["list"]})
+                                    .attributes({
+                                        placeholder: "No one in this room",
+                                        trackingId: "roomMemberListContainer",
+                                        trackingClasses: ["list"]
+                                    })
                                     .build();
 
 

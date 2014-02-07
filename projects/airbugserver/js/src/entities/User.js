@@ -283,6 +283,8 @@ var User = Class.extend(Entity, {
 
 bugmeta.annotate(User).with(
     entity("User").properties([
+        property("agreedToTermsDate")
+            .type("date"),
         property("anonymous")
             .type("boolean"),
         property("createdAt")

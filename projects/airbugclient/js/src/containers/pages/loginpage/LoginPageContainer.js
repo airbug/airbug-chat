@@ -12,7 +12,9 @@
 //@Require('airbug.BoxWithFooterView')
 //@Require('airbug.LoginFormContainer')
 //@Require('airbug.PageView')
+//@Require('airbug.PanelView')
 //@Require('airbug.SignupButtonContainer')
+//@Require('airbug.TextView')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -33,10 +35,12 @@ var bugpack                         = require('bugpack').context();
 var Class                           = bugpack.require('Class');
 var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
 var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
-var BoxWithFooterView               = bugpack.require('airbug.BoxWithFooterView');
+var BoxWithHeaderAndFooterView      = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var LoginFormContainer              = bugpack.require('airbug.LoginFormContainer');
 var PageView                        = bugpack.require('airbug.PageView');
+var PanelView                       = bugpack.require('airbug.PanelView');
 var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
+var TextView                        = bugpack.require('airbug.TextView');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
@@ -87,7 +91,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {BoxWithFooterView}
+         * @type {BoxWithHeaderAndFooterView}
          */
         this.boxView                        = null;
 
@@ -137,10 +141,22 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
         this.pageView =
             view(PageView)
                 .children([
-                    view(BoxWithFooterView)
+                    view(BoxWithHeaderAndFooterView)
                         .id("loginBoxView")
                         .attributes({classes: "login-box"})
                         .appendTo('*[id|="page"]')
+                        .children([
+                            view(PanelView)
+                                .appendTo('#box-header-{{cid}}')
+                                .children([
+                                    view(TextView)
+                                        .attributes({
+                                            text: "Login to airbug",
+                                            classes: "login-header-text"
+                                        })
+                                        .appendTo("#panel-body-{{cid}}")
+                                ])
+                        ])
                 ])
                 .build();
 

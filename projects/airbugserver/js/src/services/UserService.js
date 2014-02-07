@@ -417,7 +417,8 @@ var UserService = Class.extend(Obj, {
                 } else if (!PasswordUtil.isValid(userObject.password)) {
                     flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
-                    userObject.status = currentUser.getStatus();
+                    userObject.status               = currentUser.getStatus();
+                    userObject.agreedToTermsDate    = UserDefines.TOS_Date;
                     user = _this.userManager.generateUser(userObject);
                     bcrypt.genSalt(10, function(err, salt) {
                         if (err) {

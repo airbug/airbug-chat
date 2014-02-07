@@ -509,10 +509,6 @@ div.overlay-background {
     margin-top: 46px;
 }
 
-.box-with-footer .box-body {
-    margin-bottom: 46px;
-}
-
 .box-footer {
     bottom: 0px;
     height: 40px;
@@ -545,6 +541,11 @@ div.overlay-background {
 
 .list {
 
+}
+
+.list-placeholder {
+    margin: 10px;
+    display: none;
 }
 
 .list-item {
@@ -602,15 +603,23 @@ div.overlay-background {
 }
 
 .form-wrapper {
-    margin-top: 20px;
+    margin-top: 0px;
     margin-left: auto;
     margin-right: auto;
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
     background-color: rgb(255, 255, 255);
     border-width: 1px;
     border-color: rgb(196, 196, 196);
     border-style: solid;
     border-radius: 5px;
+}
+
+.form-wrapper-naked {
+    margin-top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 20px 0px 20px;
+    background-color: rgb(255, 255, 255);
 }
 
 .button-wrapper {
@@ -1016,10 +1025,11 @@ div.previous-messages-loader {
 }
 
 .login-box {
+    margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
     max-width: 586px;
-    height: 296px;
+    height: 284px;
 }
 
 .login-box .box-footer {
@@ -1030,14 +1040,41 @@ div.previous-messages-loader {
     margin: 0;
 }
 
+.login-box .box-header .panel-wrapper {
+    margin: 0;
+}
+
+.login-header-text {
+    padding-left: 20px;
+    line-height: 38px;
+}
+
 .btn-github {
     margin: 10px;
 }
 
 .registration-box {
+    margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
     max-width: 586px;
+}
+
+.registration-box .box-header .panel-wrapper {
+    margin: 0;
+}
+
+.registration-header-text {
+    padding-left: 20px;
+    line-height: 38px;
+}
+
+.terms-wrapper {
+    border-top: solid #cccccb 1px;
+    border-bottom: solid #cccccb 1px;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 /* ZeroClipboard
@@ -1252,6 +1289,15 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 
 /* Twitter Bootstrap Overrides
 *******************************************************************/
+
+.control-group-space {
+    margin-bottom: 20px;
+}
+
+.form-horizontal .control-group-space {
+    margin-bottom: 40px;
+}
+
 @media (max-width: 979px) {
     .navbar-fixed-top, .navbar-fixed-bottom {
         position: fixed;

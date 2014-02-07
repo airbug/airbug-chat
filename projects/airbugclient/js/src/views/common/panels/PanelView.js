@@ -39,7 +39,7 @@ var PanelView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="panel-wrapper {{attributes.classes}}">' +
+    template:   '<div id="{{id}}-wrapper" class="panel-wrapper {{classes}}">' +
                     '<div id="{{id}}" class="panel">' +
                         '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
                         '</div>' +

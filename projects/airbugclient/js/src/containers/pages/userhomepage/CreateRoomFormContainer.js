@@ -11,6 +11,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormView')
 //@Require('airbug.FormViewEvent')
+//@Require('airbug.PanelView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -35,6 +36,7 @@ var Exception               = bugpack.require('Exception');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var PanelView               = bugpack.require('airbug.PanelView');
 var RoomModel               = bugpack.require('airbug.RoomModel');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -103,6 +105,12 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
          * @type {CreateRoomFormView}
          */
         this.createRoomFormView = null;
+
+        /**
+         * @private
+         * @type {PanelView}
+         */
+        this.createRoomPanel    = null;
     },
 
 
@@ -119,16 +127,21 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.createRoomFormView =
-            view(CreateRoomFormView)
-                // .attributes({type: "primary", align: "left"})
+        this.createRoomPanel =
+            view(PanelView)
+                .children([
+                    view(CreateRoomFormView)
+                        .id("createRoomForm")
+                        .appendTo("#panel-body-{{cid}}")
+                ])
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.createRoomFormView);
+        this.setViewTop(this.createRoomPanel);
+        this.createRoomFormView = this.findViewById("createRoomForm");
     },
 
     /**

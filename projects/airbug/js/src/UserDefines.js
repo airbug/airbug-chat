@@ -40,6 +40,12 @@ UserDefines.Status = {
     OFFLINE: "offline"
 };
 
+/**
+ * @static
+ * @const {Date}
+ */
+UserDefines.TOS_Date = new Date("December 14, 2013");
+
 
 //-------------------------------------------------------------------------------
 // Exports

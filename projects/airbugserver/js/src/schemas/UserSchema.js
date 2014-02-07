@@ -29,6 +29,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 //-------------------------------------------------------------------------------
 
 var UserSchema = new Schema({
+    agreedToTermsDate: Date,
     anonymous: Boolean,
     createdAt: Date,
 
