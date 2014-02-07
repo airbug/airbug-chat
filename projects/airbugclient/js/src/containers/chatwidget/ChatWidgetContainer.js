@@ -22,8 +22,8 @@
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.ListContainer')
 //@Require('airbug.PanelView')
-//@Require('airbug.ScrollEvent')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredAnnotation')
@@ -60,8 +60,8 @@ var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFor
 var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
+var ListContainer                   = bugpack.require('airbug.ListContainer');
 var PanelView                       = bugpack.require('airbug.PanelView');
-var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
 var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
@@ -95,6 +95,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {ConversationModel} conversationModel
      */
     _constructor: function(conversationModel) {
@@ -103,7 +104,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -117,6 +118,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {Map.<string, ChatMessageModel>}
          */
         this.chatMessageTryUuidToChatMessageModelMap    = new Map();
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                                     = null;
 
 
         // Models
@@ -149,6 +156,10 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {ChatWidgetView}
          */
         this.chatWidgetView                             = null;
+
+
+        // Containers
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
@@ -195,7 +206,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {UserManagerModule}
          */
         this.userManagerModule                          = null;
-
     },
 
 
@@ -269,7 +279,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
         this.deinitializeObservers();
         this.deinitializeCommandSubscriptions();
     },
@@ -279,23 +288,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
         this.initializeObservers();
         this.initializeCommandSubscriptions();
-    },
-
-    /**
-     *
-     */
-    initializeEventListeners: function() {
-        this.chatWidgetMessagesContainer.getViewTop().addEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this, true);
-    },
-
-    /**
-     *
-     */
-    deinitializeEventListeners: function() {
-        this.chatWidgetMessagesContainer.getViewTop().removeEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this);
     },
 
     /**
@@ -362,6 +356,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @protected
      * @param {ChatMessageModel} chatMessageModel
      */
     appendChatMessageModel: function(chatMessageModel) {
@@ -372,6 +367,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @protected
      * @param {ChatMessageModel} chatMessageModel
      */
     prependChatMessageModel: function(chatMessageModel) {
@@ -382,6 +378,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     * @protected
      * @param {List.<ChatMessageModel>} chatMessageModels
      */
     prependChatMessageModels: function(chatMessageModels) {
@@ -437,8 +434,8 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
-     * @param {function(Throwable)} callback
+     * @private
+     * @param {function(Throwable=)} callback
      */
     loadPreviousChatMessageBatch: function(callback) {
         var _this                       = this;
@@ -484,24 +481,24 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                     });
                 })
             ]).execute(function(throwable) {
-                    _this.chatWidgetMessagesContainer.hidePreviousMessagesLoader();
-                    if (!throwable) {
-                        var chatMessageModels = new List();
-                        chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
-                            var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
-                            var chatMessageModel = _this.buildChatMessageModel({
-                                pending: false,
-                                failed: false
-                            }, chatMessageMeldDocument, senderUserMeldDocument);
+                _this.chatWidgetMessagesContainer.hidePreviousMessagesLoader();
+                if (!throwable) {
+                    var chatMessageModels = new List();
+                    chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
+                        var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
+                        var chatMessageModel = _this.buildChatMessageModel({
+                            pending: false,
+                            failed: false
+                        }, chatMessageMeldDocument, senderUserMeldDocument);
 
-                            chatMessageModels.add(chatMessageModel);
-                        });
-                        _this.prependChatMessageModels(chatMessageModels);
-                        callback(undefined);
-                    } else {
-                        callback(throwable);
-                    }
-                });
+                        chatMessageModels.add(chatMessageModel);
+                    });
+                    _this.prependChatMessageModels(chatMessageModels);
+                    callback();
+                } else {
+                    callback(throwable);
+                }
+            });
         }
     },
 
@@ -546,7 +543,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
+            if (!throwable) {
                 chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
                     var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
                     _this.buildAndAppendChatMessageModel({
@@ -554,6 +551,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                             failed: false
                         }, chatMessageMeldDocument, senderUserMeldDocument);
                 });
+                _this.startScrollStateListener();
+            } else {
+                _this.logger.error(throwable);
             }
         });
     },
@@ -575,7 +575,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (throwable) {
-                console.error(throwable.message, throwable.stack);
+                _this.logger.error(throwable.message, throwable.stack);
             }
         });
     },
@@ -649,22 +649,60 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
                     chatMessageModel.setProperty("failed", true);
                     chatMessageModel.setProperty("pending", false);
                 } else {
-                    console.log("ERROR - unhandled throwable:", throwable);
+                    _this.logger.error(throwable);
                 }
             }
         });
     },
 
+
     //-------------------------------------------------------------------------------
-    // Handlers
+    // Private Methods
     //-------------------------------------------------------------------------------
 
-    handleChatWidgetMessagesScrollToTopEvent: function(event) {
-        var _this = this;
-        this.loadPreviousChatMessageBatch(function(throwable){
-            console.log("finished loading previous chatmessage batch");
-            _this.chatWidgetMessagesContainer.getViewTop().addEventListener(ScrollEvent.EventType.SCROLL_TO_TOP, this.handleChatWidgetMessagesScrollToTopEvent, this, true);
-        });
+    /**
+     * @private
+     */
+    startScrollStateListener: function() {
+        this.chatWidgetMessagesContainer.addEventListener(ListContainer.EventTypes.SCROLL_STATE_CHANGE, this.hearScrollStateChange, this);
+    },
+
+    /**
+     * @private
+     */
+    stopScrollStateListener: function() {
+        this.chatWidgetMessagesContainer.removeEventListener(ListContainer.EventTypes.SCROLL_STATE_CHANGE, this.hearScrollStateChange, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearScrollStateChange: function(event) {
+        var _this           = this;
+        if (event.getData().scrollState === ListContainer.ScrollState.TOP) {
+            this.stopScrollStateListener();
+            var lastChatMessageModel = null;
+            if (this.chatMessageList.getCount() > 0) {
+                lastChatMessageModel     = this.chatMessageList.getAt(0);
+            }
+            this.loadPreviousChatMessageBatch(function(throwable) {
+                if (!throwable) {
+                    _this.logger.info("finished loading previous chat message batch");
+                    if (lastChatMessageModel) {
+                        _this.chatWidgetMessagesContainer.scrollToCarapaceModel(lastChatMessageModel);
+                    }
+                    _this.startScrollStateListener();
+                } else {
+                    _this.logger.error(throwable);
+                }
+            });
+        }
     },
 
     /**
@@ -739,6 +777,7 @@ bugmeta.annotate(ChatWidgetContainer).with(
         property("chatMessageStreamManagerModule").ref("chatMessageStreamManagerModule"),
         property("commandModule").ref("commandModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("logger").ref("logger"),
         property("userManagerModule").ref("userManagerModule")
     ])
 );

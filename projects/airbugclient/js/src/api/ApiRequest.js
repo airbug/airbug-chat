@@ -218,9 +218,9 @@ var ApiRequest = Class.extend(EventDispatcher, {
             if (responseType === ApiDefines.Responses.SUCCESS) {
                 this.fireCallbacks();
             } else if (responseType === ApiDefines.Responses.EXCEPTION) {
-                this.fireCallbacks(new Exception(data.exception.type, data.exception.data, data.exception.message, data.exception.causes));
+                this.fireCallbacks(data.exception);
             } else if (responseType === ApiDefines.Responses.ERROR) {
-                this.fireCallbacks(new Bug(data.error.type, data.error.data, data.error.message));
+                this.fireCallbacks(data.error);
             } else {
                 this.fireCallbacks(null, callResponse);
             }

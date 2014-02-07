@@ -144,10 +144,10 @@ var RetrieveRequest = Class.extend(ApiRequest, {
                 }
             } else if (responseType === ApiDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions
-                this.fireCallbacks(new Exception(data.exception.type, data.exception.data, data.exception.message, data.exception.causes));
+                this.fireCallbacks(data.exception);
             } else if (responseType === ApiDefines.Responses.ERROR) {
                 //TODO BRN: Handle common errors
-                this.fireCallbacks(new Bug(data.error.type, data.error.data, data.error.message));
+                this.fireCallbacks(data.error);
             } else {
                 this.fireCallbacks(null, callResponse);
             }

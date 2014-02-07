@@ -273,7 +273,7 @@ var ChatMessageService = Class.extend(EntityService, {
 
         var _this           = this;
         var currentUser     = requestContext.get("currentUser");
-        var callManager     = requestContext.get("callManager");
+        var call            = requestContext.get("call");
         if (currentUser.isNotAnonymous()) {
 
             var chatMessageList = null;
@@ -307,12 +307,12 @@ var ChatMessageService = Class.extend(EntityService, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(callManager.getCallUuid(), chatMessageList.toArray(), function(throwable) {
+                    _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), callManager.getCallUuid(), function(throwable) {
+                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })

@@ -112,7 +112,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
      *      tryUuid:        string,
      *      type:           string
      * }} chatMessageObject
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     createChatMessage: function(chatMessageObject, callback) {
         var _this = this;
@@ -139,8 +139,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {{}} chatMessageObject
-     * @param {Meld=} chatMessageMeld
-     * @param {Meld=} senderUserMeld
+     * @param {MeldDocument=} chatMessageMeld
+     * @param {MeldDocument=} senderUserMeld
      */
     generateChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
         var type = chatMessageObject.type || chatMessageMeld.getData().type;
@@ -157,8 +157,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {{}} chatMessageObject
-     * @param {Meld=} chatMessageMeld
-     * @param {Meld=} senderUserMeld
+     * @param {MeldDocument=} chatMessageMeld
+     * @param {MeldDocument=} senderUserMeld
      */
     generateCodeChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
         return new CodeChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
@@ -166,8 +166,8 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {{}} chatMessageObject
-     * @param {Meld=} chatMessageMeld
-     * @param {Meld=} senderUserMeld
+     * @param {MeldDocument=} chatMessageMeld
+     * @param {MeldDocument=} senderUserMeld
      */
     generateImageChatMessageModel: function(chatMessageObject, chatMessageMeld, senderUserMeld) {
         return new ImageChatMessageModel(chatMessageObject, chatMessageMeld, senderUserMeld);
@@ -369,7 +369,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
         var requestData = {
             conversationId: conversationId,
             index:          index,
-            batchSize:      50,
+            batchSize:      15,
             order:          'asc'
         };
         var requestType = "retrieveChatMessageBatchByConversationId";

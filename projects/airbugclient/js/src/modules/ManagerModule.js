@@ -192,12 +192,12 @@ var ManagerModule = Class.extend(Obj, {
                     callback(undefined, meldDocumentSet);
                 } else if (callResponse.getType() === ApiDefines.Responses.EXCEPTION) {
                     //TODO BRN: Handle common exceptions
-                    callback(new Exception(data.exception));
+                    callback(data.exception);
                 } else if (callResponse.getType() === ApiDefines.Responses.ERROR) {
                     //TODO BRN: Handle common errors
-                    callback(new Error(data.error));
+                    callback(data.error);
                 } else {
-                    callback(undefined, callResponse);
+                    callback(null, callResponse);
                 }
             } else {
                 callback(throwable);
@@ -324,10 +324,10 @@ var ManagerModule = Class.extend(Obj, {
                     callback(null, meldDocument);
                 } else if (callResponse.getType() === ApiDefines.Responses.EXCEPTION) {
                     //TODO BRN: Handle common exceptions
-                    callback(new Exception(data.exception));
+                    callback(data.exception);
                 } else if (callResponse.getType() === ApiDefines.Responses.ERROR) {
                     //TODO BRN: Handle common errors
-                    callback(new Error(data.error));
+                    callback(data.error);
                 } else {
                     callback(null, callResponse);
                 }
@@ -522,10 +522,10 @@ var ManagerModule = Class.extend(Obj, {
                 callback(null, retrievedMeldList);
             } else if (responseType === ApiDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions
-                callback(new Exception(data.exception));
+                callback(data.exception);
             } else if (responseType === ApiDefines.Responses.ERROR) {
                 //TODO BRN: Handle common errors
-                callback(new Error(data.error));
+                callback(data.error);
             } else {
                 callback(null, callResponse);
             }

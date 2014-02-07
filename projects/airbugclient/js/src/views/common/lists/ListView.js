@@ -37,12 +37,39 @@ var ListView = Class.extend(MustacheView, {
 
     template: '<div id="{{id}}" class="list"></div>',
 
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {string}
+     */
+    getId: function() {
+        if (this.id) {
+            return this.id;
+        }
+        return "list-" + this.getCid();
+    },
+
+    /**
+     * @return {$}
+     */
+    getListElement: function() {
+        return this.findElement("#" + this.getId());
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Mustache Methods
+    //-------------------------------------------------------------------------------
+
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "list-" + this.cid;
+        data.id     = this.getId();
         return data;
     }
 });

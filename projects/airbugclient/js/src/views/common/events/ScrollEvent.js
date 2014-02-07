@@ -14,34 +14,72 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Event = bugpack.require('Event');
+var Class       = bugpack.require('Class');
+var Event       = bugpack.require('Event');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ScrollEvent = Class.extend(Event, {});
+var ScrollEvent = Class.extend(Event, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {string} eventType
+     * @param {number} scrollTop
+     */
+    _constructor: function(eventType, scrollTop) {
+
+        this._super(eventType, {});
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.scrollTop      = scrollTop
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {number}
+     */
+    getScrollTop: function() {
+        return this.scrollTop;
+    }
+});
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Static Properties
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @enum {string}
  */
 ScrollEvent.EventType = {
-    SCROLL_TO_TOP: "ScrollEvent::ScrollToTop",
-    SCROLL_TO_BOTTOM: "FormViewEvent::ScrollToBottom"
+    SCROLL: "ScrollEvent:Scroll"
 };
 
 

@@ -8,6 +8,7 @@
     "googleAnalyticsId" : "",
     "mongoDbIp": "localhost",
     "port": 8000,
+    "hostName": "localhost",
     "redis": {
         "host": "127.0.0.1",
         "port": 6379

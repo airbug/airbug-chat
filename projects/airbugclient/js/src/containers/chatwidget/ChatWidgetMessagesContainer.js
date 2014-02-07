@@ -7,6 +7,7 @@
 //@Export('ChatWidgetMessagesContainer')
 
 //@Require('AddChange')
+//@Require('Bug')
 //@Require('Class')
 //@Require('ClearChange')
 //@Require('Map')
@@ -14,14 +15,8 @@
 //@Require('airbug.ChatMessageCodeContainer')
 //@Require('airbug.ChatMessageImageContainer')
 //@Require('airbug.ChatMessageTextContainer')
-//@Require('airbug.ListView')
-//@Require('airbug.ListItemView')
-//@Require('airbug.PanelView')
+//@Require('airbug.ListContainer')
 //@Require('airbug.PreviousMessagesLoaderContainer')
-//@Require('airbug.ScrollEvent')
-//@Require('carapace.CarapaceContainer')
-//@Require('carapace.ViewBuilder')
-//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -36,6 +31,7 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var AddChange                       = bugpack.require('AddChange');
+var Bug                             = bugpack.require('Bug');
 var Class                           = bugpack.require('Class');
 var ClearChange                     = bugpack.require('ClearChange');
 var Map                             = bugpack.require('Map');
@@ -43,35 +39,26 @@ var RemoveChange                    = bugpack.require('RemoveChange');
 var ChatMessageCodeContainer        = bugpack.require('airbug.ChatMessageCodeContainer');
 var ChatMessageImageContainer       = bugpack.require('airbug.ChatMessageImageContainer');
 var ChatMessageTextContainer        = bugpack.require('airbug.ChatMessageTextContainer');
-var ListView                        = bugpack.require('airbug.ListView');
-var ListItemView                    = bugpack.require('airbug.ListItemView');
-var PanelView                       = bugpack.require('airbug.PanelView');
+var ListContainer                   = bugpack.require('airbug.ListContainer');
 var PreviousMessagesLoaderContainer = bugpack.require('airbug.PreviousMessagesLoaderContainer');
-var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
-var JQuery                          = bugpack.require('jquery.JQuery');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $                               = JQuery;
-var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
+/**
+ * @class
+ * @extends {ListContainer}
+ */
+var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {ChatMessageList} chatMessageList
      */
     _constructor: function(chatMessageList) {
@@ -85,12 +72,6 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {Map.<ChatMessageModel, ChatMessageContainer>}
-         */
-        this.chatMessageModelToChatMessageContainerMap  = new Map();
-
-        /**
-         * @private
          * @type {boolean}
          */
         this.resetTimer                                 = false;
@@ -101,6 +82,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
          */
         this.timerIsSet                                 = false;
 
+
         // Models
         //-------------------------------------------------------------------------------
 
@@ -110,18 +92,13 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
          */
         this.chatMessageList                            = chatMessageList;
 
+
         // Views
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {PanelView}
-         */
-        this.chatWidgetMessagesView                     = null;
-
-        /**
-         *
-         * @type {}
+         * @type {PreviousMessagesLoaderContainer}
          */
         this.previousMessagesLoaderContainer            = null;
     },
@@ -130,49 +107,6 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-        //TODO BRN: Setup a timeout to re-render messages every few seconds. This will keep the time stamps up to date.
-    },
-
-    /**
-     * @protected
-     */
-    deactivateContainer: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        this.chatWidgetMessagesView =
-            view(PanelView)
-                .children([
-                    view(ListView)
-                        .id("messageListView")
-                        .appendTo('*[id|="panel-body"]')
-                ])
-                .build();
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.chatWidgetMessagesView);
-    },
 
     /**
      * @protected
@@ -187,36 +121,29 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
         this.initializeObservers();
     },
 
+    /**
+     * @protected
+     */
     deinitializeContainer: function() {
-        this.deinitializeEventListeners();
+        this._super();
         this.deinitializeObservers();
     },
 
-    initializeEventListeners: function() {
-        var _this = this;
-        this.getViewTop().$el.find('#messageListView').parent().scroll(function(event){
-            if($('#messageListView').parent().scrollTop() === 0){
-                console.log("You've scrolled to the top. Loading more messages");
-                _this.getViewTop().dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL_TO_TOP, {}));
-            }
-        });
-        console.log("Scroll to top event listener initialized");
-    },
-
-    deinitializeEventListeners: function() {
-        $('#messageListView').parent().off();
-    },
-
+    /**
+     * @protected
+     */
     initializeObservers: function() {
         this.chatMessageList.observe(AddChange.CHANGE_TYPE, "", this.observeChatMessageListAdd, this);
         this.chatMessageList.observe(ClearChange.CHANGE_TYPE, "", this.observeChatMessageListClear, this);
         this.chatMessageList.observe(RemoveChange.CHANGE_TYPE, "", this.observeChatMessageListRemove, this);
     },
 
+    /**
+     * @protected
+     */
     deinitializeObservers: function() {
         this.chatMessageList.unobserve(AddChange.CHANGE_TYPE, "", this.observeChatMessageListAdd, this);
         this.chatMessageList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeChatMessageListClear, this);
@@ -231,6 +158,15 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
     /**
      *
      */
+    hidePreviousMessagesLoader: function() {
+        if(this.previousMessagesLoaderContainer) {
+            this.removeContainerChild(this.previousMessagesLoaderContainer, true);
+        }
+    },
+
+    /**
+     *
+     */
     showPreviousMessagesLoader: function() {
         if(!this.previousMessagesLoaderContainer) {
             this.previousMessagesLoaderContainer = new PreviousMessagesLoaderContainer();
@@ -238,14 +174,6 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         this.prependContainerChild(this.previousMessagesLoaderContainer, ".list");
     },
 
-    /**
-     *
-     */
-    hidePreviousMessagesLoader: function() {
-        if(this.previousMessagesLoaderContainer) {
-            this.removeContainerChild(this.previousMessagesLoaderContainer, true);
-        }
-    },
 
     //-------------------------------------------------------------------------------
     // Protected Methods
@@ -258,7 +186,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         var _this = this;
         setTimeout(function() {
             _this.timerAnimationHandler();
-        }, 50);
+        }, 0);
     },
 
     /**
@@ -270,8 +198,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
             this.setAnimationTimer();
         } else {
             this.timerIsSet = false;
-            var panelBody = this.chatWidgetMessagesView.$el.find(".panel-body");
-            panelBody.animate({scrollTop: panelBody.prop("scrollHeight")}, 600);
+            this.animateScrollToCarapaceModel(this.chatMessageList.getAt(this.chatMessageList.getCount() - 1), 600);
         }
     },
 
@@ -288,7 +215,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         //TODO:
         //make the transition time dynamic to fit the length of the message and the speed of incoming messages
         //NOTE: SUNG I think we should make automatic scrolling only occur while the user is active.
-        // Forcing user scrolling for messages that were recieved while away would help us as well as the user to keep track of read and unread messages.
+        // Forcing user scrolling for messages that were received while away would help us as well as the user to keep track of read and unread messages.
     },
 
     /**
@@ -297,7 +224,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      * @return {ChatMessageContainer}
      */
     createChatMessageContainer: function(chatMessageModel) {
-        if (!this.chatMessageModelToChatMessageContainerMap.containsKey(chatMessageModel)) {
+        if (!this.hasCarapaceModel(chatMessageModel)) {
             var type = chatMessageModel.getProperty("type");
             /** @type {ChatMessageContainer} */
             var chatMessageContainer = undefined;
@@ -312,9 +239,9 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
                     chatMessageContainer = new ChatMessageImageContainer(chatMessageModel);
                     break;
                 default:
-                    throw new Error("Unrecognized message type '" + type + "'");
+                    throw new Bug("IllegalState", {}, "Unrecognized message type '" + type + "'");
             }
-            this.chatMessageModelToChatMessageContainerMap.put(chatMessageModel, chatMessageContainer);
+            this.mapModelToContainer(chatMessageModel, chatMessageContainer);
             return chatMessageContainer;
         }
     },
@@ -348,12 +275,13 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         this.prependContainerChild(chatMessageContainer, ".list");
     },
 
+
     //-------------------------------------------------------------------------------
     // Model Observers
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
      * @param {AddAtChange} change
      */
     observeChatMessageListAdd: function(change){
@@ -363,8 +291,15 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
         if(index === 0) {
             this.prependChatMessageContainer(chatMessageContainer);
         } else {
+            var scrollState = this.getScrollState();
             this.appendChatMessageContainer(chatMessageContainer);
-            this.animateChatMessageCollectionAdd();
+
+            // NOTE BRN: Only scroll if we're already at the bottom of the message list. This way it doesn't jump back
+            // if the room is busy and you're reading older messages
+
+            if (scrollState === ListContainer.ScrollState.BOTTOM || scrollState === ListContainer.ScrollState.NO_SCROLL) {
+                this.animateChatMessageCollectionAdd();
+            }
         }
     },
 
@@ -374,7 +309,7 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     observeChatMessageListClear: function(change) {
         this.removeAllContainerChildren(true);
-        this.chatMessageModelToChatMessageContainerMap.clear();
+        this.clearModelMap();
         this.processChatMessageList();
     },
 
@@ -384,9 +319,22 @@ var ChatWidgetMessagesContainer = Class.extend(CarapaceContainer, {
      */
     observeChatMessageListRemove: function(change) {
         var chatMessageModel = change.getValue();
-        var chatMessageContainer = this.chatMessageModelToChatMessageContainerMap.get(chatMessageModel);
-        this.chatMessageModelToChatMessageContainerMap.remove(chatMessageModel);
+        var chatMessageContainer = this.getContainerForModel(chatMessageModel);
+        this.unmapModel(chatMessageModel);
         this.removeContainerChild(chatMessageContainer, true);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listener
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearScrollStateChange: function(event) {
+
     }
 });
 

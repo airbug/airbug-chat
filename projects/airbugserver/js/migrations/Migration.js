@@ -24,6 +24,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Obj             = bugpack.require('Obj');
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------

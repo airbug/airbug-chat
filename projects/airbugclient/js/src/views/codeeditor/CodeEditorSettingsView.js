@@ -142,8 +142,9 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
         return data;
     },
 
+
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
