@@ -237,7 +237,6 @@ var UserController = Class.extend(EntityController, {
                 var userIds             = data.objectIds;
                 var requestContext      = request.requestContext;
 
-                console.log("data:", data, "userIds:", userIds);
                 userService.retrieveUsers(requestContext, userIds, function(throwable, userMap) {
                     _this.processRetrieveEachResponse(responder, throwable, userIds, userMap, callback);
                 });
