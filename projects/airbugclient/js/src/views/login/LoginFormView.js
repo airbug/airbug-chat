@@ -45,7 +45,7 @@ var LoginFormView = Class.extend(MustacheView, {
                         '</div>' +
                         '<div class="control-group">' +
                             '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
-                            '<span class="help-inline">Not a member yet? <a href="#signup">click here</a></span>' +
+                            '<span class="help-inline">Not a member yet? <a href="#signup">signup here</a></span>' +
                         '</div>' +
                     '</form>' +
                 '</div>',

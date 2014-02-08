@@ -58,7 +58,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
                             '</div>' +
                             '<div class="control-group">' +
                                 '<button id="submit-button-{{cid}}" type="submit" class="btn">Create Account</button>' +
-                                '<span class="help-inline">Already have an account? <a href="#login">click here</a></span>' +
+                                '<span class="help-inline">Already have an account? <a href="#login">login here</a></span>' +
                             '</div>' +
                             '<div class="terms-wrapper">' +
                                 '<span class="help-block">By clicking "Create Account" you agree to our <a href="//airbug.com/terms">terms of service</a> and <a href="//airbug.com/privacy">privacy policy</a></span>' +
