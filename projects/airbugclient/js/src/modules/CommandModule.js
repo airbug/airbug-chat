@@ -80,7 +80,6 @@ CommandModule.CommandType = {
         SET_TABSIZE:    "CommandModuleCommand::codeEditor:setTabSize",
         SET_TEXT:       "CommandModuleCommand::codeEditor:setText",
         SET_THEME:      "CommandModuleCommand::codeEditor:setTheme"
-
     },
     TOGGLE: {
         HAMBURGER_LEFT:         "CommandModuleCommand::toggle::hamburgerLeft",

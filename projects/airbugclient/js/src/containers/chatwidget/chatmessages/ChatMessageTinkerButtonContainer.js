@@ -127,22 +127,6 @@ var ChatMessageTinkerButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearChatMessageTinkerButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearChatMessageTinkerButtonClickedEvent: function(event) {
-        //TODO
-        this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
-        this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
     }
 });
 
