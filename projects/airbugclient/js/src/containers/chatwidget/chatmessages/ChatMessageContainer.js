@@ -297,7 +297,11 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         var chatMessageId = this.chatMessageModel.getProperty("id");
         if (this.chatMessageModel.getProperty("type") === "code") {
             var code = this.chatMessageModel.getProperty("code");
+            var codeLanguage = this.getChatMessageModel().getProperty("codeLanguage");
+            console.log("codeLanguage:", codeLanguage);
+            this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
+            this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_MODE, {mode: "ace/mode/" + codeLanguage});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
             //TODO Future Feature Figure out a way to remember the reference to the original chatMessage
             //Display Code command will overwrite whatever is currently inside the ace editor
