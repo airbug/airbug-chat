@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
@@ -34,21 +35,22 @@ var bugpack                     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var Exception                   = bugpack.require('Exception');
-var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent')
-var CommandModule               = bugpack.require('airbug.CommandModule');
-var HomeButtonContainer         = bugpack.require('airbug.HomeButtonContainer');
-var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
-var PageContainer               = bugpack.require('airbug.PageContainer');
-var RoomChatBoxContainer        = bugpack.require('airbug.RoomChatBoxContainer');
-var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
-var RoomModel                   = bugpack.require('airbug.RoomModel');
-var ShareRoomContainer          = bugpack.require('airbug.ShareRoomContainer');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var Exception                           = bugpack.require('Exception');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
+var CommandModule                       = bugpack.require('airbug.CommandModule');
+var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
+var LogoutButtonContainer               = bugpack.require('airbug.LogoutButtonContainer');
+var PageContainer                       = bugpack.require('airbug.PageContainer');
+var RoomChatBoxContainer                = bugpack.require('airbug.RoomChatBoxContainer');
+var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
+var RoomModel                           = bugpack.require('airbug.RoomModel');
+var ShareRoomContainer                  = bugpack.require('airbug.ShareRoomContainer');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -263,6 +265,8 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         this.commandModule.subscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.subscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
+        this.commandModule.subscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
     },
 
     /**
@@ -272,6 +276,8 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         this.commandModule.unsubscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+        this.commandModule.unsubscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
     },
 
 
@@ -285,6 +291,48 @@ var RoomPageContainer = Class.extend(PageContainer, {
     hideShareRoomOverlay: function() {
         this.viewTop.$el.find(".share-room-overlay").hide();
     },
+
+
+    setDocumentTitle: function() {
+        document.title = this.roomModel.getProperty("name");
+    },
+
+    handleDisplayCodeEditorOverlayWidgetCommand: function(message) {
+        console.log("handleDisplayCodeEditorOverlayWidgetCommand");
+        var data    = message.getData();
+        var tabSize = data.tabSize;
+        var text    = data.text;
+        var mode    = data.mode;
+        var theme   = data.theme;
+        console.log("data:", data);
+        if(!this.codeEditorOverlayWidgetContainer){
+            this.codeEditorOverlayWidgetContainer = new CodeEditorOverlayWidgetContainer();
+        }
+        this.addContainerChild(this.codeEditorOverlayWidgetContainer, ".page");
+        this.codeEditorOverlayWidgetContainer.setEditorText(text);
+        this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
+        this.codeEditorOverlayWidgetContainer.setEditorTheme(theme);
+        this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
+        this.codeEditorOverlayWidgetContainer.getViewTop().show();
+        this.codeEditorOverlayWidgetContainer.focusOnAceEditor();
+    },
+
+    handleHideCodeEditorOverlayWidgetCommand: function(message) {
+        var text    = this.codeEditorOverlayWidgetContainer.getEditorText();
+        var mode    = this.codeEditorOverlayWidgetContainer.getEditorMode();
+        var theme   = this.codeEditorOverlayWidgetContainer.getEditorTheme();
+        var tabSize = this.codeEditorOverlayWidgetContainer.getEditorTabSize();
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_TEXT,       {text: text});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_MODE,       {mode: mode});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_THEME,      {theme: theme});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_TABSIZE,    {tabSize: tabSize});
+        this.codeEditorOverlayWidgetContainer.getViewTop().hide();
+        this.removeContainerChild(this.codeEditorOverlayWidgetContainer);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private

@@ -36,11 +36,11 @@ var CodeEditorWidgetView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div id="{{id}}" class="code-editor-widget box {{attributes.classes}}">' +
-            '<div id="code-editor-widget-header" class="code-editor-workspace-header box-header">' +
+            '<div id="{{id}}-header" class="code-editor-workspace-header box-header">' +
             '</div>' +
-            '<div id="code-editor-widget-body" class="code-editor-widget-body box-body">' +
+            '<div id="{{id}}-body" class="code-editor-widget-body box-body">' +
             '</div>' +
-            '<div id="code-editor-widget-footer" class="code-editor-widget-footer box-footer">' +
+            '<div id="{{id}}-footer" class="code-editor-widget-footer box-footer">' +
             '</div>' +
         '</div>',
 

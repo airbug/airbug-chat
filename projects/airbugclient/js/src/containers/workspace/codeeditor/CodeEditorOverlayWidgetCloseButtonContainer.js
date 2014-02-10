@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('WorkspaceCloseButtonContainer')
+//@Export('CodeEditorOverlayWidgetCloseButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -53,7 +53,7 @@ var view                    = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
+var CodeEditorOverlayWidgetCloseButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -64,7 +64,7 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
      */
     _constructor: function() {
 
-        this._super("WorkspaceCloseButton");
+        this._super("code-editor-fullscreen-close-button");
 
 
         //-------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearWorkspaceCloseButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorFullscreenCloseButtonClickedEvent, this);
     },
 
 
@@ -134,8 +134,8 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearWorkspaceCloseButtonClickedEvent: function(event) {
-        this.getCommandModule().relayCommand(CommandType.HIDE.WORKSPACE, {});
+    hearCodeEditorFullscreenCloseButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, {});
     }
 });
 
@@ -144,4 +144,4 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.WorkspaceCloseButtonContainer", WorkspaceCloseButtonContainer);
+bugpack.export("airbug.CodeEditorOverlayWidgetCloseButtonContainer", CodeEditorOverlayWidgetCloseButtonContainer);

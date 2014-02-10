@@ -75,6 +75,13 @@ var CommandModule = Class.extend(Publisher, {
  * @enum {string}
  */
 CommandModule.CommandType = {
+    CODE_EDITOR: {
+        SET_MODE:       "CommandModuleCommand::codeEditor:setMode",
+        SET_TABSIZE:    "CommandModuleCommand::codeEditor:setTabSize",
+        SET_TEXT:       "CommandModuleCommand::codeEditor:setText",
+        SET_THEME:      "CommandModuleCommand::codeEditor:setTheme"
+
+    },
     TOGGLE: {
         HAMBURGER_LEFT:         "CommandModuleCommand::toggle::hamburgerLeft",
         HAMBURGER_RIGHT:        "CommandModuleCommand::toggle::hamburgerRight",
@@ -84,6 +91,7 @@ CommandModule.CommandType = {
     DISPLAY: {
         CODE:                   "CommandModuleCommand::display::code",
         CODE_EDITOR:            "CommandModuleCommand::display::codeEditor",
+        CODE_EDITOR_FULLSCREEN: "CommandModuleCommand::display::codeEditorFullscreen",
         IMAGE_EDITOR:           "CommandModuleCommand::display::imageEditor",
         IMAGE_LIST:             "CommandModuleCommand::display::imageList",
         IMAGE_UPLOAD:           "CommandModuleCommand::display::imageUpload",
@@ -92,7 +100,8 @@ CommandModule.CommandType = {
     },
     HIDE: {
         WORKSPACE:              "CommandModuleCommand::hide::workspace",
-        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay"
+        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay",
+        CODE_EDITOR_FULLSCREEN: "CommandModuleCommand::hide::codeEditorFullscreen"
     },
     FLASH: {
         ERROR:                  "CommandModuleCommand::flash::error",

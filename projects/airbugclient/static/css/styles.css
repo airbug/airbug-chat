@@ -404,8 +404,17 @@ div.overlay-background {
     right: 0;
     bottom: 0;
     left: 0;
-    margin: 10% 0%;
     width: 100%;
+    height: 100%;
+    min-height: 200px;
+    margin-top: 45px;
+}
+
+div.page-overlay>.overlay-body.fullscreen-overlay {
+    position: absolute;
+    width: 95%;
+    height: 85%;
+    margin-left: 0.8%;
 }
 
 /* Panel CSS

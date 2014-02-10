@@ -47,7 +47,10 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired   = AutowiredAnnotation.autowired;
+var bugmeta     = BugMeta.context();
 var CommandType = CommandModule.CommandType;
+var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -81,7 +84,7 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                      = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -90,7 +93,7 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {BoxView}
          */
-        this.boxView                    = null;
+        this.boxView                            = null;
 
 
         // Containers
@@ -100,13 +103,13 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {CodeEditorWidgetContainer}
          */
-        this.codeEditorWidgetContainer        = null;
+        this.codeEditorWidgetContainer          = null;
 
         /**
          * @private
          * @type {CodeEditorSettingsContainer}
          */
-        this.codeEditorSettingsContainer    = null;
+        this.codeEditorSettingsContainer        = null;
 
     },
 
@@ -152,8 +155,8 @@ var CodeEditorWorkspaceContainer = Class.extend(CarapaceContainer, {
 
     createContainerChildren: function() {
         this._super();
-        this.codeEditorWidgetContainer      = new CodeEditorWidgetContainer();
-        this.codeEditorSettingsContainer    = new CodeEditorSettingsContainer();
+        this.codeEditorWidgetContainer          = new CodeEditorWidgetContainer();
+        this.codeEditorSettingsContainer        = new CodeEditorSettingsContainer();
         this.addContainerChild(this.codeEditorWidgetContainer,      "#code-editor-workspace");
         this.addContainerChild(this.codeEditorSettingsContainer,    "#code-editor-workspace");
     },
