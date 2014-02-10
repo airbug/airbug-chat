@@ -95,6 +95,56 @@ var TextAreaView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @returns {number}
+     */
+    getCaret: function() {
+        var el = this.$el[0];
+        if (el.selectionStart) {
+            return el.selectionStart;
+        } else if (document.selection) {
+            el.focus();
+
+            var r = document.selection.createRange();
+            if (r == null) {
+                return 0;
+            }
+
+            var re = el.createTextRange();
+            var rc = re.duplicate();
+            re.moveToBookmark(r.getBookmark());
+            rc.setEndPoint('EndToStart', re);
+
+            return rc.text.length;
+        }
+        return 0;
+    },
+
+    /**
+     * @param {number} position
+     */
+    setCaret: function(position) {
+        this.setSelectionRange(position, position);
+    },
+
+    /**
+     * @param {number} selectionStart
+     * @param {number} selectionEnd
+     */
+    setSelectionRange: function(selectionStart, selectionEnd) {
+        var el = this.$el[0];
+        if (el.setSelectionRange) {
+            el.focus();
+            el.setSelectionRange(selectionStart, selectionEnd);
+        } else if (el.createTextRange) {
+            var range = el.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', selectionEnd);
+            range.moveStart('character', selectionStart);
+            range.select();
+        }
+    },
+
+    /**
      * @returns {*}
      */
     getValue: function() {
@@ -118,7 +168,7 @@ var TextAreaView = Class.extend(MustacheView, {
      * @param {jQuery.Event} event
      */
     handleKeyDown: function(event) {
-        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_DOWN, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_DOWN, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey, event));
     },
 
     /**
@@ -126,7 +176,7 @@ var TextAreaView = Class.extend(MustacheView, {
      * @param {jQuery.Event} event
      */
     handleKeyPress: function(event) {
-        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_PRESS, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_PRESS, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey, event));
     },
 
     /**
@@ -134,7 +184,7 @@ var TextAreaView = Class.extend(MustacheView, {
      * @param {jQuery.Event} event
      */
     handleKeyUp: function(event) {
-        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_UP, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey));
+        this.dispatchEvent(new KeyBoardEvent(KeyBoardEvent.EventTypes.KEY_UP, event.keyCode, event.ctrlKey, event.shiftKey, event.altKey, event));
     }
 });
 

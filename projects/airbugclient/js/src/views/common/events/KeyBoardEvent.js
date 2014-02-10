@@ -35,9 +35,11 @@ var KeyBoardEvent = Class.extend(Event, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(eventType, keyCode, controlKey, shiftKey, altKey) {
+    _constructor: function(eventType, keyCode, controlKey, shiftKey, altKey, event) {
 
-        this._super(eventType, {});
+        this._super(eventType, {
+            event: event
+        });
 
 
         //-------------------------------------------------------------------------------
@@ -77,7 +79,7 @@ var KeyBoardEvent = Class.extend(Event, {
     /**
      * @return {boolean}
      */
-    getAlyKey: function() {
+    getAltKey: function() {
         return this.altKey;
     },
 

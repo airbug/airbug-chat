@@ -270,6 +270,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
     deinitializeContainer: function() {
         this._super();
         this.chooseOrUploadImageButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
+        this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.handleKeyPressEvent, this);
         this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
         this.twoColumnView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
         this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
@@ -281,6 +282,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.chooseOrUploadImageButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
+        this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.handleKeyPressEvent, this);
         this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
         this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
         this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
@@ -301,11 +303,24 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
+     * @param {KeyBoardEvent} event
      */
-    processEnterKey: function() {
-        var submitOnEnter = this.submitOnEnterCheckBoxView.isChecked();
+    processEnterKeyEvent: function(event) {
+        var ctl             = event.getControlKey();
+        var shift           = event.getShiftKey();
+        var submitOnEnter   = this.submitOnEnterCheckBoxView.isChecked();
         if (submitOnEnter) {
-            this.relayChatMessage();
+            if (!ctl && !shift) {
+                this.relayChatMessage();
+            } else {
+                this.insertLineBreak();
+            }
+        } else {
+            if (ctl || shift) {
+                this.relayChatMessage();
+            } else {
+                this.insertLineBreak();
+            }
         }
     },
 
@@ -333,6 +348,17 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageData);
         this.textAreaView.setValue("");
         this.sendButtonTextView.setText("Ok");
+    },
+
+    /**
+     * @protected
+     */
+    insertLineBreak: function() {
+        var content     = this.textAreaView.getValue();
+        var caret       = this.textAreaView.getCaret();
+        this.textAreaView.setValue(content.substring(0, caret) +
+            "\n" + content.substring(caret, content.length));
+        this.textAreaView.setCaret(caret + 1);
     },
 
 
@@ -374,12 +400,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {KeyBoardEvent} event
      */
-    handleKeyUpEvent: function(event) {
+    handleKeyPressEvent: function(event) {
         var key     = event.getKeyCode();
-        var ctl     = event.getControlKey();
-        var shift   = event.getShiftKey();
-        if (key === 13 && !ctl && !shift) {
-            this.processEnterKey();
+        if (key === 13) {
+            var htmlEvent = event.getData().event;
+            htmlEvent.preventDefault();
+            htmlEvent.stopPropagation();
         } else {
             var formData  = this.getFormData();
             if (!/\S/.test(formData.text)) {
@@ -387,6 +413,17 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
             } else {
                 this.sendButtonTextView.setText("Send");
             }
+        }
+    },
+
+    /**
+     * @private
+     * @param {KeyBoardEvent} event
+     */
+    handleKeyUpEvent: function(event) {
+        var key     = event.getKeyCode();
+        if (key === 13) {
+            this.processEnterKeyEvent(event);
         }
     }
 });
