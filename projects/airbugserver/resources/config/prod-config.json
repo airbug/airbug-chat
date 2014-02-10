@@ -9,6 +9,6 @@
     },
     "hostName": "airbug.com",
     "sslEnabled": false,
-    "staticUrl": "//d1jply0oquv2ju.cloudfront.net/airbug/0.0.13/static",
+    "staticUrl": "//d1jply0oquv2ju.cloudfront.net/airbug/0.0.14/static",
     "mongoDbIp": "10.209.21.90"
 }

@@ -42,7 +42,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
                     '<div class="form-wrapper">' +
                         '<form class="form-horizontal">' +
                             '<div class="control-group">' +
-                                '<input class="input-xxlarge" type="email" name="email" placeholder="Email (required)" required>' +
+                                '<input class="input-xxlarge" type="email" name="email" placeholder="Email  (required)" required>' +
                             '</div>' +
                             '<div class="control-group">' +
                                 '<input class="input-xxlarge" type="text" name="firstName" placeholder="First Name  (required)" required>' +
