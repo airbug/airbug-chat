@@ -81,6 +81,13 @@ var RoomPageContainer = Class.extend(PageContainer, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {DocumentUtil}
+         */
+        this.documentUtil                           = null;
+
+
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -162,7 +169,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -171,9 +178,8 @@ var RoomPageContainer = Class.extend(PageContainer, {
      */
     activateContainer: function(routingArgs) {
         this._super(routingArgs);
-
         this.loadRoom(this.roomModel.getProperty("id"));
-        this.setDocumentTitle();
+        this.documentUtil.setTitle(this.roomModel.getProperty("name"));
     },
 
     /**
@@ -211,63 +217,74 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.addContainerChild(this.roomChatBoxContainer,           ".column2of4");
     },
 
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         //EventListeners and and command subscription initialization handled by super
     },
 
+    /**
+     * @protected
+     */
     deinitializeContainer: function() {
         this._super();
         //EventListeners and and command subscription deinitialization handled by super
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
     initializeEventListeners: function() {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
     deinitializeEventListeners: function() {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
     initializeCommandSubscriptions: function() {
         this._super();
         this.commandModule.subscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.subscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
     },
 
+    /**
+     * @protected
+     */
     deinitializeCommandSubscriptions: function() {
         this._super();
         this.commandModule.unsubscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
     },
 
-    hearOverlayBackgroundClickedEvent: function() {
-        this.hideShareRoomOverlay();
-    },
 
-    handleDisplayShareRoomOverlayCommand: function() {
-        this.viewTop.$el.find(".share-room-overlay").show();
-    },
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
 
-    handleHideShareRoomOverlayCommand: function() {
-        this.hideShareRoomOverlay();
-    },
-
+    /**
+     * @private
+     */
     hideShareRoomOverlay: function() {
         this.viewTop.$el.find(".share-room-overlay").hide();
     },
-
-    setDocumentTitle: function() {
-        document.title = this.roomModel.getProperty("name");
-    },
-
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
 
     /**
      * @private
@@ -303,6 +320,40 @@ var RoomPageContainer = Class.extend(PageContainer, {
                 }
             }
         });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearOverlayBackgroundClickedEvent: function(event) {
+        this.hideShareRoomOverlay();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Message Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    handleDisplayShareRoomOverlayCommand: function(message) {
+        this.viewTop.$el.find(".share-room-overlay").show();
+    },
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    handleHideShareRoomOverlayCommand: function(message) {
+        this.hideShareRoomOverlay();
     }
 });
 
@@ -314,6 +365,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
 bugmeta.annotate(RoomPageContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
+        property("documentUtil").ref("documentUtil"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
     ])

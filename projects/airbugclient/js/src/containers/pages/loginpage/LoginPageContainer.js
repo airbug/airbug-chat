@@ -76,6 +76,13 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {DocumentUtil}
+         */
+        this.documentUtil                           = null;
+
+
         // Modules
         //-------------------------------------------------------------------------------
 
@@ -128,6 +135,15 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
     //-------------------------------------------------------------------------------
     // CarapaceController Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array.<*>} routingArgs
+     */
+    activateContainer: function(routingArgs) {
+        this._super(routingArgs);
+        this.documentUtil.setTitle("Login - airbug");
+    },
 
     /**
      * @protected
@@ -199,6 +215,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
 bugmeta.annotate(LoginPageContainer).with(
     autowired().properties([
+        property("documentUtil").ref("documentUtil"),
         property("navigationModule").ref("navigationModule")
     ])
 );

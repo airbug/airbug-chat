@@ -13,6 +13,9 @@
 //@Require('airbug.PageView')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.TwoColumnView')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ViewBuilder')
 
 
@@ -34,6 +37,9 @@ var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer'
 var PageView                    = bugpack.require('airbug.PageView');
 var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
 var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -41,7 +47,10 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var view = ViewBuilder.view;
+var autowired                   = AutowiredAnnotation.autowired;
+var bugmeta                     = BugMeta.context();
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -62,6 +71,12 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {DocumentUtil}
+         */
+        this.documentUtil               = null;
 
 
         // Containers
@@ -98,8 +113,17 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array.<*>} routingArgs
+     */
+    activateContainer: function(routingArgs) {
+        this._super(routingArgs);
+        this.documentUtil.setTitle("Home page - airbug");
+    },
 
     /**
      * @protected
@@ -137,12 +161,19 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.logoutButtonContainer, '#header-right');
         this.addContainerChild(this.roomListPanelContainer, ".column1of2");
         this.addContainerChild(this.createRoomFormContainer, ".column2of2");
-    },
-
-    activateContainer: function(routingArgs) {
-        this._super(routingArgs);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(UserHomePageContainer).with(
+    autowired().properties([
+        property("documentUtil").ref("documentUtil")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

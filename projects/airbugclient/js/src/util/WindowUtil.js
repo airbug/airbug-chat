@@ -40,7 +40,14 @@ var WindowUtil = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {window|*|window.window} window
+     */
     _constructor: function(window) {
+
+        this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -48,7 +55,7 @@ var WindowUtil = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Window}
+         * @type {window|*|window.window}
          */
         this.window = window;
     },
@@ -59,7 +66,7 @@ var WindowUtil = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Window}
+     * @return {window|*|window.window}
      */
     getWindow: function() {
         return this.window;

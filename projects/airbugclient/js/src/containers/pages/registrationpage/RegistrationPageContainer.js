@@ -14,6 +14,9 @@
 //@Require('airbug.PanelView')
 //@Require('airbug.RegistrationFormContainer')
 //@Require('airbug.TextView')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ViewBuilder')
 
 
@@ -36,6 +39,9 @@ var PageView                        = bugpack.require('airbug.PageView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var RegistrationFormContainer       = bugpack.require('airbug.RegistrationFormContainer');
 var TextView                        = bugpack.require('airbug.TextView');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
@@ -43,6 +49,9 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired                      = AutowiredAnnotation.autowired;
+var bugmeta                        = BugMeta.context();
+var property                       = PropertyAnnotation.property;
 var view                            = ViewBuilder.view;
 
 
@@ -71,6 +80,12 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {DocumentUtil}
+         */
+        this.documentUtil                           = null;
 
 
         // Containers
@@ -109,6 +124,15 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array.<*>} routingArgs
+     */
+    activateContainer: function(routingArgs) {
+        this._super(routingArgs);
+        this.documentUtil.setTitle("Join - airbug");
+    },
 
     /**
      * @protected
@@ -160,6 +184,17 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.registrationFormContainer, "#box-body-" + this.boxView.getCid());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(RegistrationPageContainer).with(
+    autowired().properties([
+        property("documentUtil").ref("documentUtil")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

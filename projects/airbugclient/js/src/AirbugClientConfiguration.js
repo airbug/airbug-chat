@@ -11,6 +11,7 @@
 //@Require('Obj')
 //@Require('Url')
 //@Require('airbug.AirbugClientConfig')
+//@Require('airbug.DocumentUtil')
 //@Require('airbug.WindowUtil')
 //@Require('bugcall.Call')
 //@Require('bugflow.BugFlow')
@@ -44,6 +45,7 @@ var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var Url                         = bugpack.require('Url');
 var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
+var DocumentUtil                = bugpack.require('airbug.DocumentUtil');
 var WindowUtil                  = bugpack.require('airbug.WindowUtil');
 var Call                        = bugpack.require('bugcall.Call');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
@@ -139,6 +141,21 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @returns {document|*|HTMLDocument}
+     */
+    document: function() {
+        return document;
+    },
+
+    /**
+     * @param {document|*|HTMLDocument} document
+     * @return {DocumentUtil}
+     */
+    documentUtil: function(document) {
+        return new DocumentUtil(document);
+    },
+
+    /**
      * @param {ISocketFactory} socketIoFactory
      * @param {SocketIoConfig} socketIoConfig
      * @return {SocketIoClient}
@@ -162,14 +179,14 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {Window}
+     * @return {window|*|window.window}
      */
     window: function() {
         return window;
     },
 
     /**
-     * @param {Window} window
+     * @param {window|*|window.window} window
      * @return {WindowUtil}
      */
     windowUtil: function(window) {
@@ -202,6 +219,11 @@ bugmeta.annotate(AirbugClientConfiguration).with(
         module("controllerScan")
             .args([
                 arg().ref("carapaceApplication")
+            ]),
+        module("document"),
+        module("documentUtil")
+            .args([
+                arg().ref("document")
             ]),
         module("socketIoClient")
             .args([
