@@ -56,6 +56,9 @@ var RegistrationFormView = Class.extend(MustacheView, {
                             '<div class="control-group control-group-space">' +
                                 '<input class="input-xxlarge" type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password  (required)" required>' +
                             '</div>' +
+                            '<div class="control-group control-group-space">' +
+                                '<input class="input-xxlarge" type="betaKey" name="betaKey" id="betaKey" placeholder=" Beta Key  (required)" required>' +
+                            '</div>' +
                             '<div class="control-group">' +
                                 '<button id="submit-button-{{cid}}" type="submit" class="btn">Create Account</button>' +
                                 '<span class="help-inline">Already have an account? <a href="#login">login here</a></span>' +
