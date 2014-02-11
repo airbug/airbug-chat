@@ -31,6 +31,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var UserSchema = new Schema({
     agreedToTermsDate: Date,
     anonymous: Boolean,
+    betaKey: {type: String, index: true, unique: false},
     createdAt: Date,
 
     // NOTE BRN: Cannot make email unique since anonymous users have a 'null' value for their email and we can't have
