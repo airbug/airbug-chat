@@ -136,7 +136,7 @@ var MessageContentTextView = Class.extend(MustacheView, {
                 return '<br/><iframe id="' + iframeId + '" class="gist-embed" width="100%"></iframe><br/>';
                 //return '<br/><iframe src="' + match + '.pibb?scroll=true"></iframe><br/>';
             }
-            return '<a href="' + url.toString() + '">' + match + '</a>';
+            return '<a href="' + url.toString() + '" target="_blank">' + match + '</a>';
         });
     }
 });
