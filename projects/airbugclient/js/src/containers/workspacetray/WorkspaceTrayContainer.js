@@ -12,7 +12,6 @@
 //@Require('airbug.ImageEditorTrayButtonContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('airbug.ListView')
 //@Require('airbug.TextView')
 //@Require('airbug.PanelView')
 //@Require('bugmeta.BugMeta')

@@ -63,7 +63,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
      */
     _constructor: function(chatMessageList) {
 
-        this._super();
+        this._super("No chat messages in this room");
 
 
         //-------------------------------------------------------------------------------
@@ -265,6 +265,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
      *
      */
     appendChatMessageContainer: function(chatMessageContainer) {
+        this.hidePlaceholder();
         this.addContainerChild(chatMessageContainer, ".list");
     },
 
@@ -272,6 +273,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
      *
      */
     prependChatMessageContainer: function(chatMessageContainer) {
+        this.hidePlaceholder();
         this.prependContainerChild(chatMessageContainer, ".list");
     },
 

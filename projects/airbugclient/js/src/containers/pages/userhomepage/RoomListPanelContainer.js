@@ -18,6 +18,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
+//@Require('airbug.LoaderView')
 //@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.SelectableListItemView')
@@ -53,6 +54,7 @@ var SetPropertyChange           = bugpack.require('SetPropertyChange');
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var ListView                    = bugpack.require('airbug.ListView');
 var ListViewEvent               = bugpack.require('airbug.ListViewEvent');
+var LoaderView                  = bugpack.require('airbug.LoaderView');
 var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
 var RoomNameView                = bugpack.require('airbug.RoomNameView');
 var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
@@ -159,15 +161,15 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
-         */
-        this.addRoomButtonView          = null;
-
-        /**
-         * @private
          * @type {ListView}
          */
         this.listView                   = null;
+
+        /**
+         * @private
+         * @type {LoaderView}
+         */
+        this.loaderView                 = null;
 
         /**
          * @private
@@ -207,26 +209,32 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
         view(PanelWithHeaderView)
+            .name("panelView")
             .attributes({headerTitle: "Rooms"})
             .children([
                 view(ListView)
-                    .id("listView")
+                    .name("listView")
                     .attributes({
                         placeholder: "You have no rooms"
                     })
-                    .appendTo('*[id|="panel-body"]')
+                    .appendTo("#panel-body-{{cid}}")
+                    .children([
+                        view(LoaderView)
+                            .name("loaderView")
+                            .attributes({
+                                size: LoaderView.Size.SMALL
+                            })
+                            .appendTo("#list-{{cid}}")
+                    ])
             ])
-            .build();
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.panelView);
-        this.addRoomButtonView  = this.findViewById("addRoomButtonView");
-        this.listView           = this.findViewById("listView");
     },
 
     /**
@@ -380,6 +388,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
+                _this.loaderView.hide();
                 if (roomMeldDocumentSet.getCount() > 0) {
                     roomMeldDocumentSet.forEach(function(roomMeldDocument) {
                         _this.buildRoomModel({}, roomMeldDocument);

@@ -11,6 +11,7 @@
 //@Require('Map')
 //@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
+//@Require('airbug.LoaderView')
 //@Require('airbug.PanelView')
 //@Require('airbug.ScrollEvent')
 //@Require('carapace.CarapaceContainer')
@@ -35,6 +36,7 @@ var Map                             = bugpack.require('Map');
 var RemoveChange                    = bugpack.require('RemoveChange');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
+var LoaderView                      = bugpack.require('airbug.LoaderView');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
@@ -66,8 +68,9 @@ var ListContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @constructs
+     * @param {string} placeholder
      */
-    _constructor: function() {
+    _constructor: function(placeholder) {
 
         this._super();
 
@@ -94,9 +97,21 @@ var ListContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {LoaderView}
+         */
+        this.loaderView                                 = null;
+
+        /**
+         * @private
          * @type {PanelView}
          */
         this.panelView                                  = null;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.placeholder                                = placeholder;
 
         /**
          * @private
@@ -115,6 +130,13 @@ var ListContainer = Class.extend(CarapaceContainer, {
      */
     getListView: function() {
         return this.listView;
+    },
+
+    /**
+     * @return {LoaderView}
+     */
+    getLoaderView: function() {
+        return this.loaderView;
     },
 
     /**
@@ -152,7 +174,18 @@ var ListContainer = Class.extend(CarapaceContainer, {
             .children([
                 view(ListView)
                     .name("listView")
-                    .appendTo('*[id|="panel-body"]')
+                    .appendTo("#panel-body-{{cid}}")
+                    .attributes({
+                        placeholder: this.placeholder
+                    })
+                    .children([
+                        view(LoaderView)
+                            .name("loaderView")
+                            .attributes({
+                                size: LoaderView.Size.MEDIUM
+                            })
+                            .appendTo("#list-{{cid}}")
+                    ])
             ])
             .build(this);
 
@@ -204,6 +237,20 @@ var ListContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     *
+     */
+    hideLoader: function() {
+        this.loaderView.hide();
+    },
+
+    /**
+     *
+     */
+    hidePlaceholder: function() {
+        this.listView.hidePlaceholder();
+    },
+
+    /**
      * @param {CarapaceModel} carapaceModel
      */
     scrollToCarapaceModel: function(carapaceModel) {
@@ -212,6 +259,20 @@ var ListContainer = Class.extend(CarapaceContainer, {
             var value = this.panelView.getPanelBodyElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
             this.panelView.getPanelBodyElement().scrollTop(value);
         }
+    },
+
+    /**
+     *
+     */
+    showLoader: function() {
+        this.loaderView.show();
+    },
+
+    /**
+     *
+     */
+    showPlaceholder: function() {
+        this.listView.showPlaceholder();
     },
 
 

@@ -253,8 +253,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.chatWidgetView             = view(ChatWidgetView)
-                                            .build();
+        view(ChatWidgetView)
+            .name("chatWidgetView")
+            .build(this);
 
 
         // Wire Up Views
@@ -269,9 +270,9 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.chatWidgetMessagesContainer        = new ChatWidgetMessagesContainer(this.chatMessageList);
-        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages');
+        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages-{{cid}}');
         this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer();
-        this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input");
+        this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input-{{cid}}");
     },
 
     /**
@@ -544,13 +545,18 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
-                    var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
-                    _this.buildAndAppendChatMessageModel({
-                            pending: false,
-                            failed: false
-                        }, chatMessageMeldDocument, senderUserMeldDocument);
-                });
+                _this.chatWidgetMessagesContainer.hideLoader();
+                if (chatMessageMeldDocumentList.getCount() > 0) {
+                    chatMessageMeldDocumentList.forEach(function(chatMessageMeldDocument) {
+                        var senderUserMeldDocument = senderUserMeldDocumentMap.get(chatMessageMeldDocument.getData().senderUserId);
+                        _this.buildAndAppendChatMessageModel({
+                                pending: false,
+                                failed: false
+                            }, chatMessageMeldDocument, senderUserMeldDocument);
+                    });
+                } else {
+                    _this.chatWidgetMessagesContainer.showPlaceholder();
+                }
                 _this.startScrollStateListener();
             } else {
                 _this.logger.error(throwable);

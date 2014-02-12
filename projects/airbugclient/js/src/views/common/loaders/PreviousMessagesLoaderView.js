@@ -35,7 +35,7 @@ var PreviousMessagesLoaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="previous-messages-loader">' +
+    template:   '<div id="{{id}}" class="previous-messages-loader {{classes}}">' +
             '<img src="{{{staticUrl}}}/img/loader-line-large.gif">' +
             '</img>' +
             '<p>retrieving previous messages...</p>'+
