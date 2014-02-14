@@ -4,10 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('SubmitButtonView')
+//@Export('NakedSubmitButtonView')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('airbug.NakedButtonView')
 
 
 //-------------------------------------------------------------------------------
@@ -22,22 +22,20 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ButtonView      = bugpack.require('airbug.ButtonView');
+var NakedButtonView = bugpack.require('airbug.NakedButtonView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SubmitButtonView = Class.extend(ButtonView, {
+var NakedSubmitButtonView = Class.extend(NakedButtonView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
-        '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}">{{buttonName}}</button>' +
-        '</div>',
+    template:   '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}">{{buttonName}}</button>',
 
     /**
      * @return {Object}
@@ -56,4 +54,4 @@ var SubmitButtonView = Class.extend(ButtonView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SubmitButtonView", SubmitButtonView);
+bugpack.export("airbug.NakedSubmitButtonView", NakedSubmitButtonView);

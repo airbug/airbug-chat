@@ -4,10 +4,10 @@
 
 //@Package('airbug')
 
-//@Export('SubmitButtonView')
+//@Export('TableHeadingView')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('airbug.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -22,31 +22,32 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ButtonView      = bugpack.require('airbug.ButtonView');
+var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SubmitButtonView = Class.extend(ButtonView, {
+var TableHeadingView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
-        '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}">{{buttonName}}</button>' +
-        '</div>',
+    template:   '<th id="{{id}}">{{attributes.text}}</th>',
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     generateTemplateData: function() {
-        var id              = this.getId() || "submit-button-" + this.getCid();
-        var data            = this._super();
-        data.id             = id;
-        data.buttonName     = this.attributes.buttonName;
+        var data = this._super();
+        data.id = this.getId() || "table-heading" + this.getCid();
         return data;
     }
 });
@@ -56,4 +57,4 @@ var SubmitButtonView = Class.extend(ButtonView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.SubmitButtonView", SubmitButtonView);
+bugpack.export("airbug.TableHeadingView", TableHeadingView);
