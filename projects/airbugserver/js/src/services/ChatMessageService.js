@@ -14,8 +14,8 @@
 //@Require('Obj')
 //@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -37,8 +37,8 @@ var MappedThrowable         = bugpack.require('MappedThrowable');
 var Obj                     = bugpack.require('Obj');
 var EntityService           = bugpack.require('airbugserver.EntityService');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -46,9 +46,9 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                     = ArgAnnotation.arg;
 var bugmeta                 = BugMeta.context();
 var module                  = ModuleAnnotation.module;
+var property                = PropertyAnnotation.property;
 var $iterableParallel       = BugFlow.$iterableParallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -68,7 +68,10 @@ var ChatMessageService = Class.extend(EntityService, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(chatMessageManager, conversationManager, chatMessageStreamManager, chatMessagePusher) {
+    /**
+     * @constructs
+     */
+    _constructor: function() {
 
         this._super();
 
@@ -81,25 +84,31 @@ var ChatMessageService = Class.extend(EntityService, {
          * @private
          * @type {ChatMessageManager}
          */
-        this.chatMessageManager             = chatMessageManager;
+        this.chatMessageManager             = null;
 
         /**
          * @private
          * @type {ChatMessagePusher}
          */
-        this.chatMessagePusher              = chatMessagePusher;
+        this.chatMessagePusher              = null;
 
         /**
          * @private
          * @type {ChatMessageStreamManager}
          */
-        this.chatMessageStreamManager       = chatMessageStreamManager;
+        this.chatMessageStreamManager       = null;
 
         /**
          * @private
          * @type {ConversationManager}
          */
-        this.conversationManager            = conversationManager;
+        this.conversationManager            = null;
+
+        /**
+         * @private
+         * @type {ConversationSecurity}
+         */
+        this.conversationSecurity           = null;
     },
 
 
@@ -117,34 +126,33 @@ var ChatMessageService = Class.extend(EntityService, {
      * @param {function(Throwable, ChatMessage=)} callback
      */
     createChatMessage: function(requestContext, chatMessageObject, callback) {
-        var _this = this;
+        var _this           = this;
         var chatMessage     = this.chatMessageManager.generateChatMessage(chatMessageObject);
-        var call     = requestContext.get("call");
+        var call            = requestContext.get("call");
         var currentUser     = requestContext.get("currentUser");
 
-        if (currentUser.isNotAnonymous() && currentUser.getId() === chatMessage.getSenderUserId()) {
+        if (currentUser.getId() === chatMessage.getSenderUserId()) {
             if (chatMessage.getConversationId()) {
                 var conversation = null;
                 $series([
                     $task(function(flow) {
                         _this.conversationManager.retrieveConversation(chatMessage.getConversationId(), function(throwable, returnedConversation) {
                             if (!throwable) {
-                                if (returnedConversation) {
-
-                                    //NOTE BRN: Validate that the user is a member of this room
-
-                                    if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                        conversation = returnedConversation;
-                                        flow.complete();
-                                    } else {
-                                        flow.error(new Exception("UnauthorizedAccess"));
-                                    }
-                                } else {
-                                    flow.error(new Exception("NotFound"));
-                                }
+                                conversation = returnedConversation;
+                                flow.complete(throwable);
                             } else {
-                                flow.error(throwable);
+                                flow.error(new Exception("NotFound", {}, "Could not find Conversation with the id '" + chatMessage.getConversationId() + "'"))
                             }
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.conversationManager.populateConversation(conversation, ["owner"], function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.conversationSecurity.checkConversationWriteAccess(currentUser, conversation, function(throwable) {
+                            flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
@@ -155,7 +163,7 @@ var ChatMessageService = Class.extend(EntityService, {
                             chatMessage.getConversationId(), chatMessage.getTryUuid(), function(throwable, chatMessage) {
                             if (!throwable) {
                                 if (chatMessage) {
-                                    flow.error(new Exception("ChatMessage already exists"));
+                                    flow.error(new Exception("AlreadyExists", {}, "ChatMessage already exists"));
                                 } else {
                                     flow.complete();
                                 }
@@ -191,10 +199,10 @@ var ChatMessageService = Class.extend(EntityService, {
                     callback(throwable, chatMessage);
                 });
             } else {
-                callback(new Exception("BadRequest"));
+                callback(new Exception("BadRequest", {}, "Request missing conversation id"));
             }
         } else {
-            callback(new Exception("UnauthorizedAccess"));
+            callback(new Exception("UnauthorizedAccess", {}, "Messages can only be created by the current user"));
         }
     },
 
@@ -216,47 +224,64 @@ var ChatMessageService = Class.extend(EntityService, {
     retrieveChatMessage: function(requestContext, chatMessageId, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var call         = requestContext.get("call");
+        var call                = requestContext.get("call");
         /** @type {ChatMessage} */
         var chatMessage         = null;
         var chatMessageManager  = this.chatMessageManager;
+        var conversation        = null;
 
-        if (currentUser.isNotAnonymous()) {
-            $series([
-                $task(function(flow){
-                    chatMessageManager.retrieveChatMessage(chatMessageId, function(throwable, returnedChatMessage){
-                        chatMessage = returnedChatMessage;
-                        if (!throwable) {
-                            if (!chatMessage) {
-                                flow.error(new Exception("NotFound"));
-                            } else {
-                                flow.complete();
-                            }
+        $series([
+            $task(function(flow){
+                chatMessageManager.retrieveChatMessage(chatMessageId, function(throwable, returnedChatMessage) {
+                    if (!throwable) {
+                        if (!returnedChatMessage) {
+                            flow.error(new Exception("NotFound", {}, "Could not find ChatMessage with the id '" + chatMessageId + "'"));
                         } else {
-                            flow.error(throwable);
+                            chatMessage = returnedChatMessage;
+                            flow.complete();
                         }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessage(call.getCallUuid(), chatMessage, function(throwable) {
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationManager.retrieveConversation(chatMessage.getConversationId(), function(throwable, returnedConversation) {
+                    if (!throwable) {
+                        conversation = returnedConversation;
                         flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessageToCall(chatMessage, call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                if (!throwable) {
-                    callback(null, chatMessage);
-                } else {
-                    callback(throwable);
-                }
-            });
-        } else {
-            callback(new Exception("UnauthorizedAccess"));
-        }
+                    } else {
+                        flow.error(new Exception("NotFound", {}, "Could not find Conversation with the id '" + chatMessage.getConversationId() + "'"))
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationManager.populateConversation(conversation, ["owner"], function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationSecurity.checkConversationReadAccess(currentUser, conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.meldCallWithChatMessage(call.getCallUuid(), chatMessage, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.pushChatMessageToCall(chatMessage, call.getCallUuid(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, chatMessage);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /**
@@ -271,61 +296,59 @@ var ChatMessageService = Class.extend(EntityService, {
         console.log("ChatMessageService#retrieveChatMessageBatchByConversationId");
         console.log("conversationId:", conversationId, "index:", index, "batchSize:", batchSize, "order", order);
 
-        var _this           = this;
-        var currentUser     = requestContext.get("currentUser");
-        var call            = requestContext.get("call");
-        if (currentUser.isNotAnonymous()) {
+        var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
+        var call                = requestContext.get("call");
+        var chatMessageList     = null;
+        var conversation        = null;
+        var mappedException     = null;
 
-            var chatMessageList = null;
-            var conversation    = null;
-            var mappedException = null;
-
-            $series([
-                $task(function(flow) {
-                    _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
-                        if (!throwable) {
-
-                            //NOTE BRN: Validate that the user is a member of this room
-
-                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                conversation = returnedConversation;
-                                flow.complete();
-                            } else {
-                                flow.error(new Exception("UnauthorizedAccess"));
-                            }
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessageManager.retrieveChatMessageBatchByConversationId(conversation.getId(), index, batchSize, order, function(throwable, returnedChatMessageList) {
-                        if (!throwable) {
-                            chatMessageList = returnedChatMessageList;
-                        }
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
+        $series([
+            $task(function(flow) {
+                _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
                     if (!throwable) {
-                        callback(mappedException, chatMessageList);
+                        conversation = returnedConversation;
+                        flow.complete(throwable);
                     } else {
-                        callback(throwable);
+                        flow.error(new Exception("NotFound", {}, "Could not find Conversation with the id '" + conversationId + "'"))
                     }
                 });
-        } else {
-            callback(new Exception("UnauthorizedAccess"));
-        }
+            }),
+            $task(function(flow) {
+                _this.conversationManager.populateConversation(conversation, ["owner"], function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationSecurity.checkConversationReadAccess(currentUser, conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessageManager.retrieveChatMessageBatchByConversationId(conversation.getId(), index, batchSize, order, function(throwable, returnedChatMessageList) {
+                    if (!throwable) {
+                        chatMessageList = returnedChatMessageList;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(mappedException, chatMessageList);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /*
@@ -334,11 +357,14 @@ var ChatMessageService = Class.extend(EntityService, {
      * @param {function(Throwable, Map.<string, ChatMessage>} callback
      */
     retrieveChatMessages: function(requestContext, chatMessageIds, callback) {
+
+        //TODO BRN: Add security checks
+
         var _this               = this;
         /** @type {Map.<string, ChatMessage>} */
         var chatMessageMap      = null;
         var currentUser         = requestContext.get("currentUser");
-        var call         = requestContext.get("call");
+        var call                = requestContext.get("call");
         var chatMessageManager  = this.chatMessageManager;
         var mappedException     = null;
 
@@ -357,7 +383,7 @@ var ChatMessageService = Class.extend(EntityService, {
                                         if (!mappedException) {
                                             mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                         }
-                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
+                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find ChatMessage with the id '" + key + "'"));
                                     }
                                 });
                             }
@@ -393,61 +419,59 @@ var ChatMessageService = Class.extend(EntityService, {
      * @param {function(Throwable, List.<string, ChatMessage>=)} callback
      */
     retrieveChatMessagesByConversationIdSortBySentAt: function(requestContext, conversationId, callback) {
-        var _this = this;
-        var currentUser     = requestContext.get("currentUser");
-        var call     = requestContext.get("call");
-        if (currentUser.isNotAnonymous()) {
+        var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
+        var call                = requestContext.get("call");
+        var chatMessageList     = null;
+        var conversation        = null;
+        var mappedException     = null;
 
-            var chatMessageList = null;
-            var conversation    = null;
-            var mappedException = null;
-
-            $series([
-                $task(function(flow) {
-                    _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
-                        if (!throwable) {
-
-                            //NOTE BRN: Validate that the user is a member of this room
-
-                            if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                conversation = returnedConversation;
-                                flow.complete();
-                            } else {
-                                flow.error(new Exception("UnauthorizedAccess"));
-                            }
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessageManager.retrieveChatMessagesByConversationIdSortBySentAt(conversation.getId(), function(throwable, returnedChatMessageList) {
-                        if (!throwable) {
-                            chatMessageList = returnedChatMessageList;
-                        }
+        $series([
+            $task(function(flow) {
+                _this.conversationManager.retrieveConversation(conversationId, function(throwable, returnedConversation) {
+                    if (!throwable) {
+                        conversation = returnedConversation;
                         flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                if (!throwable) {
-                    callback(mappedException, chatMessageList);
-                } else {
-                    callback(throwable);
-                }
-            });
-        } else {
-            callback(new Exception("UnauthorizedAccess"));
-        }
+                    } else {
+                        flow.error(new Exception("NotFound", {}, "Could not find Conversation with the id '" + conversationId + "'"))
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationManager.populateConversation(conversation, ["owner"], function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationSecurity.checkConversationReadAccess(currentUser, conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessageManager.retrieveChatMessagesByConversationIdSortBySentAt(conversation.getId(), function(throwable, returnedChatMessageList) {
+                    if (!throwable) {
+                        chatMessageList = returnedChatMessageList;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageList.toArray(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.chatMessagePusher.pushChatMessagesToCall(chatMessageList.toArray(), call.getCallUuid(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(mappedException, chatMessageList);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /*
@@ -458,7 +482,7 @@ var ChatMessageService = Class.extend(EntityService, {
      */
     updateChatMessage: function(requestContext, chatMessageId, updates, callback) {
         //TODO BRN: Implement
-        callback(new Exception("UnauthorizedAccess"));
+        callback(new Exception("NotImplemented", {}, "Not implemented"));
     }
 });
 
@@ -469,11 +493,12 @@ var ChatMessageService = Class.extend(EntityService, {
 
 bugmeta.annotate(ChatMessageService).with(
     module("chatMessageService")
-        .args([
-            arg().ref("chatMessageManager"),
-            arg().ref("conversationManager"),
-            arg().ref("chatMessageStreamManager"),
-            arg().ref("chatMessagePusher")
+        .properties([
+            property("chatMessageManager").ref("chatMessageManager"),
+            property("chatMessagePusher").ref("chatMessagePusher"),
+            property("chatMessageStreamManager").ref("chatMessageStreamManager"),
+            property("conversationManager").ref("conversationManager"),
+            property("conversationSecurity").ref("conversationSecurity")
         ])
 );
 

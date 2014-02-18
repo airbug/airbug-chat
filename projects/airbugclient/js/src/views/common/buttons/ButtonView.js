@@ -38,39 +38,28 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 var ButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Template
+    //-------------------------------------------------------------------------------
+
+    template:   '<div id="{{id}}-wrapper" class="button-wrapper {{classes}}">' +
+        '<button id="button-{{cid}}" class="btn {{buttonClasses}}"></button>' +
+        '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Object} options
+     * @return {$}
      */
-    _constructor: function(options) {
-
-        this._super(options);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        if (!this.id) {
-            this.id = "button-" + this.cid;
-        }
+    getButtonElement: function() {
+        return this.findElement("#button-{{cid}}");
     },
 
 
     //-------------------------------------------------------------------------------
-    // Template
-    //-------------------------------------------------------------------------------
-
-    template:   '<div id="{{id}}-wrapper" class="button-wrapper {{buttonWrapperClasses}}">' +
-                    '<button id="{{id}}" class="btn {{buttonClasses}}"></button>' +
-                '</div>',
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -78,7 +67,7 @@ var ButtonView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.findElement('#' + this.getId()).off();
+        this.getButtonElement().off();
     },
 
     /**
@@ -87,14 +76,36 @@ var ButtonView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.findElement('#' + this.getId()).on('click', function(event) {
+        this.getButtonElement().on('click', function(event) {
             _this.handleButtonClick(event);
         });
     },
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {string} attributeName
+     * @param {*} attributeValue
+     */
+    renderAttribute: function(attributeName, attributeValue) {
+        switch (attributeName) {
+            case "active":
+                if (attributeValue) {
+                    this.getButtonElement().addClass("active");
+                } else {
+                    this.getButtonElement().removeClass("active");
+                }
+                break;
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // MustacheView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -102,8 +113,7 @@ var ButtonView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.buttonClasses = "";
-        data.id = this.getId();
+        data.buttonClasses = this.getAttribute("buttonClasses") || "";
         switch (this.attributes.size) {
             case ButtonView.Size.LARGE:
                 data.buttonClasses += " btn-large";
@@ -140,21 +150,19 @@ var ButtonView = Class.extend(MustacheView, {
                 data.buttonClasses += " btn-link";
                 break;
         }
-        switch (this.attributes.block) {
-            case true:
-                data.buttonClasses += " btn-block";
-                break
+        if (this.getAttribute("active")) {
+            data.buttonClasses += " active";
         }
-        switch (this.attributes.disabled) {
-            case true:
-                data.buttonClasses += " disabled";
-                break
+        if (this.getAttribute("block")) {
+            data.buttonClasses += " btn-block";
+        }
+        if (this.getAttribute("disabled")) {
+            data.buttonClasses += " disabled";
         }
 
-        data.buttonWrapperClasses = "";
         switch (this.attributes.align) {
             case "right":
-                data.buttonWrapperClasses += "pull-right";
+                data.classes += "pull-right";
                 break;
         }
 

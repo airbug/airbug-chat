@@ -121,6 +121,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.loadingPreviousMessages                    = false;
+
+        /**
+         * @private
          * @type {Logger}
          */
         this.logger                                     = null;
@@ -156,6 +162,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {ChatWidgetView}
          */
         this.chatWidgetView                             = null;
+
+        /**
+         * @private
+         * @type {PanelView}
+         */
+        this.messagesPanelView                          = null;
 
 
         // Containers
@@ -255,6 +267,11 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         view(ChatWidgetView)
             .name("chatWidgetView")
+            .children([
+                view(PanelView)
+                    .name("messagesPanelView")
+                    .appendTo("#chat-widget-messages-{{cid}}")
+            ])
             .build(this);
 
 
@@ -270,7 +287,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.chatWidgetMessagesContainer        = new ChatWidgetMessagesContainer(this.chatMessageList);
-        this.addContainerChild(this.chatWidgetMessagesContainer, '#chat-widget-messages-{{cid}}');
+        this.addContainerChild(this.chatWidgetMessagesContainer, '#panel-body-' + this.messagesPanelView.getCid());
         this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer();
         this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input-{{cid}}");
     },
@@ -661,10 +678,51 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         });
     },
 
+    /**
+     * @protected
+     */
+    tryLoadPreviousMessages: function() {
+        var _this = this;
+        if (this.hasReachedLastMessage()) {
+            return;
+        }
+        if (!this.loadingPreviousMessages) {
+            this.loadingPreviousMessages = true;
+            var lastChatMessageModel = null;
+            if (this.chatMessageList.getCount() > 0) {
+                lastChatMessageModel     = this.chatMessageList.getAt(0);
+            }
+            this.loadPreviousChatMessageBatch(function(throwable) {
+                if (!throwable) {
+                    _this.logger.info("finished loading previous chat message batch");
+                    if (lastChatMessageModel) {
+                        _this.chatWidgetMessagesContainer.scrollToCarapaceModel(lastChatMessageModel);
+                    }
+                } else {
+                    _this.logger.error(throwable);
+                }
+                _this.loadingPreviousMessages = false;
+            });
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @return {boolean}
+     */
+    hasReachedLastMessage: function() {
+        if (this.chatMessageList.getCount() > 0) {
+            var topChatMessageModel = this.chatMessageList.getAt(0);
+            var index = topChatMessageModel.getProperty("index");
+            return (index <= 1);
+        }
+        return true;
+    },
 
     /**
      * @private
@@ -692,22 +750,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     hearScrollStateChange: function(event) {
         var _this           = this;
         if (event.getData().scrollState === ListContainer.ScrollState.TOP) {
-            this.stopScrollStateListener();
-            var lastChatMessageModel = null;
-            if (this.chatMessageList.getCount() > 0) {
-                lastChatMessageModel     = this.chatMessageList.getAt(0);
-            }
-            this.loadPreviousChatMessageBatch(function(throwable) {
-                if (!throwable) {
-                    _this.logger.info("finished loading previous chat message batch");
-                    if (lastChatMessageModel) {
-                        _this.chatWidgetMessagesContainer.scrollToCarapaceModel(lastChatMessageModel);
-                    }
-                    _this.startScrollStateListener();
-                } else {
-                    _this.logger.error(throwable);
-                }
-            });
+            this.tryLoadPreviousMessages();
         }
     },
 

@@ -35,7 +35,7 @@ var FourColumnView = Class.extend(MultiColumnView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:       '<div id={{id}} class="{{rowStyle}} column 3column-container">' +
+    template:       '<div id={{id}} class="{{rowStyle}} column 3column-container {{classes}}">' +
                         '<div class="column column1of4 leftrow {{leftColumnSpan}} {{leftHamburger}}"></div>' +
                         '<div class="column column2of4 {{centerLeftColumnSpan}}"></div>' +
                         '<div class="column column3of4 {{centerRightColumnSpan}} "></div>' +
@@ -101,7 +101,7 @@ var FourColumnView = Class.extend(MultiColumnView, {
             case FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT_AND_RIGHT:
                 data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
                 data.rightHamburger = "hamburger-panel-right hamburger-panel-hidden";
-                data.leftColumnSpan         = "span3";
+                data.leftColumnSpan         = "span2";
                 data.centerLeftColumnSpan   = "span11";
                 data.centerRightColumnSpan  = "span1";
                 data.rightColumnSpan        = "span3";
@@ -109,7 +109,7 @@ var FourColumnView = Class.extend(MultiColumnView, {
             case FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT:
                 data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
                 data.rightHamburger = "";
-                data.leftColumnSpan         = "span3";
+                data.leftColumnSpan         = "span2";
                 data.centerLeftColumnSpan   = "span11";
                 data.centerRightColumnSpan  = "span3";
                 data.rightColumnSpan        = "span1";

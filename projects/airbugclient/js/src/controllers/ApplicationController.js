@@ -38,10 +38,15 @@ var autowired           = AutowiredAnnotation.autowired;
 var controller          = ControllerAnnotation.controller;
 var property            = PropertyAnnotation.property;
 
+
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CarapaceController}
+ */
 var ApplicationController = Class.extend(CarapaceController, {
 
     //-------------------------------------------------------------------------------
@@ -73,7 +78,7 @@ var ApplicationController = Class.extend(CarapaceController, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceController Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -105,7 +110,7 @@ var ApplicationController = Class.extend(CarapaceController, {
         this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
             if (!throwable) {
                 if (currentUser.isLoggedIn()) {
-                    callback(undefined, currentUser);
+                    callback(null, currentUser);
                 } else {
                     _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
                     _this.navigationModule.navigate("login", {

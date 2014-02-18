@@ -7,9 +7,11 @@
 //@Export('ErrorNotificationOverlayContainer')
 
 //@Require('Class')
+//@Require('airbug.BoxView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.OverlayView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -21,7 +23,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,9 +31,11 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var BoxView                 = bugpack.require('airbug.BoxView');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
 var OverlayView             = bugpack.require('airbug.OverlayView');
+var TextView                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -43,11 +47,11 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired               = AutowiredAnnotation.autowired;
+var bugmeta                 = BugMeta.context();
+var CommandType             = CommandModule.CommandType;
+var property                = PropertyAnnotation.property;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -113,42 +117,35 @@ var ErrorNotificationOverlayContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.overlayView =
-            view(OverlayView)
-                .attributes({
-                    type: OverlayView.Type.APPLICATION,
-                    size: OverlayView.Size.ONE_THIRD
-                })
-                .children([
-                    view(BoxView)
-                        .appendTo('*[id|="overlay"]')
-                        .children([
-                            view(TextView)
-                                .attributes({text: "An uncaught error or timeout has occurred."}),
-                            view(TextView)
-                                .attributes({text: "airbug is sorry for the inconvenience."}),
-                            view(TextView)
-                                .attributes({text: "Please refresh your browser window."}),
-                            view(TextView)
-                                .attributes({text: "Error Details:" + this.errorObject.errorMessage}),
-                            view(TextView)
-                                .attributes({text: "Error Details:" + this.errorObject.url + "" + this.errorObject.lineNumber}),
-                        ])
-                ])
-                .build();
+        view(OverlayView)
+            .name("overlayView")
+            .attributes({
+                type: OverlayView.Type.APPLICATION,
+                size: OverlayView.Size.ONE_THIRD
+            })
+            .children([
+                view(BoxView)
+                    .appendTo("#overlay-{{cid}}")
+                    .children([
+                        view(TextView)
+                            .attributes({text: "An uncaught error or timeout has occurred."}),
+                        view(TextView)
+                            .attributes({text: "airbug is sorry for the inconvenience."}),
+                        view(TextView)
+                            .attributes({text: "Please refresh your browser window."}),
+                        view(TextView)
+                            .attributes({text: "Error Details:" + this.errorObject.errorMessage}),
+                        view(TextView)
+                            .attributes({text: "Error Details:" + this.errorObject.url + "" + this.errorObject.lineNumber}),
+                    ])
+            ])
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.overlayView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
     }
 });
 

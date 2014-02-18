@@ -103,7 +103,7 @@ var MessageContentTextView = Class.extend(MustacheView, {
                 var v = url.getUrlQuery("v");
                 return '<br/><iframe id="ytplayer" type="text/html" width="100%" height="360" style="max-width: 640px" src="https://www.youtube.com/embed/' +
                     v + '" frameborder="0" allowfullscreen></iframe><br/>';
-            } else if (url.getHost() === "gist.github.com" && !!url.getPath().match(/\/\w.*\/[0-9].*/)) {
+            } else if (url.getHost() === "gist.github.com" && !!url.getPath().match(/\/\w*\/[0-9]*/)) {
 
                 var iframeId = "gistFrame-" + IdGenerator.generateId();
 
@@ -135,6 +135,14 @@ var MessageContentTextView = Class.extend(MustacheView, {
 
                 return '<br/><iframe id="' + iframeId + '" class="gist-embed" width="100%"></iframe><br/>';
                 //return '<br/><iframe src="' + match + '.pibb?scroll=true"></iframe><br/>';
+            } else if (url.getHost() === "open.spotify.com" && !!url.getPath().match(/\/track\/\w*/)) {
+                var trackId = url.getPath().match(/\/track\/(\w*)/)[1];
+                return '<br/><iframe src="https://embed.spotify.com/?uri=spotify:track:' + trackId + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe><br/>';
+            } else if (url.getHost() === "open.spotify.com" && !!url.getPath().match(/\/user\/\w*\/playlist\/\w*/)) {
+                var matches = url.getPath().match(/\/user\/(\w*)\/playlist\/(\w*)/);
+                var userId = matches[1];
+                var playlistId = matches[2];
+                return '<br/><iframe src="https://embed.spotify.com/?uri=spotify:user:' + userId + ':playlist:' + playlistId + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe><br/>';
             }
             return '<a href="' + url.toString() + '" target="_blank">' + match + '</a>';
         });

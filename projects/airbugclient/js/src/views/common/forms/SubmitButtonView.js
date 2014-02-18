@@ -35,8 +35,9 @@ var SubmitButtonView = Class.extend(ButtonView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper"class="button-wrapper {{buttonWrapperClasses}}">' +
-        '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}">{{buttonName}}</button>' +
+    template:
+        '<div id="{{id}}-wrapper"class="button-wrapper {{classes}}">' +
+            '<button id="{{id}}" type="submit" class="btn summit-button {{buttonClasses}}">{{buttonName}}</button>' +
         '</div>',
 
     /**

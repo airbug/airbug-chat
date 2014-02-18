@@ -134,19 +134,20 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(TwoColumnView)
-                        .attributes({configuration: TwoColumnView.Configuration.DEFAULT})
-                ])
-                .build();
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(TwoColumnView)
+                    .attributes({configuration: TwoColumnView.Configuration.DEFAULT})
+                    .appendTo("#page-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
 
     },
 

@@ -40,7 +40,7 @@ var CopyToClipboardButtonView = Class.extend(ButtonView, {
     /**
      *
      */
-    template:   '<div class="button-wrapper {{buttonWrapperClasses}}">' +
+    template:   '<div class="button-wrapper {{classes}}">' +
                     '<button id="button-{{cid}}" class="copy-to-clipboard btn {{buttonClasses}}"></button>' +
                 '</div>'
 

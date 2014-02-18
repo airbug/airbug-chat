@@ -377,7 +377,7 @@ var RoomService = Class.extend(EntityService, {
      */
     retrieveRoom: function(requestContext, roomId, callback) {
         var _this           = this;
-        var call     = requestContext.get("call");
+        var call            = requestContext.get("call");
         var currentUser     = requestContext.get('currentUser');
 
         /** @type {Room} */
@@ -450,7 +450,7 @@ var RoomService = Class.extend(EntityService, {
                                         if (!mappedException) {
                                             mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                         }
-                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}));
+                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find room by the id '" + key + "'"));
                                     }
                                 });
                             }
@@ -476,7 +476,7 @@ var RoomService = Class.extend(EntityService, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users cannot access Rooms"));
         }
     },
 

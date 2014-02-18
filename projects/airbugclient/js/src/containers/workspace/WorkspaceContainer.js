@@ -7,10 +7,9 @@
 //@Export('WorkspaceContainer')
 
 //@Require('Class')
-//@Require('airbug.CodeEditorWorkspaceContainer')
-//@Require('airbug.CommandModule')
-//@Require('airbug.ImageEditorWidgetContainer')
-//@Require('airbug.PanelView')
+//@Require('Obj')
+//@Require('airbug.BoxView')
+//@Require('airbug.IWorkspace')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -30,10 +29,9 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var CodeEditorWorkspaceContainer    = bugpack.require('airbug.CodeEditorWorkspaceContainer');
-var CommandModule                   = bugpack.require('airbug.CommandModule');
-var ImageEditorWidgetContainer      = bugpack.require('airbug.ImageEditorWidgetContainer');
-var PanelView                       = bugpack.require('airbug.PanelView');
+var Obj                             = bugpack.require('Obj');
+var BoxView                         = bugpack.require('airbug.BoxView');
+var IWorkspace                      = bugpack.require('airbug.IWorkspace');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -47,7 +45,6 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 var autowired                   = AutowiredAnnotation.autowired;
 var bugmeta                     = BugMeta.context();
-var CommandType                 = CommandModule.CommandType;
 var property                    = PropertyAnnotation.property;
 var view                        = ViewBuilder.view;
 
@@ -56,6 +53,11 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CarapaceContainer}
+ * @implements {IWorkspace}
+ */
 var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
@@ -71,45 +73,73 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
         /**
-         * @type {CommandModule}
+         * @private
+         * @type {WorkspaceWidgetContainer}
          */
-        this.commandModule                  = null;
+        this.currentWidget                  = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {BoxView}
+         */
+        this.boxView                        = null;
 
         /**
          * @private
-         * @type {PanelView}
+         * @type {WorkspaceModule}
          */
-        this.panelView                      = null;
+        this.workspaceModule                = null;
+    },
 
 
-        // Containers
-        //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {CodeEditorWorkspaceContainer}
-         */
-        this.codeEditorWorkspaceContainer      = null;
+    /**
+     * @return {BoxView}
+     */
+    getBoxView: function() {
+        return this.boxView;
+    },
 
-        /**
-         * @private
-         * @type {ImageEditorWidgetContainer}
-         */
-        this.imageEditorWidgetContainer   = null;
+    /**
+     * @return {WorkspaceWidgetContainer}
+     */
+    getCurrentWidget: function() {
+        return this.currentWidget;
+    },
 
+    /**
+     * @return {WorkspaceModule}
+     */
+    getWorkspaceModule: function() {
+        return this.workspaceModule;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IWorkspace Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    hideWorkspace: function() {
+        this.boxView.hide();
+        this.currentWidget = null;
+    },
+
+    /**
+     *
+     */
+    showWorkspace: function() {
+        this.boxView.show();
     },
 
 
@@ -119,63 +149,53 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-    },
-
-    /**
-     * @protected
      */
     createContainer: function() {
         this._super();
 
 
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelView)
-                .id("workspace-container")
-                .build();
+        view(BoxView)
+            .name("boxView") //NOTE This was #image-editor-widget
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxView);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {WorkspaceWidgetContainer} widget
+     * @param {string} workspaceName
+     */
+    showWidget: function(widget, workspaceName) {
+        this.updateCurrentWidget(widget);
+        this.getWorkspaceModule().openWorkspace(workspaceName);
     },
 
     /**
      * @protected
+     * @param {WorkspaceWidgetContainer} widget
+     * @param {string} workspaceName
      */
-    createContainerChildren: function() {
-        this._super();
-        this.codeEditorWorkspaceContainer   = new CodeEditorWorkspaceContainer();
-        this.imageEditorWidgetContainer     = new ImageEditorWidgetContainer();
-        this.addContainerChild(this.codeEditorWorkspaceContainer, "#panel-body-" + this.panelView.cid);
-        this.addContainerChild(this.imageEditorWidgetContainer, "#panel-body-" + this.panelView.cid);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeCommandSubscriptions();
-    },
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeCommandSubscriptions();
+    toggleWidget: function(widget, workspaceName) {
+        if (Obj.equals(this.currentWidget, widget)) {
+            this.updateCurrentWidget(null);
+            this.getWorkspaceModule().closeWorkspace();
+        } else {
+            this.updateCurrentWidget(widget);
+            this.getWorkspaceModule().openWorkspace(workspaceName);
+        }
     },
 
 
@@ -185,50 +205,27 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
+     * @param {WorkspaceWidgetContainer} widget
      */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {PublisherMessage} message
-     */
-    handleDisplayCodeEditorCommand: function(message) {
-        this.handleDisplayCommand("#code-editor-workspace");
-    },
-
-    /**
-     * @param {PublisherMessage} message
-     */
-    handleDisplayImageEditorCommand: function(message) {
-        this.handleDisplayCommand("#image-editor-widget");
-    },
-
-    /**
-     * @param {string} widgetId //in CSS format
-     */
-    handleDisplayCommand: function(widgetId) {
-        var widget              = this.viewTop.$el.find(widgetId);
-        var workspaceWidgets    = this.viewTop.$el.find(".workspace-widget");
-
-        workspaceWidgets.not(widgetId).removeClass("workspace-widget-open").hide();
-        widget.addClass("workspace-widget-open").show();
+    updateCurrentWidget: function(widget) {
+        if (this.currentWidget !== widget) {
+            if (this.currentWidget) {
+                this.currentWidget.hideWidget();
+            }
+            this.currentWidget = widget;
+            if (this.currentWidget) {
+                this.currentWidget.showWidget();
+            }
+        }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(WorkspaceContainer, IWorkspace);
 
 
 //-------------------------------------------------------------------------------
@@ -237,7 +234,7 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(WorkspaceContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("workspaceModule").ref("workspaceModule")
     ])
 );
 

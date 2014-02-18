@@ -12,6 +12,7 @@
 //@Require('Url')
 //@Require('airbug.AirbugClientConfig')
 //@Require('airbug.DocumentUtil')
+//@Require('airbug.MemoryCache')
 //@Require('airbug.WindowUtil')
 //@Require('bugcall.Call')
 //@Require('bugflow.BugFlow')
@@ -46,6 +47,7 @@ var Obj                         = bugpack.require('Obj');
 var Url                         = bugpack.require('Url');
 var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
 var DocumentUtil                = bugpack.require('airbug.DocumentUtil');
+var MemoryCache                 = bugpack.require('airbug.MemoryCache');
 var WindowUtil                  = bugpack.require('airbug.WindowUtil');
 var Call                        = bugpack.require('bugcall.Call');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
@@ -118,11 +120,12 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {Logger} logger
      * @param {CarapaceRouter} carapaceRouter
      * @return {CarapaceApplication}
      */
-    carapaceApplication: function(carapaceRouter) {
-        return new CarapaceApplication(carapaceRouter);
+    carapaceApplication: function(logger, carapaceRouter) {
+        return new CarapaceApplication(logger, carapaceRouter);
     },
 
     /**
@@ -138,6 +141,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
      */
     controllerScan: function(carapaceApplication) {
         return new ControllerScan(carapaceApplication);
+    },
+
+    /**
+     * @return {MemoryCache}
+     */
+    dialogueMemoryCache: function() {
+        return new MemoryCache();
     },
 
     /**
@@ -213,6 +223,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             ]),
         module("carapaceApplication")
             .args([
+                arg().ref("logger"),
                 arg().ref("carapaceRouter")
             ]),
         module("carapaceRouter"),
@@ -220,6 +231,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("carapaceApplication")
             ]),
+        module("dialogueMemoryCache"),
         module("document"),
         module("documentUtil")
             .args([

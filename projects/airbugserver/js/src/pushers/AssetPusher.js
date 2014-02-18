@@ -69,6 +69,16 @@ var AssetPusher = Class.extend(EntityPusher, {
 
     /**
      * @protected
+     * @param {string} callUuid
+     * @param {Array.<Asset>} assets
+     * @param {function(Throwable=)} callback
+     */
+    meldCallWithAssets: function(callUuid, assets, callback) {
+        this.meldCallWithEntities(callUuid, assets, callback);
+    },
+
+    /**
+     * @protected
      * @param {Asset} asset
      * @param {string} callUuid
      * @param {function(Throwable=)} callback
@@ -82,6 +92,50 @@ var AssetPusher = Class.extend(EntityPusher, {
             .waitFor([callUuid])
             .setDocument(meldDocumentKey, data)
             .exec(callback);
+    },
+
+    /**
+     * @protected
+     * @param {Array.<Asset>} assets
+     * @param {string} callUuid
+     * @param {function(Throwable=)} callback
+     */
+    pushAssetsToCall: function(assets, callUuid, callback) {
+        var _this   = this;
+        var push    = this.getPushManager().push();
+        push
+            .to([callUuid])
+            .waitFor([callUuid]);
+        assets.forEach(function(asset) {
+            var meldDocumentKey     = _this.generateMeldDocumentKeyFromEntity(asset);
+            var data                = _this.filterEntity(asset);
+            push.setDocument(meldDocumentKey, data)
+        });
+        push.exec(callback);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // EntityPusher Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Entity} entity
+     * @return {Object}
+     */
+    filterEntity: function(entity) {
+        return Obj.pick(entity.toObject(), [
+            "id",
+            "midsizeMimeType",
+            "midsizeUrl",
+            "mimeType",
+            "name",
+            "thumbnailMimeType",
+            "thumbnailUrl",
+            "type",
+            "url"
+        ]);
     }
 });
 

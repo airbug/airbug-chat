@@ -109,7 +109,7 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {BoxView}
+         * @type {BoxWithHeaderView}
          */
         this.boxView                    = null;
 
@@ -143,34 +143,33 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(BoxWithHeaderView)
-                        .id("registrationBoxView")
-                        .attributes({classes: "registration-box"})
-                        .appendTo('*[id|="page"]')
-                        .children([
-                            view(PanelView)
-                                .appendTo('#box-header-{{cid}}')
-                                .children([
-                                    view(TextView)
-                                        .attributes({
-                                            text: "Join airbug",
-                                            classes: "registration-header-text"
-                                        })
-                                        .appendTo('#panel-body-{{cid}}')
-                                ])
-                        ])
-                ])
-                .build();
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(BoxWithHeaderView)
+                    .name("boxView")
+                    .attributes({classes: "registration-box"})
+                    .appendTo("#page-{{cid}}")
+                    .children([
+                        view(PanelView)
+                            .appendTo('#box-header-{{cid}}')
+                            .children([
+                                view(TextView)
+                                    .attributes({
+                                        text: "Join airbug",
+                                        classes: "registration-header-text"
+                                    })
+                                    .appendTo('#panel-body-{{cid}}')
+                            ])
+                    ])
+            ])
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.getApplicationView().addViewChild(this.pageView, "#application-" + this.getApplicationView().getCid());
-        this.boxView =  this.findViewById("registrationBoxView");
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
     },
 
     /**

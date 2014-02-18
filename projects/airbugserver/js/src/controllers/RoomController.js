@@ -60,6 +60,7 @@ var RoomController = Class.extend(EntityController, {
 
     /**
      * @constructs
+     * @param {ControllerManager} controllerManager
      * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService

@@ -109,15 +109,18 @@ var HomeButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "left"})
-                .children([
-                    view(TextView)
-                        .attributes({text: "Home"})
-                        .appendTo('button[id|="button"]')
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({
+                type: "primary",
+                align: "left"
+            })
+            .children([
+                view(TextView)
+                    .attributes({text: "Home"})
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views

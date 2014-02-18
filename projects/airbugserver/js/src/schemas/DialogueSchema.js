@@ -20,8 +20,8 @@ var mongoose            = require('mongoose');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var Schema      = mongoose.Schema;
-var ObjectId    = mongoose.Schema.Types.ObjectId;
+var Schema              = mongoose.Schema;
+var ObjectId            = mongoose.Schema.Types.ObjectId;
 
 
 //-------------------------------------------------------------------------------

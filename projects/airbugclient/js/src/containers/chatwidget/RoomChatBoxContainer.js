@@ -147,6 +147,18 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
          * @type {BoxWithHeaderView}
          */
         this.boxWithHeaderView                      = null;
+
+        /**
+         * @private
+         * @type {SubheaderView}
+         */
+        this.roomChatBoxSubheaderView               = null;
+
+        /**
+         * @private
+         * @type {TwoColumnView}
+         */
+        this.roomChatBoxTwoColumnView               = null;
     },
 
 
@@ -192,26 +204,29 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxWithHeaderView =
-            view(BoxWithHeaderView)
-                .children([
-                    view(SubheaderView)
-                    .id("room-chatbox-header")
+        view(BoxWithHeaderView)
+            .name("boxWithHeaderView")
+            .attributes({
+                classes: "room-chatbox-header"
+            })
+            .children([
+                view(SubheaderView)
+                    .name("roomChatBoxSubheaderView")
                     .appendTo(".box-header")
                     .children([
                         view(RoomNameView)
                             .model(this.roomModel)
-                            .appendTo('.subheader-center')
+                            .appendTo('#subheader-center-{{cid}}')
                     ]),
-                    view(TwoColumnView)
-                        .id("room-chatbox-row-container")
-                        .attributes({
-                            rowStyle: MultiColumnView.RowStyle.FLUID,
-                            configuration: TwoColumnView.Configuration.THICK_RIGHT
-                        })
-                        .appendTo(".box-body")
-                ])
-                .build();
+                view(TwoColumnView)
+                    .name("roomChatBoxTwoColumnView")
+                    .attributes({
+                        rowStyle: MultiColumnView.RowStyle.FLUID,
+                        configuration: TwoColumnView.Configuration.THICK_RIGHT
+                    })
+                    .appendTo(".box-body")
+            ])
+            .build(this);
 
 
         // Wire Up Views
@@ -230,10 +245,17 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.roomsHamburgerButtonContainer          = new RoomsHamburgerButtonContainer();
         this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
 
-        this.addContainerChild(this.chatWidgetContainer,            "#room-chatbox-row-container>.column2of2");
-        this.addContainerChild(this.exitRoomButtonContainer,        ".subheader-right");
-        this.addContainerChild(this.roomsHamburgerButtonContainer,  ".subheader-left");
-        this.addContainerChild(this.roomMemberListPanelContainer,   "#room-chatbox-row-container>.column1of2");
+        this.addContainerChild(this.chatWidgetContainer,            "#column2of2-" + this.roomChatBoxTwoColumnView.getCid());
+        this.addContainerChild(this.exitRoomButtonContainer,        "#subheader-right-" + this.roomChatBoxSubheaderView.getCid());
+        this.addContainerChild(this.roomsHamburgerButtonContainer,  "#subheader-left-" + this.roomChatBoxSubheaderView.getCid());
+        this.addContainerChild(this.roomMemberListPanelContainer,   "#column1of2-" + this.roomChatBoxTwoColumnView.getCid());
+    },
+
+    deinitializeContainer: function() {
+        this._super();
+        this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomModelClearChange, this);
+        this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "conversationId", this.observeConversationIdSetPropertyChange, this);
+        this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "conversationId", this.observeConversationIdRemovePropertyChange, this);
     },
 
     /**
@@ -314,8 +336,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(RoomChatBoxContainer).with(
     autowired().properties([
-        property("conversationManagerModule").ref("conversationManagerModule"),
-        property("roomManagerModule").ref("roomManagerModule")
+        property("conversationManagerModule").ref("conversationManagerModule")
     ])
 );
 

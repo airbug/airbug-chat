@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -32,17 +32,11 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 var PageView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="page">' +
-                '</div>',
-
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "page-" + this.cid;
-        return data;
-    }
+    template:   '<div id="page-{{cid}}" class="page">' +
+                '</div>'
 });
 
 

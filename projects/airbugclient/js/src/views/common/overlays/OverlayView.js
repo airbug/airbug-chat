@@ -15,15 +15,16 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class               = bugpack.require('Class');
+var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
+var MustacheView        = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
@@ -36,16 +37,37 @@ var OverlayView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="{{overlayWrapperClasses}}">' +
-            '<div class="overlay-background">' +
+    template:
+        '<div id="overlay-{{cid}}" class="{{overlayWrapperClasses}}">' +
+            '<div id="overlay-background-{{cid}}" class="overlay-background">' +
             '</div>' +
-            '<div class="{{overlayClasses}}">' +
+            '<div id="overlay-body-{{cid}}" class="{{overlayClasses}}">' +
             '</div>' +
         '</div>',
 
 
+
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {$}
+     */
+    getOverlayElement: function() {
+        return this.findElement("#overlay-{{cid}}");
+    },
+
+    /**
+     * @return {$}
+     */
+    getOverlayBackgroundElement: function() {
+        return this.findElement("#overlay-background-{{cid}}");
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -53,7 +75,7 @@ var OverlayView = Class.extend(MustacheView, {
      */
     deinitializeView: function() {
         this._super();
-        this.findElement('.overlay-background').off();
+        this.getOverlayBackgroundElement().off();
     },
 
     /**
@@ -62,13 +84,14 @@ var OverlayView = Class.extend(MustacheView, {
     initializeView: function() {
         this._super();
         var _this = this;
-        this.findElement('.overlay-background').on('click', function(event) {
+        this.getOverlayBackgroundElement().on('click', function(event) {
             _this.handleBackgroundClick(event);
         });
     },
 
+
     //-------------------------------------------------------------------------------
-    // MustacheView Extensions
+    // MustacheView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -76,9 +99,7 @@ var OverlayView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "overlay-" + this.getCid();
-
-        if(this.attributes.classes){
+        if (this.attributes.classes) {
             data.overlayWrapperClasses = this.attributes.classes + " overlay";
         } else {
             data.overlayWrapperClasses = "overlay";
@@ -109,8 +130,9 @@ var OverlayView = Class.extend(MustacheView, {
         return data;
     },
 
+
     //-------------------------------------------------------------------------------
-    // View Event Handlers
+    // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
@@ -123,12 +145,25 @@ var OverlayView = Class.extend(MustacheView, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @enum {string}
+ */
 OverlayView.Type = {
     APPLICATION: "application-overlay",
     PAGE: "page-overlay",
     PANEL: "panel-overlay"
 };
 
+/**
+ * @static
+ * @enum {string}
+ */
 OverlayView.Size = {
     ONE_QUARTER: "one-quarter-overlay",
     ONE_THIRD:   "one-third-overlay",

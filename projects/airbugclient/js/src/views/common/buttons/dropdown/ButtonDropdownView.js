@@ -35,7 +35,7 @@ var ButtonDropdownView = Class.extend(ButtonView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="button-wrapper {{buttonWrapperClasses}}">' +
+    template:   '<div id="{{id}}-wrapper" class="button-wrapper {{classes}}">' +
                     '<div class="btn-group">' +
                         '<button id="{{id}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
                         '</button>' +

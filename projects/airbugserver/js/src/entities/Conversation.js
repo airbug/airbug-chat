@@ -46,6 +46,10 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var Conversation = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
@@ -83,14 +87,28 @@ var Conversation = Class.extend(Entity, {
      * @return {string}
      */
     getOwnerId: function() {
-        return this.deltaDocument.getData().ownerId;
+        return this.getEntityData().ownerId;
     },
 
     /**
      * @param {string} ownerId
      */
     setOwnerId: function(ownerId) {
-        this.deltaDocument.getData().ownerId = ownerId;
+        this.getEntityData().ownerId = ownerId;
+    },
+
+    /**
+     * @return {string}
+     */
+    getOwnerType: function() {
+        return this.getEntityData().ownerType;
+    },
+
+    /**
+     * @param {string} ownerType
+     */
+    setOwnerType: function(ownerType) {
+        this.getEntityData().ownerType = ownerType;
     },
 
 
@@ -152,8 +170,9 @@ bugmeta.annotate(Conversation).with(
         property("ownerId")
             .type("string")
             .id(),
+        property("ownerType")
+            .type("string"),
         property("owner")
-            .type("Room")
             .populates(true)
             .stored(false),
         property("updatedAt")

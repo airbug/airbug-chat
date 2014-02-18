@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -35,15 +35,16 @@ var SubheaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="subheader-wrapper">' +
-        '<div id="{{id}}" class="subheader">' +
-        '<div class="subheader-left">' +
-        '</div>' +
-        '<div class="subheader-center">' +
-        '</div>' +
-        '<div class="subheader-right">' +
-        '</div>' +
-        '</div>' +
+    template:
+        '<div id="subheader-wrapper-{{cid}}" class="subheader-wrapper {{classes}">' +
+            '<div id="subheader-{{cid}}" class="subheader">' +
+                '<div id="subheader-left-{{cid}}" class="subheader-left">' +
+                '</div>' +
+                '<div id="subheader-center-{{cid}}" class="subheader-center">' +
+                '</div>' +
+                '<div id="subheader-right-{{cid}}" class="subheader-right">' +
+                '</div>' +
+            '</div>' +
         '</div>',
 
     /**
@@ -51,7 +52,7 @@ var SubheaderView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data    = this._super();
-        data.id     = this.getId() || "subheader-" + this.cid;
+        data.id     = this.getId() || "subheader-" + this.getCid();
         return data;
     }
 });

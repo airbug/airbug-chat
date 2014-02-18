@@ -42,7 +42,7 @@ var Set                 = bugpack.require('Set');
 var StringUtil          = bugpack.require('StringUtil');
 var TypeUtil            = bugpack.require('TypeUtil');
 var ApiRequest          = bugpack.require('airbug.ApiRequest');
-var ApiDefines       = bugpack.require('airbug.ApiDefines');
+var ApiDefines          = bugpack.require('airbug.ApiDefines');
 var RetrieveRequest     = bugpack.require('airbug.RetrieveRequest');
 
 
@@ -67,14 +67,14 @@ var ManagerModule = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {Map.<string, RetrieveRequest>}
+         * @type {Map.<ApiRequest, ApiRequest>}
          */
-        this.activeRetrieveRequestMap   = new Map();
+        this.activeApiRequestMap        = new Map();
 
         /**
          * @private
@@ -105,6 +105,20 @@ var ManagerModule = Class.extend(Obj, {
      */
     getAirbugApi: function() {
         return this.airbugApi;
+    },
+
+    /**
+     * @return {MeldBuilder}
+     */
+    getMeldBuilder: function() {
+        return this.meldBuilder;
+    },
+
+    /**
+     * @return {MeldStore}
+     */
+    getMeldStore: function() {
+        return this.meldStore;
     },
 
 
@@ -408,74 +422,16 @@ var ManagerModule = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Protected Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {RetrieveRequest} request
-     */
-    addRetrieveRequest: function(request) {
-        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityId());
-        request.addEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRetrieveRequestProcessingResponse, this);
-        this.activeRetrieveRequestMap.put(key, request);
-    },
-
-    /**
-     * @private
-     * @param {string} entityType
-     * @param {string} entityId
-     * @param {MeldBuilder} meldBuilder
-     * @param {MeldStore} meldStore
-     * @returns {RetrieveRequest}
-     */
-    factoryRetrieveRequest: function(entityType, entityId, meldBuilder, meldStore) {
-        return new RetrieveRequest(entityType, entityId, meldBuilder, meldStore);
-    },
-
-    /**
-     * @private
-     * @param {string} entityType
-     * @param {string} entityId
-     * @returns {RetrieveRequest}
-     */
-    generateRetrieveRequest: function(entityType, entityId) {
-        var key = this.generateRetrieveRequestKey(entityType, entityId);
-
-        //TEST
-        console.log("ManagerModule#generateRetrieveRequest - entityType:", entityType, " entityId:", entityId);
-
-        //TEST
-        console.log("this.activeRetrieveRequestMap.containsKey(key):", this.activeRetrieveRequestMap.containsKey(key));
-
-
-        if (this.activeRetrieveRequestMap.containsKey(key)) {
-            return this.activeRetrieveRequestMap.get(key);
-        } else {
-            var request = this.factoryRetrieveRequest(entityType, entityId, this.meldBuilder, this.meldStore);
-            this.addRetrieveRequest(request);
-            return request;
-        }
-    },
-
-    /**
-     * @private
-     * @param {string} entityType
-     * @param {string} entityId
-     * @returns {string}
-     */
-    generateRetrieveRequestKey: function(entityType, entityId) {
-        return entityType + "_" + entityId;
-    },
-
-    /**
      * @protected
-     * @param {RetrieveRequest} request
+     * @param {ApiRequest} request
      */
-    removeRetrieveRequest: function(request) {
-        var key = this.generateRetrieveRequestKey(request.getEntityType(), request.getEntityId());
-        request.removeEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRetrieveRequestProcessingResponse, this);
-        this.activeRetrieveRequestMap.remove(key);
+    addActiveApiRequest: function(request) {
+        request.addEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRequestProcessingResponse, this);
+        this.activeApiRequestMap.put(request, request);
     },
 
     /**
@@ -489,11 +445,29 @@ var ManagerModule = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {ApiRequest} apiRequest
+     * @return {ApiRequest}
+     */
+    getActiveApiRequest: function(apiRequest) {
+        return this.activeApiRequestMap.get(apiRequest);
+    },
+
+    /**
+     * @protected
      * @param {Array.<string>} meldDocumentKeys
      * @return {List.<MeldDocument>}
      */
     getEach: function(meldDocumentKeys) {
         return this.meldStore.getEachMeldDocumentByMeldDocumentKey(meldDocumentKeys);
+    },
+
+    /**
+     * @protected
+     * @param {ApiRequest} apiRequest
+     * @return {boolean}
+     */
+    hasActiveApiRequest: function(apiRequest) {
+        return this.activeApiRequestMap.containsKey(apiRequest);
     },
 
     /**
@@ -589,6 +563,48 @@ var ManagerModule = Class.extend(Obj, {
         }
     },
 
+    /**
+     * @protected
+     * @param {ApiRequest} request
+     */
+    removeActiveApiRequest: function(request) {
+        request.removeEventListener(ApiRequest.EventTypes.PROCESSING_RESPONSE, this.hearApiRequestProcessingResponse, this);
+        this.activeApiRequestMap.remove(request);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {string} entityType
+     * @param {string} entityId
+     * @param {MeldBuilder} meldBuilder
+     * @param {MeldStore} meldStore
+     * @returns {RetrieveRequest}
+     */
+    factoryRetrieveRequest: function(entityType, entityId, meldBuilder, meldStore) {
+        return new RetrieveRequest(entityType, entityId, meldBuilder, meldStore);
+    },
+
+    /**
+     * @private
+     * @param {string} entityType
+     * @param {string} entityId
+     * @returns {RetrieveRequest}
+     */
+    generateRetrieveRequest: function(entityType, entityId) {
+        var apiRequest = this.factoryRetrieveRequest(entityType, entityId, this.meldBuilder, this.meldStore);
+        if (this.hasActiveApiRequest(apiRequest)) {
+            return /** @type {RetrieveRequest} */ (this.getActiveApiRequest(apiRequest));
+        } else {
+            this.addActiveApiRequest(apiRequest);
+            return apiRequest;
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -598,9 +614,9 @@ var ManagerModule = Class.extend(Obj, {
      * @private
      * @param {Event} event
      */
-    hearApiRetrieveRequestProcessingResponse: function(event) {
+    hearApiRequestProcessingResponse: function(event) {
         var request = event.getTarget();
-        this.removeRetrieveRequest(request);
+        this.removeActiveApiRequest(request);
     }
 });
 
