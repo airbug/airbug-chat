@@ -137,7 +137,7 @@ var RoomMemberController = Class.extend(EntityController, {
             var _this = this;
             var requestContext  = request.requestContext;
             var roomId          = request.params.id;
-            roomMemberService.deleteRoomMember(requestContext, roomId, function(throwable){
+            roomMemberService.deleteRoomMember(requestContext, roomId, function(throwable, entity){
                 _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });

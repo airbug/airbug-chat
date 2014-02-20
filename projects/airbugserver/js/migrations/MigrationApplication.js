@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.AddsBetaKeysMigration')
 //@Require('airbugserver.AddsChatMessageCountersAndIndexesMigration')
 //@Require('airbugserver.AddsOwnerTypeToConversationsMigration')
 //@Require('airbugserver.AddsSentAtIndexToChatMessagesMigration')
@@ -33,6 +34,7 @@ var mongoose                                    = require('mongoose');
 
 var Class                                       = bugpack.require('Class');
 var Obj                                         = bugpack.require('Obj');
+var AddsBetaKeysMigration                       = bugpack.require('AddsBetaKeysMigration');
 var AddsChatMessageCountersAndIndexesMigration  = bugpack.require('airbugserver.AddsChatMessageCountersAndIndexesMigration');
 var AddsOwnerTypeToConversationsMigration       = bugpack.require('airbugserver.AddsOwnerTypeToConversationsMigration');
 var AddsSentAtIndexToChatMessagesMigration      = bugpack.require('airbugserver.AddsSentAtIndexToChatMessagesMigration');
@@ -118,12 +120,14 @@ var MigrationApplication = Class.extend(Obj, {
         var addsOwnerTypeToConversationsMigration       = new AddsOwnerTypeToConversationsMigration();
         var addsSentAtIndexToChatMessagesMigration      = new AddsSentAtIndexToChatMessagesMigration();
         var updatesStatusForNonAnonymousUsersMigration  = new UpdatesStatusForNonAnonymousUsersMigration();
+        var addsBetaKeysMigration                       = new AddsBetaKeysMigration();
 
         var migrations = [
             addsChatMessageCountersAndIndexesMigration,
             addsOwnerTypeToConversationsMigration,
             addsSentAtIndexToChatMessagesMigration,
-            updatesStatusForNonAnonymousUsersMigration
+            updatesStatusForNonAnonymousUsersMigration,
+            addsBetaKeysMigration
         ];
 
 

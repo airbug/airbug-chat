@@ -4,10 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounterModel')
+//@Export('BetaKeyModel')
 //@Autoload
 
-//@Require('airbugserver.BetaKeyCounterSchema')
+//@Require('airbugserver.BetaKeySchema')
 
 
 //-------------------------------------------------------------------------------
@@ -22,18 +22,18 @@ var mongoose    = require('mongoose');
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounterSchema  = bugpack.require('airbugserver.BetaKeyCounterSchema');
+var BetaKeySchema  = bugpack.require('airbugserver.BetaKeySchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounterModel = mongoose.model("BetaKeyCounter", BetaKeyCounterSchema);
+var BetaKeyModel = mongoose.model("BetaKey", BetaKeySchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounterModel', BetaKeyCounterModel);
+bugpack.export('airbugserver.BetaKeyModel', BetaKeyModel);

@@ -67,7 +67,7 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter, logger) {
+    _constructor: function(airbugApi, meldStore, meldBuilder, userManagerModule, navigationModule, bugCallRouter, logger, marshaller) {
 
         this._super(airbugApi, meldStore, meldBuilder);
 
@@ -93,6 +93,12 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
          * @type {null}
          */
         this.logger             = logger;
+
+        /**
+         * @private
+         * @type {Marshaller}
+         */
+        this.marshaller         = marshaller;
 
         /**
          * @private
@@ -164,7 +170,6 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
             //NOTE: SUNG Does this need to be done on the server side to ensure disconnect.
             // If so, how do we deal with the default reconnect behavior?
             refreshConnectionForLogout: function(request, responder, callback) {
-                console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                 console.log("CurrentUserManagerModule refreshConnectionForLogout route");
                 var response = responder.response("Success", {});
                 _this.currentUser = null;
@@ -262,16 +267,18 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     dataType: "json",
                     data: {email: email, password: password},
                     success: function(data, textStatus, req) {
-                        if (data.responseType === "Success") {
+                        var responseType = data.responseType;
+                        if(responseType === "Success") {
                             flow.complete();
-                        } else if (data.responseType === "Exception") {
-                            var exceptionData = data.exception;
-
-                            //TEST
-                            console.log("BIG TEST - exceptionData:", exceptionData);
-
+                        } else if (responseType === "Exception") {
+                            var exceptionData = _this.marshaller.unmarshalData(data.exception);
                             flow.error(new Exception(exceptionData.type, exceptionData.data, exceptionData.message));
+                        } else if (responseType === "Error") {
+                            //TODO
+                            var errorData = _this.marshaller.unmarshalData(data.error);
+                            flow.error(new Error(errorData.message));
                         } else {
+                            flow.error(new Error("Unknown response type"));
                             _this.logger.error("Unhandled response type on login");
                         }
                     },
@@ -315,8 +322,19 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     },
                     success: function(data, textStatus, req) {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                        var error = data.error;
-                        flow.complete(error);
+                        var responseType = data.responseType;
+                        if(responseType === "Success") {
+                            flow.complete();
+                        } else if (responseType === "Exception") {
+                            var exceptionData = _this.marshaller.unmarshalData(data.exception);
+                            flow.error(new Exception(exceptionData.type, exceptionData.data, exceptionData.message));
+                        } else if (responseType === "Error") {
+                            //TODO
+                            var errorData = _this.marshaller.unmarshalData(data.error);
+                            flow.error(new Error(errorData.message));
+                        } else {
+                            flow.error(new Error("Unknown response type"));
+                        }
                     },
                     error: function(req, textStatus, errorThrown) {
                         if (TypeUtil.isString(errorThrown)) {
@@ -360,9 +378,19 @@ var CurrentUserManagerModule = Class.extend(ManagerModule, {
                     data: userObject,
                     success: function(data, textStatus, req) {
                         console.log("success. data:", data, "textStatus:", textStatus, "req:", req);
-                        // var user    = data.user;
-                        var error   = data.error;
-                        flow.complete(error);
+                        var responseType = data.responseType;
+                        if(responseType === "Success") {
+                            flow.complete();
+                        } else if (responseType === "Exception") {
+                            var exceptionData = _this.marshaller.unmarshalData(data.exception);
+                            flow.error(new Exception(exceptionData.type, exceptionData.data, exceptionData.message));
+                        } else if (responseType === "Error") {
+                            //TODO
+                            var errorData = _this.marshaller.unmarshalData(data.error);
+                            flow.error(new Error(errorData.message));
+                        } else {
+                            flow.error(new Error("Unknown response type"));
+                        }
                     },
                     error: function(req, textStatus, errorThrown) {
                         if (TypeUtil.isString(errorThrown)) {
@@ -428,7 +456,8 @@ bugmeta.annotate(CurrentUserManagerModule).with(
             arg().ref("userManagerModule"),
             arg().ref("navigationModule"),
             arg().ref("bugCallRouter"),
-            arg().ref("logger")
+            arg().ref("logger"),
+            arg().ref("marshaller")
         ])
 );
 

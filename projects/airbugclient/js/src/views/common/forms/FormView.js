@@ -38,7 +38,7 @@ var FormView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:
-        '<form class="{{classes}}" id="{{id}}">' +
+        '<form id="{{id}}" class="{{classes}}">' +
         '</form>',
 
 

@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounter')
+//@Export('BetaKey')
 
 //@Require('Class')
 //@Require('Set')
@@ -46,7 +46,7 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounter = Class.extend(Entity, {
+var BetaKey = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -108,8 +108,8 @@ var BetaKeyCounter = Class.extend(Entity, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounter).with(
-    entity("BetaKeyCounter").properties([
+bugmeta.annotate(BetaKey).with(
+    entity("BetaKey").properties([
         property("createdAt")
             .type("date"),
         property("id")
@@ -131,4 +131,4 @@ bugmeta.annotate(BetaKeyCounter).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounter', BetaKeyCounter);
+bugpack.export('airbugserver.BetaKey', BetaKey);

@@ -4,10 +4,10 @@
 
 //@Package('airbugserver')
 
-//@Export('BaseBetaKeyModel')
+//@Export('SignupModel')
 //@Autoload
 
-//@Require('airbugserver.BaseBetaKeySchema')
+//@Require('airbugserver.SignupSchema')
 
 
 //-------------------------------------------------------------------------------
@@ -22,18 +22,18 @@ var mongoose    = require('mongoose');
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var BaseBetaKeySchema  = bugpack.require('airbugserver.BaseBetaKeySchema');
+var SignupSchema  = bugpack.require('airbugserver.SignupSchema');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BaseBetaKeyModel = mongoose.model("BaseBetaKey", BaseBetaKeySchema);
+var SignupModel = mongoose.model("Signup", SignupSchema);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BaseBetaKeyModel', BaseBetaKeyModel);
+bugpack.export('airbugserver.SignupModel', SignupModel);

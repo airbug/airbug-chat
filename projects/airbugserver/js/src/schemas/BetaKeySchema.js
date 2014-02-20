@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('BaseBetaKeySchema')
+//@Export('BetaKeySchema')
 //@Autoload
 
 
@@ -27,16 +27,21 @@ var Schema      = mongoose.Schema;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BaseBetaKeySchema = new Schema({
-    betaKey:                {type: String, required: true, index: true},
-    cap:                    {type: Number, required: false},
-    createdAt:              {type: Date,   required: true, default: Date.now},
-    updatedAt:              {type: Date,   required: true, default: Date.now}
+var BetaKeySchema = new Schema({
+    baseKey:                {type: String,      required: true,                     index: true},
+    betaKey:                {type: String,      required: true,                     index: true, unique: true},
+    cap:                    {type: Number,      required: false},
+    createdAt:              {type: Date,        required: true, default: Date.now},
+    count:                  {type: Number,      required: true, default: 0},
+    hasCap:                 {type: Boolean,     required: true, default: false},
+    isBaseKey:              {type: Boolean,     required: true, default: false,     index: true},
+    secondaryKeys:          {type: [String],    required: false},
+    updatedAt:              {type: Date,        required: true, default: Date.now},
+    version:                {type: String,      required: true, default: "0.0.1"}
 });
-
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BaseBetaKeySchema', BaseBetaKeySchema);
+bugpack.export('airbugserver.BetaKeySchema', BetaKeySchema);

@@ -22,6 +22,8 @@
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmarsh.Marshaller')
+//@Require('bugmarsh.MarshRegistry')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute:bugcall.BugCallRouter')
 //@Require('configbug.Configbug')
@@ -70,6 +72,8 @@ var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnot
 var IConfiguration                  = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var Marshaller                      = bugpack.require('bugmarsh.Marshaller');
+var MarshRegistry                   = bugpack.require('bugmarsh.MarshRegistry');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter                   = bugpack.require('bugroute:bugcall.BugCallRouter');
 var Configbug                       = bugpack.require('configbug.Configbug');
@@ -206,6 +210,21 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param marshRegistry
+     * @returns {Marshaller}
+     */
+    marshaller: function(marshRegistry) {
+        return new Marshaller(marshRegistry);
+    },
+
+    /**
+     * @returns {MarshRegistry}
+     */
+    marshRegistry: function() {
+        return new MarshRegistry();
+    },
+
+    /**
      * @return {Mongoose}
      */
     mongoose: function() {
@@ -311,6 +330,16 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
         module('awsUploader'),
 
+
+        //-------------------------------------------------------------------------------
+        // BugJs
+        //-------------------------------------------------------------------------------
+
+        module('marshaller')
+            .args([
+                arg().ref("marshRegistry")
+            ]),
+        module('marshRegistry'),
 
 
         //-------------------------------------------------------------------------------

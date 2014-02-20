@@ -59,9 +59,9 @@ var UserController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, userService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, userService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ var UserController = Class.extend(EntityController, {
             var data                = request.body;
             userService.loginUserWithEmailAndPassword(requestContext, data.email, data.password, function(throwable) {
                 if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
+                    _this.processAjaxThrowable(response, throwable);
                 } else {
                     _this.sendAjaxSuccessResponse(response);
                 }
@@ -120,7 +120,7 @@ var UserController = Class.extend(EntityController, {
             var requestContext  = request.requestContext;
             userService.logoutUser(requestContext, function(throwable) {
                 if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
+                    _this.processAjaxThrowable(response, throwable);
                 } else {
                     _this.sendAjaxSuccessResponse(response);
                 }
@@ -128,11 +128,18 @@ var UserController = Class.extend(EntityController, {
         });
 
         expressApp.post('/api/register', function(request, response) {
+            console.log("user controller register");
             var requestContext  = request.requestContext;
             var userObject      = request.body;
+
+            requestContext.set("ipAddress", request.ip);
+            requestContext.set("acceptedLanguages", request.acceptedLanguages);
+            requestContext.set("userAgent", request.get("user-agent"));
+
             userService.registerUser(requestContext, userObject, function(throwable) {
+                console.log("throwable:", throwable);
                 if (throwable) {
-                    _this.processAjaxThrowable(throwable, response);
+                    _this.processAjaxThrowable(response, throwable);
                 } else {
                     _this.sendAjaxSuccessResponse(response);
                 }
@@ -273,7 +280,8 @@ bugmeta.annotate(UserController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("userService")
+            arg().ref("userService"),
+            arg().ref("marshaller")
         ])
 );
 

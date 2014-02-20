@@ -94,6 +94,20 @@ var User = Class.extend(Entity, {
     },
 
     /**
+     * @return {string}
+     */
+    getBetaKey: function() {
+        return this.getDeltaDocument().getData().betaKey;
+    },
+
+    /**
+     * @return {Date}
+     */
+    getCreatedAt: function() {
+        return this.getDeltaDocument().getData().createdAt;
+    },
+
+    /**
      * @return {*}
      */
     getEmail: function() {
@@ -287,6 +301,8 @@ bugmeta.annotate(User).with(
             .type("date"),
         property("anonymous")
             .type("boolean"),
+        property("betaKey")
+            .type("string"),
         property("createdAt")
             .type("date"),
         property("email")

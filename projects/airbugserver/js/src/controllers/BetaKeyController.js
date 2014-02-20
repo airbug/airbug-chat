@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounterController')
+//@Export('BetaKeyController')
 //@Autoload
 
 //@Require('Class')
@@ -51,7 +51,7 @@ var module              = ModuleAnnotation.module;
  * @constructor
  * @extends {EntityController}
  */
-var BetaKeyCounterController = Class.extend(EntityController, {
+var BetaKeyController = Class.extend(EntityController, {
 
 
     //-------------------------------------------------------------------------------
@@ -62,9 +62,9 @@ var BetaKeyCounterController = Class.extend(EntityController, {
      * @constructs
      * @param {ExpressApp} expressApp
      * @param {BugCallRouter} bugCallRouter
-     * @param {BetaKeyCounterService} betaKeyCounterService
+     * @param {BetaKeyService} betaKeyService
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, betaKeyCounterService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, betaKeyService) {
 
         this._super(controllerManager, expressApp, bugCallRouter);
 
@@ -75,9 +75,9 @@ var BetaKeyCounterController = Class.extend(EntityController, {
 
         /**
          * @private
-         * @type {BetaKeyCounterService}
+         * @type {BetaKeyService}
          */
-        this.betaKeyCounterService      = betaKeyCounterService;
+        this.betaKeyService      = betaKeyService;
     },
 
 
@@ -86,10 +86,10 @@ var BetaKeyCounterController = Class.extend(EntityController, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {BetaKeyCounterService}
+     * @return {BetaKeyService}
      */
-    getBetaKeyCounterService: function() {
-        return this.betaKeyCounterService;
+    getBetaKeyService: function() {
+        return this.betaKeyService;
     },
 
 
@@ -103,18 +103,7 @@ var BetaKeyCounterController = Class.extend(EntityController, {
     configureController: function(callback) {
         var _this                   = this;
         var expressApp              = this.getExpressApp();
-        var betaKeyCounterService   = this.getBetaKeyCounterService();
-
-        // REST API
-        //-------------------------------------------------------------------------------
-
-        expressApp.get('/api/v1/betakeycounter/:id', function(request, response){
-            var requestContext      = request.requestContext;
-            var betaKey             = request.params.betaKey;
-            betaKeyCounterService.retrieveBetaKeyCounter(requestContext, betaKey, function(throwable, entity){
-                _this.processAjaxRetrieveResponse(response, throwable, entity);
-            });
-        });
+        var betaKeyService          = this.getBetaKeyService();
 
         this.bugCallRouter.addAll({
 
@@ -123,18 +112,18 @@ var BetaKeyCounterController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              * @param {function(Throwable=)} callback
              */
-            retrieveBetaKeyCounter:   function(request, responder, callback) {
+            retrieveBetaKey:   function(request, responder, callback) {
                 var data                = request.getData();
                 var betaKey             = data.betaKey;
                 var requestContext      = request.requestContext;
 
                 if(betaKey === "ALL_THE_BUGS_SPECIAL_COMBO") {
-                    betaKeyCounterService.retrieveAllBetaKeyCounters(requestContext, function(throwable, betaKeyCounterList) {
-                        _this.processRetrieveListResponse(responder, throwable, betaKeyCounterList, callback);
+                    betaKeyService.retrieveAllBetaKeys(requestContext, function(throwable, betaKeyList) {
+                        _this.processRetrieveListResponse(responder, throwable, betaKeyList, callback);
                     });
                 } else {
-                    betaKeyCounterService.retrieveBetaKeyCounterByBetaKey(requestContext, betaKey, function(throwable, betaKeyCounter) {
-                        _this.processRetrieveResponse(responder, throwable, betaKeyCounter, callback);
+                    betaKeyService.retrieveBetaKeyByBetaKey(requestContext, betaKey, function(throwable, betaKey) {
+                        _this.processRetrieveResponse(responder, throwable, betaKey, callback);
                     });
                 }
             }
@@ -148,13 +137,13 @@ var BetaKeyCounterController = Class.extend(EntityController, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounterController).with(
-    module("betaKeyCounterController")
+bugmeta.annotate(BetaKeyController).with(
+    module("betaKeyController")
         .args([
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("betaKeyCounterService")
+            arg().ref("betaKeyService")
         ])
 );
 
@@ -163,4 +152,4 @@ bugmeta.annotate(BetaKeyCounterController).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounterController', BetaKeyCounterController);
+bugpack.export('airbugserver.BetaKeyController', BetaKeyController);

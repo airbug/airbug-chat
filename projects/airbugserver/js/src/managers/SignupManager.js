@@ -4,13 +4,13 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounterManager')
+//@Export('SignupManager')
 //@Autoload
 
 //@Require('Class')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('airbugserver.BetaKeyCounter')
+//@Require('airbugserver.Signup')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
@@ -29,9 +29,9 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var List                        = bugpack.require('List');
+var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
-var BetaKeyCounter              = bugpack.require('airbugserver.BetaKeyCounter');
+var Signup                      = bugpack.require('airbugserver.Signup');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
@@ -51,81 +51,46 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-/**
- *
- * @extends {EntityManager}
- */
-var BetaKeyCounterManager = Class.extend(EntityManager, {
+var SignupManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {BetaKeyCounter} betaKeyCounter
-     * @param {(Array.<string> | function(Throwable, BetaKeyCounter))} dependencies
-     * @param {function(Throwable, BetaKeyCounter)=} callback
+     * @param {Signup} signup
+     * @param {(Array.<string> | function(Throwable, Signup))} dependencies
+     * @param {function(Throwable, Signup)=} callback
      */
-    createBetaKeyCounter: function(betaKeyCounter, dependencies, callback) {
+    createSignup: function(signup, dependencies, callback) {
         if(TypeUtil.isFunction(dependencies)){
             callback        = dependencies;
             dependencies    = [];
         };
         var options         = {};
-        this.create(betaKeyCounter, options, dependencies, callback);
+        this.create(signup, options, dependencies, callback);
+    },
+
+    /**
+     * @param {Signup} signup
+     * @param {function(Throwable)} callback
+     */
+    deleteSignup: function(signup, callback) {
+        this.delete(signup, callback);
     },
 
     /**
      * @param {{
      *      createdAt: Date,
-     *      betaKey: string,
-     *      isBaseKey: boolean,
-     *      count: number,
+     *      id: string,
      *      updatedAt: Date
      * }} data
-     * @return {BetaKeyCounter}
+     * @return {Signup}
      */
-    generateBetaKeyCounter: function(data) {
-        var betaKeyCounter = new BetaKeyCounter(data);
-        this.generate(betaKeyCounter);
-        return betaKeyCounter;
-    },
-
-    /**
-     * @param {string} betaKey
-     * @param {function(Throwable, BetaKeyCounter)} callback
-     */
-    retrieveBetaKeyCounterByBetaKey: function(betaKey, callback) {
-        var _this = this;
-        this.dataStore.findOne({betaKey: betaKey}).lean(true).exec(function(throwable, dbObject){
-            if (!throwable) {
-                var betaKeyCounter = _this.convertDbObjectToEntity(dbObject);
-                betaKeyCounter.commitDelta();
-                callback(undefined, betaKeyCounter);
-            } else {
-                callback(throwable, undefined);
-            }
-        });
-    },
-
-    /**
-     * @param {function(Throwable, Map.<string, BetaKeyCounter>=)} callback
-     */
-    retrieveAllBetaKeyCounters: function(callback) {
-        var _this = this;
-        this.dataStore.find({}).lean(true).exec(function(throwable, dbObjects) {
-            if (!throwable) {
-                var newList = new List();
-                dbObjects.forEach(function(dbObject) {
-                    var betaKeyCounter = _this.convertDbObjectToEntity(dbObject);
-                    betaKeyCounter.commitDelta();
-                    newList.add(betaKeyCounter);
-                });
-                callback(undefined, newList);
-            } else {
-                callback(throwable, undefined);
-            }
-        });
+    generateSignup: function(data) {
+        var signup = new Signup(data);
+        this.generate(signup);
+        return signup;
     }
 });
 
@@ -134,9 +99,9 @@ var BetaKeyCounterManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounterManager).with(
-    entityManager("betaKeyCounterManager")
-        .ofType("BetaKeyCounter")
+bugmeta.annotate(SignupManager).with(
+    entityManager("signupManager")
+        .ofType("Signup")
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
@@ -149,4 +114,4 @@ bugmeta.annotate(BetaKeyCounterManager).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounterManager', BetaKeyCounterManager);
+bugpack.export('airbugserver.SignupManager', SignupManager);

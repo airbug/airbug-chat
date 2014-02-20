@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounterPusher')
+//@Export('BetaKeyPusher')
 //@Autoload
 
 //@Require('Class')
@@ -49,7 +49,7 @@ var module              = ModuleAnnotation.module;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounterPusher = Class.extend(EntityPusher, {
+var BetaKeyPusher = Class.extend(EntityPusher, {
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -58,42 +58,42 @@ var BetaKeyCounterPusher = Class.extend(EntityPusher, {
     /**
      * @protected
      * @param {string} callUuid
-     * @param {BetaKeyCounter} betaKeyCounter
+     * @param {BetaKey} betaKey
      * @param {function(Throwable=)} callback
      */
-    meldCallWithBetaKeyCounter: function(callUuid, betaKeyCounter, callback) {
-        this.meldCallWithEntity(callUuid, betaKeyCounter, callback);
+    meldCallWithBetaKey: function(callUuid, betaKey, callback) {
+        this.meldCallWithEntity(callUuid, betaKey, callback);
     },
 
     /**
      * @protected
      * @param {string} callUuid
-     * @param {Array.<BetaKeyCounter>} betaKeyCounters
+     * @param {Array.<BetaKey>} betaKeys
      * @param {function(Throwable=)} callback
      */
-    meldCallWithBetaKeyCounters: function(callUuid, betaKeyCounters, callback) {
-        this.meldCallWithEntities(callUuid, betaKeyCounters, callback);
+    meldCallWithBetaKeys: function(callUuid, betaKeys, callback) {
+        this.meldCallWithEntities(callUuid, betaKeys, callback);
     },
 
     /**
      * @protected
-     * @param {BetaKeyCounter} betaKeyCounter
+     * @param {BetaKey} betaKey
      * @param {(Array.<string> | function(Throwable=))} waitForCallUuids
      * @param {function(Throwable=)=} callback
      */
-    pushBetaKeyCounter: function(betaKeyCounter, waitForCallUuids, callback) {
-        this.pushEntity(betaKeyCounter, waitForCallUuids, callback);
+    pushBetaKey: function(betaKey, waitForCallUuids, callback) {
+        this.pushEntity(betaKey, waitForCallUuids, callback);
     },
 
     /**
      * @protected
-     * @param {BetaKeyCounter} betaKeyCounter
+     * @param {BetaKey} betaKey
      * @param {string} callUuid
      * @param {function(Throwable=)} callback
      */
-    pushBetaKeyCounterToCall: function(betaKeyCounter, callUuid, callback) {
-        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(betaKeyCounter);
-        var data                = this.filterEntity(betaKeyCounter);
+    pushBetaKeyToCall: function(betaKey, callUuid, callback) {
+        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(betaKey);
+        var data                = this.filterEntity(betaKey);
         var push                = this.getPushManager().push();
         push
             .to([callUuid])
@@ -104,19 +104,19 @@ var BetaKeyCounterPusher = Class.extend(EntityPusher, {
 
     /**
      * @protected
-     * @param {Array.<BetaKeyCounter>} betaKeyCounters
+     * @param {Array.<BetaKey>} betaKeys
      * @param {string} callUuid
      * @param {function(Throwable=)} callback
      */
-    pushBetaKeyCountersToCall: function(betaKeyCounters, callUuid, callback) {
+    pushBetaKeysToCall: function(betaKeys, callUuid, callback) {
         var _this   = this;
         var push    = this.getPushManager().push();
         push
             .to([callUuid])
             .waitFor([callUuid]);
-        betaKeyCounters.forEach(function(betaKeyCounter) {
-            var meldDocumentKey     = _this.generateMeldDocumentKeyFromEntity(betaKeyCounter);
-            var data                = _this.filterEntity(betaKeyCounter);
+        betaKeys.forEach(function(betaKey) {
+            var meldDocumentKey     = _this.generateMeldDocumentKeyFromEntity(betaKey);
+            var data                = _this.filterEntity(betaKey);
             push.setDocument(meldDocumentKey, data)
         });
         push.exec(callback);
@@ -147,13 +147,13 @@ var BetaKeyCounterPusher = Class.extend(EntityPusher, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounterPusher).with(
-    module("betaKeyCounterPusher")
+bugmeta.annotate(BetaKeyPusher).with(
+    module("betaKeyPusher")
         .args([
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),
-            arg().ref("betaKeyCounterManager"),
+            arg().ref("betaKeyManager"),
             arg().ref("meldSessionManager")
         ])
 );
@@ -163,4 +163,4 @@ bugmeta.annotate(BetaKeyCounterPusher).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounterPusher', BetaKeyCounterPusher);
+bugpack.export('airbugserver.BetaKeyPusher', BetaKeyPusher);

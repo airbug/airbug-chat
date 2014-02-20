@@ -4,11 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('BetaKeyCounterManagerModule')
+//@Export('BetaKeyManagerModule')
 //@Autoload
 
 //@Require('Class')
-//@Require('airbug.BetaKeyCounterModel')
+//@Require('airbug.BetaKeyModel')
 //@Require('airbug.ManagerModule')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -27,7 +27,7 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var BetaKeyCounterModel             = bugpack.require('airbug.BetaKeyCounterModel');
+var BetaKeyModel                    = bugpack.require('airbug.BetaKeyModel');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
@@ -47,7 +47,7 @@ var module                          = ModuleAnnotation.module;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounterManagerModule = Class.extend(ManagerModule, {
+var BetaKeyManagerModule = Class.extend(ManagerModule, {
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -58,7 +58,7 @@ var BetaKeyCounterManagerModule = Class.extend(ManagerModule, {
      * @param {MeldDocument=} conversationMeldDocument
      * @returns {ConversationModel}
      */
-    generateBetaKeyCounterModel: function(dataObject, conversationMeldDocument) {
+    generateBetaKeyModel: function(dataObject, conversationMeldDocument) {
         return new ConversationModel(dataObject, conversationMeldDocument);
     },
 
@@ -66,15 +66,15 @@ var BetaKeyCounterManagerModule = Class.extend(ManagerModule, {
      * @param {string} betaKey
      * @param {function(Throwable, MeldDocument=)} callback
      */
-    retrieveBetaKeyCounterByBetaKey: function(betaKey, callback) {
+    retrieveBetaKeyByBetaKey: function(betaKey, callback) {
         var _this = this;
-        this.request("retrieveBetaKeyCounter", {betaKey: betaKey}, function(throwable, callResponse) {
+        this.request("retrieveBetaKey", {betaKey: betaKey}, function(throwable, callResponse) {
             if(!throwable) {
                 var data = callResponse.getData();
                 if(data.list){
-                    _this.processListRetrieveResponse(throwable, callResponse, "BetaKeyCounter", callback);
+                    _this.processListRetrieveResponse(throwable, callResponse, "BetaKey", callback);
                 } else if(data.objectId) {
-                    _this.retrieve("BetaKeyCounter", data.objectId, callback);
+                    _this.retrieve("BetaKey", data.objectId, callback);
                 }
             } else {
                 callback(throwable, undefined);
@@ -89,8 +89,8 @@ var BetaKeyCounterManagerModule = Class.extend(ManagerModule, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounterManagerModule).with(
-    module("betaKeyCounterManagerModule")
+bugmeta.annotate(BetaKeyManagerModule).with(
+    module("betaKeyManagerModule")
         .args([
             arg().ref("airbugApi"),
             arg().ref("meldStore"),
@@ -103,4 +103,4 @@ bugmeta.annotate(BetaKeyCounterManagerModule).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BetaKeyCounterManagerModule", BetaKeyCounterManagerModule);
+bugpack.export("airbug.BetaKeyManagerModule", BetaKeyManagerModule);

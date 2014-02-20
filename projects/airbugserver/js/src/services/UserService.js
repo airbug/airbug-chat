@@ -17,6 +17,7 @@
 //@Require('airbugserver.Github')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
+//@Require('airbugserver.SignupManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -45,6 +46,7 @@ var UserDefines             = bugpack.require('airbug.UserDefines');
 var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
+var SignupManager           = bugpack.require('airbugserver.SignupManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
@@ -74,7 +76,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher) {
+    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher, betaKeyService, signupManager) {
 
         this._super();
 
@@ -88,6 +90,12 @@ var UserService = Class.extend(Obj, {
          * @type {AirbugClientRequestPublisher}
          */
         this.airbugClientRequestPublisher       = airbugClientRequestPublisher;
+
+        /**
+         * @private
+         * @type {BetaKeyService}
+         */
+        this.betaKeyService                     = betaKeyService;
 
         /**
          * @private
@@ -113,6 +121,11 @@ var UserService = Class.extend(Obj, {
          */
         this.sessionService                     = sessionService;
 
+        /**
+         *
+         * @type {*}
+         */
+        this.signupManager                      = signupManager;
         /**
          * @private
          * @type {UserManager}
@@ -389,6 +402,7 @@ var UserService = Class.extend(Obj, {
      * @param {function(Throwable, User=)} callback
      */
     registerUser: function(requestContext, formData, callback) {
+        console.log("requestContext:", requestContext);
         var _this       = this;
         var currentUser = requestContext.get("currentUser");
         var github      = null;
@@ -396,6 +410,7 @@ var UserService = Class.extend(Obj, {
         var user        = null;
         var userEmail   = formData.email;
         var userObject  = formData;
+        var betaKey     = userObject.betaKey;
 
         $series([
             $task(function(flow) {
@@ -417,20 +432,33 @@ var UserService = Class.extend(Obj, {
                 } else if (!PasswordUtil.isValid(userObject.password)) {
                     flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
-                    userObject.status               = currentUser.getStatus();
-                    userObject.agreedToTermsDate    = UserDefines.TOS_Date;
-                    user = _this.userManager.generateUser(userObject);
-                    bcrypt.genSalt(10, function(err, salt) {
-                        if (err) {
-                            flow.complete(err);
+                    _this.betaKeyService.validateAndIncrementBaseBetaKey(betaKey, function(throwable, valid){
+                        if(throwable) {
+                            flow.error(throwable);
                         } else {
-                            bcrypt.hash(userObject.password, salt, function(err, crypted) {
-                                user.setPasswordHash(crypted);
-                                flow.complete(err);
-                            });
+                            if(valid) {
+                                flow.complete();
+                            } else {
+                                flow.complete(new Exception("InvalidBetaKey", {}, "Invalid beta key"));
+                            }
                         }
                     });
                 }
+            }),
+            $task(function(flow) {
+                userObject.status               = currentUser.getStatus();
+                userObject.agreedToTermsDate    = UserDefines.TOS_Date;
+                user = _this.userManager.generateUser(userObject);
+                bcrypt.genSalt(10, function(err, salt) {
+                    if (err) {
+                        flow.complete(err);
+                    } else {
+                        bcrypt.hash(userObject.password, salt, function(err, crypted) {
+                            user.setPasswordHash(crypted);
+                            flow.complete(err);
+                        });
+                    }
+                });
             }),
             $task(function(flow) {
                 _this.userManager.createUser(user, function(throwable) {
@@ -489,9 +517,23 @@ var UserService = Class.extend(Obj, {
                     flow.complete();
                 }
 
+            }),
+            $task(function(flow){
+                var signup = _this.signupManager.generateSignup({
+                    airbugVersion: "unknown", //TODO
+                    betaKey: betaKey,
+                    createdAt: user.getCreatedAt(),
+                    ipAddress: requestContext.get("ipAddress"),
+                    acceptedLanguages: requestContext.get("acceptedLanguages"),
+                    userAgent: requestContext.get("userAgent"),
+                    userId: user.getId()
+                });
+                _this.signupManager.createSignup(signup, function(throwable, returnedSignup){
+                    flow.complete(throwable);
+                });
             })
         ]).execute(function(throwable) {
-            if (!throwable) {
+                if (!throwable) {
                 callback(null, user);
             } else {
                 callback(throwable);
@@ -884,7 +926,9 @@ bugmeta.annotate(UserService).with(
             arg().ref("sessionService"),
             arg().ref("airbugClientRequestPublisher"),
             arg().ref("githubManager"),
-            arg().ref("userPusher")
+            arg().ref("userPusher"),
+            arg().ref("betaKeyService"),
+            arg().ref("signupManager")
         ])
 );
 

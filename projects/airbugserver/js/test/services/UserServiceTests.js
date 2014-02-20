@@ -123,9 +123,38 @@ var setupUserService = function(setupObject, userManager) {
     setupObject.dummyAirbugClientRequestPublisher = {
 
     };
+    setupObject.dummyBetaKeyService = {
+        validateBetaKey: function(betaKey, callback) {
+            if(betaKey === "GO_AIRBUG!") {
+                callback(undefined, true);
+            } else {
+                callback(undefined, false);
+            }
+        },
+        validateAndIncrementBaseBetaKey: function(betaKey, callback) {
+            if(betaKey === "GO_AIRBUG!") {
+                callback(undefined, true);
+            } else {
+                callback(undefined, false);
+            }
+        }
+    };
+    setupObject.dummySignupManager = {
+        generateSignup: function(data) {
+            return data;
+        },
+
+        createSignup: function(signup, dependencies, callback) {
+            if(typeof dependencies === "function") {
+                dependencies(undefined);
+            } else {
+                callback(undefined);
+            }
+        }
+    };
     //logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher
     setupObject.testUserService     = new UserService(setupObject.logger, setupObject.dummySessionManager, setupObject.dummyUserManager,
-        setupObject.sessionService, setupObject.dummyAirbugClientRequestPublisher, setupObject.dummyGithubManager, setupObject.dummyUserPusher);
+        setupObject.sessionService, setupObject.dummyAirbugClientRequestPublisher, setupObject.dummyGithubManager, setupObject.dummyUserPusher, setupObject.dummyBetaKeyService, setupObject.dummySignupManager);
 };
 
 
@@ -159,11 +188,12 @@ var userServiceRegisterUserWitNonExistingEmailTest = {
                     firstName: "",
                     lastName: "",
                     password: "testPassword",
-                    confirmPassword: "testPassword"
+                    confirmPassword: "testPassword",
+                    betaKey: "GO_AIRBUG!"
                 };
                 _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     console.log("this.testUserServiceNoUsers.registerUser throwable", throwable);
-                    test.assertTrue(throwable === null,
+                    test.assertTrue((throwable === undefined || throwable === null),
                         "Make sure that throwable was not defined");
                     test.assertTrue(!!user,
                         "Assert user was generated");
@@ -212,7 +242,8 @@ var userServiceRegisterUserWithEmptyPasswordTest = {
                     firstName: "",
                     lastName: "",
                     password: "",
-                    confirmPassword: ""
+                    confirmPassword: "",
+                    betaKey: "GO_AIRBUG!"
                 };
                 _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
@@ -262,7 +293,8 @@ var userServiceRegisterUserWithMismatchingPasswordsTest = {
                     firstName: "",
                     lastName: "",
                     password: "password1",
-                    confirmPassword: "password2"
+                    confirmPassword: "password2",
+                    betaKey: "GO_AIRBUG!"
                 };
                 _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
@@ -312,7 +344,8 @@ var userServiceRegisterUserWithExistingEmailTest = {
                     firstName: "",
                     lastName: "",
                     password: "testPassword",
-                    confirmPassword: "testPassword"
+                    confirmPassword: "testPassword",
+                    betaKey: "GO_AIRBUG!"
                 };
                 _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
@@ -515,6 +548,101 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
     }
 };
 
+var userServiceRegisterUserWithValidBetaKeyTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserServiceWitNoUsers(this);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                var formData = {
+                    email: "newUserOne@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "testPassword",
+                    confirmPassword: "testPassword",
+                    betaKey: "GO_AIRBUG!"
+                };
+                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    test.assertTrue(throwable === null,
+                        "Make sure that throwable was not defined");
+                    test.assertTrue(!!user,
+                        "Assert user was generated");
+                    test.assertEqual(user.getBetaKey(), "GO_AIRBUG!",
+                        "Assert that betaKey was set properly");
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+                if (!throwable) {
+                    test.complete();
+                } else {
+                    test.error(throwable);
+                }
+            });
+    }
+};
+
+var userServiceRegisterUserWithInvalidBetaKeyTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        setupUserServiceWitNoUsers(this);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                var formData = {
+                    email: "newUserTwo@example.com",
+                    firstName: "",
+                    lastName: "",
+                    password: "testPassword",
+                    confirmPassword: "testPassword",
+                    betaKey: "GO_GO_GO!"
+                };
+                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    test.assertTrue(user === undefined,
+                        "Assert user was not generated because the beta key is invalid");
+                    test.assertTrue(!!throwable,
+                        "Make sure that throwable was defined");
+                    test.assertEqual(throwable.getType(), "InvalidBetaKey",
+                        "Assert that the user was not created because it the beta key was invalid");
+                    flow.complete();
+                });
+            })
+        ]).execute(function(throwable) {
+                if (!throwable) {
+                    test.complete();
+                } else {
+                    test.error(throwable);
+                }
+            });
+    }
+};
 
 bugmeta.annotate(userServiceRegisterUserWitNonExistingEmailTest).with(
     test().name("UserService - register user with non-existing email test")
@@ -546,4 +674,12 @@ bugmeta.annotate(userServiceLoginWithEmailThatDoesNotExistTest).with(
 
 bugmeta.annotate(userServiceLoginWithValidEmailButWrongPasswordTest).with(
     test().name("UserService - login with valid email but wrong password test")
+);
+
+bugmeta.annotate(userServiceRegisterUserWithValidBetaKeyTest).with(
+    test().name("UserService - login with a valid beta key test")
+);
+
+bugmeta.annotate(userServiceRegisterUserWithInvalidBetaKeyTest).with(
+    test().name("UserService - login with an invalid beta key test")
 );

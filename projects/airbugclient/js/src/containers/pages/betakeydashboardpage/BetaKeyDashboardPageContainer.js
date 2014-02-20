@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.BetaKeyCounterModel')
+//@Require('airbug.BetaKeyModel')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.ButtonView')
 //@Require('airbug.FormControlGroupView')
@@ -43,7 +43,7 @@ var bugpack = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
-var BetaKeyCounterModel         = bugpack.require('airbug.BetaKeyCounterModel');
+var BetaKeyModel                = bugpack.require('airbug.BetaKeyModel');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var FormView                    = bugpack.require('airbug.FormView');
@@ -144,9 +144,9 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {BetaKeyCounterManagerModule}
+         * @type {BetaKeyManagerModule}
          */
-        this.betaKeyCounterManagerModule    = null;
+        this.betaKeyManagerModule            = null;
 
         /**
          * @private
@@ -261,7 +261,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         var betaKey = formData.betaKey;
         console.log("formData:", formData);
         console.log("betaKey:", betaKey);
-        this.loadBetaKeyCountersByBetaKey(betaKey);
+        this.loadBetaKeysByBetaKey(betaKey);
     },
 
     handleFormSubmitEvent: function(event) {
@@ -269,21 +269,21 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         var betaKey = formData.betaKey;
         console.log("formData:", formData);
         console.log("betaKey:", betaKey);
-        this.loadBetaKeyCountersByBetaKey(betaKey);
+        this.loadBetaKeysByBetaKey(betaKey);
     },
 
-    loadBetaKeyCountersByBetaKey: function(betaKey) {
+    loadBetaKeysByBetaKey: function(betaKey) {
         var _this = this;
-        this.betaKeyCounterManagerModule.retrieveBetaKeyCounterByBetaKey(betaKey, function(throwable, meldDocument){
+        this.betaKeyManagerModule.retrieveBetaKeyByBetaKey(betaKey, function(throwable, meldDocument){
             if(!throwable) {
                 if(meldDocument) {
                     _this.clearTable();
                     if(Class.doesExtend(meldDocument, List)){
                         meldDocument.forEach(function(meldDocument){
-                            _this.addBetaKeyCounterToTable(meldDocument);
+                            _this.addBetaKeyToTable(meldDocument);
                         });
                     } else if (meldDocument){
-                        _this.addBetaKeyCounterToTable(meldDocument);
+                        _this.addBetaKeyToTable(meldDocument);
                     }
                 } else {
                     console.log("There are no beta keys by the the name", betaKey);
@@ -294,15 +294,15 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         });
     },
 
-    addBetaKeyCounterToTable: function(meldDocument) {
-        console.log("addBetaKeyCounterToTable");
-        var betaKeyCounterModel = new BetaKeyCounterModel({}, meldDocument);
+    addBetaKeyToTable: function(meldDocument) {
+        console.log("addBetaKeyToTable");
+        var betaKeyModel = new BetaKeyModel({}, meldDocument);
         var tableRowView = view(TableRowView)
             .children([
                 view(TableDataView)
-                    .attributes({text: betaKeyCounterModel.getProperty("betaKey")}),
+                    .attributes({text: betaKeyModel.getProperty("betaKey")}),
                 view(TableDataView)
-                    .attributes({text: betaKeyCounterModel.getProperty("count")})
+                    .attributes({text: betaKeyModel.getProperty("count")})
             ])
             .build();
 
@@ -325,7 +325,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
 
 bugmeta.annotate(BetaKeyDashboardPageContainer).with(
     autowired().properties([
-        property("betaKeyCounterManagerModule").ref("betaKeyCounterManagerModule"),
+        property("betaKeyManagerModule").ref("betaKeyManagerModule"),
         property("documentUtil").ref("documentUtil")
     ])
 );

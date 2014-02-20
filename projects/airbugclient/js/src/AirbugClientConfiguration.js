@@ -20,6 +20,8 @@
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmarsh.Marshaller')
+//@Require('bugmarsh.MarshRegistry')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute:bugcall.BugCallRouter')
 //@Require('carapace.CarapaceApplication')
@@ -55,6 +57,8 @@ var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
 var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var Marshaller                  = bugpack.require('bugmarsh.Marshaller');
+var MarshRegistry               = bugpack.require('bugmarsh.MarshRegistry');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter               = bugpack.require('bugroute:bugcall.BugCallRouter');
 var CarapaceApplication         = bugpack.require('carapace.CarapaceApplication');
@@ -166,6 +170,21 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @param {MarshRegistry} marshRegistry
+     * @returns {Marshaller}
+     */
+    marshaller: function(marshRegistry) {
+        return new Marshaller(marshRegistry);
+    },
+
+    /**
+     * @returns {MarshRegistry}
+     */
+    marshRegistry: function() {
+        return new MarshRegistry();
+    },
+
+    /**
      * @param {ISocketFactory} socketIoFactory
      * @param {SocketIoConfig} socketIoConfig
      * @return {SocketIoClient}
@@ -237,6 +256,11 @@ bugmeta.annotate(AirbugClientConfiguration).with(
             .args([
                 arg().ref("document")
             ]),
+        module("marshaller")
+            .args([
+                arg().ref("marshRegistry")
+            ]),
+        module("marshRegistry"),
         module("socketIoClient")
             .args([
                 arg().ref("browserSocketIoFactory"),

@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('BetaKeyCounterModel')
+//@Export('BetaKeyModel')
 
 //@Require('Class')
 //@Require('airbug.MeldModel')
@@ -37,7 +37,7 @@ var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
  * @class
  * @extends {MeldModel}
  */
-var BetaKeyCounterModel = Class.extend(MeldModel, /** @lends {BetaKeyCounterModel.prototype} */{
+var BetaKeyModel = Class.extend(MeldModel, /** @lends {BetaKeyModel.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -46,15 +46,15 @@ var BetaKeyCounterModel = Class.extend(MeldModel, /** @lends {BetaKeyCounterMode
     /**
      * @return {MeldDocument}
      */
-    getBetaKeyCounterModelMeldDocument: function() {
+    getBetaKeyModelMeldDocument: function() {
         return this.getMeldDocument();
     },
 
     /**
-     * @param {MeldDocument} betaKeyCounterModelMeldDocument
+     * @param {MeldDocument} betaKeyModelMeldDocument
      */
-    setBetaKeyCounterModelMeldDocument: function(betaKeyCounterModelMeldDocument) {
-        this.setMeldDocument(betaKeyCounterModelMeldDocument)
+    setBetaKeyModelMeldDocument: function(betaKeyModelMeldDocument) {
+        this.setMeldDocument(betaKeyModelMeldDocument)
     },
 
 
@@ -158,4 +158,4 @@ var BetaKeyCounterModel = Class.extend(MeldModel, /** @lends {BetaKeyCounterMode
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.BetaKeyCounterModel", BetaKeyCounterModel);
+bugpack.export("airbug.BetaKeyModel", BetaKeyModel);

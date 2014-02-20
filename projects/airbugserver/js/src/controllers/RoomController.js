@@ -130,7 +130,7 @@ var RoomController = Class.extend(EntityController, {
             var roomId          = request.params.id;
             var updates         = request.body;
             roomService.updateRoom(requestContext, roomId, updates, function(throwable, entity){
-                _this.processAjaxUpdateResponse(response, throwable, entity);sponse.json(roomJson);
+                _this.processAjaxUpdateResponse(response, throwable, entity);
             });
         });
 
@@ -138,7 +138,7 @@ var RoomController = Class.extend(EntityController, {
             var _this = this;
             var requestContext  = request.requestContext;
             var roomId          = request.params.id;
-            roomService.deleteRoom(requestContext, roomId, function(throwable){
+            roomService.deleteRoom(requestContext, roomId, function(throwable, entity){
                 _this.processAjaxDeleteResponse(response, throwable, entity);
             });
         });

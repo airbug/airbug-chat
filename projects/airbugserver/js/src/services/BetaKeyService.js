@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('BetaKeyCounterService')
+//@Export('BetaKeyService')
 //@Autoload
 
 //@Require('Bug')
@@ -74,27 +74,27 @@ var $forEachParallel        = BugFlow.$forEachParallel;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BetaKeyCounterService = Class.extend(Obj, {
+var BetaKeyService = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(betaKeyCounterManager, betaKeyCounterPusher) {
+    _constructor: function(betaKeyManager, betaKeyPusher) {
 
         this._super();
 
         /**
          * @private
-         * @type {BetaKeyCounterManager}
+         * @type {BetaKeyManager}
          */
-        this.betaKeyCounterManager = betaKeyCounterManager;
+        this.betaKeyManager = betaKeyManager;
 
         /**
          * @private
-         * @type {BetaKeyCounterPusher}
+         * @type {BetaKeyPusher}
          */
-        this.betaKeyCounterPusher = betaKeyCounterPusher;
+        this.betaKeyPusher = betaKeyPusher;
 
     },
 
@@ -103,27 +103,34 @@ var BetaKeyCounterService = Class.extend(Obj, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} betaKey
+     * @param {function(?Error)} callback
+     */
+    incrementCountForBetaKeyAndParentKeys: function(betaKey, callback) {
+        this.betaKeyManager.incrementCountForBetaKeyAndParentKeys(betaKey, callback);
+    },
 
     /*
      * @param {RequestContext} requestContext
      * @param {string} betaKey
-     * @param {function(Throwable, BetaKeyCounter=} callback
+     * @param {function(Throwable, BetaKey=} callback
      */
-    retrieveBetaKeyCounterByBetaKey: function(requestContext, betaKey, callback) {
+    retrieveBetaKeyByBetaKey: function(requestContext, betaKey, callback) {
         var _this           = this;
         var call            = requestContext.get("call");
         var currentUser     = requestContext.get('currentUser');
 
-        /** @type {BetaKeyCounter} */
-        var betaKeyCounter           = null;
+        /** @type {BetaKey} */
+        var betaKey           = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    _this.dbRetrieveBetaKeyCounterByBetaKey(betaKey, function(throwable, returnedBetaKeyCounter) {
+                    _this.dbRetrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
                         if (!throwable) {
-                            if (returnedBetaKeyCounter) {
-                                betaKeyCounter = returnedBetaKeyCounter;
+                            if (returnedBetaKey) {
+                                betaKey = returnedBetaKey;
                                 flow.complete(throwable);
                             } else {
                                 flow.error(new Exception('NotFound'));
@@ -134,18 +141,18 @@ var BetaKeyCounterService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.betaKeyCounterPusher.meldCallWithBetaKeyCounter(call.getCallUuid(), betaKeyCounter, function(throwable) {
+                    _this.betaKeyPusher.meldCallWithBetaKey(call.getCallUuid(), betaKey, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.betaKeyCounterPusher.pushBetaKeyCounterToCall(betaKeyCounter, call.getCallUuid(), function(throwable) {
+                    _this.betaKeyPusher.pushBetaKeyToCall(betaKey, call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
                     if (!throwable) {
-                        callback(null, betaKeyCounter);
+                        callback(null, betaKey);
                     } else {
                         callback(throwable);
                     }
@@ -157,23 +164,23 @@ var BetaKeyCounterService = Class.extend(Obj, {
 
     /*
      * @param {RequestContext} requestContext
-     * @param {function(Throwable, List.<BetaKeyCounter>=} callback
+     * @param {function(Throwable, List.<BetaKey>=} callback
      */
-    retrieveAllBetaKeyCounters: function(requestContext, callback) {
+    retrieveAllBetaKeys: function(requestContext, callback) {
         var _this           = this;
         var call            = requestContext.get("call");
         var currentUser     = requestContext.get('currentUser');
 
-        /** @type {List.<BetaKeyCounter>} */
-        var betaKeyCounterList          = null;
+        /** @type {List.<BetaKey>} */
+        var betaKeyList          = null;
 
         if (currentUser.isNotAnonymous()) {
             $series([
                 $task(function(flow) {
-                    _this.dbRetrieveAllBetaKeyCounters(function(throwable, returnedBetaKeyCounterList) {
+                    _this.dbRetrieveAllBetaKeys(function(throwable, returnedBetaKeyList) {
                         if (!throwable) {
-                            if (returnedBetaKeyCounterList) {
-                                betaKeyCounterList = returnedBetaKeyCounterList;
+                            if (returnedBetaKeyList) {
+                                betaKeyList = returnedBetaKeyList;
                                 flow.complete(throwable);
                             } else {
                                 flow.error(new Exception('NotFound'));
@@ -184,18 +191,18 @@ var BetaKeyCounterService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.betaKeyCounterPusher.meldCallWithBetaKeyCounters(call.getCallUuid(), betaKeyCounterList.toArray(), function(throwable) {
+                    _this.betaKeyPusher.meldCallWithBetaKeys(call.getCallUuid(), betaKeyList.toArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.betaKeyCounterPusher.pushBetaKeyCountersToCall(betaKeyCounterList.toArray(), call.getCallUuid(), function(throwable) {
+                    _this.betaKeyPusher.pushBetaKeysToCall(betaKeyList.toArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
             ]).execute(function(throwable) {
                     if (!throwable) {
-                        callback(null, betaKeyCounterList);
+                        callback(null, betaKeyList);
                     } else {
                         callback(throwable);
                     }
@@ -203,6 +210,15 @@ var BetaKeyCounterService = Class.extend(Obj, {
         } else {
             callback(new Exception('UnauthorizedAccess'));
         }
+    },
+
+    /**
+     *
+     * @param {string} betaKey
+     * @param {function(Error, boolean} callback
+     */
+    validateAndIncrementBaseBetaKey: function(betaKey, callback) {
+        this.betaKeyManager.validateAndIncrementBaseBetaKey(betaKey, callback);
     },
 
     //-------------------------------------------------------------------------------
@@ -211,16 +227,16 @@ var BetaKeyCounterService = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Throwable, List.<BetaKeyCounter>=)} callback
+     * @param {function(Throwable, List.<BetaKey>=)} callback
      */
-    dbRetrieveAllBetaKeyCounters: function(callback) {
-        var betaKeyCounters         = null;
-        var betaKeyCounterManager   = this.betaKeyCounterManager;
+    dbRetrieveAllBetaKeys: function(callback) {
+        var betaKeys         = null;
+        var betaKeyManager   = this.betaKeyManager;
         $task(function(flow) {
-            betaKeyCounterManager.retrieveAllBetaKeyCounters(function(throwable, returnedBetaKeyCounters) {
+            betaKeyManager.retrieveAllBetaKeys(function(throwable, returnedBetaKeys) {
                 if (!throwable) {
-                    if (returnedBetaKeyCounters) {
-                        betaKeyCounters = returnedBetaKeyCounters;
+                    if (returnedBetaKeys) {
+                        betaKeys = returnedBetaKeys;
                     } else {
                         throwable = new Exception('NotFound');
                     }
@@ -229,7 +245,7 @@ var BetaKeyCounterService = Class.extend(Obj, {
             });
         }).execute(function(throwable) {
                 if (!throwable) {
-                    callback(null, betaKeyCounters);
+                    callback(null, betaKeys);
                 } else {
                     callback(throwable);
                 }
@@ -239,16 +255,16 @@ var BetaKeyCounterService = Class.extend(Obj, {
     /**
      * @private
      * @param {string} betaKey
-     * @param {function(Throwable, BetaKeyCounter=)} callback
+     * @param {function(Throwable, BetaKey=)} callback
      */
-    dbRetrieveBetaKeyCounterByBetaKey: function(betaKey, callback) {
-        var betaKeyCounter          = null;
-        var betaKeyCounterManager   = this.betaKeyCounterManager;
+    dbRetrieveBetaKeyByBetaKey: function(betaKey, callback) {
+        var betaKey          = null;
+        var betaKeyManager   = this.betaKeyManager;
         $task(function(flow) {
-            betaKeyCounterManager.retrieveBetaKeyCounterByBetaKey(betaKey, function(throwable, returnedBetaKeyCounter) {
+            betaKeyManager.retrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
                 if (!throwable) {
-                    if (returnedBetaKeyCounter) {
-                        betaKeyCounter = returnedBetaKeyCounter;
+                    if (returnedBetaKey) {
+                        betaKey = returnedBetaKey;
                     } else {
                         throwable = new Exception('NotFound');
                     }
@@ -257,7 +273,7 @@ var BetaKeyCounterService = Class.extend(Obj, {
             });
         }).execute(function(throwable) {
                 if (!throwable) {
-                    callback(null, betaKeyCounter);
+                    callback(null, betaKey);
                 } else {
                     callback(throwable);
                 }
@@ -270,11 +286,11 @@ var BetaKeyCounterService = Class.extend(Obj, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyCounterService).with(
-    module("betaKeyCounterService")
+bugmeta.annotate(BetaKeyService).with(
+    module("betaKeyService")
         .args([
-            arg().ref("betaKeyCounterManager"),
-            arg().ref("betaKeyCounterPusher")
+            arg().ref("betaKeyManager"),
+            arg().ref("betaKeyPusher")
         ])
 );
 
@@ -283,4 +299,4 @@ bugmeta.annotate(BetaKeyCounterService).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.BetaKeyCounterService', BetaKeyCounterService);
+bugpack.export('airbugserver.BetaKeyService', BetaKeyService);
