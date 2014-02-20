@@ -141,7 +141,7 @@ var CodeEditorSettingsButtonContainer = Class.extend(ButtonContainer, {
      * @param {ButtonViewEvent} event
      */
     hearCodeEditorButtonClickedEvent: function(event) {
-        this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_EDITOR_SETTINGS, {});
+        this.getCommandModule().relayCommand(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, {});
     }
 });
 

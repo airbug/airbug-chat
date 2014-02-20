@@ -8,7 +8,9 @@
 
 //@Require('Class')
 //@Require('airbug.BoxView')
+//@Require('airbug.ButtonView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -20,7 +22,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,7 +31,9 @@ var bugpack = require('bugpack').context();
 
 var Class                               = bugpack.require('Class');
 var BoxView                             = bugpack.require('airbug.BoxView');
+var ButtonView                          = bugpack.require('airbug.ButtonView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
+var TextView                            = bugpack.require('airbug.TextView');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -41,8 +45,11 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var CommandType                         = CommandModule.CommandType;
+var property                            = PropertyAnnotation.property;
+var view                                = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -77,6 +84,7 @@ var ChooseOrUploadImageContainer = Class.extend(CarapaceContainer, {
          */
         this.commandModule              = null;
 
+
         // Views
         //-------------------------------------------------------------------------------
 
@@ -85,27 +93,12 @@ var ChooseOrUploadImageContainer = Class.extend(CarapaceContainer, {
          * @type {BoxView}
          */
         this.boxView                    = null;
-
-
-        // Containers
-        //-------------------------------------------------------------------------------
-
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-    },
 
     /**
      * @protected
@@ -121,96 +114,53 @@ var ChooseOrUploadImageContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.boxView =
-            view(BoxView)
-                .id("choose-or-upload-image-container")
-                .attributes({})
-                .children([
-                    view(BoxView)
-                        .children([
-                            view(ButtonView)
-                                .attributes({
-                                    block: true,
-                                    size: ButtonView.Size.LARGE
-                                })
-                                .children([
-                                    view(TextView)
-                                        .attributes({
-                                            text: "CHOOSE"
-                                        })
-                                        .appendTo('*[id|="button"]')
-                                ])
-                                .appendTo('*[id|="box"]')
-                        ])
-                        .appendTo('#choose-or-upload-image-container'),
-                    view(BoxView)
-                        .children([
-                            view(ButtonView)
-                                .attributes({
-                                    block: true,
-                                    size: ButtonView.Size.LARGE
-                                })
-                                .children([
-                                    view(TextView)
-                                        .attributes({
-                                            text: "UPLOAD"
-                                        })
-                                        .appendTo('*[id|="button"]')
-                                ])
-                                .appendTo('*[id|="box"]')
-                        ])
-                        .appendTo('#choose-or-upload-image-container')
-                ])
-                .build();
+        view(BoxView)
+            .name("boxView")
+            .attributes({})
+            .children([
+                view(BoxView)
+                    .children([
+                        view(ButtonView)
+                            .attributes({
+                                block: true,
+                                size: ButtonView.Size.LARGE
+                            })
+                            .children([
+                                view(TextView)
+                                    .attributes({
+                                        text: "CHOOSE"
+                                    })
+                                    .appendTo("#button-{{cid}}")
+                            ])
+                            .appendTo("#box-{{cid}}")
+                    ])
+                    .appendTo('#box-{{cid}}'),
+                view(BoxView)
+                    .children([
+                        view(ButtonView)
+                            .attributes({
+                                block: true,
+                                size: ButtonView.Size.LARGE
+                            })
+                            .children([
+                                view(TextView)
+                                    .attributes({
+                                        text: "UPLOAD"
+                                    })
+                                    .appendTo("#button-{{cid}}")
+                            ])
+                            .appendTo("#box-{{cid}}")
+                    ])
+                    .appendTo("#box-{{cid}}")
+            ])
+            .build(this);
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.boxView);
-    },
-
-    createContainerChildren: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeCommandSubscriptions();
-    },
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-
     }
-
-    //-------------------------------------------------------------------------------
-    // Event Handlers
-    //-------------------------------------------------------------------------------
-
 });
 
 

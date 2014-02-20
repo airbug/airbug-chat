@@ -9,8 +9,10 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbugserver.AddsChatMessageCountersAndIndexesMigration')
+//@Require('airbugserver.AddsOwnerTypeToConversationsMigration')
 //@Require('airbugserver.AddsSentAtIndexToChatMessagesMigration')
 //@Require('airbugserver.MigrationModel')
+//@Require('airbugserver.UpdatesStatusForNonAnonymousUsersMigration')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('configbug.Configbug')
@@ -32,8 +34,10 @@ var mongoose                                    = require('mongoose');
 var Class                                       = bugpack.require('Class');
 var Obj                                         = bugpack.require('Obj');
 var AddsChatMessageCountersAndIndexesMigration  = bugpack.require('airbugserver.AddsChatMessageCountersAndIndexesMigration');
+var AddsOwnerTypeToConversationsMigration       = bugpack.require('airbugserver.AddsOwnerTypeToConversationsMigration');
 var AddsSentAtIndexToChatMessagesMigration      = bugpack.require('airbugserver.AddsSentAtIndexToChatMessagesMigration');
 var MigrationModel                              = bugpack.require('airbugserver.MigrationModel');
+var UpdatesStatusForNonAnonymousUsersMigration  = bugpack.require('airbugserver.UpdatesStatusForNonAnonymousUsersMigration');
 var BugFlow                                     = bugpack.require('bugflow.BugFlow');
 var BugFs                                       = bugpack.require('bugfs.BugFs');
 var Configbug                                   = bugpack.require('configbug.Configbug');
@@ -111,11 +115,15 @@ var MigrationApplication = Class.extend(Obj, {
     start: function(callback) {
         var _this                                       = this;
         var addsChatMessageCountersAndIndexesMigration  = new AddsChatMessageCountersAndIndexesMigration();
+        var addsOwnerTypeToConversationsMigration       = new AddsOwnerTypeToConversationsMigration();
         var addsSentAtIndexToChatMessagesMigration      = new AddsSentAtIndexToChatMessagesMigration();
+        var updatesStatusForNonAnonymousUsersMigration  = new UpdatesStatusForNonAnonymousUsersMigration();
 
         var migrations = [
             addsChatMessageCountersAndIndexesMigration,
-            addsSentAtIndexToChatMessagesMigration
+            addsOwnerTypeToConversationsMigration,
+            addsSentAtIndexToChatMessagesMigration,
+            updatesStatusForNonAnonymousUsersMigration
         ];
 
 

@@ -7,13 +7,14 @@
 //@Export('ConversationService')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
 //@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,13 +29,14 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var EntityService           = bugpack.require('airbugserver.EntityService');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -42,11 +44,11 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                     = ArgAnnotation.arg;
 var bugmeta                 = BugMeta.context();
 var module                  = ModuleAnnotation.module;
-var $task                   = BugFlow.$task;
+var property                = PropertyAnnotation.property;
 var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ var ConversationService = Class.extend(EntityService, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(conversationManager, conversationPusher) {
+    _constructor: function() {
 
         this._super();
 
@@ -72,13 +74,19 @@ var ConversationService = Class.extend(EntityService, {
          * @private
          * @type {ChatMessageManager}
          */
-        this.conversationManager    = conversationManager;
+        this.conversationManager    = null;
 
         /**
          * @private
          * @type {ConversationPusher}
          */
-        this.conversationPusher     = conversationPusher;
+        this.conversationPusher     = null;
+
+        /**
+         * @private
+         * @type {ConversationSecurity}
+         */
+        this.conversationSecurity   = null;
     },
 
 
@@ -115,48 +123,50 @@ var ConversationService = Class.extend(EntityService, {
         var call                = requestContext.get("call");
         var conversation        = null;
 
-        if (!currentUser.isAnonymous()) {
-            $series([
-                $task(function(flow) {
-                    _this.dbRetrievePopulatedConversation(conversationId, function(throwable, returnedConversation) {
+        $series([
+            $task(function(flow) {
+                _this.dbRetrievePopulatedConversation(conversationId, function(throwable, returnedConversation) {
 
-                        //TODO BRN: Is it ok for non-room members to retrieve a conversation?
-                        if (!throwable) {
-                            if (returnedConversation) {
-                                if (currentUser.getRoomIdSet().contains(returnedConversation.getOwnerId())) {
-                                    conversation = returnedConversation;
-                                    flow.complete();
-                                } else {
-                                    flow.error(new Exception("UnauthorizedAccess", {objectId: conversationId}));
-                                }
-                            } else {
-                                flow.error(new Exception("NotFound"));
-                            }
+                    //TODO BRN: Is it ok for non-room members to retrieve a conversation?
+                    if (!throwable) {
+                        if (returnedConversation) {
+                            conversation = returnedConversation;
+                            flow.complete();
                         } else {
-                            flow.error(throwable);
+                            flow.error(new Exception("NotFound", {}, "Could not find conversation by the id '" + conversationId + "'"));
                         }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.conversationPusher.meldCallWithConversation(call.getCallUuid(), conversation, function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.conversationPusher.pushConversationToCall(conversation, call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                if (!throwable) {
-                    callback(null, conversation);
-                } else {
-                    callback(throwable);
-                }
-            });
-        } else {
-            callback(new Exception("UnauthorizedAccess"));
-        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationSecurity.checkConversationReadAccess(currentUser, conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationPusher.meldCallWithConversation(call.getCallUuid(), conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationPusher.meldCallWithConversation(call.getCallUuid(), conversation, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.conversationPusher.pushConversationToCall(conversation, call.getCallUuid(), function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, conversation);
+            } else {
+                callback(throwable);
+            }
+        });
     },
 
     /*
@@ -199,7 +209,7 @@ var ConversationService = Class.extend(EntityService, {
      */
     dbRetrievePopulatedConversation: function(conversationId, callback) {
         var _this               = this;
-        var conversation        = undefined;
+        var conversation        = null;
         var conversationManager = this.conversationManager;
         $series([
             $task(function(flow) {
@@ -208,7 +218,7 @@ var ConversationService = Class.extend(EntityService, {
                         if (returnedConversation) {
                             conversation = returnedConversation;
                         } else {
-                            throwable = new Exception("NotFound", {objectId: conversationId});
+                            throwable = new Exception("NotFound", {objectId: conversationId}, "Could not find conversation with the id '" + conversationId + "'");
                         }
                     }
                     flow.complete(throwable);
@@ -236,9 +246,10 @@ var ConversationService = Class.extend(EntityService, {
 
 bugmeta.annotate(ConversationService).with(
     module("conversationService")
-        .args([
-            arg().ref("conversationManager"),
-            arg().ref("conversationPusher")
+        .properties([
+            property("conversationManager").ref("conversationManager"),
+            property("conversationPusher").ref("conversationPusher"),
+            property("conversationSecurity").ref("conversationSecurity")
         ])
 );
 

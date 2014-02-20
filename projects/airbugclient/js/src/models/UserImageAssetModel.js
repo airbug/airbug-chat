@@ -7,7 +7,7 @@
 //@Export('UserImageAssetModel')
 
 //@Require('Class')
-//@Require('airbug.MeldModel')
+//@Require('airbug.MappedMeldModel')
 //@Require('meldbug.MeldDocument')
 //@Require('meldbug.MeldDocumentEvent')
 
@@ -24,7 +24,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var MeldModel               = bugpack.require('airbug.MeldModel');
+var MappedMeldModel         = bugpack.require('airbug.MappedMeldModel');
 var MeldDocument            = bugpack.require('meldbug.MeldDocument');
 var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
 
@@ -36,9 +36,31 @@ var MeldDocumentEvent       = bugpack.require('meldbug.MeldDocumentEvent');
 
 /**
  * @class
- * @extends {MeldModel}
+ * @extends {MappedMeldModel}
  */
-var UserImageAssetModel = Class.extend(MeldModel, {
+var UserImageAssetModel = Class.extend(MappedMeldModel, {
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {Object} dataObject
+     * @param {MeldDocument} imageAssetMeldDocument
+     * @param {MeldDocument} userAssetMeldDocument
+     */
+    _constructor: function(dataObject, imageAssetMeldDocument, userAssetMeldDocument) {
+        var meldDocumentMap = new Map();
+        if (imageAssetMeldDocument) {
+            meldDocumentMap.put("imageAsset", imageAssetMeldDocument);
+        }
+        if (userAssetMeldDocument) {
+            meldDocumentMap.put("userAsset", userAssetMeldDocument);
+        }
+        this._super(dataObject, meldDocumentMap);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -47,15 +69,29 @@ var UserImageAssetModel = Class.extend(MeldModel, {
     /**
      * @return {MeldDocument}
      */
-    getUserAssetMeldDocument: function() {
-        return this.getMeldDocument();
+    getImageAssetMeldDocument: function() {
+        return this.getMeldDocument("imageAsset");
     },
 
     /**
-     * @param {MeldDocument} assetMeldDocument
+     * @param {MeldDocument} imageAssetMeldDocument
      */
-    setUserAssetMeldDocument: function(assetMeldDocument) {
-        this.setMeldDocument(assetMeldDocument);
+    setImageAssetMeldDocument: function(imageAssetMeldDocument) {
+        this.putMeldDocument("imageAsset", imageAssetMeldDocument);
+    },
+
+    /**
+     * @return {MeldDocument}
+     */
+    getUserAssetMeldDocument: function() {
+        return this.getMeldDocument("userAsset");
+    },
+
+    /**
+     * @param {MeldDocument} userAssetMeldDocument
+     */
+    setUserAssetMeldDocument: function(userAssetMeldDocument) {
+        this.putMeldDocument("userAsset", userAssetMeldDocument);
     },
 
 
@@ -68,21 +104,37 @@ var UserImageAssetModel = Class.extend(MeldModel, {
      */
     initializeModel: function() {
         this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
+        if (this.getUserAssetMeldDocument()) {
+            this.getUserAssetMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_SET])
                 .where("data.deltaChange.propertyName")
                 .in(["id", "userId", "assetId"])
-                .call(this.hearMeldPropertySetChange, this);
-            this.getMeldDocument()
+                .call(this.hearUserAssetPropertySetChange, this);
+            this.getUserAssetMeldDocument()
                 .on(MeldDocumentEvent.EventTypes.CHANGE)
                 .where("data.changeType")
                 .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
                 .where("data.deltaChange.propertyName")
                 .in(["id", "userId", "assetId"])
-                .call(this.hearMeldPropertyRemovedChange, this);
+                .call(this.hearUserAssetPropertyRemovedChange, this);
+        }
+        if (this.getImageAssetMeldDocument()) {
+            this.getImageAssetMeldDocument()
+                .on(MeldDocumentEvent.EventTypes.CHANGE)
+                .where("data.changeType")
+                .in([MeldDocument.ChangeTypes.PROPERTY_SET])
+                .where("data.deltaChange.propertyName")
+                .in(["midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbnailMimeType", "thumbnailUrl", "url"])
+                .call(this.hearImageAssetPropertySetChange, this);
+            this.getImageAssetMeldDocument()
+                .on(MeldDocumentEvent.EventTypes.CHANGE)
+                .where("data.changeType")
+                .in([MeldDocument.ChangeTypes.PROPERTY_REMOVED])
+                .where("data.deltaChange.propertyName")
+                .in(["midsizeMimeType", "midsizeUrl", "mimeType", "name", "size", "thumbnailMimeType", "thumbnailUrl", "url"])
+                .call(this.hearImageAssetPropertyRemovedChange, this);
         }
     },
 
@@ -91,11 +143,17 @@ var UserImageAssetModel = Class.extend(MeldModel, {
      */
     deinitializeModel: function() {
         this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
-                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
-            this.getMeldDocument()
-                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertyRemovedChange, this);
+        if (this.getUserAssetMeldDocument()) {
+            this.getUserAssetMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearUserAssetPropertySetChange, this);
+            this.getUserAssetMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearUserAssetPropertyRemovedChange, this);
+        }
+        if (this.getImageAssetMeldDocument()) {
+            this.getImageAssetMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearImageAssetPropertySetChange, this);
+            this.getImageAssetMeldDocument()
+                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearImageAssetPropertyRemovedChange, this);
         }
     },
 
@@ -106,23 +164,49 @@ var UserImageAssetModel = Class.extend(MeldModel, {
 
     /**
      * @protected
+     * @param {string} key
+     * @param {MeldDocument} meldDocument
      */
-    processMeldDocument: function() {
+    processMeldDocument: function(key, meldDocument) {
         this._super();
-        var data    = this.getMeldDocument().getData();
-        this.setProperty("id",      data.id);
-        this.setProperty("userId",  data.userId);
-        this.setProperty("assetId", data.assetId);
+        var data = meldDocument.getData();
+        if (key === "userAsset") {
+            this.setProperty("id",      data.id);
+            this.setProperty("userId",  data.userId);
+            this.setProperty("assetId", data.assetId);
+        } else if (key === "imageAsset") {
+            this.setProperty("midsizeMimeType",     data.midsizeMimeType);
+            this.setProperty("midsizeUrl",          data.midsizeUrl);
+            this.setProperty("mimeType",            data.mimeType);
+            this.setProperty("name",                data.name);
+            this.setProperty("size",                data.size);
+            this.setProperty("thumbnailMimeType",   data.thumbnailMimeType);
+            this.setProperty("thumbnailUrl",        data.thumbnailUrl);
+            this.setProperty("url",                 data.url);
+        }
     },
 
     /**
      * @protected
+     * @param {string} key
+     * @param {MeldDocument} meldDocument
      */
-    unprocessMeldDocument: function() {
+    unprocessMeldDocument: function(key, meldDocument) {
         this._super();
-        this.removeProperty("id",      data.id);
-        this.removeProperty("userId",  data.userId);
-        this.removeProperty("assetId", data.assetId);
+        if (key === "userAsset") {
+            this.removeProperty("id");
+            this.removeProperty("userId");
+            this.removeProperty("assetId");
+        } else if (key === "imageAsset") {
+            this.removeProperty("midsizeMimeType");
+            this.removeProperty("midsizeUrl");
+            this.removeProperty("mimeType");
+            this.removeProperty("name");
+            this.removeProperty("size");
+            this.removeProperty("thumbnailMimeType");
+            this.removeProperty("thumbnailUrl");
+            this.removeProperty("url");
+        }
     },
 
 
@@ -134,7 +218,7 @@ var UserImageAssetModel = Class.extend(MeldModel, {
      * @private
      * @param {Event} event
      */
-    hearMeldPropertySetChange: function(event) {
+    hearImageAssetPropertySetChange: function(event) {
         var deltaChange     = event.getData().deltaChange;
         var propertyName    = deltaChange.getPropertyName();
         var propertyValue   = deltaChange.getPropertyValue();
@@ -145,7 +229,28 @@ var UserImageAssetModel = Class.extend(MeldModel, {
      * @private
      * @param {Event} event
      */
-    hearMeldPropertyRemovedChange: function(event) {
+    hearImageAssetPropertyRemovedChange: function(event) {
+        var deltaChange     = event.getData().deltaChange;
+        var propertyName    = deltaChange.getPropertyName();
+        this.removeProperty(propertyName);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearUserAssetPropertySetChange: function(event) {
+        var deltaChange     = event.getData().deltaChange;
+        var propertyName    = deltaChange.getPropertyName();
+        var propertyValue   = deltaChange.getPropertyValue();
+        this.setProperty(propertyName, propertyValue);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearUserAssetPropertyRemovedChange: function(event) {
         var deltaChange     = event.getData().deltaChange;
         var propertyName    = deltaChange.getPropertyName();
         this.removeProperty(propertyName);

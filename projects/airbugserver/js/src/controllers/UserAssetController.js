@@ -223,6 +223,22 @@ var UserAssetController = Class.extend(EntityController, {
              * @param {CallResponder} responder
              * @param {function(Throwable=)} callback
              */
+            retrieveUserAssetsForCurrentUserSortByCreatedAt: function(request, responder, callback) {
+                var data                = request.getData();
+                var requestContext      = request.requestContext;
+                var currentUser         = requestContext.get('currentUser');
+                var currentUserId       = currentUser.getId();
+
+                userAssetService.retrieveUserAssetsByUserIdSortByCreatedAt(requestContext, currentUserId, function(throwable, userAssetList) {
+                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
             retrieveUserAssetsByUserId: function(request, responder, callback) {
                 console.log("UserAssetController#retrieveUserAssetsByUserId");
                 var data                = request.getData();

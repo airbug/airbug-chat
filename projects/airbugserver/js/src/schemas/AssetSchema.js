@@ -28,7 +28,6 @@ var Schema      = mongoose.Schema;
 //-------------------------------------------------------------------------------
 
 var AssetSchema = new Schema({
-    type: {type: String},
     createdAt: Date,
     midsizeMimeType: {type: String},
     midsizeUrl: {type: String},
@@ -36,6 +35,7 @@ var AssetSchema = new Schema({
     name: {type: String},
     thumbnailMimeType: {type: String},
     thumbnailUrl: {type: String},
+    type: {type: String},
     updatedAt: Date,
     url: {type: String, index: true, unique: true, required: true}
 });

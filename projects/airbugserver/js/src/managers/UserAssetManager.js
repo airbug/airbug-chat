@@ -181,6 +181,27 @@ var UserAssetManager = Class.extend(EntityManager, {
     },
 
     /**
+     * @param {string} userId
+     * @param {function(Throwable, List.<UserAsset>=)} callback
+     */
+    retrieveUserAssetsByUserIdSortByCreatedAt: function(userId, callback) {
+        var _this = this;
+        this.dataStore.find({userId: userId}).sort({createdAt: -1}).lean(true).exec(function(throwable, dbObjects) {
+            if (!throwable) {
+                var newList = new List();
+                dbObjects.forEach(function(dbObject) {
+                    var userAsset = _this.convertDbObjectToEntity(dbObject);
+                    userAsset.commitDelta();
+                    newList.add(userAsset);
+                });
+                callback(null, newList);
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
      * @param {UserAsset} userAsset
      * @param {function(Throwable, UserAsset)} callback
      */

@@ -128,24 +128,22 @@ var GithubLoginPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(BoxWithFooterView)
-                        .id("githubLoginBoxView")
-                        .attributes({classes: "login-box"})// TODO - dkk - need to change this? Probably not.
-                        .appendTo('*[id|="page"]')
-                ])
-                .build();
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(BoxWithFooterView)
+                    .name("boxView")
+                    .attributes({classes: "login-box"})
+                    .appendTo("#page-{{cid}}")
+            ])
+            .build(this);
 
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.getApplicationView().addViewChild(this.pageView, "#application-" + this.getApplicationView().getCid());
-
-        this.boxView =  this.findViewById("githubLoginBoxView");
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
     },
 
     /**

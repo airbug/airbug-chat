@@ -177,93 +177,85 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.codeEditorOverlayWidgetView =
-            view(OverlayView)
-                .attributes({
-                    classes: "code-editor-fullscreen-overlay",
-                    size: OverlayView.Size.FULLSCREEN,
-                    type: OverlayView.Type.PAGE
-                })
-                .children([
-                    view(CodeEditorWidgetView)
-                        .id("code-editor-overlay-widget")
-                        .children([
-                            view(ButtonToolbarView)
-                                .id("code-editor-overlay-widget-toolbar")
-                                .appendTo("#code-editor-overlay-widget-header")
-                                .children([
-                                    view(ButtonGroupView)
-                                        .appendTo('#code-editor-overlay-widget-toolbar')
-                                        .children([
-                                            view(NakedButtonView)
-                                                .attributes({
-                                                    size: NakedButtonView.Size.NORMAL,
-                                                    disabled: true,
-                                                    type: NakedButtonView.Type.INVERSE
-                                                })
-                                                .children([
-                                                    view(IconView)
-                                                        .attributes({
-                                                            type: IconView.Type.CHEVRON_LEFT,
-                                                            color: IconView.Color.WHITE
-                                                        })
-                                                        .appendTo('button[id|="button"]'),
-                                                    view(IconView)
-                                                        .attributes({
-                                                            type: IconView.Type.CHEVRON_RIGHT,
-                                                            color: IconView.Color.WHITE
-                                                        })
-                                                        .appendTo('button[id|="button"]'),
-                                                    view(TextView)
-                                                        .attributes({
-                                                            text: 'Editor'
-                                                        })
-                                                        .appendTo('button[id|="button"]')
-                                                ])
-                                        ]),
-                                    view(ButtonGroupView)
-                                        .appendTo('#code-editor-overlay-widget-toolbar')
-                                ]),
-                            view(CodeEditorView)
-                                .id("code-editor-overlay-view")
-                                .attributes({
+        view(OverlayView)
+            .name("codeEditorOverlayWidgetView")
+            .attributes({
+                classes: "code-editor-fullscreen-overlay",
+                size: OverlayView.Size.FULLSCREEN,
+                type: OverlayView.Type.PAGE
+            })
+            .children([
+                view(CodeEditorWidgetView)
+                    .appendTo("#overlay-body-{{cid}}")
+                    .children([
+                        view(ButtonToolbarView)
+                            .id("code-editor-overlay-widget-toolbar")
+                            .appendTo("#code-editor-widget-header-{{cid}}")
+                            .children([
+                                view(ButtonGroupView)
+                                    .appendTo('#code-editor-overlay-widget-toolbar')
+                                    .children([
+                                        view(NakedButtonView)
+                                            .attributes({
+                                                size: NakedButtonView.Size.NORMAL,
+                                                disabled: true,
+                                                type: NakedButtonView.Type.INVERSE
+                                            })
+                                            .children([
+                                                view(IconView)
+                                                    .attributes({
+                                                        type: IconView.Type.CHEVRON_LEFT,
+                                                        color: IconView.Color.WHITE
+                                                    })
+                                                    .appendTo('button[id|="button"]'),
+                                                view(IconView)
+                                                    .attributes({
+                                                        type: IconView.Type.CHEVRON_RIGHT,
+                                                        color: IconView.Color.WHITE
+                                                    })
+                                                    .appendTo('button[id|="button"]'),
+                                                view(TextView)
+                                                    .attributes({
+                                                        text: 'Editor'
+                                                    })
+                                                    .appendTo('button[id|="button"]')
+                                            ])
+                                    ]),
+                                view(ButtonGroupView)
+                                    .appendTo('#code-editor-overlay-widget-toolbar')
+                            ]),
+                        view(CodeEditorView)
+                            .name("codeEditorView")
+                            .attributes({
 //                                    width: "300px",
 //                                    height: "200px"
-                                })
-                                .appendTo("#code-editor-overlay-widget-body"),
-                            view(ButtonView)
-                                .id("code-editor-overlay-widget-send-code-button")
-                                .attributes({
-                                    type: "default",
-                                    size: ButtonView.Size.LARGE,
-                                    block: true
-                                })
-                                .children([
-                                    view(TextView)
-                                        .attributes({text: "Send"})
-                                        .appendTo("#code-editor-overlay-widget-send-code-button")
-                                ])
-                                .appendTo("#code-editor-overlay-widget-footer")
-                        ])
-                        .appendTo(".overlay-body")
-                ])
-                .build();
+                            })
+                            .appendTo("#code-editor-widget-body-{{cid}}"),
+                        view(ButtonView)
+                            .name("sendButtonView")
+                            .attributes({
+                                type: "default",
+                                size: ButtonView.Size.LARGE,
+                                block: true
+                            })
+                            .children([
+                                view(TextView)
+                                    .attributes({text: "Send"})
+                                    .appendTo("#button-{{cid}}")
+                            ])
+                            .appendTo("#code-editor-widget-footer-{{cid}}")
+                    ])
+            ])
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.codeEditorOverlayWidgetView);
-        this.sendButtonView     = this.findViewById("code-editor-overlay-widget-send-code-button");
-        this.codeEditorView     = this.findViewById("code-editor-overlay-view");
 
         Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
         this.aceEditor          = Ace.edit(this.codeEditorView.$el.get(0));
@@ -344,23 +336,6 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // Message Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @type {PublisherMessage} message
-     */
-    handleDisplayCodeCommand: function(message) {
-        var code = message.getData().code;
-        this.setEditorText(code);
-    },
-
-    handleDisplayCodeEditorCommand: function(message) {
-        this.focusOnAceEditor();
-    },
-
-
-    //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
@@ -412,10 +387,31 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     *
+     */
+    clearSelection: function() {
+        this.aceEditor.clearSelection();
+    },
+
+    /**
      * @return {Ace}
      */
     getEditor: function() {
         return this.aceEditor;
+    },
+
+    /**
+     * @return {*}
+     */
+    getEditorCursorPosition: function() {
+        return this.aceEditor.getCursorPosition();
+    },
+
+    /**
+     * @param {*} cursorPosition
+     */
+    setEditorCursorPosition: function(cursorPosition) {
+        this.aceEditor.navigateTo(cursorPosition.row, cursorPosition.column);
     },
 
     /**
@@ -537,12 +533,14 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
         this.aceEditor.resize();
     },
 
+    /**
+     *
+     */
     focusOnAceEditor: function() {
         var aceEditor = this.aceEditor;
         var session = aceEditor.getSession();
         var count = session.getLength();
         aceEditor.focus();
-        aceEditor.gotoLine(count, session.getLine(count-1).length);
     }
 });
 

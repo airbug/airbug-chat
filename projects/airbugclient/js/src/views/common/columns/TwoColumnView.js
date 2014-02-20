@@ -36,8 +36,8 @@ var TwoColumnView = Class.extend(MultiColumnView, {
     //-------------------------------------------------------------------------------
 
     template:       '<div id={{id}} class="{{rowStyle}} column 2column-container">' +
-                        '<div class="{{leftColumnSpan}} {{leftHamburger}} column leftrow column1of2"></div>' +
-                        '<div class="{{rightColumnSpan}} {{rightHamburger}} column rightrow column2of2"></div>' +
+                        '<div id="column1of2-{{cid}}" class="{{leftColumnSpan}} {{leftHamburger}} column leftrow column1of2"></div>' +
+                        '<div id="column2of2-{{cid}}" class="{{rightColumnSpan}} {{rightHamburger}} column rightrow column2of2"></div>' +
                     '</div>',
 
 

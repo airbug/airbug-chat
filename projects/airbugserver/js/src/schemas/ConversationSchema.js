@@ -31,6 +31,7 @@ var ObjectId    = mongoose.Schema.Types.ObjectId;
 var ConversationSchema = new Schema({
     createdAt: Date,
     ownerId: {type: ObjectId, required: true, index: true, unique: true},
+    ownerType: String,
     updatedAt: Date
 });
 

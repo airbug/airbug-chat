@@ -9,8 +9,9 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
-//@Require('airbug.ApiRequest')
+//@Require('Obj')
 //@Require('airbug.ApiDefines')
+//@Require('airbug.ApiRequest')
 
 
 //-------------------------------------------------------------------------------
@@ -27,14 +28,19 @@ var bugpack                 = require('bugpack').context();
 var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
+var Obj                     = bugpack.require('Obj');
+var ApiDefines              = bugpack.require('airbug.ApiDefines');
 var ApiRequest              = bugpack.require('airbug.ApiRequest');
-var ApiDefines           = bugpack.require('airbug.ApiDefines');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ApiRequest}
+ */
 var RetrieveRequest = Class.extend(ApiRequest, {
 
     //-------------------------------------------------------------------------------
@@ -116,6 +122,36 @@ var RetrieveRequest = Class.extend(ApiRequest, {
      */
     getMeldStore: function() {
         return this.meldStore;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Obj Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @override
+     * @param {*} value
+     * @return {boolean}
+     */
+    equals: function(value) {
+        if (Class.doesExtend(value, RetrieveRequest)) {
+            return (Obj.equals(value.getEntityType(), this.entityType) && Obj.equals(value.getEntityId(), this.entityId));
+        }
+        return false;
+    },
+
+    /**
+     * @override
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[RetrieveRequest]" +
+                Obj.hashCode(this.entityType) + "_" +
+                Obj.hashCode(this.entityId));
+        }
+        return this._hashCode;
     },
 
 

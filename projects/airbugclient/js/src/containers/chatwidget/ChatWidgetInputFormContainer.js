@@ -7,7 +7,6 @@
 //@Export('ChatWidgetInputFormContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CheckBoxInputView')
@@ -41,7 +40,6 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var BoxView                 = bugpack.require('airbug.BoxView');
 var ButtonView              = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
 var CheckBoxInputView       = bugpack.require('airbug.CheckBoxInputView');
@@ -119,15 +117,15 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {FormView}
          */
-        this.chooseOrUploadImageButtonView  = null;
+        this.chatWidgetFormView             = null;
 
         /**
          * @private
-         * @type {FormView}
+         * @type {ButtonView}
          */
-        this.formView                       = null;
+        this.chooseOrUploadImageButtonView  = null;
 
         /**
          * @private
@@ -183,85 +181,87 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.twoColumnView =
-            view(TwoColumnView)
-                .attributes({
-                    configuration: TwoColumnView.Configuration.THIN_RIGHT,
-                    rowStyle: MultiColumnView.RowStyle.FLUID
-                })
-                .id("chatWidgetInputRowContainer")
-                .children([
-                    view(FormView)
-                        .id("chatWidgetInputForm")
-                        .attributes({
-                            classes: "form-horizontal"
-                        })
-                        .appendTo(".column1of2")
-                        .children([
-                            view(FormControlGroupView)
-                                .attributes({
-                                    classes: "control-group-textarea"
-                                })
-                                .children([
-                                    view(TextAreaView)
-                                        .id("chatInputTextArea")
-                                        .attributes({
-                                            name: "text"
-                                        })
-                                ]),
-                            view(FormControlGroupView)
-                                .attributes({
-                                    classes: "control-group-checkbox"
-                                })
-                                .children([
-                                    view(LabelView)
-                                        .attributes({
-                                            text: "Press enter to send",
-                                            classes: "checkbox"
-                                        })
-                                        .children([
-                                            view(CheckBoxInputView)
-                                                .id("submitOnEnterCheckBox")
-                                                .attributes({
-                                                    checked: true
-                                                })
-                                        ])
-                                ])
-                        ]),
-                    view(ButtonView)
-                        .id("choose-or-upload-image-button")
-                        .appendTo(".column2of2")
-                        .children([
-                            view(IconView)
-                                .attributes({
-                                    type: IconView.Type.CAMERA
-                                })
-                                .appendTo("#choose-or-upload-image-button")
-                        ]),
-                    view(ButtonView)
-                        .id("chat-widget-input-send-button")
-                        .appendTo(".column2of2")
-                        .children([
-                            view(TextView)
-                                .id("sendButtonTextView")
-                                .attributes({text: "Ok"})
-                                .appendTo('#chat-widget-input-send-button')
-                        ])
-                ])
-                .build();
+        view(TwoColumnView)
+            .name("twoColumnView")
+            .attributes({
+                configuration: TwoColumnView.Configuration.THIN_RIGHT,
+                rowStyle: MultiColumnView.RowStyle.FLUID
+            })
+            .children([
+                view(FormView)
+                    .name("chatWidgetFormView")
+                    .attributes({
+                        classes: "form-horizontal"
+                    })
+                    .appendTo("#column1of2-{{cid}}")
+                    .children([
+                        view(FormControlGroupView)
+                            .attributes({
+                                classes: "control-group-textarea"
+                            })
+                            .children([
+                                view(TextAreaView)
+                                    .name("textAreaView")
+                                    .attributes({
+                                        name: "text"
+                                    })
+                            ]),
+                        view(FormControlGroupView)
+                            .attributes({
+                                classes: "control-group-checkbox"
+                            })
+                            .children([
+                                view(LabelView)
+                                    .attributes({
+                                        text: "Press enter to send",
+                                        classes: "checkbox"
+                                    })
+                                    .children([
+                                        view(CheckBoxInputView)
+                                            .name("submitOnEnterCheckBoxView")
+                                            .attributes({
+                                                checked: true
+                                            })
+                                    ])
+                            ])
+                    ]),
+                view(ButtonView)
+                    .name("chooseOrUploadImageButtonView")
+                    .appendTo("#column2of2-{{cid}}")
+                    .attributes({
+                        classes: "choose-or-upload-image-button-wrapper",
+                        buttonClasses: "choose-or-upload-image-button"
+                    })
+                    .children([
+                        view(IconView)
+                            .attributes({
+                                type: IconView.Type.CAMERA
+                            })
+                            .appendTo("#button-{{cid}}")
+                    ]),
+                view(ButtonView)
+                    .name("sendButtonView")
+                    .appendTo("#column2of2-{{cid}}")
+                    .attributes({
+                        classes: "chat-widget-input-send-button-wrapper",
+                        buttonClasses: "chat-widget-input-send-button"
+                    })
+                    .children([
+                        view(TextView)
+                            .name("sendButtonTextView")
+                            .attributes({
+                                text: "Ok"
+                            })
+                            .appendTo('#button-{{cid}}')
+                    ])
+            ])
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.twoColumnView);
-
-        this.chooseOrUploadImageButtonView  = this.findViewById("choose-or-upload-image-button");
-        this.formView                       = this.findViewById("chatWidgetInputForm");
-        this.sendButtonTextView             = this.findViewById("sendButtonTextView");
-        this.sendButtonView                 = this.findViewById("chat-widget-input-send-button");
-        this.submitOnEnterCheckBoxView      = this.findViewById("submitOnEnterCheckBox");
-        this.textAreaView                   = this.findViewById("chatInputTextArea");
     },
 
     /**
@@ -298,7 +298,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @return {Object}
      */
     getFormData: function() {
-        return this.formView.getFormData();
+        return this.chatWidgetFormView.getFormData();
     },
 
     /**
@@ -371,10 +371,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     handleChooseOrUploadImageViewClickedEvent: function(event) {
-        this.commandModule.relayCommand(CommandType.DISPLAY.WORKSPACE, {});
-        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_EDITOR, {});
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
-        //NOTE: This will later show the ChooseOrUploadImageContainer
     },
 
     /**
@@ -406,13 +403,6 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
             var htmlEvent = event.getData().event;
             htmlEvent.preventDefault();
             htmlEvent.stopPropagation();
-        } else {
-            var formData  = this.getFormData();
-            if (!/\S/.test(formData.text)) {
-                this.sendButtonTextView.setText("Ok");
-            } else {
-                this.sendButtonTextView.setText("Send");
-            }
         }
     },
 
@@ -424,6 +414,13 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
         var key     = event.getKeyCode();
         if (key === 13) {
             this.processEnterKeyEvent(event);
+        } else {
+            var formData  = this.getFormData();
+            if (!/\S/.test(formData.text)) {
+                this.sendButtonTextView.setText("Ok");
+            } else {
+                this.sendButtonTextView.setText("Send");
+            }
         }
     }
 });

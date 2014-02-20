@@ -9,6 +9,8 @@
 
 //@Require('Class')
 //@Require('airbug.ManagerModule')
+//@Require('airbug.UserList')
+//@Require('airbug.UserModel')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -27,6 +29,8 @@ var bugpack                         = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
+var UserList                        = bugpack.require('airbug.UserList');
+var UserModel                       = bugpack.require('airbug.UserModel');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -50,6 +54,23 @@ var UserManagerModule = Class.extend(ManagerModule, {
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {IList=} dataList
+     * @return {UserList}
+     */
+    generateUserList: function(dataList) {
+        return new UserList(dataList);
+    },
+
+    /**
+     * @param {Object} dataObject
+     * @param {MeldDocument=} meldDocument
+     * @returns {UserModel}
+     */
+    generateUserModel: function(dataObject, meldDocument) {
+        return new UserModel(dataObject, meldDocument);
+    },
 
     /**
      * @param {string} userId

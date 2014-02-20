@@ -7,35 +7,22 @@
 //@Export('WorkspaceWidgetContainer')
 
 //@Require('Class')
-//@Require('airbug.PanelView')
-//@Require('airbug.WorkspaceContainer')
 //@Require('carapace.CarapaceContainer')
-//@Require('carapace.ViewBuilder')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var PanelView                   = bugpack.require('airbug.PanelView');
-var WorkspaceContainer          = bugpack.require('airbug.WorkspaceContainer');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var view        = ViewBuilder.view;
+var Class                           = bugpack.require('Class');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 
 
 //-------------------------------------------------------------------------------
@@ -45,109 +32,22 @@ var view        = ViewBuilder.view;
 var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function() {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-
-        // Views
-        //-------------------------------------------------------------------------------
-
-
-        /**
-         * @private
-         * @type {PanelView}
-         */
-        this.panelView                  = null;
-
-
-        // Containers
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {WorkspaceContainer}
-         */
-        this.workspaceContainer         = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {Array<*>} routerArgs
+     *
      */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
+    hideWidget: function() {
+        this.getViewTop().hide();
     },
 
     /**
-     * @protected
+     *
      */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        this.panelView =
-            view(PanelView)
-                .id("workspace-container-panel")
-                .build();
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.panelView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.workspaceContainer         = new WorkspaceContainer();
-        this.addContainerChild(this.workspaceContainer,         "#workspace-container-panel");
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
+    showWidget: function() {
+        this.getViewTop().show();
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-
 });
 
 

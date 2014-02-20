@@ -35,22 +35,45 @@ var MessageContentImageView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="message-image-{{cid}}" class="message-image image-preview">' +
-            '<a href="{{model.url}}"  target="_blank"> <img id="image-{{cid}}" src={{model.midsizeUrl}} /> </a>' +
+    //NOTE: SUNG Temporarily using an href for the full size image until we have implemented our own full size view.
+
+    template:
+        '<div id="message-content-{{cid}}" class="message-image image-preview">' +
+            '<a id="image-link-{{cid}}" href="{{model.url}}"  target="_blank"> ' +
+                '<img id="image-{{cid}}" src={{model.midsizeUrl}} />' +
+            '</a>' +
         '</div>',
 
-        //NOTE: SUNG Temporarily using an href for the full size image until we have implemented our own full size view.
+
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @return {$}
      */
-    generateTemplateData: function() {
-        var data = this._super();
-        return data;
+    getImageElement: function() {
+        return this.findElement("#image-{{cid}}");
     },
+
+    /**
+     * @return {$}
+     */
+    getImageLinkElement: function() {
+        return this.findElement("#image-link-{{cid}}");
+    },
+
+    /**
+     * @return {$}
+     */
+    getMessageContentElement: function() {
+        return this.findElement("#message-content-{{cid}}");
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @protected
@@ -61,10 +84,10 @@ var MessageContentImageView = Class.extend(MustacheView, {
         this._super(propertyName, propertyValue);
         switch (propertyName) {
             case "midsizeUrl":
-                this.findElement('#image-' + this.getCid()).attr("src", propertyValue);
+                this.getImageElement().attr("src", propertyValue);
                 break;
             case "url":
-                this.findElement('#message-image-' + this.getCid() + ">a").attr("href", propertyValue);
+                this.getImageLinkElement().attr("href", propertyValue);
                 break;
         }
     }

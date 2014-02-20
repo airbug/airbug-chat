@@ -7,14 +7,11 @@
 //@Export('PinboardTrayButtonContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -30,14 +27,11 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var IconView                    = bugpack.require('airbug.IconView');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -52,7 +46,7 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
+var PinboardTrayButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -60,29 +54,12 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("PinboardTrayButton");
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @type {string}
-         */
-        this.buttonName                 = "PinboardTrayButton";
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {CommandModule}
-         */
-        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -92,7 +69,6 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView                 = null;
-
     },
 
 
@@ -123,24 +99,24 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .id("pinboard-tray-button")
-                .attributes({
-                    size: ButtonView.Size.LARGE,
-                    type: "primary",
-                    align: "center",
-                    block: true
-                })
-                .children([
-                    view(IconView)
-                        .attributes({
-                            type: IconView.Type.PUSHPIN,
-                            color: IconView.Color.WHITE
-                        })
-                        .appendTo("#pinboard-tray-button")
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({
+                size: ButtonView.Size.LARGE,
+                type: "primary",
+                align: "center",
+                block: true
+            })
+            .children([
+                view(IconView)
+                    .attributes({
+                        type: IconView.Type.PUSHPIN,
+                        color: IconView.Color.WHITE
+                    })
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -149,10 +125,11 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @protected
      */
-    createContainerChildren: function() {
+    deinitializeContainer: function() {
         this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearPinboardTrayButtonClickedEvent, this);
     },
 
     /**
@@ -160,7 +137,7 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearPinboardTrayButtonClickedEvent, this);
     },
 
 
@@ -172,21 +149,10 @@ var PinboardTrayButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
+    hearPinboardTrayButtonClickedEvent: function(event) {
 
     }
-
 });
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(PinboardTrayButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

@@ -82,10 +82,11 @@ CommandModule.CommandType = {
         SET_THEME:      "CommandModuleCommand::codeEditor:setTheme"
     },
     TOGGLE: {
+        CODE_EDITOR:            "CommandModuleCommand::toggle::codeEditor",
+        CODE_EDITOR_SETTINGS:   "CommandModuleCommand::toggle::codeEditorSettings",
         HAMBURGER_LEFT:         "CommandModuleCommand::toggle::hamburgerLeft",
         HAMBURGER_RIGHT:        "CommandModuleCommand::toggle::hamburgerRight",
-        CODE_EDITOR_SETTINGS:   "CommandModuleCommand::toggle::codeEditorSettings",
-        WORKSPACE:              "CommandModuleCommand::toggle::workspace"
+        IMAGE_LIST:             "CommandModuleCommand::toggle::imageList"
     },
     DISPLAY: {
         CODE:                   "CommandModuleCommand::display::code",
@@ -94,11 +95,9 @@ CommandModule.CommandType = {
         IMAGE_EDITOR:           "CommandModuleCommand::display::imageEditor",
         IMAGE_LIST:             "CommandModuleCommand::display::imageList",
         IMAGE_UPLOAD:           "CommandModuleCommand::display::imageUpload",
-        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::display::shareRoomOverlay",
-        WORKSPACE:              "CommandModuleCommand::display::workspace"
+        SHARE_ROOM_OVERLAY:     "CommandModuleCommand::display::shareRoomOverlay"
     },
     HIDE: {
-        WORKSPACE:              "CommandModuleCommand::hide::workspace",
         SHARE_ROOM_OVERLAY:     "CommandModuleCommand::hide::shareRoomOverlay",
         CODE_EDITOR_FULLSCREEN: "CommandModuleCommand::hide::codeEditorFullscreen"
     },

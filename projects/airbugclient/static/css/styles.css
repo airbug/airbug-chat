@@ -220,7 +220,7 @@ html, body {
     right: 0px;
     bottom: 0px;
     left: 0px;
-    height: 40px;
+    position: absolute;
     background-color: rgb(255, 255, 255);
     border-color: rgb(196, 196, 196);
     border-width: 1px;
@@ -531,7 +531,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     font-weight: 500;
     left: 0px;
     line-height: 32px;
-    height: 40px;
+    height: 46px;
     position: absolute;
     top: 0px;
     width: 100%;
@@ -544,6 +544,11 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 .quarter-box {
     height: 25%;
 }
+
+.scroll-box {
+    overflow-y: scroll;
+}
+
 
 /* List CSS
 *******************************************************************/
@@ -805,6 +810,15 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     line-height: 34px;
 }
 
+
+.room-chatbox-header {
+
+}
+
+.room-chatbox-header .box-header {
+
+}
+
 /* ChatWidget CSS
 *******************************************************************/
 
@@ -863,12 +877,12 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     padding: 0px;
 }
 
-#choose-or-upload-image-button-wrapper {
+.choose-or-upload-image-button-wrapper {
     left: 0;
     width: 33%;
 }
 
-#chat-widget-input-send-button-wrapper {
+.chat-widget-input-send-button-wrapper {
     right: -9%;
     width: 74%;
 }
@@ -883,11 +897,11 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     border-radius: 5px;
 }
 
-#choose-or-upload-image-button {
+.choose-or-upload-image-button {
     width: 98%;
 }
 
-#chat-widget-input-send-button {
+.chat-widget-input-send-button {
     width: 97%;
 }
 
@@ -907,22 +921,6 @@ div.previous-messages-loader {
     background-color: rgb(207, 226, 243); /* Old browsers */
 }
 
-#room-chatbox-header .subheader-center .room-name {
-    position: relative;
-    text-align: center;
-}
-
-#room-chatbox-header .subheader-center .btn-group {
-    position: relative;
-    margin-left: 10px;
-}
-
-#room-chatbox-header .subheader-center .btn-group button {
-    padding: 0;
-    margin-top: 4px;
-    margin-left: 3px;
-}
-
 #roommember-list-panel-container .panel-header .btn-group {
     display: inline-block;
     width: 15%;
@@ -939,6 +937,37 @@ div.previous-messages-loader {
 #roommember-list-panel-container .panel-header .panel-header-nav-right .btn {
     margin-top: 1px;
 }
+
+
+/* Loader CSS
+*******************************************************************/
+
+.loader {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 80px;
+}
+
+.loader-image {
+    width: 100%;
+    height: auto;
+}
+
+.loader-small {
+    width: 32px;
+    height: 32px;
+}
+
+.loader-medium {
+    width: 64px;
+    height: 64px;
+}
+
+.loader-large {
+    width: 128px;
+    height: 128px;
+}
+
 
 /* Message CSS
 *******************************************************************/
@@ -1050,7 +1079,7 @@ div.previous-messages-loader {
 }
 
 .login-box .box-header .panel-wrapper {
-    margin: 0;
+    margin: 0px 0px 5px 0px;
 }
 
 .login-header-text {
@@ -1070,7 +1099,7 @@ div.previous-messages-loader {
 }
 
 .registration-box .box-header .panel-wrapper {
-    margin: 0;
+    margin: 0px 0px 5px 0px;;
 }
 
 .registration-header-text {
@@ -1141,19 +1170,19 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 /* ImageList CSS
 *******************************************************************/
 
-#image-list-container .box-footer .btn-group {
+.image-list-container .box-footer .btn-group {
     width: 100%;
 }
 
-#image-list-container .box-footer .btn-group .btn {
+.image-list-container .box-footer .btn-group .btn {
     height: 45px;
 }
 
-#image-list-container .box-footer .btn-group .btn:first-child {
+.image-list-container .box-footer .btn-group .btn:first-child {
     width: 20%;
 }
 
-#image-list-container .box-footer .btn-group .btn:last-child {
+.image-list-container .box-footer .btn-group .btn:last-child {
     width: 80%
 }
 
@@ -1246,17 +1275,17 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 /* ImageUpload CSS (see also FileUpload CSS above)
 *******************************************************************/
 
-#image-upload-container {
+.image-upload-container {
     overflow: hidden;
 }
 
-#image-upload-container.box>.box-body>.box {
+.image-upload-container.box>.box-body>.box {
     padding-left: 10px;
     width: 89%;
     overflow-y: scroll;
 }
 
-#image-upload-container.box>.box-body .box>span:first-child {
+.image-upload-container.box>.box-body .box>span:first-child {
     margin: 0% 33%;
 }
 

@@ -7,14 +7,12 @@
 //@Export('CodeEditorTrayButtonContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
+//@Require('airbug.IconView')
 //@Require('airbug.TextView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -30,14 +28,12 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule               = bugpack.require('airbug.CommandModule');
+var IconView                    = bugpack.require('airbug.IconView');
 var TextView                    = bugpack.require('airbug.TextView');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -45,6 +41,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var CommandType                 = CommandModule.CommandType;
 var view                        = ViewBuilder.view;
 
 
@@ -52,7 +49,7 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
+var CodeEditorTrayButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -60,29 +57,12 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("CodeEditorTrayButton");
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @type {string}
-         */
-        this.buttonName                 = "CodeEditorTrayButton";
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {CommandModule}
-         */
-        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -92,22 +72,12 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView                 = null;
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-    },
 
     /**
      * @protected
@@ -115,43 +85,37 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
     createContainer: function() {
         this._super();
 
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .id("code-editor-tray-button")
-                .attributes({
-                    size: ButtonView.Size.LARGE,
-                    type: "primary",
-                    align: "center",
-                    block: true
-                })
-                .children([
-                    view(IconView)
-                        .attributes({
-                            type: IconView.Type.CHEVRON_LEFT,
-                            color: IconView.Color.WHITE
-                        })
-                        .appendTo("#code-editor-tray-button"),
-                    view(TextView)
-                        .attributes({
-                            text: "c/"
-                        })
-                        .appendTo("#code-editor-tray-button"),
-                    view(IconView)
-                        .attributes({
-                            type: IconView.Type.CHEVRON_RIGHT,
-                            color: IconView.Color.WHITE
-                        })
-                        .appendTo("#code-editor-tray-button")
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({
+                size: ButtonView.Size.LARGE,
+                type: "primary",
+                align: "center",
+                block: true
+            })
+            .children([
+                view(IconView)
+                    .attributes({
+                        type: IconView.Type.CHEVRON_LEFT,
+                        color: IconView.Color.WHITE
+                    })
+                    .appendTo("#button-{{cid}}"),
+                view(TextView)
+                    .attributes({
+                        text: "c/"
+                    })
+                    .appendTo("#button-{{cid}}"),
+                view(IconView)
+                    .attributes({
+                        type: IconView.Type.CHEVRON_RIGHT,
+                        color: IconView.Color.WHITE
+                    })
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -160,10 +124,11 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @protected
      */
-    createContainerChildren: function() {
+    deinitializeContainer: function() {
         this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorTrayButtonClickedEvent, this);
     },
 
     /**
@@ -171,7 +136,7 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorTrayButtonClickedEvent, this);
     },
 
 
@@ -183,21 +148,10 @@ var CodeEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
-
+    hearCodeEditorTrayButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_EDITOR, {});
     }
-
 });
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorTrayButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ var ListView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:
-        '<div id="{{id}}" class="list">' +
+        '<div id="list-{{cid}}" class="list">' +
             '<div id="list-view-placeholder-{{cid}}" class="list-placeholder">{{placeholder}}</div>' +
         '</div>',
 
@@ -46,20 +46,10 @@ var ListView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @returns {string}
-     */
-    getId: function() {
-        if (this.id) {
-            return this.id;
-        }
-        return "list-" + this.getCid();
-    },
-
-    /**
      * @return {$}
      */
     getListElement: function() {
-        return this.findElement("#" + this.getId());
+        return this.findElement("#list-{{cid}}");
     },
 
     /**
@@ -79,8 +69,6 @@ var ListView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data            = this._super();
-        data.id             = this.getId();
-
         var placeholder     = this.getAttribute("placeholder");
         if (placeholder) {
             data.placeholder    = placeholder;

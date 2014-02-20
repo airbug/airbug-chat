@@ -36,11 +36,16 @@ var ChatWidgetView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     template:   '<div id="{{id}}" class="chat-widget">' +
-                    '<div id="chat-widget-messages" class="chat-widget-messages image-upload-dropzone">' +
+                    '<div id="chat-widget-messages-{{cid}}" class="chat-widget-messages image-upload-dropzone">' +
                     '</div>' +
-                    '<div id="chat-widget-input" class="chat-widget-input">' +
+                    '<div id="chat-widget-input-{{cid}}" class="chat-widget-input">' +
                     '</div>' +
                 '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // Mustache Mehtods
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}

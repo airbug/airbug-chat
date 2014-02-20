@@ -108,8 +108,28 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    isActive: function() {
+        return this.active;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+    },
 
     /**
      * @protected
@@ -117,6 +137,18 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
     initializeContainer: function() {
         this._super();
         this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {boolean} active
+     */
+    setActive: function(active) {
+        this.getViewTop().setAttribute("active", active);
     },
 
 

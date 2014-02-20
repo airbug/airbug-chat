@@ -105,15 +105,15 @@ var ChatMessageTinkerButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "link", align: "right"})
-                .children([
-                    view(TextView)
-                        .attributes({text: "tinker"})
-                        .appendTo('button[id|="button"]')
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({type: "link", align: "right"})
+            .children([
+                view(TextView)
+                    .attributes({text: "tinker"})
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views

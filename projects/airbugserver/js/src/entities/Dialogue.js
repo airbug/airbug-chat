@@ -46,6 +46,10 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var Dialogue = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
@@ -147,6 +151,7 @@ var Dialogue = Class.extend(Entity, {
     }
 });
 
+
 //-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
@@ -168,7 +173,9 @@ bugmeta.annotate(Dialogue).with(
         property("updatedAt")
             .type("date"),
         property("userIdPair")
-            .type("object"),
+            .type("Pair")
+            .collectionOf("string")
+            .id(),
         property("userPair")
             .type("Pair")
             .populates(true)

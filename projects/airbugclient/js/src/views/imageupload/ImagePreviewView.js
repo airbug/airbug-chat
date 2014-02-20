@@ -35,18 +35,10 @@ var ImagePreviewView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:       '<div id="{{id}}" class="image-preview">\
-                <a href="{{model.url}}"  target="_blank" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>\
-    <div>',
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data            = this._super();
-        data.id             = this.getId() || "image-preview-" + this.getCid();
-        return data;
-    }
+    template:
+        '<div id="image-preview-{{cid}}" class="image-preview">' +
+            '<a href="{{model.url}}"  target="_blank" title="{{model.name}}" ><img src="{{model.thumbnailUrl}}"></a>' +
+        '<div>'
 });
 
 

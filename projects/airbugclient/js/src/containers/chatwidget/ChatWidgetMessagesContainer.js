@@ -63,7 +63,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
      */
     _constructor: function(chatMessageList) {
 
-        this._super();
+        this._super("No chat messages in this room");
 
 
         //-------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -171,7 +171,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
         if(!this.previousMessagesLoaderContainer) {
             this.previousMessagesLoaderContainer = new PreviousMessagesLoaderContainer();
         }
-        this.prependContainerChild(this.previousMessagesLoaderContainer, ".list");
+        this.prependContainerChild(this.previousMessagesLoaderContainer, "#list-" + this.getListView().getCid());
     },
 
 
@@ -244,6 +244,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
             this.mapModelToContainer(chatMessageModel, chatMessageContainer);
             return chatMessageContainer;
         }
+        return null;
     },
 
     /**
@@ -258,21 +259,23 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
     },
 
     addChatMessageContainerAt: function(chatMessageContainer, index) {
-        this.addContainerChildAt(chatMessageContainer, index, ".list");
+        this.addContainerChildAt(chatMessageContainer, index, "#list-" + this.getListView().getCid());
     },
 
     /**
      *
      */
     appendChatMessageContainer: function(chatMessageContainer) {
-        this.addContainerChild(chatMessageContainer, ".list");
+        this.hidePlaceholder();
+        this.addContainerChild(chatMessageContainer, "#list-" + this.getListView().getCid());
     },
 
     /**
      *
      */
     prependChatMessageContainer: function(chatMessageContainer) {
-        this.prependContainerChild(chatMessageContainer, ".list");
+        this.hidePlaceholder();
+        this.prependContainerChild(chatMessageContainer, "#list-" + this.getListView().getCid());
     },
 
 
@@ -288,7 +291,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
         var chatMessageModel    = change.getValue();
         var index               = change.getIndex();
         var chatMessageContainer = this.createChatMessageContainer(chatMessageModel);
-        if(index === 0) {
+        if (index === 0) {
             this.prependChatMessageContainer(chatMessageContainer);
         } else {
             var scrollState = this.getScrollState();

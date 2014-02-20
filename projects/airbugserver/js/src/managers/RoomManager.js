@@ -9,7 +9,7 @@
 
 //@Require('Class')
 //@Require('Set')
-//@TypeUtil('TypeUtil')
+//@Require('TypeUtil')
 //@Require('airbugserver.Room')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -73,8 +73,9 @@ var RoomManager = Class.extend(EntityManager, {
             conversation: {
                 idSetter:   room.setConversationId,
                 setter:     room.setConversation,
-                ownerIdProperty: "ownerId", //Should this be ownerIdSetter? This would require requiring Conversation here.
-                ownerProperty: "owner" //How should we handle many to many associations?
+                referenceIdProperty: "ownerId", //Should this be ownerIdSetter? This would require requiring Conversation here.
+                referenceTypeProperty: "ownerType",
+                referenceProperty: "owner" //How should we handle many to many associations?
             }
         };
         this.create(room, options, dependencies, callback);

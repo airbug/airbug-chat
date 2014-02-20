@@ -14,42 +14,48 @@
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
+//@Require('carapace.RoutingRequest')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var RoomPageContainer       = bugpack.require('airbug.RoomPageContainer');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
+var Class                       = bugpack.require('Class');
+var ApplicationController       = bugpack.require('airbug.ApplicationController');
+var RoomPageContainer           = bugpack.require('airbug.RoomPageContainer');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta     = BugMeta.context();
-var autowired   = AutowiredAnnotation.autowired;
-var controller  = ControllerAnnotation.controller;
-var property    = PropertyAnnotation.property;
+var bugmeta                     = BugMeta.context();
+var autowired                   = AutowiredAnnotation.autowired;
+var controller                  = ControllerAnnotation.controller;
+var property                    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ApplicationController}
+ */
 var RoomPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------
@@ -103,55 +109,40 @@ var RoomPageController = Class.extend(ApplicationController, {
             if (!throwable) {
                 var roomId      = routingRequest.getArgs()[0];
                 _this.roomManagerModule.retrieveRoom(roomId, function(throwable, room) {
-
-                    //TEST
-                    console.log("RoomPageController #filterRouting - throwable:", throwable, " room:", room);
-
                     if (!throwable) {
-                        //TEST
-                        console.log("currentUser.getRoomIdSet().contains(roomId):", currentUser.getRoomIdSet().contains(roomId));
-
-
                         if (currentUser.getRoomIdSet().contains(roomId)) {
                             routingRequest.accept();
                         } else {
                             _this.roomManagerModule.joinRoom(roomId, function(throwable) {
-                                //TEST
-                                console.log("RoomPageController #filterRouting - joinRoom return - throwable:", throwable);
-
                                 if (!throwable) {
                                     routingRequest.accept();
                                 } else {
-                                    console.log(throwable.message);
-                                    console.log(throwable.stack);
-                                    routingRequest.reject();
+                                    routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
                                 }
                             });
                         }
                     } else {
                         if (throwable.getType() === "NotFound") {
-
+                            routingRequest.reject(RoutingRequest.RejectReason.NOT_FOUND);
                         } else {
-                            console.log(throwable.message);
-                            console.log(throwable.stack);
-                            routingRequest.reject();
+                            routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
                         }
                     }
                 });
             } else {
-                console.log(throwable.message);
-                console.log(throwable.stack);
-                routingRequest.reject(); //OR forward to home?
+                routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
             }
         });
     }
 });
 
-bugmeta.annotate(RoomPageController).with(
-    controller().route("room/:id")
-);
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomPageController).with(
+    controller().route("room/:id"),
     autowired().properties([
         property("roomManagerModule").ref("roomManagerModule")
     ])

@@ -7,17 +7,16 @@
 //@Export('WorkspaceTrayContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonViewEvent')
+//@Require('Map')
 //@Require('airbug.CodeEditorTrayButtonContainer')
+//@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.ImageEditorTrayButtonContainer')
-//@Require('airbug.CommandModule')
-//@Require('airbug.IconView')
-//@Require('airbug.ListView')
-//@Require('airbug.TextView')
+//@Require('airbug.ImageWorkspace')
 //@Require('airbug.PanelView')
-//@Require('bugmeta.BugMeta')
+//@Require('airbug.WorkspaceEvent')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -34,16 +33,16 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+var Map                             = bugpack.require('Map');
 var CodeEditorTrayButtonContainer   = bugpack.require('airbug.CodeEditorTrayButtonContainer');
+var CodeEditorWorkspace             = bugpack.require('airbug.CodeEditorWorkspace');
 var ImageEditorTrayButtonContainer  = bugpack.require('airbug.ImageEditorTrayButtonContainer');
-var CommandModule                   = bugpack.require('airbug.CommandModule');
-var IconView                        = bugpack.require('airbug.IconView');
-var TextView                        = bugpack.require('airbug.TextView');
+var ImageWorkspace                  = bugpack.require('airbug.ImageWorkspace');
 var PanelView                       = bugpack.require('airbug.PanelView');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
 var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
@@ -52,9 +51,8 @@ var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var CommandType                     = CommandModule.CommandType;
-var bugmeta                         = BugMeta.context();
 var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
 var property                        = PropertyAnnotation.property;
 var view                            = ViewBuilder.view;
 
@@ -63,6 +61,10 @@ var view                            = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CarapaceContainer}
+ */
 var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
@@ -78,27 +80,12 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
         /**
          * @private
-         * @type {CommandModule}
+         * @type {Map.<string, CarapaceContainer>}
          */
-        this.commandModule                  = null;
+        this.workspaceTrayButtonMap         = new Map();
 
-        // Views
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {PanelView}
-         */
-        this.panelView                      = null;
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -114,20 +101,32 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
          * @type {ImageEditorTrayButtonContainer}
          */
         this.imageEditorTrayButtonContainer = null;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {WorkspaceModule}
+         */
+        this.workspaceModule                    = null;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {PanelView}
+         */
+        this.panelView                      = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-    },
 
     /**
      * @protected
@@ -143,10 +142,9 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelView)
-                .attributes({})
-                .build();
+        view(PanelView)
+            .name("panelView")
+            .build(this);
 
 
         // Wire Up Views
@@ -156,12 +154,12 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @protected
      */
     createContainerChildren: function() {
         this._super();
-        this.codeEditorTrayButtonContainer = new CodeEditorTrayButtonContainer();
-        this.imageEditorTrayButtonContainer = new ImageEditorTrayButtonContainer();
+        this.codeEditorTrayButtonContainer      = new CodeEditorTrayButtonContainer();
+        this.imageEditorTrayButtonContainer     = new ImageEditorTrayButtonContainer();
         this.addContainerChild(this.codeEditorTrayButtonContainer, "#panel-body-" + this.panelView.getCid());
         this.addContainerChild(this.imageEditorTrayButtonContainer, "#panel-body-" + this.panelView.getCid());
     },
@@ -169,9 +167,31 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+
+        // TODO BRN: FIX HACK. These buttons should register with the rest of the workspace system. Need some sort  of
+        // API that allows workspaces to register buttons for the tray.
+
+        this.workspaceTrayButtonMap.remove(CodeEditorWorkspace.WORKSPACE_NAME);
+        this.workspaceTrayButtonMap.remove(ImageWorkspace.WORKSPACE_NAME);
+
+        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.CHANGED, this.hearWorkspaceChanged, this);
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
+
+        // TODO BRN: FIX HACK. These buttons should register with the rest of the workspace system. Need some sort  of
+        // API that allows workspaces to register buttons for the tray.
+
+        this.workspaceTrayButtonMap.put(CodeEditorWorkspace.WORKSPACE_NAME, this.codeEditorTrayButtonContainer);
+        this.workspaceTrayButtonMap.put(ImageWorkspace.WORKSPACE_NAME, this.imageEditorTrayButtonContainer);
+
+        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.CHANGED, this.hearWorkspaceChanged, this);
     },
 
 
@@ -180,30 +200,27 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
+     * @param {Event} event
      */
-    initializeEventListeners: function() {
-        this.codeEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorButtonClickedEvent, this);
-        this.imageEditorTrayButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorButtonClickedEvent, this);
-    },
-
-    /**
-     *
-     */
-    hearCodeEditorButtonClickedEvent: function(event) {
-        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {source: "#code-editor-button"});
-        this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
-    },
-
-    /**
-     *
-     */
-    hearImageEditorButtonClickedEvent: function(event) {
-        this.commandModule.relayCommand(CommandType.TOGGLE.WORKSPACE, {source: "#image-editor-button"});
-        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_EDITOR, {});
-        this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_LIST, {});
+    hearWorkspaceChanged: function(event) {
+        var previousWorkspaceName   = event.getData().previousWorkspace;
+        var workspaceName           = event.getData().workspace;
+        if (previousWorkspaceName) {
+            var previousWorkspaceTrayButton = this.workspaceTrayButtonMap.get(previousWorkspaceName);
+            if (previousWorkspaceTrayButton) {
+                previousWorkspaceTrayButton.setActive(false);
+            }
+        }
+        if (workspaceName) {
+            var workspaceTrayButton = this.workspaceTrayButtonMap.get(workspaceName);
+            if (workspaceTrayButton) {
+                workspaceTrayButton.setActive(true);
+            }
+        }
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // BugMeta
@@ -211,9 +228,10 @@ var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(WorkspaceTrayContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule"),
+        property("workspaceModule").ref("workspaceModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

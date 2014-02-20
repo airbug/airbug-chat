@@ -9,9 +9,10 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('Map')
+//@Require('airbug.BoxView')
 //@Require('airbug.ListView')
 //@Require('airbug.ListItemView')
-//@Require('airbug.PanelView')
+//@Require('airbug.LoaderView')
 //@Require('airbug.ScrollEvent')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -33,9 +34,10 @@ var Class                           = bugpack.require('Class');
 var Event                           = bugpack.require('Event');
 var Map                             = bugpack.require('Map');
 var RemoveChange                    = bugpack.require('RemoveChange');
+var BoxView                         = bugpack.require('airbug.BoxView');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListItemView                    = bugpack.require('airbug.ListItemView');
-var PanelView                       = bugpack.require('airbug.PanelView');
+var LoaderView                      = bugpack.require('airbug.LoaderView');
 var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
 var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
@@ -66,8 +68,9 @@ var ListContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @constructs
+     * @param {string} placeholder
      */
-    _constructor: function() {
+    _constructor: function(placeholder) {
 
         this._super();
 
@@ -88,15 +91,27 @@ var ListContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {BoxView}
+         */
+        this.boxView                                    = null;
+
+        /**
+         * @private
          * @type {ListView}
          */
         this.listView                                   = null;
 
         /**
          * @private
-         * @type {PanelView}
+         * @type {LoaderView}
          */
-        this.panelView                                  = null;
+        this.loaderView                                 = null;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.placeholder                                = placeholder;
 
         /**
          * @private
@@ -111,6 +126,13 @@ var ListContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {BoxView}
+     */
+    getBoxView: function() {
+        return this.boxView;
+    },
+
+    /**
      * @return {ListView}
      */
     getListView: function() {
@@ -118,10 +140,10 @@ var ListContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     * @return {PanelView}
+     * @return {LoaderView}
      */
-    getPanelView: function() {
-        return this.panelView;
+    getLoaderView: function() {
+        return this.loaderView;
     },
 
     /**
@@ -147,12 +169,26 @@ var ListContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(PanelView)
-            .name("panelView")
+        view(BoxView)
+            .name("boxView")
+            .attributes({
+                scroll: true
+            })
             .children([
                 view(ListView)
                     .name("listView")
-                    .appendTo('*[id|="panel-body"]')
+                    .appendTo("#box-{{cid}}")
+                    .attributes({
+                        placeholder: this.placeholder
+                    })
+                    .children([
+                        view(LoaderView)
+                            .name("loaderView")
+                            .attributes({
+                                size: LoaderView.Size.SMALL
+                            })
+                            .appendTo("#list-{{cid}}")
+                    ])
             ])
             .build(this);
 
@@ -160,7 +196,7 @@ var ListContainer = Class.extend(CarapaceContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.panelView);
+        this.setViewTop(this.boxView);
     },
 
     /**
@@ -168,7 +204,7 @@ var ListContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.panelView.addEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
+        this.boxView.addEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
     },
 
     /**
@@ -176,16 +212,13 @@ var ListContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.panelView.removeEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
+        this.boxView.removeEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
     },
 
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
-
-    // NOTE BRN: We don't do this by chat message Id because ChatMessageModels can be added to the container before they
-    // ever have an ID (when they're being sent)
 
     /**
      * @param {CarapaceModel} carapaceModel
@@ -194,8 +227,8 @@ var ListContainer = Class.extend(CarapaceContainer, {
     animateScrollToCarapaceModel: function(carapaceModel, duration) {
         var carapaceContainer = this.carapaceModelToCarapaceContainerMap.get(carapaceModel);
         if (carapaceContainer) {
-            var value = this.panelView.getPanelBodyElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
-            this.panelView.getPanelBodyElement().animate({
+            var value = this.boxView.getBoxElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
+            this.boxView.getBoxElement().animate({
                 scrollTop: value
             }, {
                 duration: duration
@@ -204,14 +237,42 @@ var ListContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
+     *
+     */
+    hideLoader: function() {
+        this.loaderView.hide();
+    },
+
+    /**
+     *
+     */
+    hidePlaceholder: function() {
+        this.listView.hidePlaceholder();
+    },
+
+    /**
      * @param {CarapaceModel} carapaceModel
      */
     scrollToCarapaceModel: function(carapaceModel) {
         var carapaceContainer = this.carapaceModelToCarapaceContainerMap.get(carapaceModel);
         if (carapaceContainer) {
-            var value = this.panelView.getPanelBodyElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
-            this.panelView.getPanelBodyElement().scrollTop(value);
+            var value = this.boxView.getBoxElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
+            this.boxView.getBoxElement().scrollTop(value);
         }
+    },
+
+    /**
+     *
+     */
+    showLoader: function() {
+        this.loaderView.show();
+    },
+
+    /**
+     *
+     */
+    showPlaceholder: function() {
+        this.listView.showPlaceholder();
     },
 
 
@@ -220,7 +281,7 @@ var ListContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @protected
      */
     clearModelMap: function() {
         this.carapaceModelToCarapaceContainerMap.clear();
@@ -271,13 +332,13 @@ var ListContainer = Class.extend(CarapaceContainer, {
      * @param {number} scrollTop
      */
     calculateScrollState: function(scrollTop) {
-        var panelBodyHeight = this.panelView.getPanelBodyElement().height();
-        var listHeight      = this.listView.getListElement().height();
-        if (listHeight <= panelBodyHeight) {
+        var scrollAreaHeight    = this.boxView.getBoxElement().height();
+        var listHeight          = this.listView.getListElement().height();
+        if (listHeight <= scrollAreaHeight) {
             this.updateScrollState(ListContainer.ScrollState.NO_SCROLL);
         } else if (scrollTop === 0) {
             this.updateScrollState(ListContainer.ScrollState.TOP);
-        } else if (scrollTop === (listHeight - panelBodyHeight)) {
+        } else if (scrollTop === (listHeight - scrollAreaHeight)) {
             this.updateScrollState(ListContainer.ScrollState.BOTTOM);
         } else {
             this.updateScrollState(ListContainer.ScrollState.MIDDLE);

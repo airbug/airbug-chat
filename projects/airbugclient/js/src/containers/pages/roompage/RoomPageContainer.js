@@ -7,7 +7,10 @@
 //@Export('RoomPageContainer')
 
 //@Require('Class')
+//@Require('ClearChange')
 //@Require('Exception')
+//@Require('RemovePropertyChange')
+//@Require('SetPropertyChange')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
@@ -36,7 +39,10 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
+var ClearChange                         = bugpack.require('ClearChange');
 var Exception                           = bugpack.require('Exception');
+var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
+var SetPropertyChange                   = bugpack.require('SetPropertyChange');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
@@ -181,7 +187,6 @@ var RoomPageContainer = Class.extend(PageContainer, {
     activateContainer: function(routingArgs) {
         this._super(routingArgs);
         this.loadRoom(this.roomModel.getProperty("id"));
-        this.documentUtil.setTitle(this.roomModel.getProperty("name"));
     },
 
     /**
@@ -225,6 +230,8 @@ var RoomPageContainer = Class.extend(PageContainer, {
     initializeContainer: function() {
         this._super();
         //EventListeners and and command subscription initialization handled by super
+
+
     },
 
     /**
@@ -247,6 +254,9 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+        this.roomModel.observe(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
+        this.roomModel.observe(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
+        this.roomModel.observe(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
     },
 
     /**
@@ -256,6 +266,9 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+        this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
+        this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
+        this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
     },
 
     /**
@@ -276,7 +289,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         this.commandModule.unsubscribe(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, this.handleDisplayShareRoomOverlayCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
     },
 
@@ -293,17 +306,15 @@ var RoomPageContainer = Class.extend(PageContainer, {
     },
 
 
-    setDocumentTitle: function() {
-        document.title = this.roomModel.getProperty("name");
-    },
-
     handleDisplayCodeEditorOverlayWidgetCommand: function(message) {
         console.log("handleDisplayCodeEditorOverlayWidgetCommand");
-        var data    = message.getData();
-        var tabSize = data.tabSize;
-        var text    = data.text;
-        var mode    = data.mode;
-        var theme   = data.theme;
+        var data            = message.getData();
+        var cursorPosition  = data.cursorPosition;
+        var tabSize         = data.tabSize;
+        var text            = data.text;
+        var mode            = data.mode;
+        var theme           = data.theme;
+
         console.log("data:", data);
         if(!this.codeEditorOverlayWidgetContainer){
             this.codeEditorOverlayWidgetContainer = new CodeEditorOverlayWidgetContainer();
@@ -313,6 +324,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
         this.codeEditorOverlayWidgetContainer.setEditorTheme(theme);
         this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
+        this.codeEditorOverlayWidgetContainer.setEditorCursorPosition(cursorPosition);
         this.codeEditorOverlayWidgetContainer.getViewTop().show();
         this.codeEditorOverlayWidgetContainer.focusOnAceEditor();
     },
@@ -331,28 +343,20 @@ var RoomPageContainer = Class.extend(PageContainer, {
     },
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Protected Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @protected
      * @param {string} roomId
      */
     loadRoom: function(roomId) {
-        console.log("Loading roomModel inside of RoomPageContainer#loadRoomModel");
         var _this = this;
-
-        //TODO start loading animation
-        // var blackoutLoaderContainer = new BlackoutLoaderContainer();
-        // this.addContainerChild(blackoutLoaderContainer);
-
         this.roomManagerModule.retrieveRoom(roomId, function(throwable, roomMeldDocument) {
             if (!throwable) {
                 _this.roomModel.setMeldDocument(roomMeldDocument);
-                //TODO stop loading animation
             } else {
 
-                //TODO stop loading animation
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
                 if (Class.doesExtend(throwable, Exception)) {
@@ -402,6 +406,18 @@ var RoomPageContainer = Class.extend(PageContainer, {
      */
     handleHideShareRoomOverlayCommand: function(message) {
         this.hideShareRoomOverlay();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Model Observers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    observeRoomNameChange: function() {
+        this.documentUtil.setTitle(this.roomModel.getProperty("name"));
     }
 });
 

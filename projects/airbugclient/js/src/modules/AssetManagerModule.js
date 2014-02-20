@@ -56,7 +56,7 @@ var AssetManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} url
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     addAssetFromUrl: function(url, callback) {
         var requestData = {url: url};
@@ -66,8 +66,8 @@ var AssetManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {{
      *      name: string
-     * }} roomObject
-     * @param {function(Throwable, Meld=)} callback
+     * }} assetObject
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     createAsset: function(assetObject, callback) {
         this.create("Asset", assetObject, callback);
@@ -85,23 +85,23 @@ var AssetManagerModule = Class.extend(ManagerModule, {
     /**
      * @param {Object=} assetObject
      * @param {MeldDocument=} assetMeldDocument
-     * @returns {AssetModel}
+     * @returns {ImageAssetModel}
      */
     generateImageAssetModel: function(assetObject, assetMeldDocument) {
         return new ImageAssetModel(assetObject, assetMeldDocument);
     },
 
     /**
-     * @param {string} roomId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {string} assetId
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveAsset: function(assetId, callback) {
         this.retrieve("Asset", assetId, callback);
     },
 
     /**
-     * @param {Array.<string>} roomIds
-     * @param {function(Throwable, Map.<string, Meld>=)} callback
+     * @param {Array.<string>} assetIds
+     * @param {function(Throwable, Map.<string, MeldDocument>=)} callback
      */
     retrieveAssets: function(assetIds, callback) {
         this.retrieveEach("Asset", assetIds, callback);

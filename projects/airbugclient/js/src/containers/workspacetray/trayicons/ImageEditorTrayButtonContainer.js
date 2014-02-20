@@ -7,14 +7,11 @@
 //@Export('ImageEditorTrayButtonContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonContainer')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -30,14 +27,11 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
 var ButtonView                  = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var IconView                    = bugpack.require('airbug.IconView');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -45,6 +39,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var CommandType                 = CommandModule.CommandType;
 var view                        = ViewBuilder.view;
 
 
@@ -52,7 +47,7 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
+var ImageEditorTrayButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -60,29 +55,13 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("ImageEditorTrayButton");
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @type {string}
-         */
-        this.buttonName                 = "ImageEditorTrayButton";
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {CommandModule}
-         */
-        this.commandModule              = null;
 
         // Views
         //-------------------------------------------------------------------------------
@@ -92,55 +71,42 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
          * @type {ButtonView}
          */
         this.buttonView                 = null;
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-
-    },
 
     /**
      * @protected
      */
     createContainer: function() {
+
         this._super();
-
-
-        // Create Models
-        //-------------------------------------------------------------------------------
 
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .id("image-editor-tray-button")
-                .attributes({
-                    size: ButtonView.Size.LARGE,
-                    type: "primary",
-                    align: "center",
-                    block: true
-                })
-                .children([
-                    view(IconView)
-                        .attributes({
-                            type: IconView.Type.PICTURE,
-                            color: IconView.Color.WHITE
-                        })
-                        .appendTo("#image-editor-tray-button")
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({
+                size: ButtonView.Size.LARGE,
+                type: "primary",
+                align: "center",
+                block: true
+            })
+            .children([
+                view(IconView)
+                    .attributes({
+                        type: IconView.Type.PICTURE,
+                        color: IconView.Color.WHITE
+                    })
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -149,10 +115,11 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
     },
 
     /**
-     *
+     * @protected
      */
-    createContainerChildren: function() {
+    deinitializeContainer: function() {
         this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
     },
 
     /**
@@ -160,7 +127,7 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
     },
 
 
@@ -172,21 +139,11 @@ var ImageEditorTrayButtonContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {ButtonViewEvent} event
      */
-    hearButtonClickedEvent: function(event) {
-
+    hearImageEditorTrayButtonClickedEvent: function(event) {
+        this.getCommandModule().relayCommand(CommandType.TOGGLE.IMAGE_LIST, {});
     }
 
 });
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ImageEditorTrayButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

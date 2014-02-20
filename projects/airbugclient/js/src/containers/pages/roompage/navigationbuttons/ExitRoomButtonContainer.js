@@ -123,15 +123,15 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "right"})
-                .children([
-                    view(TextView)
-                        .attributes({text: "Exit"})
-                        .appendTo('button[id|="button"]')
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({type: "primary", align: "right"})
+            .children([
+                view(TextView)
+                    .attributes({text: "Exit"})
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views

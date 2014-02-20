@@ -509,7 +509,7 @@ var UserAssetService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} userId
-     * @param {function(Throwable, List.<UserAsset>)} callback
+     * @param {function(Throwable, List.<UserAsset>=)} callback
      */
     retrieveUserImageAssetsByUserId: function(requestContext, userId, callback) {
         var _this = this;
@@ -550,9 +550,59 @@ var UserAssetService = Class.extend(Obj, {
                     }
                 });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users are not allowed to access UserAssets"));
         }
     },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {function(Throwable, List.<UserAsset>=)} callback
+     */
+    retrieveUserAssetsByUserIdSortByCreatedAt: function(requestContext, userId, callback) {
+        var _this = this;
+        var currentUser = requestContext.get('currentUser');
+        var call        = requestContext.get('call');
+        var mappedException = null;
+        var userAssetManager = this.userAssetManager;
+        /** @type {List.<UserAsset>} */
+        var userImageAssetList = null;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    userAssetManager.retrieveUserAssetsByUserIdSortByCreatedAt(userId, function(throwable, returnedImageUserAssetList) {
+                        if (!throwable) {
+                            userImageAssetList = returnedImageUserAssetList;
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.userAssetPusher.meldCallWithUserAssets(call.getCallUuid(),
+                        userImageAssetList.toArray(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                }),
+                $task(function(flow) {
+                    _this.userAssetPusher.pushUserAssetsToCall(userImageAssetList.toArray(),
+                        call.getCallUuid(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(mappedException, userImageAssetList);
+                    } else {
+                        callback(throwable, null);
+                    }
+                });
+        } else {
+            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users are not allowed to access UserAssets"));
+        }
+    },
+
+
     //-------------------------------------------------------------------------------
     // Private
     //-------------------------------------------------------------------------------

@@ -63,10 +63,10 @@ var ConversationManager = Class.extend(EntityManager, {
      * @param {function(Throwable, Conversation)=} callback
      */
     createConversation: function(conversation, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(conversation, options, dependencies, callback);
     },
@@ -108,6 +108,7 @@ var ConversationManager = Class.extend(EntityManager, {
             },
             owner: {
                 idGetter:   conversation.getOwnerId,
+                typeGetter: conversation.getOwnerType,
                 getter:     conversation.getOwner,
                 setter:     conversation.setOwner
             }

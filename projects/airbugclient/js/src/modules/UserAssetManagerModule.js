@@ -85,16 +85,17 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {Object=} userAssetObject
+     * @param {MeldDocument=} imageAssetMeldDocument
      * @param {MeldDocument=} userAssetMeldDocument
      * @returns {UserImageAssetModel}
      */
-    generateUserImageAssetModel: function(userAssetObject, userAssetMeldDocument) {
-        return new UserImageAssetModel(userAssetObject, userAssetMeldDocument);
+    generateUserImageAssetModel: function(userAssetObject, imageAssetMeldDocument, userAssetMeldDocument) {
+        return new UserImageAssetModel(userAssetObject, imageAssetMeldDocument, userAssetMeldDocument);
     },
 
     /**
      * @param {string} userAssetId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     retrieveUserAsset: function(userAssetId, callback) {
         this.retrieve("UserAsset", userAssetId, callback);
@@ -109,7 +110,7 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {function(Throwable, List.<Meld>=)} callback
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
      */
     retrieveUserAssetsForCurrentUser: function(callback) {
         var _this = this;
@@ -119,7 +120,17 @@ var UserAssetManagerModule = Class.extend(ManagerModule, {
     },
 
     /**
-     * @param {function(Throwable, List.<Meld>=)} callback
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
+     */
+    retrieveUserAssetsForCurrentUserSortByCreatedAt: function(callback) {
+        var _this = this;
+        this.request("retrieveUserAssetsForCurrentUserSortByCreatedAt", {}, function(throwable, callResponse) {
+            _this.processListRetrieveResponse(throwable, callResponse, "UserAsset", callback);
+        });
+    },
+
+    /**
+     * @param {function(Throwable, List.<MeldDocument>=)} callback
      */
     retrieveUserImageAssetsForCurrentUser: function(callback) {
         var _this = this;

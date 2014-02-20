@@ -58,7 +58,13 @@ var IconView = Class.extend(MustacheView, {
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
 /**
+ * @static
  * @enum {number}
  */
 IconView.Color = {
@@ -67,6 +73,7 @@ IconView.Color = {
 };
 
 /**
+ * @static
  * @enum {string}
  */
 IconView.Type = {

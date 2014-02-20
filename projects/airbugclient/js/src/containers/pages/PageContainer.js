@@ -11,8 +11,9 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.PageView')
 //@Require('airbug.FourColumnView')
+//@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
-//@Require('airbug.WorkspaceWidgetContainer')
+//@Require('airbug.WorkspaceWrapperContainer')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -23,7 +24,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -35,8 +36,9 @@ var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer')
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var FourColumnView              = bugpack.require('airbug.FourColumnView');
 var PageView                    = bugpack.require('airbug.PageView');
+var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
 var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
-var WorkspaceWidgetContainer    = bugpack.require('airbug.WorkspaceWidgetContainer');
+var WorkspaceWrapperContainer   = bugpack.require('airbug.WorkspaceWrapperContainer');
 var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
@@ -47,11 +49,11 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
+var autowired                   = AutowiredAnnotation.autowired;
+var bugmeta                     = BugMeta.context();
+var CommandType                 = CommandModule.CommandType;
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -77,39 +79,57 @@ var PageContainer = Class.extend(ApplicationContainer, {
         //-------------------------------------------------------------------------------
 
         /**
+         * @private
          * @type {CommandModule}
          */
-        this.commandModule      = null;
+        this.commandModule              = null;
+
+        /**
+         * @private
+         * @type {WorkspaceModule}
+         */
+        this.workspaceModule            = null;
+
 
         // Containers
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
+         * @private
          * @type {WorkspaceTrayContainer}
          */
         this.workspaceTrayContainer     = null;
 
         /**
-         * @protected
-         * @type {WorkspaceWidgetContainer}
+         * @private
+         * @type {WorkspaceWrapperContainer}
          */
-        this.workspaceWidgetContainer   = null;
+        this.workspaceWrapperContainer   = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
+         * @private
          * @type {PageView}
          */
-        this.pageView           = null;
+        this.pageView                   = null;
     },
 
 
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array<*>} routerArgs
+     */
+    activateContainer: function(routerArgs) {
+        this._super(routerArgs);
+        this.updateColumnSpans();
+    },
 
     /**
      * @protected
@@ -120,16 +140,16 @@ var PageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(FourColumnView)
-                        .id("page-row-container")
-                        .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT})
-                ])
-                .build();
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(FourColumnView)
+                    .id("page-row-container")
+                    .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT})
+            ])
+            .build(this);
 
-        this.bodyView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
     },
 
     /**
@@ -139,25 +159,8 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this._super();
         this.workspaceTrayContainer     = new WorkspaceTrayContainer();
         this.addContainerChild(this.workspaceTrayContainer, ".column4of4");
-        this.workspaceWidgetContainer   = new WorkspaceWidgetContainer();
-        this.addContainerChild(this.workspaceWidgetContainer, ".column3of4");
-    },
-
-    /**
-     * @protected
-     */
-    activateContainer: function(routingArgs) {
-        this._super(routingArgs);
-        this.viewTop.$el.find("#page-row-container>.column3of4").removeClass("span3").hide();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
+        this.workspaceWrapperContainer   = new WorkspaceWrapperContainer();
+        this.addContainerChild(this.workspaceWrapperContainer, ".column3of4");
     },
 
     /**
@@ -169,80 +172,48 @@ var PageContainer = Class.extend(ApplicationContainer, {
         this.deinitializeCommandSubscriptions();
     },
 
-    //-------------------------------------------------------------------------------
-    // Private Instance Methods
-    //-------------------------------------------------------------------------------
-
-    initializeEventListeners: function() {
-
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.initializeEventListeners();
+        this.initializeCommandSubscriptions();
     },
 
-    deinitializeEventListeners: function() {
 
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+    },
+
+    /**
+     * @private
+     */
+    deinitializeEventListeners: function() {
+        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
+        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
     },
 
     /**
      * @private
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.DISPLAY.WORKSPACE,      this.handleDisplayWorkspaceCommand,    this);
-        this.commandModule.subscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,       this);
-        this.commandModule.subscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,     this);
         this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
     },
 
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.WORKSPACE,      this.handleDisplayWorkspaceCommand,    this);
-        this.commandModule.unsubscribe(CommandType.HIDE.WORKSPACE,         this.handleHideWorkspaceCommand,        this);
-        this.commandModule.unsubscribe(CommandType.TOGGLE.WORKSPACE,       this.handleToggleWorkspaceCommand,      this);
-        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
-    },
-
-    handleDisplayWorkspaceCommand: function(message){
-        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
-
-        workspace.addClass("workspace-open");
-        workspace.show();
-
-        this.updateColumnSpans();
-    },
-
     /**
      * @private
-     * @param {PublisherMessage} message
      */
-    handleToggleWorkspaceCommand: function(message) {
-        /* source is the css style id of the button */
-        var source = message.getData().source;
-        var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
-        var workspaceWidgetIsOpen   = workspace.hasClass("workspace-open");
-        var codeEditorWidgetIsOpen  = this.viewTop.$el.find("#code-editor-workspace").hasClass("workspace-widget-open");
-        var imageEditorWidgetIsOpen = this.viewTop.$el.find("#image-editor-widget").hasClass("workspace-widget-open");
-
-        if(workspaceWidgetIsOpen){
-            if((source === "#code-editor-button" && codeEditorWidgetIsOpen) || (source === "#image-editor-button" && imageEditorWidgetIsOpen)) {
-                workspace.toggleClass("workspace-open");
-            }
-        } else {
-            workspace.toggleClass("workspace-open");
-        }
-
-        if(workspace.hasClass("workspace-open")){
-            workspace.show();
-        } else {
-            workspace.hide();
-        }
-        this.updateColumnSpans();
-    },
-
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleHideWorkspaceCommand: function(message) {
-        var workspace       = this.viewTop.$el.find("#page-row-container>.column3of4");
-        workspace.removeClass("workspace-open span3").hide();
-        this.updateColumnSpans();
+    initializeEventListeners: function() {
+        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
+        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
     },
 
     /**
@@ -273,29 +244,54 @@ var PageContainer = Class.extend(ApplicationContainer, {
         var roomspace               = this.viewTop.$el.find("#page-row-container>.column2of4");
         var workspace               = this.viewTop.$el.find("#page-row-container>.column3of4");
         var hamburgerLeftIsOpen     = !hamburgerLeft.hasClass("hamburger-panel-hidden");
-        var workspaceIsOpen         = workspace.hasClass("workspace-open");
+        var workspaceIsOpen         = this.workspaceModule.isOpen();
 
         if (hamburgerLeftIsOpen) {
             if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span8 span5");
-                roomspace.addClass("span5");
+                roomspace.removeClass("span11 span9 span8 span6");
+                workspace.removeClass("span3 span0");
+                roomspace.addClass("span6");
                 workspace.addClass("span3");
             } else {
-                roomspace.removeClass("span11 span8 span5");
-                roomspace.addClass("span8");
-                workspace.removeClass("span3");
+                roomspace.removeClass("span11 span9  span8 span6");
+                workspace.removeClass("span3 span0");
+                roomspace.addClass("span9");
+                workspace.addClass("span0");
             }
         } else {
             if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span8 span5");
+                roomspace.removeClass("span11 span9 span8 span6");
+                workspace.removeClass("span3 span0");
                 roomspace.addClass("span8");
                 workspace.addClass("span3");
             } else {
-                roomspace.removeClass("span11 span8 span5");
+                roomspace.removeClass("span11 span9 span8 span6");
+                workspace.removeClass("span3 span0");
                 roomspace.addClass("span11");
-                workspace.removeClass("span3");
+                workspace.addClass("span0");
             }
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearWorkspaceClosed: function(event) {
+        this.updateColumnSpans();
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearWorkspaceOpened: function(event) {
+        this.updateColumnSpans();
     }
 });
 
@@ -306,9 +302,11 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
 bugmeta.annotate(PageContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
+        property("workspaceModule").ref("workspaceModule")
     ])
 );
+
 
 //-------------------------------------------------------------------------------
 // Exports

@@ -10,6 +10,7 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
+//@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('Set')
 //@Require('UuidGenerator')
@@ -44,6 +45,7 @@ var fs                      = require('fs');
 var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
+var MappedThrowable         = bugpack.require('MappedThrowable');
 var Obj                     = bugpack.require('Obj');
 var Set                     = bugpack.require('Set');
 var UuidGenerator           = bugpack.require('UuidGenerator');
@@ -246,6 +248,61 @@ var AssetService = Class.extend(Obj, {
                 });
         } else {
             callback(new Exception('UnauthorizedAccess'));
+        }
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {Array.<string>} assetIds
+     * @param {function(Throwable, Map.<string, Asset>=)} callback
+     */
+    retrieveAssets: function(requestContext, assetIds, callback) {
+        var _this               = this;
+        /** @type {Map.<string, Asset>} */
+        var assetMap            = null;
+        var currentUser         = requestContext.get("currentUser");
+        var call                = requestContext.get("call");
+        var assetManager        = this.assetManager;
+        var mappedException     = null;
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    assetManager.retrieveAssets(assetIds, function(throwable, returnedAssetMap) {
+                        if (!throwable) {
+                            assetMap = returnedAssetMap.clone();
+                            returnedAssetMap.forEach(function(asset, key) {
+                                if (asset === null) {
+                                    assetMap.remove(key);
+                                    if (!mappedException) {
+                                        mappedException = new MappedThrowable(MappedThrowable.MAPPED);
+                                    }
+                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find Asset by the id '" + key + "'"));
+                                }
+                            });
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.assetPusher.meldCallWithAssets(call.getCallUuid(), assetMap.getValueArray(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.assetPusher.pushAssetsToCall(assetMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(mappedException, assetMap);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        } else {
+            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users cannot access Assets"));
         }
     },
 

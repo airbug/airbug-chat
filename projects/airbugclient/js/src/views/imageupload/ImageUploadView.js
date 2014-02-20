@@ -35,7 +35,7 @@ var ImageUploadView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="{{id}}" class="box box-with-header">\
+    template: '<div id="{{id}}" class="box box-with-header image-upload-container">\
             <div class="box-header">\
             </div>\
             <div class="box-body">\

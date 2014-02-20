@@ -133,7 +133,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -154,36 +154,34 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(BoxWithHeaderAndFooterView)
-                        .id("loginBoxView")
-                        .attributes({classes: "login-box"})
-                        .appendTo('*[id|="page"]')
-                        .children([
-                            view(PanelView)
-                                .appendTo('#box-header-{{cid}}')
-                                .children([
-                                    view(TextView)
-                                        .attributes({
-                                            text: "Login to airbug",
-                                            classes: "login-header-text"
-                                        })
-                                        .appendTo("#panel-body-{{cid}}")
-                                ])
-                        ])
-                ])
-                .build();
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(BoxWithHeaderAndFooterView)
+                    .name("boxView")
+                    .attributes({classes: "login-box"})
+                    .appendTo("#page-{{cid}}")
+                    .children([
+                        view(PanelView)
+                            .appendTo('#box-header-{{cid}}')
+                            .children([
+                                view(TextView)
+                                    .attributes({
+                                        text: "Login to airbug",
+                                        classes: "login-header-text"
+                                    })
+                                    .appendTo("#panel-body-{{cid}}")
+                            ])
+                    ])
+            ])
+            .build(this);
 
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.getApplicationView().addViewChild(this.pageView, "#application-" + this.getApplicationView().getCid());
-
-        this.boxView =  this.findViewById("loginBoxView");
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
     },
 
     /**
@@ -198,13 +196,6 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.signupButtonContainer, "#header-right");
         this.addContainerChild(this.loginFormContainer, "#box-body-" + this.boxView.getCid());
         this.addContainerChild(this.alternateLoginPanelContainer, "#box-footer-" + this.boxView.getCid());
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
     }
 });
 

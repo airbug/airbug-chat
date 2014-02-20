@@ -18,6 +18,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.ListView')
 //@Require('airbug.ListViewEvent')
+//@Require('airbug.LoaderView')
 //@Require('airbug.RoomMemberListItemContainer')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
@@ -50,6 +51,7 @@ var SetPropertyChange               = bugpack.require('SetPropertyChange');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var ListView                        = bugpack.require('airbug.ListView');
 var ListViewEvent                   = bugpack.require('airbug.ListViewEvent');
+var LoaderView                      = bugpack.require('airbug.LoaderView');
 var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -156,6 +158,12 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
          * @type {ListView}
          */
         this.listView                           = null;
+
+        /**
+         * @private
+         * @type {LoaderView}
+         */
+        this.loaderView                         = null;
     },
 
 
@@ -191,13 +199,22 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listView           = view(ListView)
-                                    .attributes({
-                                        placeholder: "No one in this room",
-                                        trackingId: "roomMemberListContainer",
-                                        trackingClasses: ["list"]
-                                    })
-                                    .build();
+        view(ListView)
+            .name("listView")
+            .attributes({
+                placeholder: "No one in this room",
+                trackingId: "roomMemberListContainer",
+                trackingClasses: ["list"]
+            })
+            .children([
+                view(LoaderView)
+                    .name("loaderView")
+                    .attributes({
+                        size: LoaderView.Size.SMALL
+                    })
+                    .appendTo("#list-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views
@@ -242,6 +259,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         if (!this.roomMemberIdToRoomMemberModelMap.containsKey(roomMemberId)) {
             this.roomMemberIdToRoomMemberModelMap.put(roomMemberModel.getProperty("id"), roomMemberModel);
             this.roomMemberList.add(roomMemberModel);
+            this.listView.hidePlaceholder();
         }
     },
 
@@ -252,7 +270,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
     buildRoomMemberListItem: function(roomMemberModel) {
         if (!this.roomMemberModelToListItemMap.containsKey(roomMemberModel)) {
             var roomMemberListItemContainer = new RoomMemberListItemContainer(roomMemberModel);
-            this.addContainerChild(roomMemberListItemContainer, "#list-" + this.listView.getCid());
+            this.addContainerChild(roomMemberListItemContainer, "#list-{{cid}}");
             this.roomMemberModelToListItemMap.put(roomMemberModel, roomMemberListItemContainer);
         }
     },
@@ -367,10 +385,15 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                roomMemberMeldDocumentSet.forEach(function(roomMemberMeldDocument) {
-                    var userMeldDocument = userMeldDocumentMap.get(roomMemberMeldDocument.getData().userId);
-                    _this.buildRoomMemberModel({}, roomMemberMeldDocument, userMeldDocument);
-                });
+                _this.loaderView.hide();
+                if (roomMemberMeldDocumentSet.getCount() > 0) {
+                    roomMemberMeldDocumentSet.forEach(function(roomMemberMeldDocument) {
+                        var userMeldDocument = userMeldDocumentMap.get(roomMemberMeldDocument.getData().userId);
+                        _this.buildRoomMemberModel({}, roomMemberMeldDocument, userMeldDocument);
+                    });
+                } else {
+                    _this.listView.showPlaceholder();
+                }
             } else {
                 //TODO Error handling
                 //TODO Error tracking

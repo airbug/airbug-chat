@@ -124,18 +124,18 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
-            view(ButtonView)
-                .attributes({type: "primary", align: "left"})
-                .children([
-                    view(IconView)
-                        .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
-                        .appendTo('button[id|="button"]'),
-                    view(TextView)
-                        .attributes({text: "Back"})
-                        .appendTo('button[id|="button"]')
-                ])
-                .build();
+        view(ButtonView)
+            .name("buttonView")
+            .attributes({type: "primary", align: "left"})
+            .children([
+                view(IconView)
+                    .attributes({type: IconView.Type.CHEVRON_LEFT, color: IconView.Color.WHITE})
+                    .appendTo("#button-{{cid}}"),
+                view(TextView)
+                    .attributes({text: "Back"})
+                    .appendTo("#button-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views

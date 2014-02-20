@@ -139,7 +139,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         this.overlayView        = null;
 
         /**
-         * @pruvate
+         * @private
          * @type {BoxWithHeaderView}
          */
         this.shareRoomBoxView   = null;
@@ -177,46 +177,45 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.overlayView =
-            view(OverlayView)
-                .attributes({
-                    classes: "share-room-overlay",
-                    size: OverlayView.Size.ONE_THIRD,
-                    type: OverlayView.Type.PAGE
-                })
-                .children([
-                    view(BoxWithHeaderView)
-                        .id("shareRoomBox")
-                        .children([
-                            view(ShareRoomTextView)
-                                .model(this.roomModel)
-                                .appendTo('.box-body'),
-                            view(RoomLinkFauxTextFieldView)
-                                .model(this.roomModel)
-                                .appendTo('.box-body'),
-                            view(CopyToClipboardButtonView)
-                                .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
-                                .children([
-                                    view(TextView)
-                                        .attributes({text: "Copy Link"})
-                                        .appendTo('*[id|="button"]'),
-                                    view(IconView)
-                                        .attributes({
-                                            type: IconView.Type.PAPERCLIP,
-                                            color: IconView.Color.WHITE})
-                                        .appendTo('*[id|="button"]')
-                                ])
-                                .appendTo('.box-body')
-                        ])
-                        .appendTo(".overlay-body")
-                ])
-                .build();
+        view(OverlayView)
+            .name("overlayView")
+            .attributes({
+                classes: "share-room-overlay",
+                size: OverlayView.Size.ONE_THIRD,
+                type: OverlayView.Type.PAGE
+            })
+            .children([
+                view(BoxWithHeaderView)
+                    .name("shareRoomBoxView")
+                    .children([
+                        view(ShareRoomTextView)
+                            .model(this.roomModel)
+                            .appendTo("#box-body-{{cid}}"),
+                        view(RoomLinkFauxTextFieldView)
+                            .model(this.roomModel)
+                            .appendTo("#box-body-{{cid}}"),
+                        view(CopyToClipboardButtonView)
+                            .attributes({type: "primary", align: "right", size: ButtonView.Size.NORMAL})
+                            .children([
+                                view(TextView)
+                                    .attributes({text: "Copy Link"})
+                                    .appendTo('*[id|="button"]'),
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.PAPERCLIP,
+                                        color: IconView.Color.WHITE})
+                                    .appendTo('*[id|="button"]')
+                            ])
+                            .appendTo("#box-body-{{cid}}")
+                    ])
+                    .appendTo("#overlay-body-{{cid}}")
+            ])
+            .build(this);
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.overlayView);
-        this.shareRoomBoxView = this.findViewById("shareRoomBox");
     },
 
     /**
@@ -226,7 +225,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.closeShareRoomOverlayButtonContainer = new CloseShareRoomOverlayButtonContainer();
 
-        this.addContainerChild(this.closeShareRoomOverlayButtonContainer, ".box-header");
+        this.addContainerChild(this.closeShareRoomOverlayButtonContainer, "#box-header-" + this.shareRoomBoxView.getCid());
     },
 
     /**
@@ -301,6 +300,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     destroyZeroClipboard: function() {
+        this.clip.off();
         this.clip = null;
     },
 

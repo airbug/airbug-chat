@@ -35,7 +35,7 @@ var RoomNameView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="room-name-{{cid}}" class="room-name text {{attributes.classes}}">{{model.name}}</span>',
+    template:   '<span id="room-name-{{cid}}" class="room-name text {{classes}}">{{model.name}}</span>',
 
 
     //-------------------------------------------------------------------------------

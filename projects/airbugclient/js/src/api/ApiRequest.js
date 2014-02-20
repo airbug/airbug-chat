@@ -41,6 +41,10 @@ var ApiDefines              = bugpack.require('airbug.ApiDefines');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {EventDispatcher}
+ */
 var ApiRequest = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
@@ -65,7 +69,7 @@ var ApiRequest = Class.extend(EventDispatcher, {
          * @private
          * @type {BugCallClient}
          */
-        this.bugCallClient  = null;
+        this.bugCallClient          = null;
 
         /**
          * @private
@@ -183,7 +187,7 @@ var ApiRequest = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {function(Throwable, )} callback
+     * @param {function(Throwable, OutgoingRequest=)} callback
      */
     sendRequest: function(callback) {
         if (!this.sent) {
