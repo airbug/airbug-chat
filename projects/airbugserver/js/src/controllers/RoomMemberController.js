@@ -64,9 +64,9 @@ var RoomMemberController = Class.extend(EntityController, {
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomMemberService} roomMemberService
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, roomMemberService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, roomMemberService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -235,7 +235,8 @@ bugmeta.annotate(RoomMemberController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("roomMemberService")
+            arg().ref("roomMemberService"),
+            arg().ref("marshaller")
         ])
 );
 

@@ -47,8 +47,10 @@ var conversationControllerInstantiationTest = {
         this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
-        this.conversationService     = {};
-        this.conversationController  = new ConversationController(this.controllerManager, this.expressApp, this.bugCallRouter, this.conversationService);
+        this.conversationService    = {};
+        this.marshaller             = {};
+        this.conversationController = new ConversationController(this.controllerManager, this.expressApp, this.bugCallRouter, this.conversationService,
+            this.marshaller);
     },
 
     test: function(test) {
@@ -62,6 +64,10 @@ var conversationControllerInstantiationTest = {
             "Assert bugCallRouter has been set to conversationController's expressApp property");
         test.assertEqual(this.conversationController.getConversationService(), this.conversationService,
             "Assert conversationService has been set to conversationController's expressApp property");
+        test.assertEqual(this.conversationController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to conversationController's marshaller property");
+        test.assertNotEqual(this.conversationController.getMarshaller(), undefined,
+            "Assert marshaller is not undefined");
     }
 };
 bugmeta.annotate(conversationControllerInstantiationTest).with(

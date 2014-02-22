@@ -65,9 +65,9 @@ var DialogueController = Class.extend(EntityController, {
      * @param {BugCallRouter} bugCallRouter
      * @param {DialogueService} dialogueService
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, dialogueService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, dialogueService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -220,7 +220,8 @@ bugmeta.annotate(DialogueController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("dialogueService")
+            arg().ref("dialogueService"),
+            arg().ref("marshaller")
         ])
 );
 

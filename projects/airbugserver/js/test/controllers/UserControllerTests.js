@@ -48,7 +48,9 @@ var userControllerInstantiationTest = {
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.userService            = {};
-        this.userController         = new UserController(this.controllerManager, this.expressApp, this.bugCallRouter, this.userService);
+        this.marshaller             = {};
+        this.userController         = new UserController(this.controllerManager, this.expressApp, this.bugCallRouter, this.userService,
+            this.marshaller);
     },
 
     test: function(test) {
@@ -62,6 +64,10 @@ var userControllerInstantiationTest = {
             "Assert bugCallRouter has been set to userController's bugCallRouter property");
         test.assertEqual(this.userController.getUserService(), this.userService,
             "Assert userService has been set to userController's expressApp property");
+        test.assertEqual(this.userController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to userController's marshaller property");
+        test.assertNotEqual(this.userController.getMarshaller(), undefined,
+            "Assert marshaller is not undefined");
     }
 };
 bugmeta.annotate(userControllerInstantiationTest).with(

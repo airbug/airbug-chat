@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('airbugserver.EntityController')
-//@Require('airbugserver.AssetController')
+//@Require('airbugserver.UserAssetController')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var EntityController        = bugpack.require('airbugserver.EntityController');
-var AssetController         = bugpack.require('airbugserver.AssetController');
+var UserAssetController     = bugpack.require('airbugserver.UserAssetController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -41,31 +41,36 @@ var test                    = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var assetControllerInstantiationTest = {
+var userAssetControllerInstantiationTest = {
 
     setup: function() {
         this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.assetService           = {};
-        this.assetController        = new AssetController(this.controllerManager, this.expressApp, this.bugCallRouter,
-            this.assetService);
+        this.marshaller             = {};
+        this.userAssetController        = new UserAssetController(this.controllerManager, this.expressApp, this.bugCallRouter,
+            this.assetService, this.marshaller);
     },
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.assetController, EntityController),
+        test.assertTrue(Class.doesExtend(this.userAssetController, EntityController),
             "Assert assetController extends EntityController");
-        test.assertEqual(this.assetController.getControllerManager(), this.controllerManager,
+        test.assertEqual(this.userAssetController.getControllerManager(), this.controllerManager,
             "Assert controllerManager has been set properly");
-        test.assertEqual(this.assetController.getExpressApp(), this.expressApp,
-            "Assert expressApp has been set to assetController's expressApp property");
-        test.assertEqual(this.assetController.getBugCallRouter(), this.bugCallRouter,
-            "Assert bugCallRouter has been set to assetController's bugCallRouter property");
-        test.assertEqual(this.assetController.getAssetService(), this.assetService,
-            "Assert assetService has been set to assetController's expressApp property");
+        test.assertEqual(this.userAssetController.getExpressApp(), this.expressApp,
+            "Assert expressApp has been set to userAssetController's expressApp property");
+        test.assertEqual(this.userAssetController.getBugCallRouter(), this.bugCallRouter,
+            "Assert bugCallRouter has been set to userAssetController's bugCallRouter property");
+        test.assertEqual(this.userAssetController.getUserAssetService(), this.assetService,
+            "Assert assetService has been set to userAssetController's expressApp property");
+        test.assertEqual(this.userAssetController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to userAssetController's marshaller property");
+        test.assertNotEqual(this.userAssetController.getMarshaller(), undefined,
+            "Assert marshaller is not undefined");
     }
 };
 
-bugmeta.annotate(assetControllerInstantiationTest).with(
-    test().name("AssetController - instantiation Test")
+bugmeta.annotate(userAssetControllerInstantiationTest).with(
+    test().name("UserAssetController - instantiation Test")
 );

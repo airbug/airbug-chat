@@ -59,9 +59,9 @@ var UserAssetController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter, userAssetService);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
         //-------------------------------------------------------------------------------
         // Private Properties
@@ -284,7 +284,8 @@ bugmeta.annotate(UserAssetController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("userAssetService")
+            arg().ref("userAssetService"),
+            arg().ref("marshaller")
         ])
 );
 

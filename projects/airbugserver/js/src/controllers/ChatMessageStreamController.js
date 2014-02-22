@@ -52,9 +52,9 @@ var ChatMessageStreamController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, chatMessageStreamService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, chatMessageStreamService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -162,7 +162,8 @@ bugmeta.annotate(ChatMessageStreamController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("chatMessageStreamService")
+            arg().ref("chatMessageStreamService"),
+            arg().ref("marshaller")
         ])
 );
 

@@ -48,8 +48,9 @@ var assetControllerInstantiationTest = {
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.assetService           = {};
+        this.marshaller             = {};
         this.assetController        = new AssetController(this.controllerManager, this.expressApp, this.bugCallRouter,
-            this.assetService);
+            this.assetService, this.marshaller);
     },
 
     test: function(test) {
@@ -63,6 +64,10 @@ var assetControllerInstantiationTest = {
             "Assert bugCallRouter has been set to assetController's bugCallRouter property");
         test.assertEqual(this.assetController.getAssetService(), this.assetService,
             "Assert assetService has been set to assetController's expressApp property");
+        test.assertEqual(this.assetController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to assetController's marshaller property");
+        test.assertNotEqual(this.assetController.getMarshaller(), undefined,
+            "Assert marshaller is not undefined");
     }
 };
 

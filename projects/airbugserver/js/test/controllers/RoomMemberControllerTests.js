@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbugserver.ChatMessageController')
+//@Require('airbugserver.RoomMemberController')
 //@Require('airbugserver.EntityController')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
@@ -23,7 +23,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
+var RoomMemberController      = bugpack.require('airbugserver.RoomMemberController');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
@@ -41,35 +41,35 @@ var test = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var chatMessageControllerInstantiationTest = {
+var roomMemberControllerInstantiationTest = {
 
     setup: function() {
         this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
-        this.chatMessageService     = {};
+        this.roomMemberService      = {};
         this.marshaller             = {};
-        this.chatMessageController  = new ChatMessageController(this.controllerManager, this.expressApp, this.bugCallRouter,
-            this.chatMessageService, this.marshaller);
+        this.roomMemberController = new RoomMemberController(this.controllerManager, this.expressApp, this.bugCallRouter, this.roomMemberService,
+            this.marshaller);
     },
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.chatMessageController, EntityController),
-            "Assert chatMessageController extends EntityController");
-        test.assertEqual(this.chatMessageController.getControllerManager(), this.controllerManager,
+        test.assertTrue(Class.doesExtend(this.roomMemberController, EntityController),
+            "Assert roomMemberController extends EntityController");
+        test.assertEqual(this.roomMemberController.getControllerManager(), this.controllerManager,
             "Assert controllerManager has been set properly");
-        test.assertEqual(this.chatMessageController.getExpressApp(), this.expressApp,
-            "Assert expressApp has been set to chatMessageController's expressApp property");
-        test.assertEqual(this.chatMessageController.getBugCallRouter(), this.bugCallRouter,
-            "Assert bugCallRouter has been set to chatMessageController's expressApp property");
-        test.assertEqual(this.chatMessageController.getChatMessageService(), this.chatMessageService,
-            "Assert chatMessageService has been set to chatMessageController's expressApp property");
-        test.assertEqual(this.chatMessageController.getMarshaller(), this.marshaller,
-            "Assert marshaller has been set to chatMessageController's marshaller property");
-        test.assertNotEqual(this.chatMessageController.getMarshaller(), undefined,
+        test.assertEqual(this.roomMemberController.getExpressApp(), this.expressApp,
+            "Assert expressApp has been set to roomMemberController's expressApp property");
+        test.assertEqual(this.roomMemberController.getBugCallRouter(), this.bugCallRouter,
+            "Assert bugCallRouter has been set to roomMemberController's expressApp property");
+        test.assertEqual(this.roomMemberController.getRoomMemberService(), this.roomMemberService,
+            "Assert roomMemberService has been set to roomMemberController's expressApp property");
+        test.assertEqual(this.roomMemberController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to roomMemberController's marshaller property");
+        test.assertNotEqual(this.roomMemberController.getMarshaller(), undefined,
             "Assert marshaller is not undefined");
     }
 };
-bugmeta.annotate(chatMessageControllerInstantiationTest).with(
-    test().name("ChatMessageController - instantiation Test")
+bugmeta.annotate(roomMemberControllerInstantiationTest).with(
+    test().name("RoomMemberController - instantiation Test")
 );

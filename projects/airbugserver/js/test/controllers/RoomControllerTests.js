@@ -58,7 +58,9 @@ var roomControllerInstantiationTest = {
         this.expressApp             = {};
         this.bugCallRouter          = {};
         this.roomService            = {};
-        this.roomController         = new RoomController(this.controllerManager, this.expressApp, this.bugCallRouter, this.roomService);
+        this.marshaller             = {};
+        this.roomController         = new RoomController(this.controllerManager, this.expressApp, this.bugCallRouter,
+            this.roomService, this.marshaller);
     },
 
     test: function(test) {
@@ -72,6 +74,10 @@ var roomControllerInstantiationTest = {
             "Assert bugCallRouter has been set to roomController's bugCallRouter property");
         test.assertEqual(this.roomController.getRoomService(), this.roomService,
             "Assert roomService has been set to roomController's expressApp property");
+        test.assertEqual(this.roomController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to roomController's marshaller property");
+        test.assertNotEqual(this.roomController.getMarshaller(), undefined,
+            "Assert marshaller is not undefined");
     }
 };
 bugmeta.annotate(roomControllerInstantiationTest).with(

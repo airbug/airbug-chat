@@ -65,9 +65,9 @@ var RoomController = Class.extend(EntityController, {
      * @param {BugCallRouter} bugCallRouter
      * @param {RoomService} roomService
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, roomService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, roomService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------

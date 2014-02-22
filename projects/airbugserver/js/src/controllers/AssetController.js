@@ -59,9 +59,9 @@ var AssetController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, assetService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, assetService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------

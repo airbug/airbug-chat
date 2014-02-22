@@ -59,9 +59,9 @@ var InteractionStatusController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, interactionStatusService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, interactionStatusService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -135,7 +135,8 @@ bugmeta.annotate(InteractionStatusController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("interactionStatusService")
+            arg().ref("interactionStatusService"),
+            arg().ref("marshaller")
         ])
 );
 

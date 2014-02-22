@@ -64,9 +64,9 @@ var BetaKeyController = Class.extend(EntityController, {
      * @param {BugCallRouter} bugCallRouter
      * @param {BetaKeyService} betaKeyService
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, betaKeyService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, betaKeyService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -143,7 +143,8 @@ bugmeta.annotate(BetaKeyController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("betaKeyService")
+            arg().ref("betaKeyService"),
+            arg().ref("marshaller")
         ])
 );
 

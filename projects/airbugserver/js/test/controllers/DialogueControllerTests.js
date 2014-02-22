@@ -5,8 +5,8 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('airbugserver.DialogueController')
 //@Require('airbugserver.EntityController')
-//@Require('airbugserver.SessionController')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var DialogueController      = bugpack.require('airbugserver.DialogueController');
 var EntityController        = bugpack.require('airbugserver.EntityController');
-var SessionController       = bugpack.require('airbugserver.SessionController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -33,43 +33,43 @@ var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation')
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var bugmeta = BugMeta.context();
+var test = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var sessionControllerInstantiationTest = {
+var dialogueControllerInstantiationTest = {
 
     setup: function() {
         this.controllerManager      = {};
         this.expressApp             = {};
         this.bugCallRouter          = {};
-        this.sessionService         = {};
+        this.dialogueService        = {};
         this.marshaller             = {};
-        this.sessionController      = new SessionController(this.controllerManager, this.expressApp, this.bugCallRouter,
-            this.sessionService, this.marshaller);
+        this.dialogueController = new DialogueController(this.controllerManager, this.expressApp, this.bugCallRouter, this.dialogueService,
+            this.marshaller);
     },
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.sessionController, EntityController),
-            "Assert sessionController extends EntityController");
-        test.assertEqual(this.sessionController.getControllerManager(), this.controllerManager,
+        test.assertTrue(Class.doesExtend(this.dialogueController, EntityController),
+            "Assert dialogueController extends EntityController");
+        test.assertEqual(this.dialogueController.getControllerManager(), this.controllerManager,
             "Assert controllerManager has been set properly");
-        test.assertEqual(this.sessionController.getExpressApp(), this.expressApp,
-            "Assert expressApp has been set to sessionController's expressApp property");
-        test.assertEqual(this.sessionController.getBugCallRouter(), this.bugCallRouter,
-            "Assert bugCallRouter has been set to sessionController's bugCallRouter property");
-        test.assertEqual(this.sessionController.getSessionService(), this.sessionService,
-            "Assert sessionService has been set to sessionController's expressApp property");
-        test.assertEqual(this.sessionController.getMarshaller(), this.marshaller,
-            "Assert marshaller has been set to sessionController's marshaller property");
-        test.assertNotEqual(this.sessionController.getMarshaller(), undefined,
+        test.assertEqual(this.dialogueController.getExpressApp(), this.expressApp,
+            "Assert expressApp has been set to dialogueController's expressApp property");
+        test.assertEqual(this.dialogueController.getBugCallRouter(), this.bugCallRouter,
+            "Assert bugCallRouter has been set to dialogueController's expressApp property");
+        test.assertEqual(this.dialogueController.getDialogueService(), this.dialogueService,
+            "Assert dialogueService has been set to dialogueController's expressApp property");
+        test.assertEqual(this.dialogueController.getMarshaller(), this.marshaller,
+            "Assert marshaller has been set to dialogueController's marshaller property");
+        test.assertNotEqual(this.dialogueController.getMarshaller(), undefined,
             "Assert marshaller is not undefined");
     }
 };
-bugmeta.annotate(sessionControllerInstantiationTest).with(
-    test().name("SessionController - instantiation Test")
+bugmeta.annotate(dialogueControllerInstantiationTest).with(
+    test().name("DialogueController - instantiation Test")
 );

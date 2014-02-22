@@ -55,9 +55,9 @@ var SessionController = Class.extend(EntityController, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, sessionService) {
+    _constructor: function(controllerManager, expressApp, bugCallRouter, sessionService, marshaller) {
 
-        this._super(controllerManager, expressApp, bugCallRouter);
+        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
         //-------------------------------------------------------------------------------
@@ -119,7 +119,8 @@ bugmeta.annotate(SessionController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("sessionService")
+            arg().ref("sessionService"),
+            arg().ref("marshaller")
         ])
 );
 
