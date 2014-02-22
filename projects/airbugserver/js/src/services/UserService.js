@@ -17,7 +17,6 @@
 //@Require('airbugserver.Github')
 //@Require('airbugserver.IBuildRequestContext')
 //@Require('airbugserver.RequestContext')
-//@Require('airbugserver.SignupManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
@@ -46,7 +45,6 @@ var UserDefines             = bugpack.require('airbug.UserDefines');
 var Github                  = bugpack.require('airbugserver.Github');
 var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
 var RequestContext          = bugpack.require('airbugserver.RequestContext');
-var SignupManager           = bugpack.require('airbugserver.SignupManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
@@ -76,7 +74,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher, betaKeyService, signupManager) {
+    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher, betaKeyService, signupManager, airbugServerConfig) {
 
         this._super();
 
@@ -84,6 +82,12 @@ var UserService = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {AirbugServerConfig}
+         */
+        this.airbugServerConfig                 = airbugServerConfig;
 
         /**
          * @private
@@ -123,9 +127,10 @@ var UserService = Class.extend(Obj, {
 
         /**
          *
-         * @type {*}
+         * @type {SignupManager}
          */
         this.signupManager                      = signupManager;
+
         /**
          * @private
          * @type {UserManager}
@@ -520,7 +525,7 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow){
                 var signup = _this.signupManager.generateSignup({
-                    airbugVersion: "unknown", //TODO
+                    airbugVersion: _this.airbugServerConfig.getAppVersion(),
                     betaKey: betaKey,
                     createdAt: user.getCreatedAt(),
                     ipAddress: requestContext.get("ipAddress"),
@@ -928,7 +933,8 @@ bugmeta.annotate(UserService).with(
             arg().ref("githubManager"),
             arg().ref("userPusher"),
             arg().ref("betaKeyService"),
-            arg().ref("signupManager")
+            arg().ref("signupManager"),
+            arg().ref("airbugServerConfig")
         ])
 );
 

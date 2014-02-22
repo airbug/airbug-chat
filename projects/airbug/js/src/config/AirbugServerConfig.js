@@ -42,6 +42,20 @@ var AirbugServerConfig = Class.extend(Config, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {string} appVersion
+     */
+    getAppVersion: function() {
+        return this.getProperty("appVersion");
+    },
+
+    /**
+     * @param {string} appVersion
+     */
+    setAppVersion: function(appVersion) {
+        this.setProperty("appVersion", appVersion);
+    },
+
+    /**
      * @returns {string}
      */
     getGithubClientId: function() {

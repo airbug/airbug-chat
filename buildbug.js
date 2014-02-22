@@ -265,6 +265,13 @@ buildTarget('local').buildFlow(
                     staticPaths: ["{{static.outputPath}}"]
                 }
             }),
+            targetTask('replaceTokens', {
+                properties: {
+                    tokenObjects: [
+                        {token: "{{BUILD_VERSION}}", replacementValue: version, filePaths: [buildProject.getProperty("buildPath") + "/airbugserver/" + version + "/resources/config"]}
+                    ]
+                }
+            }),
             targetTask('generateBugPackRegistry', {
                 init: function(task, buildProject, properties) {
                     var nodePackage = nodejs.findNodePackage(
@@ -345,6 +352,13 @@ buildTarget('prod').buildFlow(
                         staticPaths: buildProject.getProperty("static.serverStickyPaths"),
                         testPaths: buildProject.getProperty("unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths")
+                    }
+                }),
+                targetTask('replaceTokens', {
+                    properties: {
+                        tokenObjects: [
+                            {token: "{{BUILD_VERSION}}", replacementValue: version, filePaths: [buildProject.getProperty("buildPath") + "/airbugserver/" + version + "/resources/config"]}
+                        ]
                     }
                 }),
                 targetTask('generateBugPackRegistry', {

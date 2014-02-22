@@ -38,7 +38,7 @@ var SignupSchema = new Schema({
     createdAt:          {type: Date,        index: true,    required: true,     default: Date.now},
     day:                {type: Number,      index: true}, //1-31 getDate
     geoCoordinates:     {type: [Number],    index: true},
-    ipAddress:          {type: String,      index: false,   required: true},
+    ipAddress:          {type: String,      index: false}, // required: true
     languages:          {type: [String],    index: true},
     month:              {type: Number,      index: true}, //0-11 getMonth
     secondaryBetaKeys:  {type: [String],    index: true},
@@ -46,7 +46,7 @@ var SignupSchema = new Schema({
     updatedAt:          {type: Date,        index: true,    required: true,     default: Date.now},
     userAgent:          {type: String,      index: true},
     userId:             {type: ObjectId,    index: true,                        ref: "user"},
-    version:            {type: String,      index: true,    required: true,     default: "0.0.1"},
+    version:            {type: String,      index: true,    required: true,     default: "0.1.0"},
     weekday:            {type: Number,      index: true}, //0-6 getDay
     year:               {type: Number,      index: true}  //e.g. 2014 getFullYear
 });

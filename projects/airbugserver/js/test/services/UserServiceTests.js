@@ -152,9 +152,14 @@ var setupUserService = function(setupObject, userManager) {
             }
         }
     };
+    setupObject.airbugServerConfig = {
+        getAppVersion: function(){
+            return "appVersion";
+        }
+    };
     //logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher
     setupObject.testUserService     = new UserService(setupObject.logger, setupObject.dummySessionManager, setupObject.dummyUserManager,
-        setupObject.sessionService, setupObject.dummyAirbugClientRequestPublisher, setupObject.dummyGithubManager, setupObject.dummyUserPusher, setupObject.dummyBetaKeyService, setupObject.dummySignupManager);
+        setupObject.sessionService, setupObject.dummyAirbugClientRequestPublisher, setupObject.dummyGithubManager, setupObject.dummyUserPusher, setupObject.dummyBetaKeyService, setupObject.dummySignupManager, setupObject.airbugServerConfig);
 };
 
 

@@ -9,11 +9,13 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbugserver.AddsBetaKeysMigration')
+//@Require('airbugserver.AddsBetaKeysToExistingUsersMigration')
 //@Require('airbugserver.AddsChatMessageCountersAndIndexesMigration')
 //@Require('airbugserver.AddsOwnerTypeToConversationsMigration')
 //@Require('airbugserver.AddsSentAtIndexToChatMessagesMigration')
 //@Require('airbugserver.MigrationModel')
 //@Require('airbugserver.UpdatesStatusForNonAnonymousUsersMigration')
+//@Require('airbugserver.AddsSignupsForExistingUsersMigration')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('configbug.Configbug')
@@ -34,10 +36,12 @@ var mongoose                                    = require('mongoose');
 
 var Class                                       = bugpack.require('Class');
 var Obj                                         = bugpack.require('Obj');
-var AddsBetaKeysMigration                       = bugpack.require('AddsBetaKeysMigration');
+var AddsBetaKeysMigration                       = bugpack.require('airbugserver.AddsBetaKeysMigration');
+var AddsBetaKeysToExistingUsersMigration        = bugpack.require('airbugserver.AddsBetaKeysToExistingUsersMigration');
 var AddsChatMessageCountersAndIndexesMigration  = bugpack.require('airbugserver.AddsChatMessageCountersAndIndexesMigration');
 var AddsOwnerTypeToConversationsMigration       = bugpack.require('airbugserver.AddsOwnerTypeToConversationsMigration');
 var AddsSentAtIndexToChatMessagesMigration      = bugpack.require('airbugserver.AddsSentAtIndexToChatMessagesMigration');
+var AddsSignupsForExistingUsersMigration        = bugpack.require('airbugserver.AddsSignupsForExistingUsersMigration');
 var MigrationModel                              = bugpack.require('airbugserver.MigrationModel');
 var UpdatesStatusForNonAnonymousUsersMigration  = bugpack.require('airbugserver.UpdatesStatusForNonAnonymousUsersMigration');
 var BugFlow                                     = bugpack.require('bugflow.BugFlow');
@@ -121,13 +125,17 @@ var MigrationApplication = Class.extend(Obj, {
         var addsSentAtIndexToChatMessagesMigration      = new AddsSentAtIndexToChatMessagesMigration();
         var updatesStatusForNonAnonymousUsersMigration  = new UpdatesStatusForNonAnonymousUsersMigration();
         var addsBetaKeysMigration                       = new AddsBetaKeysMigration();
+        var addsBetaKeysToExistingUsersMigration        = new AddsBetaKeysToExistingUsersMigration();
+        var addsSignupsForExistingUsersMigration        = new AddsSignupsForExistingUsersMigration();
 
         var migrations = [
             addsChatMessageCountersAndIndexesMigration,
             addsOwnerTypeToConversationsMigration,
             addsSentAtIndexToChatMessagesMigration,
             updatesStatusForNonAnonymousUsersMigration,
-            addsBetaKeysMigration
+            addsBetaKeysMigration,
+            addsBetaKeysToExistingUsersMigration,
+            addsSignupsForExistingUsersMigration
         ];
 
 

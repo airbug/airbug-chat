@@ -157,6 +157,37 @@ var BetaKeyManager = Class.extend(EntityManager, {
     },
 
     /**
+     * @param {string} baseKey
+     * @param {function(Error} callback
+     */
+    incrementCountForBaseBetaKey: function(baseKey, callback) {
+        this.dataStore.findOneAndUpdate(
+            {   betaKey: baseKey,
+                isBaseKey: true,
+                $where: function(){
+                    if(this.hasCap){
+                        return this.cap < this.count;
+                    } else {
+                        return true;
+                    }
+                }
+            },
+            { $inc: {count: 1}},
+            function(error, betaKeyDoc) {
+                if(error){
+                    callback(error);
+                } else {
+                    if(betaKeyDoc) {
+                        callback(undefined);
+                    } else {
+                        callback(new Exception("InvalidBetaKey", {}, "Beta Key '" + betaKey + "' is full"));
+                    }
+                }
+            }
+        );
+    },
+
+    /**
      * @param {string} betaKey
      * @param {function(?Error)} callback
      */
@@ -216,10 +247,7 @@ var BetaKeyManager = Class.extend(EntityManager, {
     },
 
     validateAndIncrementBaseBetaKey: function(betaKey, callback) {
-        console.log("validateBetaKey");
-        console.log("betaKey:", betaKey);
         var baseKey = betaKey.split("+")[0];
-        console.log("baseKey:", baseKey);
         this.dataStore.findOneAndUpdate(
             {   betaKey: baseKey,
                 isBaseKey: true,

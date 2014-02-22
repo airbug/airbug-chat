@@ -356,6 +356,7 @@ var AirbugInitializer = Class.extend(Obj, {
         ]);
 
         this.airbugServerConfig.absorbConfig(config, [
+            "appVersion",
             "github.clientId",
             "github.clientSecret",
             "staticUrl",

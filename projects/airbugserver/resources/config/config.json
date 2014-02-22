@@ -1,4 +1,5 @@
 {
+    "appVersion": "{{BUILD_VERSION}}",
     "cookieSecret": "some secret, seriously don't tell",
     "cookieMaxAge": 86400000,
     "enableTracking": true,

@@ -34,11 +34,13 @@ var AddsBetaKeysMigration = Class.extend(Migration, {
     up: function(callback) {
         var baseBetaKeys = [
             {betaKey: "GO_AIRBUG!",                                                     baseKey: "GO_AIRBUG!",                                                  isBaseKey: true, hasCap: false},
+            {betaKey: "GO_TEAM_AIRBUG!",                                                baseKey: "GO_TEAM_AIRBUG!",                                                  isBaseKey: true, hasCap: false},
             {betaKey: "GO_AIRBUG#BN14",                                                 baseKey: "GO_AIRBUG#BN14",                                              isBaseKey: true, hasCap: false},
             {betaKey: "GO_AIRBUG#MW14",                                                 baseKey: "GO_AIRBUG#MW14",                                              isBaseKey: true, hasCap: false},
             {betaKey: "GO_AIRBUG#RS14",                                                 baseKey: "GO_AIRBUG#RS14",                                              isBaseKey: true, hasCap: false},
             {betaKey: "GO_AIRBUG#SC14",                                                 baseKey: "GO_AIRBUG#SC14",                                              isBaseKey: true, hasCap: false},
             {betaKey: "GO_AIRBUG#TP14",                                                 baseKey: "GO_AIRBUG#TP14",                                              isBaseKey: true, hasCap: false},
+            {betaKey: "GO_AIRBUG#ADVISOR14",                                            baseKey: "GO_AIRBUG#ADVISOR14",                                              isBaseKey: true, hasCap: false},
             {betaKey: "AIRBUG_THE_TSHIRT_KEY",                                          baseKey: "AIRBUG_THE_TSHIRT_KEY",                                       isBaseKey: true, hasCap: false},
             {betaKey: "AIRBUG_AND_DBC_FOR_THE_WIN",                                     baseKey: "AIRBUG_AND_DBC_FOR_THE_WIN",                                  isBaseKey: true, hasCap: false},
             {betaKey: "airbugAndHackReactorForTheWin",                                  baseKey: "airbugAndHackReactorForTheWin",                               isBaseKey: true, hasCap: false},
