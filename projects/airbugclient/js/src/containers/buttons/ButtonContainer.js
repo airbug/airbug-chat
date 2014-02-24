@@ -139,10 +139,16 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
         this.initializeEventListeners();
     },
 
+    /**
+     * @protected
+     */
     deinitializeEventListeners: function() {
         this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
     initializeEventListeners: function() {
         this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
     },

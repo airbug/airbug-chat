@@ -128,11 +128,17 @@ var SignupButtonContainer = Class.extend(ButtonContainer, {
         this.setViewTop(this.buttonView);
     },
 
+    /**
+     * @protected
+     */
     initializeEventListeners: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSignupButtonClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
     deinitializeEventListeners: function() {
         this._super();
         this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSignupButtonClickedEvent, this);

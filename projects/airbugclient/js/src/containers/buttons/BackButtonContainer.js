@@ -163,11 +163,17 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
         }
     },
 
+    /**
+     * @protected
+     */
     initializeEventListeners: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
     deinitializeEventListeners: function() {
         this._super();
         this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
