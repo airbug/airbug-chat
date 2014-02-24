@@ -127,12 +127,14 @@ var LoginButtonContainer = Class.extend(ButtonContainer, {
         this.setViewTop(this.buttonView);
     },
 
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
+    initializeEventListeners: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLoginButtonClickedEvent, this);
+    },
+
+    deinitializeEventListeners: function() {
+        this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLoginButtonClickedEvent, this);
     },
 
 

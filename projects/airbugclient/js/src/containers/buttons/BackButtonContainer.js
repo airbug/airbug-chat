@@ -150,7 +150,6 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
     deinitializeContainer: function() {
         this._super();
         this.pageStateModule.putState(BackButtonContainer.STATE_KEY, this.goBackId);
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
     },
 
     /**
@@ -158,12 +157,20 @@ var BackButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
-
         this.goBackId = this.pageStateModule.getState(BackButtonContainer.STATE_KEY);
         if (!this.goBackId) {
             this.goBackId = this.navigationModule.markPreviousGoBack();
         }
+    },
+
+    initializeEventListeners: function() {
+        this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
+    },
+
+    deinitializeEventListeners: function() {
+        this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackButtonClickedEvent, this);
     },
 
 
