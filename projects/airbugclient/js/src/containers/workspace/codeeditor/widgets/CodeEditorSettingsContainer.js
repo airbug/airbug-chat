@@ -69,6 +69,9 @@ var view                            = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @extends {WorkspaceWidgetContainer}
+ */
 var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
     //-------------------------------------------------------------------------------
@@ -255,11 +258,16 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.getViewTop().$el.find("select#code-editor-tabsize").off();
     },
 
+    /**
+     * @private
+     */
     initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
-
     },
 
+    /**
+     * @private
+     */
     deinitializeCommandSubscriptions: function() {
         this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
     },
@@ -279,10 +287,16 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         $("select#code-editor-mode option[value='" + mode + "']").attr("selected", "selected");
     },
 
+    /**
+     * @private
+     */
     handleBackButtonClickedEvent: function() {
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
     },
 
+    /**
+     * @private
+     */
     handleModeSelectionEvent: function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -294,6 +308,9 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     },
 
+    /**
+     * @private
+     */
     handleThemeSelectionEvent: function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -305,6 +322,9 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     },
 
+    /**
+     * @private
+     */
     handleFontSizeSelectionEvent: function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -316,6 +336,9 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     },
 
+    /**
+     * @private
+     */
     handleTabSizeSelectionEvent: function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -323,17 +346,6 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         var data = {
             setting: "tabSize",
             tabSize: $("select#code-editor-tabsize").val()
-        };
-        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
-    },
-
-    handleTabTypeSelectionEvent: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        var context = event.data.context;
-        var data = {
-            setting: "tabType",
-            tabType: $("select#code-editor-tabtype").val().match(/\-(.*)/)[1]
         };
         context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     }
