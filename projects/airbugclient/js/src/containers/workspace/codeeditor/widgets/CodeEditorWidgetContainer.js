@@ -355,16 +355,28 @@ var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.setEditorText(code);
     },
 
+    /**
+     * @private
+     * @type {PublisherMessage} message
+     */
     handleSetTextCommand: function(message) {
         var text = message.getData().text;
         this.setEditorText(text);
     },
 
+    /**
+     * @private
+     * @type {PublisherMessage} message
+     */
     handleSetModeCommand: function(message) {
         var mode = message.getData().mode;
         this.setEditorMode(mode);
     },
 
+    /**
+     * @private
+     * @type {PublisherMessage} message
+     */
     handleSetThemeCommand: function(message) {
         var theme = message.getData().theme;
         this.setEditorTheme(theme);
@@ -418,11 +430,13 @@ var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      *
      */
     configureAceEditor: function() {
+        //refactor to use helper methods.
         this.aceEditor.getSession().setMode("ace/mode/plain_text");
         this.aceEditor.setTheme("ace/theme/twilight");
         this.aceEditor.getSession().setTabSize(4);
         this.aceEditor.getSession().setUseSoftTabs(true);
         this.aceEditor.setFontSize(12);
+        this.aceEditor.setOption("showInvisibles", true);
     },
 
     /**
@@ -561,6 +575,13 @@ var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         if (this.aceEditor) {
             this.aceEditor.setReadOnly(true);
         }
+    },
+
+    /**
+     * @param {boolean} boolean
+     */
+    setWhitespace: function(boolean) {
+        this.aceEditor.setOption("showInvisibles", boolean);
     },
 
     /**

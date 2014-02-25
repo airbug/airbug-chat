@@ -240,6 +240,10 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
                 var tabType     = data.tabType;
                 this.codeEditorWidgetContainer.setEditorTabType(tabType);
                 break;
+            case "whitespace":
+                var whitespaceBoolean = (data.whitespace === "true") ? true : false;
+                this.codeEditorWidgetContainer.setWhitespace(whitespaceBoolean);
+                break;
         }
     },
 

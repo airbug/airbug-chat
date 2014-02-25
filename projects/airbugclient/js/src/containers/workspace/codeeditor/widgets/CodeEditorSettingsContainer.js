@@ -246,6 +246,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.getViewTop().$el.find("select#code-editor-mode").change(       {context: this}, this.handleModeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-theme").change(      {context: this}, this.handleThemeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-tabsize").change(    {context: this}, this.handleTabSizeSelectionEvent);
+        this.getViewTop().$el.find("select#code-editor-whitespace").change( {context: this}, this.handleWhitespaceSelectionEvent);
     },
 
     /**
@@ -256,6 +257,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.getViewTop().$el.find("select#code-editor-mode").off();
         this.getViewTop().$el.find("select#code-editor-theme").off();
         this.getViewTop().$el.find("select#code-editor-tabsize").off();
+        this.getViewTop().$el.find("select#code-editor-whitespace").off();
     },
 
     /**
@@ -346,6 +348,17 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         var data = {
             setting: "tabSize",
             tabSize: $("select#code-editor-tabsize").val()
+        };
+        context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
+    },
+
+    handleWhitespaceSelectionEvent: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var context = event.data.context;
+        var data = {
+            setting: "whitespace",
+            whitespace: $("select#code-editor-whitespace").val()
         };
         context.getViewTop().dispatchEvent(new FormViewEvent(FormViewEvent.EventType.CHANGE, data));
     }

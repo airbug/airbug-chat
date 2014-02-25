@@ -131,6 +131,11 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
                 <option value="2">2 Spaces</option>\
                 <option value="4" selected="selected">4 Spaces</option>\
             </select>\
+            <label for="code-editor-whitespace">Show Whitespace</label>\
+            <select id="code-editor-whitespace" size="1">\
+                <option value="true" selected="selected">true</option>\
+                <option value="false">false</option>\
+            </select>\
     </div>\
 </div>',
 
