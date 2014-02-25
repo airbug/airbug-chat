@@ -218,6 +218,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     deinitializeContainer: function() {
         this._super();
         this.deinitializeEventListeners();
+        this.deinitializeCommandSubscriptions();
     },
 
     /**
@@ -226,6 +227,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     initializeContainer: function() {
         this._super();
         this.initializeEventListeners();
+        this.initializeCommandSubscriptions();
     },
 
 
@@ -253,10 +255,29 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.getViewTop().$el.find("select#code-editor-tabsize").off();
     },
 
+    initializeCommandSubscriptions: function() {
+        this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
+
+    },
+
+    deinitializeCommandSubscriptions: function() {
+        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Model Event Handlers
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @type {PublisherMessage} message
+     */
+    handleSetModeCommand: function(message) {
+        var mode    = message.getData().mode;
+        $("select#code-editor-mode option[selected]").removeAttr("selected");
+        $("select#code-editor-mode option[value='" + mode + "']").attr("selected", "selected");
+    },
 
     handleBackButtonClickedEvent: function() {
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
