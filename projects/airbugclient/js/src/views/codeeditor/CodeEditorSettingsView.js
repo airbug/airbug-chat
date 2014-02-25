@@ -43,7 +43,7 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
             <div class="box-header">\
             </div>\
             <div class="box-body">\
-            <label for="code-editor-mode">Mode</label>\
+            <label for="code-editor-mode">Language</label>\
             <select id="code-editor-mode" size="1">\
                 <option value="ace/mode/c_cpp">         C           </option>\
                 <option value="ace/mode/csharp">        C#          </option>\
@@ -52,6 +52,7 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
                 <option value="ace/mode/css">           CSS         </option>\
                 <option value="ace/mode/django">        Django      </option>\
                 <option value="ace/mode/rhtml">         erb         </option>\
+                <option value="ace/mode/golang">        Go          </option>\
                 <option value="ace/mode/haml">          HAML        </option>\
                 <option value="ace/mode/handlebars">    Handlebars  </option>\
                 <option value="ace/mode/html">          HTML        </option>\
