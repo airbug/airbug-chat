@@ -46,7 +46,7 @@ var CodeView = Class.extend(MustacheView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        this.super();
+        this._super();
     }
 });
 
