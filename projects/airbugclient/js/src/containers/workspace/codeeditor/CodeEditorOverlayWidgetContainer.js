@@ -12,6 +12,7 @@
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorOverlayWidgetCloseButtonContainer')
 //@Require('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
@@ -23,10 +24,6 @@
 //@Require('airbug.OverlayView')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -41,37 +38,31 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                               = bugpack.require('Class');
-var Ace                                 = bugpack.require('ace.Ace');
-var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
-var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
-var ButtonView                          = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
-var CodeEditorOverlayWidgetCloseButtonContainer = bugpack.require('airbug.CodeEditorOverlayWidgetCloseButtonContainer');
-var CodeEditorOverlayWidgetMinimizeButtonContainer = bugpack.require('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer');
-var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
-var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
-var CodeEditorWidgetView                = bugpack.require('airbug.CodeEditorWidgetView');
-var CommandModule                       = bugpack.require('airbug.CommandModule');
-var IconView                            = bugpack.require('airbug.IconView');
-var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
-var OverlayView                         = bugpack.require('airbug.OverlayView');
-var TextView                            = bugpack.require('airbug.TextView');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+var Class                                           = bugpack.require('Class');
+var Ace                                             = bugpack.require('ace.Ace');
+var ButtonGroupView                                 = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView                               = bugpack.require('airbug.ButtonToolbarView');
+var ButtonView                                      = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent                                 = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorBaseWidgetContainer                   = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
+var CodeEditorOverlayWidgetCloseButtonContainer     = bugpack.require('airbug.CodeEditorOverlayWidgetCloseButtonContainer');
+var CodeEditorOverlayWidgetMinimizeButtonContainer  = bugpack.require('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer');
+var CodeEditorSettingsButtonContainer               = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
+var CodeEditorView                                  = bugpack.require('airbug.CodeEditorView');
+var CodeEditorWidgetView                            = bugpack.require('airbug.CodeEditorWidgetView');
+var CommandModule                                   = bugpack.require('airbug.CommandModule');
+var IconView                                        = bugpack.require('airbug.IconView');
+var NakedButtonView                                 = bugpack.require('airbug.NakedButtonView');
+var OverlayView                                     = bugpack.require('airbug.OverlayView');
+var TextView                                        = bugpack.require('airbug.TextView');
+var ViewBuilder                                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
 var CommandType = CommandModule.CommandType;
-var property    = PropertyAnnotation.property;
 var view        = ViewBuilder.view;
 
 
@@ -79,7 +70,10 @@ var view        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
+/**
+ * @extends {CodeEditorBaseWidgetContainer}
+ */
+var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -94,40 +88,9 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {Ace}
-         */
-        this.aceEditor                                      = null;
-
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {CommandModule}
-         */
-        this.commandModule                                  = null;
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {AirbugClientConfig}
-         */
-        this.airbugClientConfig                             = null;
-
 
         // Views
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CodeEditorView}
-         */
-        this.codeEditorView                                 = null;
 
         /**
          * @private
@@ -150,12 +113,6 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
          * @type {CodeEditorOverlayWidgetCloseButtonContainer}
          */
         this.closeButton                                    = null;
-//
-//        /**
-//         * @private
-//         * @type {CodeEditorSettingsButtonContainer}
-//         */
-//        this.settingsButton                 = null;
     },
 
 
@@ -274,36 +231,17 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-        this.configureAceEditor();
-    },
-
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // CodeEditorBaseWidgetContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @private
      */
     initializeEventListeners: function() {
+        this._super();
         var _this = this;
-        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
         this.codeEditorOverlayWidgetMinimizeButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearMinimizeButtonClickedEvent, this)
 //        this.codeEditorOverlayWidgetView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackgroundClickedEvent, this);
         this.getViewTop().$el.find(".overlay-background").on('click', function(event){
@@ -315,23 +253,25 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
      * @private
      */
     deinitializeEventListeners: function() {
-        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
+        this._super();
 //        this.codeEditorOverlayWidgetView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackgroundClickedEvent, this);
         this.getViewTop().$el.find(".overlay-background").off();
     },
 
     /**
      * @private
+     * @override
      */
     initializeCommandSubscriptions: function() {
-
+        //None
     },
 
     /**
      * @private
+     * @override
      */
     deinitializeCommandSubscriptions: function() {
-
+        //None
     },
 
 
@@ -339,37 +279,11 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    hearBackgroundClickedEvent: function(event) {
-        this.hideFullscreenCodeEditor();
-        event.stopPropagation();
-    },
-
-    hearMinimizeButtonClickedEvent: function(event) {
-        this.hideFullscreenCodeEditor();
-        event.stopPropagation();
-    },
-
     /**
      * @param {ButtonViewEvent} event
      */
     hearSendButtonClickedEvent: function(event) {
-        var code            = this.getEditorText();
-        var codeLanguage    = this.getEditorLanguage();
-        var chatMessageObject = {
-            type: "code",
-            body: {parts: [{
-                code: code,
-                type: "code",
-                codeLanguage: codeLanguage
-            }]}
-        };
-
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
-        this.commandModule.relayCommand(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, {});
-        event.stopPropagation();
-    },
-
-    hideFullscreenCodeEditor: function() {
+        this._super(event);
         this.commandModule.relayCommand(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, {});
     },
 
@@ -379,182 +293,35 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @override
      */
     configureAceEditor: function() {
         this.aceEditor.getSession().setMode("ace/mode/plain_text");
         this.aceEditor.setTheme("ace/theme/twilight");
     },
 
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     *
+     * @protected
+     * @param {} event
      */
-    clearSelection: function() {
-        this.aceEditor.clearSelection();
+    hearBackgroundClickedEvent: function(event) {
+        this.hideFullscreenCodeEditor();
+        event.stopPropagation();
     },
 
     /**
-     * @return {Ace}
+     * @protected
+     * @param {} event
      */
-    getEditor: function() {
-        return this.aceEditor;
-    },
-
-    /**
-     * @return {*}
-     */
-    getEditorCursorPosition: function() {
-        return this.aceEditor.getCursorPosition();
-    },
-
-    /**
-     * @param {*} cursorPosition
-     */
-    setEditorCursorPosition: function(cursorPosition) {
-        this.aceEditor.navigateTo(cursorPosition.row, cursorPosition.column);
-    },
-
-    /**
-     * @returns {Document}
-     */
-    getEditorDocument: function() {
-        return this.aceEditor.getSession().getDocument();
-    },
-
-    /**
-     * @param {Document}
-     */
-    setEditorDocument: function(document) {
-        this.aceEditor.getSession().setDocument(document);
-    },
-
-    /**
-     * @param {number} fontSize
-     */
-    setEditorFontSize: function(fontSize) {
-        this.aceEditor.setFontSize(fontSize);
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorLanguage: function() {
-        var mode = this.aceEditor.getSession().getMode().$id;
-        return mode.substring(mode.lastIndexOf("/") + 1);
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorMode: function() {
-        return this.aceEditor.getSession().getMode().$id;
-    },
-
-    /**
-     * @param {string} mode
-     */
-    setEditorMode: function(mode) {
-        this.aceEditor.getSession().setMode(mode);
-    },
-
-    /**
-     *
-     * @returns {number}
-     */
-    getEditorTabSize: function() {
-        return this.aceEditor.getSession().getTabSize();
-    },
-
-    /**
-     * @param {number} tabSize
-     */
-    setEditorTabSize: function(tabSize) {
-        this.aceEditor.getSession().setTabSize(tabSize);
-        console.log("tab size has been set to", this.aceEditor.getSession().getTabSize()); //maybe make these into notifications
-    },
-
-    /**
-     * @param {string | boolean} tabType
-     */
-    setEditorTabType: function(tabType) {
-        if(tabType === "soft") {
-            tabType = true;
-        } else if(tabType === "hard") {
-            tabType = false;
-        }
-        this.aceEditor.getSession().setUseSoftTabs(tabType);
-        console.log("tabs have been set to", '"' + this.aceEditor.getSession().getTabString() + '"'); //maybe make these into notifications
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorText: function() {
-        if (this.aceEditor) {
-            return this.aceEditor.getValue();
-        } else {
-            return "";
-        }
-    },
-
-    /**
-     * @param {string} value
-     */
-    setEditorText: function(value) {
-        if (this.aceEditor) {
-            this.aceEditor.setValue(value);
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorTheme: function() {
-        return this.aceEditor.getTheme();
-    },
-
-    /**
-     *
-     */
-    setEditorTheme: function(theme) {
-        this.aceEditor.setTheme(theme);
-    },
-
-    /**
-     *
-     */
-    setEditorToReadOnly: function() {
-        if (this.aceEditor) {
-            this.aceEditor.setReadOnly(true);
-        }
-    },
-
-    resizeEditor: function() {
-        this.aceEditor.resize();
-    },
-
-    /**
-     *
-     */
-    focusOnAceEditor: function() {
-        var aceEditor = this.aceEditor;
-        var session = aceEditor.getSession();
-        var count = session.getLength();
-        aceEditor.focus();
+    hearMinimizeButtonClickedEvent: function(event) {
+        this.hideFullscreenCodeEditor();
+        event.stopPropagation();
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorOverlayWidgetContainer).with(
-    autowired().properties([
-        property("airbugClientConfig").ref("airbugClientConfig"),
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------

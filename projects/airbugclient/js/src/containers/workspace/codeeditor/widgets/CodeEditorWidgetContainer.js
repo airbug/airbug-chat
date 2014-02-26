@@ -12,6 +12,7 @@
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorFullscreenButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
@@ -21,10 +22,6 @@
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
-//@Require('airbug.WorkspaceWidgetContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -45,6 +42,7 @@ var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupVie
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonView                          = bugpack.require('airbug.ButtonView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorBaseWidgetContainer       = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
 var CodeEditorFullscreenButtonContainer = bugpack.require('airbug.CodeEditorFullscreenButtonContainer');
 var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
@@ -54,10 +52,6 @@ var IconView                            = bugpack.require('airbug.IconView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
-var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -65,10 +59,7 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                           = AutowiredAnnotation.autowired;
-var bugmeta                             = BugMeta.context();
 var CommandType                         = CommandModule.CommandType;
-var property                            = PropertyAnnotation.property;
 var view                                = ViewBuilder.view;
 
 
@@ -76,7 +67,7 @@ var view                                = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
+var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -91,40 +82,9 @@ var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {Ace}
-         */
-        this.aceEditor                              = null;
-
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @type {CommandModule}
-         */
-        this.commandModule                          = null;
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {AirbugClientConfig}
-         */
-        this.airbugClientConfig                     = null;
-
 
         // Views
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CodeEditorView}
-         */
-        this.codeEditorView                         = null;
 
         /**
          * @private
@@ -268,352 +228,48 @@ var CodeEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-        this.configureAceEditor();
-    },
-
-
     //-------------------------------------------------------------------------------
-    // WorkspaceWidgetContainer Methods
+    // CodeEditorBaseWidgetContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
+     * @override
      */
-    showWidget: function() {
+    initializeEventListeners: function() {
         this._super();
-        this.focusOnAceEditor();
+        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
     },
 
+    /**
+     * @private
+     * @override
+     */
+    deinitializeEventListeners: function() {
+        this._super();
+        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+    },
 
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     */
-    initializeEventListeners: function() {
-        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
-        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeEventListeners: function() {
-        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
-        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-    },
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
-        this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_TEXT, this.handleSetTextCommand, this);
-        this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
-        this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_THEME, this.handleSetThemeCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_TEXT, this.handleSetTextCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_THEME, this.handleSetThemeCommand, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Message Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @type {PublisherMessage} message
-     */
-    handleDisplayCodeCommand: function(message) {
-        var code = message.getData().code;
-        this.setEditorText(code);
-    },
-
-    /**
-     * @private
-     * @type {PublisherMessage} message
-     */
-    handleSetTextCommand: function(message) {
-        var text = message.getData().text;
-        this.setEditorText(text);
-    },
-
-    /**
-     * @private
-     * @type {PublisherMessage} message
-     */
-    handleSetModeCommand: function(message) {
-        var mode = message.getData().mode;
-        this.setEditorMode(mode);
-    },
-
-    /**
-     * @private
-     * @type {PublisherMessage} message
-     */
-    handleSetThemeCommand: function(message) {
-        var theme = message.getData().theme;
-        this.setEditorTheme(theme);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
+     * @protected
      * @param {Event} event
      */
     hearFullScreenButtonClickedEvent: function(event) {
         var data    = {
-            cursorPosition: this.getEditorCursorPosition(),
-            mode: this.getEditorMode(),
-            text: this.getEditorText(),
-            theme: this.getEditorTheme(),
-            tabSize: this.getEditorTabSize()
+            cursorPosition:     this.getEditorCursorPosition(),
+            mode:               this.getEditorMode(),
+            showInvisibles:     this.getEditorShowInvisibles(),
+            text:               this.getEditorText(),
+            theme:              this.getEditorTheme(),
+            tabSize:            this.getEditorTabSize()
         };
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, data);
     },
-
-    /**
-     * @param {ButtonViewEvent} event
-     */
-    hearSendButtonClickedEvent: function(event) {
-        var code            = this.getEditorText();
-        var codeLanguage    = this.getEditorLanguage();
-        var chatMessageObject = {
-            type: "code",
-            body: {parts: [{
-                code: code,
-                type: "code",
-                codeLanguage: codeLanguage
-            }]}
-        };
-
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
-        event.stopPropagation();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Ace Config and Helper Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    configureAceEditor: function() {
-        //refactor to use helper methods.
-        this.aceEditor.getSession().setMode("ace/mode/plain_text");
-        this.aceEditor.setTheme("ace/theme/twilight");
-        this.aceEditor.getSession().setTabSize(4);
-        this.aceEditor.getSession().setUseSoftTabs(true);
-        this.aceEditor.setFontSize(12);
-        this.aceEditor.setOption("showInvisibles", true);
-    },
-
-    /**
-     * @return {Ace}
-     */
-    getEditor: function() {
-        return this.aceEditor;
-    },
-
-    /**
-     * @return {*}
-     */
-    getEditorCursorPosition: function() {
-        return this.aceEditor.getCursorPosition();
-    },
-
-    /**
-     * @param {*} cursorPosition
-     */
-    setEditorCursorPosition: function(cursorPosition) {
-        this.aceEditor.moveCursorToPosition(cursorPosition);
-    },
-
-    /**
-     * @returns {Document} document
-     */
-    getEditorDocument: function() {
-        return this.aceEditor.getSession().getDocument();
-    },
-
-    /**
-     * @param {Document} document
-     */
-    setEditorDocument: function(document) {
-        this.aceEditor.getSession().setDocument(document);
-    },
-
-    /**
-     * @param {number} fontSize
-     */
-    setEditorFontSize: function(fontSize) {
-        this.aceEditor.setFontSize(fontSize);
-
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorLanguage: function() {
-        var mode = this.aceEditor.getSession().getMode().$id;
-        return mode.substring(mode.lastIndexOf("/") + 1);
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorMode: function() {
-        return this.aceEditor.getSession().getMode().$id;
-    },
-
-    /**
-     * @param {string} mode
-     */
-    setEditorMode: function(mode) {
-        this.aceEditor.getSession().setMode(mode);
-    },
-
-    /**
-     *
-     * @returns {number}
-     */
-    getEditorTabSize: function() {
-        return this.aceEditor.getSession().getTabSize();
-    },
-
-    /**
-     * @param {number} tabSize
-     */
-    setEditorTabSize: function(tabSize) {
-        this.aceEditor.getSession().setTabSize(tabSize);
-        console.log("tab size has been set to", this.aceEditor.getSession().getTabSize()); //maybe make these into notifications
-    },
-
-    /**
-     * @param {string | boolean} tabType
-     */
-    setEditorTabType: function(tabType) {
-        if(tabType === "soft") {
-            tabType = true;
-        } else if(tabType === "hard") {
-            tabType = false;
-        }
-        this.aceEditor.getSession().setUseSoftTabs(tabType);
-        console.log("tabs have been set to", '"' + this.aceEditor.getSession().getTabString() + '"'); //maybe make these into notifications
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorText: function() {
-        if (this.aceEditor) {
-            return this.aceEditor.getValue();
-        } else {
-            return "";
-        }
-    },
-
-    /**
-     * @param {string} value
-     */
-    setEditorText: function(value) {
-        if (this.aceEditor) {
-            this.aceEditor.setValue(value);
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getEditorTheme: function() {
-        return this.aceEditor.getTheme();
-    },
-
-    /**
-     * @param {string} theme
-     */
-    setEditorTheme: function(theme) {
-        this.aceEditor.setTheme(theme);
-        console.log("theme has been set to", this.getEditorTheme());
-    },
-
-    /**
-     *
-     */
-    setEditorToReadOnly: function() {
-        if (this.aceEditor) {
-            this.aceEditor.setReadOnly(true);
-        }
-    },
-
-    /**
-     * @param {boolean} boolean
-     */
-    setWhitespace: function(boolean) {
-        this.aceEditor.setOption("showInvisibles", boolean);
-    },
-
-    /**
-     *
-     */
-    resizeEditor: function() {
-        this.aceEditor.resize();
-    },
-
-    /**
-     *
-     */
-    focusOnAceEditor: function() {
-        var aceEditor = this.aceEditor;
-        var session = aceEditor.getSession();
-        var count = session.getLength();
-        aceEditor.focus();
-        //aceEditor.gotoLine(count, session.getLine(count-1).length);
-    }
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorWidgetContainer).with(
-    autowired().properties([
-        property("airbugClientConfig").ref("airbugClientConfig"),
-        property("commandModule").ref("commandModule")
-    ])
-);
 
 
 //-------------------------------------------------------------------------------
