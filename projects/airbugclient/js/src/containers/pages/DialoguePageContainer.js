@@ -376,6 +376,7 @@ var DialoguePageContainer = Class.extend(PageContainer, {
         var data            = message.getData();
         var tabSize         = data.tabSize;
         var cursorPosition  = data.cursorPosition;
+        var showInvisibles  = data.showInvisibles;
         var text            = data.text;
         var mode            = data.mode;
         var theme           = data.theme;
@@ -386,6 +387,7 @@ var DialoguePageContainer = Class.extend(PageContainer, {
         this.addContainerChild(this.codeEditorOverlayWidgetContainer, ".page");
         this.codeEditorOverlayWidgetContainer.setEditorText(text);
         this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
+        this.codeEditorOverlayWidgetContainer.setEditorShowInvisibles(showInvisibles);
         this.codeEditorOverlayWidgetContainer.setEditorTheme(theme);
         this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
         this.codeEditorOverlayWidgetContainer.setEditorCursorPosition(cursorPosition);

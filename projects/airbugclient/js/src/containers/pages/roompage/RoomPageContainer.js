@@ -310,6 +310,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         console.log("handleDisplayCodeEditorOverlayWidgetCommand");
         var data            = message.getData();
         var cursorPosition  = data.cursorPosition;
+        var showInvisibles  = data.showInvisibles;
         var tabSize         = data.tabSize;
         var text            = data.text;
         var mode            = data.mode;
@@ -322,6 +323,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.addContainerChild(this.codeEditorOverlayWidgetContainer, ".page");
         this.codeEditorOverlayWidgetContainer.setEditorText(text);
         this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
+        this.codeEditorOverlayWidgetContainer.setEditorShowInvisibles(showInvisibles);
         this.codeEditorOverlayWidgetContainer.setEditorTheme(theme);
         this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
         this.codeEditorOverlayWidgetContainer.setEditorCursorPosition(cursorPosition);
