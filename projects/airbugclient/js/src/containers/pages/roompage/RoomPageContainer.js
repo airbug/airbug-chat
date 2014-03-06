@@ -232,8 +232,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     initializeContainer: function() {
         this._super();
         //EventListeners and and command subscription initialization handled by super
-
-
+        this.initializeObservers();
     },
 
     /**
@@ -242,6 +241,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     deinitializeContainer: function() {
         this._super();
         //EventListeners and and command subscription deinitialization handled by super
+        this.deinitializeObservers();
     },
 
 
@@ -256,9 +256,6 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
-        this.roomModel.observe(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
-        this.roomModel.observe(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
-        this.roomModel.observe(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
     },
 
     /**
@@ -268,9 +265,6 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
         overlayView.removeEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
-        this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
-        this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
-        this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
     },
 
     /**
@@ -293,6 +287,18 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.commandModule.unsubscribe(CommandType.HIDE.SHARE_ROOM_OVERLAY, this.handleHideShareRoomOverlayCommand, this);
         this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
         this.commandModule.unsubscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+    },
+
+    initializeObservers: function() {
+        this.roomModel.observe(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
+        this.roomModel.observe(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
+        this.roomModel.observe(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
+    },
+
+    deinitializeObservers: function() {
+        this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
+        this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
+        this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
     },
 
 
