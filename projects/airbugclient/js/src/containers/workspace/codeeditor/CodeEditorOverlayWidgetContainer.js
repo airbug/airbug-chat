@@ -14,7 +14,6 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorOverlayWidgetCloseButtonContainer')
-//@Require('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CodeEditorWidgetView')
@@ -47,7 +46,6 @@ var ButtonView                                      = bugpack.require('airbug.Bu
 var ButtonViewEvent                                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorBaseWidgetContainer                   = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
 var CodeEditorOverlayWidgetCloseButtonContainer     = bugpack.require('airbug.CodeEditorOverlayWidgetCloseButtonContainer');
-var CodeEditorOverlayWidgetMinimizeButtonContainer  = bugpack.require('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer');
 var CodeEditorSettingsButtonContainer               = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                                  = bugpack.require('airbug.CodeEditorView');
 var CodeEditorWidgetView                            = bugpack.require('airbug.CodeEditorWidgetView');
@@ -103,12 +101,6 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
 
         // Containers
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CodeEditorOverlayWidgetMinimizeButtonContainer}
-         */
-        this.codeEditorOverlayWidgetMinimizeButtonContainer = null;
 
         /**
          * @private
@@ -221,11 +213,9 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
      */
     createContainerChildren: function() {
         this._super();
-        this.codeEditorOverlayWidgetMinimizeButtonContainer = new CodeEditorOverlayWidgetMinimizeButtonContainer();
         this.closeButton        = new CodeEditorOverlayWidgetCloseButtonContainer();
 //        this.settingsButton     = new CodeEditorSettingsButtonContainer();
 //        this.addContainerChild(this.settingsButton, ".btn-group:last-child");
-        this.addContainerChild(this.codeEditorOverlayWidgetMinimizeButtonContainer, ".btn-group:last-child");
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
@@ -239,7 +229,6 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
      */
     initializeEventListeners: function() {
         this._super();
-        var _this = this;
         this.codeEditorOverlayWidgetMinimizeButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearMinimizeButtonClickedEvent, this)
         this.codeEditorOverlayWidgetView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
     },
