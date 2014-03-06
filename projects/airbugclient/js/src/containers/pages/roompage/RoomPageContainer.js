@@ -16,6 +16,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LogoutButtonContainer')
+//@Require('airbug.OverlayViewEvent')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
@@ -48,6 +49,7 @@ var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOver
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
 var LogoutButtonContainer               = bugpack.require('airbug.LogoutButtonContainer');
+var OverlayViewEvent                    = bugpack.require('airbug.OverlayViewEvent');
 var PageContainer                       = bugpack.require('airbug.PageContainer');
 var RoomChatBoxContainer                = bugpack.require('airbug.RoomChatBoxContainer');
 var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
@@ -253,7 +255,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     initializeEventListeners: function() {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
-        overlayView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+        overlayView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
         this.roomModel.observe(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
         this.roomModel.observe(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
         this.roomModel.observe(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
@@ -265,7 +267,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     deinitializeEventListeners: function() {
         this._super();
         var overlayView  = this.shareRoomContainer.getViewTop();
-        overlayView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearOverlayBackgroundClickedEvent, this);
+        overlayView.removeEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
         this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomNameChange, this);
         this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
         this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "name", this.observeRoomNameChange, this);
@@ -385,7 +387,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
      * @private
      * @param {Event} event
      */
-    hearOverlayBackgroundClickedEvent: function(event) {
+    hearOverlayCloseEvent: function(event) {
         this.hideShareRoomOverlay();
     },
 

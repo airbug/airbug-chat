@@ -22,6 +22,7 @@
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.OverlayView')
+//@Require('airbug.OverlayViewEvent')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('carapace.ViewBuilder')
@@ -54,6 +55,7 @@ var CommandModule                                   = bugpack.require('airbug.Co
 var IconView                                        = bugpack.require('airbug.IconView');
 var NakedButtonView                                 = bugpack.require('airbug.NakedButtonView');
 var OverlayView                                     = bugpack.require('airbug.OverlayView');
+var OverlayViewEvent                                = bugpack.require('airbug.OverlayViewEvent');
 var TextView                                        = bugpack.require('airbug.TextView');
 var ViewBuilder                                     = bugpack.require('carapace.ViewBuilder');
 
@@ -186,10 +188,6 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
                             ]),
                         view(CodeEditorView)
                             .name("codeEditorView")
-                            .attributes({
-//                                    width: "300px",
-//                                    height: "200px"
-                            })
                             .appendTo("#code-editor-widget-body-{{cid}}"),
                         view(ButtonView)
                             .name("sendButtonView")
@@ -243,10 +241,7 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
         this._super();
         var _this = this;
         this.codeEditorOverlayWidgetMinimizeButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearMinimizeButtonClickedEvent, this)
-//        this.codeEditorOverlayWidgetView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackgroundClickedEvent, this);
-        this.getViewTop().$el.find(".overlay-background").on('click', function(event){
-            _this.hearBackgroundClickedEvent(event);
-        });
+        this.codeEditorOverlayWidgetView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
     },
 
     /**
@@ -254,8 +249,8 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
      */
     deinitializeEventListeners: function() {
         this._super();
-//        this.codeEditorOverlayWidgetView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearBackgroundClickedEvent, this);
-        this.getViewTop().$el.find(".overlay-background").off();
+        this.codeEditorOverlayWidgetMinimizeButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearMinimizeButtonClickedEvent, this)
+        this.codeEditorOverlayWidgetView.removeEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
     },
 
     /**
@@ -308,7 +303,7 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
      * @protected
      * @param {} event
      */
-    hearBackgroundClickedEvent: function(event) {
+    hearOverlayCloseEvent: function(event) {
         this.hideFullscreenCodeEditor();
         event.stopPropagation();
     },

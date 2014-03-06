@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.MustacheView')
+//@Require('airbug.OverlayViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
 var MustacheView        = bugpack.require('airbug.MustacheView');
+var OverlayViewEvent    = bugpack.require('airbug.OverlayViewEvent');
 
 
 //-------------------------------------------------------------------------------
@@ -76,6 +78,7 @@ var OverlayView = Class.extend(MustacheView, {
     deinitializeView: function() {
         this._super();
         this.getOverlayBackgroundElement().off();
+        $("body").off("keyup", this.handleKeyupEvent);
     },
 
     /**
@@ -87,6 +90,7 @@ var OverlayView = Class.extend(MustacheView, {
         this.getOverlayBackgroundElement().on('click', function(event) {
             _this.handleBackgroundClick(event);
         });
+        $("body").keyup(this, this.handleKeyupEvent);
     },
 
 
@@ -139,9 +143,29 @@ var OverlayView = Class.extend(MustacheView, {
      * @private
      * @param {jQuery.Event} event
      */
+    handleKeyupEvent: function(event){
+        var _this = event.data;
+        if(event.keyCode === 27) {
+            _this.handleEscapeKeyKeyUp(event);
+        }
+    },
+
+    /**
+     * @private
+     * @param {jQuery.Event} event
+     */
     handleBackgroundClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED));
+        this.dispatchEvent(new OverlayViewEvent(OverlayViewEvent.EventType.CLOSE));
+    },
+
+    /**
+     * @private
+     * @param {jQuery.Event} event
+     */
+    handleEscapeKeyKeyUp: function(event) {
+        event.preventDefault();
+        this.dispatchEvent(new OverlayViewEvent(OverlayViewEvent.EventType.CLOSE));
     }
 });
 
