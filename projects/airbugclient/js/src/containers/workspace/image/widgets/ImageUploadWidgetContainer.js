@@ -285,8 +285,8 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
             dataType: 'json',
             dropzone: $(".image-upload-dropzone"),
             pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            maxFileSize: 5000000, // 5 MB
+//            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i, //does not work without jquery ui components
+//            maxFileSize: 5000000, // 5 MB //does not work without jquery ui components
             // Enable image resizing, except for Android and Opera,
             // which actually support image resizing, but fail to
             // send Blob objects via XHR requests:
@@ -315,26 +315,43 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
             add: function (event, data) {
                 _this.hideDragAndDropText();
 
-                var file = data.files[0];
-                var filename = file.name;
+                //validate file type and size
+                var uploadErrors = [];
+                var acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
+                var maxFileSize     = 5000000;
+                if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('File is not of an accepted file type');
+                }
+                if(data.originalFiles[0]['size'].length && data.originalFiles[0]['size'] > maxFileSize) {
+                    uploadErrors.push('File size of exceeds file size limit of ' + maxFileSize);
+                }
 
-                var imageAssetModel = _this.assetManagerModule.generateImageAssetModel({name: filename});
-                var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
-                _this.addContainerChild(imageUploadItemContainer, "#image-upload-container>.box-body>.box")
+                if(uploadErrors.length > 0) {
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: uploadErrors.join("\n")});
+                } else {
 
-                //hide send button if this is a drop from the chat messages div
-                data.context = imageUploadItemContainer.getViewTop().$el;
-                data.originalFiles[0].imageUploadItemContainer = imageUploadItemContainer;
+                    var file = data.files[0];
+                    var filename = file.name;
 
-                if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
-                    data.process().done(function () {
+                    var imageAssetModel = _this.assetManagerModule.generateImageAssetModel({name: filename});
+                    var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
+                    _this.addContainerChild(imageUploadItemContainer, "#image-upload-container>.box-body>.box")
 
-                        imageUploadItemContainer.getViewTop().$el.find(".status-message").text("uploading...");
-                        /** @type {{files: Array}} data, @type {string} status, @type {{}} jqXHR **/
-                        data.submit().done(function(data, status, jqXHR) {
+                    //hide send button if this is a drop from the chat messages div
+                    data.context = imageUploadItemContainer.getViewTop().$el;
+                    data.originalFiles[0].imageUploadItemContainer = imageUploadItemContainer;
 
+                    if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
+                        data.process().done(function () {
+
+                            imageUploadItemContainer.getViewTop().$el.find(".status-message").text("uploading...");
+                            /** @type {{files: Array}} data, @type {string} status, @type {{}} jqXHR **/
+                            data.submit().done(function(data, status, jqXHR) {
+
+                            });
                         });
-                    });
+                    }
+
                 }
             },
             start: function(event) {
