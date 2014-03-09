@@ -118,7 +118,8 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
         view(NakedButtonView)
             .name("buttonView")
             .attributes({
-                size: NakedButtonView.Size.SMALL
+                size: NakedButtonView.Size.SMALL,
+                type: NakedButtonView.Type.LINK
             })
             .children([
                 view(IconView)

@@ -257,7 +257,7 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
      * @param {PublisherMessage} message
      */
     handleDisplayCodeEditorCommand: function(message) {
-        this.showWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+        this.displayCodeEditor();
     },
 
     /**
@@ -265,7 +265,7 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
      * @param {PublisherMessage} message
      */
     handleDisplayCodeEditorSettingsCommand: function(message) {
-        this.showWidget(this.codeEditorSettingsWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+        this.displayCodeEditorSettings();
     },
 
     /**
@@ -273,6 +273,27 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
      * @param {Message} message
      */
     handleToggleCodeEditorCommand: function(message) {
+        this.toggleCodeEditor();
+    },
+
+    /**
+     * @private
+     */
+    displayCodeEditor: function() {
+        this.showWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+    },
+
+    /**
+     * @private
+     */
+    displayCodeEditorSettings: function() {
+        this.showWidget(this.codeEditorSettingsWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+    },
+
+    /**
+     * @private
+     */
+    toggleCodeEditor: function() {
         this.toggleWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
     }
 });

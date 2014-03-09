@@ -17,6 +17,9 @@
 //@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.ImageUploadView')
 //@Require('airbug.NakedButtonView')
+//@Require('airbug.TabsView')
+//@Require('airbug.TabView')
+//@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
@@ -51,6 +54,9 @@ var ImageUploadAddByUrlContainer        = bugpack.require('airbug.ImageUploadAdd
 var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
 var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
+var TabsView                            = bugpack.require('airbug.TabsView');
+var TabView                             = bugpack.require('airbug.TabView');
+var TabViewEvent                        = bugpack.require('airbug.TabViewEvent');
 var TextView                            = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
@@ -126,9 +132,9 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
         /**
          * @private
-         * @type {NakedButtonView}
+         * @type {TabView}
          */
-        this.imageListLinkButtonView        = null;
+        this.imageListTabView               = null;
 
 
         // Containers
@@ -187,53 +193,47 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
             .name("imageUploadView")
             .id("image-upload-container")
             .children([
+                view(TabsView)
+                    .name("tabsView")
+                    .appendTo(".box-header")
+                    .children([
+                        view(TabView)
+                            .name("imageListTabView")
+                            .children([
+                                view(IconView)
+                                    .appendTo('a')
+                                    .attributes({
+                                        type: IconView.Type.PICTURE
+                                    }),
+                                view(TextView)
+                                    .appendTo('a')
+                                    .attributes({
+                                        text: "Image List"
+                                    })
+                            ]),
+                        view(TabView)
+                            .name("imageUploadTabView")
+                            .attributes({
+                                classes: "disabled active"
+                            })
+                            .children([
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.UPLOAD
+                                    })
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: " Upload"
+                                    })
+                                    .appendTo('a')
+                            ])
+                        ]),
                 view(ButtonToolbarView)
                     .appendTo(".box-header")
                     .children([
                         view(ButtonGroupView)
                             .appendTo(".btn-toolbar")
-                            .children([
-                                view(NakedButtonView)
-                                    .attributes({
-                                        size: NakedButtonView.Size.NORMAL,
-                                        disabled: true,
-                                        type: NakedButtonView.Type.INVERSE
-                                    })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.UPLOAD,
-                                                color: IconView.Color.WHITE
-                                            })
-                                            .appendTo('button[id|="button"]'),
-                                        view(TextView)
-                                            .attributes({
-                                                text: " Upload"
-                                            })
-                                            .appendTo('button[id|="button"]')
-                                    ])
-                            ]),
-                        view(ButtonGroupView)
-                            .appendTo(".btn-toolbar")
-                            .children([
-                                view(NakedButtonView)
-                                    .id("image-list-link-button")
-                                    .attributes({
-                                        size: NakedButtonView.Size.SMALL
-                                    })
-                                    .children([
-                                        view(IconView)
-                                            .appendTo('#image-list-link-button')
-                                            .attributes({
-                                                type: IconView.Type.PICTURE
-                                            }),
-                                        view(TextView)
-                                            .appendTo('#image-list-link-button')
-                                            .attributes({
-                                                text: "Image List"
-                                            })
-                                    ])
-                            ])
                     ])
             ])
             .build(this);
@@ -242,8 +242,6 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.imageUploadView);
-
-        this.imageListLinkButtonView    = this.findViewById("image-list-link-button");
     },
 
     /**
@@ -393,13 +391,13 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     //-------------------------------------------------------------------------------
 
     initializeEventListeners: function() {
-        this.imageListLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageListTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().addEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
     },
 
     deinitializeEventListeners: function() {
-        this.imageListLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageListTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().removeEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
     },

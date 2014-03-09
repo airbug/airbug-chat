@@ -16,12 +16,15 @@
 //@Require('airbug.CodeEditorFullscreenButtonContainer')
 //@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
+//@Require('airbug.CodeEditorWidgetCloseButtonContainer')
 //@Require('airbug.CodeEditorWidgetView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
+//@Require('airbug.TabsView')
+//@Require('airbug.TabView')
+//@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
-//@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -36,23 +39,26 @@ var bugpack                             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                               = bugpack.require('Class');
-var Ace                                 = bugpack.require('ace.Ace');
-var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
-var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
-var ButtonView                          = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
-var CodeEditorBaseWidgetContainer       = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
-var CodeEditorFullscreenButtonContainer = bugpack.require('airbug.CodeEditorFullscreenButtonContainer');
-var CodeEditorSettingsButtonContainer   = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
-var CodeEditorView                      = bugpack.require('airbug.CodeEditorView');
-var CodeEditorWidgetView                = bugpack.require('airbug.CodeEditorWidgetView');
-var CommandModule                       = bugpack.require('airbug.CommandModule');
-var IconView                            = bugpack.require('airbug.IconView');
-var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
-var TextView                            = bugpack.require('airbug.TextView');
-var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+var Class                                   = bugpack.require('Class');
+var Ace                                     = bugpack.require('ace.Ace');
+var ButtonGroupView                         = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView                       = bugpack.require('airbug.ButtonToolbarView');
+var ButtonView                              = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
+var CodeEditorBaseWidgetContainer           = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
+var CodeEditorFullscreenButtonContainer     = bugpack.require('airbug.CodeEditorFullscreenButtonContainer');
+var CodeEditorSettingsButtonContainer       = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
+var CodeEditorView                          = bugpack.require('airbug.CodeEditorView');
+var CodeEditorWidgetCloseButtonContainer    = bugpack.require('airbug.CodeEditorWidgetCloseButtonContainer');
+var CodeEditorWidgetView                    = bugpack.require('airbug.CodeEditorWidgetView');
+var CommandModule                           = bugpack.require('airbug.CommandModule');
+var IconView                                = bugpack.require('airbug.IconView');
+var NakedButtonView                         = bugpack.require('airbug.NakedButtonView');
+var TabsView                                = bugpack.require('airbug.TabsView');
+var TabView                                 = bugpack.require('airbug.TabView');
+var TabViewEvent                            = bugpack.require('airbug.TabViewEvent');
+var TextView                                = bugpack.require('airbug.TextView');
+var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -88,6 +94,30 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
         /**
          * @private
+         * @type {ButtonToolbarView}
+         */
+        this.buttonToolbarView                      = null;
+
+        /**
+         * @private
+         * @type {TabView}
+         */
+        this.editorTabView                          = null;
+
+        /**
+         * @private
+         * @type {TabView}
+         */
+        this.settingsTabView                        = null;
+
+        /**
+         * @private
+         * @type {TabsView}
+         */
+        this.tabsView                               = null;
+
+        /**
+         * @private
          * @type {CodeEditorWidgetView}
          */
         this.codeEditorWidgetView                   = null;
@@ -107,12 +137,6 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
          * @type {CodeEditorFullscreenButtonContainer}
          */
         this.codeEditorFullscreenButtonContainer    = null;
-
-        /**
-         * @private
-         * @type {CodeEditorSettingsButtonContainer}
-         */
-        this.settingsButton                         = null;
     },
 
 
@@ -146,40 +170,54 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
             .name("codeEditorWidgetView")
             .children([
                 view(ButtonToolbarView)
+                    .name("buttonToolbarView")
                     .id("code-editor-widget-toolbar")
                     .appendTo("#code-editor-widget-header-{{cid}}")
                     .children([
                         view(ButtonGroupView)
                             .appendTo('#code-editor-widget-toolbar')
+                    ]),
+                view(TabsView)
+                    .name("tabsView")
+                    .appendTo("#code-editor-widget-header-{{cid}}")
+                    .children([
+                        view(TabView)
+                            .name("editorTabView")
+                            .attributes({
+                                classes: "disabled active"
+                            })
                             .children([
-                                view(NakedButtonView)
+                                view(IconView)
                                     .attributes({
-                                        size: NakedButtonView.Size.NORMAL,
-                                        disabled: true,
-                                        type: NakedButtonView.Type.INVERSE
+                                        type: IconView.Type.CHEVRON_LEFT
                                     })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.CHEVRON_LEFT,
-                                                color: IconView.Color.WHITE
-                                            })
-                                            .appendTo('button[id|="button"]'),
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.CHEVRON_RIGHT,
-                                                color: IconView.Color.WHITE
-                                            })
-                                            .appendTo('button[id|="button"]'),
-                                        view(TextView)
-                                            .attributes({
-                                                text: 'Editor'
-                                            })
-                                            .appendTo('button[id|="button"]')
-                                    ])
+                                    .appendTo('a'),
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.CHEVRON_RIGHT
+                                    })
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: 'Editor'
+                                    })
+                                    .appendTo('a')
                             ]),
-                        view(ButtonGroupView)
-                            .appendTo('#code-editor-widget-toolbar')
+                        view(TabView)
+                            .name("settingsTabView")
+                            .children([
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.COG,
+                                        color: IconView.Color.WHITE
+                                    })
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: 'Settings'
+                                    })
+                                    .appendTo('a')
+                            ])
                     ]),
                 view(CodeEditorView)
                     .id("code-editor-view")
@@ -220,10 +258,8 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.closeButton                            = new WorkspaceCloseButtonContainer();
-        this.settingsButton                         = new CodeEditorSettingsButtonContainer();
+        this.closeButton                            = new CodeEditorWidgetCloseButtonContainer();
         this.codeEditorFullscreenButtonContainer    = new CodeEditorFullscreenButtonContainer();
-        this.addContainerChild(this.settingsButton, ".btn-group:last-child");
         this.addContainerChild(this.codeEditorFullscreenButtonContainer, ".btn-group:last-child");
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
@@ -239,6 +275,7 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
     initializeEventListeners: function() {
         this._super();
         this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
     },
 
     /**
@@ -248,6 +285,7 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
     deinitializeEventListeners: function() {
         this._super();
         this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
     },
 
     //-------------------------------------------------------------------------------
@@ -269,6 +307,15 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
         };
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, data);
     },
+
+    /**
+     * @private
+     * @param {TabViewEvent} event
+     */
+    hearSettingsTabClickedEvent: function(event) {
+        event.stopPropagation();
+        this.getContainerParent().displayCodeEditorSettings();
+    }
 });
 
 

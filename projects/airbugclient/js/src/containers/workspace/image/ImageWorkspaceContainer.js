@@ -195,6 +195,7 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
      * @param {Message} message
      */
     handleToggleImageListCommand: function(message) {
+        this.imageUploadWidgetContainer.hideWidget();
         this.toggleWidget(this.imageListWidgetContainer, ImageWorkspace.WORKSPACE_NAME);
     }
 });

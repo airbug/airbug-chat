@@ -39,8 +39,8 @@ var CodeEditorSettingsView = Class.extend(MustacheView, {
 
     // table id was controls and more-controls
     template:
-        '<div id="{{id}}-wrapper" class="code-editor-settings box box-with-header">\
-            <div class="box-header">\
+        '<div id="{{id}}-wrapper" class="workspace-widget box box-with-header">\
+            <div class="box-header workspace-widget-header">\
             </div>\
             <div class="box-body">\
             <label for="code-editor-mode">Language</label>\

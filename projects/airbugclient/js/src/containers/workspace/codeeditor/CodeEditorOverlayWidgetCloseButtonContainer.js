@@ -99,7 +99,8 @@ var CodeEditorOverlayWidgetCloseButtonContainer = Class.extend(ButtonContainer, 
         this.buttonView =
             view(NakedButtonView)
                 .attributes({
-                    size: NakedButtonView.Size.SMALL
+                    size: NakedButtonView.Size.SMALL,
+                    type: NakedButtonView.Type.LINK
                 })
                 .children([
                     view(IconView)

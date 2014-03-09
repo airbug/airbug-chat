@@ -17,7 +17,6 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
-//@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonViewEvent')
@@ -26,9 +25,13 @@
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImageListContainer')
 //@Require('airbug.NakedButtonView')
+//@Require('airbug.TabsView')
+//@Require('airbug.TabView')
+//@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
 //@Require('airbug.UserImageAssetContainer')
 //@Require('airbug.UserImageAssetList')
+//@Require('airbug.WorkspaceBoxWithHeaderAndFooterView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugflow.BugFlow')
@@ -60,7 +63,6 @@ var RemoveChange                        = bugpack.require('RemoveChange');
 var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
 var Set                                 = bugpack.require('Set');
 var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-var BoxWithHeaderAndFooterView          = bugpack.require('airbug.BoxWithHeaderAndFooterView');
 var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
@@ -69,9 +71,13 @@ var IconView                            = bugpack.require('airbug.IconView');
 var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
 var ImageListContainer                  = bugpack.require('airbug.ImageListContainer');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
+var TabsView                            = bugpack.require('airbug.TabsView');
+var TabView                             = bugpack.require('airbug.TabView');
+var TabViewEvent                        = bugpack.require('airbug.TabViewEvent');
 var TextView                            = bugpack.require('airbug.TextView');
 var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
 var UserImageAssetList                  = bugpack.require('airbug.UserImageAssetList');
+var WorkspaceBoxWithHeaderAndFooterView = bugpack.require('airbug.WorkspaceBoxWithHeaderAndFooterView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
 var BugFlow                             = bugpack.require('bugflow.BugFlow');
@@ -185,15 +191,27 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
         /**
          * @private
-         * @type {BoxWithHeaderAndFooterView}
+         * @type {WorkspaceBoxWithHeaderAndFooterView}
          */
         this.boxView                                = null;
 
         /**
          * @private
-         * @type {NakedButtonView}
+         * @type {TabView}
          */
-        this.imageUploadLinkButtonView              = null;
+        this.imageListTabView                       = null;
+
+        /**
+         * @private
+         * @type {TabView}
+         */
+        this.imageUploadTabView                     = null;
+
+        /**
+         * @private
+         * @type {TabsView}
+         */
+        this.tabsView                               = null;
 
 
         // Containers
@@ -243,59 +261,53 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(BoxWithHeaderAndFooterView)
+        view(WorkspaceBoxWithHeaderAndFooterView)
             .name("boxView")
             .attributes({
                 classes: "image-list-container"
             })
             .children([
+                view(TabsView)
+                    .name("tabsView")
+                    .appendTo("#box-header-{{cid}}")
+                    .children([
+                        view(TabView)
+                            .name("imageListTabView")
+                            .attributes({
+                                classes: "disabled active"
+                            })
+                            .children([
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.PICTURE
+                                    })
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: " Image List"
+                                    })
+                                    .appendTo('a')
+                            ]),
+                        view(TabView)
+                            .name("imageUploadTabView")
+                            .children([
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.UPLOAD
+                                    })
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: "Upload"
+                                    })
+                                    .appendTo('a')
+                            ])
+                    ]),
                 view(ButtonToolbarView)
                     .id("image-list-toolbar")
                     .appendTo("#box-header-{{cid}}")
                     .children([
                         view(ButtonGroupView)
-                            .appendTo('#image-list-toolbar')
-                            .children([
-                                view(NakedButtonView)
-                                    .attributes({
-                                        size: NakedButtonView.Size.NORMAL,
-                                        disabled: true,
-                                        type: NakedButtonView.Type.INVERSE
-                                    })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.PICTURE,
-                                                color: IconView.Color.WHITE
-                                            })
-                                            .appendTo('button[id|="button"]'),
-                                        view(TextView)
-                                            .attributes({
-                                                text: " Image List"
-                                            })
-                                            .appendTo('button[id|="button"]')
-                                    ])
-                            ]),
-                        view(ButtonGroupView)
-                            .children([
-                                view(NakedButtonView)
-                                    .id("image-upload-link-button")
-                                    .attributes({
-                                        size: NakedButtonView.Size.SMALL
-                                    })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.UPLOAD
-                                            })
-                                            .appendTo('#image-upload-link-button'),
-                                        view(TextView)
-                                            .attributes({
-                                                text: "Upload"
-                                            })
-                                            .appendTo('#image-upload-link-button')
-                                    ])
-                            ])
                             .appendTo('#image-list-toolbar')
                     ])
             ])
@@ -305,8 +317,6 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.boxView);
-
-        this.imageUploadLinkButtonView = this.findViewById("image-upload-link-button")
     },
 
     /**
@@ -349,7 +359,7 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @protected
      */
     deinitializeEventListeners: function() {
-        this.imageUploadLinkButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearUploadImageLinkButtonClicked, this);
+        this.imageUploadTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearUploadImageTabClicked, this);
         this.userImageAssetStreamModel.unobserve(AddChange.CHANGE_TYPE,         "userImageAssetIdSet", this.observeUserImageAssetIdSetAddChange, this);
         this.userImageAssetStreamModel.unobserve(RemoveChange.CHANGE_TYPE,      "userImageAssetIdSet", this.observeUserImageAssetIdSetRemoveChange, this);
         this.userImageAssetStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "userImageAssetIdSet", this.observeUserImageAssetIdSetPropertyChange, this);
@@ -366,7 +376,7 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @protected
      */
     initializeEventListeners: function() {
-        this.imageUploadLinkButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearUploadImageLinkButtonClicked, this);
+        this.imageUploadTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearUploadImageTabClicked, this);
         this.userImageAssetStreamModel.observe(AddChange.CHANGE_TYPE,           "userImageAssetIdSet", this.observeUserImageAssetIdSetAddChange, this);
         this.userImageAssetStreamModel.observe(RemoveChange.CHANGE_TYPE,        "userImageAssetIdSet", this.observeUserImageAssetIdSetRemoveChange, this);
         this.userImageAssetStreamModel.observe(SetPropertyChange.CHANGE_TYPE,   "userImageAssetIdSet", this.observeUserImageAssetIdSetPropertyChange, this);
@@ -626,7 +636,8 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @private
      * @param {Event} event
      */
-    hearUploadImageLinkButtonClicked: function(event) {
+    hearUploadImageTabClicked: function(event) {
+        console.log("ImageListWidgetContainer#hearUploadImageTabClicked");
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
     }
 });

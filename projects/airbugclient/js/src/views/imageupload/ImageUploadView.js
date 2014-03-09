@@ -35,10 +35,10 @@ var ImageUploadView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template: '<div id="{{id}}" class="box box-with-header image-upload-container">\
-            <div class="box-header">\
+    template: '<div id="{{id}}" class="workspace-widget box-with-header image-upload-container">\
+            <div class="workspace-widget-header box-header">\
             </div>\
-            <div class="box-body">\
+            <div class="workspace-widget-body box-body">\
                 <form id="file-upload-widget" class="form-horizontal" enctype="multipart/form-data">\
                     <div class="btn-toolbar">\
                         <div class="btn-group">\

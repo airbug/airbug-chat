@@ -8,12 +8,16 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')
+//@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
+//@Require('airbug.TabsView')
+//@Require('airbug.TabView')
+//@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
@@ -37,12 +41,16 @@ var bugpack                         = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var ButtonGroupView                 = bugpack.require('airbug.ButtonGroupView');
+var ButtonToolbarView               = bugpack.require('airbug.ButtonToolbarView');
 var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorSettingsView          = bugpack.require('airbug.CodeEditorSettingsView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
 var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
 var IconView                        = bugpack.require('airbug.IconView');
 var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
+var TabsView                        = bugpack.require('airbug.TabsView');
+var TabView                         = bugpack.require('airbug.TabView');
+var TabViewEvent                    = bugpack.require('airbug.TabViewEvent');
 var TextView                        = bugpack.require('airbug.TextView');
 var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
@@ -102,15 +110,15 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
         /**
          * @private
-         * @type {NakedButtonView}
-         */
-        this.backButtonView                     = null;
-
-        /**
-         * @private
          * @type {CodeEditorSettingsView}
          */
         this.codeEditorSettingsView             = null;
+
+        /**
+         * @private
+         * @type {TabView}
+         */
+        this.editorTabView                      = null;
 
 
         // Containers
@@ -147,55 +155,49 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                     .children([
                         view(ButtonGroupView)
                             .appendTo('#code-editor-settings-toolbar')
+                    ]),
+                view(TabsView)
+                    .name("tabsView")
+                    .appendTo(".box-header")
+                    .children([
+                        view(TabView)
+                            .name("editorTabView")
                             .children([
-                                view(NakedButtonView)
+                                view(IconView)
                                     .attributes({
-                                        size: NakedButtonView.Size.NORMAL,
-                                        disabled: true,
-                                        type: NakedButtonView.Type.INVERSE
+                                        type: IconView.Type.CHEVRON_LEFT
                                     })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.COG,
-                                                color: IconView.Color.WHITE
-                                            })
-                                            .appendTo('button[id|="button"]'),
-                                        view(TextView)
-                                            .attributes({
-                                                text: " Settings"
-                                            })
-                                            .appendTo('button[id|="button"]')
-                                    ])
+                                    .appendTo("a"),
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.CHEVRON_RIGHT
+                                    })
+                                    .appendTo("a"),
+                                view(TextView)
+                                    .attributes({
+                                        text: "Editor"
+                                    })
+                                    .appendTo("a")
                             ]),
-                        view(ButtonGroupView)
-                            .appendTo('#code-editor-settings-toolbar')
+                        view(TabView)
+                            .name("settingsTabView")
+                            .attributes({
+                                classes: "disabled active"
+                            })
                             .children([
-                                view(NakedButtonView)
-                                    .name("backButtonView")
-                                    .id("back-to-code-editor-button")
+                                view(IconView)
                                     .attributes({
-                                        size: NakedButtonView.Size.SMALL
+                                        type: IconView.Type.COG
                                     })
-                                    .children([
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.CHEVRON_LEFT
-                                            })
-                                            .appendTo("#back-to-code-editor-button"),
-                                        view(IconView)
-                                            .attributes({
-                                                type: IconView.Type.CHEVRON_RIGHT
-                                            })
-                                            .appendTo("#back-to-code-editor-button"),
-                                        view(TextView)
-                                            .attributes({
-                                                text: "Editor"
-                                            })
-                                            .appendTo("#back-to-code-editor-button")
-                                    ])
+                                    .appendTo('a'),
+                                view(TextView)
+                                    .attributes({
+                                        text: " Settings"
+                                    })
+                                    .appendTo('a')
                             ])
                     ])
+
             ])
             .build(this);
 
@@ -242,7 +244,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @private
      */
     initializeEventListeners: function() {
-        this.backButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.editorTabView.addEventListener(TabViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
         this.getViewTop().$el.find("select#code-editor-mode").change(       {context: this}, this.handleModeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-theme").change(      {context: this}, this.handleThemeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-tabsize").change(    {context: this}, this.handleTabSizeSelectionEvent);
@@ -253,7 +255,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @private
      */
     deinitializeEventListeners: function() {
-        this.backButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.editorTabView.removeEventListener(TabViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
         this.getViewTop().$el.find("select#code-editor-mode").off();
         this.getViewTop().$el.find("select#code-editor-theme").off();
         this.getViewTop().$el.find("select#code-editor-tabsize").off();
