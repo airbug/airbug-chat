@@ -178,6 +178,16 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      * @param {WorkspaceWidgetContainer} widget
      * @param {string} workspaceName
      */
+    hideWidget: function(widget, workspaceName) {
+        this.updateCurrentWidget(null);
+        this.getWorkspaceModule().closeWorkspace(workspaceName);
+    },
+
+    /**
+     * @protected
+     * @param {WorkspaceWidgetContainer} widget
+     * @param {string} workspaceName
+     */
     showWidget: function(widget, workspaceName) {
         this.updateCurrentWidget(widget);
         this.getWorkspaceModule().openWorkspace(workspaceName);
@@ -190,11 +200,9 @@ var WorkspaceContainer = Class.extend(CarapaceContainer, {
      */
     toggleWidget: function(widget, workspaceName) {
         if (Obj.equals(this.currentWidget, widget)) {
-            this.updateCurrentWidget(null);
-            this.getWorkspaceModule().closeWorkspace();
+            this.hideWidget(widget, workspaceName);
         } else {
-            this.updateCurrentWidget(widget);
-            this.getWorkspaceModule().openWorkspace(workspaceName);
+            this.showWidget(widget, workspaceName);
         }
     },
 
