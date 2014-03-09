@@ -14,7 +14,6 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorFullscreenButtonContainer')
-//@Require('airbug.CodeEditorSettingsButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CodeEditorWidgetCloseButtonContainer')
 //@Require('airbug.CodeEditorWidgetView')
@@ -47,7 +46,6 @@ var ButtonView                              = bugpack.require('airbug.ButtonView
 var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorBaseWidgetContainer           = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
 var CodeEditorFullscreenButtonContainer     = bugpack.require('airbug.CodeEditorFullscreenButtonContainer');
-var CodeEditorSettingsButtonContainer       = bugpack.require('airbug.CodeEditorSettingsButtonContainer');
 var CodeEditorView                          = bugpack.require('airbug.CodeEditorView');
 var CodeEditorWidgetCloseButtonContainer    = bugpack.require('airbug.CodeEditorWidgetCloseButtonContainer');
 var CodeEditorWidgetView                    = bugpack.require('airbug.CodeEditorWidgetView');
