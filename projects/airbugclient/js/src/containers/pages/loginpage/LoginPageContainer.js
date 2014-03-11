@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.BoxWithFooterView')
+//@Require('airbug.BoxWithHeaderAndFooterView')
 //@Require('airbug.LoginFormContainer')
 //@Require('airbug.PageView')
 //@Require('airbug.PanelView')
