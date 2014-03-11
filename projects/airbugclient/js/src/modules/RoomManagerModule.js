@@ -104,7 +104,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(Throwable, string)} callback
+     * @param {function(Throwable)} callback
      */
     leaveRoom: function(roomId, callback) {
         var requestData = {roomId: roomId};

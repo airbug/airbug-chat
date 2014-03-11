@@ -20,6 +20,12 @@ html, body {
     margin-left: 10px;
 }
 
+ul.dropdown-menu li:not(.divider), ul.dropdown-menu li:not(.divider) > a,
+ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
+    cursor: pointer;
+    cursor: hand;
+}
+
 /* Application CSS
 *******************************************************************/
 
@@ -227,7 +233,7 @@ html, body {
     border-style: solid;
     border-radius: 5px;
     margin: 2px 4px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .subheader {
@@ -648,6 +654,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 
 .clickable-box {
     cursor: pointer;
+    cursor: hand;
 }
 
 .clickable-box:active {
@@ -1140,6 +1147,7 @@ div.previous-messages-loader {
 
 input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     cursor: pointer;
+    cursor: hand;
 }
 
 /* Workspace Widgets
@@ -1311,6 +1319,7 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     font-size: 200px;
     direction: ltr;
     cursor: pointer;
+    cursor: hand;
 }
 
 /* Fixes for IE < 8 */

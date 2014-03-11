@@ -4,12 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('ExitRoomButtonContainer')
+//@Export('RoomOptionsDropdownButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonDropdownView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.CommandModule')
+//@Require('airbug.DropdownItemDividerView')
+//@Require('airbug.DropdownItemView')
+//@Require('airbug.DropdownViewEvent')
+//@Require('airbug.IconView')
 //@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -30,8 +35,13 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonDropdownView      = bugpack.require('airbug.ButtonDropdownView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var CommandModule           = bugpack.require('airbug.CommandModule');
+var DropdownItemDividerView = bugpack.require('airbug.DropdownItemDividerView');
+var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
+var DropdownViewEvent       = bugpack.require('airbug.DropdownViewEvent');
+var IconView                = bugpack.require('airbug.IconView');
 var TextView                = bugpack.require('airbug.TextView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -57,7 +67,7 @@ var view        = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
+var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -65,7 +75,7 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
 
     _constructor: function(roomModel) {
 
-        this._super("ExitRoomButton");
+        this._super("RoomOptionsDropdownButton");
 
 
         //-------------------------------------------------------------------------------
@@ -80,7 +90,7 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {RoomModel}
          */
-        this.roomModel                  = roomModel;
+        this.roomModel                      = roomModel;
 
 
         // Modules
@@ -88,15 +98,15 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {CurrentUserManagerModule}
+         * @type {CommandModule}
          */
-        this.currentUserManagerModule   = null;
+        this.commandModule                  = null;
 
         /**
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule           = null;
+        this.navigationModule               = null;
 
 
         // Views
@@ -104,9 +114,15 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {ButtonView}
+         * @type {ButtonDropdownView}
          */
-        this.buttonView                 = null;
+        this.buttonView                     = null;
+
+        /**
+         * @private
+         * @type {DropdownItemView}
+         */
+        this.leaveRoomPermanentlyButtonView = null;
     },
 
 
@@ -123,13 +139,24 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(ButtonView)
+        view(ButtonDropdownView)
             .name("buttonView")
             .attributes({type: "primary", align: "right"})
             .children([
-                view(TextView)
-                    .attributes({text: "Exit"})
-                    .appendTo("#button-{{cid}}")
+                view(IconView)
+                    .attributes({
+                        type: IconView.Type.CHEVRON_DOWN,
+                        color: IconView.Color.WHITE
+                    })
+                    .appendTo("button"),
+                view(DropdownItemView)
+                    .name("leaveRoomPermanentlyButtonView")
+                    .appendTo("#dropdown-list-{{cid}}")
+                    .children([
+                        view(TextView)
+                            .appendTo("a")
+                            .attributes({text: "Leave room permanently"})
+                    ])
             ])
             .build(this);
 
@@ -145,7 +172,16 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearExitRoomButtonClickedEvent, this);
+    },
+
+    initializeEventListeners: function() {
+        this._super();
+        this.leaveRoomPermanentlyButtonView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLeaveRoomPermanentlyButtonClickedEvent, this);
+    },
+
+    deinitializeEventListeners: function() {
+        this._super();
+        this.leaveRoomPermanentlyButtonView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLeaveRoomPermanentlyButtonClickedEvent, this);
     },
 
 
@@ -153,13 +189,15 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearExitRoomButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("home", {
-            trigger: true
+    hearLeaveRoomPermanentlyButtonClickedEvent: function() {
+        var _this = this;
+        this.roomManagerModule.leaveRoom(this.roomModel.getProperty("id"), function(throwable){
+            if(throwable) {
+                _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: "Unable to leave room permanently because " + throwable.getMessage()});
+            }
+            _this.navigationModule.navigate("home", {
+                trigger: true
+            });
         });
     }
 });
@@ -169,8 +207,9 @@ var ExitRoomButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ExitRoomButtonContainer).with(
+bugmeta.annotate(RoomOptionsDropdownButtonContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
     ])
@@ -181,4 +220,4 @@ bugmeta.annotate(ExitRoomButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ExitRoomButtonContainer", ExitRoomButtonContainer);
+bugpack.export("airbug.RoomOptionsDropdownButtonContainer", RoomOptionsDropdownButtonContainer);

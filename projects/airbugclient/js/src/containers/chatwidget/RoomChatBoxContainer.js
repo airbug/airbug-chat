@@ -13,10 +13,10 @@
 //@Require('airbug.BoxWithHeaderView')
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
-//@Require('airbug.ExitRoomButtonContainer')
 //@Require('airbug.MultiColumnView')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
+//@Require('airbug.RoomOptionsDropdownButtonContainer')
 //@Require('airbug.RoomsHamburgerButtonContainer')
 //@Require('airbug.SubheaderView')
 //@Require('airbug.TwoColumnView')
@@ -45,10 +45,10 @@ var SetPropertyChange                       = bugpack.require('SetPropertyChange
 var BoxWithHeaderView                       = bugpack.require('airbug.BoxWithHeaderView');
 var ChatWidgetContainer                     = bugpack.require('airbug.ChatWidgetContainer');
 var ConversationModel                       = bugpack.require('airbug.ConversationModel');
-var ExitRoomButtonContainer                 = bugpack.require('airbug.ExitRoomButtonContainer');
 var MultiColumnView                         = bugpack.require('airbug.MultiColumnView');
 var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
 var RoomNameView                            = bugpack.require('airbug.RoomNameView');
+var RoomOptionsDropdownButtonContainer      = bugpack.require('airbug.RoomOptionsDropdownButtonContainer');
 var RoomsHamburgerButtonContainer           = bugpack.require('airbug.RoomsHamburgerButtonContainer');
 var SubheaderView                           = bugpack.require('airbug.SubheaderView');
 var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
@@ -106,15 +106,15 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ExitRoomButtonContainer}
-         */
-        this.exitRoomButtonContainer                = null;
-
-        /**
-         * @private
          * @type {RoomMemberListPanelContainer}
          */
         this.roomMemberListPanelContainer           = null;
+
+        /**
+         * @private
+         * @type {RoomOptionsDropdownButtonContainer}
+         */
+        this.roomOptionsDropdownButtonContainer     = null;
 
         /**
          * @private
@@ -241,14 +241,15 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.chatWidgetContainer                    = new ChatWidgetContainer(this.conversationModel);
-        this.exitRoomButtonContainer                = new ExitRoomButtonContainer(this.roomModel);
         this.roomsHamburgerButtonContainer          = new RoomsHamburgerButtonContainer();
         this.roomMemberListPanelContainer           = new RoomMemberListPanelContainer(this.roomModel);
+        this.roomOptionsDropdownButtonContainer     = new RoomOptionsDropdownButtonContainer(this.roomModel);
 
-        this.addContainerChild(this.chatWidgetContainer,            "#column2of2-" + this.roomChatBoxTwoColumnView.getCid());
-        this.addContainerChild(this.exitRoomButtonContainer,        "#subheader-right-" + this.roomChatBoxSubheaderView.getCid());
-        this.addContainerChild(this.roomsHamburgerButtonContainer,  "#subheader-left-" + this.roomChatBoxSubheaderView.getCid());
-        this.addContainerChild(this.roomMemberListPanelContainer,   "#column1of2-" + this.roomChatBoxTwoColumnView.getCid());
+
+        this.addContainerChild(this.chatWidgetContainer,                "#column2of2-" + this.roomChatBoxTwoColumnView.getCid());
+        this.addContainerChild(this.roomOptionsDropdownButtonContainer, "#subheader-right-" + this.roomChatBoxSubheaderView.getCid());
+        this.addContainerChild(this.roomsHamburgerButtonContainer,      "#subheader-left-" + this.roomChatBoxSubheaderView.getCid());
+        this.addContainerChild(this.roomMemberListPanelContainer,       "#column1of2-" + this.roomChatBoxTwoColumnView.getCid());
     },
 
     deinitializeContainer: function() {
