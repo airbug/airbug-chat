@@ -992,7 +992,7 @@ div.previous-messages-loader {
 .message-sent-at, .message-created-at, .chatmessage-sent-at, .chatmessage-created-at {
     position: absolute;
     right: 14px;
-    color: rgb(210, 228, 243);
+    color: #6666FF;
     text-align:right;
 }
 
