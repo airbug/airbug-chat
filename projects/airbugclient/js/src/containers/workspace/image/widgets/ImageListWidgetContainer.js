@@ -31,7 +31,7 @@
 //@Require('airbug.TextView')
 //@Require('airbug.UserImageAssetContainer')
 //@Require('airbug.UserImageAssetList')
-//@Require('airbug.WorkspaceBoxWithHeaderAndFooterView')
+//@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugflow.BugFlow')
@@ -77,7 +77,7 @@ var TabViewEvent                        = bugpack.require('airbug.TabViewEvent')
 var TextView                            = bugpack.require('airbug.TextView');
 var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
 var UserImageAssetList                  = bugpack.require('airbug.UserImageAssetList');
-var WorkspaceBoxWithHeaderAndFooterView = bugpack.require('airbug.WorkspaceBoxWithHeaderAndFooterView');
+var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
 var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
 var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
 var BugFlow                             = bugpack.require('bugflow.BugFlow');
@@ -261,7 +261,7 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(WorkspaceBoxWithHeaderAndFooterView)
+        view(WorkspaceBoxWithHeaderView)
             .name("boxView")
             .attributes({
                 classes: "image-list-container"
