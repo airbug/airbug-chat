@@ -406,7 +406,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      * @private
      */
     initializeCommandSubscriptions: function() {
-
+        //create and subscribe to save image to image list command
     },
 
     /**
@@ -421,10 +421,18 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     // Event Handlers
     //-------------------------------------------------------------------------------
 
+    /**
+     * @private
+     * @param {Event} event
+     */
     handleUploadListLinkButtonClicked: function(event) {
         this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_LIST, {});
     },
 
+    /**
+     * @private
+     * @param {Event} event
+     */
     handleAddByUrlButtonClicked: function(event) {
         var data = event.getData();
         var imageUploadItemContainer = data.imageUploadItemContainer;
@@ -433,6 +441,10 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
     },
 
+    /**
+     * @private
+     * @param {Event} event
+     */
     handleAddByUrlCompletedEvent: function(event) {
         var data = event.getData();
         var url = data.url;
@@ -448,6 +460,12 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.handleUploadDoneEvent(context, 0, data);
     },
 
+    /**
+     * @private
+     * @param {} data
+     * @param {} index
+     * @param {} file
+     */
     handleUploadDoneEvent: function(data, index, file) {
         var _this                       = this;
         var assetId                     = file._id || file.id;
@@ -494,6 +512,12 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     },
 
 
+    /**
+     * @private
+     * @param {string} assetId
+     * @param {ImageAssetModel} imageAssetModel
+     * @param {function(Throwable, string, ImageAssetModel)} callback
+     */
     createUserAssetAndUserAssetModel: function(assetId, imageAssetModel, callback){
         var currentUserManagerModule    = this.currentUserManagerModule;
         var userAssetManagerModule      = this.userAssetManagerModule;
@@ -531,10 +555,16 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         });
     },
 
+    /**
+     * @private
+     */
     handleAddByUrlFailedEvent: function(event) {
         //TODO: SUNG
     },
 
+    /**
+     * @private
+     */
     hideDragAndDropText: function() {
         this.viewTop.$el.find(".box-body .box>span").hide();
     }

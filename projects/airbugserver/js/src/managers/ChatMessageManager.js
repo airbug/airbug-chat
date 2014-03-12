@@ -115,8 +115,6 @@ var ChatMessageManager = Class.extend(EntityManager, {
     /**
      * @param {{
      *      body: string,
-     *      code: string,
-     *      codeLanguage: string,
      *      conversationId: string,
      *      conversationOwnerId: string,
      *      createdAt: Date,

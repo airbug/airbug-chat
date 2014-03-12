@@ -76,10 +76,10 @@ var CommandModule = Class.extend(Publisher, {
  */
 CommandModule.CommandType = {
     CODE_EDITOR: {
-        SET_MODE:       "CommandModuleCommand::codeEditor:setMode",
-        SET_TABSIZE:    "CommandModuleCommand::codeEditor:setTabSize",
-        SET_TEXT:       "CommandModuleCommand::codeEditor:setText",
-        SET_THEME:      "CommandModuleCommand::codeEditor:setTheme"
+        SET_MODE:               "CommandModuleCommand::codeEditor:setMode",
+        SET_TABSIZE:            "CommandModuleCommand::codeEditor:setTabSize",
+        SET_TEXT:               "CommandModuleCommand::codeEditor:setText",
+        SET_THEME:              "CommandModuleCommand::codeEditor:setTheme"
     },
     TOGGLE: {
         CODE_EDITOR:            "CommandModuleCommand::toggle::codeEditor",
