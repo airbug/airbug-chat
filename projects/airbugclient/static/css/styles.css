@@ -923,6 +923,28 @@ div.previous-messages-loader {
     text-align: center;
 }
 
+div.message-image div.btn-toolbar {
+    visibility: hidden;
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+}
+
+div.message-image div.btn-group:first-child {
+    left: 2px;
+}
+
+div.message-image div.btn-group:last-child {
+    right: 2px;
+}
+
+div.message-image div.btn-group:only-child {
+    left: 2px;
+}
+
+div.message-image:hover div.btn-toolbar {
+    visibility: visible;
+}
 
 #roomChatBoxRowContainer .column1of2 .dropdown-menu {
     background-color: rgb(207, 226, 243); /* Old browsers */
@@ -997,6 +1019,7 @@ div.previous-messages-loader {
 }
 
 .message-sent-at, .message-created-at, .chatmessage-sent-at, .chatmessage-created-at {
+    cursor: default;
     position: absolute;
     right: 14px;
     color: #6666FF;

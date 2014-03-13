@@ -11,6 +11,7 @@
 //@Require('airbug.ChatMessageTinkerButtonContainer')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.ImageViewEvent')
 //@Require('airbug.ListItemView')
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
@@ -37,6 +38,7 @@ var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEven
 var ChatMessageTinkerButtonContainer    = bugpack.require('airbug.ChatMessageTinkerButtonContainer');
 var ChatMessageView                     = bugpack.require('airbug.ChatMessageView');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
+var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
 var ListItemView                        = bugpack.require('airbug.ListItemView');
 var PanelView                           = bugpack.require('airbug.PanelView');
 var RequestFailedException              = bugpack.require('bugcall.RequestFailedException');
@@ -126,6 +128,12 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
          * @type {CommandModule}
          */
         this.commandModule                      = null;
+
+        /**
+         * @private
+         * @type {CurrentUserManagerModule}
+         */
+        this.currentUserManagerModule           = null;
 
         /**
          * @private
@@ -219,8 +227,24 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     initializeContainer: function() {
-        var _this = this;
         this._super();
+        this.initializeEventListeners();
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.deinitializeEventlisteners();
+    },
+
+    /**
+     * @protected
+     */
+    initializeEventListeners: function() {
+        var _this = this;
+
         this.chatMessageView.$el.find(".message-failed-false, .message-failed-true")
             .on("click", function(event) {
                 event.preventDefault();
@@ -230,6 +254,16 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
                 return false;
             });
         this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
+        this.getChatMessageView().addEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeEventlisteners: function() {
+        this.chatMessageView.$el.find(".message-failed-false, .message-failed-true").off();
+        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
+        this.getChatMessageView().removeEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
     },
 
 
@@ -294,11 +328,10 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @param {ButtonViewEvent} event
      */
     handleChatMessageTinker: function(event) {
-        var chatMessageId = this.chatMessageModel.getProperty("id");
+        console.log("handleChatMessageTinker");
         if (this.chatMessageModel.getProperty("type") === "code") {
             var code = this.chatMessageModel.getProperty("code");
             var codeLanguage = this.getChatMessageModel().getProperty("codeLanguage");
-            console.log("codeLanguage:", codeLanguage);
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
             this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_MODE, {mode: "ace/mode/" + codeLanguage});
             this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
@@ -307,6 +340,33 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
             //May want to provide a warning or option to create a new code editor tab/workspace
             //Or at least explain it in the demo video
         }
+    },
+
+    /**
+     * @private
+     * @param {ImageViewEvent} event
+     */
+    handleSaveImageToListButtonClickedEvent: function(event) {
+        var _this           = this;
+        var data            = event.getData();
+        var assetId         = data.assetId;
+        var userAssetData   = {
+            assetId: assetId,
+            userId: null
+        };
+
+        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, retrievedCurrentUser) {
+            if (!throwable) {
+                userAssetData.userId = retrievedCurrentUser.getId();
+                _this.userAssetManagerModule.createUserAsset(userAssetData, function(throwable, meldDocument){
+                    if(throwable) {
+                        _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: throwable.getMessage()})
+                    }
+                });
+            } else {
+                _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: "Error: Unable save message to image list."})
+            }
+        });
     }
 });
 
@@ -318,6 +378,8 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ChatMessageContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("userAssetManagerModule").ref("userAssetManagerModule"),
         property("userManagerModule").ref("userManagerModule"),
         property("commandModule").ref("commandModule")
     ])
