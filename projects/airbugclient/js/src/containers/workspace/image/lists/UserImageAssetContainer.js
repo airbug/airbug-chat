@@ -255,6 +255,7 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
         var chatMessageObject = {
             type: "image",
             body: {parts: [{
+                assetId: imageData.assetId,
                 type: "image",
                 url: imageData.url,
                 size: imageData.size,

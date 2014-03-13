@@ -223,6 +223,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             failed:         chatMessageData.failed,
             pending:        chatMessageData.pending,
             // to populate the codeChatMessageModel properties before meldDocument is set
+            //assetId:        chatMessageData.body.parts[0].assetId,
             code:           chatMessageData.body.parts[0].code,
             codeLanguage:   chatMessageData.body.parts[0].codeLanguage
         };
@@ -269,6 +270,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
             failed:         chatMessageData.failed,
             pending:        chatMessageData.pending,
             // to populate the imageChatMessageModel properties before meldDocument is set
+            assetId:        chatMessageData.body.parts[0].assetId,
             name:           chatMessageData.body.parts[0].name,
             url:            chatMessageData.body.parts[0].url,
             thumbnailUrl:   chatMessageData.body.parts[0].thumbnailUrl,
