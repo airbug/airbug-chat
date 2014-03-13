@@ -41,9 +41,10 @@ var ImageViewEvent = Class.extend(Event, {});
  */
 ImageViewEvent.EventType = {
     CLICKED_DELETE: "ImageViewEvent:ClickedDelete",
-    CLICKED_EDIT: "ImageViewEvent:ClickedEdit",
-    CLICKED_SAVE: "ImageViewEvent:ClickedSave",
-    CLICKED_SEND: "ImageViewEvent:ClickedSend"
+    CLICKED_EDIT:   "ImageViewEvent:ClickedEdit",
+    CLICKED_SAVE:   "ImageViewEvent:ClickedSave",
+    CLICKED_SEND:   "ImageViewEvent:ClickedSend",
+    CLICKED_TINKER: "ImageViewEvent:ClickedEdit"
 };
 
 
