@@ -51,6 +51,9 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @extends {EntityManager}
+ */
 var AssetManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
