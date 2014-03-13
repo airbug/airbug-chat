@@ -263,7 +263,8 @@ bugmeta.annotate(RoomController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("roomService")
+            arg().ref("roomService"),
+            arg().ref("marshaller")
         ])
 );
 

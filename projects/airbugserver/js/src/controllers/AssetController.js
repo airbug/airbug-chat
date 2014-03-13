@@ -248,7 +248,8 @@ bugmeta.annotate(AssetController).with(
             arg().ref("controllerManager"),
             arg().ref("expressApp"),
             arg().ref("bugCallRouter"),
-            arg().ref("assetService")
+            arg().ref("assetService"),
+            arg().ref("marshaller")
         ])
 );
 
