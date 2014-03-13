@@ -91,6 +91,8 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
             var chatData    = meldDocument.getData();
             var imageData   = chatData.body.parts[0];
             console.log("imageData = ", imageData);
+            this.setProperty("assetId",         imageData.assetId);
+            this.setProperty("body",            chatData.body);
             this.setProperty("filename",        imageData.name);
             this.setProperty("url",             imageData.url);
             this.setProperty("thumbnailUrl",    imageData.thumbnailUrl);
@@ -106,6 +108,8 @@ var ImageChatMessageModel    = Class.extend(ChatMessageModel, {
     unprocessMeldDocument: function(key, meldDocument) {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
+            this.removeproperty("assetId");
+            this.removeProperty("body");
             this.removeProperty("filename");
             this.removeProperty("url");
             this.removeProperty("thumbnailUrl");

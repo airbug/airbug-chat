@@ -94,8 +94,9 @@ var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
         if (key === "chatMessage") {
             var chatData    = meldDocument.getData();
             var codeData = chatData.body.parts[0];
-            this.setProperty("code", codeData.code);
-            this.setProperty("codeLanguage", codeData.codeLanguage);
+            this.setProperty("body",            chatData.body);
+            this.setProperty("code",            codeData.code);
+            this.setProperty("codeLanguage",    codeData.codeLanguage);
         }
     },
 
@@ -107,6 +108,7 @@ var CodeChatMessageModel    = Class.extend(ChatMessageModel, {
     unprocessMeldDocument: function(key, meldDocument) {
         this._super(key, meldDocument);
         if (key === "chatMessage") {
+            this.removeProperty("body");
             this.removeProperty("code");
             this.removeProperty("codeLanguage");
         }
