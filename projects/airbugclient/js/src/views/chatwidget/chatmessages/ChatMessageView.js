@@ -41,29 +41,28 @@ var ChatMessageView = Class.extend(MustacheView, {
 
     template:   '<div id="chat-message-{{cid}}" class="message-wrapper">' +
                     '<div id="message-header-{{cid}}" class="message-header">' +
-                        '<div id="message-header-left-{{cid}}" class="subheader-left">' +
-                            '<div id="message-sent-by-{{cid}}" class="message-sent-by">{{model.sentBy}}</div>' +
+                        '<div id="message-header-left-{{cid}}"    class="subheader-left">' +
+                            '<div id="message-sent-by-{{cid}}"    class="message-sent-by">{{model.sentBy}}</div>' +
                         '</div>' +
-                        '<div id="message-header-center-{{cid}}" class="subheader-center">' +
+                        '<div id="message-header-center-{{cid}}"  class="subheader-center">' +
                         '</div>' +
-                        '<div id="message-header-right-{{cid}}" class="subheader-right">' +
+                        '<div id="message-header-right-{{cid}}"   class="subheader-right">' +
                             '<div id="message-created-at-{{cid}}" class="message-created-at">{{sentAgo}}</div>' +
                         '</div>' +
                     '</div>' +
                     '<div id="message-controls-{{cid}}" class="message-controls"></div>' +
-                    '<div id="message-content-{{cid}}" class="message-content"></div>' +
-                    '<div class="message-footer">' +
+                    '<div id="message-body-{{cid}}"     class="message-body"></div>' +
+                    '<div id="message-footer-{{cid}} "  class="message-footer">' +
                         '<div class="subheader-left">' +
                         '</div>' +
                         '<div class="subheader-center">' +
                         '</div>' +
                         '<div class="subheader-right">' +
                             '<div id="message-pending-{{cid}}" class="{{messagePendingClass}}"><img src="{{{staticUrl}}}/img/pending-dark-blue.gif"></div>' +
-                            '<div id="message-failed-{{cid}}" class="{{messageFailedClass}}"><button class="btn btn-danger btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
+                            '<div id="message-failed-{{cid}}"  class="{{messageFailedClass}}"><button class="btn btn-danger btn-mini"><i class="icon-exclamation-sign"></i></button></div>' +
                         '</div>' +
                     '</div>' +
                 '</div>',
-
 
     //-------------------------------------------------------------------------------
     // CarapaceView Extensions

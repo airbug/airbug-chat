@@ -108,7 +108,7 @@ var ChatMessageTextContainer = Class.extend(ChatMessageContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.getChatMessageView().addViewChild(this.messageContentTextView, "#message-content-" + this.getChatMessageView().getCid());
+        this.getChatMessageView().addViewChild(this.messageContentTextView, "#message-body-" + this.getChatMessageView().getCid());
     }
 });
 
