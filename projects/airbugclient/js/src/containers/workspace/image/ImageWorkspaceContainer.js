@@ -148,6 +148,7 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+        this.commandModule.subscribe(CommandType.SAVE.TO_IMAGE_LIST, this.handleSaveToImageListCommand, this);
         this.commandModule.subscribe(CommandType.TOGGLE.IMAGE_LIST, this.handleToggleImageListCommand, this);
     },
 
@@ -158,6 +159,7 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
         this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
         this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
         this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+        this.commandModule.unsubscribe(CommandType.SAVE.TO_IMAGE_LIST, this.handleSaveToImageListCommand, this);
         this.commandModule.unsubscribe(CommandType.TOGGLE.IMAGE_LIST, this.handleToggleImageListCommand, this);
     },
 
@@ -188,6 +190,26 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
      */
     handleDisplayImageUploadCommand: function(message) {
         this.showWidget(this.imageUploadWidgetContainer, ImageWorkspace.WORKSPACE_NAME);
+    },
+
+    /**
+     * @private
+     * @param {Message} message
+     */
+    handleSaveToImageListCommand: function(message) {
+        var _this   = this;
+        var data    = message.getData();
+        var assetId = data.assetId;
+
+        this.imageUploadWidgetContainer.createUserAsset(assetId, function(throwable, userAssetId){
+            if(!throwable) {
+                _this.showWidget(_this.imageListWidgetContainer, ImageWorkspace.WORKSPACE_NAME);
+
+                //show image list scroll to top
+            } else {
+                _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: throwable.getMessage()});
+            }
+        });
     },
 
     /**

@@ -107,6 +107,9 @@ CommandModule.CommandType = {
         MESSAGE:                "CommandModuleCommand::flash::message",
         SUCCESS:                "CommandModuleCommand::flash::success"
     },
+    SAVE: {
+        TO_IMAGE_LIST:          "CommandModuleCommand::save::toImageList"
+    },
     SUBMIT: {
         CHAT_MESSAGE:           "CommandModuleCommand::submit::chatMessage"
     },

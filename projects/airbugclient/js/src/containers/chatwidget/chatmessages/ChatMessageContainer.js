@@ -131,12 +131,6 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {CurrentUserManagerModule}
-         */
-        this.currentUserManagerModule           = null;
-
-        /**
-         * @private
          * @type {UserManagerModule}
          */
         this.userManagerModule                  = null;
@@ -347,26 +341,9 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
      * @param {ImageViewEvent} event
      */
     handleSaveImageToListButtonClickedEvent: function(event) {
-        var _this           = this;
         var data            = event.getData();
         var assetId         = data.assetId;
-        var userAssetData   = {
-            assetId: assetId,
-            userId: null
-        };
-
-        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, retrievedCurrentUser) {
-            if (!throwable) {
-                userAssetData.userId = retrievedCurrentUser.getId();
-                _this.userAssetManagerModule.createUserAsset(userAssetData, function(throwable, meldDocument){
-                    if(throwable) {
-                        _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: throwable.getMessage()})
-                    }
-                });
-            } else {
-                _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: "Error: Unable save message to image list."})
-            }
-        });
+        this.commandModule.relayCommand(CommandType.SAVE.TO_IMAGE_LIST, {assetId: assetId});
     }
 });
 
@@ -378,8 +355,6 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 bugmeta.annotate(ChatMessageContainer).with(
     autowired().properties([
         property("chatMessageManagerModule").ref("chatMessageManagerModule"),
-        property("currentUserManagerModule").ref("currentUserManagerModule"),
-        property("userAssetManagerModule").ref("userAssetManagerModule"),
         property("userManagerModule").ref("userManagerModule"),
         property("commandModule").ref("commandModule")
     ])

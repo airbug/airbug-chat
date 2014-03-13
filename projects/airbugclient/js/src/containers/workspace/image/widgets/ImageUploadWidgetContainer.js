@@ -492,7 +492,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                         imageUploadItemContainer.sendImageChatMessage();
                     }
 
-                    _this.createUserAssetAndUserAssetModel(assetId, imageAssetModel, function(throwable, userAssetId, imageAssetModel){
+                    _this.createUserAsset(assetId, function(throwable){
                         if(!throwable){
                             setTimeout(function() {
                                 statusMessage.text("completed");
@@ -501,7 +501,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                                 });
                             },2000);
                         } else {
-                            //TODO SUNG
+                            _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: throwable.getMessage()});
                         }
                     });
             } else {
@@ -511,14 +511,11 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         });
     },
 
-
     /**
-     * @private
      * @param {string} assetId
-     * @param {ImageAssetModel} imageAssetModel
-     * @param {function(Throwable, string, ImageAssetModel)} callback
+     * @param {function(Throwable, string)} callback
      */
-    createUserAssetAndUserAssetModel: function(assetId, imageAssetModel, callback){
+    createUserAsset: function(assetId, callback) {
         var currentUserManagerModule    = this.currentUserManagerModule;
         var userAssetManagerModule      = this.userAssetManagerModule;
         var userAssetData = {
@@ -537,7 +534,6 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                 });
             }),
             $task(function(flow){
-                console.log("userAssetData:", userAssetData);
                 userAssetManagerModule.createUserAsset(userAssetData, function(throwable, meldDocument){
                     var data = meldDocument.getData();
 
@@ -549,10 +545,9 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                 });
             })
         ])
-        .execute(function(throwable){
-                console.log("throwable:", throwable, "userAssetId:", userAssetId, "imageAssetModel:", imageAssetModel);
-            callback(throwable, userAssetId, imageAssetModel);
-        });
+            .execute(function(throwable){
+                callback(throwable, userAssetId);
+            });
     },
 
     /**
