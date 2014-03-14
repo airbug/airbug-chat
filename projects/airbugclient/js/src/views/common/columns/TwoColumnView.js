@@ -63,28 +63,28 @@ var TwoColumnView = Class.extend(MultiColumnView, {
                 data.rightColumnSpan = "span12";
                 break;
             case TwoColumnView.Configuration.THIN_RIGHT:
-                data.leftColumnSpan = "span9";
-                data.rightColumnSpan = "span3";
+                data.leftColumnSpan = "span8";
+                data.rightColumnSpan = "span4";
                 break;
             case TwoColumnView.Configuration.THICK_RIGHT:
-                data.leftColumnSpan = "span3";
-                data.rightColumnSpan = "span9";
+                data.leftColumnSpan = "span4";
+                data.rightColumnSpan = "span8";
                 break;
             case TwoColumnView.Configuration.THIN_RIGHT_SMALL:
-                data.leftColumnSpan = "span6";
+                data.leftColumnSpan = "span9";
                 data.rightColumnSpan = "span3";
                 break;
             case TwoColumnView.Configuration.THICK_RIGHT_SMALL:
                 data.leftColumnSpan = "span3";
-                data.rightColumnSpan = "span6";
+                data.rightColumnSpan = "span9";
                 break;
             case TwoColumnView.Configuration.EXTRA_THIN_RIGHT_SMALL:
-                data.leftColumnSpan = "span7";
+                data.leftColumnSpan = "span10";
                 data.rightColumnSpan = "span2";
                 break;
             case TwoColumnView.Configuration.EXTRA_THICK_RIGHT_SMALL:
                 data.leftColumnSpan = "span2";
-                data.rightColumnSpan = "span7";
+                data.rightColumnSpan = "span10";
                 break;
             case TwoColumnView.Configuration.HAMBURGER_LEFT:
                 data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";

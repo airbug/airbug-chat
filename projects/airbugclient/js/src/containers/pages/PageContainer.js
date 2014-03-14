@@ -104,11 +104,17 @@ var PageContainer = Class.extend(ApplicationContainer, {
          * @private
          * @type {WorkspaceWrapperContainer}
          */
-        this.workspaceWrapperContainer   = null;
+        this.workspaceWrapperContainer  = null;
 
 
         // Views
         //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @type {FourColumnView}
+         */
+        this.fourColumnView             = null;
 
         /**
          * @private
@@ -144,6 +150,7 @@ var PageContainer = Class.extend(ApplicationContainer, {
             .name("pageView")
             .children([
                 view(FourColumnView)
+                    .name("fourColumnView")
                     .id("page-row-container")
                     .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT})
             ])

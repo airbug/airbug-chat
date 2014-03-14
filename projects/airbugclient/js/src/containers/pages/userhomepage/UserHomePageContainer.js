@@ -7,10 +7,10 @@
 //@Export('UserHomePageContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationContainer')
 //@Require('airbug.CreateRoomFormContainer')
 //@Require('airbug.LogoutButtonContainer')
-//@Require('airbug.PageView')
+//@Require('airbug.MultiColumnView')
+//@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.TwoColumnView')
 //@Require('bugmeta.BugMeta')
@@ -31,10 +31,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
 var CreateRoomFormContainer     = bugpack.require('airbug.CreateRoomFormContainer');
 var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
-var PageView                    = bugpack.require('airbug.PageView');
+var MultiColumnView             = bugpack.require('airbug.MultiColumnView');
+var PageContainer               = bugpack.require('airbug.PageContainer');
 var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
 var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
@@ -57,7 +57,7 @@ var view                        = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var UserHomePageContainer = Class.extend(ApplicationContainer, {
+var UserHomePageContainer = Class.extend(PageContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -106,9 +106,9 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @protected
-         * @type {PageView}
+         * @type {TwoColumnView}
          */
-        this.pageView          = null;
+        this.twoColumnView          = null;
     },
 
 
@@ -131,24 +131,15 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
     createContainer: function() {
         this._super();
 
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(PageView)
-            .name("pageView")
-            .children([
-                view(TwoColumnView)
-                    .attributes({configuration: TwoColumnView.Configuration.DEFAULT})
-                    .appendTo("#page-{{cid}}")
-            ])
+        view(TwoColumnView)
+            .name("twoColumnView")
+            .attributes({
+                configuration: TwoColumnView.Configuration.THICK_RIGHT_SMALL,
+                rowStyle: MultiColumnView.RowStyle.FLUID
+            })
             .build(this);
 
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
-
+        this.fourColumnView.addViewChild(this.twoColumnView, ".column2of4");
     },
 
     /**
@@ -160,8 +151,8 @@ var UserHomePageContainer = Class.extend(ApplicationContainer, {
         this.createRoomFormContainer    = new CreateRoomFormContainer();
         this.roomListPanelContainer     = new RoomListPanelContainer();
         this.addContainerChild(this.logoutButtonContainer, '#header-right');
-        this.addContainerChild(this.roomListPanelContainer, ".column1of2");
-        this.addContainerChild(this.createRoomFormContainer, ".column2of2");
+        this.addContainerChild(this.roomListPanelContainer, ".2column-container .column1of2");
+        this.addContainerChild(this.createRoomFormContainer, ".2column-container .column2of2");
     }
 });
 
