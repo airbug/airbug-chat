@@ -4,13 +4,11 @@
 
 //@Package('airbug')
 
-//@Export('ImageListItemButtonToolbarContainer')
+//@Export('EmbedImageButtonGroupContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonToolbarView')
-//@Require('airbug.DeleteImageButtonGroupContainer')
-//@Require('airbug.EmbedImageButtonGroupContainer')
-//@Require('airbug.SendImageButtonGroupContainer')
+//@Require('airbug.ButtonGroupView')
+//@Require('airbug.EmbedImageNakedButtonContainer')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -27,11 +25,9 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
-var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
+var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
+var EmbedImageNakedButtonContainer      = bugpack.require('airbug.EmbedImageNakedButtonContainer');
 var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-var DeleteImageButtonGroupContainer     = bugpack.require('airbug.DeleteImageButtonGroupContainer');
-var EmbedImageButtonGroupContainer      = bugpack.require('airbug.EmbedImageButtonGroupContainer');
-var SendImageButtonGroupContainer       = bugpack.require('airbug.SendImageButtonGroupContainer');
 var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -46,7 +42,7 @@ var view                                = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
+var EmbedImageButtonGroupContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -66,30 +62,18 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ButtonToolbarView}
+         * @type {ButtonGroupView}
          */
-        this.buttonToolbarView                  = null;
+        this.buttonGroupView        = null;
 
         // Containers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {DeleteImageButtonGroupContainer}
+         * @type {EmbedImageNakedButtonContainer}
          */
-        this.deleteImageButtonGroupContainer    = null;
-
-        /**
-         * @private
-         * @type {EmbedImageButtonGroupContainer}
-         */
-        this.embedImageButtonGroupContainer      = null;
-
-        /**
-         * @private
-         * @type {SendImageButtonGroupContainer}
-         */
-        this.sendImageButtonGroupContainer      = null;
+        this.embedImageNakedButtonContainer = null;
 
     },
 
@@ -112,26 +96,21 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonToolbarView =
-            view(ButtonToolbarView)
+        this.buttonGroupView =
+            view(ButtonGroupView)
                 .build();
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonToolbarView);
+        this.setViewTop(this.buttonGroupView);
 
     },
 
     createContainerChildren: function() {
         this._super();
-        this.deleteImageButtonGroupContainer    = new DeleteImageButtonGroupContainer();
-        this.embedImageButtonGroupContainer     = new EmbedImageButtonGroupContainer();
-        this.sendImageButtonGroupContainer      = new SendImageButtonGroupContainer();
-
-        this.addContainerChild(this.deleteImageButtonGroupContainer,    ".btn-toolbar");
-        this.addContainerChild(this.embedImageButtonGroupContainer,     ".btn-toolbar");
-        this.addContainerChild(this.sendImageButtonGroupContainer,      ".btn-toolbar");
+        this.embedImageNakedButtonContainer = new EmbedImageNakedButtonContainer();
+        this.addContainerChild(this.embedImageNakedButtonContainer, ".btn-group");
     }
 });
 
@@ -140,4 +119,4 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageListItemButtonToolbarContainer", ImageListItemButtonToolbarContainer);
+bugpack.export("airbug.EmbedImageButtonGroupContainer", EmbedImageButtonGroupContainer);
