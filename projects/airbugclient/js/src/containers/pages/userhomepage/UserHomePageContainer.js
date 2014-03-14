@@ -7,6 +7,8 @@
 //@Export('UserHomePageContainer')
 
 //@Require('Class')
+//@Require('airbug.CodeEditorOverlayWidgetContainer')
+//@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormContainer')
 //@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.MultiColumnView')
@@ -30,17 +32,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var CreateRoomFormContainer     = bugpack.require('airbug.CreateRoomFormContainer');
-var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
-var MultiColumnView             = bugpack.require('airbug.MultiColumnView');
-var PageContainer               = bugpack.require('airbug.PageContainer');
-var RoomListPanelContainer      = bugpack.require('airbug.RoomListPanelContainer');
-var TwoColumnView               = bugpack.require('airbug.TwoColumnView');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
+var CommandModule                       = bugpack.require('airbug.CommandModule');
+var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
+var LogoutButtonContainer               = bugpack.require('airbug.LogoutButtonContainer');
+var MultiColumnView                     = bugpack.require('airbug.MultiColumnView');
+var PageContainer                       = bugpack.require('airbug.PageContainer');
+var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
+var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
@@ -49,6 +53,7 @@ var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 var autowired                   = AutowiredAnnotation.autowired;
 var bugmeta                     = BugMeta.context();
+var CommandType                 = CommandModule.CommandType;
 var property                    = PropertyAnnotation.property;
 var view                        = ViewBuilder.view;
 
@@ -71,6 +76,12 @@ var UserHomePageContainer = Class.extend(PageContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CommandModule}
+         */
+        this.commandModule              = null;
 
         /**
          * @private
@@ -153,6 +164,68 @@ var UserHomePageContainer = Class.extend(PageContainer, {
         this.addContainerChild(this.logoutButtonContainer, '#header-right');
         this.addContainerChild(this.roomListPanelContainer, ".2column-container .column1of2");
         this.addContainerChild(this.createRoomFormContainer, ".2column-container .column2of2");
+    },
+
+    /**
+     * @protected
+     */
+    initializeCommandSubscriptions: function() {
+        this._super();
+        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
+        this.commandModule.subscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeCommandSubscriptions: function() {
+        this._super();
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
+        this.commandModule.unsubscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+
+    handleDisplayCodeEditorOverlayWidgetCommand: function(message) {
+        console.log("handleDisplayCodeEditorOverlayWidgetCommand");
+        var data            = message.getData();
+        var cursorPosition  = data.cursorPosition;
+        var showInvisibles  = data.showInvisibles;
+        var tabSize         = data.tabSize;
+        var text            = data.text;
+        var mode            = data.mode;
+        var theme           = data.theme;
+
+        console.log("data:", data);
+        if(!this.codeEditorOverlayWidgetContainer){
+            this.codeEditorOverlayWidgetContainer = new CodeEditorOverlayWidgetContainer();
+        }
+        this.addContainerChild(this.codeEditorOverlayWidgetContainer, ".page");
+        this.codeEditorOverlayWidgetContainer.setEditorText(text);
+        this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
+        this.codeEditorOverlayWidgetContainer.setEditorShowInvisibles(showInvisibles);
+        this.codeEditorOverlayWidgetContainer.setEditorTheme(theme);
+        this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
+        this.codeEditorOverlayWidgetContainer.setEditorCursorPosition(cursorPosition);
+        this.codeEditorOverlayWidgetContainer.getViewTop().show();
+        this.codeEditorOverlayWidgetContainer.focusOnAceEditor();
+    },
+
+    handleHideCodeEditorOverlayWidgetCommand: function(message) {
+        var text    = this.codeEditorOverlayWidgetContainer.getEditorText();
+        var mode    = this.codeEditorOverlayWidgetContainer.getEditorMode();
+        var theme   = this.codeEditorOverlayWidgetContainer.getEditorTheme();
+        var tabSize = this.codeEditorOverlayWidgetContainer.getEditorTabSize();
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_TEXT,       {text: text});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_MODE,       {mode: mode});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_THEME,      {theme: theme});
+        this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_TABSIZE,    {tabSize: tabSize});
+        this.codeEditorOverlayWidgetContainer.getViewTop().hide();
+        this.removeContainerChild(this.codeEditorOverlayWidgetContainer);
     }
 });
 
@@ -163,6 +236,7 @@ var UserHomePageContainer = Class.extend(PageContainer, {
 
 bugmeta.annotate(UserHomePageContainer).with(
     autowired().properties([
+        property("commandModule").ref("commandModule"),
         property("documentUtil").ref("documentUtil")
     ])
 );
