@@ -164,7 +164,8 @@ bugmeta.annotate(RoomManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

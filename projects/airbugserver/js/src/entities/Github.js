@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('Github')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
@@ -75,56 +76,56 @@ var Github = Class.extend(Entity, {
      * @return {string}
      */
     getGithubAuthCode: function() {
-        return this.deltaDocument.getData().githubAuthCode;
+        return this.getEntityData().githubAuthCode;
     },
 
     /*
      * @param {string} githubAuthCode
      */
     setGithubAuthCode: function(githubAuthCode) {
-        this.deltaDocument.getData().githubAuthCode = githubAuthCode;
+        this.getEntityData().githubAuthCode = githubAuthCode;
     },
 
     /*
      * @return {string}
      */
     getGithubId: function() {
-        return this.deltaDocument.getData().githubId;
+        return this.getEntityData().githubId;
     },
 
     /*
      * @param {string} githubId
      */
     setGithubId: function(githubId) {
-        this.deltaDocument.getData().githubId = githubId;
+        this.getEntityData().githubId = githubId;
     },
 
     /*
      * @return {string}
      */
     getGithubLogin: function() {
-        return this.deltaDocument.getData().githubLogin;
+        return this.getEntityData().githubLogin;
     },
 
     /*
      * @param {string} githubLogin
      */
     setGithubLogin: function(githubLogin) {
-        this.deltaDocument.getData().githubLogin = githubLogin;
+        this.getEntityData().githubLogin = githubLogin;
     },
 
     /*
      * @return {string}
      */
     getUserId: function() {
-        return this.deltaDocument.getData().userId;
+        return this.getEntityData().userId;
     },
 
     /*
      * @param {string} userId
      */
     setUserId: function(userId) {
-        this.deltaDocument.getData().userId = userId;
+        this.getEntityData().userId = userId;
     },
 
 
@@ -160,20 +161,30 @@ var Github = Class.extend(Entity, {
 bugmeta.annotate(Github).with(
     entity("Github").properties([
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("githubAuthCode")
             .type("string"),
         property("githubId")
-            .type("string"),
+            .type("string")
+            .require(true)
+            .index(true)
+            .unique(true),
         property("githubLogin")
             .type("string"),
         property("updatedAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("userId")
-            .type("string"),
+            .type("string")
+            .index(true)
+            .require(true),
         property("user")
             .type("User")
             .populates(true)
+            .store(false)
     ])
 );
 

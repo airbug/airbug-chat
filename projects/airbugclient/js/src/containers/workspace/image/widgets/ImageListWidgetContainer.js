@@ -213,6 +213,12 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
          */
         this.tabsView                               = null;
 
+        /**
+         * @private
+         * @type {ButtonGroupView}
+         */
+        this.widgetControlButtonGroupView           = null;
+
 
         // Containers
         //-------------------------------------------------------------------------------
@@ -304,11 +310,11 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                             ])
                     ]),
                 view(ButtonToolbarView)
-                    .id("image-list-toolbar")
                     .appendTo("#box-header-{{cid}}")
                     .children([
                         view(ButtonGroupView)
-                            .appendTo('#image-list-toolbar')
+                            .name("widgetControlButtonGroupView")
+                            .appendTo("#button-toolbar-{{cid}}")
                     ])
             ])
             .build(this);
@@ -325,7 +331,7 @@ var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     createContainerChildren: function() {
         this._super();
         this.closeButton        = new WorkspaceCloseButtonContainer();
-        this.addContainerChild(this.closeButton, "#image-list-toolbar .btn-group:last-child");
+        this.addContainerChild(this.closeButton, "#button-group-" + this.widgetControlButtonGroupView.getCid());
         this.imageListContainer = new ImageListContainer(this.userImageAssetList);
         this.addContainerChild(this.imageListContainer, "#box-body-" + this.boxView.getCid());
     },

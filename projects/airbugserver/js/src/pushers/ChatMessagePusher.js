@@ -163,6 +163,7 @@ var ChatMessagePusher = Class.extend(EntityPusher, {
 bugmeta.annotate(ChatMessagePusher).with(
     module("chatMessagePusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

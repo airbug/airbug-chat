@@ -165,50 +165,51 @@ var ImageUploadAddByUrlContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonToolbarView =
-            view(ButtonToolbarView)
-                .children([
-                    view(ButtonGroupView)
-                        .appendTo(".btn-toolbar")
-                        .children([
-                            view(FormControlGroupView)
-                                .id("image-upload-add-by-url-container")
-                                .attributes({classes: "btn btn-large btn-inverse disabled"})
-                                .children([
-                                    view(LabelView)
-                                        .attributes({
-                                            text: "URL:",
-                                            for: "url",
-                                            classes: "control-label"
-                                        }),
-                                    view(ControlsView)
-                                        .children([
-                                            view(InputView)
-                                                .id("image-upload-add-by-url-input")
+        view(ButtonToolbarView)
+            .name("buttonToolbarView")
+            .children([
+                view(ButtonGroupView)
+                    .appendTo("#button-toolbar-{{cid}}")
+                    .children([
+                        view(FormControlGroupView)
+                            .id("image-upload-add-by-url-container")
+                            .appendTo("#button-group-{{cid}}")
+                            .attributes({classes: "btn btn-large btn-inverse disabled"})
+                            .children([
+                                view(LabelView)
+                                    .attributes({
+                                        text: "URL:",
+                                        for: "url",
+                                        classes: "control-label"
+                                    }),
+                                view(ControlsView)
+                                    .children([
+                                        view(InputView)
+                                            .id("image-upload-add-by-url-input")
+                                            .attributes({
+                                                type: "text",
+                                                name: "url"
+                                            }),
+                                            view(NakedButtonView)
+                                                .id("image-upload-add-by-url-submit-button")
                                                 .attributes({
-                                                    type: "text",
-                                                    name: "url"
-                                                }),
-                                                view(NakedButtonView)
-                                                    .id("image-upload-add-by-url-submit-button")
-                                                    .attributes({
-                                                        type: NakedButtonView.Type.SUCCESS,
-                                                        size: NakedButtonView.Size.SMALL
-                                                    })
-                                                    .children([
-                                                        view(IconView)
-                                                            .attributes({
-                                                                type: IconView.Type.PLUS,
-                                                                color: IconView.Color.WHITE
-                                                            })
-                                                            .appendTo("#image-upload-add-by-url-submit-button")
-                                                    ])
-                                        ])
+                                                    type: NakedButtonView.Type.SUCCESS,
+                                                    size: NakedButtonView.Size.SMALL
+                                                })
+                                                .children([
+                                                    view(IconView)
+                                                        .attributes({
+                                                            type: IconView.Type.PLUS,
+                                                            color: IconView.Color.WHITE
+                                                        })
+                                                        .appendTo("#image-upload-add-by-url-submit-button")
+                                                ])
+                                    ])
 
-                                ])
-                        ])
-                ])
-                .build();
+                            ])
+                    ])
+            ])
+            .build(this);
 
         // Wire Up Views
         //-------------------------------------------------------------------------------

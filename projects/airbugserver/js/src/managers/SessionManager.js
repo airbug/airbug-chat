@@ -13,6 +13,7 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.Cookie')
 //@Require('airbugserver.Session')
+//@Require('airbugserver.SessionData')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
@@ -36,6 +37,7 @@ var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var Cookie                      = bugpack.require('airbugserver.Cookie');
 var Session                     = bugpack.require('airbugserver.Session');
+var SessionData                 = bugpack.require('airbugserver.SessionData');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
@@ -66,7 +68,7 @@ var SessionManager = Class.extend(EntityManager, {
      * @param {function(Throwable, number)} callback
      */
     countAllSessions: function(callback) {
-         this.dataStore.count({}, function(throwable, count) {
+         this.getDataStore().count({}, function(throwable, count) {
              if (callback) {
                  callback(throwable, count);
              }
@@ -103,7 +105,7 @@ var SessionManager = Class.extend(EntityManager, {
      *
      */
     deleteAllSessions: function(callback) {
-        this.dataStore.remove({}, function(throwable) {
+        this.getDataStore().remove({}, function(throwable) {
             if (callback) {
                 callback(throwable);
             }
@@ -122,7 +124,7 @@ var SessionManager = Class.extend(EntityManager, {
      *
      */
     deleteSessionBySid: function(sid, callback) {
-        this.dataStore.remove({sid: sid}, function(throwable) {
+        this.getDataStore().remove({sid: sid}, function(throwable) {
             if (callback) {
                 callback(throwable);
             }
@@ -131,19 +133,25 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
+     *      cookie: (Cookie),
      *      createdAt: Date,
-     *      data: Object,
+     *      data: (SessionData),
      *      expires: Date,
      *      id: string,
      *      sid: string,
-     *      updatedAt: Date
+     *      updatedAt: Date,
+     *      userId: string
      * }} data
      * @return {Session}
      */
     generateSession: function(data) {
         var session     = new Session(data);
-        var cookie      = new Cookie(session.getDeltaDocument().getData().cookie);
-        session.setCookie(cookie);
+        if (!Class.doesExtend(data.cookie, Cookie)) {
+            data.cookie = new Cookie(data.cookie);
+        }
+        if (!Class.doesExtend(data.data, SessionData)) {
+            data.data = new SessionData(data.data);
+        }
         this.generate(session);
         return session;
     },
@@ -231,7 +239,7 @@ var SessionManager = Class.extend(EntityManager, {
 
     /**
      * @param {Session} session
-     * @param {function(Throwable, Session)} callback
+     * @param {function(Throwable, Session=)} callback
      */
     updateSession: function(session, callback) {
         this.update(session, callback);
@@ -248,7 +256,8 @@ bugmeta.annotate(SessionManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

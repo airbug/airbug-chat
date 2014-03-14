@@ -5,37 +5,50 @@
 //@Package('airbugserver')
 
 //@Export('AddsChatMessageCountersAndIndexesMigration')
+//@Autoload
 
 //@Require('Class')
-//@Require('airbugserver.ChatMessageCounterModel')
-//@Require('airbugserver.ChatMessageModel')
-//@Require('airbugserver.ConversationModel')
-//@Require('airbugserver.Migration')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
+//@Require('bugmigrate.Migration')
+//@Require('bugmigrate.MigrationAnnotation')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var mongoose    = require("mongoose");
+var bugpack                         = require('bugpack').context();
+
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var ChatMessageCounterModel = bugpack.require("airbugserver.ChatMessageCounterModel");
-var ChatMessageModel        = bugpack.require('airbugserver.ChatMessageModel');
-var ConversationModel       = bugpack.require('airbugserver.ConversationModel');
-var Migration               = bugpack.require('airbugserver.Migration');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var Class                           = bugpack.require('Class');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var Migration                       = bugpack.require('bugmigrate.Migration');
+var MigrationAnnotation             = bugpack.require('bugmigrate.MigrationAnnotation');
 
-var $forEachParallel        = BugFlow.$forEachParallel;
-var $forEachSeries          = BugFlow.$forEachSeries;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-var $whileSeries            = BugFlow.$whileSeries;
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
+var migration                       = MigrationAnnotation.migration;
+var property                        = PropertyAnnotation.property;
+var $forEachParallel                = BugFlow.$forEachParallel;
+var $forEachSeries                  = BugFlow.$forEachSeries;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
+var $whileSeries                    = BugFlow.$whileSeries;
 
 //make sure there is an index on sentAt see AddsSentAtIndexToChatMessagesMigration.js
 //find all chatmessagcounters
@@ -45,17 +58,61 @@ var $whileSeries            = BugFlow.$whileSeries;
 //check message count against number of messages updated as a validation check
 //go from the earliest message to the latest in small batches and update
 
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
+
 var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
-    name: "AddsChatMessageCountersAndIndexesMigration",
-    app: "airbug",
-    appVersion: "0.0.13",
-    version: "0.0.1",
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {string} appName
+     * @param {string} appVersion
+     * @param {string} name
+     * @param {string} version
+     */
+    _constructor: function(appName, appVersion, name, version) {
+
+        this._super(appName, appVersion, name, version);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+        
+        /**
+         * @private
+         * @type {MongoDataStore}
+         */
+        this.mongoDataStore         = null
+    },
+
+    
+    //-------------------------------------------------------------------------------
+    // Migration Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
     up: function(callback) {
-        console.log("Running", this.getName(), "...");
+        var _this                   = this;
+        var ChatMessageCounterModel = this.mongoDataStore.getMongooseModelForName("ChatMessageCounter");
+        var ChatMessageModel        = this.mongoDataStore.getMongooseModelForName("ChatMessage");
+        var ConversationModel       = this.mongoDataStore.getMongooseModelForName("Conversation");
+        var conversations           = null;
 
-        var _this = this;
-        var conversations = null;
-
+        this.logger.info("Running", this.getName(), "...");
         $series([
             $task(function(flow){
                 //find all conversations
@@ -66,7 +123,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
             }),
             $task(function(flow){
                 $forEachSeries(conversations, function(flow, conversation){
-                    console.log("adding index numbers to chatMessages in conversation", conversation._id);
+                    _this.logger.info("adding index numbers to chatMessages in conversation", conversation._id);
                     var counter             = 0;
                     var conversationId      = conversation._id;
                     var earliestChatMessage = null;
@@ -83,11 +140,11 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                     if(chatMessageCounters.length === 0){
                                         var chatMessageCounter = new ChatMessageCounterModel({conversationId: conversationId});
                                         chatMessageCounter.save(function(error, chatMessageCounters, numberAffected){
-                                            console.log("chatMessageCounter saved:", chatMessageCounters);
+                                            _this.logger.info("chatMessageCounter saved:", chatMessageCounters);
                                             flow.complete(error);
                                         });
                                     } else {
-                                        console.log("chatMessageCounter already exists");
+                                        _this.logger.info("chatMessageCounter already exists");
                                         flow.complete();
                                     }
                                 } else {
@@ -98,7 +155,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                         $task(function(flow){
                             //Get chatmessage count for conversation
                             ChatMessageModel.count({conversationId: conversationId}, function(error, returnedCount){
-                                console.log("message count for conversation", conversationId, ":", returnedCount);
+                                _this.logger.info("message count for conversation", conversationId, ":", returnedCount);
                                 messageCount = returnedCount;
                                 flow.complete(error);
                             });
@@ -107,21 +164,21 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                             //if there are chatmessages for the conversation
                             //add index numbers to chatMessages
                             if(messageCount > 0) {
-                                console.log("count is greater than 0");
+                                _this.logger.info("count is greater than 0");
                                 $series([
                                     $task(function(flow){
                                         //limit 1 reduces the number of chatmessages kept in memory while doing the sort to 1
-                                        console.log("retrieving earliest chatMessage for conversation", conversationId);
+                                        _this.logger.info("retrieving earliest chatMessage for conversation", conversationId);
                                         ChatMessageModel.find({conversationId: conversationId}).sort({sentAt: 1}).limit(1).exec(function(error, chatMessages){
                                             if(!error){
                                                 if(chatMessages[0]){
                                                     earliestChatMessage = chatMessages[0];
                                                     oldestSentAt        = earliestChatMessage.sentAt;
-                                                    console.log("earliestChatMessage:", earliestChatMessage._id);
-                                                    console.log("oldestSentAt:", oldestSentAt);
+                                                    _this.logger.info("earliestChatMessage:", earliestChatMessage._id);
+                                                    _this.logger.info("oldestSentAt:", oldestSentAt);
                                                     flow.complete();
                                                 } else {
-                                                    console.log("There are no chatMessages in this conversation");
+                                                    _this.logger.info("There are no chatMessages in this conversation");
                                                     flow.complete(); //There are no chatMessages in this conversation
                                                 }
                                             }else{
@@ -130,9 +187,9 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                         });
                                     }),
                                     $task(function(flow){
-                                        console.log("updating the earliest chatMessage");
+                                        _this.logger.info("updating the earliest chatMessage");
                                         ChatMessageModel.getNextIndexByConversationId(conversationId, function(error, index){
-                                            console.log("index:", index);
+                                            _this.logger.info("index:", index);
                                             if(!error){
                                                 earliestChatMessage.index = index;
                                                 earliestChatMessage.updatedAt = Date.now();
@@ -141,7 +198,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                                         if(numberAffected === 0){
                                                             flow.complete(new Error("earliestChatMessage did not save"));
                                                         } else {
-                                                            console.log("earliest chatMessage saved:", chatMessage._id);
+                                                            _this.logger.info("earliest chatMessage saved:", chatMessage._id);
                                                             counter = counter + 1;
                                                             flow.complete();
                                                         }
@@ -156,7 +213,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                     }),
                                     $task(function(flow){
                                         //Find the next 100 messages for that conversation in ascending order of SentAt
-                                        console.log("conversationId:", conversationId, "oldestSentAt:", oldestSentAt);
+                                        _this.logger.info("conversationId:", conversationId, "oldestSentAt:", oldestSentAt);
                                         ChatMessageModel
                                         .find({
                                             conversationId: conversationId,
@@ -167,7 +224,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                         .exec(function(error, returnedChatMessages){
                                             if(!error){
                                                 chatMessages = returnedChatMessages;
-                                                console.log("number of remaining chatMessages:", chatMessages.length);
+                                                _this.logger.info("number of remaining chatMessages:", chatMessages.length);
 
                                                 $whileSeries(
                                                     function(flow){
@@ -175,9 +232,9 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                                     $series([
                                                         $task(function(flow){
                                                             $forEachSeries(chatMessages, function(flow, chatMessage) {
-                                                                console.log("retrieving index for chatMessage:", chatMessage._id);
+                                                                _this.logger.info("retrieving index for chatMessage:", chatMessage._id);
                                                                 ChatMessageModel.getNextIndexByConversationId(conversationId, function(error, index){
-                                                                    console.log("index:", index);
+                                                                    _this.logger.info("index:", index);
                                                                     if(!error){
                                                                         chatMessage.index = index;
                                                                         chatMessage.updatedAt = Date.now();
@@ -186,7 +243,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                                                                 if(numberAffected === 0){
                                                                                     flow.complete(new Error("ChatMessage did not save"));
                                                                                 } else {
-                                                                                    console.log("ChatMessage saved:", chatMessage);
+                                                                                    _this.logger.info("ChatMessage saved:", chatMessage);
                                                                                     counter = counter + 1;
                                                                                     flow.complete();
                                                                                 }
@@ -205,12 +262,12 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                                         }),
                                                         $task(function(flow){
                                                             lastSentAt = chatMessages[chatMessages.length - 1].sentAt;
-                                                            console.log('lastSentAt:', lastSentAt);
+                                                            _this.logger.info('lastSentAt:', lastSentAt);
                                                             flow.complete();
                                                         })
                                                         ,
                                                         $task(function(flow){
-                                                            console.log("conversationId:", conversationId, "lastSentAt:", lastSentAt);
+                                                            _this.logger.info("conversationId:", conversationId, "lastSentAt:", lastSentAt);
                                                             ChatMessageModel
                                                             .find({
                                                                 conversationId: conversationId,
@@ -219,14 +276,14 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                                             .sort({sentAt: 1})
                                                             .limit(500)
                                                             .exec(function(error, returnedChatMessages) {
-                                                                console.log("error:", error);
-                                                                console.log("returnedChatMessages", returnedChatMessages);
+                                                                _this.logger.info("error:", error);
+                                                                _this.logger.info("returnedChatMessages", returnedChatMessages);
                                                                 if(!error) {
                                                                     chatMessages = returnedChatMessages;
-                                                                    console.log("chatMessages reset with next set of messages");
+                                                                    _this.logger.info("chatMessages reset with next set of messages");
                                                                     flow.complete();
                                                                 } else {
-                                                                    console.log("chatMessages reset. no more messages in this conversation");
+                                                                    _this.logger.info("chatMessages reset. no more messages in this conversation");
                                                                     chatMessages = [];
                                                                     flow.complete(error);
                                                                 }
@@ -245,16 +302,16 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                                     })
                                 ])
                                     .execute(function(error){
-                                        console.log("counter is", counter);
-                                        console.log("messageCount is", messageCount);
+                                        _this.logger.info("counter is", counter);
+                                        _this.logger.info("messageCount is", messageCount);
                                         if(counter != messageCount){
-                                            console.log("Error: internal count does not equal message count");
+                                            _this.logger.info("Error: internal count does not equal message count");
                                         }
                                         flow.complete(error);
                                     });
                             } else {
-                                console.log("messageCount is", messageCount);
-                                console.log("counter is", counter);
+                                _this.logger.info("messageCount is", messageCount);
+                                _this.logger.info("counter is", counter);
                                 flow.complete();
                             }
                         })
@@ -268,17 +325,7 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
                     })
             })
         ])
-        .execute(function(error){
-            if(error) {
-                console.log("Error:", error);
-                console.log("Up migration", _this.name, "failed.");
-                callback(error);
-            } else {
-                console.log("Up migration", _this.name, "completed.");
-                console.log("Currently at migration version", _this.version, "for", _this.app, _this.appVersion);
-                callback();
-            }
-        });
+        .execute(callback);
     }
 
 //    ,down: function(callback) {
@@ -321,6 +368,25 @@ var AddsChatMessageCountersAndIndexesMigration = Class.extend(Migration, {
 //        });
 //    }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AddsChatMessageCountersAndIndexesMigration).with(
+    migration()
+        .appName("airbug")
+        .appVersion("0.0.13")
+        .name("AddsChatMessageCountersAndIndexesMigration")
+        .version("0.0.1"),
+    autowired()
+        .properties([
+            property("logger").ref("logger"),
+            property("mongoDataStore").ref("mongoDataStore")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

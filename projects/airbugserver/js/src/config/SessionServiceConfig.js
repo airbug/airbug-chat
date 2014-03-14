@@ -45,7 +45,11 @@ var SessionServiceConfig = Class.extend(Config, {
      * @return {number}
      */
     getCookieMaxAge: function() {
-        return this.getProperty("cookieMaxAge");
+        var cookieMaxAge = this.getProperty("cookieMaxAge");
+        if (!TypeUtil.isNumber(cookieMaxAge)) {
+            cookieMaxAge = 86400000;
+        }
+        return cookieMaxAge;
     },
 
     /**
@@ -77,7 +81,11 @@ var SessionServiceConfig = Class.extend(Config, {
      * @return {string}
      */
     getCookieSecret: function() {
-        return this.getProperty("cookieSecret");
+        var cookieSecret = this.getProperty("cookieSecret");
+        if (!TypeUtil.isString(cookieSecret)) {
+            cookieSecret = "";
+        }
+        return cookieSecret;
     },
 
     /**
@@ -85,6 +93,24 @@ var SessionServiceConfig = Class.extend(Config, {
      */
     setCookieSecret: function(cookieSecret) {
         this.setProperty("cookieSecret", cookieSecret);
+    },
+
+    /**
+     * @returns {string}
+     */
+    getCookieDomain: function() {
+        var cookieDomain = this.getProperty("cookieDomain");
+        if (!TypeUtil.isString(cookieDomain)) {
+            cookieDomain = "";
+        }
+        return cookieDomain;
+    },
+
+    /**
+     * @param {string} cookieDomain
+     */
+    setCookieDomain: function(cookieDomain) {
+        this.setProperty("cookieDomain", cookieDomain);
     },
 
     /**

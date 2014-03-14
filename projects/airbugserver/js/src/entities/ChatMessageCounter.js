@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageCounter')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
@@ -63,14 +64,14 @@ var ChatMessageCounter = Class.extend(Entity, {
      * @returns {string}
      */
     getConversationId: function() {
-        return this.deltaDocument.getData().conversationId;
+        return this.getEntityData().conversationId;
     },
 
     /**
      * @returns {number}
      */
     getCount: function() {
-        return this.deltaDocument.getData().count;
+        return this.getEntityData().count;
     }
 
 });
@@ -81,17 +82,29 @@ var ChatMessageCounter = Class.extend(Entity, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(ChatMessageCounter).with(
-    entity("ChatMessageCounter").properties([
-        property("id")
-            .type("string")
-            .primaryId(),
-        property("conversationId")
-            .type("string")
-            .id(),
-        property("count").type("number"),
-        property("createdAt").type("date"),
-        property("updatedAt").type("date")
-    ])
+    entity("ChatMessageCounter")
+        .properties([
+            property("conversationId")
+                .type("string")
+                .require(true)
+                .index(true)
+                .id(),
+            property("count")
+                .type("number")
+                .require(true)
+                .default(0),
+            property("createdAt")
+                .type("date")
+                .require(true)
+                .default(Date.now),
+            property("id")
+                .type("string")
+                .primaryId(),
+            property("updatedAt")
+                .type("date")
+                .require(true)
+                .default(Date.now)
+        ])
 );
 
 

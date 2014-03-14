@@ -57,6 +57,10 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CallRequestPublisher}
+ */
 var AirbugClientRequestPublisher = Class.extend(CallRequestPublisher, {
 
     //-------------------------------------------------------------------------------
@@ -235,4 +239,4 @@ bugmeta.annotate(AirbugClientRequestPublisher).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('meldbug.AirbugClientRequestPublisher', AirbugClientRequestPublisher);
+bugpack.export('airbugserver.AirbugClientRequestPublisher', AirbugClientRequestPublisher);

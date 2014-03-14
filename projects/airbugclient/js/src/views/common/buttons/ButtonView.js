@@ -100,6 +100,13 @@ var ButtonView = Class.extend(MustacheView, {
                     this.getButtonElement().removeClass("active");
                 }
                 break;
+            case "disabled":
+                if (attributeValue) {
+                    this.getButtonElement().addClass("disabled");
+                } else {
+                    this.getButtonElement().removeClass("disabled");
+                }
+                break;
         }
     },
 
@@ -167,6 +174,25 @@ var ButtonView = Class.extend(MustacheView, {
         }
 
         return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    disableButton: function() {
+        this.setAttribute("disabled", true);
+    },
+
+    /**
+     *
+     */
+    enableButton: function() {
+        this.setAttribute("disabled", false);
     },
 
 

@@ -30,12 +30,12 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Map                         = bugpack.require('Map');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var Asset                       = bugpack.require('airbugserver.Asset');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var TypeUtil                    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +52,7 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 //-------------------------------------------------------------------------------
 
 /**
+ * @class
  * @extends {EntityManager}
  */
 var AssetManager = Class.extend(EntityManager, {
@@ -147,7 +148,8 @@ bugmeta.annotate(AssetManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

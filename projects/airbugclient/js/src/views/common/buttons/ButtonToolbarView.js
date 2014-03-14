@@ -36,33 +36,10 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 var ButtonToolbarView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @constructs
-     * @param {Object} options
-     */
-    _constructor: function(options) {
-
-        this._super(options);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        if (!this.id) {
-            this.id = "button-group" + this.cid;
-        }
-    },
-
-
-    //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="btn-toolbar {{buttonGroupClasses}}">' +
+    template:   '<div id="button-toolbar-{{cid}}" class="btn-toolbar {{classes}}">' +
         '</div>',
 
 
@@ -75,12 +52,9 @@ var ButtonToolbarView = Class.extend(MustacheView, {
      */
     generateTemplateData: function() {
         var data = this._super();
-        data.id     = this.getId() || "button-toolbar-" + this.getCid();
-
-        data.buttonGroupClasses = "";
         switch (this.attributes.align) {
             case "right":
-                data.buttonGroupClasses += "pull-right";
+                data.classes += "pull-right";
                 break;
         }
 

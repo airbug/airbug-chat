@@ -392,7 +392,7 @@ var DialoguePageContainer = Class.extend(PageContainer, {
         this.codeEditorOverlayWidgetContainer.setEditorTabSize(tabSize);
         this.codeEditorOverlayWidgetContainer.setEditorCursorPosition(cursorPosition);
         this.codeEditorOverlayWidgetContainer.getViewTop().show();
-        this.codeEditorOverlayWidgetContainer.focusOnAceEditor();
+        this.codeEditorOverlayWidgetContainer.focusEditor();
     },
 
     /**

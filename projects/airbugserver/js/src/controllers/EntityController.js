@@ -203,8 +203,6 @@ var EntityController = Class.extend(Controller, {
      * @param {function(Throwable=)} callback
      */
     processRetrieveListResponse: function(responder, throwable, entityList, callback) {
-        console.log("processRetrieveListResponse");
-        console.log("entityList:", entityList);
         var dataList             = new List();
         if (entityList) {
             entityList.forEach(function(entity) {

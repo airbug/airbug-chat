@@ -53,7 +53,7 @@ var EntityPusher = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(meldBuilder, meldManager, pushManager, userManager, meldSessionManager) {
+    _constructor: function(logger, meldBuilder, meldManager, pushManager, userManager, meldSessionManager) {
 
         this._super();
 
@@ -66,7 +66,7 @@ var EntityPusher = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                 = null;
+        this.logger                 = logger;
 
         /**
          * @private
@@ -105,6 +105,13 @@ var EntityPusher = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
+    },
+
+    /**
      * @return {MeldBuilder}
      */
     getMeldBuilder: function() {
@@ -119,10 +126,24 @@ var EntityPusher = Class.extend(Obj, {
     },
 
     /**
+     * @return {MeldSessionManager}
+     */
+    getMeldSessionManager: function() {
+        return this.meldSessionManager;
+    },
+
+    /**
      * @return {PushManager}
      */
     getPushManager: function() {
         return this.pushManager;
+    },
+
+    /**
+     * @return {UserManager}
+     */
+    getUserManager: function() {
+        return this.userManager;
     },
 
 

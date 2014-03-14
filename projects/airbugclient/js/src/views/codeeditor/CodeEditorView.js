@@ -7,22 +7,41 @@
 //@Export('CodeEditorView')
 
 //@Require('Class')
+//@Require('ace.Ace')
+//@Require('airbug.CodeEditorViewEvent')
 //@Require('airbug.MustacheView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Class                               = bugpack.require('Class');
+var Ace                                 = bugpack.require('ace.Ace');
+var CodeEditorViewEvent                 = bugpack.require('airbug.CodeEditorViewEvent');
+var MustacheView                        = bugpack.require('airbug.MustacheView');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var property                            = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -35,18 +54,308 @@ var CodeEditorView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="code-editor {{attributes.classes}}">' +
+    template:   '<div id="code-editor-{{cid}}" class="code-editor {{classes}}">' +
         '</div>',
 
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(options) {
+
+        this._super(options);
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Ace}
+         */
+        this.editor                                 = null;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {AirbugClientConfig}
+         */
+        this.airbugClientConfig                     = null;
+
+        var _this = this;
+        this.handleChangeSelection  = function(event) {
+            _this.dispatchEvent(new CodeEditorViewEvent(CodeEditorViewEvent.EventType.SELECTION_CHANGED));
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
     /**
-     * @return {Object}
+     * @return {Ace}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "code-editor";
-        return data;
+    getEditor: function() {
+        return this.editor;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {string}
+     */
+    getEditorCopyText: function() {
+        return this.editor.getCopyText();
+    },
+
+    /**
+     * @return {*}
+     */
+    getEditorCursorPosition: function() {
+        return this.editor.getCursorPosition();
+    },
+
+    /**
+     * @param {*} cursorPosition
+     */
+    setEditorCursorPosition: function(cursorPosition) {
+        this.editor.moveCursorToPosition(cursorPosition);
+    },
+
+    /**
+     * @returns {Document} document
+     */
+    getEditorDocument: function() {
+        return this.editor.getSession().getDocument();
+    },
+
+    /**
+     * @param {Document} document
+     */
+    setEditorDocument: function(document) {
+        this.editor.getSession().setDocument(document);
+    },
+
+    /**
+     * @return {number}
+     */
+    getEditorFontSize: function() {
+        return this.editor.getFontSize();
+    },
+
+    /**
+     * @param {number} fontSize
+     */
+    setEditorFontSize: function(fontSize) {
+        this.editor.setFontSize(fontSize);
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorLanguage: function() {
+        var mode = this.editor.getSession().getMode().$id;
+        return mode.substring(mode.lastIndexOf("/") + 1);
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorMode: function() {
+        return this.editor.getSession().getMode().$id;
+    },
+
+    /**
+     * @param {string} mode
+     */
+    setEditorMode: function(mode) {
+        this.editor.getSession().setMode(mode);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    getEditorShowInvisibles: function() {
+        return this.editor.getOption("showInvisibles");
+    },
+
+    /**
+     * @param {boolean} showInvisibles
+     */
+    setEditorShowInvisibles: function(showInvisibles) {
+        this.editor.setOption("showInvisibles", showInvisibles);
+    },
+
+    /**
+     * @return {number}
+     */
+    getEditorTabSize: function() {
+        return this.editor.getSession().getTabSize();
+    },
+
+    /**
+     * @param {number} tabSize
+     */
+    setEditorTabSize: function(tabSize) {
+        this.editor.getSession().setTabSize(tabSize);
+        console.log("tab size has been set to", this.editor.getSession().getTabSize()); //maybe make these into notifications
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorTabType: function() {
+        if (this.getEditorUseSoftTabs()) {
+            return "soft";
+        } else {
+            return "hard";
+        }
+    },
+    
+    /**
+     * @param {string} tabType
+     */
+    setEditorTabType: function(tabType) {
+        var softTabs = false;
+        if (tabType === "soft") {
+            softTabs = true;
+        }
+        this.setEditorUseSoftTabs(softTabs);
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorText: function() {
+        if (this.editor) {
+            return this.editor.getValue();
+        } else {
+            return "";
+        }
+    },
+
+    /**
+     * @param {string} value
+     */
+    setEditorText: function(value) {
+        if (this.editor) {
+            this.editor.setValue(value);
+        }
+    },
+
+    /**
+     * @return {string}
+     */
+    getEditorTheme: function() {
+        return this.editor.getTheme();
+    },
+
+    /**
+     * @param {string} theme
+     */
+    setEditorTheme: function(theme) {
+        this.editor.setTheme(theme);
+    },
+
+    /**
+     * @returns {boolean}
+     */
+    getEditorReadOnly: function() {
+        return this.editor.getReadOnly();
+    },
+    
+    /**
+     * @param {boolean} readOnly
+     */
+    setEditorReadOnly: function(readOnly) {
+        if (this.editor) {
+            this.editor.setReadOnly(readOnly);
+        }
+    },
+
+    /**
+     * @return {boolean}
+     */
+    getEditorUseSoftTabs: function() {
+        return this.editor.getSession().getUseSoftTabs();
+    },
+
+    /**
+     * @param {boolean} useSoftTabs
+     */
+    setEditorUseSoftTabs: function(useSoftTabs) {
+        this.editor.getSession().setUseSoftTabs(useSoftTabs);
+    },
+
+    /**
+     *
+     */
+    resizeEditor: function() {
+        this.editor.resize();
+    },
+
+    /**
+     *
+     */
+    focusEditor: function() {
+        this.editor.focus();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    deinitializeView: function() {
+        this._super();
+        this.editor.selection.removeListener("changeSelection", this.handleChangeSelection);
+    },
+
+    /**
+     * @protected
+     */
+    initializeView: function() {
+        this._super();
+        this.editor.selection.on("changeSelection", this.handleChangeSelection);
+    },
+
+    /**
+     * @return {Element}
+     */
+    make: function() {
+        var element = this._super();
+        Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
+        this.editor          = Ace.edit(element[0]);
+        return element;
     }
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CodeEditorView).with(
+    autowired().properties([
+        property("airbugClientConfig").ref("airbugClientConfig")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

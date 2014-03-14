@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('RoomMember')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
@@ -173,7 +174,9 @@ var RoomMember = Class.extend(Entity, {
 bugmeta.annotate(RoomMember).with(
     entity("RoomMember").properties([
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("id")
             .type("string")
             .primaryId(),
@@ -182,18 +185,24 @@ bugmeta.annotate(RoomMember).with(
         property("room")
             .type("Room")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("roomId")
             .type("string")
+            .require(true)
+            .index(true)
             .id(),
         property("updatedAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("user")
             .type("User")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("userId")
             .type("string")
+            .require(true)
+            .index(true)
             .id()
     ])
 );

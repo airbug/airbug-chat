@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('Room')
+//@Autoload
 
 //@Require('Class')
 //@require('Set')
@@ -83,42 +84,42 @@ var Room = Class.extend(Entity, {
      * @return {string}
      */
     getConversationId: function() {
-        return this.getDeltaDocument().getData().conversationId;
+        return this.getEntityData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.getDeltaDocument().getData().conversationId = conversationId;
+        this.getEntityData().conversationId = conversationId;
     },
 
     /**
      * @return {string}
      */
     getName: function() {
-        return this.getDeltaDocument().getData().name;
+        return this.getEntityData().name;
     },
 
     /**
      * @param {string} name
      */
     setName: function(name) {
-        this.getDeltaDocument().getData().name = name;
+        this.getEntityData().name = name;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomMemberIdSet: function() {
-        return this.getDeltaDocument().getData().roomMemberIdSet;
+        return this.getEntityData().roomMemberIdSet;
     },
 
     /**
      * @param {Set.<string>} roomMemberIdSet
      */
     setRoomMemberIdSet: function(roomMemberIdSet) {
-        this.getDeltaDocument().getData().roomMemberIdSet = roomMemberIdSet;
+        this.getEntityData().roomMemberIdSet = roomMemberIdSet;
     },
 
 
@@ -221,17 +222,21 @@ bugmeta.annotate(Room).with(
         property("conversation")
             .type("Conversation")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("conversationId")
             .type("string")
+            .index(true)
             .id(),
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("id")
             .type("string")
             .primaryId(),
         property("name")
-            .type("string"),
+            .type("string")
+            .require(true),
         property("roomMemberIdSet")
             .type("Set")
             .collectionOf("string")
@@ -240,9 +245,11 @@ bugmeta.annotate(Room).with(
             .type("Set")
             .collectionOf("RoomMember")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("updatedAt")
             .type("date")
+            .require(true)
+            .default(Date.now)
     ])
 );
 

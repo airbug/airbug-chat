@@ -7,7 +7,6 @@
 //@Export('CodeEditorWidgetContainer')
 
 //@Require('Class')
-//@Require('ace.Ace')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
 //@Require('airbug.ButtonView')
@@ -15,6 +14,7 @@
 //@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorFullscreenButtonContainer')
 //@Require('airbug.CodeEditorView')
+//@Require('airbug.CodeEditorViewEvent')
 //@Require('airbug.CodeEditorWidgetCloseButtonContainer')
 //@Require('airbug.CodeEditorWidgetView')
 //@Require('airbug.CommandModule')
@@ -39,7 +39,6 @@ var bugpack                             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                                   = bugpack.require('Class');
-var Ace                                     = bugpack.require('ace.Ace');
 var ButtonGroupView                         = bugpack.require('airbug.ButtonGroupView');
 var ButtonToolbarView                       = bugpack.require('airbug.ButtonToolbarView');
 var ButtonView                              = bugpack.require('airbug.ButtonView');
@@ -47,6 +46,7 @@ var ButtonViewEvent                         = bugpack.require('airbug.ButtonView
 var CodeEditorBaseWidgetContainer           = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
 var CodeEditorFullscreenButtonContainer     = bugpack.require('airbug.CodeEditorFullscreenButtonContainer');
 var CodeEditorView                          = bugpack.require('airbug.CodeEditorView');
+var CodeEditorViewEvent                     = bugpack.require('airbug.CodeEditorViewEvent');
 var CodeEditorWidgetCloseButtonContainer    = bugpack.require('airbug.CodeEditorWidgetCloseButtonContainer');
 var CodeEditorWidgetView                    = bugpack.require('airbug.CodeEditorWidgetView');
 var CommandModule                           = bugpack.require('airbug.CommandModule');
@@ -83,9 +83,8 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
-
 
         // Views
         //-------------------------------------------------------------------------------
@@ -98,9 +97,27 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
         /**
          * @private
+         * @type {CodeEditorWidgetView}
+         */
+        this.codeEditorWidgetView                   = null;
+
+        /**
+         * @private
          * @type {TabView}
          */
         this.editorTabView                          = null;
+
+        /**
+         * @private
+         * @type {ButtonView}
+         */
+        this.sendButtonView                         = null;
+
+        /**
+         * @private
+         * @type {ButtonView}
+         */
+        this.sendSelectedButtonView                 = null;
 
         /**
          * @private
@@ -116,9 +133,9 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
         /**
          * @private
-         * @type {CodeEditorWidgetView}
+         * @type {ButtonGroupView}
          */
-        this.codeEditorWidgetView                   = null;
+        this.widgetControlButtonGroupView           = null;
 
 
         // Containers
@@ -139,16 +156,8 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
-    },
 
     /**
      * @protected
@@ -169,11 +178,11 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
             .children([
                 view(ButtonToolbarView)
                     .name("buttonToolbarView")
-                    .id("code-editor-widget-toolbar")
                     .appendTo("#code-editor-widget-header-{{cid}}")
                     .children([
                         view(ButtonGroupView)
-                            .appendTo('#code-editor-widget-toolbar')
+                            .name("widgetControlButtonGroupView")
+                            .appendTo("#button-toolbar-{{cid}}")
                     ]),
                 view(TabsView)
                     .name("tabsView")
@@ -206,8 +215,7 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
                             .children([
                                 view(IconView)
                                     .attributes({
-                                        type: IconView.Type.COG,
-                                        color: IconView.Color.WHITE
+                                        type: IconView.Type.COG
                                     })
                                     .appendTo('a'),
                                 view(TextView)
@@ -218,25 +226,50 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
                             ])
                     ]),
                 view(CodeEditorView)
-                    .id("code-editor-view")
+                    .name("codeEditorView")
                     .attributes({
                         width: "300px",
                         height: "200px"
                     })
                     .appendTo("#code-editor-widget-body-{{cid}}"),
-                view(ButtonView)
-                    .name("sendButtonView")
-                    .attributes({
-                        type: "default",
-                        size: ButtonView.Size.LARGE,
-                        block: true
-                    })
-                    .children([
-                        view(TextView)
-                            .attributes({text: "Send"})
-                            .appendTo("#button-{{cid}}")
-                    ])
+                view(ButtonToolbarView)
                     .appendTo("#code-editor-widget-footer-{{cid}}")
+                    .children([
+                        view(ButtonGroupView)
+                            .appendTo("#button-toolbar-{{cid}}")
+                            .children([
+                                view(ButtonView)
+                                    .name("sendButtonView")
+                                    .appendTo("#button-group-{{cid}}")
+                                    .attributes({
+                                        type: "default",
+                                        size: ButtonView.Size.LARGE
+                                    })
+                                    .children([
+                                        view(TextView)
+                                            .attributes({text: "Send"})
+                                            .appendTo("#button-{{cid}}")
+                                    ])
+                            ]),
+                        view(ButtonGroupView)
+                            .appendTo("#button-toolbar-{{cid}}")
+                            .children([
+                                view(ButtonView)
+                                    .name("sendSelectedButtonView")
+                                    .appendTo("#button-group-{{cid}}")
+                                    .attributes({
+                                        type: "default",
+                                        size: ButtonView.Size.LARGE,
+                                        block: true,
+                                        disabled: true
+                                    })
+                                    .children([
+                                        view(TextView)
+                                            .attributes({text: "Send Selected"})
+                                            .appendTo("#button-{{cid}}")
+                                    ])
+                            ])
+                    ])
             ])
             .build(this);
 
@@ -245,10 +278,6 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.codeEditorWidgetView);
-        this.codeEditorView     = this.findViewById("code-editor-view");
-
-        Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
-        this.aceEditor          = Ace.edit(this.codeEditorView.$el.get(0));
     },
 
     /**
@@ -258,52 +287,108 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
         this._super();
         this.closeButton                            = new CodeEditorWidgetCloseButtonContainer();
         this.codeEditorFullscreenButtonContainer    = new CodeEditorFullscreenButtonContainer();
-        this.addContainerChild(this.codeEditorFullscreenButtonContainer, ".btn-group:last-child");
-        this.addContainerChild(this.closeButton, ".btn-group:last-child");
+        this.addContainerChild(this.codeEditorFullscreenButtonContainer, "#button-group-" + this.widgetControlButtonGroupView.getCid());
+        this.addContainerChild(this.closeButton, "#button-group-" + this.widgetControlButtonGroupView.getCid());
     },
 
-    //-------------------------------------------------------------------------------
-    // CodeEditorBaseWidgetContainer Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @override
-     */
-    initializeEventListeners: function() {
-        this._super();
-        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-        this.settingsTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
-    },
-
-    /**
-     * @private
-     * @override
-     */
-    deinitializeEventListeners: function() {
-        this._super();
-        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-        this.settingsTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
-    },
 
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @private
+     */
+    deinitializeEventListeners: function() {
+        this.codeEditorView.removeEventListener(CodeEditorViewEvent.EventType.SELECTION_CHANGED, this.hearCodeEditorSelectionChangedEvent, this);
+        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
+        this.sendSelectedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendSelectedButtonClickedEvent, this);
+        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
+    },
+
+
+    /**
+     * @private
+     */
+    initializeEventListeners: function() {
+        this.codeEditorView.addEventListener(CodeEditorViewEvent.EventType.SELECTION_CHANGED, this.hearCodeEditorSelectionChangedEvent, this);
+        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
+        this.sendSelectedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendSelectedButtonClickedEvent, this);
+        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {CodeEditorViewEvent} event
+     */
+    hearCodeEditorSelectionChangedEvent: function(event) {
+        var copyText = this.getEditorCopyText();
+        if (copyText.length > 0) {
+            this.sendSelectedButtonView.enableButton();
+        } else {
+            this.sendSelectedButtonView.disableButton();
+        }
+    },
+
+    /**
+     * @private
      * @param {Event} event
      */
     hearFullScreenButtonClickedEvent: function(event) {
         var data    = {
-            cursorPosition:     this.getEditorCursorPosition(),
-            mode:               this.getEditorMode(),
-            showInvisibles:     this.getEditorShowInvisibles(),
-            text:               this.getEditorText(),
-            theme:              this.getEditorTheme(),
-            tabSize:            this.getEditorTabSize()
+            cursorPosition: this.getEditorCursorPosition(),
+            mode: this.getEditorMode(),
+            showInvisibles: this.getEditorShowInvisibles(),
+            text: this.getEditorText(),
+            theme: this.getEditorTheme(),
+            tabSize: this.getEditorTabSize()
         };
         this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, data);
+    },
+
+    /**
+     * @param {ButtonViewEvent} event
+     */
+    hearSendButtonClickedEvent: function(event) {
+        var code            = this.getEditorText();
+        var codeLanguage    = this.getEditorLanguage();
+        var chatMessageObject = {
+            type: "code",
+            body: {parts: [{
+                code: code,
+                type: "code",
+                codeLanguage: codeLanguage
+            }]}
+        };
+
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        event.stopPropagation();
+    },
+
+    /**
+     * @param {ButtonViewEvent} event
+     */
+    hearSendSelectedButtonClickedEvent: function(event) {
+        var code            = this.getEditorCopyText();
+        var codeLanguage    = this.getEditorLanguage();
+        var chatMessageObject = {
+            type: "code",
+            body: {parts: [{
+                code: code,
+                type: "code",
+                codeLanguage: codeLanguage
+            }]}
+        };
+
+        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        event.stopPropagation();
     },
 
     /**
@@ -311,8 +396,8 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
      * @param {TabViewEvent} event
      */
     hearSettingsTabClickedEvent: function(event) {
+        this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, {});
         event.stopPropagation();
-        this.getContainerParent().displayCodeEditorSettings();
     }
 });
 

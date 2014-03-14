@@ -66,6 +66,7 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
          */
         this.buttonToolbarView                  = null;
 
+
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -74,12 +75,11 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
          * @type {SendImageButtonGroupContainer}
          */
         this.sendImageButtonGroupContainer      = null;
-
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -96,22 +96,24 @@ var ImageUploadItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonToolbarView =
-            view(ButtonToolbarView)
-                .build();
+        view(ButtonToolbarView)
+            .name("buttonToolbarView")
+            .build(this);
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.buttonToolbarView);
-
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
         this.sendImageButtonGroupContainer      = new SendImageButtonGroupContainer();
-
-        this.addContainerChild(this.sendImageButtonGroupContainer,      ".btn-toolbar");
+        this.addContainerChild(this.sendImageButtonGroupContainer,      "#button-toolbar-" + this.buttonToolbarView.getCid());
     }
 });
 

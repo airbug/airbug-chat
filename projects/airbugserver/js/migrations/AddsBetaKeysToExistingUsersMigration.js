@@ -5,44 +5,104 @@
 //@Package('airbugserver')
 
 //@Export('AddsBetaKeysToExistingUsersMigration')
+//@Autoload
 
 //@Require('Class')
-//@Require('airbugserver.BetaKeyModel')
-//@Require('airbugserver.UserModel')
-//@Require('airbugserver.Migration')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
+//@Require('bugmigrate.Migration')
+//@Require('bugmigrate.MigrationAnnotation')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var mongoose    = require("mongoose");
+var bugpack                 = require('bugpack').context();
+
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var BetaKeyModel            = bugpack.require('airbugserver.BetaKeyModel');
-var UserModel               = bugpack.require("airbugserver.UserModel");
-var Migration               = bugpack.require('airbugserver.Migration');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var Class                           = bugpack.require('Class');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var Migration                       = bugpack.require('bugmigrate.Migration');
+var MigrationAnnotation             = bugpack.require('bugmigrate.MigrationAnnotation');
 
-var $forEachParallel        = BugFlow.$forEachParallel;
-var $forInParallel          = BugFlow.$forInParallel;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
 
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
+var migration                       = MigrationAnnotation.migration;
+var property                        = PropertyAnnotation.property;
+var $forEachParallel                = BugFlow.$forEachParallel;
+var $forEachSeries                  = BugFlow.$forEachSeries;
+var $forInParallel                  = BugFlow.$forInParallel;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
 
 var AddsBetaKeysToExistingUsersMigration = Class.extend(Migration, {
-    name: "AddsBetaKeysToExistingUsersMigration",
-    app: "airbug",
-    appVersion: "0.0.17",
-    version: "0.0.2",
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {string} appName
+     * @param {string} appVersion
+     * @param {string} name
+     * @param {string} version
+     */
+    _constructor: function(appName, appVersion, name, version) {
+
+        this._super(appName, appVersion, name, version);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+
+        /**
+         * @private
+         * @type {MongoDataStore}
+         */
+        this.mongoDataStore         = null
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Migration Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
     up: function(callback) {
-        var baseBetaKeyCounters = {};
-        var currentUsersAndNewBetaKeys = [
+        var BetaKeyModel                = this.mongoDataStore.getMongooseModelForName("BetaKey");
+        var UserModel                   = this.mongoDataStore.getMongooseModelForName("User");
+        var baseBetaKeyCounters         = {};
+        var currentUsersAndNewBetaKeys  = [
             [{"email": "matthew.mcneely@gmail.com", "firstName" : "Matthew", "lastName" : "McNeely" },      {betaKey: "GO_AIRBUG#BN14"}],
             [{"email": "meganr3@gmail.com", "firstName" : "Megan", "lastName" : "Neisler" },                {betaKey: "GO_AIRBUG#BN14"}],
             [{"email": "dane@parklet.co", "firstName" : "Dane", "lastName" : "Hurtubise" },                 {betaKey: "GO_AIRBUG#BN14"}],
@@ -98,6 +158,25 @@ var AddsBetaKeysToExistingUsersMigration = Class.extend(Migration, {
 
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AddsBetaKeysToExistingUsersMigration).with(
+    migration()
+        .appName("airbug")
+        .appVersion("0.0.17")
+        .name("AddsBetaKeysToExistingUsersMigration")
+        .version("0.0.2"),
+    autowired()
+        .properties([
+            property("logger").ref("logger"),
+            property("mongoDataStore").ref("mongoDataStore")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

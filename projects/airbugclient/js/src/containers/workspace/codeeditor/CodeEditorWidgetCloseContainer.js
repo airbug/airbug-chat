@@ -124,8 +124,7 @@ var CodeEditorWidgetCloseButtonContainer = Class.extend(ButtonContainer, {
             .children([
                 view(IconView)
                     .attributes({
-                        type: IconView.Type.REMOVE,
-                        color: IconView.Color.WHITE
+                        type: IconView.Type.REMOVE
                     })
                     .appendTo('*[id|="button"]')
             ])

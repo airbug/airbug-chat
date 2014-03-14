@@ -73,10 +73,10 @@ var BetaKeyManager = Class.extend(EntityManager, {
      * @param {function(Throwable, BetaKey)=} callback
      */
     createBetaKey: function(betaKey, dependencies, callback) {
-        if(TypeUtil.isFunction(dependencies)){
+        if (TypeUtil.isFunction(dependencies)) {
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(betaKey, options, dependencies, callback);
     },
@@ -97,6 +97,14 @@ var BetaKeyManager = Class.extend(EntityManager, {
         var betaKey = new BetaKey(data);
         this.generate(betaKey);
         return betaKey;
+    },
+
+    /**
+     * @param {string} betaKeyId
+     * @param {function(Throwable, BetaKey=)} callback
+     */
+    retrieveBetaKey: function(betaKeyId, callback) {
+        this.retrieve(betaKeyId, callback);
     },
 
     /**
@@ -141,7 +149,7 @@ var BetaKeyManager = Class.extend(EntityManager, {
      */
     retrieveAllBetaKeys: function(callback) {
         var _this = this;
-        this.dataStore.find({}).lean(true).exec(function(throwable, dbObjects) {
+        this.getDataStore().find({}).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newList = new List();
                 dbObjects.forEach(function(dbObject) {
@@ -158,10 +166,10 @@ var BetaKeyManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} baseKey
-     * @param {function(Error} callback
+     * @param {function(Error=)} callback
      */
     incrementCountForBaseBetaKey: function(baseKey, callback) {
-        this.dataStore.findOneAndUpdate(
+        this.getDataStore().findOneAndUpdate(
             {   betaKey: baseKey,
                 isBaseKey: true,
                 $where: function(){
@@ -174,13 +182,13 @@ var BetaKeyManager = Class.extend(EntityManager, {
             },
             { $inc: {count: 1}},
             function(error, betaKeyDoc) {
-                if(error){
+                if (error) {
                     callback(error);
                 } else {
-                    if(betaKeyDoc) {
-                        callback(undefined);
+                    if (betaKeyDoc) {
+                        callback();
                     } else {
-                        callback(new Exception("InvalidBetaKey", {}, "Beta Key '" + betaKey + "' is full"));
+                        callback(new Exception("InvalidBetaKey", {}, "Beta Key '" + baseKey + "' is full"));
                     }
                 }
             }
@@ -248,12 +256,12 @@ var BetaKeyManager = Class.extend(EntityManager, {
 
     validateAndIncrementBaseBetaKey: function(betaKey, callback) {
         var baseKey = betaKey.split("+")[0];
-        this.dataStore.findOneAndUpdate(
+        this.getDataStore().findOneAndUpdate(
             {   betaKey: baseKey,
                 isBaseKey: true,
                 $where: function(){
                     if(this.hasCap){
-                        return this.cap < this.count;
+                        return this.count < this.cap;
                     } else {
                         return true;
                     }
@@ -286,7 +294,8 @@ bugmeta.annotate(BetaKeyManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

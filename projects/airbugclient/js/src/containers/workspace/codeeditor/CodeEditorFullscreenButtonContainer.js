@@ -110,8 +110,7 @@ var CodeEditorFullscreenButtonContainer = Class.extend(ButtonContainer, {
                     .children([
                         view(IconView)
                             .attributes({
-                                type: IconView.Type.FULLSCREEN,
-                                color: IconView.Color.WHITE
+                                type: IconView.Type.FULLSCREEN
                             })
                             .appendTo('button[id|="button"]')
                     ])

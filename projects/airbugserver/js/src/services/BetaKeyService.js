@@ -80,22 +80,58 @@ var BetaKeyService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(betaKeyManager, betaKeyPusher) {
+    _constructor: function(logger, betaKeyManager, betaKeyPusher) {
 
         this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
          * @type {BetaKeyManager}
          */
-        this.betaKeyManager = betaKeyManager;
+        this.betaKeyManager     = betaKeyManager;
 
         /**
          * @private
          * @type {BetaKeyPusher}
          */
-        this.betaKeyPusher = betaKeyPusher;
+        this.betaKeyPusher      = betaKeyPusher;
 
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger             = logger;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {BetaKeyManager}
+     */
+    getBetaKeyManager: function() {
+        return this.betaKeyManager;
+    },
+
+    /**
+     * @return {BetaKeyPusher}
+     */
+    getBetaKeyPusher: function() {
+        return this.betaKeyPusher;
+    },
+
+    /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
     },
 
 
@@ -289,6 +325,7 @@ var BetaKeyService = Class.extend(Obj, {
 bugmeta.annotate(BetaKeyService).with(
     module("betaKeyService")
         .args([
+            arg().ref("logger"),
             arg().ref("betaKeyManager"),
             arg().ref("betaKeyPusher")
         ])

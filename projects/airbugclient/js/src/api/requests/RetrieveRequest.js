@@ -176,7 +176,7 @@ var RetrieveRequest = Class.extend(ApiRequest, {
                     this.fireCallbacks(null, meldDocument);
                 } else {
                     // NOTE BRN: Looks like this meld doc may have been removed before we could get our hands on it
-                    this.fireCallbacks(new Exception("NotFound"));
+                    this.fireCallbacks(new Exception("NotFound", {}, "Could not find MeldDocument with the MeldDocumentKey '" + returnedMeldDocumentKey.toStringKey() + "'"));
                 }
             } else if (responseType === ApiDefines.Responses.EXCEPTION) {
                 //TODO BRN: Handle common exceptions

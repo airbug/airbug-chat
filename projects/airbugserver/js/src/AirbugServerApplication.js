@@ -93,9 +93,17 @@ var AirbugServerApplication = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     start: function(callback) {
-        this.configurationScan.scanAll();
+        this.configurationScan.scanBugpacks([
+            "airbugserver.AirbugServerConfiguration",
+            "meldbugserver.MeldbugServerConfiguration"
+        ]);
         this.entityManagerScan.scanAll();
-        this.moduleScan.scanAll();
+        this.moduleScan.scanAll({
+            excludes: [
+                "bugmigrate.MigrationInitializer",
+                "bugmigrate.MigrationManager"
+            ]
+        });
         this.iocContext.process();
         this.iocContext.initialize(callback);
     },

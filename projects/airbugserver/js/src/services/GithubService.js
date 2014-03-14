@@ -164,9 +164,9 @@ var GithubService = Class.extend(Obj, {
         if (error) {
             // bad_verification_code - user has
             // incorrect_client_credentials - client_id or client_secret is not set properly.
-            callback(new Exception("GithubError"));
-        } else if (state !== session.getData().githubState) {
-            callback(new Exception("badState"));
+            callback(new Exception("GithubError", {}, "Error occurred on Github"));
+        } else if (state !== session.getData().getGithubState()) {
+            callback(new Exception("badState", {}, "States do not match"));
         } else {
             $series([
                 $task(function(flow) {
@@ -177,11 +177,14 @@ var GithubService = Class.extend(Obj, {
                         });
                     } catch (e) {
                         console.log('GithubService #loginUserWithGithub ERROR calling getAuthToken', e, " trace ", e.trace);
+                        flow.error(e);
                     }
                 }),
                 $task(function(flow) {
                     _this.githubApi.retrieveGithubUser(authToken, function(throwable, githubUserObject) {
-                        githubUser = githubUserObject;
+                        if (!throwable) {
+                            githubUser = githubUserObject;
+                        }
                         flow.complete(throwable);
                     });
                 }),
@@ -191,9 +194,7 @@ var GithubService = Class.extend(Obj, {
                         flow.complete(new Error("NotFound"));
                     } else {
                         _this.githubManager.retrieveGithubByGithubId(githubId, function(throwable, github) {
-                            if (throwable) {
-                                callback(throwable);
-                            } else {
+                            if (!throwable) {
                                 if (github) {
                                     githubEntity = github;
                                     _this.githubManager.populateGithub(github, ["user"], function(throwable) {
@@ -204,6 +205,8 @@ var GithubService = Class.extend(Obj, {
                                 } else {
                                     flow.complete();
                                 }
+                            } else {
+                                flow.error(throwable);
                             }
                         });
                     }
@@ -272,8 +275,8 @@ var GithubService = Class.extend(Obj, {
      */
     ensureGithubStateOnSession: function(session, callback) {
         var sessionData = session.getData();
-        if (!sessionData.githubState) {
-            sessionData.githubState = this.generateGithubState();
+        if (!sessionData.getGithubState()) {
+            sessionData.setGithubState(this.generateGithubState());
         }
         this.sessionManager.updateSession(session, function(throwable, session) {
             callback(throwable);
@@ -286,10 +289,10 @@ var GithubService = Class.extend(Obj, {
      */
     addGithubDataToSession: function(session, githubId, authToken, githubLogin, emails, callback) {
         var sessionData = session.getData();
-        sessionData.githubId = githubId;
-        sessionData.githubAuthToken = authToken;
-        sessionData.githubLogin = githubLogin;
-        sessionData.githubEmails = emails;
+        sessionData.setGithubId(githubId);
+        sessionData.setGithubAuthToken(authToken);
+        sessionData.setGithubLogin(githubLogin);
+        sessionData.setGithubEmails(emails);
         this.sessionManager.updateSession(session, function(throwable, session) {
             callback(throwable);
         });

@@ -6,12 +6,12 @@
 
 //@Require('Class')
 //@Require('Exception')
-//@Require('airbugserver.Session')
-//@Require('airbugserver.User')
 //@Require('airbugserver.UserService')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
+//@Require('bugtrace.BugTrace')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
 
@@ -28,12 +28,12 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
-var Session             = bugpack.require('airbugserver.Session');
-var User                = bugpack.require('airbugserver.User');
 var UserService         = bugpack.require('airbugserver.UserService');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var BugTrace            = bugpack.require('bugtrace.BugTrace');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn             = bugpack.require('bugyarn.BugYarn');
 var Logger              = bugpack.require('loggerbug.Logger');
 
 
@@ -42,52 +42,78 @@ var Logger              = bugpack.require('loggerbug.Logger');
 //-------------------------------------------------------------------------------
 
 var bugmeta             = BugMeta.context();
+var bugyarn             = BugYarn.context();
 var test                = TestAnnotation.test;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
+var $trace              = BugTrace.$trace;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestUserService", function(yarn) {
+    yarn.spin([
+        "setupMockSuccessPushTaskManager",
+        "setupTestLogger",
+        "setupTestSessionManager",
+        "setupTestUserManager",
+        "setupTestSessionService",
+        "setupTestAirbugClientRequestPublisher",
+        "setupTestGithubManager",
+        "setupTestUserPusher",
+        "setupTestBetaKeyService",
+        "setupTestSignupManager",
+        "setupTestAirbugServerConfig"
+    ]);
+    yarn.wind({
+        userService: new UserService(this.logger, this.sessionManager, this.userManager, this.sessionService, this.airbugClientRequestPublisher, this.githubManager, this.userPusher, this.betaKeyService, this.signupManager, this.airbugServerConfig)
+    });
+});
 
 
 // Setup Methods
 //-------------------------------------------------------------------------------
 
-var setupUserServiceWitExistingUsers = function(setupObject) {
-    setupObject.existingUser = new User({
-        id: "testId",
-        email: 'test@example.com',
-        passwordHash: '$2a$10$UCNxW7UFww9z97eijL8QhewpxjqNCjv0CoPO/PKOyjdnMdoRSnlMe'
-    });
-    var dummyUserManagerExistingUser = {
-        retrieveUserByEmail: function(email, callback) {
-            if (email === "test@example.com") {
-                callback(undefined, setupObject.existingUser);
-            } else {
-                callback(undefined, undefined);
-            }
-        }
-    };
-    setupUserService(setupObject, dummyUserManagerExistingUser);
+var setupUserServiceWitExistingUsers = function(yarn, setupObject, callback) {
+    $series([
+        $task(function(flow) {
+            setupUserService(yarn, setupObject, function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.existingUser = setupObject.userManager.generateUser({
+                email: 'test@example.com',
+                passwordHash: '$2a$10$UCNxW7UFww9z97eijL8QhewpxjqNCjv0CoPO/PKOyjdnMdoRSnlMe'
+            });
+            setupObject.userManager.createUser(setupObject.existingUser, function(throwable) {
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(callback);
 };
 
-var setupUserServiceWitNoUsers = function(setupObject) {
-    var dummyUserManager = {
-        retrieveUserByEmail: function(email, callback) {
-            callback();
-        },
-        generateUser: function(userObject) {
-            return new User(userObject);
-        },
-        createUser: function(user, callback) {
-            callback();
-        }
-    };
-    setupUserService(setupObject, dummyUserManager);
+var setupUserServiceWitNoUsers = function(yarn, setupObject, callback) {
+    $series([
+        $task(function(flow) {
+            setupUserService(yarn, setupObject, function(throwable) {
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(callback);
 };
 
-var setupUserService = function(setupObject, userManager) {
-    setupObject.logger              = new Logger();
-    setupObject.testCurrentUser     = new User({});
-    setupObject.testSession         = new Session({});
-    setupObject.dummyUserManager    = userManager;
+var setupUserService = function(yarn, setupObject, callback) {
+    setupObject.marshRegistry.processModule();
+    setupObject.schemaManager.processModule();
+    setupObject.mongoDataStore.processModule();
+    setupObject.testCurrentUser     = yarn.weave("testAnonymousUser");
+    setupObject.testSession         = yarn.weave("testSession");
+    setupObject.testBetaKey         = yarn.weave("testBetaKey", [{
+        betaKey: "GO_AIRBUG!"
+    }]);
     setupObject.testRequestContext  = {
         get: function(key) {
             if (key === "currentUser") {
@@ -101,65 +127,64 @@ var setupUserService = function(setupObject, userManager) {
 
         }
     };
-    setupObject.dummyUserPusher = {
-        unmeldUserWithEntity: function(user, entity, callback) {
-            callback();
-        }
-    }
     setupObject.testMeldDocumentKey         = {};
-    setupObject.sessionService      = {
-        regenerateSession: function(session, callback) {
-            callback(undefined, setupObject.testSession);
-        }
-    };
-    setupObject.dummySessionManager = {
-        updateSession: function(session, callback) {
-            callback();
-        }
-    };
-    setupObject.dummyGithubManager = {
-
-    };
-    setupObject.dummyAirbugClientRequestPublisher = {
-
-    };
-    setupObject.dummyBetaKeyService = {
-        validateBetaKey: function(betaKey, callback) {
-            if(betaKey === "GO_AIRBUG!") {
-                callback(undefined, true);
-            } else {
-                callback(undefined, false);
-            }
-        },
-        validateAndIncrementBaseBetaKey: function(betaKey, callback) {
-            if(betaKey === "GO_AIRBUG!") {
-                callback(undefined, true);
-            } else {
-                callback(undefined, false);
-            }
-        }
-    };
-    setupObject.dummySignupManager = {
-        generateSignup: function(data) {
-            return data;
-        },
-
-        createSignup: function(signup, dependencies, callback) {
-            if(typeof dependencies === "function") {
-                dependencies(undefined);
-            } else {
-                callback(undefined);
-            }
-        }
-    };
-    setupObject.airbugServerConfig = {
-        getAppVersion: function(){
-            return "appVersion";
-        }
-    };
-    //logger, sessionManager, userManager, sessionService, callService, githubManager, userPusher
-    setupObject.testUserService     = new UserService(setupObject.logger, setupObject.dummySessionManager, setupObject.dummyUserManager,
-        setupObject.sessionService, setupObject.dummyAirbugClientRequestPublisher, setupObject.dummyGithubManager, setupObject.dummyUserPusher, setupObject.dummyBetaKeyService, setupObject.dummySignupManager, setupObject.airbugServerConfig);
+    $series([
+        $task(function(flow) {
+            setupObject.blockingRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.subscriberRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisPubSub.initialize(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.pubSub.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.userManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.sessionManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.githubManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.signupManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.betaKeyManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.betaKeyManager.createBetaKey(setupObject.testBetaKey, function(throwable) {
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(callback);
 };
 
 
@@ -176,7 +201,22 @@ var userServiceRegisterUserWitNonExistingEmailTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitNoUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitNoUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -196,24 +236,25 @@ var userServiceRegisterUserWitNonExistingEmailTest = {
                     confirmPassword: "testPassword",
                     betaKey: "GO_AIRBUG!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
-                    console.log("this.testUserServiceNoUsers.registerUser throwable", throwable);
-                    test.assertTrue((throwable === undefined || throwable === null),
-                        "Make sure that throwable was not defined");
-                    test.assertTrue(!!user,
-                        "Assert user was generated");
-                    test.assertEqual(user.getEmail(), "test@example.com",
-                        "Assert that email was set properly");
-                    test.assertTrue(user.getPasswordHash() !== undefined,
-                        "Assert that password hash was generated");
-                    test.assertTrue(user.getPasswordHash().length > 0,
-                        "Assert that the hash was generated");
+                _this.userService.registerUser(_this.testRequestContext, formData, $trace(function(throwable, user) {
+                    if (!throwable) {
+                        test.assertTrue(!!user,
+                            "Assert user was generated");
+                        if (user) {
+                            test.assertEqual(user.getEmail(), "test@example.com",
+                                "Assert that email was set properly");
+                            test.assertTrue(user.getPasswordHash() !== undefined,
+                                "Assert that password hash was generated");
+                            test.assertTrue(user.getPasswordHash().length > 0,
+                                "Assert that the hash was generated");
+                        }
+                    }
                     flow.complete(throwable);
-                });
+                }));
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -230,7 +271,22 @@ var userServiceRegisterUserWithEmptyPasswordTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitNoUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitNoUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -250,7 +306,7 @@ var userServiceRegisterUserWithEmptyPasswordTest = {
                     confirmPassword: "",
                     betaKey: "GO_AIRBUG!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                _this.userService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because no password was specified");
                     test.assertTrue(!!throwable,
@@ -264,7 +320,7 @@ var userServiceRegisterUserWithEmptyPasswordTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -281,7 +337,22 @@ var userServiceRegisterUserWithMismatchingPasswordsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitNoUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitNoUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -301,7 +372,7 @@ var userServiceRegisterUserWithMismatchingPasswordsTest = {
                     confirmPassword: "password2",
                     betaKey: "GO_AIRBUG!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                _this.userService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because passwords don't match");
                     test.assertTrue(!!throwable,
@@ -314,12 +385,12 @@ var userServiceRegisterUserWithMismatchingPasswordsTest = {
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
-                }
-            });
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
@@ -332,7 +403,22 @@ var userServiceRegisterUserWithExistingEmailTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitExistingUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitExistingUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -352,7 +438,7 @@ var userServiceRegisterUserWithExistingEmailTest = {
                     confirmPassword: "testPassword",
                     betaKey: "GO_AIRBUG!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                _this.userService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because it already existed");
                     test.assertTrue(!!throwable,
@@ -364,7 +450,7 @@ var userServiceRegisterUserWithExistingEmailTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -381,7 +467,22 @@ var userServiceLoginWithValidEmailAndPasswordTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitExistingUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitExistingUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -395,7 +496,7 @@ var userServiceLoginWithValidEmailAndPasswordTest = {
                 // test login with a valid user and password
                 var email = "test@example.com";
                 var password = "lastpass";
-                _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.userService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     if (!throwable) {
                         test.assertTrue(throwable === null,
                             "Make sure that throwable was null");
@@ -409,7 +510,7 @@ var userServiceLoginWithValidEmailAndPasswordTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -426,7 +527,22 @@ var userServiceLoginWithValidEmailAndBlankPasswordTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitExistingUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitExistingUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -440,7 +556,7 @@ var userServiceLoginWithValidEmailAndBlankPasswordTest = {
                 // test login with a valid user and blank password
                 var email = "test@example.com";
                 var password = "";
-                _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.userService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(!!throwable,
@@ -454,7 +570,7 @@ var userServiceLoginWithValidEmailAndBlankPasswordTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -472,7 +588,22 @@ var userServiceLoginWithEmailThatDoesNotExistTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitExistingUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitExistingUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -486,7 +617,7 @@ var userServiceLoginWithEmailThatDoesNotExistTest = {
                 // test login with a user that doesn't exist
                 var email = "test@plagzample.com";
                 var password = "what???";
-                _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.userService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(!!throwable,
@@ -499,12 +630,12 @@ var userServiceLoginWithEmailThatDoesNotExistTest = {
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
-                }
-            });
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
@@ -517,7 +648,22 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitExistingUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitExistingUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -531,7 +677,7 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
                 // test login with a valid user but wrong password
                 var email = "test@example.com";
                 var password = "what???";
-                _this.testUserService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
+                _this.userService.loginUserWithEmailAndPassword(_this.testRequestContext, email, password, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because login failed");
                     test.assertTrue(!!throwable,
@@ -545,7 +691,7 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -562,7 +708,22 @@ var userServiceRegisterUserWithValidBetaKeyTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitNoUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitNoUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -581,23 +742,25 @@ var userServiceRegisterUserWithValidBetaKeyTest = {
                     confirmPassword: "testPassword",
                     betaKey: "GO_AIRBUG!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
-                    test.assertTrue(throwable === null,
-                        "Make sure that throwable was not defined");
-                    test.assertTrue(!!user,
-                        "Assert user was generated");
-                    test.assertEqual(user.getBetaKey(), "GO_AIRBUG!",
-                        "Assert that betaKey was set properly");
+                _this.userService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                    if (!throwable) {
+                        test.assertTrue(!!user,
+                            "Assert user was generated");
+                        if (user) {
+                            test.assertEqual(user.getBetaKey(), "GO_AIRBUG!",
+                                "Assert that betaKey was set properly");
+                        }
+                    }
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
-                }
-            });
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
@@ -610,7 +773,22 @@ var userServiceRegisterUserWithInvalidBetaKeyTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupUserServiceWitNoUsers(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserService"
+        ]);
+        $task(function(flow) {
+            setupUserServiceWitNoUsers(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -629,7 +807,7 @@ var userServiceRegisterUserWithInvalidBetaKeyTest = {
                     confirmPassword: "testPassword",
                     betaKey: "GO_GO_GO!"
                 };
-                _this.testUserService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
+                _this.userService.registerUser(_this.testRequestContext, formData, function(throwable, user) {
                     test.assertTrue(user === undefined,
                         "Assert user was not generated because the beta key is invalid");
                     test.assertTrue(!!throwable,
@@ -640,14 +818,18 @@ var userServiceRegisterUserWithInvalidBetaKeyTest = {
                 });
             })
         ]).execute(function(throwable) {
-                if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
-                }
-            });
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
 bugmeta.annotate(userServiceRegisterUserWitNonExistingEmailTest).with(
     test().name("UserService - register user with non-existing email test")
@@ -682,9 +864,9 @@ bugmeta.annotate(userServiceLoginWithValidEmailButWrongPasswordTest).with(
 );
 
 bugmeta.annotate(userServiceRegisterUserWithValidBetaKeyTest).with(
-    test().name("UserService - login with a valid beta key test")
+    test().name("UserService - register user with a valid beta key test")
 );
 
 bugmeta.annotate(userServiceRegisterUserWithInvalidBetaKeyTest).with(
-    test().name("UserService - login with an invalid beta key test")
+    test().name("UserService - register user with an invalid beta key test")
 );

@@ -67,7 +67,7 @@ var RoomService = Class.extend(EntityService, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(roomManager, userManager, roomMemberManager, chatMessageStreamManager, roomPusher, userPusher, roomMemberPusher) {
+    _constructor: function(logger, roomManager, userManager, roomMemberManager, chatMessageStreamManager, roomPusher, userPusher, roomMemberPusher) {
 
         this._super();
 
@@ -78,15 +78,15 @@ var RoomService = Class.extend(EntityService, {
 
         /**
          * @private
-         * @type {Logger}
-         */
-        this.logger                         = null;
-
-        /**
-         * @private
          * @type {ChatMessageStreamManager}
          */
         this.chatMessageStreamManager       = chatMessageStreamManager;
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                         = logger;
 
         /**
          * @private
@@ -123,6 +123,67 @@ var RoomService = Class.extend(EntityService, {
          * @type {UserPusher}
          */
         this.userPusher                     = userPusher;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {ChatMessageStreamManager}
+     */
+    getChatMessageStreamManager: function() {
+        return this.chatMessageStreamManager;
+    },
+
+    /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
+    },
+
+    /**
+     * @return {RoomManager}
+     */
+    getRoomManager: function() {
+        return this.roomManager;
+    },
+
+    /**
+     * @return {RoomMemberManager}
+     */
+    getRoomMemberManager: function() {
+        return this.roomMemberManager;
+    },
+
+    /**
+     * @return {RoomMemberPusher}
+     */
+    getRoomMemberPusher: function() {
+        return this.roomMemberPusher;
+    },
+
+    /**
+     * @return {RoomPusher}
+     */
+    getRoomPusher: function() {
+        return this.roomPusher;
+    },
+
+    /**
+     * @return {UserManager}
+     */
+    getUserManager: function() {
+        return this.userManager;
+    },
+
+    /**
+     * @return {UserPusher}
+     */
+    getUserPusher: function() {
+        return this.userPusher;
     },
 
 
@@ -250,7 +311,7 @@ var RoomService = Class.extend(EntityService, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot create Rooms"));
         }
     },
 
@@ -809,6 +870,7 @@ var RoomService = Class.extend(EntityService, {
 bugmeta.annotate(RoomService).with(
     module("roomService")
         .args([
+            arg().ref("logger"),
             arg().ref("roomManager"),
             arg().ref("userManager"),
             arg().ref("roomMemberManager"),

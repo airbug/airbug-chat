@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserImageAssetStream')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')
@@ -81,19 +82,23 @@ var UserImageAssetStream = Class.extend(Entity, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(UserImageAssetStream).with(
-    entity("UserImageAssetStream").properties([
-        property("createdAt")
-            .type("date"),
-        property("id")
-            .type("string")
-            .primaryId(),
-        property("userImageAssetIdSet")
-            .type("Set")
-            .collectionOf("string")
-            .id(),
-        property("updatedAt")
-            .type("date")
-    ])
+    entity("UserImageAssetStream")
+        .properties([
+            property("createdAt")
+                .type("date")
+                .default(Date.now),
+            property("id")
+                .type("string")
+                .primaryId(),
+            property("userImageAssetIdSet")
+                .type("Set")
+                .collectionOf("string")
+                .id(),
+            property("updatedAt")
+                .type("date")
+                .default(Date.now)
+        ])
+        .store(false)
 );
 
 

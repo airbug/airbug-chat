@@ -21,14 +21,13 @@
 //@Require('express.ExpressServer')
 
 
-//ooops
-
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugpack     = require('bugpack').context();
 var express     = require('express');
+var http        = require('http');
 
 
 //-------------------------------------------------------------------------------
@@ -140,10 +139,18 @@ var UserMediaServerConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Express}
+     */
+    express: function() {
+        return express;
+    },
+
+    /**
+     * @param {Express} express
      * @return {ExpressApp}
      */
-    expressApp: function() {
-        this._expressApp = new ExpressApp();
+    expressApp: function(express) {
+        this._expressApp = new ExpressApp(express);
         return this._expressApp;
     },
 
@@ -152,7 +159,7 @@ var UserMediaServerConfiguration = Class.extend(Obj, {
      * @return {ExpressServer}
      */
     expressServer: function(expressApp) {
-        this._expressServer = new ExpressServer(expressApp);
+        this._expressServer = new ExpressServer(http, expressApp);
         return this._expressServer;
     }
 });
@@ -171,6 +178,7 @@ Class.implement(UserMediaServerConfiguration, IConfiguration);
 
 bugmeta.annotate(UserMediaServerConfiguration).with(
     configuration("userMediaServerConfiguration").modules([
+        module("express"),
         module("expressApp"),
         module("expressServer")
             .args([

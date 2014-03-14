@@ -493,12 +493,12 @@ var UserService = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 var sessionData = session.getData();
-                if (sessionData && sessionData.githubAuthToken) {
+                if (sessionData && sessionData.getGithubAuthToken()) {
                     github = new Github({
                         userId: user.id,
-                        githubAuthCode: sessionData.githubAuthToken,
-                        githubId: sessionData.githubId,
-                        githubLogin: sessionData.githubLogin
+                        githubAuthCode: sessionData.getGithubAuthToken(),
+                        githubId: sessionData.getGithubId(),
+                        githubLogin: sessionData.getGithubLogin()
                     });
                     github.setUser(user);
                     _this.githubManager.createGithub(github, function(throwable) {
@@ -511,10 +511,10 @@ var UserService = Class.extend(Obj, {
             $task(function(flow) {
                 if (github) {
                     var sessionData = session.getData();
-                    delete sessionData.githubId;
-                    delete sessionData.githubAuthToken;
-                    delete sessionData.githubLogin;
-                    delete sessionData.githubState;
+                    sessionData.setGithubId(null);
+                    sessionData.setGithubAuthToken(null);
+                    sessionData.setGithubLogin(null);
+                    sessionData.setGithubState(null);
                     _this.sessionManager.updateSession(session, function(throwable, session) {
                         flow.complete(throwable);
                     });

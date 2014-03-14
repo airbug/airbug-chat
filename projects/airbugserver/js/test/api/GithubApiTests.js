@@ -4,12 +4,13 @@
 
 //@TestFile
 
+//@Require('Class')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('airbugserver.GithubApi')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.MongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -23,12 +24,13 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class                   = bugpack.require('Class');
 var TypeUtil                = bugpack.require('TypeUtil');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var GithubApi               = bugpack.require('airbugserver.GithubApi');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -36,12 +38,65 @@ var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestGithubApi", function(yarn) {
+    yarn.spin([
+        "setupTestAirbugServerConfig"
+    ]);
+    var dummyHttps = {};
+    var dummyGithub = {};
+    yarn.wind({
+        githubApi: new GithubApi(dummyHttps, dummyGithub, this.airbugServerConfig)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var githubApiInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestAirbugServerConfig"
+        ]);
+        this.dummyHttps         = {};
+        this.dummyGithub        = {};
+        this.testGithubApi      = new GithubApi(this.dummyHttps, this.dummyGithub, this.airbugServerConfig);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testGithubApi, GithubApi),
+            "Assert instance of GithubApi");
+        test.assertEqual(this.testGithubApi.getGithub(), this.dummyGithub,
+            "Assert .github was set correctly");
+        test.assertEqual(this.testGithubApi.getHttps(), this.dummyHttps,
+            "Assert .https was set correctly");
+        test.assertEqual(this.testGithubApi.getAirbugServerConfig(), this.airbugServerConfig,
+            "Assert .airbugServerConfig was set correctly");
+    }
+};
+bugmeta.annotate(githubApiInstantiationTest).with(
+    test().name("GithubApi - instantiation test")
+);
+
 
 var githubApiGetAuthTokenTest = {
 
@@ -51,7 +106,7 @@ var githubApiGetAuthTokenTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
 
-    setup: function() {
+    setup: function(test) {
         var _this = this;
         this.testAuthToken = 'cfb73f18e5fa8790fded4f073a1f640eeee7e351';
         this.responseEventHandlers = {};
@@ -91,6 +146,7 @@ var githubApiGetAuthTokenTest = {
             }
         };
         this.githubApi = new GithubApi(this.testHttps, {}, this.testAirbugServerConfig);
+        test.completeSetup();
     },
 
     //-------------------------------------------------------------------------------
@@ -110,7 +166,7 @@ var githubApiGetAuthTokenTest = {
             if (throwable) {
                 test.error();
             } else {
-                test.complete();
+                test.completeTest();
             }
         });
     }
@@ -128,7 +184,7 @@ var githubApiRetrieveGithubUserTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
 
-    setup: function() {
+    setup: function(test) {
         var _this = this;
         this.testGithubUser = {
             login: 'dicegame',
@@ -157,6 +213,7 @@ var githubApiRetrieveGithubUserTest = {
             }
         };
         this.githubApi = new GithubApi({}, this.testGithub, this.testAirbugServerConfig);
+        test.completeSetup();
     },
 
     //-------------------------------------------------------------------------------
@@ -174,7 +231,7 @@ var githubApiRetrieveGithubUserTest = {
             if (throwable) {
                 test.error();
             } else {
-                test.complete();
+                test.completeTest();
             }
         });
     }

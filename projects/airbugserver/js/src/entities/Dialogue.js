@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('Dialogue')
+//@Autoload
 
 //@Require('Class')
 //@Require('Pair')
@@ -161,25 +162,33 @@ bugmeta.annotate(Dialogue).with(
         property("conversation")
             .type("Conversation")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("conversationId")
             .type("string")
+            .require(true)
+            .index(true)
             .id(),
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("id")
             .type("string")
             .primaryId(),
         property("updatedAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("userIdPair")
             .type("Pair")
+            .require(true)
+            .index(true)
             .collectionOf("string")
             .id(),
         property("userPair")
             .type("Pair")
             .populates(true)
-            .stored(false)
+            .store(false)
     ])
 );
 

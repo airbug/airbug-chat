@@ -1,5 +1,6 @@
 {
     "appVersion": "{{BUILD_VERSION}}",
+    "cookieDomain": "",
     "cookieSecret": "some secret, seriously don't tell",
     "cookieMaxAge": 86400000,
     "enableTracking": true,
@@ -14,7 +15,7 @@
         "host": "127.0.0.1",
         "port": 6379
     },
-    "sessionKey": "'airbug.sid'",
+    "sessionKey": "airbug.sid",
     "sslEnabled": false,
     "staticUrl": "/static",
     "stickyStaticUrl": "/static"

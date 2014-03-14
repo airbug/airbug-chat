@@ -5,10 +5,12 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessage')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.IndexAnnotation')
 //@Require('bugentity.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 
@@ -27,6 +29,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
+var IndexAnnotation         = bugpack.require('bugentity.IndexAnnotation');
 var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
@@ -37,6 +40,7 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 var bugmeta                 = BugMeta.context();
 var entity                  = EntityAnnotation.entity;
+var index                   = IndexAnnotation.index;
 var property                = PropertyAnnotation.property;
 
 
@@ -44,6 +48,10 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var ChatMessage = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
@@ -81,84 +89,84 @@ var ChatMessage = Class.extend(Entity, {
      * @return {string}
      */
     getBody: function() {
-        return this.deltaDocument.getData().body;
+        return this.getEntityData().body;
     },
 
     /**
      * @param {string} body
      */
     setBody: function(body) {
-        this.deltaDocument.getData().body = body;
+        this.getEntityData().body = body;
     },
 
     /**
      * @return {string}
      */
     getConversationId: function() {
-        return this.deltaDocument.getData().conversationId;
+        return this.getEntityData().conversationId;
     },
 
     /**
      * @param {string} conversationId
      */
     setConversationId: function(conversationId) {
-        this.deltaDocument.getData().conversationId = conversationId;
+        this.getEntityData().conversationId = conversationId;
     },
 
     /**
      * @return {number}
      */
     getIndex: function() {
-        return this.deltaDocument.getData().index;
+        return this.getEntityData().index;
     },
 
     /**
      * @param {number} index
      */
     setIndex: function(index) {
-        this.deltaDocument.getData().index = index;
+        this.getEntityData().index = index;
     },
 
     /**
      * @return {string}
      */
     getSenderUserId: function() {
-        return this.deltaDocument.getData().senderUserId;
+        return this.getEntityData().senderUserId;
     },
 
     /**
      * @param {string} senderUserId
      */
     setSenderUserId: function(senderUserId) {
-        this.deltaDocument.getData().senderUserId = senderUserId;
+        this.getEntityData().senderUserId = senderUserId;
     },
 
     /**
      * @return {Date}
      */
     getSentAt: function() {
-        return this.deltaDocument.getData().sentAt;
+        return this.getEntityData().sentAt;
     },
 
     /**
      * @param {Date} sentAt
      */
     setSentAt: function(sentAt) {
-        this.deltaDocument.getData().sentAt = sentAt;
+        this.getEntityData().sentAt = sentAt;
     },
 
     /**
      * @return {string}
      */
     getTryUuid: function() {
-        return this.deltaDocument.getData().tryUuid;
+        return this.getEntityData().tryUuid;
     },
 
     /**
      * @param {string} tryUuid
      */
     setTryUuid: function(tryUuid) {
-        this.deltaDocument.getData().tryUuid = tryUuid;
+        this.getEntityData().tryUuid = tryUuid;
     },
 
 
@@ -211,42 +219,60 @@ var ChatMessage = Class.extend(Entity, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(ChatMessage).with(
-    entity("ChatMessage").properties([
-        property("body")
-            .type("string"),
-        property("code")
-            .type("string"),
-        property("codeLanguage")
-            .type("string"),
-        property("conversationId")
-            .type("string")
-            .id(),
-        property("conversation")
-            .type("Conversation")
-            .populates(true),
-        property("createdAt")
-            .type("date"),
-        property("id")
-            .type("string")
-            .primaryId(),
-        property("index")
-            .type("number"),
-        property("senderUserId")
-            .type("string")
-            .id(),
-        property("senderUser")
-            .type("User")
-            .populates(true)
-            .stored(false),
-        property("sentAt")
-            .type("date"),
-        property("tryUuid")
-            .type("string"),
-        property("type")
-            .type("string"),
-        property("updatedAt")
-            .type("date")
-    ])
+    entity("ChatMessage")
+        .properties([
+            property("body")
+                .type("mixed"),
+            property("conversationId")
+                .type("string")
+                .index(true)
+                .require(true)
+                .id(),
+            property("conversation")
+                .type("Conversation")
+                .populates(true)
+                .store(false),
+            property("createdAt")
+                .type("date")
+                .require(true)
+                .default(Date.now),
+            property("id")
+                .type("string")
+                .primaryId(),
+            property("index")
+                .type("number")
+                .index(true)
+                .require(true)
+                .default(-1),
+            property("senderUserId")
+                .type("string")
+                .index(true)
+                .require(true)
+                .id(),
+            property("senderUser")
+                .type("User")
+                .populates(true)
+                .store(false),
+            property("sentAt")
+                .type("date")
+                .index(true)
+                .require(true),
+            property("tryUuid")
+                .type("string")
+                .index(true)
+                .require(true),
+            property("type")
+                .type("string")
+                .require(true),
+            property("updatedAt")
+                .type("date")
+                .require(true)
+                .default(Date.now)
+        ])
+        .indexes([
+            index({conversationId: 1, index: 1})
+                .unique(true)
+        ])
 );
 
 

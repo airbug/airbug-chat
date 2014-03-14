@@ -126,6 +126,7 @@ buildProperties({
             "./projects/airbugserver/js/migrations",
             "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
+            "../bugjs/projects/bugcall/bugjars/publisher/js/src",
             "../bugjs/projects/bugcall/bugjars/server/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
@@ -135,6 +136,7 @@ buildProperties({
             "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmeta/js/src",
+            "../bugjs/projects/bugmigrate/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtrace/js/src",
@@ -152,7 +154,8 @@ buildProperties({
             "../meldbug/projects/meldbugserver/js/src"
         ],
         scriptPaths: [
-            "./projects/airbugserver/js/scripts"
+            "./projects/airbugserver/js/scripts",
+            "../bugjs/projects/bugmigrate/js/scripts"
         ],
         resourcePaths: [
             "./projects/airbugclient/resources",
@@ -170,6 +173,7 @@ buildProperties({
             }
         },
         sourcePaths: [
+            "../bugjs/projects/bugyarn/js/src",
             "../bugunit/projects/bugdouble/js/src",
             "../bugunit/projects/bugunit/js/src"
         ],
@@ -177,8 +181,11 @@ buildProperties({
             "../bugunit/projects/bugunit/js/scripts"
         ],
         testPaths: [
+            "./projects/airbug/js/test",
             "./projects/airbugserver/js/test",
+            "../bugjs/projects/aws/js/test",
             "../bugjs/projects/bugcall/bugjars/core/js/test",
+            "../bugjs/projects/bugcall/bugjars/publisher/js/test",
             "../bugjs/projects/bugcall/bugjars/server/js/test",
             "../bugjs/projects/bugdelta/js/test",
             "../bugjs/projects/bugentity/js/test",
@@ -191,10 +198,15 @@ buildProperties({
             "../bugjs/projects/bugsub/js/test",
             "../bugjs/projects/bugtrace/js/test",
             "../bugjs/projects/configbug/js/test",
+            "../bugjs/projects/express/js/test",
             "../bugjs/projects/handshaker/js/test",
+            "../bugjs/projects/loggerbug/js/test",
             "../bugjs/projects/mongo/js/test",
+            "../bugjs/projects/redis/js/test",
+            "../bugjs/projects/socketio/bugjars/server/js/test",
             "../bugjs/projects/socketio/bugjars/socket/js/test",
             "../meldbug/projects/meldbug/bugjars/core/js/test",
+            "../meldbug/projects/meldbug/bugjars/server/js/test",
             "../meldbug/projects/meldbugserver/js/test"
         ]
     },
@@ -226,9 +238,6 @@ buildTarget('clean').buildFlow(
 
 // Local Flow
 //-------------------------------------------------------------------------------
-
-//TODO BRN: Local development of node js and client side projects should "create" the packages and package them up but
-// the sources should be symlinked to instead
 
 buildTarget('local').buildFlow(
     series([
@@ -298,6 +307,7 @@ buildTarget('local').buildFlow(
                     );
                     task.updateProperties({
                         modulePath: packedNodePackage.getFilePath()
+                        //checkCoverage: true
                     });
                 }
             }),
@@ -386,7 +396,8 @@ buildTarget('prod').buildFlow(
                             buildProject.getProperty("unitTest.packageJson.version")
                         );
                         task.updateProperties({
-                            modulePath: packedNodePackage.getFilePath()
+                            modulePath: packedNodePackage.getFilePath(),
+                            checkCoverage: true
                         });
                     }
                 })

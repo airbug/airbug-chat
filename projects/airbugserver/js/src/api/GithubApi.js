@@ -45,18 +45,22 @@ var $task                       = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @extends {Obj}
  */
 var GithubApi = Class.extend(Obj, {
 
-    _constructor: function(https, github, airbugServerConfig) {
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
 
-        this.https = https;
-        this.github = github;
+    _constructor: function(https, github, airbugServerConfig) {
+
+        this._super();
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
@@ -64,14 +68,48 @@ var GithubApi = Class.extend(Obj, {
          */
         this.airbugServerConfig = airbugServerConfig;
 
-        if (! airbugServerConfig) {
-            console.log("ERROR: GithubApi#constructor airbugServerConfig was not defined! ",
-                airbugServerConfig, " https ", https, " github ", github);
-        }
+        /**
+         * @private
+         * @type {*}
+         */
+        this.github             = github;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.https              = https;
     },
 
+
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {AirbugServerConfig}
+     */
+    getAirbugServerConfig: function() {
+        return this.airbugServerConfig;
+    },
+
+    /**
+     * @return {*}
+     */
+    getGithub: function() {
+        return this.github;
+    },
+
+    /**
+     * @return {*}
+     */
+    getHttps: function() {
+        return this.https;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**

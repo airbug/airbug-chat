@@ -5,42 +5,103 @@
 //@Package('airbugserver')
 
 //@Export('AddsSignupsForExistingUsersMigration')
+//@Autoload
 
 //@Require('Class')
-//@Require('airbugserver.BetaKeyModel')
-//@Require('airbugserver.SignupModel')
-//@Require('airbugserver.UserModel')
-//@Require('airbugserver.Migration')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
+//@Require('bugmigrate.Migration')
+//@Require('bugmigrate.MigrationAnnotation')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-var mongoose    = require("mongoose");
+var bugpack                         = require('bugpack').context();
+
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var BetaKeyModel            = bugpack.require('airbugserver.BetaKeyModel');
-var SignupModel             = bugpack.require('airbugserver.SignupModel');
-var UserModel               = bugpack.require("airbugserver.UserModel");
-var Migration               = bugpack.require('airbugserver.Migration');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var Class                           = bugpack.require('Class');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var Migration                       = bugpack.require('bugmigrate.Migration');
+var MigrationAnnotation             = bugpack.require('bugmigrate.MigrationAnnotation');
 
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
 
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
+var migration                       = MigrationAnnotation.migration;
+var property                        = PropertyAnnotation.property;
+var $forEachParallel                = BugFlow.$forEachParallel;
+var $forEachSeries                  = BugFlow.$forEachSeries;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
 
 var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
-    name: "AddsSignupsForExistingUsersMigration",
-    app: "airbug",
-    appVersion: "0.0.17",
-    version: "0.0.3",
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {string} appName
+     * @param {string} appVersion
+     * @param {string} name
+     * @param {string} version
+     */
+    _constructor: function(appName, appVersion, name, version) {
+
+        this._super(appName, appVersion, name, version);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+
+        /**
+         * @private
+         * @type {MongoDataStore}
+         */
+        this.mongoDataStore         = null
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Migration Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
     up: function(callback) {
+
+        var SignupModel         = this.mongoDataStore.getMongooseModelForName("Signup");
+        var UserModel           = this.mongoDataStore.getMongooseModelForName("User");
+
         var users = null;
         var signups = [];
         $series([
@@ -71,6 +132,25 @@ var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
 
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AddsSignupsForExistingUsersMigration).with(
+    migration()
+        .appName("airbug")
+        .appVersion("0.0.17")
+        .name("AddsSignupsForExistingUsersMigration")
+        .version("0.0.3"),
+    autowired()
+        .properties([
+            property("logger").ref("logger"),
+            property("mongoDataStore").ref("mongoDataStore")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

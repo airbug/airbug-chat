@@ -7,13 +7,12 @@
 //@Export('ChatMessageManager')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('List')
 //@Require('Set')
-//@Require('Throwable')
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessage')
-//@Require('airbugserver.ChatMessageModel')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugflow.BugFlow')
@@ -33,13 +32,12 @@ var bugpack                     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                         = bugpack.require('Bug');
 var Class                       = bugpack.require('Class');
 var List                        = bugpack.require('List');
 var Set                         = bugpack.require('Set');
-var Throwable                   = bugpack.require('Throwable');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
-var ChatMessageModel            = bugpack.require('airbugserver.ChatMessageModel');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
@@ -64,22 +62,46 @@ var $task                       = BugFlow.$task;
 
 var ChatMessageManager = Class.extend(EntityManager, {
 
-    _constructor: function(entityManagerStore, schemaManager, mongoDataStore, chatMessageCounterManager) {
-        this._super(entityManagerStore, schemaManager, mongoDataStore);
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(entityManagerStore, schemaManager, mongoDataStore, entityDeltaBuilder, chatMessageCounterManager) {
+
+        this._super(entityManagerStore, schemaManager, mongoDataStore, entityDeltaBuilder);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
 
         /**
+         * @private
          * @type {ChatMessageCounterManager}
          */
         this.chatMessageCounterManager = chatMessageCounterManager;
     },
 
+
     //-------------------------------------------------------------------------------
-    // MongoManager
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {ChatMessageCounterManager}
+     */
+    getChatMessageCounterManager: function() {
+        return this.chatMessageCounterManager;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {ChatMessage} chatMessage
-     * @param {(Array.<string> | function(Throwable, ChatMessage))} dependencies
+     * @param {(Array.<string> | function(Throwable, ChatMessage=))} dependencies
      * @param {function(Throwable, ChatMessage=)=} callback
      */
     createChatMessage: function(chatMessage, dependencies, callback) {
@@ -89,18 +111,34 @@ var ChatMessageManager = Class.extend(EntityManager, {
             dependencies    = [];
         }
         var options         = {};
-        ChatMessageModel.getNextIndexByConversationId(chatMessage.getConversationId(), function(error, index){
-            if(!error) {
-                if(index){
-                    chatMessage.setIndex(index);
-                    _this.create(chatMessage, options, dependencies, callback);
-                } else {
-                    callback(new Throwable("Error", {}, "Next index for chatMessage could not be retrieved"));
-                }
+        var index           = null;
+        $series([
+            $task(function(flow) {
+                _this.chatMessageCounterManager.getNextIndexByConversationId(chatMessage.getConversationId(), function(throwable, returnedIndex) {
+                    if (!throwable) {
+                        if (returnedIndex) {
+                            index = returnedIndex;
+                            flow.complete();
+                        } else {
+                            flow.error(new Bug("Error", {}, "Next index for chatMessage could not be retrieved"));
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                chatMessage.setIndex(index);
+                _this.create(chatMessage, options, dependencies, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, chatMessage);
             } else {
-                callback(error);
+                callback(throwable);
             }
-
         });
     },
 
@@ -177,7 +215,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
      */
     retrieveChatMessageBySenderUserIdAndConversationIdAndTryUuid: function(senderUserId, conversationId, tryUuid, callback) {
         var _this = this;
-        this.dataStore
+        this.getDataStore()
             .where("senderUserId", senderUserId)
             .where("conversationId", conversationId)
             .where("tryUuid", tryUuid)
@@ -207,9 +245,6 @@ var ChatMessageManager = Class.extend(EntityManager, {
      */
     retrieveChatMessageBatchByConversationId: function(conversationId, index, batchSize, order, callback) {
         var _this = this;
-        console.log("ChatMessageManager#retrieveChatMessageBatchByConversationId")
-        console.log("conversationId:", conversationId, "index:", index, "batchSize:", batchSize, "order", order);
-
         //validate arguments
         if(['asc', 'desc', 'ascending', 'descending', 1, -1].indexOf(order) === -1){
             callback(new Throwable("Incorrect Type", {}, "order must be one of the following 'asc', 'desc', 'ascending', 'descending', 1, or -1"));
@@ -230,10 +265,7 @@ var ChatMessageManager = Class.extend(EntityManager, {
                     });
                 }),
                 $task(function(flow){
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    console.log("****************************************************************");
                     query.lean(true).sort({sentAt: order}).exec(function(throwable, dbObjects){
-                        console.log("dbObjects:", dbObjects);
                         if (!throwable) {
                             dbObjects.forEach(function(dbObject) {
                                 var chatMessage = _this.convertDbObjectToEntity(dbObject);
@@ -349,6 +381,7 @@ bugmeta.annotate(ChatMessageManager).with(
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
             arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder"),
             arg().ref("chatMessageCounterManager")
         ])
 );

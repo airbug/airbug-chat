@@ -63,8 +63,8 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {User} user
-     * @param {(Array.<string> | function(Throwable, User))} dependencies
-     * @param {function(Throwable, User)=} callback
+     * @param {(Array.<string> | function(Throwable, User=))} dependencies
+     * @param {function(Throwable, User=)=} callback
      */
     createUser: function(user, dependencies, callback) {
         if (TypeUtil.isFunction(dependencies)) {
@@ -85,15 +85,15 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
-     *      agreedToTermsDate: Date,
+     *      agreedToTermsDate: Date=,
      *      anonymous: boolean,
-     *      createdAt: Date,
-     *      email: string,
-     *      firstName: string,
-     *      lastName: string,
-     *      passwordHash: string,
-     *      roomIdSet: (Array.<string> | Set.<string>),
-     *      updatedAt: Date
+     *      createdAt: Date=,
+     *      email: string=,
+     *      firstName: string=,
+     *      lastName: string=,
+     *      passwordHash: string=,
+     *      roomIdSet: (Array.<string> | Set.<string>)=,
+     *      updatedAt: Date=
      * }} data
      * @return {User}
      */
@@ -162,7 +162,7 @@ var UserManager = Class.extend(EntityManager, {
 
     /**
      * @param {User} user
-     * @param {function(Throwable, User)} callback
+     * @param {function(Throwable, User=)} callback
      */
     updateUser: function(user, callback) {
         this.update(user, callback);
@@ -180,7 +180,8 @@ bugmeta.annotate(UserManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

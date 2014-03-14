@@ -4,6 +4,7 @@
 
 //@TestFile
 
+//@Require('Class')
 //@Require('Set')
 //@Require('airbugserver.Asset')
 //@Require('airbugserver.AssetManager')
@@ -16,7 +17,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.DummyMongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
 var Asset                   = bugpack.require('airbugserver.Asset');
 var AssetManager            = bugpack.require('airbugserver.AssetManager');
@@ -42,7 +44,7 @@ var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -50,9 +52,30 @@ var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestUserAssetManager", function(yarn) {
+    yarn.spin([
+        "setupTestAssetManager",
+        "setupTestUserManager",
+        "setupTestEntityManagerStore",
+        "setupTestSchemaManager",
+        "setupDummyMongoDataStore",
+        "setupTestEntityDeltaBuilder"
+    ]);
+    yarn.wind({
+        userAssetManager: new UserAssetManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder)
+    });
+    this.userAssetManager.setEntityType("UserAsset");
+});
 
 
 //-------------------------------------------------------------------------------
@@ -62,24 +85,15 @@ var $task                   = BugFlow.$task;
 var setupUserAssetManager = function(setupObject) {
     setupObject.testUser               = new User({});
     setupObject.testAsset              = new Asset({});
-    setupObject.entityManagerStore     = new EntityManagerStore();
-    setupObject.mongoDataStore         = new DummyMongoDataStore();
-    setupObject.schemaManager          = new SchemaManager();
-    setupObject.assetManager           = new AssetManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.assetManager.setEntityType("Asset");
-    setupObject.userManager            = new UserManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.userManager.setEntityType("User");
-    setupObject.userAssetManager       = new UserAssetManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.userAssetManager.setEntityType("UserAsset");
 };
 
-var initializeManagers = function(setupObject, test) {
+var initializeManagers = function(setupObject, callback) {
     var _this = setupObject;
     $series([
         $task(function(flow) {
-            _this.schemaManager.initializeModule(function(throwable) {
-                flow.complete(throwable);
-            });
+            _this.schemaManager.processModule();
+            _this.mongoDataStore.processModule();
+            flow.complete();
         }),
         $task(function(flow) {
             _this.userAssetManager.initializeModule(function(throwable) {
@@ -96,14 +110,10 @@ var initializeManagers = function(setupObject, test) {
                 flow.complete(throwable);
             });
         })
-    ]).execute(function(throwable) {
-        if (throwable) {
-            test.error(throwable);
-        }
-    });
+    ]).execute(callback);
 };
 
-var createEntities = function(setupObject, test) {
+var createEntities = function(setupObject, callback) {
     var _this = setupObject;
     $series([
         $task(function(flow) {
@@ -133,17 +143,49 @@ var createEntities = function(setupObject, test) {
             });
             flow.complete();
         })
-    ]).execute(function(throwable) {
-        if (throwable) {
-            test.error(throwable);
-        }
-    });
+    ]).execute(callback);
 };
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+
+var userAssetManagerInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestEntityManagerStore",
+            "setupTestSchemaManager",
+            "setupDummyMongoDataStore",
+            "setupTestEntityDeltaBuilder"
+        ]);
+        this.testUserAssetManager   = new UserAssetManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testUserAssetManager, UserAssetManager),
+            "Assert instance of UserAssetManager");
+        test.assertEqual(this.testUserAssetManager.getEntityManagerStore(), this.entityManagerStore,
+            "Assert .entityManagerStore was set correctly");
+        test.assertEqual(this.testUserAssetManager.getEntityDataStore(), this.mongoDataStore,
+            "Assert .entityDataStore was set correctly");
+        test.assertEqual(this.testUserAssetManager.getSchemaManager(), this.schemaManager,
+            "Assert .schemaManager was set correctly");
+        test.assertEqual(this.testUserAssetManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
+            "Assert .entityDeltaBuilder was set correctly");
+    }
+};
 
 var userAssetManagerCreateUserAssetTest = {
 
@@ -154,7 +196,30 @@ var userAssetManagerCreateUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserAssetManager"
+        ]);
         setupUserAssetManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                createEntities(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        })
     },
 
 
@@ -164,8 +229,6 @@ var userAssetManagerCreateUserAssetTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
         $series([
             $task(function(flow) {
                 _this.userAssetManager.createUserAsset(_this.testUserAsset, function(throwable, userAsset) {
@@ -181,7 +244,7 @@ var userAssetManagerCreateUserAssetTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -198,7 +261,30 @@ var userAssetManagerDeleteUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserAssetManager"
+        ]);
         setupUserAssetManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                createEntities(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        })
     },
 
 
@@ -208,56 +294,49 @@ var userAssetManagerDeleteUserAssetTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
-    }
-};
-
-var userAssetManagerGenerateUserAssetTest = {
-
-    async: true,
-
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-        setupUserAssetManager(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
-    }
-};
-
-var userAssetManagerPopulateUserAssetTest = {
-
-    async: true,
-
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-        setupUserAssetManager(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
+        $series([
+            $task(function(flow) {
+                _this.userAssetManager.createUserAsset(_this.testUserAsset, function(throwable, userAsset) {
+                    if (!throwable) {
+                        test.assertEqual(_this.testUserAsset, userAsset,
+                            "Assert userAsset returned is the same userAsset sent in");
+                        var id = userAsset.getId();
+                        test.assertTrue(!!id,
+                            "Assert create UserAsset has an id. id = " + id);
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userAssetManager.retrieveUserAsset(_this.testUserAsset.getId(), function(throwable, returnedUserAsset) {
+                    if (!throwable) {
+                        test.assertEqual(_this.testUserAsset.getId(), returnedUserAsset.getId(),
+                            "Assert userAsset returned is the same userAsset sent in");
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userAssetManager.deleteUserAsset(_this.testUserAsset, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userAssetManager.retrieveUserAsset(_this.testUserAsset.getId(), function(throwable, returnedUserAsset) {
+                    if (!throwable) {
+                        test.assertEqual(returnedUserAsset, null,
+                            "Assert userAsset no longer exists");
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
@@ -270,7 +349,30 @@ var userAssetManagerRetrieveUserAssetTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestUserAssetManager"
+        ]);
         setupUserAssetManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                createEntities(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -280,83 +382,52 @@ var userAssetManagerRetrieveUserAssetTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
+        $series([
+            $task(function(flow) {
+                _this.userAssetManager.createUserAsset(_this.testUserAsset, function(throwable, userAsset) {
+                    if (!throwable) {
+                        test.assertEqual(_this.testUserAsset, userAsset,
+                            "Assert userAsset returned is the same userAsset sent in");
+                        var id = userAsset.getId();
+                        test.assertTrue(!!id,
+                            "Assert create UserAsset has an id. id = " + id);
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userAssetManager.retrieveUserAsset(_this.testUserAsset.getId(), function(throwable, returnedUserAsset) {
+                    if (!throwable) {
+                        test.assertEqual(_this.testUserAsset.getId(), returnedUserAsset.getId(),
+                            "Assert userAsset returned is the same userAsset sent in");
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
-var userAssetManagerRetrieveUserAssetsTest = {
 
-    async: true,
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
 
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-        setupUserAssetManager(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
-    }
-};
-
-var userAssetManagerRetrieveUserAssetsByUserIdTest = {
-
-    async: true,
-
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-        setupUserAssetManager(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
-    }
-};
-
-var userAssetManagerUpdateUserAssetTest = {
-
-    async: true,
-
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function(test) {
-        setupUserAssetManager(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        var _this = this;
-        initializeManagers(this, test);
-        createEntities(this, test);
-    }
-};
-
+bugmeta.annotate(userAssetManagerInstantiationTest).with(
+    test().name("UserAssetManager - instantiation test")
+);
 bugmeta.annotate(userAssetManagerCreateUserAssetTest).with(
     test().name("UserAssetManager - #createUserAsset Test")
+);
+bugmeta.annotate(userAssetManagerDeleteUserAssetTest).with(
+    test().name("UserAssetManager - #deleteUserAsset Test")
+);
+bugmeta.annotate(userAssetManagerRetrieveUserAssetTest).with(
+    test().name("UserAssetManager - #retrieveUserAsset Test")
 );

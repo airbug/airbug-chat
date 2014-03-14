@@ -5,33 +5,98 @@
 //@Package('airbugserver')
 
 //@Export('AddsBetaKeysMigration')
+//@Autoload
 
 //@Require('Class')
-//@Require('airbugserver.BetaKeyModel')
-//@Require('airbugserver.Migration')
+//@Require('bugflow.BugFlow')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
+//@Require('bugmigrate.Migration')
+//@Require('bugmigrate.MigrationAnnotation')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugpack     = require('bugpack').context();
-var mongoose    = require("mongoose");
+
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var BetaKeyModel            = bugpack.require("airbugserver.BetaKeyModel");
-var Migration               = bugpack.require('airbugserver.Migration');
+var Class                           = bugpack.require('Class');
+var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var Migration                       = bugpack.require('bugmigrate.Migration');
+var MigrationAnnotation             = bugpack.require('bugmigrate.MigrationAnnotation');
 
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var autowired                       = AutowiredAnnotation.autowired;
+var bugmeta                         = BugMeta.context();
+var migration                       = MigrationAnnotation.migration;
+var property                        = PropertyAnnotation.property;
+var $forEachParallel                = BugFlow.$forEachParallel;
+var $forEachSeries                  = BugFlow.$forEachSeries;
+var $series                         = BugFlow.$series;
+var $task                           = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// Declare Class
+//-------------------------------------------------------------------------------
 
 var AddsBetaKeysMigration = Class.extend(Migration, {
-    name: "AddsBetaKeysMigration",
-    app: "airbug",
-    appVersion: "0.0.17",
-    version: "0.0.1",
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructs
+     * @param {string} appName
+     * @param {string} appVersion
+     * @param {string} name
+     * @param {string} version
+     */
+    _constructor: function(appName, appVersion, name, version) {
+
+        this._super(appName, appVersion, name, version);
+
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+
+        /**
+         * @private
+         * @type {MongoDataStore}
+         */
+        this.mongoDataStore         = null
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Migration Methods
+    //-------------------------------------------------------------------------------
+
     up: function(callback) {
+        var BetaKeyModel    = this.mongoDataStore.getMongooseModelForName("BetaKey");
+
         var baseBetaKeys = [
             {betaKey: "GO_AIRBUG!",                                                     baseKey: "GO_AIRBUG!",                                                  isBaseKey: true, hasCap: false},
             {betaKey: "GO_TEAM_AIRBUG!",                                                baseKey: "GO_TEAM_AIRBUG!",                                                  isBaseKey: true, hasCap: false},
@@ -59,11 +124,32 @@ var AddsBetaKeysMigration = Class.extend(Migration, {
             {betaKey: "The Force will be with you...always.",                           baseKey: "The Force will be with you...always."}
         ];
 
-        BetaKeyModel.create(baseBetaKeys, function(error){
-            callback(error);
-        });
+        $forEachParallel(baseBetaKeys, function(flow, baseBetaKey) {
+            BetaKeyModel.update(baseBetaKey, {}, {upsert: true}, function(error){
+                flow.complete(error);
+            });
+        }).execute(callback);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(AddsBetaKeysMigration).with(
+    migration()
+        .appName("airbug")
+        .appVersion("0.0.17")
+        .name("AddsBetaKeysMigration")
+        .version("0.0.1"),
+    autowired()
+        .properties([
+            property("logger").ref("logger"),
+            property("mongoDataStore").ref("mongoDataStore")
+        ])
+);
+
 
 //-------------------------------------------------------------------------------
 // Exports

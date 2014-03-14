@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('ChatMessageStream')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')
@@ -49,30 +50,15 @@ var property                = PropertyAnnotation.property;
 var ChatMessageStream = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(data) {
-
-        this._super(data);
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-    },
-
-
-    //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-
+    /**
+     * @returns {Set.<string>}
+     */
+    getChatMessageIdSet: function() {
+        return this.getEntityData().chatMessageIdSet;
+    }
 });
 
 
@@ -81,19 +67,23 @@ var ChatMessageStream = Class.extend(Entity, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(ChatMessageStream).with(
-    entity("ChatMessageStream").properties([
-        property("createdAt")
-            .type("date"),
-        property("id")
-            .type("string")
-            .primaryId(),
-        property("chatMessageIdSet")
-            .type("Set")
-            .collectionOf("string")
-            .id(),
-        property("updatedAt")
-            .type("date")
-    ])
+    entity("ChatMessageStream")
+        .properties([
+            property("createdAt")
+                .type("date")
+                .default(Date.now),
+            property("id")
+                .type("string")
+                .primaryId(),
+            property("chatMessageIdSet")
+                .type("Set")
+                .collectionOf("string")
+                .id(),
+            property("updatedAt")
+                .type("date")
+                .default(Date.now)
+        ])
+        .store(false)
 );
 
 

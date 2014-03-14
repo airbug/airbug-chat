@@ -5,34 +5,15 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbugserver.AirbugCallManager')
-//@Require('airbugserver.AirbugCallService')
-//@Require('airbugserver.ChatMessageStreamManager')
-//@Require('airbugserver.Conversation')
-//@Require('airbugserver.ConversationManager')
 //@Require('airbugserver.Room')
-//@Require('airbugserver.RoomManager')
-//@Require('airbugserver.RoomMember')
-//@Require('airbugserver.RoomMemberManager')
 //@Require('airbugserver.RoomService')
-//@Require('airbugserver.Session')
-//@Require('airbugserver.SessionManager')
 //@Require('airbugserver.User')
-//@Require('airbugserver.UserManager')
 //@Require('bugcall.Call')
 //@Require('bugdelta.DeltaBuilder')
-//@Require('bugentity.EntityManagerStore')
-//@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('loggerbug.Logger')
-//@Require('meldbug.MeldBucket')
-//@Require('meldbug.MeldBuilder')
-//@Require('meldbug.MeldStore')
-//@Require('meldbugserver.MeldManagerFactory')
-//@Require('meldbugserver.MeldBucketStore')
-//@Require('mongo.DummyMongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -47,30 +28,15 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var AirbugCallManager           = bugpack.require('airbugserver.AirbugCallManager');
-var AirbugCallService           = bugpack.require('airbugserver.AirbugCallService');
-var ChatMessageStreamManager    = bugpack.require('airbugserver.ChatMessageStreamManager');
-var Conversation                = bugpack.require('airbugserver.Conversation');
-var ConversationManager         = bugpack.require('airbugserver.ConversationManager');
 var Room                        = bugpack.require('airbugserver.Room');
-var RoomManager                 = bugpack.require('airbugserver.RoomManager');
-var RoomMember                  = bugpack.require('airbugserver.RoomMember');
-var RoomMemberManager           = bugpack.require('airbugserver.RoomMemberManager');
 var RoomService                 = bugpack.require('airbugserver.RoomService');
-var Session                     = bugpack.require('airbugserver.Session');
-var SessionManager              = bugpack.require('airbugserver.SessionManager');
 var User                        = bugpack.require('airbugserver.User');
-var UserManager                 = bugpack.require('airbugserver.UserManager');
 var Call                        = bugpack.require('bugcall.Call');
 var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
-var EntityManagerStore          = bugpack.require('bugentity.EntityManagerStore');
-var SchemaManager               = bugpack.require('bugentity.SchemaManager');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation              = bugpack.require('bugunit-annotate.TestAnnotation');
-var Logger                      = bugpack.require('loggerbug.Logger');
-var MeldBuilder                 = bugpack.require('meldbug.MeldBuilder');
-var DummyMongoDataStore         = bugpack.require('mongo.DummyMongoDataStore');
+var BugYarn                     = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -78,9 +44,33 @@ var DummyMongoDataStore         = bugpack.require('mongo.DummyMongoDataStore');
 //-------------------------------------------------------------------------------
 
 var bugmeta                     = BugMeta.context();
+var bugyarn                     = BugYarn.context();
 var test                        = TestAnnotation.test;
 var $series                     = BugFlow.$series;
 var $task                       = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestRoomService", function(yarn) {
+    yarn.spin([
+        "setupMockSuccessPushTaskManager",
+        "setupTestLogger",
+        "setupTestRoomManager",
+        "setupTestUserManager",
+        "setupTestRoomMemberManager",
+        "setupTestChatMessageStreamManager",
+        "setupTestRoomPusher",
+        "setupTestUserPusher",
+        "setupTestRoomMemberPusher",
+        "setupTestConversationManager"
+    ]);
+    yarn.wind({
+        roomService: new RoomService(this.logger, this.roomManager, this.userManager, this.roomMemberManager, this.chatMessageStreamManager, this.roomPusher, this.userPusher, this.roomMemberPusher)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
@@ -88,56 +78,18 @@ var $task                       = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 /**
+ * @param {Yarn} yarn
  * @param {Object} setupObject
  * @param {Object} currentUserObject
  * @param {Object} sessionObject
  */
-var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
-
-    setupObject.dummyBugCallServer      = {
-        on: function() {}
-    };
-    setupObject.roomPusher              = {
-        meldCallWithRoom: function(callUuid, room, callback) {
-            callback();
-        },
-        pushRoomToCall: function(room, callUuid, callback) {
-            callback();
-        },
-        pushRoom: function(room, waitForCallUuids, callback) {
-            callback();
-        }
-    };
-    setupObject.userPusher              = {
-        pushUser: function(user, waitForCallUuids, callback) {
-            callback();
-        }
-    };
-    setupObject.roomMemberPusher        = {};
-    setupObject.chatMessageStreamManager = new ChatMessageStreamManager();
-    setupObject.dummyRedisClient        = {};
-    setupObject.airbugCallManager       = new AirbugCallManager(setupObject.dummyRedisClient);
-    setupObject.meldBuilder             = new MeldBuilder();
-    setupObject.entityManagerStore      = new EntityManagerStore();
-    setupObject.mongoDataStore          = new DummyMongoDataStore();
-    setupObject.schemaManager           = new SchemaManager();
-    setupObject.roomManager             = new RoomManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.roomManager.setEntityType("Room");
-    setupObject.roomMemberManager       = new RoomMemberManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.roomMemberManager.setEntityType("RoomMember");
-    setupObject.userManager             = new UserManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.userManager.setEntityType("User");
-    setupObject.conversationManager     = new ConversationManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.conversationManager.setEntityType("Conversation");
-    setupObject.sessionManager          = new SessionManager(setupObject.entityManagerStore, setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.sessionManager.setEntityType("Session");
-    setupObject.airbugCallService       = new AirbugCallService(setupObject.dummyBugCallServer, setupObject.airbugCallManager, setupObject.sessionManager);
-    setupObject.roomService             = new RoomService(setupObject.roomManager, setupObject.userManager ,setupObject.roomMemberManager, setupObject.chatMessageStreamManager, setupObject.roomPusher, setupObject.userPusher, setupObject.roomMemberPusher);
-    setupObject.logger                  = new Logger();
-    setupObject.roomService.logger      = setupObject.logger;
-    setupObject.testCurrentUser = setupObject.userManager.generateUser(currentUserObject);
-    setupObject.testSession     = setupObject.sessionManager.generateSession(sessionObject);
-    setupObject.testCall = new Call(setupObject.logger, sessionObject.testCallUuid);
+var setupRoomService = function(yarn, setupObject, currentUserObject, sessionObject) {
+    setupObject.marshRegistry.processModule();
+    setupObject.schemaManager.processModule();
+    setupObject.mongoDataStore.processModule();
+    setupObject.testCurrentUser     = yarn.weave("testNotAnonymousUser", [currentUserObject]);
+    setupObject.testSession         = yarn.weave("testSession", [sessionObject]);
+    setupObject.testCall            = new Call(setupObject.logger, sessionObject.testCallUuid);
     setupObject.testRequestContext  = {
         get: function(key) {
             if (key === "currentUser") {
@@ -155,10 +107,112 @@ var setupRoomService = function(setupObject, currentUserObject, sessionObject) {
     };
 };
 
+var initializeRoomService = function(setupObject, callback) {
+    $series([
+        $task(function(flow) {
+            setupObject.blockingRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.subscriberRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisPubSub.initialize(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.pubSub.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.roomManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.conversationManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.roomMemberManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.userManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.sessionManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(callback);
+};
+
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var roomServiceInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger",
+            "setupTestRoomManager",
+            "setupTestUserManager",
+            "setupTestRoomMemberManager",
+            "setupTestChatMessageStreamManager",
+            "setupTestRoomPusher",
+            "setupTestUserPusher",
+            "setupTestRoomMemberPusher"
+        ]);
+        this.testRoomService    = new RoomService(this.logger, this.roomManager, this.userManager, this.roomMemberManager, this.chatMessageStreamManager, this.roomPusher, this.userPusher, this.roomMemberPusher);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testRoomService, RoomService),
+            "Assert instance of RoomService");
+        test.assertEqual(this.testRoomService.getChatMessageStreamManager(), this.chatMessageStreamManager,
+            "Assert .chatMessageStreamManager was set correctly");
+        test.assertEqual(this.testRoomService.getLogger(), this.logger,
+            "Assert .logger was set correctly");
+        test.assertEqual(this.testRoomService.getRoomManager(), this.roomManager,
+            "Assert .roomManager was set correctly");
+        test.assertEqual(this.testRoomService.getRoomMemberManager(), this.roomMemberManager,
+            "Assert .roomMemberManager was set correctly");
+        test.assertEqual(this.testRoomService.getRoomMemberPusher(), this.roomMemberPusher,
+            "Assert .roomMemberPusher was set correctly");
+        test.assertEqual(this.testRoomService.getRoomPusher(), this.roomPusher,
+            "Assert .roomPusher was set correctly");
+        test.assertEqual(this.testRoomService.getUserManager(), this.userManager,
+            "Assert .userManager was set correctly");
+        test.assertEqual(this.testRoomService.getUserPusher(), this.userPusher,
+            "Assert .userPusher was set correctly");
+    }
+};
 
 var roomServiceCreateRoomTest = {
 
@@ -170,21 +224,43 @@ var roomServiceCreateRoomTest = {
 
     setup: function(test) {
         var _this = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestRoomService",
+            "setupTestSessionManager"
+        ]);
         this.testCurrentUserObject    = {
             firstName: "testFirstName",
             lstName: "testLastName"
         };
         this.testSessionObject        = {
             cookie: {
-
+                domain: "testDomain",
+                expires: new Date(Date.now()),
+                httpOnly: true,
+                originalMaxAge: 1000,
+                path: "testPath",
+                secure: false
             }
         };
         this.testCallUuid = "abc123";
-        setupRoomService(this, this.testCurrentUserObject, this.testSessionObject);
         this.testName       = "testName";
         this.testRoomData   = {
             name: this.testName
-        }
+        };
+        setupRoomService(yarn, this, this.testCurrentUserObject, this.testSessionObject);
+
+        $task(function(flow) {
+            initializeRoomService(_this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -195,36 +271,6 @@ var roomServiceCreateRoomTest = {
     test: function(test) {
         var _this = this;
         $series([
-            $task(function(flow) {
-                _this.schemaManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.conversationManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.roomManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.roomMemberManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.userManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.sessionManager.initializeModule(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
             $task(function(flow) {
                 _this.userManager.createUser(_this.testCurrentUser, function(throwable) {
                     flow.complete(throwable);
@@ -258,13 +304,141 @@ var roomServiceCreateRoomTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
         });
     }
 };
+
+var roomServiceAddUserToRoomTest = {
+
+    async: true,
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestRoomService",
+            "setupTestSessionManager"
+        ]);
+        this.testCurrentUserObject    = {
+            firstName: "testFirstName",
+            lstName: "testLastName"
+        };
+        this.testSessionObject        = {
+            cookie: {
+                domain: "testDomain",
+                expires: new Date(Date.now()),
+                httpOnly: true,
+                originalMaxAge: 1000,
+                path: "testPath",
+                secure: false
+            }
+        };
+        this.testCallUuid = "abc123";
+        this.testName       = "testName";
+        this.testRoomData   = {
+            name: this.testName
+        };
+        this.testOtherUserObject    = {
+            firstName: "testOtherFirstName",
+            lastName: "testOtherLastName"
+        };
+        setupRoomService(yarn, this, this.testCurrentUserObject, this.testSessionObject);
+        this.testOtherUser = this.userManager.generateUser(this.testOtherUserObject);
+
+        $task(function(flow) {
+            initializeRoomService(_this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this       = this;
+        var testRoom    = null;
+        $series([
+            $task(function(flow) {
+                _this.userManager.createUser(_this.testCurrentUser, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userManager.createUser(_this.testOtherUser, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.sessionManager.createSession(_this.testSession, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.roomService.createRoom(_this.testRequestContext, _this.testRoomData, function(throwable, room) {
+                    if (!throwable) {
+                        testRoom = room;
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.roomService.addUserToRoom(_this.testRequestContext, _this.testOtherUser, testRoom.getId(), function(throwable, otherUser, room) {
+                    if (!throwable) {
+                        test.assertEqual(room.getRoomMemberIdSet().getCount(), 2,
+                            "Assert that the room has 2 room members");
+                        var roomMember = room.getRoomMemberSet().toArray()[1];
+                        test.assertTrue(room.getRoomMemberIdSet().contains(roomMember.getId()),
+                            "Assert that the roomMemberIdSet contains the new roomMember's id");
+                        test.assertTrue(_this.testOtherUser.getRoomIdSet().contains(room.getId()),
+                            "Assert that the user's room id set has the room id");
+                        var deltaBuilder    = new DeltaBuilder();
+                        var testDelta       = deltaBuilder.buildDelta(room.getDeltaDocument(), room.getDeltaDocument().getPreviousDocument());
+                        test.assertEqual(testDelta.getChangeCount(), 0,
+                            "Assert that the Entity has been committed and there are no pending changes");
+                    }
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
+    }
+};
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(roomServiceInstantiationTest).with(
+    test().name("RoomService - instantiation test")
+);
+
 bugmeta.annotate(roomServiceCreateRoomTest).with(
     test().name("RoomService - #createRoom Test")
+);
+
+bugmeta.annotate(roomServiceAddUserToRoomTest).with(
+    test().name("RoomService - #AddUserToRoom Test")
 );

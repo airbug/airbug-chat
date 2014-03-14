@@ -70,7 +70,6 @@ var assetControllerInstantiationTest = {
             "Assert marshaller is not undefined");
     }
 };
-
 bugmeta.annotate(assetControllerInstantiationTest).with(
     test().name("AssetController - instantiation Test")
 );

@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('UserAsset')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
@@ -81,42 +82,42 @@ var UserAsset = Class.extend(Entity, {
      * @return {string}
      */
     getAssetId: function() {
-        return this.deltaDocument.getData().assetId;
+        return this.getEntityData().assetId;
     },
 
     /*
      * @param {string} assetId
      */
     setAssetId: function(assetId) {
-        this.deltaDocument.getData().assetId = assetId;
+        this.getEntityData().assetId = assetId;
     },
 
     /*
      * @return {string}
      */
     getName: function() {
-        return this.deltaDocument.getData().name;
+        return this.getEntityData().name;
     },
 
     /*
      * @param {string} name
      */
     setName: function(name) {
-        this.deltaDocument.getData().name = name;
+        this.getEntityData().name = name;
     },
 
     /*
      * @return {string}
      */
     getUserId: function() {
-        return this.deltaDocument.getData().userId;
+        return this.getEntityData().userId;
     },
 
     /*
      * @param {string} userId
      */
     setUserId: function(userId) {
-        this.deltaDocument.getData().userId = userId;
+        this.getEntityData().userId = userId;
     },
 
 
@@ -170,27 +171,37 @@ var UserAsset = Class.extend(Entity, {
 
 bugmeta.annotate(UserAsset).with(
     entity("UserAsset").properties([
-        property("id")
-            .type("string")
-            .primaryId(),
         property("assetId")
             .type("string")
+            .index(true)
+            .require(true)
             .id(),
         property("asset")
             .type("Asset")
-            .populates(true),
+            .populates(true)
+            .store(false),
+        property("createdAt")
+            .type("date")
+            .require(true)
+            .default(Date.now),
+        property("id")
+            .type("string")
+            .primaryId(),
         property("name")
             .type("string"),
+        property("updatedAt")
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("userId")
             .type("string")
+            .require(true)
+            .index(true)
             .id(),
         property("user")
             .type("User")
-            .populates(true),
-        property("createdAt")
-            .type("date"),
-        property("updatedAt")
-            .type("date")
+            .populates(true)
+            .store(false)
     ])
 );
 

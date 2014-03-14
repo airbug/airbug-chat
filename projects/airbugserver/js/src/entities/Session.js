@@ -5,11 +5,14 @@
 //@Package('airbugserver')
 
 //@Export('Session')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
 //@Require('bugentity.PropertyAnnotation')
+//@Require('bugmarsh.MarshAnnotation');
+//@Require('bugmarsh.MarshPropertyAnnotation');
 //@Require('bugmeta.BugMeta')
 
 
@@ -17,27 +20,31 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Entity                  = bugpack.require('bugentity.Entity');
-var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var Class                       = bugpack.require('Class');
+var Entity                      = bugpack.require('bugentity.Entity');
+var EntityAnnotation            = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation          = bugpack.require('bugentity.PropertyAnnotation');
+var MarshAnnotation             = bugpack.require('bugmarsh.MarshAnnotation');
+var MarshPropertyAnnotation     = bugpack.require('bugmarsh.MarshPropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                 = BugMeta.context();
-var entity                  = EntityAnnotation.entity;
-var property                = PropertyAnnotation.property;
+var bugmeta                     = BugMeta.context();
+var entity                      = EntityAnnotation.entity;
+var marsh                       = MarshAnnotation.marsh;
+var marshProperty               = MarshPropertyAnnotation.property;
+var property                    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
@@ -50,6 +57,16 @@ var Session = Class.extend(Entity, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {{
+     *      cookie: Cookie,
+     *      data: SessionData,
+     *      expires: Date,
+     *      sid: string,
+     *      userId: string
+     * }} data
+     */
     _constructor: function(data) {
 
         this._super(data);
@@ -58,12 +75,6 @@ var Session = Class.extend(Entity, {
         //-------------------------------------------------------------------------------
         // Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {Cookie}
-         */
-        this.cookie = undefined;
     },
 
 
@@ -75,28 +86,28 @@ var Session = Class.extend(Entity, {
      * @return {Cookie}
      */
     getCookie: function() {
-        return this.cookie;
+        return this.getEntityData().cookie;
     },
 
     /**
      * @param {Cookie} cookie
      */
     setCookie: function(cookie) {
-        this.cookie = cookie;
+        this.getEntityData().cookie = cookie;
     },
 
     /**
-     * @return {Object}
+     * @return {SessionData}
      */
     getData: function() {
-        return this.deltaDocument.getData().data;
+        return this.getEntityData().data;
     },
 
     /**
-     * @param {Object} data
+     * @param {SessionData} sessionData
      */
-    setData: function(data) {
-        this.deltaDocument.getData().data = data;
+    setData: function(sessionData) {
+        this.getEntityData().data = sessionData;
     },
 
     /**
@@ -110,28 +121,28 @@ var Session = Class.extend(Entity, {
      * @return {string}
      */
     getSid: function() {
-        return this.deltaDocument.getData().sid;
+        return this.getEntityData().sid;
     },
 
     /**
      * @param {string} sid
      */
     setSid: function(sid) {
-        this.deltaDocument.getData().sid = sid;
+        this.getEntityData().sid = sid;
     },
 
     /**
      * @return {string}
      */
     getUserId: function() {
-        return this.deltaDocument.getData().userId;
+        return this.getEntityData().userId;
     },
 
     /**
      * @param {string} userId
      */
     setUserId: function(userId) {
-        this.deltaDocument.getData().userId = userId;
+        this.getEntityData().userId = userId;
     },
 
 
@@ -143,7 +154,7 @@ var Session = Class.extend(Entity, {
      *
      */
     resetMaxAge: function() {
-        this.cookie.resetMaxAge();
+        this.getCookie().resetMaxAge();
     }
 });
 
@@ -157,20 +168,38 @@ bugmeta.annotate(Session).with(
         property("cookie")
             .type("Cookie"),
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("data")
-            .type("string"),
+            .type("SessionData"),
         property("id")
             .type("string")
             .primaryId(),
         property("sid")
-            .type("string"),
+            .type("string")
+            .require(true)
+            .index(true)
+            .unique(true),
         property("updatedAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("userId")
             .type("string")
+            .index(true)
             .id()
-    ])
+    ]),
+    marsh("Session")
+        .properties([
+            marshProperty("cookie"),
+            marshProperty("createdAt"),
+            marshProperty("data"),
+            marshProperty("id"),
+            marshProperty("sid"),
+            marshProperty("updatedAt"),
+            marshProperty("userId")
+        ])
 );
 
 

@@ -86,7 +86,7 @@ var AssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(assetManager, assetPusher, awsUploader, imagemagick) {
+    _constructor: function(logger, assetManager, assetPusher, awsUploader, imagemagick) {
 
         this._super();
 
@@ -94,25 +94,71 @@ var AssetService = Class.extend(Obj, {
          * @private
          * @type {AssetManager}
          */
-        this.assetManager = assetManager;
+        this.assetManager   = assetManager;
 
         /**
          * @private
          * @type {AssetPusher}
          */
-        this.assetPusher = assetPusher;
+        this.assetPusher    = assetPusher;
 
         /**
          * @private
          * @type {AwsUploader}
          */
-        this.awsUploader = awsUploader;
+        this.awsUploader    = awsUploader;
 
         /**
          * @private
          * @type {imagemagick}
          */
-        this.imagemagick = imagemagick;
+        this.imagemagick    = imagemagick;
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger         = logger;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {AssetManager}
+     */
+    getAssetManager: function() {
+        return this.assetManager;
+    },
+
+    /**
+     * @return {AssetPusher}
+     */
+    getAssetPusher: function() {
+        return this.assetPusher;
+    },
+
+    /**
+     * @return {AwsUploader}
+     */
+    getAwsUploader: function() {
+        return this.awsUploader;
+    },
+
+    /**
+     * @return {imagemagick}
+     */
+    getImagemagick: function() {
+        return this.imagemagick;
+    },
+
+    /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
     },
 
 
@@ -126,9 +172,6 @@ var AssetService = Class.extend(Obj, {
      * @param {function(Throwable, Entity)} callback
      */
     addAssetFromUrl: function(requestContext, url, callback) {
-        console.log("AssetService#addAssetFromUrl"); //Cleanup
-        console.log("url:", url); //Cleanup
-
         var _this = this;
         // TODO - dkk - Parse URL to get filename. If no filename then generate one //Cleanup
         var filename = url.match(/([^\/]+)(\.\w+$)/)[0];
@@ -164,16 +207,24 @@ var AssetService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} assetId
-     * @param {function(Throwable, asset)} callback
+     * @param {function(Throwable=)} callback
      */
     deleteAsset: function(requestContext, assetId, callback) {
-        var _this = this;
-        var asset = undefined;
+        var _this   = this;
+        var asset   = null;
         $series([
             $task(function(flow) {
                 _this.assetManager.retrieveAsset(assetId, function(throwable, retrievedAsset) {
-                    asset = retrievedAsset;
-                    flow.complete(throwable);
+                    if (!throwable) {
+                        if (retrievedAsset) {
+                            asset = retrievedAsset;
+                            flow.complete();
+                        } else {
+                            flow.error(new Exception("NotFound", {}, "Could not find Asset with the id '" + assetId + "'"));
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             }),
             $task(function(flow) {
@@ -181,9 +232,7 @@ var AssetService = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             })
-        ]).execute(function(throwable) {
-            callback(throwable);
-        });
+        ]).execute(callback);
     },
 
     /**
@@ -222,7 +271,7 @@ var AssetService = Class.extend(Obj, {
                                 asset = returnedAsset;
                                 flow.complete(throwable);
                             } else {
-                                flow.error(new Exception('NotFound'));
+                                flow.error(new Exception("NotFound", {}, "Could not find Asset with the id '" + assetId + "'"));
                             }
                         } else {
                             flow.error(throwable);
@@ -500,6 +549,7 @@ var AssetService = Class.extend(Obj, {
 bugmeta.annotate(AssetService).with(
     module("assetService")
         .args([
+            arg().ref("logger"),
             arg().ref("assetManager"),
             arg().ref("assetPusher"),
             arg().ref("awsUploader"),

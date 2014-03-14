@@ -147,6 +147,7 @@ var AssetPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(AssetPusher).with(
     module("assetPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

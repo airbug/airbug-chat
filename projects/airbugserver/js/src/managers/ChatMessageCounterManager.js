@@ -8,9 +8,9 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessageCounter')
-//@Require('airbugserver.ChatMessageCounterModel')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
@@ -29,13 +29,13 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
+var Exception                   = bugpack.require('Exception');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var ChatMessageCounter          = bugpack.require('airbugserver.ChatMessageCounter');
-var ChatMessageCounterModel     = bugpack.require('airbugserver.ChatMessageCounterModel');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var TypeUtil                    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -57,9 +57,10 @@ var ChatMessageCounterManager = Class.extend(EntityManager, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+
     /**
      * @param {ChatMessageCounter} chatMessageCounter
-     * @param {(Array.<string> | function(Throwable, ChatMessage))} dependencies
+     * @param {(Array.<string> | function(Throwable, ChatMessage=))} dependencies
      * @param {function(Throwable, ChatMessage=)=} callback
      */
     createChatMessageCounter: function(chatMessageCounter, dependencies, callback) {
@@ -88,39 +89,83 @@ var ChatMessageCounterManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} conversationId
-     * @param {function(Throwable, ChatMessageCounter)} callback
+     * @param {function(Throwable, number=)} callback
+     */
+    getNextIndexByConversationId: function(conversationId, callback) {
+        this.getDataStore().findOneAndUpdate(
+            { conversationId: conversationId },
+            { $inc: { count: 1 } },
+            { new: true, upsert: true},
+            function(error, chatMessageCounter) {
+                if (error) {
+                    callback(error);
+                } else {
+                    if (chatMessageCounter) {
+                        callback(null, chatMessageCounter.count);
+                    } else {
+                        callback(new Exception("NotFound", {}, "No ChatMessageCounter found"));
+                    }
+                }
+            }
+        );
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, number=)} callback
+     */
+    getCountByConversationId: function(conversationId, callback) {
+        this.getDataStore().find(
+            { conversationId: conversationId },
+            function(error, chatMessageCounter) {
+                if (!error) {
+                    if (chatMessageCounter) {
+                        callback(null, chatMessageCounter.count);
+                    } else {
+                        callback(null, 0);
+                    }
+                } else {
+                    callback(new Exception("MongoError", {}, "Error occurred in mongo db", [error]));
+                }
+            }
+        );
+    },
+
+    /**
+     * @param {string} conversationId
+     * @param {function(Throwable, ChatMessageCounter=)} callback
      */
     retrieveChatMessageCounterByConversationId: function(conversationId, callback) {
         var _this = this;
-        this.dataStore
+        this.getDataStore()
             .where("conversationId", conversationId)
             .lean(true)
             .exec(function(throwable, dbObject) {
                 if (!throwable) {
                     var entityObject = null;
                     if (!dbObject || dbObject.length === 0) {
-                        ChatMessageCounterModel.create({conversationId: conversationId}, function(throwable, chatMessageCounter){
-                            if(!throwable){
-                                if(TypeUtil.isArray(chatMessageCounter)){
-                                    var chatMessageCounter = chatMessageCounter[0];
+                        _this.getDataStore().create({conversationId: conversationId}, function(throwable, chatMessageCounter){
+                            if (!throwable) {
+                                if (TypeUtil.isArray(chatMessageCounter)) {
+                                    chatMessageCounter = chatMessageCounter[0];
                                 }
                                 entityObject = _this.convertDbObjectToEntity(chatMessageCounter);
                                 entityObject.commitDelta();
-                                callback(undefined, entityObject);
+                                callback(null, entityObject);
                             } else {
-                                callback(throwable, undefined);
+                                callback(throwable);
                             }
                         });
                     } else {
-                        if(TypeUtil.isArray(dbObject)){
+                        if (TypeUtil.isArray(dbObject)) {
                             dbObject = dbObject[0];
                         }
                         entityObject = _this.convertDbObjectToEntity(dbObject);
                         entityObject.commitDelta();
-                        callback(undefined, entityObject);
+                        callback(null, entityObject);
                     }
                 } else {
-                    callback(throwable, undefined);
+                    callback(throwable);
                 }
             });
     }
@@ -137,7 +182,8 @@ bugmeta.annotate(ChatMessageCounterManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

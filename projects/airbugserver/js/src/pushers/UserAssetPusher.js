@@ -76,6 +76,21 @@ var UserAssetPusher = Class.extend(EntityPusher, {
     },
 
     /**
+     * @param {UserAsset} userAsset
+     * @param {string} callUuid
+     * @param {function(Throwable=)} callback
+     */
+    pushRemoveUserAssetToCall: function(userAsset, callUuid, callback) {
+        var meldDocumentKey     = this.generateMeldDocumentKeyFromEntity(userAsset);
+        var push                = this.push();
+        push
+            .to([callUuid])
+            .waitFor([callUuid])
+            .removeDocument(meldDocumentKey)
+            .exec(callback);
+    },
+
+    /**
      * @protected
      * @param {UserAsset} userAsset
      * @param {function(Throwable=)} callback
@@ -142,6 +157,15 @@ var UserAssetPusher = Class.extend(EntityPusher, {
             .exec(callback);
     },
 
+    /**
+     * @param {User} user
+     * @param {UserAsset} userAsset
+     * @param {function(Throwable=)} callback
+     */
+    unmeldUserWithUserAsset: function(user, userAsset, callback) {
+        this.unmeldUserWithEntity(user, userAsset, callback);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -169,6 +193,7 @@ var UserAssetPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(UserAssetPusher).with(
     module("userAssetPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

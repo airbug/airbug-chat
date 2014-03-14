@@ -66,7 +66,7 @@ var SignupManager = Class.extend(EntityManager, {
         if(TypeUtil.isFunction(dependencies)){
             callback        = dependencies;
             dependencies    = [];
-        };
+        }
         var options         = {};
         this.create(signup, options, dependencies, callback);
     },
@@ -81,16 +81,50 @@ var SignupManager = Class.extend(EntityManager, {
 
     /**
      * @param {{
+     *      acceptedLanguages: string,
+     *      airbugVersion: string,
+     *      baseBetaKey: string,
+     *      betaKey: string,
+     *      city: string,
+     *      country: string,
      *      createdAt: Date,
-     *      id: string,
-     *      updatedAt: Date
+     *      day: number,
+     *      geoCoordinates: Array.<number>,
+     *      ipAddress: string,
+     *      languages: Array.<string>,
+     *      month: number,
+     *      secondaryBetaKeys: Array.<string>,
+     *      state: string,
+     *      updatedAt: Date,
+     *      userAgent: string,
+     *      userId: string,
+     *      version: string,
+     *      weekday: number,
+     *      year: number
      * }} data
      * @return {Signup}
      */
     generateSignup: function(data) {
+        if (!Class.doesExtend(data.geoCoordinates, Set)) {
+            data.geoCoordinates = new Set(data.geoCoordinates);
+        }
+        if (!Class.doesExtend(data.languages, Set)) {
+            data.languages = new Set(data.languages);
+        }
+        if (!Class.doesExtend(data.secondaryBetaKeys, Set)) {
+            data.secondaryBetaKeys = new Set(data.secondaryBetaKeys);
+        }
         var signup = new Signup(data);
         this.generate(signup);
         return signup;
+    },
+
+    /**
+     * @param {string} signupId
+     * @param {function(Throwable, Signup=)} callback
+     */
+    retrieveSignup: function(signupId, callback) {
+        this.retrieve(signupId, callback);
     }
 });
 
@@ -105,7 +139,8 @@ bugmeta.annotate(SignupManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

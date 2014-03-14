@@ -76,7 +76,7 @@ var MustacheView = Class.extend(CarapaceView, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // CarapaceView Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -86,11 +86,6 @@ var MustacheView = Class.extend(CarapaceView, {
         var data = this.generateTemplateData();
         return $(Mustache.render(this.template, data));
     },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
-    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------

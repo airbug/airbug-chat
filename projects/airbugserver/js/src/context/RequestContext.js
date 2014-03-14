@@ -39,7 +39,7 @@ var RequestContext = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {express.Request | bugcall.IncomingRequest} request
+     * @param {express.Request | IncomingRequest} request
      */
     _constructor: function(type, request) {
 
@@ -64,7 +64,7 @@ var RequestContext = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {express.Request | bugcall.IncomingRequest} request
+         * @type {express.Request | IncomingRequest} request
          */
         this.request    = request;
     },
@@ -82,7 +82,7 @@ var RequestContext = Class.extend(Obj, {
     },
 
     /**
-     * @return {express.Request | bugcall.IncomingRequest}
+     * @return {express.Request | IncomingRequest}
      */
     getRequest: function() {
         return this.request;

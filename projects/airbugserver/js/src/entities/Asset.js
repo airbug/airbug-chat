@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('Asset')
+//@Autoload
 
 //@Require('Class')
 //@Require('bugentity.Entity')
@@ -44,16 +45,11 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var Asset = Class.extend(Entity, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(data) {
-        this._super(data);
-    },
-
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -63,118 +59,113 @@ var Asset = Class.extend(Entity, {
      * @returns {string}
      */
     getMidsizeMimeType: function() {
-        return this.deltaDocument.getData().midsizeMimeType;
+        return this.getEntityData().midsizeMimeType;
     },
 
     /**
      * @param {string} midsizeMimeType
      */
     setMidsizeMimeType: function(midsizeMimeType) {
-        this.deltaDocument.getData().midsizeMimeType = midsizeMimeType;
+        this.getEntityData().midsizeMimeType = midsizeMimeType;
     },
 
     /**
      * @returns {string}
      */
     getMidsizeUrl: function() {
-        return this.deltaDocument.getData().midsizeUrl;
+        return this.getEntityData().midsizeUrl;
     },
 
     /**
      * @param {string} midsizeUrl
      */
     setMidsizeUrl: function(midsizeUrl) {
-        this.deltaDocument.getData().midsizeUrl = midsizeUrl;
+        this.getEntityData().midsizeUrl = midsizeUrl;
     },
 
     /**
      * @return {string}
      */
     getMimeType: function() {
-        return this.deltaDocument.getData().mimeType;
+        return this.getEntityData().mimeType;
     },
 
     /**
      * @param {string} mimeType
      */
     setMimeType: function(mimeType) {
-        this.deltaDocument.getData().mimeType = mimeType;
+        this.getEntityData().mimeType = mimeType;
     },
 
     /**
      * @return {string}
      */
     getName: function() {
-        return this.deltaDocument.getData().name;
+        return this.getEntityData().name;
     },
 
     /**
      * @param {string} name
      */
     setName: function(name) {
-        this.deltaDocument.getData().name = name;
+        this.getEntityData().name = name;
     },
 
     /**
      * @return {number}
      */
     getSize: function() {
-        return this.deltaDocument.getData().size;
+        return this.getEntityData().size;
     },
 
     /**
      * @param {number} size
      */
     setSize: function(size) {
-        this.deltaDocument.getData().size = size;
+        this.getEntityData().size = size;
     },
 
     /**
      * @return {string}
      */
     getThumbnailMimeType: function() {
-        return this.deltaDocument.getData().thumbnailMimeType;
+        return this.getEntityData().thumbnailMimeType;
     },
 
     /**
      * @param {string} thumbnailMimeType
      */
     setThumbnailMimeType: function(thumbnailMimeType) {
-        this.deltaDocument.getData().thumbnailMimeType = thumbnailMimeType;
+        this.getEntityData().thumbnailMimeType = thumbnailMimeType;
     },
 
     /**
      * @return {string}
      */
     getThumbnailUrl: function() {
-        return this.deltaDocument.getData().thumbnailUrl;
+        return this.getEntityData().thumbnailUrl;
     },
 
     /**
      * @param {string} thumbUrl
      */
     setThumbnailUrl: function(thumbUrl) {
-        this.deltaDocument.getData().thumbnailUrl = thumbUrl;
+        this.getEntityData().thumbnailUrl = thumbUrl;
     },
 
     /**
      * @return {string}
      */
     getUrl: function() {
-        return this.deltaDocument.getData().url;
+        return this.getEntityData().url;
     },
 
     /**
      * @param {string} url
      */
     setUrl: function(url) {
-        this.deltaDocument.getData().url = url;
+        this.getEntityData().url = url;
     }
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
 });
 
 
@@ -184,19 +175,37 @@ var Asset = Class.extend(Entity, {
 
 bugmeta.annotate(Asset).with(
     entity("Asset").properties([
+        property("createdAt")
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("id")
             .type("string")
             .primaryId(),
-        property("createdAt").type("date"),
-        property("midsizeMimeType").type("string"),
-        property("midsizeUrl").type("string"),
-        property("mimeType").type("string"),
-        property("name").type("string"),
-        property("size").type("number"),
-        property("thumbnailMimeType").type("string"),
-        property("thumbnailUrl").type("string"),
-        property("updatedAt").type("date"),
-        property("url").type("string")
+        property("midsizeMimeType")
+            .type("string"),
+        property("midsizeUrl")
+            .type("string"),
+        property("mimeType")
+            .type("string"),
+        property("name")
+            .type("string"),
+        property("thumbnailMimeType")
+            .type("string"),
+        property("thumbnailUrl")
+            .type("string"),
+        property("type")
+            .type("string"),
+        property("updatedAt")
+            .type("date")
+            .require(true)
+            .default(Date.now),
+        property("url")
+            .type("string")
+            .index(true)
+            .unique(true)
+            .require(true)
+            .default("")
     ])
 );
 

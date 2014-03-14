@@ -178,7 +178,7 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
                             .appendTo("#code-editor-widget-header-{{cid}}")
                             .children([
                                 view(ButtonGroupView)
-                                    .appendTo('#code-editor-overlay-widget-toolbar')
+                                    .appendTo("#button-toolbar-{{cid}}")
                             ]),
                         view(CodeEditorView)
                             .name("codeEditorView")

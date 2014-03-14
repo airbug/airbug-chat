@@ -67,7 +67,7 @@ var UserAssetService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(userAssetManager, userAssetPusher, userImageAssetStreamManager, userImageAssetStreamPusher) {
+    _constructor: function(logger, userAssetManager, userAssetPusher, userImageAssetStreamManager, userImageAssetStreamPusher) {
 
         this._super();
 
@@ -80,7 +80,7 @@ var UserAssetService = Class.extend(Obj, {
          * @private
          * @type {Logger}
          */
-        this.logger                         = null;
+        this.logger                         = logger;
 
         /**
          * @private
@@ -146,7 +146,6 @@ var UserAssetService = Class.extend(Obj, {
                                 flow.error(new Exception('NotFound'));
                             }
                         } else {
-                            console.log('UserAssetService#createUserAsset createUserAsset throwable = ', throwable);
                             flow.error(throwable);
                         }
                     });
@@ -154,7 +153,6 @@ var UserAssetService = Class.extend(Obj, {
                 $task(function(flow) {
                     userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
                         if (throwable) {
-                            console.log('UserAssetService#createUserAsset populateUserAsset throwable = ', throwable);
                             flow.error(throwable);
                         } else {
                             flow.complete(throwable);
@@ -164,7 +162,6 @@ var UserAssetService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
                         if (throwable) {
-                            console.log('UserAssetService#createUserAsset meldCallWithUserAsset throwable = ', throwable);
                             flow.error(throwable);
                         } else {
                             flow.complete(throwable);
@@ -174,7 +171,6 @@ var UserAssetService = Class.extend(Obj, {
                 $task(function(flow) {
                     _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         if (throwable) {
-                            console.log('UserAssetService#createUserAsset pushUserAssetToCall throwable = ', throwable);
                             flow.error(throwable);
                         } else {
                             flow.complete(throwable);
@@ -199,14 +195,14 @@ var UserAssetService = Class.extend(Obj, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot create UserAssets"));
         }
     },
 
     /**
      * @param {RequestContext} requestContext
      * @param {string} userAssetId
-     * @param {function(Throwable, UserAsset)} callback
+     * @param {function(Throwable, UserAsset=)} callback
      */
     deleteUserAsset: function(requestContext, userAssetId, callback) {
         var _this                   = this;
@@ -226,7 +222,7 @@ var UserAssetService = Class.extend(Obj, {
                                 userAsset = returnedUserAsset;
                                 flow.complete();
                             } else {
-                                flow.error(new Exception('NotFound'));
+                                flow.error(new Exception('NotFound', {}, "Could not find UserAsset with the id '" + userAssetId + "'"));
                             }
                         } else {
                             flow.error(throwable);
@@ -243,17 +239,12 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
+                    _this.userAssetPusher.pushRemoveUserAssetToCall(userAsset, callCallUuid, function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAsset(callCallUuid, userAsset, function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetToCall(userAsset, callCallUuid, function(throwable) {
+                    _this.userAssetPusher.unmeldUserWithUserAsset(currentUser, userAsset, function(throwable) {
                         flow.complete(throwable);
                     });
                 })
@@ -265,7 +256,7 @@ var UserAssetService = Class.extend(Obj, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users do not have access to UserAssets"));
         }
     },
 
@@ -341,7 +332,7 @@ var UserAssetService = Class.extend(Obj, {
     /**
      * @param {RequestContext} requestContext
      * @param {string} userAssetId
-     * @param {Function(Throwable, UserAsset)} callback
+     * @param {function(Throwable, UserAsset=)} callback
      */
     retrieveUserAsset: function(requestContext, userAssetId, callback) {
         var _this                   = this;
@@ -361,16 +352,11 @@ var UserAssetService = Class.extend(Obj, {
                                 userAsset = returnedUserAsset;
                                 flow.complete();
                             } else {
-                                flow.error(new Exception('NotFound'));
+                                flow.error(new Exception("NotFound", {}, "Could not find UserAsset with id '" + userAssetId + "'"));
                             }
                         } else {
                             flow.error(throwable);
                         }
-                    });
-                }),
-                $task(function(flow) {
-                    userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable) {
-                        flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
@@ -391,14 +377,14 @@ var UserAssetService = Class.extend(Obj, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access UserAssets"));
         }
     },
 
     /**
      * @param {RequestContext} requestContext
      * @param {Array.<string>} userAssetIds
-     * @param {function(Throwable, Map.<string, UserAsset>)} callback
+     * @param {function(Throwable, Map.<string, UserAsset>=)} callback
      */
     retrieveUserAssets: function(requestContext, userAssetIds, callback) {
         var _this                   = this;
@@ -415,25 +401,20 @@ var UserAssetService = Class.extend(Obj, {
                 $task(function(flow) {
                     userAssetManager.retrieveUserAssets(userAssetIds, function(throwable, returnedUserAssetMap) {
                         if (!throwable) {
-                            if (! returnedUserAssetMap) {
-                                throwable = new Exception('No UserAssets Found');
-                            } else {
-                                userAssetMap = returnedUserAssetMap.clone();
-                                returnedUserAssetMap.forEach(function(userAsset, key) {
-                                    if (userAsset === null) {
-                                        userAssetMap.remove(key);
-                                        if (!mappedException) {
-                                            mappedException = new MappedThrowable(MappedThrowable.MAPPED);
-                                        }
-                                        mappedException.putThrowable(key, new Exception('NotFound', {objectId: key}));
+                            userAssetMap = returnedUserAssetMap.clone();
+                            returnedUserAssetMap.forEach(function(userAsset, key) {
+                                if (userAsset === null) {
+                                    userAssetMap.remove(key);
+                                    if (!mappedException) {
+                                        mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                     }
-                                });
-                                _this.dbPopulateUserAssets(userAssetMap, function(throwable) {
-                                    flow.complete(throwable);
-                                });
-                            }
+                                    mappedException.putThrowable(key, new Exception('NotFound', {objectId: key}, "Could not find UserAsset with id '" + key + "'"));
+                                }
+                            });
+                            flow.complete();
+                        } else {
+                            flow.error(throwable);
                         }
-                        flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
@@ -454,7 +435,7 @@ var UserAssetService = Class.extend(Obj, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access UserAssets"));
         }
     },
 
@@ -483,16 +464,14 @@ var UserAssetService = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.meldCallWithUserAssets(call.getCallUuid(),
-                        userAssetList.toArray(), function(throwable) {
-                           flow.complete(throwable);
-                        });
+                    _this.userAssetPusher.meldCallWithUserAssets(call.getCallUuid(), userAssetList.toArray(), function(throwable) {
+                       flow.complete(throwable);
+                    });
                 }),
                 $task(function(flow) {
-                    _this.userAssetPusher.pushUserAssetsToCall(userAssetList.toArray(),
-                        call.getCallUuid(), function(throwable) {
-                            flow.complete(throwable);
-                        });
+                    _this.userAssetPusher.pushUserAssetsToCall(userAssetList.toArray(), call.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
@@ -637,9 +616,11 @@ var UserAssetService = Class.extend(Obj, {
 bugmeta.annotate(UserAssetService).with(
     module('userAssetService')
         .args([
+            arg().ref('logger'),
             arg().ref('userAssetManager'),
             arg().ref('userAssetPusher'),
-            arg().ref('userImageAssetStreamManager')
+            arg().ref('userImageAssetStreamManager'),
+            arg().ref('userImageAssetStreamPusher')
         ])
 );
 

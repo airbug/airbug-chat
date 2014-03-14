@@ -5,80 +5,100 @@
 //@Package('airbugserver')
 
 //@Export('Cookie')
+//@Autoload
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('TypeUtil')
+//@Require('bugentity.Entity')
+//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.PropertyAnnotation')
+//@Require('bugmarsh.MarshAnnotation');
+//@Require('bugmarsh.MarshPropertyAnnotation');
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-var cookie                  = require('cookie');
+var bugpack                     = require('bugpack').context();
+var cookie                      = require('cookie');
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var TypeUtil                = bugpack.require('TypeUtil');
+var Class                       = bugpack.require('Class');
+var TypeUtil                    = bugpack.require('TypeUtil');
+var Entity                      = bugpack.require('bugentity.Entity');
+var EntityAnnotation            = bugpack.require('bugentity.EntityAnnotation');
+var PropertyAnnotation          = bugpack.require('bugentity.PropertyAnnotation');
+var MarshAnnotation             = bugpack.require('bugmarsh.MarshAnnotation');
+var MarshPropertyAnnotation     = bugpack.require('bugmarsh.MarshPropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var entity                      = EntityAnnotation.entity;
+var marsh                       = MarshAnnotation.marsh;
+var marshProperty               = MarshPropertyAnnotation.property;
+var property                    = PropertyAnnotation.property;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Cookie = Class.extend(Obj, {
-
+/**
+ * @class
+ * @extends {Entity}
+ */
+var Cookie = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {{
+     *      domain: string,
+     *      expires: Date,
+     *      httpOnly: boolean,
+     *      originalMaxAge: number,
+     *      path: string,
+     *      secure: boolean
+     * }} data
+     */
     _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {{
-         *     domain: string,
-         *     expires: Date,
-         *     httpOnly: boolean,
-         *     originalMaxAge: number,
-         *     path: string,
-         *     secure: boolean
-         * }}
-         */
-        this.data               = data;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.secure             = false;
-
-        if (!TypeUtil.isBoolean(this.getHttpOnly())) {
+        if (!TypeUtil.isString(data.domain)) {
+            this.setDomain("");
+        }
+        if (!TypeUtil.isBoolean(data.httpOnly)) {
             this.setHttpOnly(true);
         }
-        if (!TypeUtil.isNumber(this.getMaxAge())) {
-            this.setMaxAge(1000 * 60 * 60 * 24);
+        if (!TypeUtil.isDate(data.expires)) {
+            this.setExpires(new Date(Date.now() + 1000 * 60 * 60 * 24));
         }
-        if (!TypeUtil.isString(this.getPath())) {
+        if (!TypeUtil.isString(data.path)) {
             this.setPath("/");
         }
-        if (!TypeUtil.isBoolean(this.isSecure())) {
+        if (!TypeUtil.isBoolean(data.secure)) {
             this.setSecure(false);
         }
-        this.setOriginalMaxAge(!TypeUtil.isNumber(this.data.originalMaxAge) ? this.getMaxAge() : this.data.originalMaxAge);
+        this.setOriginalMaxAge(!TypeUtil.isNumber(data.originalMaxAge) ? this.getMaxAge() : data.originalMaxAge);
     },
 
 
@@ -87,39 +107,46 @@ var Cookie = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @return {string}
      */
-    getData: function() {
-        return this.data;
+    getDomain: function() {
+        return this.getEntityData().domain;
+    },
+
+    /**
+     * @param {string} domain
+     */
+    setDomain: function(domain) {
+        this.getEntityData().domain = domain;
     },
 
     /**
      * @return {Date}
      */
     getExpires: function() {
-        return this.data.expires;
+        return this.getEntityData().expires;
     },
 
     /**
      * @param {Date} expires
      */
     setExpires: function(expires) {
-        this.data.expires        = expires;
-        this.data.originalMaxAge = this.getMaxAge();
+        this.getEntityData().expires        = expires;
+        this.setOriginalMaxAge(this.getMaxAge());
     },
 
     /**
      * @return {boolean}
      */
     getHttpOnly: function() {
-        return this.data.httpOnly;
+        return this.getEntityData().httpOnly;
     },
 
     /**
      * @param {boolean} httpOnly
      */
     setHttpOnly: function(httpOnly) {
-        this.data.httpOnly = httpOnly;
+        this.getEntityData().httpOnly = httpOnly;
     },
 
     /**
@@ -129,9 +156,9 @@ var Cookie = Class.extend(Obj, {
      */
     setMaxAge: function(ms) {
         if (TypeUtil.isNumber(ms)) {
-            this.data.expires = new Date(Date.now() + ms);
+            this.getEntityData().expires = new Date(Date.now() + ms);
         } else {
-            this.data.expires = ms;
+            this.getEntityData().expires = ms;
         }
     },
 
@@ -139,51 +166,61 @@ var Cookie = Class.extend(Obj, {
      * @return {number}
      */
     getMaxAge: function() {
-        return this.data.expires instanceof Date
-            ? this.data.expires.valueOf() - Date.now()
-            : this.data.expires;
+        return (this.getExpires().valueOf() - Date.now());
     },
 
     /**
      * @return {number}
      */
     getOriginalMaxAge: function() {
-        return this.originalMaxAge;
+        return this.getEntityData().originalMaxAge;
     },
 
     /**
      * @param {number} originalMaxAge
      */
     setOriginalMaxAge: function(originalMaxAge) {
-        this.originalMaxAge = originalMaxAge;
+        this.getEntityData().originalMaxAge = originalMaxAge;
     },
 
     /**
      * @return {string}
      */
     getPath: function() {
-        return this.data.path;
+        return this.getEntityData().path;
     },
 
     /**
      * @param {string} path
      */
     setPath: function(path) {
-        this.data.path = path;
+        this.getEntityData().path = path;
     },
 
     /**
      * @return {boolean}
      */
-    isSecure: function() {
-        return this.data.secure;
+    getSecure: function() {
+        return this.getEntityData().secure;
     },
 
     /**
      * @param {boolean} secure
      */
     setSecure: function(secure) {
-        this.data.secure = secure;
+        this.getEntityData().secure = secure;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    isSecure: function() {
+        return this.getSecure();
     },
 
 
@@ -210,16 +247,51 @@ var Cookie = Class.extend(Obj, {
      * @return {string}
      */
     serialize: function(name, val) {
-        return cookie.serialize(name, val, this.data);
+        return cookie.serialize(name, val, this.getEntityData());
     },
 
     /**
      * @return {Object}
      */
     toJSON: function() {
-        return this.getData();
+        return this.getEntityData();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Cookie).with(
+    entity("Cookie")
+        .properties([
+            property("domain")
+                .type("string")
+                .default(""),
+            property("expires")
+                .type("date")
+                .require(true),
+            property("httpOnly")
+                .type("boolean")
+                .require(true),
+            property("path")
+                .type("string")
+                .require(true),
+            property("secure")
+                .type("boolean")
+                .require(true)
+        ])
+        .embed(true),
+    marsh("Cookie")
+        .properties([
+            marshProperty("domain"),
+            marshProperty("expires"),
+            marshProperty("httpOnly"),
+            marshProperty("path"),
+            marshProperty("secure")
+        ])
+);
 
 
 //-------------------------------------------------------------------------------

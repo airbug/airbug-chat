@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('User')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')
@@ -46,6 +47,10 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var User = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
@@ -83,14 +88,14 @@ var User = Class.extend(Entity, {
      * @return {boolean}
      */
     getAnonymous: function() {
-        return this.getDeltaDocument().getData().anonymous;
+        return this.getEntityData().anonymous;
     },
 
     /**
      * @param {boolean} anonymous
      */
     setAnonymous: function(anonymous) {
-        this.getDeltaDocument().getData().anonymous = anonymous;
+        this.getEntityData().anonymous = anonymous;
     },
 
     /**
@@ -111,42 +116,42 @@ var User = Class.extend(Entity, {
      * @return {*}
      */
     getEmail: function() {
-        return this.getDeltaDocument().getData().email;
+        return this.getEntityData().email;
     },
 
     /**
      * @param {string} email
      */
     setEmail: function(email) {
-        this.getDeltaDocument().getData().email = email;
+        this.getEntityData().email = email;
     },
 
     /**
      * @return {string}
      */
     getFirstName: function() {
-        return this.getDeltaDocument().getData().firstName;
+        return this.getEntityData().firstName;
     },
 
     /**
      * @param {string} firstName
      */
     setFirstName: function(firstName) {
-        this.getDeltaDocument().getData().firstName = firstName;
+        this.getEntityData().firstName = firstName;
     },
 
     /**
      * @return {string}
      */
     getLastName: function() {
-        return this.getDeltaDocument().getData().lastName;
+        return this.getEntityData().lastName;
     },
 
     /**
      * @param {string} lastName
      */
     setLastName: function(lastName) {
-        this.getDeltaDocument().getData().lastName = lastName;
+        this.getEntityData().lastName = lastName;
     },
 
     /**
@@ -154,7 +159,7 @@ var User = Class.extend(Entity, {
      * @returns {string|*}
      */
     getPasswordHash: function() {
-        return this.getDeltaDocument().getData().passwordHash;
+        return this.getEntityData().passwordHash;
     },
 
     /**
@@ -162,35 +167,35 @@ var User = Class.extend(Entity, {
      * @param {string} passwordHash
      */
     setPasswordHash: function(passwordHash) {
-        this.getDeltaDocument().getData().passwordHash = passwordHash;
+        this.getEntityData().passwordHash = passwordHash;
     },
 
     /**
      * @return {Set.<string>}
      */
     getRoomIdSet: function() {
-        return this.getDeltaDocument().getData().roomIdSet;
+        return this.getEntityData().roomIdSet;
     },
 
     /**
      * @param {Set.<string>} roomIdSet
      */
     setRoomIdSet: function(roomIdSet) {
-        this.getDeltaDocument().getData().roomIdSet = roomIdSet;
+        this.getEntityData().roomIdSet = roomIdSet;
     },
 
     /**
      * @return {string}
      */
     getStatus: function() {
-        return this.getDeltaDocument().getData().status;
+        return this.getEntityData().status;
     },
 
     /**
      * @param {string} status
      */
     setStatus: function(status) {
-        this.getDeltaDocument().getData().status = status;
+        this.getEntityData().status = status;
     },
 
 
@@ -300,13 +305,23 @@ bugmeta.annotate(User).with(
         property("agreedToTermsDate")
             .type("date"),
         property("anonymous")
-            .type("boolean"),
+            .type("boolean")
+            .require(true)
+            .default(true),
         property("betaKey")
             .type("string"),
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
+
+        // NOTE BRN: Cannot make email unique or require it since anonymous users have a 'null' value for their email and we can't have
+        // more than one null. We'll have to validate uniqueness at the application level instead.
+        // More info http://stackoverflow.com/questions/7955040/mongodb-mongoose-unique-if-not-null
+
         property("email")
-            .type("string"),
+            .type("string")
+            .index(true),
         property("firstName")
             .type("string"),
         property("id")
@@ -324,16 +339,18 @@ bugmeta.annotate(User).with(
             .type("Set")
             .collectionOf("Room")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("sessionSet")
             .type("Set")
             .collectionOf("Session")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("status")
             .type("string"),
         property("updatedAt")
             .type("date")
+            .require(true)
+            .default(Date.now)
     ])
 );
 

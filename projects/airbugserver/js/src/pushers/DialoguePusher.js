@@ -160,6 +160,7 @@ var DialoguePusher = Class.extend(EntityPusher, {
 bugmeta.annotate(DialoguePusher).with(
     module("dialoguePusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

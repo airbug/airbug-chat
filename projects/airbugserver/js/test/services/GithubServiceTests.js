@@ -16,6 +16,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
 
@@ -42,6 +43,7 @@ var BugDouble           = bugpack.require('bugdouble.BugDouble');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn             = bugpack.require('bugyarn.BugYarn');
 var Logger              = bugpack.require('loggerbug.Logger');
 
 
@@ -49,31 +51,46 @@ var Logger              = bugpack.require('loggerbug.Logger');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var spyOnObject         = BugDouble.spyOnObject;
 var bugmeta             = BugMeta.context();
+var bugyarn             = BugYarn.context();
+var spyOnObject         = BugDouble.spyOnObject;
+var stubObject          = BugDouble.stubObject;
+var test                = TestAnnotation.test;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
-var test                = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupGithubService", function(yarn) {
+    yarn.spin([
+        "setupMockSuccessPushTaskManager",
+        "setupTestLogger",
+        "setupTestSessionManager",
+        "setupTestGithubManager",
+        "setupTestGithubApi",
+        "setupTestUserService",
+        "setupTestUserManager"
+    ]);
+
+    yarn.wind({
+        githubService: new GithubService(this.sessionManager, this.githubManager, this.githubApi, this.userService, this.userManager)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
 // Setup Methods
 //-------------------------------------------------------------------------------
 
-var setupGithubService = function(setupObject) {
-    setupObject.logger              = new Logger();
-    setupObject.testCurrentUser     = new User({});
-    setupObject.testCurrentUser.setId("testId");
-    setupObject.testCurrentUser.setAnonymous(true);
-    setupObject.testSession         = new Session({
-        data: {
-            key: 'value'
-        },
-        sid: UuidGenerator.generateUuid(),
-        cookie: {
-            expires: this.testExpires
-        }
-    });
+var setupGithubService = function(yarn, setupObject, callback) {
+
+    setupObject.schemaManager.processModule();
+    setupObject.mongoDataStore.processModule();
+    setupObject.testCurrentUser     = yarn.weave("testNotAnonymousUser");
+    setupObject.testSession         = yarn.weave("testSession");
 
     setupObject.testRequestContext = {
         get: function(key) {
@@ -88,11 +105,6 @@ var setupGithubService = function(setupObject) {
 
         }
     };
-    setupObject.testSessionManager = {
-        updateSession: function(session, callback) {
-            callback(undefined, session);
-        }
-    };
     setupObject.testGithubUser = {
         id: 12345,
         login: 'dicegame'
@@ -102,48 +114,69 @@ var setupGithubService = function(setupObject) {
         githubId: setupObject.testGithubUser.id,
         githubAuthToken: setupObject.testGithubAuthToken
     });
-    setupObject.testGithubManager = {
-        createGithub: function(github, callback) {
-            callback(undefined, github);
-        },
-        populateGithub: function(github, properties, callback) {
-            github.setUser(setupObject.testCurrentUser);
-            callback(undefined);
-        },/*
-        retrieveGithubId: function(callback) {
-            callback(throwable, setupObject.testGithubUser.id);
-        },*/
-        retrieveGithubByGithubId: function(githubId, callback) {
-            callback(undefined, setupObject.testGithub);
-        }
-    };
-    setupObject.testGithubApi = {
+    stubObject(setupObject.githubApi, {
         getAuthToken: function(code, callback) {
             callback(undefined, setupObject.testGithubAuthToken);
         },
         retrieveGithubUser: function(authToken, callback) {
             callback(undefined, setupObject.testGithubUser);
         }
-    };
-    setupObject.testUserService = {
-        loginUser: function(requestContext, user, callback) {
-            callback(undefined, user);
-        }
-    };
-    setupObject.users = {
-        'test@example.com': new User({
-            id: "testUserId",
-            email: 'test@example.com'
+    });
+    var testUser = setupObject.userManager.generateUser({
+        email: 'test@example.com'
+    });
+    $series([
+        $task(function(flow) {
+            setupObject.blockingRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.subscriberRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisPubSub.initialize(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.pubSub.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.userManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.sessionManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.githubManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.userManager.createUser(setupObject.testCurrentUser, function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.userManager.createUser(testUser, function(throwable) {
+                flow.complete(throwable);
+            });
         })
-    }; // map email to user object
-    setupObject.testUserManager = {
-        retrieveUserByEmail: function(email, callback) {
-            callback(undefined, setupObject.users[email]);
-        }
-    };
-    setupObject.testGithubService = new GithubService(setupObject.testSessionManager,
-        setupObject.testGithubManager, setupObject.testGithubApi, setupObject.testUserService,
-        setupObject.testUserManager);
+    ]).execute(callback);
 };
 
 
@@ -151,7 +184,7 @@ var setupGithubService = function(setupObject) {
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var githubServiceloginUserWithGithubTest = {
+var githubServiceLoginUserWithGithubTest = {
 
     async: true,
 
@@ -160,7 +193,22 @@ var githubServiceloginUserWithGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubService(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -172,15 +220,15 @@ var githubServiceloginUserWithGithubTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 var code = 'testCode';
-                var state = _this.testSession.getData().githubState;
+                var state = _this.testSession.getData().getGithubState();
                 var error = '';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable === undefined,
                         "throwable should be undefined for a valid github login");
                     flow.complete(throwable);
@@ -188,7 +236,7 @@ var githubServiceloginUserWithGithubTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -196,7 +244,7 @@ var githubServiceloginUserWithGithubTest = {
     }
 };
 
-var githubServiceloginUserWithGithubErrorTest = {
+var githubServiceLoginUserWithGithubErrorTest = {
 
     async: true,
 
@@ -205,7 +253,22 @@ var githubServiceloginUserWithGithubErrorTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubService(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -217,15 +280,15 @@ var githubServiceloginUserWithGithubErrorTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 var code = 'testCode';
-                var state = _this.testSession.getData().githubState;
+                var state = _this.testSession.getData().getGithubState();
                 var error = 'BAD THING!';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable !== undefined,
                         "throwable should be undefined when we get an error from github");
                     flow.complete();
@@ -233,7 +296,7 @@ var githubServiceloginUserWithGithubErrorTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -241,7 +304,7 @@ var githubServiceloginUserWithGithubErrorTest = {
     }
 };
 
-var githubServiceloginUserWithGithubStateMismatchTest = {
+var githubServiceLoginUserWithGithubStateMismatchTest = {
 
     async: true,
 
@@ -250,7 +313,22 @@ var githubServiceloginUserWithGithubStateMismatchTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubService(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -262,7 +340,7 @@ var githubServiceloginUserWithGithubStateMismatchTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
@@ -270,7 +348,7 @@ var githubServiceloginUserWithGithubStateMismatchTest = {
                 var code = 'testCode';
                 var state = 'BAD STATE!';
                 var error = '';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable !== undefined,
                         "throwable should not be undefined when we have a state mismatch");
                     flow.complete();
@@ -278,7 +356,7 @@ var githubServiceloginUserWithGithubStateMismatchTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -287,7 +365,7 @@ var githubServiceloginUserWithGithubStateMismatchTest = {
 };
 
 
-var githubServiceloginUserWithGithubNoGithubRecordTest = {
+var githubServiceLoginUserWithGithubNoGithubRecordTest = {
 
     async: true,
 
@@ -296,8 +374,23 @@ var githubServiceloginUserWithGithubNoGithubRecordTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubService(this);
-        this.testGithub = undefined;
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                _this.testGithub = undefined;
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -309,15 +402,15 @@ var githubServiceloginUserWithGithubNoGithubRecordTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 var code = 'testCode';
-                var state = _this.testSession.getData().githubState;
+                var state = _this.testSession.getData().getGithubState();
                 var error = '';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable === undefined,
                         "throwable should be undefined when we don't find a github record in the db");
                     flow.complete(throwable);
@@ -325,7 +418,7 @@ var githubServiceloginUserWithGithubNoGithubRecordTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -334,7 +427,7 @@ var githubServiceloginUserWithGithubNoGithubRecordTest = {
 };
 
 
-var githubServiceloginUserWithGithubNoGithubRecordUserLoggedInTest = {
+var githubServiceLoginUserWithGithubNoGithubRecordUserLoggedInTest = {
 
     async: true,
 
@@ -343,15 +436,28 @@ var githubServiceloginUserWithGithubNoGithubRecordUserLoggedInTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        var _this = this;
-        setupGithubService(this);
-        this.testGithub = undefined;
-        this.testCurrentUser = new User({
-            id: "testUserId",
-            anonymous: false
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                _this.testGithub = undefined;
+                _this.testCurrentUser = new User({
+                    anonymous: false
+                });
+                _this.testCurrentUser.setAnonymous(false);
+                _this.githubManagerSpy = spyOnObject(_this.githubManager);
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
         });
-        this.testCurrentUser.setAnonymous(false);
-        this.testGithubManagerSpy = spyOnObject(this.testGithubManager);
     },
 
 
@@ -363,25 +469,25 @@ var githubServiceloginUserWithGithubNoGithubRecordUserLoggedInTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 var code = 'testCode';
-                var state = _this.testSession.getData().githubState;
+                var state = _this.testSession.getData().getGithubState();
                 var error = '';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable === undefined,
                         "throwable should be undefined");
-                    test.assertTrue(_this.testGithubManagerSpy.getSpy("createGithub").wasCalled(),
+                    test.assertTrue(_this.githubManagerSpy.getSpy("createGithub").wasCalled(),
                         "ensure that we created a new github object when the user was logged in");
                     flow.complete(throwable);
                 });
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -389,7 +495,7 @@ var githubServiceloginUserWithGithubNoGithubRecordUserLoggedInTest = {
     }
 };
 
-var githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest = {
+var githubServiceLoginUserWithGithubNoGithubRecordEmailMatchesTest = {
 
     async: true,
 
@@ -398,19 +504,28 @@ var githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupGithubService(this);
-        this.testGithub = undefined;
-        this.testGithubUser = {
-            email: 'test@example.com',
-            id: 12345,
-            login: 'dicegame'
-        };
-        this.users = {
-            'test@example.com': new User({
-                id: "testUserId",
-                email: 'test@example.com'
-            })
-        };
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupGithubService"
+        ]);
+        $task(function(flow) {
+            setupGithubService(yarn, _this, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                _this.testGithub = undefined;
+                _this.testGithubUser = {
+                    email: 'test@example.com',
+                    id: 12345,
+                    login: 'dicegame'
+                };
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
 
@@ -422,19 +537,19 @@ var githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest = {
         var _this = this;
         $series([
             $task(function(flow) {
-                _this.testGithubService.buildRequestContext(_this.testRequestContext, function(throwable) {
+                _this.githubService.buildRequestContext(_this.testRequestContext, function(throwable) {
                     flow.complete(throwable);
                 });
             }),
             $task(function(flow) {
                 var code = 'testCode';
-                var state = _this.testSession.getData().githubState;
+                var state = _this.testSession.getData().getGithubState();
                 var error = '';
-                _this.testGithubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
+                _this.githubService.loginUserWithGithub(_this.testRequestContext, code, state, error, function(throwable) {
                     test.assertTrue(throwable === undefined,
                         "throwable should be undefined when we don't find a github record in the db");
                     var session = _this.testRequestContext.get("session");
-                    var githubEmails = session.getData().githubEmails;
+                    var githubEmails = session.getData().getGithubEmails();
                     test.assertTrue(githubEmails !== undefined,
                         "githubEmails addresses should be stored on session");
                     if (githubEmails !== undefined) {
@@ -448,7 +563,7 @@ var githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -456,27 +571,31 @@ var githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest = {
     }
 };
 
-bugmeta.annotate(githubServiceloginUserWithGithubTest).with(
-    test().name('GithubService #loginUserWithGithub Test')
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(githubServiceLoginUserWithGithubTest).with(
+    test().name('GithubService - #loginUserWithGithub Test')
 );
 
-bugmeta.annotate(githubServiceloginUserWithGithubErrorTest).with(
-    test().name('GithubService #loginUserWithGithub with github error Test')
+bugmeta.annotate(githubServiceLoginUserWithGithubErrorTest).with(
+    test().name('GithubService - #loginUserWithGithub with github error Test')
 );
 
-bugmeta.annotate(githubServiceloginUserWithGithubStateMismatchTest).with(
-    test().name('GithubService #loginUserWithGithub with state mismatch Test')
+bugmeta.annotate(githubServiceLoginUserWithGithubStateMismatchTest).with(
+    test().name('GithubService - #loginUserWithGithub with state mismatch Test')
 );
 
-bugmeta.annotate(githubServiceloginUserWithGithubNoGithubRecordTest).with(
-    test().name('GithubService #loginUserWithGithub no github record Test')
+bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordTest).with(
+    test().name('GithubService - #loginUserWithGithub no github record Test')
 );
 
-bugmeta.annotate(githubServiceloginUserWithGithubNoGithubRecordUserLoggedInTest).with(
-    test().name('GithubService #loginUserWithGithub no github record user logged in Test')
+bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordUserLoggedInTest).with(
+    test().name('GithubService - #loginUserWithGithub no github record user logged in Test')
 );
 
-
-bugmeta.annotate(githubServiceloginUserWithGithubNoGithubRecordEmailMatchesTest).with(
-    test().name('GithubService #loginUserWithGithub no github record github email matches user email Test')
+bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordEmailMatchesTest).with(
+    test().name('GithubService - #loginUserWithGithub no github record github email matches user email Test')
 );

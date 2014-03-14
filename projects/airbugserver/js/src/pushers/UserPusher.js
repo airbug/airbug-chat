@@ -154,6 +154,7 @@ var UserPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(UserPusher).with(
     module("userPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

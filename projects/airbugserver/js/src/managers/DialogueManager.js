@@ -55,7 +55,6 @@ var ObjectId                    = mongoose.Types.ObjectId;
 
 var DialogueManager = Class.extend(EntityManager, {
 
-
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
@@ -195,7 +194,8 @@ bugmeta.annotate(DialogueManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

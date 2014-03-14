@@ -5,6 +5,7 @@
 //@Package('airbugserver')
 
 //@Export('Conversation')
+//@Autoload
 
 //@Require('Class')
 //@Require('Set')
@@ -161,22 +162,30 @@ bugmeta.annotate(Conversation).with(
             .type("Set")
             .collectionOf("ChatMessage")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("createdAt")
-            .type("date"),
+            .type("date")
+            .require(true)
+            .default(Date.now),
         property("id")
             .type("string")
             .primaryId(),
         property("ownerId")
             .type("string")
+            .require(true)
+            .index(true)
+            .unique(true)
             .id(),
         property("ownerType")
-            .type("string"),
+            .type("string")
+            .require(true),
         property("owner")
             .populates(true)
-            .stored(false),
+            .store(false),
         property("updatedAt")
             .type("date")
+            .require(true)
+            .default(Date.now)
     ])
 );
 

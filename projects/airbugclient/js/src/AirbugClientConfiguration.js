@@ -140,6 +140,13 @@ var AirbugClientConfiguration = Class.extend(Obj, {
     },
 
     /**
+     * @return {console|Console}
+     */
+    console: function() {
+        return console;
+    },
+
+    /**
      * @param {CarapaceApplication} carapaceApplication
      * @return {ControllerScan}
      */
@@ -246,6 +253,7 @@ bugmeta.annotate(AirbugClientConfiguration).with(
                 arg().ref("carapaceRouter")
             ]),
         module("carapaceRouter"),
+        module("console"),
         module("controllerScan")
             .args([
                 arg().ref("carapaceApplication")

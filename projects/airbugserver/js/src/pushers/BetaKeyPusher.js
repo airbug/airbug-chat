@@ -150,6 +150,7 @@ var BetaKeyPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(BetaKeyPusher).with(
     module("betaKeyPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

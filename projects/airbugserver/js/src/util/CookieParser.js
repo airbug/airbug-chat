@@ -9,6 +9,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
@@ -18,7 +19,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack                 = require('bugpack').context();
-var cookie                  = require('cookie');
 
 
 //-------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ var cookie                  = require('cookie');
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
+var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
@@ -35,6 +36,7 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                     = ArgAnnotation.arg;
 var bugmeta                 = BugMeta.context();
 var module                  = ModuleAnnotation.module;
 
@@ -50,10 +52,7 @@ var CookieParser = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    _constructor: function() {
+    _constructor: function(cookieModule) {
 
         this._super();
 
@@ -62,11 +61,28 @@ var CookieParser = Class.extend(Obj, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {cookie}
+         */
+        this.cookieModule = cookieModule;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {cookie}
+     */
+    getCookieModule: function() {
+        return this.cookieModule;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -74,7 +90,7 @@ var CookieParser = Class.extend(Obj, {
      * @return {Object}
      */
     parse: function (cookieString) {
-        return cookie.parse(cookieString);
+        return this.cookieModule.parse(cookieString);
     }
 });
 
@@ -85,6 +101,9 @@ var CookieParser = Class.extend(Obj, {
 
 bugmeta.annotate(CookieParser).with(
     module("cookieParser")
+        .args([
+            arg().ref("cookie")
+        ])
 );
 
 

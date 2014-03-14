@@ -60,9 +60,9 @@ var GithubManager = Class.extend(EntityManager, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param Github github
-     * @param {(Array.<string> | function(Throwable, User))} dependencies
-     * @param {function(Throwable, User)=} callback
+     * @param {Github} github
+     * @param {(Array.<string> | function(Throwable, User=))} dependencies
+     * @param {function(Throwable, User=)=} callback
      */
     createGithub: function(github, dependencies, callback) {
         if (TypeUtil.isFunction(dependencies)) {
@@ -171,7 +171,8 @@ bugmeta.annotate(GithubManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

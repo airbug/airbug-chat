@@ -4,6 +4,7 @@
 
 //@TestFile
 
+//@Require('Class')
 //@Require('airbugserver.Github')
 //@Require('airbugserver.GithubManager')
 //@Require('bugentity.EntityManagerStore')
@@ -14,7 +15,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.DummyMongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class                   = bugpack.require('Class');
 var Github                  = bugpack.require('airbugserver.Github');
 var GithubManager           = bugpack.require('airbugserver.GithubManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
@@ -37,7 +39,7 @@ var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -45,9 +47,28 @@ var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestGithubManager", function(yarn) {
+    yarn.spin([
+        "setupTestEntityManagerStore",
+        "setupTestSchemaManager",
+        "setupDummyMongoDataStore",
+        "setupTestEntityDeltaBuilder"
+    ]);
+    yarn.wind({
+        githubManager: new GithubManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder)
+    });
+    this.githubManager.setEntityType("Github");
+});
 
 
 //-------------------------------------------------------------------------------
@@ -55,15 +76,6 @@ var $task                   = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 var setupGithubManager = function(setupObject) {
-    setupObject.entityManagerStore     = new EntityManagerStore();
-    setupObject.mongoDataStore         = new DummyMongoDataStore();
-    setupObject.schemaManager          = new SchemaManager();
-    setupObject.entityProcessor        = new EntityProcessor(setupObject.schemaManager);
-    setupObject.entityScan             = new EntityScan(setupObject.entityProcessor);
-    setupObject.entityScan.scanClass(Github);
-    setupObject.githubManager           = new GithubManager(setupObject.entityManagerStore,
-        setupObject.schemaManager, setupObject.mongoDataStore);
-    setupObject.githubManager.setEntityType("Github");
     setupObject.testUserId              = '528ad6c3859c7f16a4000001';
     setupObject.testGithubAuthCode      = 'a1b75646f9ec91dee2dd4270f76e49ef2ebb9575';
     setupObject.testGithubId            = '12345';
@@ -76,47 +88,74 @@ var setupGithubManager = function(setupObject) {
     });
 };
 
-var initializeManagers = function(setupObject, test) {
+var initializeManagers = function(setupObject, callback) {
     $series([
         $task(function(flow) {
-            setupObject.schemaManager.initializeModule(function(throwable) {
-                flow.complete(throwable);
-            });
+            setupObject.schemaManager.processModule();
+            setupObject.mongoDataStore.processModule();
+            flow.complete();
         }),
         $task(function(flow) {
             setupObject.githubManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });
         })
-    ]).execute(function(throwable) {
-        if (throwable) {
-            test.error(throwable);
-        }
-    });
-
+    ]).execute(callback);
 };
 
-var setupGithubEntity = function(setupObject, test) {
+var setupGithubEntity = function(setupObject, callback) {
     $series([
         $task(function(flow) {
             setupObject.githubManager.createGithub(setupObject.testGithub, function(throwable) {
-                if (!throwable) {
-                    test.assertTrue(!! setupObject.testGithub.getId(),
-                        "Newly created github should have an id");
-                }
                 flow.complete(throwable);
             });
         })
-    ]).execute(function(throwable) {
-        if (throwable) {
-            test.error(throwable);
-        }
-    });
+    ]).execute(callback);
 };
+
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var githubManagerInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestEntityManagerStore",
+            "setupTestSchemaManager",
+            "setupDummyMongoDataStore",
+            "setupTestEntityDeltaBuilder"
+        ]);
+        this.testGithubManager   = new GithubManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testGithubManager, GithubManager),
+            "Assert instance of GithubManager");
+        test.assertEqual(this.testGithubManager.getEntityManagerStore(), this.entityManagerStore,
+            "Assert .entityManagerStore was set correctly");
+        test.assertEqual(this.testGithubManager.getEntityDataStore(), this.mongoDataStore,
+            "Assert .entityDataStore was set correctly");
+        test.assertEqual(this.testGithubManager.getSchemaManager(), this.schemaManager,
+            "Assert .schemaManager was set correctly");
+        test.assertEqual(this.testGithubManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
+            "Assert .entityDeltaBuilder was set correctly");
+    }
+};
+bugmeta.annotate(githubManagerInstantiationTest).with(
+    test().name("GithubManager - instantiation test")
+);
+
 
 var githubManagerRetrieveGithubByGithubIdTest = {
     async: true,
@@ -126,7 +165,30 @@ var githubManagerRetrieveGithubByGithubIdTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestGithubManager"
+        ]);
         setupGithubManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                setupGithubEntity(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -135,21 +197,17 @@ var githubManagerRetrieveGithubByGithubIdTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(_this, test);
-        setupGithubEntity(_this, test);
-        $series([
-            $task(function(flow) {
-                _this.githubManager.retrieveGithubByGithubId(_this.testGithubId, function(throwable, github) {
-                    if (!throwable) {
-                        test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
-                            "retrieveGithubByGithubId should return proper entity object");
-                    }
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
+        $task(function(flow) {
+            _this.githubManager.retrieveGithubByGithubId(_this.testGithubId, function(throwable, github) {
+                if (!throwable) {
+                    test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
+                        "retrieveGithubByGithubId should return proper entity object");
+                }
+                flow.complete(throwable);
+            });
+        }).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
@@ -165,7 +223,30 @@ var githubManagerRetrieveGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestGithubManager"
+        ]);
         setupGithubManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                setupGithubEntity(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -174,25 +255,21 @@ var githubManagerRetrieveGithubTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(_this, test);
-        setupGithubEntity(_this, test);
-        $series([
-            $task(function(flow) {
-                _this.githubManager.retrieveGithub(_this.testGithub.getId(), function(throwable, github) {
-                    if (!throwable) {
-                        test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
-                            "retrieveGithub should return proper entity object");
-                    }
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
+        $task(function(flow) {
+            _this.githubManager.retrieveGithub(_this.testGithub.getId(), function(throwable, github) {
                 if (!throwable) {
-                    test.complete();
-                } else {
-                    test.error(throwable);
+                    test.assertEqual(github.getGithubAuthCode(), _this.testGithubAuthCode,
+                        "retrieveGithub should return proper entity object");
                 }
+                flow.complete(throwable);
             });
+        }).execute(function(throwable) {
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
+        });
     }
 };
 
@@ -204,7 +281,30 @@ var githubManagerDeleteGithubTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        var _this = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestGithubManager"
+        ]);
         setupGithubManager(this);
+        $series([
+            $task(function(flow) {
+                initializeManagers(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                setupGithubEntity(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -213,8 +313,6 @@ var githubManagerDeleteGithubTest = {
 
     test: function(test) {
         var _this = this;
-        initializeManagers(_this, test);
-        setupGithubEntity(_this, test);
         _this.testGithubObjectId = _this.testGithub.getId();
         $series([
             $task(function(flow) {
@@ -233,7 +331,7 @@ var githubManagerDeleteGithubTest = {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }

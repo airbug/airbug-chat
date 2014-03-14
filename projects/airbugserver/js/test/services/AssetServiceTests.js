@@ -11,6 +11,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
 
@@ -33,6 +34,7 @@ var AssetService        = bugpack.require('airbugserver.AssetService');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn             = bugpack.require('bugyarn.BugYarn');
 var Logger              = bugpack.require('loggerbug.Logger');
 
 
@@ -41,37 +43,127 @@ var Logger              = bugpack.require('loggerbug.Logger');
 //-------------------------------------------------------------------------------
 
 var bugmeta             = BugMeta.context();
+var bugyarn             = BugYarn.context();
 var test                = TestAnnotation.test;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
 
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestAssetService", function(yarn) {
+    yarn.spin([
+        "setupMockSuccessPushTaskManager",
+        "setupTestLogger",
+        "setupTestAssetManager",
+        "setupTestAssetPusher",
+        "setupDummyAwsUploader"
+    ]);
+    yarn.wind({
+        imagemagick: {
+            identify: function() {},
+            resize: function() {}
+        }
+    });
+    yarn.wind({
+        assetService: new AssetService(this.logger, this.assetManager, this.assetPusher, this.awsUploader, this.imagemagick)
+    });
+});
+
+
+//-------------------------------------------------------------------------------
 // Setup Methods
 //-------------------------------------------------------------------------------
 
-var setupAssetService = function(setupObject) {
-    var dummyAssetManager = {
-        createAsset: function(asset, callback) {
-            callback(asset);
-        },
-        deleteAsset: function(asset, callback) {
-            callback();
-        },
-        generateAsset: function(assetObject) {
-            return new Asset(assetObject);
-        },
-        retrieveAsset: function(assetId, callback) {
-            var asset = new Asset({
-                id: assetId
-            })
-            callback(throwable, asset);
-        }
-    };
-    setupObject.logger                      = new Logger();
-    // TODO - dkk - pass in awsUploader when creating asset service
-    setupObject.testAssetService            = new AssetService(dummyAssetManager);
-    setupObject.testAssetService.logger     = setupObject.logger;
+var setupAssetService = function(setupObject, callback) {
+    $series([
+        $task(function(flow) {
+            setupObject.blockingRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.subscriberRedisClient.connect(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.redisPubSub.initialize(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.pubSub.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        }),
+        $task(function(flow) {
+            setupObject.schemaManager.processModule();
+            setupObject.mongoDataStore.processModule();
+            setupObject.assetManager.initializeModule(function(throwable) {
+                flow.complete(throwable);
+            });
+        })
+    ]).execute(callback);
 };
+
+
+//-------------------------------------------------------------------------------
+// Declare Tests
+//-------------------------------------------------------------------------------
+
+var assetServiceInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger",
+            "setupTestAssetManager",
+            "setupTestAssetPusher",
+            "setupDummyAwsUploader"
+        ]);
+        yarn.wind({
+            imagemagick: {
+                identify: function() {},
+                resize: function() {}
+            }
+        });
+        this.testAssetService   = new AssetService(this.logger, this.assetManager, this.assetPusher, this.awsUploader, this.imagemagick);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testAssetService, AssetService),
+            "Assert instance of AssetService");
+        test.assertEqual(this.testAssetService.getAssetManager(), this.assetManager,
+            "Assert .assetManager was set correctly");
+        test.assertEqual(this.testAssetService.getAssetPusher(), this.assetPusher,
+            "Assert .assetPusher was set correctly");
+        test.assertEqual(this.testAssetService.getAwsUploader(), this.awsUploader,
+            "Assert .awsUploader was set correctly");
+        test.assertEqual(this.testAssetService.getImagemagick(), this.imagemagick,
+            "Assert .imagemagick was set correctly");
+        test.assertEqual(this.testAssetService.getLogger(), this.logger,
+            "Assert .logger was set correctly");
+    }
+};
+bugmeta.annotate(assetServiceInstantiationTest).with(
+    test().name("AssetService - instantiation test")
+);
 
 var assetServiceUploadAssetTest = {
 
@@ -82,7 +174,9 @@ var assetServiceUploadAssetTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupAssetService(this);
+        var yarn = bugyarn.yarn(this);
+        yarn.spin("setupTestAssetService");
+        test.completeSetup();
     },
 
     //-------------------------------------------------------------------------------
@@ -91,7 +185,7 @@ var assetServiceUploadAssetTest = {
 
     test: function(test) {
         // TODO - dkk - implement
-        test.complete();
+        test.completeTest();
     }
 };
 
@@ -104,7 +198,9 @@ var assetServiceAddAssetFromUrlTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupAssetService(this);
+        var yarn = bugyarn.yarn(this);
+        yarn.spin("setupTestAssetService");
+        test.completeSetup();
     },
 
     //-------------------------------------------------------------------------------
@@ -113,7 +209,7 @@ var assetServiceAddAssetFromUrlTest = {
 
     test: function(test) {
         // TODO - dkk - implement
-        test.complete();
+        test.completeTest();
     }
 };
 
@@ -126,7 +222,24 @@ var assetServiceDeleteAssetTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        setupAssetService(this);
+        var _this   = this;
+        var yarn    = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestAssetService"
+        ]);
+        $series([
+            $task(function(flow) {
+                setupAssetService(_this, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeSetup();
+            } else {
+                test.error(throwable);
+            }
+        });
     },
 
     //-------------------------------------------------------------------------------
@@ -134,9 +247,21 @@ var assetServiceDeleteAssetTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testAssetService.deleteAsset(this.testRequestContext, "testAssetId", function(throwable, asset) {
-            // TODO - dkk - implement
-            test.complete(throwable);
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.assetService.deleteAsset(_this.testRequestContext, "testAssetId", function(throwable, asset) {
+                    test.assertEqual(throwable.getType(), "NotFound",
+                        "Assert throwable is of type 'NotFound'");
+                    flow.complete();
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                test.completeTest();
+            } else {
+                test.error(throwable);
+            }
         });
     }
 };

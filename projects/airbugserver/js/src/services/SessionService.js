@@ -7,7 +7,9 @@
 //@Export('SessionService')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
+//@Require('Exception')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
@@ -36,7 +38,9 @@ var url                     = require('url');
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var TypeUtil                = bugpack.require('TypeUtil');
 var UuidGenerator           = bugpack.require('UuidGenerator');
@@ -72,7 +76,7 @@ var SessionService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cookieParser, cookieSigner, sessionManager) {
+    _constructor: function(sessionServiceConfig, cookieParser, cookieSigner, sessionManager, marshaller) {
 
         this._super();
 
@@ -85,25 +89,31 @@ var SessionService = Class.extend(Obj, {
          * @private
          * @type {SessionServiceConfig}
          */
-        this.config         = null;
+        this.config             = sessionServiceConfig;
 
         /**
          * @private
          * @type {CookieParser}
          */
-        this.cookieParser   = cookieParser;
+        this.cookieParser       = cookieParser;
 
         /**
          * @private
          * @type {CookieSigner}
          */
-        this.cookieSigner   = cookieSigner;
+        this.cookieSigner       = cookieSigner;
+
+        /**
+         * @private
+         * @type {Marshaller}
+         */
+        this.marshaller         = marshaller;
 
         /**
          * @private
          * @type {SessionManager}
          */
-        this.sessionManager = sessionManager;
+        this.sessionManager     = sessionManager;
     },
 
 
@@ -111,12 +121,39 @@ var SessionService = Class.extend(Obj, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {SessionServiceConfig}
+     */
     getConfig: function() {
         return this.config;
     },
 
-    setConfig: function(config) {
-        this.config = config;
+    /**
+     * @return {CookieParser}
+     */
+    getCookieParser: function() {
+        return this.cookieParser;
+    },
+
+    /**
+     * @return {CookieSigner}
+     */
+    getCookieSigner: function() {
+        return this.cookieSigner;
+    },
+
+    /**
+     * @return {Marshaller}
+     */
+    getMarshaller: function() {
+        return this.marshaller;
+    },
+
+    /**
+     * @return {SessionManager}
+     */
+    getSessionManager: function() {
+        return this.sessionManager;
     },
 
 
@@ -126,7 +163,7 @@ var SessionService = Class.extend(Obj, {
 
     /**
      * @param {RequestContext} requestContext
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     buildRequestContext: function(requestContext, callback) {
         var sessionId = undefined;
@@ -135,11 +172,6 @@ var SessionService = Class.extend(Obj, {
         } else {
             sessionId = requestContext.getRequest().sessionId;
         }
-
-
-        //TEST
-        console.log("SessionService#buildRequestContext - sessionId:", sessionId);
-
 
         if (!sessionId) {
             this.generateSession({}, function(throwable, session) {
@@ -180,12 +212,28 @@ var SessionService = Class.extend(Obj, {
         console.log("SessionService#shakeIt");
         var sessionKey  = this.config.getSessionKey();
         if (handshakeData.headers.cookie) {
+
+            //TEST
+            console.log("handshakeData.headers.cookie:", handshakeData.headers.cookie);
+
             handshakeData.cookie        = this.cookieParser.parse(handshakeData.headers.cookie);
-            handshakeData.sessionId     = this.cookieSigner.unsign(handshakeData.cookie[sessionKey]);
-            callback(undefined, true);
+
+            //TEST
+            console.log("handshakeData.cookie:", handshakeData.cookie);
+
+            var sessionCookie = handshakeData.cookie[sessionKey];
+            if (sessionCookie) {
+                handshakeData.sessionId     = this.cookieSigner.unsign(sessionCookie);
+
+                //TEST
+                console.log("handshakeData.sessionId:", handshakeData.sessionId);
+
+                callback(null, true);
+            } else {
+                callback(new Exception("NoCookie", {}, "No cookie transmitted."), false);
+            }
         } else {
-            console.log("Finish SessionService shake first else");
-            callback(new Error('No cookie transmitted.'), false);
+            callback(new Exception("NoCookie", {}, "No cookie transmitted."), false);
         }
     },
 
@@ -217,8 +265,8 @@ var SessionService = Class.extend(Obj, {
 
         var sessionKey      = this.config.getSessionKey();
         var rollingSessions = this.config.getRollingSessions();
-        var originalHash    = undefined;
-        var originalId      = undefined;
+        var originalHash    = null;
+        var originalId      = null;
         var rawCookie       = req.cookies[sessionKey];
         var unsignedCookie  = req.signedCookies[sessionKey];
         if (!unsignedCookie && rawCookie) {
@@ -249,14 +297,12 @@ var SessionService = Class.extend(Obj, {
                     return;
                 }
 
-                // browser-session length cookie
                 if (null == cookie.getExpires()) {
                     if (!isNew) {
                         console.log('already set browser-session cookie');
                         return;
                     }
-                    // compare hashes and ids
-                } else if (originalHash == hash(session.toObject()) && originalId == session.getSid()) {
+                } else if (originalHash == _this.hashSession(session) && originalId == session.getSid()) {
                     console.log('unmodified session');
                     return;
                 }
@@ -267,12 +313,22 @@ var SessionService = Class.extend(Obj, {
             val = cookie.serialize(sessionKey, val);
             res.setHeader('Set-Cookie', val);
         });
-        req.sessionId = unsignedCookie;
-
-        //TEST
-        console.log("Finished Parsing cookie - req.sessionId:", req.sessionId);
-
-        next();
+        req.sessionId   = unsignedCookie;
+        originalId      = req.sessionId;
+        if (originalId) {
+            this.sessionManager.retrieveSessionBySid(originalId, function(throwable, session) {
+                if (!throwable) {
+                    if (session) {
+                        originalHash = _this.hashSession(session);
+                    }
+                    next();
+                } else {
+                    throw throwable;
+                }
+            });
+        } else {
+            next();
+        }
     },
 
 
@@ -292,7 +348,7 @@ var SessionService = Class.extend(Obj, {
 
     /**
      * @param {Object} data
-     * @param {function(Throwable, Session)} callback
+     * @param {function(Throwable, Session=)} callback
      */
     generateSession: function(data, callback) {
         if (!TypeUtil.isObject(data.data)) {
@@ -310,10 +366,17 @@ var SessionService = Class.extend(Obj, {
         if (!TypeUtil.isString(data.cookie.path)) {
             data.cookie.path = this.config.getCookiePath();
         }
+        if (!TypeUtil.isString(data.cookie.domain)) {
+            var cookieDomain = this.config.getCookieDomain();
+            if (!TypeUtil.isString(cookieDomain)) {
+                throw new Bug("IllegalConfig", {}, "CookieDomain was not setup properly. cookieDomain:", cookieDomain);
+            }
+            data.cookie.domain = this.config.getCookieDomain();
+        }
         var session = this.sessionManager.generateSession(data);
         this.sessionManager.createSession(session, function(throwable) {
             if (!throwable) {
-                callback(undefined, session);
+                callback(null, session);
             } else {
                 callback(throwable);
             }
@@ -333,7 +396,7 @@ var SessionService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                var data = session.getDeltaDocument().getData();
+                var data = session.getEntityData();
                 delete data.sid;
                 delete data.id;
                 delete data._id;
@@ -355,11 +418,11 @@ var SessionService = Class.extend(Obj, {
 
     /**
      * @param {string} sid
-     * @param {function(Throwable, Session)} callback
+     * @param {function(Throwable, Session=)} callback
      */
     loadSessionBySid: function(sid, callback) {
         var _this   = this;
-        var session = undefined;
+        var session = null;
         $series([
             $task(function(flow) {
                 _this.sessionManager.retrieveSessionBySid(sid, function(throwable, retrievedSession) {
@@ -403,7 +466,7 @@ var SessionService = Class.extend(Obj, {
             })
         ]).execute(function(throwable) {
             if (!throwable) {
-                callback(undefined, session);
+                callback(null, session);
             } else {
                 callback(throwable);
             }
@@ -412,10 +475,27 @@ var SessionService = Class.extend(Obj, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, Set.<Session>)} callback
+     * @param {function(Throwable, Set.<Session>=)} callback
      */
     retrieveSessionsByUserId: function(userId, callback) {
         this.sessionManager.retrieveSessionsByUserId(userId, callback);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Session} session
+     * @return {String}
+     */
+    hashSession: function(session) {
+        var cloneSession    = session.clone(true);
+        delete cloneSession.cookie;
+        var sessionJson     = this.marshaller.marshalData(cloneSession);
+        return crc32.signed(sessionJson);
     }
 });
 
@@ -435,9 +515,11 @@ Class.implement(SessionService, IBuildRequestContext);
 bugmeta.annotate(SessionService).with(
     module("sessionService")
         .args([
+            arg().ref("sessionServiceConfig"),
             arg().ref("cookieParser"),
             arg().ref("cookieSigner"),
-            arg().ref("sessionManager")
+            arg().ref("sessionManager"),
+            arg().ref("marshaller")
         ])
 );
 
@@ -448,18 +530,3 @@ bugmeta.annotate(SessionService).with(
 
 bugpack.export('airbugserver.SessionService', SessionService);
 
-
-/**
- * Hash the given `sess` object omitting changes
- * to `.cookie`.
- *
- * @param {Object} sess
- * @return {String}
- * @api private
- */
-
-function hash(sess) {
-    return crc32.signed(JSON.stringify(sess, function(key, val) {
-        if ('cookie' != key) return val;
-    }));
-}

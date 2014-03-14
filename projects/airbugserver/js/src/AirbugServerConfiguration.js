@@ -16,10 +16,8 @@
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
 //@Require('bugflow.BugFlow')
-//@Require('bugfs.BugFs')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ConfigurationAnnotation')
-//@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmarsh.Marshaller')
@@ -27,7 +25,6 @@
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute:bugcall.BugCallRouter')
 //@Require('configbug.Configbug')
-//@Require('cookies.CookieSigner')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
 //@Require('handshaker.Handshaker')
@@ -43,8 +40,11 @@
 
 var bugpack                         = require('bugpack').context();
 var connect                         = require('connect');
+var cookie                          = require('cookie');
+var cookie_signature                = require('cookie-signature');
 var express                         = require('express');
 var github                          = require('github');
+var http                            = require('http');
 var https                           = require('https');
 var imagemagick                     = require('imagemagick');
 var mongoose                        = require('mongoose');
@@ -66,10 +66,8 @@ var SessionServiceConfig            = bugpack.require('airbugserver.SessionServi
 var AwsConfig                       = bugpack.require('aws.AwsConfig');
 var AwsUploader                     = bugpack.require('aws.AwsUploader');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
-var BugFs                           = bugpack.require('bugfs.BugFs');
 var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnotation');
-var IConfiguration                  = bugpack.require('bugioc.IConfiguration');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
 var Marshaller                      = bugpack.require('bugmarsh.Marshaller');
@@ -77,11 +75,9 @@ var MarshRegistry                   = bugpack.require('bugmarsh.MarshRegistry');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var BugCallRouter                   = bugpack.require('bugroute:bugcall.BugCallRouter');
 var Configbug                       = bugpack.require('configbug.Configbug');
-var CookieSigner                    = bugpack.require('cookies.CookieSigner');
 var ExpressApp                      = bugpack.require('express.ExpressApp');
 var ExpressServer                   = bugpack.require('express.ExpressServer');
 var Handshaker                      = bugpack.require('handshaker.Handshaker');
-var MongoDataStore                  = bugpack.require('mongo.MongoDataStore');
 var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
 var SocketIoServerConfig            = bugpack.require('socketio:server.SocketIoServerConfig');
@@ -143,32 +139,48 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {Configbug}
+     * @return {console|Console}
      */
-    configbug: function() {
-        return new Configbug(BugFs.resolvePaths([__dirname, '../resources/config']));
+    console: function() {
+        return console;
     },
 
     /**
-     * @return {CookieSigner}
+     * @return {*}
      */
-    cookieSigner: function() {
-        return new CookieSigner();
+    cookie: function() {
+        return cookie;
     },
 
     /**
-     * @return {ExpressServer}
+     * @return {*}
      */
-    expressApp: function() {
-        return new ExpressApp();
+    cookieSignature: function() {
+        return cookie_signature;
     },
 
     /**
+     * @return {Express}
+     */
+    express: function() {
+        return express;
+    },
+
+    /**
+     * @param {Express} express
+     * @return {ExpressApp}
+     */
+    expressApp: function(express) {
+        return new ExpressApp(express);
+    },
+
+    /**
+     * @param {http} http
      * @param {ExpressApp} expressApp
      * @return {ExpressServer}
      */
-    expressServer: function(expressApp) {
-        return new ExpressServer(expressApp);
+    expressServer: function(http, expressApp) {
+        return new ExpressServer(http, expressApp);
     },
 
     /**
@@ -198,6 +210,13 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     /**
      * @return {*}
      */
+    http: function() {
+        return http;
+    },
+
+    /**
+     * @return {*}
+     */
     https: function() {
         return https;
     },
@@ -210,37 +229,14 @@ var AirbugServerConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @param marshRegistry
-     * @returns {Marshaller}
-     */
-    marshaller: function(marshRegistry) {
-        return new Marshaller(marshRegistry);
-    },
-
-    /**
-     * @returns {MarshRegistry}
-     */
-    marshRegistry: function() {
-        return new MarshRegistry();
-    },
-
-    /**
-     * @return {Mongoose}
+     * @return {*}
      */
     mongoose: function() {
         return mongoose;
     },
 
     /**
-     * @param {Mongoose} mongoose
-     * @return {MongoDataStore}
-     */
-    mongoDataStore: function(mongoose) {
-        return new MongoDataStore(mongoose);
-    },
-
-    /**
-     * @return {requestContextBuilder}
+     * @return {RequestContextBuilder}
      */
     requestContextBuilder: function() {
         return new RequestContextBuilder();
@@ -291,14 +287,14 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // AirBugServer
         //-------------------------------------------------------------------------------
 
+        module("console"),
+        module("cookie"),
+        module("cookieSignature"),
+        module("http"),
         module("https"),
         module("imagemagick"),
         module("github"),
         module("mongoose"),
-        module("mongoDataStore")
-            .args([
-                arg().ref("mongoose")
-            ]),
         module("requestContextBuilder"),
 
 
@@ -306,7 +302,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Config
         //-------------------------------------------------------------------------------
 
-        module("configbug"),
         module("airbugClientConfig"),
         module("airbugServerConfig"),
         module("sessionServiceConfig"),
@@ -316,9 +311,14 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         // Express
         //-------------------------------------------------------------------------------
 
-        module("expressApp"),
+        module("express"),
+        module("expressApp")
+            .args([
+                arg().ref("express")
+            ]),
         module("expressServer")
             .args([
+                arg().ref("http"),
                 arg().ref("expressApp")
             ]),
 
@@ -332,21 +332,9 @@ bugmeta.annotate(AirbugServerConfiguration).with(
 
 
         //-------------------------------------------------------------------------------
-        // BugJs
-        //-------------------------------------------------------------------------------
-
-        module('marshaller')
-            .args([
-                arg().ref("marshRegistry")
-            ]),
-        module('marshRegistry'),
-
-
-        //-------------------------------------------------------------------------------
         // Util
         //-------------------------------------------------------------------------------
 
-        module("cookieSigner"),
         module("handshaker"),
         module("githubApi")
             .args([
@@ -378,7 +366,6 @@ bugmeta.annotate(AirbugServerConfiguration).with(
         //-------------------------------------------------------------------------------
 
         module("bugCallRouter")
-
     ])
 );
 

@@ -163,6 +163,7 @@ var RoomMemberPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(RoomMemberPusher).with(
     module("roomMemberPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

@@ -216,7 +216,7 @@ var AirbugInitializer = Class.extend(Obj, {
      */
     initializeModule: function(callback) {
         var _this = this;
-        console.log("Initializing AirbugConfiguration");
+        console.log("Initializing AirbugInitializer");
 
         /** @type {string} */
         var configName  = this.generateConfigName();
@@ -225,6 +225,7 @@ var AirbugInitializer = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
+                _this.configbug.setConfigPath(BugFs.resolvePaths([__dirname, '../resources/config']));
                 _this.loadConfig(configName, function(throwable, loadedConfig) {
                     if (!throwable) {
                         config = loadedConfig;
@@ -234,12 +235,9 @@ var AirbugInitializer = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 _this.buildConfigs(config);
-                _this.sessionService.setConfig(_this.sessionServiceConfig);
                 var secret      = config.getProperty("cookieSecret");
 
-                _this.cookieSigner.setSecret(secret);
                 _this.mongoDataStore.connect('mongodb://' + config.getProperty("mongoDbIp") + '/airbug');
-
 
                 _this.expressApp.configure(function() {
                     console.log("Configuring express...");
@@ -364,6 +362,7 @@ var AirbugInitializer = Class.extend(Obj, {
         ]);
 
         this.sessionServiceConfig.absorbConfig(config, [
+            "cookieDomain",
             "cookieMaxAge",
             "cookieSecret",
             "sessionKey"

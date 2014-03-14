@@ -15,7 +15,7 @@
 //@Require('airbug.ImagePreviewContainer')
 //@Require('airbug.ImageUploadAddByUrlContainer')
 //@Require('airbug.ImageUploadItemContainer')
-//@Require('airbug.ImageUploadView')
+//@Require('airbug.ImageUploadWidgetView')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TabsView')
 //@Require('airbug.TabView')
@@ -36,7 +36,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ var IconView                            = bugpack.require('airbug.IconView');
 var ImagePreviewContainer               = bugpack.require('airbug.ImagePreviewContainer');
 var ImageUploadAddByUrlContainer        = bugpack.require('airbug.ImageUploadAddByUrlContainer');
 var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
-var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
+var ImageUploadWidgetView               = bugpack.require('airbug.ImageUploadWidgetView');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TabsView                            = bugpack.require('airbug.TabsView');
 var TabView                             = bugpack.require('airbug.TabView');
@@ -126,9 +126,9 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
         /**
          * @private
-         * @type {ImageUploadView}
+         * @type {ImageUploadWidgetView}
          */
-        this.imageUploadView                = null;
+        this.imageUploadWidgetView          = null;
 
         /**
          * @private
@@ -136,21 +136,27 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
          */
         this.imageListTabView               = null;
 
+        /**
+         * @private
+         * @type {ButtonGroupView}
+         */
+        this.widgetControlButtonGroupView   = null;
+
 
         // Containers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ImageUploadAddByUrlContainer}
+         * @type {WorkspaceCloseButtonContainer}
          */
-        this.imageUploadAddByUrlContainer   = null;
+        this.closeButtonContainer           = null;
 
         /**
          * @private
-         * @type {WorkspaceCloseButtonContainer}
+         * @type {ImageUploadAddByUrlContainer}
          */
-        this.closeButton                    = null;
+        this.imageUploadAddByUrlContainer   = null;
     },
 
 
@@ -181,21 +187,15 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     createContainer: function() {
         this._super();
 
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(ImageUploadView)
-            .name("imageUploadView")
-            .id("image-upload-container")
+        view(ImageUploadWidgetView)
+            .name("imageUploadWidgetView")
             .children([
                 view(TabsView)
                     .name("tabsView")
-                    .appendTo(".box-header")
+                    .appendTo("#box-header-{{cid}}")
                     .children([
                         view(TabView)
                             .name("imageListTabView")
@@ -230,10 +230,11 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                             ])
                         ]),
                 view(ButtonToolbarView)
-                    .appendTo(".box-header")
+                    .appendTo("#box-header-{{cid}}")
                     .children([
                         view(ButtonGroupView)
-                            .appendTo(".btn-toolbar")
+                            .name("widgetControlButtonGroupView")
+                            .appendTo("#button-toolbar-{{cid}}")
                     ])
             ])
             .build(this);
@@ -241,7 +242,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.imageUploadView);
+        this.setViewTop(this.imageUploadWidgetView);
     },
 
     /**
@@ -249,10 +250,10 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.closeButton = new WorkspaceCloseButtonContainer();
+        this.closeButtonContainer = new WorkspaceCloseButtonContainer();
         this.imageUploadAddByUrlContainer = new ImageUploadAddByUrlContainer();
-        this.addContainerChild(this.imageUploadAddByUrlContainer, "#file-upload-widget");
-        this.addContainerChild(this.closeButton, ".box-header .btn-toolbar .btn-group:last-child")
+        this.addContainerChild(this.imageUploadAddByUrlContainer, "#image-upload-from-url-" + this.imageUploadWidgetView.getCid());
+        this.addContainerChild(this.closeButtonContainer, "#button-group-" + this.widgetControlButtonGroupView.getCid())
     },
 
     /**
@@ -273,6 +274,58 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.deinitializeCommandSubscriptions();
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    deinitializeCommandSubscriptions: function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeEventListeners: function() {
+        this.imageListTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
+    initializeCommandSubscriptions: function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    initializeEventListeners: function() {
+        this.imageListTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
+        this.imageUploadAddByUrlContainer.getViewTop().addEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    deinitializeUploadWidget: function() {
+        $('#file-upload-widget').fileupload('destroy');
+    },
+
+    /**
+     * @private
+     */
     initializeUploadWidget: function() {
         var _this = this;
         $('#file-upload-widget').fileupload({
@@ -281,8 +334,8 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
             singleFileUploads: true,
             sequentialUploads: true,
             dataType: 'json',
-            dropzone: $(".image-upload-dropzone"),
-            pastezone: _this.viewTop.$el.find("#image-upload-container .box-body"),
+            dropzone: this.imageUploadWidgetView.getImageUploadDropzoneElement(),
+            pastezone: this.imageUploadWidgetView.getImageUploadDropzoneElement(),
 //            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i, //does not work without jquery ui components
 //            maxFileSize: 5000000, // 5 MB //does not work without jquery ui components
             // Enable image resizing, except for Android and Opera,
@@ -311,7 +364,6 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
                 data.files[0].autoSend = !!$(event.originalEvent.delegatedEvent.target).parents(".chat-widget-messages.image-upload-dropzone")[0];
             },
             add: function (event, data) {
-                _this.hideDragAndDropText();
 
                 //validate file type and size
                 var uploadErrors = [];
@@ -330,10 +382,9 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
                     var file = data.files[0];
                     var filename = file.name;
-
                     var imageAssetModel = _this.assetManagerModule.generateImageAssetModel({name: filename});
                     var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
-                    _this.addContainerChild(imageUploadItemContainer, "#image-upload-container>.box-body>.box")
+                    _this.addContainerChild(imageUploadItemContainer, "#image-upload-list-" + _this.imageUploadWidgetView.getCid())
 
                     //hide send button if this is a drop from the chat messages div
                     data.context = imageUploadItemContainer.getViewTop().$el;
@@ -382,39 +433,6 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         });
     },
 
-    deinitializeUploadWidget: function() {
-        $('#file-upload-widget').fileupload('destroy');
-    },
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    initializeEventListeners: function() {
-        this.imageListTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
-        this.imageUploadAddByUrlContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
-        this.imageUploadAddByUrlContainer.getViewTop().addEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
-    },
-
-    deinitializeEventListeners: function() {
-        this.imageListTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
-        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
-        this.imageUploadAddByUrlContainer.getViewTop().removeEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
-    },
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-        //create and subscribe to save image to image list command
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -438,7 +456,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         var imageUploadItemContainer = data.imageUploadItemContainer;
 
         this.getViewTop().$el.find(".box-body .box>span").hide();
-        this.addContainerChild(imageUploadItemContainer, "#image-upload-container .box-body .box")
+        this.addContainerChild(imageUploadItemContainer, "#image-upload-list-" + this.imageUploadWidgetView.getCid())
     },
 
     /**

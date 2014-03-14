@@ -162,10 +162,11 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.codeEditorWidgetContainer.hideWidget();
+        this.codeEditorSettingsWidgetContainer.hideWidget();
         this.getWorkspaceModule().registerWorkspace(CodeEditorWorkspace.WORKSPACE_NAME, this);
         this.initializeEventListeners();
         this.initializeCommandSubscriptions();
-        this.viewTop.$el.find("#code-editor-settings-wrapper").hide();
     },
 
 
@@ -242,7 +243,7 @@ var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
                 break;
             case "whitespace":
                 var whitespaceBoolean = (data.whitespace === "true") ? true : false;
-                this.codeEditorWidgetContainer.setWhitespace(whitespaceBoolean);
+                this.codeEditorWidgetContainer.setEditorShowInvisibles(whitespaceBoolean);
                 break;
         }
     },

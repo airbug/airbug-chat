@@ -70,6 +70,7 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
          */
         this.buttonToolbarView                  = null;
 
+
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -95,7 +96,7 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -112,9 +113,10 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.buttonToolbarView =
-            view(ButtonToolbarView)
-                .build();
+        view(ButtonToolbarView)
+            .name("buttonToolbarView")
+            .build(this);
+
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
@@ -123,15 +125,18 @@ var ImageListItemButtonToolbarContainer = Class.extend(CarapaceContainer, {
 
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
         this.deleteImageButtonGroupContainer    = new DeleteImageButtonGroupContainer();
         this.embedImageButtonGroupContainer     = new EmbedImageButtonGroupContainer();
         this.sendImageButtonGroupContainer      = new SendImageButtonGroupContainer();
 
-        this.addContainerChild(this.deleteImageButtonGroupContainer,    ".btn-toolbar");
-        this.addContainerChild(this.embedImageButtonGroupContainer,     ".btn-toolbar");
-        this.addContainerChild(this.sendImageButtonGroupContainer,      ".btn-toolbar");
+        this.addContainerChild(this.deleteImageButtonGroupContainer,    "#button-toolbar-" + this.buttonToolbarView.getCid());
+        this.addContainerChild(this.embedImageButtonGroupContainer,     "#button-toolbar-" + this.buttonToolbarView.getCid());
+        this.addContainerChild(this.sendImageButtonGroupContainer,      "#button-toolbar-" + this.buttonToolbarView.getCid());
     }
 });
 

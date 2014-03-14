@@ -4,9 +4,14 @@
 
 //@TestFile
 
+//@Require('Class')
+//@Require('Set')
+//@Require('airbugserver.ChatMessage')
+//@Require('airbugserver.ChatMessageManager')
+//@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.DummyMongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -20,22 +25,92 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class                   = bugpack.require('Class');
+var Set                     = bugpack.require('Set');
+var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
+var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var DummyMongoDataStore     = bugpack.require('mongo.DummyMongoDataStore');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var test    = TestAnnotation.test;
+var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
+var test                    = TestAnnotation.test;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestChatMessageManager", function(yarn) {
+    yarn.spin([
+        "setupTestEntityManagerStore",
+        "setupTestSchemaManager",
+        "setupDummyMongoDataStore",
+        "setupTestEntityDeltaBuilder",
+        "setupTestChatMessageCounterManager"
+    ]);
+    yarn.wind({
+        chatMessageManager: new ChatMessageManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder, this.chatMessageCounterManager)
+    });
+    this.chatMessageManager.setEntityType("ChatMessage");
+});
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var chatMessageManagerInstantiationTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestEntityManagerStore",
+            "setupTestSchemaManager",
+            "setupDummyMongoDataStore",
+            "setupTestEntityDeltaBuilder",
+            "setupTestChatMessageCounterManager"
+        ]);
+        this.testChatMessageManager   = new ChatMessageManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder, this.chatMessageCounterManager);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testChatMessageManager, ChatMessageManager),
+            "Assert instance of ChatMessageManager");
+        test.assertEqual(this.testChatMessageManager.getEntityManagerStore(), this.entityManagerStore,
+            "Assert .entityManagerStore was set correctly");
+        test.assertEqual(this.testChatMessageManager.getEntityDataStore(), this.mongoDataStore,
+            "Assert .entityDataStore was set correctly");
+        test.assertEqual(this.testChatMessageManager.getSchemaManager(), this.schemaManager,
+            "Assert .schemaManager was set correctly");
+        test.assertEqual(this.testChatMessageManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
+            "Assert .entityDeltaBuilder was set correctly");
+        test.assertEqual(this.testChatMessageManager.getChatMessageCounterManager(), this.chatMessageCounterManager,
+            "Assert .chatMessageCounterManager was set correctly");
+        test.assertEqual(this.testChatMessageManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
+            "Assert .entityDeltaBuilder was set correctly");
+    }
+};
+bugmeta.annotate(chatMessageManagerInstantiationTest).with(
+    test().name("ChatMessageManager - instantiation test")
+);
 
 //var chatMessageManagerAddIndexToConditionUsingIndexAndBatchSizeTest = {
 //
@@ -77,8 +152,8 @@ var test    = TestAnnotation.test;
 ////            'ChatMessage conversationId was set correctly');
 //        test.assertEqual(this.testChatMessage.getIndex(), 1,
 //            'ChatMessage index is set correctly');
-//        test.assertEqual(this.testChatMessage.getSenderUserId(), this.testSenderUserId,
-//            'ChatMessage senderUserId was set correctly');
+//        test.assertEqual(this.testChatMessage.getSenderChatMessageId(), this.testSenderChatMessageId,
+//            'ChatMessage senderChatMessageId was set correctly');
 //        test.assertEqual(this.testChatMessage.getSentAt(), this.testSentAt,
 //            'ChatMessage sentAt was set correctly');
 //        test.assertEqual(this.testChatMessage.getTryUuid(), this.testTryUuid,

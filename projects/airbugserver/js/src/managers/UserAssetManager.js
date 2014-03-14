@@ -61,8 +61,8 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {UserAsset} userAsset
-     * @param {(Array.<string> | function(Throwable, UserAsset))=} dependencies
-     * @param {function(Throwable, UserAsset)} callback
+     * @param {(Array.<string> | function(Throwable, UserAsset=))=} dependencies
+     * @param {function(Throwable, UserAsset=)=} callback
      */
     createUserAsset: function(userAsset, dependencies, callback) {
         if (TypeUtil.isFunction(dependencies)) {
@@ -75,7 +75,7 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {UserAsset} userAsset
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     deleteUserAsset: function(userAsset, callback) {
         this.delete(userAsset, callback);
@@ -93,7 +93,6 @@ var UserAssetManager = Class.extend(EntityManager, {
      */
     generateUserAsset: function(data) {
         var userAsset = new UserAsset(data);
-        console.log("UserAssetManager#generateUserAsset userAsset = ", userAsset);
         this.generate(userAsset);
         return userAsset;
     },
@@ -123,7 +122,7 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userAssetId
-     * @param {function(Throwable, UserAsset)} callback
+     * @param {function(Throwable, UserAsset=)} callback
      */
     retrieveUserAsset: function(userAssetId, callback) {
         this.retrieve(userAssetId, callback);
@@ -131,7 +130,7 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {Array.<string>} userAssetIds
-     * @param {function(Throwable, Map.<string, UserAsset>)} callback
+     * @param {function(Throwable, Map.<string, UserAsset>=)} callback
      */
     retrieveUserAssets: function(userAssetIds, callback) {
         this.retrieveEach(userAssetIds, callback);
@@ -139,7 +138,7 @@ var UserAssetManager = Class.extend(EntityManager, {
 
     /**
      * @param {string} userId
-     * @param {function(Throwable, List.<UserAsset>)} callback
+     * @param {function(Throwable, List.<UserAsset>=)} callback
      */
     retrieveUserAssetsByUserId: function(userId, callback) {
         var _this = this;
@@ -220,7 +219,8 @@ bugmeta.annotate(UserAssetManager).with(
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
-            arg().ref("mongoDataStore")
+            arg().ref("mongoDataStore"),
+            arg().ref("entityDeltaBuilder")
         ])
 );
 

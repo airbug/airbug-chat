@@ -88,6 +88,7 @@ var UserImageAssetStreamPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(UserImageAssetStreamPusher).with(
     module("userImageAssetStreamPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

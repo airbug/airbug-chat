@@ -154,6 +154,7 @@ var ConversationPusher = Class.extend(EntityPusher, {
 bugmeta.annotate(ConversationPusher).with(
     module("conversationPusher")
         .args([
+            arg().ref("logger"),
             arg().ref("meldBuilder"),
             arg().ref("meldManager"),
             arg().ref("pushManager"),

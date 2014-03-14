@@ -3,6 +3,7 @@ bugpackApi.loadContext(_appConfig.staticUrl, function(error, bugpack) {
     if (!error) {
         var AirbugClientApplication = bugpack.require('airbug.AirbugClientApplication');
         var application = new AirbugClientApplication();
+        window.application = application;
         application.start(function(error) {
             if (error) {
                 console.error(error);
