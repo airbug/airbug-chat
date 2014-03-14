@@ -41,7 +41,17 @@ var CreateRoomFormView = Class.extend(MustacheView, {
                     '<form class="form-horizontal">' +
                         '<legend>Start a conversation</legend>' +
                         '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="text" name="name" placeholder="Topic">' +
+                            '<label>Topic</label>' +
+                            '<input class="input-xxlarge" type="text" name="name" placeholder="What is the difference between input and textarea">' +
+                        '</div>' +
+                        '<div class="control-group">' +
+                            '<label>Add Participants</label>' +
+                            '<input class="input-xxlarge" type="text" name="participants" placeholder="jill@JackAndJill.com, jack@JackAndJill.com">' +
+                            '<span class="help-block">Add conversation participants by email. (Separated by commas)</span>' +
+                        '</div>' +
+                        '<div class="control-group">' +
+                            '<label>Message</label>' +
+                            '<textarea rows="5" name="chatMessage"/>' +
                         '</div>' +
                         '<div class="control-group">' +
                             '<button id="submit-button-{{cid}}" type="button" class="btn">Start a conversation</button>' +
