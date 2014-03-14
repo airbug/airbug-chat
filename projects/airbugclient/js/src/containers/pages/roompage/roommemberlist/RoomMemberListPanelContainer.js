@@ -119,7 +119,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this.panelView =
             view(PanelWithHeaderView)
                 .id("roommember-list-panel-container")
-                .attributes({headerTitle: "Room Members"})
+                .attributes({headerTitle: "Participants"})
                 .build();
 
 

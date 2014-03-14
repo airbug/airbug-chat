@@ -211,7 +211,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         view(PanelWithHeaderView)
             .name("panelView")
-            .attributes({headerTitle: "Rooms"})
+            .attributes({headerTitle: "Conversations"})
             .children([
                 view(ListView)
                     .name("listView")

@@ -39,12 +39,12 @@ var CreateRoomFormView = Class.extend(MustacheView, {
 
     template:   '<div class="form-wrapper-naked">' +
                     '<form class="form-horizontal">' +
-                        '<legend>Create a room</legend>' +
+                        '<legend>Start a conversation</legend>' +
                         '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="text" name="name" placeholder="Room name">' +
+                            '<input class="input-xxlarge" type="text" name="name" placeholder="Topic">' +
                         '</div>' +
                         '<div class="control-group">' +
-                            '<button id="submit-button-{{cid}}" type="button" class="btn">Create room</button>' +
+                            '<button id="submit-button-{{cid}}" type="button" class="btn">Start a conversation</button>' +
                         '</div>' +
                     '</form>' +
                 '</div>',

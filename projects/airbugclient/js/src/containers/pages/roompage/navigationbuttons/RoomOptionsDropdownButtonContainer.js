@@ -155,7 +155,7 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
                     .children([
                         view(TextView)
                             .appendTo("a")
-                            .attributes({text: "Leave room permanently"})
+                            .attributes({text: "Leave conversation permanently"})
                     ])
             ])
             .build(this);
