@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('airbugserver.AddsAssetIdsToImageChatMessagesMigration')
 //@Require('airbugserver.AddsBetaKeysMigration')
 //@Require('airbugserver.AddsBetaKeysToExistingUsersMigration')
 //@Require('airbugserver.AddsChatMessageCountersAndIndexesMigration')
@@ -36,6 +37,7 @@ var mongoose                                    = require('mongoose');
 
 var Class                                       = bugpack.require('Class');
 var Obj                                         = bugpack.require('Obj');
+var AddsAssetIdsToImageChatMessagesMigration    = bugpack.require('airbugserver.AddsAssetIdsToImageChatMessagesMigration');
 var AddsBetaKeysMigration                       = bugpack.require('airbugserver.AddsBetaKeysMigration');
 var AddsBetaKeysToExistingUsersMigration        = bugpack.require('airbugserver.AddsBetaKeysToExistingUsersMigration');
 var AddsChatMessageCountersAndIndexesMigration  = bugpack.require('airbugserver.AddsChatMessageCountersAndIndexesMigration');
@@ -127,6 +129,7 @@ var MigrationApplication = Class.extend(Obj, {
         var addsBetaKeysMigration                       = new AddsBetaKeysMigration();
         var addsBetaKeysToExistingUsersMigration        = new AddsBetaKeysToExistingUsersMigration();
         var addsSignupsForExistingUsersMigration        = new AddsSignupsForExistingUsersMigration();
+        var addsAssetIdsToImageChatMessagesMigration    = new AddsAssetIdsToImageChatMessagesMigration();
 
         var migrations = [
             addsChatMessageCountersAndIndexesMigration,
@@ -135,7 +138,8 @@ var MigrationApplication = Class.extend(Obj, {
             updatesStatusForNonAnonymousUsersMigration,
             addsBetaKeysMigration,
             addsBetaKeysToExistingUsersMigration,
-            addsSignupsForExistingUsersMigration
+            addsSignupsForExistingUsersMigration,
+            addsAssetIdsToImageChatMessagesMigration
         ];
 
 
