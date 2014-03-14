@@ -826,6 +826,17 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 
 }
 
+/* User Home Page CSS
+*******************************************************************/
+form.create-conversation-form {
+    margin: 3%;
+}
+
+form.create-conversation-form input, form.create-conversation-form textarea {
+    width: 90%;
+}
+
+
 /* ChatWidget CSS
 *******************************************************************/
 
