@@ -7,6 +7,7 @@
 //@Export('BetaKeyDashboardPageContainer')
 
 //@Require('Class')
+//@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.BetaKeyModel')
 //@Require('airbug.ButtonViewEvent')
@@ -15,7 +16,6 @@
 //@Require('airbug.FormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.PageView')
 //@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.InputView')
@@ -34,44 +34,44 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                       = bugpack.require('Class');
-var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
-var BetaKeyModel                = bugpack.require('airbug.BetaKeyModel');
-var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
-var FormView                    = bugpack.require('airbug.FormView');
-var FormViewEvent               = bugpack.require('airbug.FormViewEvent');
-var HomeButtonContainer         = bugpack.require('airbug.HomeButtonContainer');
-var InputView                   = bugpack.require('airbug.InputView');
-var LogoutButtonContainer       = bugpack.require('airbug.LogoutButtonContainer');
-var PageView                    = bugpack.require('airbug.PageView');
-var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
-var NakedSubmitButtonView       = bugpack.require('airbug.NakedSubmitButtonView');
-var TableDataView               = bugpack.require('airbug.TableDataView');
-var TableHeadingView            = bugpack.require('airbug.TableHeadingView');
-var TableRowView                = bugpack.require('airbug.TableRowView');
-var TableView                   = bugpack.require('airbug.TableView');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var Class                               = bugpack.require('Class');
+var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
+var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
+var BetaKeyModel                        = bugpack.require('airbug.BetaKeyModel');
+var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+var ButtonView                          = bugpack.require('airbug.ButtonView');
+var FormView                            = bugpack.require('airbug.FormView');
+var FormViewEvent                       = bugpack.require('airbug.FormViewEvent');
+var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
+var InputView                           = bugpack.require('airbug.InputView');
+var PageView                            = bugpack.require('airbug.PageView');
+var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+var NakedSubmitButtonView               = bugpack.require('airbug.NakedSubmitButtonView');
+var TableDataView                       = bugpack.require('airbug.TableDataView');
+var TableHeadingView                    = bugpack.require('airbug.TableHeadingView');
+var TableRowView                        = bugpack.require('airbug.TableRowView');
+var TableView                           = bugpack.require('airbug.TableView');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                   = AutowiredAnnotation.autowired;
-var bugmeta                     = BugMeta.context();
-var property                    = PropertyAnnotation.property;
-var view                        = ViewBuilder.view;
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var property                            = PropertyAnnotation.property;
+var view                                = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -100,15 +100,15 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
 
         /**
          * @private
-         * @type {HomeButtonContainer}
+         * @type {AccountDropdownButtonContainer}
          */
-        this.homeButtonContainer            = null;
+        this.accountDropdownButtonContainer = null;
 
         /**
          * @private
-         * @type {LogoutButtonContainer}
+         * @type {HomeButtonContainer}
          */
-        this.logoutButtonContainer          = null;
+        this.homeButtonContainer            = null;
 
 
         // Views
@@ -229,7 +229,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.applicationView.addViewChild(this.pageView, "#application-" + this.applicationView.cid);
+        this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
 
     },
 
@@ -238,10 +238,10 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.homeButtonContainer        = new HomeButtonContainer();
-        this.logoutButtonContainer      = new LogoutButtonContainer();
+        this.homeButtonContainer                = new HomeButtonContainer();
+        this.accountDropdownButtonContainer     = new AccountDropdownButtonContainer();
         this.addContainerChild(this.homeButtonContainer,   "#header-left");
-        this.addContainerChild(this.logoutButtonContainer, '#header-right');
+        this.addContainerChild(this.accountDropdownButtonContainer, '#header-right');
     },
 
     initializeContainer: function() {
@@ -286,7 +286,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
                         _this.addBetaKeyToTable(meldDocument);
                     }
                 } else {
-                    console.log("There are no beta keys by the the name", betaKey);
+                    console.log("There are no beta keys by the name", betaKey);
                 }
             } else {
                 console.log("failed to load beta key counter for", betaKey, "throwable:", throwable);

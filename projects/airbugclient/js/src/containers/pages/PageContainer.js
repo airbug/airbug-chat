@@ -180,6 +180,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
+        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
         this.deinitializeEventListeners();
         this.deinitializeCommandSubscriptions();
     },
@@ -189,6 +192,9 @@ var PageContainer = Class.extend(ApplicationContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
+        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
+        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
         this.initializeEventListeners();
         this.initializeCommandSubscriptions();
     },
@@ -202,50 +208,28 @@ var PageContainer = Class.extend(ApplicationContainer, {
      * @private
      */
     deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
+        //TODO BRN: Remove this method
     },
 
     /**
      * @private
      */
     deinitializeEventListeners: function() {
-        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
-        this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
+        //TODO BRN: Remove this method
     },
 
     /**
      * @private
      */
     initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
+        //TODO BRN: Remove this method
     },
 
     /**
      * @private
      */
     initializeEventListeners: function() {
-        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
-        this.workspaceModule.addEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
-    },
-
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleToggleHamburgerLeftCommand: function(message) {
-        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
-        hamburgerLeft.toggleClass("hamburger-panel-hidden");
-        this.updateColumnSpans();
-    },
-
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleToggleHamburgerRightCommand: function(message) {
-        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
-        hamburgerRight.toggleClass("hamburger-panel-hidden");
-        this.updateColumnSpans();
+        //TODO BRN: Remove this method
     },
 
     /**
@@ -283,6 +267,31 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 workspace.addClass("span0");
             }
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Message Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
+    handleToggleHamburgerLeftCommand: function(message) {
+        var hamburgerLeft   = this.viewTop.$el.find("#page-row-container>.column1of4");
+        hamburgerLeft.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
+    },
+
+    /**
+     * @private
+     * @param {PublisherMessage} message
+     */
+    handleToggleHamburgerRightCommand: function(message) {
+        var hamburgerRight  = this.viewTop.$el.find("#page-row-container>.column4of4");
+        hamburgerRight.toggleClass("hamburger-panel-hidden");
+        this.updateColumnSpans();
     },
 
 

@@ -4,7 +4,7 @@
 
 //@Package('airbug')
 
-//@Export('RoomOptionsDropdownButtonContainer')
+//@Export('AccountDropdownButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
@@ -55,6 +55,7 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 var autowired               = AutowiredAnnotation.autowired;
 var bugmeta                 = BugMeta.context();
+var CommandType             = CommandModule.CommandType;
 var property                = PropertyAnnotation.property;
 var view                    = ViewBuilder.view;
 
@@ -67,31 +68,20 @@ var view                    = ViewBuilder.view;
  * @constructor
  * @extends {ButtonContainer}
  */
-var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
+var AccountDropdownButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(roomModel) {
+    _constructor: function() {
 
-        this._super("RoomOptionsDropdownButton");
+        this._super("AccountDropdownButton");
 
 
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
-
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {RoomModel}
-         */
-        this.roomModel                      = roomModel;
-
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -104,15 +94,15 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {CurrentUserManagerModule}
          */
-        this.navigationModule               = null;
+        this.currentUserManagerModule       = null;
 
         /**
          * @private
-         * @type {RoomManagerModule}
+         * @type {NavigationModule}
          */
-        this.roomManagerModule              = null;
+        this.navigationModule               = null;
 
 
         // Views
@@ -128,12 +118,18 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
          * @private
          * @type {DropdownItemView}
          */
-        this.leaveRoomPermanentlyButtonView = null;
+        this.logoutItemView                 = null;
+
+        /**
+         * @private
+         * @type {DropdownItemView}
+         */
+        this.settingsItemView               = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -152,16 +148,26 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
                 view(IconView)
                     .appendTo("#dropdown-button-{{cid}}")
                     .attributes({
-                        type: IconView.Type.CHEVRON_DOWN,
+                        type: IconView.Type.USER,
                         color: IconView.Color.WHITE
                     }),
                 view(DropdownItemView)
-                    .name("leaveRoomPermanentlyButtonView")
+                    .name("settingsItemView")
                     .appendTo("#dropdown-list-{{cid}}")
                     .children([
                         view(TextView)
                             .appendTo("#dropdown-item-{{cid}}")
-                            .attributes({text: "Leave conversation permanently"})
+                            .attributes({text: "Settings"})
+                    ]),
+                view(DropdownItemDividerView)
+                    .appendTo("#dropdown-list-{{cid}}"),
+                view(DropdownItemView)
+                    .name("logoutItemView")
+                    .appendTo("#dropdown-list-{{cid}}")
+                    .children([
+                        view(TextView)
+                            .appendTo("#dropdown-item-{{cid}}")
+                            .attributes({text: "Logout"})
                     ])
             ])
             .build(this);
@@ -178,7 +184,8 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.leaveRoomPermanentlyButtonView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLeaveRoomPermanentlyButtonClickedEvent, this);
+        this.logoutItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLogoutItemDropdownSelected, this);
+        this.settingsItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearSettingsItemDropdownSelected, this);
     },
 
     /**
@@ -186,7 +193,8 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.leaveRoomPermanentlyButtonView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLeaveRoomPermanentlyButtonClickedEvent, this);
+        this.logoutItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearLogoutItemDropdownSelected, this);
+        this.settingsItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearSettingsItemDropdownSelected, this);
     },
 
 
@@ -198,15 +206,33 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
      * @private
      * @param {Event} event
      */
-    hearLeaveRoomPermanentlyButtonClickedEvent: function(event) {
+    hearLogoutItemDropdownSelected: function(event) {
         var _this = this;
-        this.roomManagerModule.leaveRoom(this.roomModel.getProperty("id"), function(throwable){
-            if(throwable) {
-                _this.commandModule.relayCommand(CommandModule.CommandType.FLASH.ERROR, {message: "Unable to leave room permanently because " + throwable.getMessage()});
+        this.currentUserManagerModule.logout(function(throwable) {
+            if (!throwable) {
+                _this.navigationModule.navigate("login", {
+                    trigger: true
+                });
+            } else {
+
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
+                if (Class.doesExtend(throwable, Exception)) {
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
+                } else {
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
+                }
             }
-            _this.navigationModule.navigate("home", {
-                trigger: true
-            });
+        });
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearSettingsItemDropdownSelected: function(event) {
+        this.navigationModule.navigate("settings", {
+            trigger: true
         });
     }
 });
@@ -216,11 +242,11 @@ var RoomOptionsDropdownButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(RoomOptionsDropdownButtonContainer).with(
+bugmeta.annotate(AccountDropdownButtonContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
-        property("navigationModule").ref("navigationModule"),
-        property("roomManagerModule").ref("roomManagerModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule"),
+        property("navigationModule").ref("navigationModule")
     ])
 );
 
@@ -229,4 +255,4 @@ bugmeta.annotate(RoomOptionsDropdownButtonContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RoomOptionsDropdownButtonContainer", RoomOptionsDropdownButtonContainer);
+bugpack.export("airbug.AccountDropdownButtonContainer", AccountDropdownButtonContainer);

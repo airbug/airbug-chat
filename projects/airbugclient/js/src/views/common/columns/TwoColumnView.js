@@ -35,10 +35,15 @@ var TwoColumnView = Class.extend(MultiColumnView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:       '<div id={{id}} class="{{rowStyle}} column 2column-container">' +
-                        '<div id="column1of2-{{cid}}" class="{{leftColumnSpan}} {{leftHamburger}} column leftrow column1of2"></div>' +
-                        '<div id="column2of2-{{cid}}" class="{{rightColumnSpan}} {{rightHamburger}} column rightrow column2of2"></div>' +
+    template:       '<div id="two-column-{{cid}}" class="{{rowStyle}} column 2column-container">' +
+                        '<div id="column1of2-{{cid}}" class="column leftrow column1of2 {{column1Classes}}"></div>' +
+                        '<div id="column2of2-{{cid}}" class="column rightrow column2of2 {{column2Classes}} "></div>' +
                     '</div>',
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------
@@ -49,55 +54,57 @@ var TwoColumnView = Class.extend(MultiColumnView, {
      * @return {Object}
      */
     generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "two-column-row-container-" + this.cid;
-        data.leftColumnSpan     = "span6";
-        data.rightColumnSpan    = "span6";
-        switch (this.attributes.configuration) {
+        var data                = this._super();
+        data.column1Classes = "";
+        data.column2Classes = "";
+        switch (this.getAttribute("configuration")) {
             case TwoColumnView.Configuration.HIDE_RIGHT:
-                data.leftColumnSpan = "span12";
-                data.rightColumnSpan = "span0";
+                data.column1Classes += "span12";
+                data.column2Classes += "span0";
                 break;
             case TwoColumnView.Configuration.HIDE_LEFT:
-                data.leftColumnSpan = "span0";
-                data.rightColumnSpan = "span12";
+                data.column1Classes += "span0";
+                data.column2Classes += "span12";
                 break;
             case TwoColumnView.Configuration.THIN_RIGHT:
-                data.leftColumnSpan = "span8";
-                data.rightColumnSpan = "span4";
+                data.column1Classes += "span8";
+                data.column2Classes += "span4";
                 break;
             case TwoColumnView.Configuration.THICK_RIGHT:
-                data.leftColumnSpan = "span4";
-                data.rightColumnSpan = "span8";
+                data.column1Classes += "span4";
+                data.column2Classes += "span8";
+                break;
+            case TwoColumnView.Configuration.THICK_RIGHT_WITH_OFFSET_2:
+                data.column1Classes += "span2 offset2";
+                data.column2Classes += "span6";
                 break;
             case TwoColumnView.Configuration.THIN_RIGHT_SMALL:
-                data.leftColumnSpan = "span9";
-                data.rightColumnSpan = "span3";
+                data.column1Classes += "span9";
+                data.column2Classes += "span3";
                 break;
             case TwoColumnView.Configuration.THICK_RIGHT_SMALL:
-                data.leftColumnSpan = "span3";
-                data.rightColumnSpan = "span9";
+                data.column1Classes += "span3";
+                data.column2Classes += "span9";
                 break;
             case TwoColumnView.Configuration.EXTRA_THIN_RIGHT_SMALL:
-                data.leftColumnSpan = "span10";
-                data.rightColumnSpan = "span2";
+                data.column1Classes += "span10";
+                data.column2Classes += "span2";
                 break;
             case TwoColumnView.Configuration.EXTRA_THICK_RIGHT_SMALL:
-                data.leftColumnSpan = "span2";
-                data.rightColumnSpan = "span10";
+                data.column1Classes += "span2";
+                data.column2Classes += "span10";
                 break;
             case TwoColumnView.Configuration.HAMBURGER_LEFT:
-                data.leftHamburger = "hamburger-panel-left hamburger-panel-hidden";
-                data.rightHamburger = "";
-                data.leftColumnSpan = "span3";
-                data.rightColumnSpan = "span12";
+                data.column1Classes += "span3 hamburger-panel-left hamburger-panel-hidden";
+                data.column2Classes += "span12";
                 break;
             case TwoColumnView.Configuration.HAMBURGER_RIGHT:
-                data.leftHamburger = "";
-                data.rightHamburger = "hamburger-panel-right hamburger-panel-hidden";
-                data.leftColumnSpan = "span12";
-                data.rightColumnSpan = "span3";
+                data.column1Classes += "span12";
+                data.column2Classes += "span3 hamburger-panel-right hamburger-panel-hidden";
                 break;
+            default:
+                data.column1Classes += "span6";
+                data.column2Classes += "span6";
         }
 
         return data;
@@ -129,7 +136,8 @@ TwoColumnView.Configuration = {
     EXTRA_THIN_LEFT_SMALL: 9,
     EXTRA_THICK_LEFT_SMALL: 8,
     HIDE_RIGHT: 10,
-    HIDE_LEFT: 11
+    HIDE_LEFT: 11,
+    THICK_RIGHT_WITH_OFFSET_2: 12
 };
 
 

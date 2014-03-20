@@ -335,8 +335,11 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
             if (!throwable) {
                 _this.currentUserModel.setCurrentUserMeldDocument(currentUser.getMeldDocument());
             } else {
-                //TODO
-                //flash throwable
+                if (Class.doesExtend(throwable, Exception)) {
+                    _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
+                } else {
+                    _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: "Sorry an error has occurred" + throwable});
+                }
             }
         });
     },

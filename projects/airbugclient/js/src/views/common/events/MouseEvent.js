@@ -4,17 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('NakedButtonDropdownView')
+//@Export('MouseEvent')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -22,31 +22,32 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class       = bugpack.require('Class');
-var ButtonView  = bugpack.require('airbug.ButtonView');
+var Event       = bugpack.require('Event');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var NakedButtonDropdownView = Class.extend(ButtonView, {
+var MouseEvent = Class.extend(Event, {});
 
-    //-------------------------------------------------------------------------------
-    // Template
-    //-------------------------------------------------------------------------------
 
-    template:
-        '<div id="dropdown-button-wrapper-{{cid}}" class="btn-group">' +
-            '<button id="dropdown-button-{{cid}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
-            '</button>' +
-            '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
-            '</ul>' +
-        '</div>'
-});
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+MouseEvent.EventType = {
+    CLICK: "MouseEvent:Click",
+    DOWN: "MouseEvent:Down",
+    UP: "MouseEvent:Up"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.NakedButtonDropdownView", NakedButtonDropdownView);
+bugpack.export("airbug.MouseEvent", MouseEvent);

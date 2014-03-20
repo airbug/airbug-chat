@@ -4,45 +4,52 @@
 
 //@Package('airbug')
 
-//@Export('ButtonDropdownView')
+//@Export('NavListView')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('airbug.MustacheView')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var ButtonView  = bugpack.require('airbug.ButtonView');
+var Class           = bugpack.require('Class');
+var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ButtonDropdownView = Class.extend(ButtonView, {
+var NavListView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="dropdown-button-wrapper-{{cid}}" class="button-wrapper {{classes}}">' +
-                    '<div class="btn-group">' +
-                        '<button id="dropdown-button-{{cid}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
-                        '</button>' +
-                        '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
-                        '</ul>' +
-                    '</div>' +
-                '</div>'
+    template:
+        '<ul id="nav-list-{{cid}}" class="nav nav-list {{classes}}">' +
+        '</ul>',
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {$}
+     */
+    getNavListElement: function() {
+        return this.findElement("#nav-list-{{cid}}");
+    }
 });
 
 
@@ -50,4 +57,4 @@ var ButtonDropdownView = Class.extend(ButtonView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ButtonDropdownView", ButtonDropdownView);
+bugpack.export("airbug.NavListView", NavListView);

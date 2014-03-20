@@ -128,6 +128,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
+        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
         this.deinitializeEventListeners();
     },
 
@@ -136,6 +137,7 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
+        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
         this.initializeEventListeners();
     },
 
@@ -143,14 +145,14 @@ var ButtonContainer = Class.extend(CarapaceContainer, {
      * @protected
      */
     deinitializeEventListeners: function() {
-        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+        //TODO BRN: Remove this method
     },
 
     /**
      * @protected
      */
     initializeEventListeners: function() {
-        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+        //TODO BRN: Remove this method
     },
 
 

@@ -666,7 +666,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .user-name {
-    position: absolute;
+    position: relative;
     left: 34px;
     right: 5px;
 }

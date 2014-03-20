@@ -141,17 +141,17 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
-    initializeEventListeners: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLogoutButtonClickedEvent, this);
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLogoutButtonClickedEvent, this);
     },
 
     /**
      * @protected
      */
-    deinitializeEventListeners: function() {
+    initializeContainer: function() {
         this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLogoutButtonClickedEvent, this);
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearLogoutButtonClickedEvent, this);
     },
 
 
@@ -181,7 +181,6 @@ var LogoutButtonContainer = Class.extend(ButtonContainer, {
                 }
             }
         });
-
     }
 });
 

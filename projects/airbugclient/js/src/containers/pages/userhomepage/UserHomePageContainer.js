@@ -7,10 +7,10 @@
 //@Export('UserHomePageContainer')
 
 //@Require('Class')
+//@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormContainer')
-//@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.MultiColumnView')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
@@ -25,7 +25,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -33,10 +33,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                               = bugpack.require('Class');
+var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
 var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
-var LogoutButtonContainer               = bugpack.require('airbug.LogoutButtonContainer');
 var MultiColumnView                     = bugpack.require('airbug.MultiColumnView');
 var PageContainer                       = bugpack.require('airbug.PageContainer');
 var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
@@ -51,11 +51,11 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                   = AutowiredAnnotation.autowired;
-var bugmeta                     = BugMeta.context();
-var CommandType                 = CommandModule.CommandType;
-var property                    = PropertyAnnotation.property;
-var view                        = ViewBuilder.view;
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var CommandType                         = CommandModule.CommandType;
+var property                            = PropertyAnnotation.property;
+var view                                = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -81,13 +81,13 @@ var UserHomePageContainer = Class.extend(PageContainer, {
          * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                      = null;
 
         /**
          * @private
          * @type {DocumentUtil}
          */
-        this.documentUtil               = null;
+        this.documentUtil                       = null;
 
 
         // Containers
@@ -95,21 +95,21 @@ var UserHomePageContainer = Class.extend(PageContainer, {
 
         /**
          * @private
-         * @type {LogoutButtonContainer}
+         * @type {AccountDropdownButtonContainer}
          */
-        this.logoutButtonContainer      = null;
+        this.accountDropdownButtonContainer     = null;
 
         /**
          * @private
          * @type {CreateRoomFormContainer}
          */
-        this.createRoomFormContainer    = null;
+        this.createRoomFormContainer            = null;
 
         /**
          * @private
          * @type {RoomListPanelContainer}
          */
-        this.roomListPanelContainer     = null;
+        this.roomListPanelContainer             = null;
 
 
         // Views
@@ -158,10 +158,10 @@ var UserHomePageContainer = Class.extend(PageContainer, {
      */
     createContainerChildren: function() {
         this._super();
-        this.logoutButtonContainer      = new LogoutButtonContainer();
-        this.createRoomFormContainer    = new CreateRoomFormContainer();
-        this.roomListPanelContainer     = new RoomListPanelContainer();
-        this.addContainerChild(this.logoutButtonContainer, '#header-right');
+        this.accountDropdownButtonContainer     = new AccountDropdownButtonContainer();
+        this.createRoomFormContainer            = new CreateRoomFormContainer();
+        this.roomListPanelContainer             = new RoomListPanelContainer();
+        this.addContainerChild(this.accountDropdownButtonContainer, '#header-right');
         this.addContainerChild(this.roomListPanelContainer, ".2column-container .column1of2");
         this.addContainerChild(this.createRoomFormContainer, ".2column-container .column2of2");
     },

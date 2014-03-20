@@ -11,11 +11,11 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
+//@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.LogoutButtonContainer')
 //@Require('airbug.OverlayViewEvent')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomChatBoxContainer')
@@ -44,11 +44,11 @@ var ClearChange                         = bugpack.require('ClearChange');
 var Exception                           = bugpack.require('Exception');
 var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
 var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-var LogoutButtonContainer               = bugpack.require('airbug.LogoutButtonContainer');
 var OverlayViewEvent                    = bugpack.require('airbug.OverlayViewEvent');
 var PageContainer                       = bugpack.require('airbug.PageContainer');
 var RoomChatBoxContainer                = bugpack.require('airbug.RoomChatBoxContainer');
@@ -103,6 +103,12 @@ var RoomPageContainer = Class.extend(PageContainer, {
 
         /**
          * @private
+         * @type {AccountDropdownButtonContainer}
+         */
+        this.accountDropdownButtonContainer         = null;
+
+        /**
+         * @private
          * @type {ConversationListSlidePanelContainer}
          */
         this.conversationListSlidePanelContainer    = null;
@@ -112,12 +118,6 @@ var RoomPageContainer = Class.extend(PageContainer, {
          * @type {HomeButtonContainer}
          */
         this.homeButtonContainer                    = null;
-
-        /**
-         * @private
-         * @type {LogoutButtonContainer}
-         */
-        this.logoutButtonContainer                  = null;
 
         /**
          * @private
@@ -212,7 +212,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
     createContainerChildren: function(routingArgs) {
         this._super(routingArgs);
         this.homeButtonContainer                    = new HomeButtonContainer();
-        this.logoutButtonContainer                  = new LogoutButtonContainer();
+        this.accountDropdownButtonContainer         = new AccountDropdownButtonContainer();
         this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
         this.roomListPanelContainer                 = new RoomListPanelContainer();
 
@@ -220,7 +220,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.addContainerChild(this.shareRoomContainer,             ".page");
 
 
-        this.addContainerChild(this.logoutButtonContainer,          "#header-right");
+        this.addContainerChild(this.accountDropdownButtonContainer, "#header-right");
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
         this.addContainerChild(this.roomListPanelContainer,         ".column1of4");
         this.addContainerChild(this.roomChatBoxContainer,           ".column2of4");
