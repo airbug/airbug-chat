@@ -19,11 +19,15 @@
 //@Require('airbug.CodeEditorWidgetView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
+//@Require('airbug.MessageHandlerModule')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TabsView')
 //@Require('airbug.TabView')
 //@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
 
@@ -51,11 +55,15 @@ var CodeEditorWidgetCloseButtonContainer    = bugpack.require('airbug.CodeEditor
 var CodeEditorWidgetView                    = bugpack.require('airbug.CodeEditorWidgetView');
 var CommandModule                           = bugpack.require('airbug.CommandModule');
 var IconView                                = bugpack.require('airbug.IconView');
+var MessageHandlerModule                    = bugpack.require('airbug.MessageHandlerModule');
 var NakedButtonView                         = bugpack.require('airbug.NakedButtonView');
 var TabsView                                = bugpack.require('airbug.TabsView');
 var TabView                                 = bugpack.require('airbug.TabView');
 var TabViewEvent                            = bugpack.require('airbug.TabViewEvent');
 var TextView                                = bugpack.require('airbug.TextView');
+var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
 
@@ -63,8 +71,11 @@ var ViewBuilder                             = bugpack.require('carapace.ViewBuil
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var CommandType                         = CommandModule.CommandType;
-var view                                = ViewBuilder.view;
+var autowired                               = AutowiredAnnotation.autowired;
+var bugmeta                                 = BugMeta.context();
+var CommandType                             = CommandModule.CommandType;
+var property                                = PropertyAnnotation.property;
+var view                                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
@@ -111,13 +122,13 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
          * @private
          * @type {ButtonView}
          */
-        this.sendButtonView                         = null;
+        this.embedButtonView                        = null;
 
         /**
          * @private
          * @type {ButtonView}
          */
-        this.sendSelectedButtonView                 = null;
+        this.sendButtonView                         = null;
 
         /**
          * @private
@@ -152,12 +163,30 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
          * @type {CodeEditorFullscreenButtonContainer}
          */
         this.codeEditorFullscreenButtonContainer    = null;
+
+
+        // Modules
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule                   = null;
     },
 
 
     //-------------------------------------------------------------------------------
     // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.processMessageHandlerState();
+    },
 
     /**
      * @protected
@@ -243,29 +272,29 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
                                     .appendTo("#button-group-{{cid}}")
                                     .attributes({
                                         type: "default",
-                                        size: ButtonView.Size.LARGE
+                                        size: ButtonView.Size.LARGE,
+                                        disabled: true
                                     })
                                     .children([
                                         view(TextView)
                                             .attributes({text: "Send"})
                                             .appendTo("#button-{{cid}}")
-                                    ])
+                                    ]),
                             ]),
                         view(ButtonGroupView)
                             .appendTo("#button-toolbar-{{cid}}")
                             .children([
                                 view(ButtonView)
-                                    .name("sendSelectedButtonView")
+                                    .name("embedButtonView")
                                     .appendTo("#button-group-{{cid}}")
                                     .attributes({
                                         type: "default",
                                         size: ButtonView.Size.LARGE,
-                                        block: true,
                                         disabled: true
                                     })
                                     .children([
                                         view(TextView)
-                                            .attributes({text: "Send Selected"})
+                                            .attributes({text: "Embed"})
                                             .appendTo("#button-{{cid}}")
                                     ])
                             ])
@@ -291,6 +320,30 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
         this.addContainerChild(this.closeButton, "#button-group-" + this.widgetControlButtonGroupView.getCid());
     },
 
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
+        this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
+        this.messageHandlerModule.removeEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
+    },
+
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
+        this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClickedEvent, this);
+        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
+        this.settingsTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
+        this.messageHandlerModule.addEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods
@@ -299,43 +352,25 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
     /**
      * @private
      */
-    deinitializeEventListeners: function() {
-        this.codeEditorView.removeEventListener(CodeEditorViewEvent.EventType.SELECTION_CHANGED, this.hearCodeEditorSelectionChangedEvent, this);
-        this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
-        this.sendSelectedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendSelectedButtonClickedEvent, this);
-        this.codeEditorFullscreenButtonContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-        this.settingsTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
-    },
+    processMessageHandlerState: function() {
+        var handlerState = this.messageHandlerModule.getHandlerState();
+        if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.EMBED_ONLY) {
+            this.embedButtonView.enableButton();
+        } else {
+            this.embedButtonView.disableButton();
+        }
 
-
-    /**
-     * @private
-     */
-    initializeEventListeners: function() {
-        this.codeEditorView.addEventListener(CodeEditorViewEvent.EventType.SELECTION_CHANGED, this.hearCodeEditorSelectionChangedEvent, this);
-        this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
-        this.sendSelectedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendSelectedButtonClickedEvent, this);
-        this.codeEditorFullscreenButtonContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearFullScreenButtonClickedEvent, this);
-        this.settingsTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.hearSettingsTabClickedEvent, this);
+        if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.SEND_ONLY) {
+            this.sendButtonView.enableButton();
+        } else {
+            this.sendButtonView.disableButton();
+        }
     },
 
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {CodeEditorViewEvent} event
-     */
-    hearCodeEditorSelectionChangedEvent: function(event) {
-        var copyText = this.getEditorCopyText();
-        if (copyText.length > 0) {
-            this.sendSelectedButtonView.enableButton();
-        } else {
-            this.sendSelectedButtonView.disableButton();
-        }
-    },
 
     /**
      * @private
@@ -354,10 +389,18 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
     },
 
     /**
+     * @private
+     * @param {Event} event
+     */
+    hearMessageHandlerModuleStateChanged: function(event) {
+        this.processMessageHandlerState();
+    },
+
+    /**
      * @param {ButtonViewEvent} event
      */
     hearSendButtonClickedEvent: function(event) {
-        var code            = this.getEditorText();
+        var code            = this.getEditorCopyText() || this.getEditorText();
         var codeLanguage    = this.getEditorLanguage();
         var chatMessageObject = {
             type: "code",
@@ -368,26 +411,23 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
             }]}
         };
 
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        this.messageHandlerModule.sendMessage(chatMessageObject);
         event.stopPropagation();
     },
 
     /**
      * @param {ButtonViewEvent} event
      */
-    hearSendSelectedButtonClickedEvent: function(event) {
-        var code            = this.getEditorCopyText();
-        var codeLanguage    = this.getEditorLanguage();
-        var chatMessageObject = {
+    hearEmbedButtonClickedEvent: function(event) {
+        var code                    = this.getEditorCopyText() || this.getEditorText();
+        var codeLanguage            = this.getEditorLanguage();
+        var codeMessagePartObject   = {
+            code: code,
             type: "code",
-            body: {parts: [{
-                code: code,
-                type: "code",
-                codeLanguage: codeLanguage
-            }]}
+            codeLanguage: codeLanguage
         };
 
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        this.messageHandlerModule.embedMessagePart(codeMessagePartObject);
         event.stopPropagation();
     },
 
@@ -400,6 +440,17 @@ var CodeEditorWidgetContainer = Class.extend(CodeEditorBaseWidgetContainer, {
         event.stopPropagation();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(CodeEditorWidgetContainer).with(
+    autowired().properties([
+        property("messageHandlerModule").ref("messageHandlerModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

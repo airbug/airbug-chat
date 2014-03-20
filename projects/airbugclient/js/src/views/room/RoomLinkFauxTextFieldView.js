@@ -91,7 +91,7 @@ var RoomLinkFauxTextFieldView = Class.extend(FauxTextFieldView, {
      */
     generateText: function(roomId) {
         var currentUrl = this.windowUtil.getUrl();
-        return currentUrl + "#room/" + roomId;
+        return currentUrl + "#conversation/" + roomId;
     }
 });
 

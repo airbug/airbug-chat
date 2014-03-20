@@ -38,6 +38,13 @@ var MustacheView    = bugpack.require('airbug.MustacheView');
 var NakedButtonView = Class.extend(MustacheView, {
 
     //-------------------------------------------------------------------------------
+    // Template
+    //-------------------------------------------------------------------------------
+
+    template: '<button id="{{id}}" class="btn {{buttonClasses}}"></button>',
+
+
+    //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
@@ -61,10 +68,15 @@ var NakedButtonView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // Template
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
-    template: '<button id="{{id}}" class="btn {{buttonClasses}}"></button>',
+    /**
+     * @return {$}
+     */
+    getButtonElement: function() {
+        return this.findElement("#button-{{cid}}");
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -88,6 +100,35 @@ var NakedButtonView = Class.extend(MustacheView, {
         this.findElement('#' + this.getId()).on('click', function(event) {
             _this.handleButtonClick(event);
         });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceView Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {string} attributeName
+     * @param {*} attributeValue
+     */
+    renderAttribute: function(attributeName, attributeValue) {
+        switch (attributeName) {
+            case "active":
+                if (attributeValue) {
+                    this.getButtonElement().addClass("active");
+                } else {
+                    this.getButtonElement().removeClass("active");
+                }
+                break;
+            case "disabled":
+                if (attributeValue) {
+                    this.getButtonElement().addClass("disabled");
+                } else {
+                    this.getButtonElement().removeClass("disabled");
+                }
+                break;
+        }
     },
 
 
@@ -159,7 +200,26 @@ var NakedButtonView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // View Event Handlers
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    disableButton: function() {
+        this.setAttribute("disabled", true);
+    },
+
+    /**
+     *
+     */
+    enableButton: function() {
+        this.setAttribute("disabled", false);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
@@ -168,7 +228,9 @@ var NakedButtonView = Class.extend(MustacheView, {
      */
     handleButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED, {}));
+        if (!this.getAttribute("disabled")) {
+            this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED, {}));
+        }
     }
 });
 

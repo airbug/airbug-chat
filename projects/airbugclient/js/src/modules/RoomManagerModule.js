@@ -7,7 +7,9 @@
 //@Export('RoomManagerModule')
 //@Autoload
 
+//@Require('ArgUtil')
 //@Require('Class')
+//@Require('airbug.ApiDefines')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.RoomList')
 //@Require('airbug.RoomModel')
@@ -27,7 +29,9 @@ var bugpack                         = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil                         = bugpack.require('ArgUtil');
 var Class                           = bugpack.require('Class');
+var ApiDefines                      = bugpack.require('airbug.ApiDefines');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
 var RoomList                        = bugpack.require('airbug.RoomList');
 var RoomModel                       = bugpack.require('airbug.RoomModel');
@@ -50,7 +54,6 @@ var module                          = ModuleAnnotation.module;
 //-------------------------------------------------------------------------------
 
 var RoomManagerModule = Class.extend(ManagerModule, {
-
 
     //-------------------------------------------------------------------------------
     // Public Methods
@@ -95,7 +98,7 @@ var RoomManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {string} roomId
-     * @param {function(Throwable, Meld=)} callback
+     * @param {function(Throwable, MeldDocument=)} callback
      */
     joinRoom: function(roomId, callback) {
         var requestData = {roomId: roomId};
@@ -125,6 +128,57 @@ var RoomManagerModule = Class.extend(ManagerModule, {
      */
     retrieveRooms: function(roomIds, callback) {
         this.retrieveEach("Room", roomIds, callback);
+    },
+
+    /**
+     * @param {{
+     *      name: string,
+     *      participantEmails: Array.<string>,
+     *      chatMessage: {
+     *          body: {
+     *              parts: Array.<*>
+     *          }
+     *      }
+     * }} startRoomObject
+     * @param {function(Throwable, MeldDocument=)} callback
+     */
+    startRoom: function(startRoomObject, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "startRoomObject", optional: false, type: "object"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        startRoomObject     = args.startRoomObject;
+        callback            = args.callback;
+
+        var _this = this;
+        var requestData = {startRoomObject: startRoomObject};
+        var requestType = "startRoom";
+        this.request(requestType, requestData, function(throwable, callResponse) {
+            if (!throwable) {
+                if (callResponse.getType() === ApiDefines.Responses.SUCCESS) {
+                    var data        = callResponse.getData();
+                    var objectId    = data.objectId;
+                    var meldDocumentKey     = _this.meldBuilder.generateMeldDocumentKey(type, objectId);
+                    var meldDocument  = _this.get(meldDocumentKey);
+                    if (meldDocument) {
+                        callback(null, meldDocument);
+                    } else {
+                        callback(new Error("Could not find MeldDocument after SUCCESS response. Something went wrong."));
+                    }
+                } else if (callResponse.getType() === ApiDefines.Responses.EXCEPTION) {
+                    //TODO BRN: Handle common exceptions
+                } else if (callResponse.getType() === ApiDefines.Responses.ERROR) {
+                    //TODO BRN: Handle common errors
+                } else {
+                    callback(undefined, callResponse);
+                }
+            } else {
+
+                //TODO BRN: Handle common Throwables. These throwables should only come from
+
+                callback(throwable);
+            }
+        });
     }
 });
 

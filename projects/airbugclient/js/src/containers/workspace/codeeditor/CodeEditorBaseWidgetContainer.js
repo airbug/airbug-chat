@@ -13,7 +13,6 @@
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ViewBuilder')
 
 
 //-------------------------------------------------------------------------------
@@ -44,6 +43,7 @@ var autowired                           = AutowiredAnnotation.autowired;
 var bugmeta                             = BugMeta.context();
 var CommandType                         = CommandModule.CommandType;
 var property                            = PropertyAnnotation.property;
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -108,8 +108,10 @@ var CodeEditorBaseWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
+        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
+        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_TEXT, this.handleSetTextCommand, this);
+        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
+        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_THEME, this.handleSetThemeCommand, this);
     },
 
     /**
@@ -117,48 +119,11 @@ var CodeEditorBaseWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-        this.configureEditor();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    initializeEventListeners: function() {
-
-    },
-
-    /**
-     * @private
-     */
-    deinitializeEventListeners: function() {
-
-    },
-
-    /**
-     * @protected
-     */
-    initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
         this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_TEXT, this.handleSetTextCommand, this);
         this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
         this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_THEME, this.handleSetThemeCommand, this);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE, this.handleDisplayCodeCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_TEXT, this.handleSetTextCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_THEME, this.handleSetThemeCommand, this);
+        this.configureEditor();
     },
 
 

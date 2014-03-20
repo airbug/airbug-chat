@@ -78,14 +78,14 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // Models
+        //-------------------------------------------------------------------------------
+
         /**
          * @private
          * @type {ImageAssetModel}
          */
         this.imageAssetModel                        = imageAssetModel;
-
-        // Models
-        //-------------------------------------------------------------------------------
 
 
         // Modules
@@ -102,6 +102,13 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
          * @type {CommandModule}
          */
         this.commandModule                          = null;
+
+        /**
+         * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule                   = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -124,16 +131,20 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {Array<*>} routerArgs
+     * @return {ImageAssetModel}
      */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
+    getImageAssetModel: function() {
+        return this.imageAssetModel;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // CarapaceController Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @protected
@@ -161,25 +172,13 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
         this._super();
         this.imageUploadItemButtonToolbarContainer   = new ImageUploadItemButtonToolbarContainer();
-    },
-
-    /**
-     * @protected
-     */
-    addToolbarContainer: function() {
-        this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-upload-item")
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
+        this.addContainerChild(this.imageUploadItemButtonToolbarContainer, ".image-upload-item");
     },
 
     /**
@@ -187,63 +186,72 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
+        this.imageUploadItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
+        this.imageUploadItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
     },
+
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
+        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
+        this.hideToolbarContainer();
+    },
+
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Public Methods
     //-------------------------------------------------------------------------------
 
-    initializeEventListeners: function() {
-        this.imageUploadItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
+    /**
+     *
+     */
+    hideToolbarContainer: function() {
+        this.imageUploadItemButtonToolbarContainer.getViewTop().hide();
     },
 
-    deinitializeEventListeners: function() {
-        this.imageUploadItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
+    /**
+     *
+     */
+    showToolbarContainer: function() {
+        this.imageUploadItemButtonToolbarContainer.getViewTop().show();
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private
      */
-    initializeCommandSubscriptions: function() {
-
+    embedImageMessagePart: function() {
+        var imageData           = this.userImageAssetModel.getData();
+        var imageMessagePart    = {
+            assetId: imageData.assetId,
+            type: "image",
+            url: imageData.url,
+            size: imageData.size,
+            midsizeMimeType: imageData.midsizeMimeType,
+            midsizeUrl: imageData.midsizeUrl,
+            mimeType: imageData.mimeType,
+            thumbnailMimeType: imageData.thumbnailMimeType,
+            thumbnailUrl: imageData.thumbnailUrl
+        };
+        this.messageHandlerModule.embedMessagePart(imageMessagePart);
     },
 
     /**
      * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-
-    },
-
-    //-------------------------------------------------------------------------------
-    // Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    handleSendImageEvent: function(event) {
-        this.sendImageChatMessage();
-    },
-
-    /**
-     *
-     */
-    getImageAssetModel: function() {
-        return this.imageAssetModel;
-    },
-
-    /**
-     *
      */
     sendImageChatMessage: function() {
-        var imageData = this.imageAssetModel.getData();
-        var chatMessageObject = {
+        var imageData           = this.userImageAssetModel.getData();
+        var chatMessageObject   = {
             type: "image",
             body: {parts: [{
-                assetId: imageData.id,
+                assetId: imageData.assetId,
                 type: "image",
                 url: imageData.url,
                 size: imageData.size,
@@ -254,7 +262,27 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
                 thumbnailUrl: imageData.thumbnailUrl
             }]}
         };
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        this.messageHandlerModule.sendMessage(chatMessageObject);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Handlers
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearClickedEmbed: function(event) {
+        this.embedImageMessagePart();
+    },
+
+    /**
+     *
+     */
+    hearClickedSend: function(event) {
+        this.sendImageChatMessage();
     }
 });
 
@@ -265,8 +293,9 @@ var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ImageUploadItemContainer).with(
     autowired().properties([
+        property("assetManagerModule").ref("assetManagerModule"),
         property("commandModule").ref("commandModule"),
-        property("assetManagerModule").ref("assetManagerModule")
+        property("messageHandlerModule").ref("messageHandlerModule")
     ])
 );
 

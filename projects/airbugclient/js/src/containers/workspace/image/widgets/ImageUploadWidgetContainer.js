@@ -499,29 +499,29 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
 
             if(!throwable){
-                    $(data.context[index]).find(".success-indicator").attr("style", "");
+                $(data.context[index]).find(".success-indicator").attr("style", "");
 
-                    imageAssetModel.setAssetMeldDocument(meldDocument);
-                    var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
-                    imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
-                    imageUploadItemContainer.addToolbarContainer();
+                imageAssetModel.setAssetMeldDocument(meldDocument);
+                var imagePreviewContainer = new ImagePreviewContainer(imageAssetModel);
+                imageUploadItemContainer.prependContainerChildTo(imagePreviewContainer, "div.image-upload-item");
+                imageUploadItemContainer.showToolbarContainer();
 
-                    if(data.originalFiles[index].autoSend){
-                        imageUploadItemContainer.sendImageChatMessage();
+                if(data.originalFiles[index].autoSend){
+                    imageUploadItemContainer.sendImageChatMessage();
+                }
+
+                _this.createUserAsset(assetId, function(throwable){
+                    if(!throwable){
+                        setTimeout(function() {
+                            statusMessage.text("completed");
+                            statusMessage.fadeOut(3000, function() {
+                                statusMessage.remove();
+                            });
+                        },2000);
+                    } else {
+                        _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: throwable.getMessage()});
                     }
-
-                    _this.createUserAsset(assetId, function(throwable){
-                        if(!throwable){
-                            setTimeout(function() {
-                                statusMessage.text("completed");
-                                statusMessage.fadeOut(3000, function() {
-                                    statusMessage.remove();
-                                });
-                            },2000);
-                        } else {
-                            _this.commandModule.relayCommand(CommandType.FLASH.ERROR, {message: throwable.getMessage()});
-                        }
-                    });
+                });
             } else {
                 statusMessage.text("upload failed!");
 //                                $(data.context[index]).find(".failed-indicator").attr("style", "");

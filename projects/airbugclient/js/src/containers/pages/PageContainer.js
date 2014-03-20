@@ -9,8 +9,9 @@
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.CommandModule')
-//@Require('airbug.PageView')
 //@Require('airbug.FourColumnView')
+//@Require('airbug.MultiColumnView')
+//@Require('airbug.PageView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWrapperContainer')
@@ -35,6 +36,7 @@ var Class                       = bugpack.require('Class');
 var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
 var CommandModule               = bugpack.require('airbug.CommandModule');
 var FourColumnView              = bugpack.require('airbug.FourColumnView');
+var MultiColumnView             = bugpack.require('airbug.MultiColumnView');
 var PageView                    = bugpack.require('airbug.PageView');
 var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
 var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
@@ -152,7 +154,10 @@ var PageContainer = Class.extend(ApplicationContainer, {
                 view(FourColumnView)
                     .name("fourColumnView")
                     .id("page-row-container")
-                    .attributes({configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT})
+                    .attributes({
+                        configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT,
+                        rowStyle: MultiColumnView.RowStyle.FLUID
+                    })
             ])
             .build(this);
 

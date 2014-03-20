@@ -112,7 +112,7 @@ var RoomLinkTextView = Class.extend(TextView, {
      */
     generateText: function(roomId) {
         var currentUrl = this.windowUtil.getUrl();
-        return currentUrl + "#room/" + roomId;
+        return currentUrl + "#conversation/" + roomId;
     }
 });
 

@@ -123,7 +123,7 @@ var PageStateModule = Class.extend(Obj, {
 bugmeta.annotate(PageStateModule).with(
     module("pageStateModule")
         .args([
-            arg("carapaceRouter").ref("carapaceRouter")
+            arg().ref("carapaceRouter")
         ])
 );
 

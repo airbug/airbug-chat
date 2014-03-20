@@ -1,4 +1,6 @@
 html, body {
+    position: relative;
+    min-width: 1200px;
     height: 100%;
     line-height: 120%;
 }
@@ -6,6 +8,7 @@ html, body {
 #uvTab {
     top: 83px!important;
     margin-top: 0px!important;
+    position: absolute!important;
 }
 .center {
     text-align: center;
@@ -31,14 +34,12 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
 
 .application-wrapper {
     background-color: rgb(243, 243, 243);
-    border-color: rgb(196, 196, 196);
-    border-style: solid;
-    border-width: 1px;
+    border-top: 1px solid rgb(196, 196, 196);
     bottom: 0px;
-    left: -1px;
+    left: 0px;
     overflow: hidden;
     position: absolute;
-    right: -1px;
+    right: 40px;
     top: 0px;
 }
 
@@ -48,6 +49,9 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
     width: 100%;
 }
 
+.application-header {
+    margin-bottom: 0px;
+}
 /* TODO BRN: In order to support firefox scroll bars. The inner body must be 20 px larger than the wrapper and the wrapper
  must have hidden scrolling. This way the panel is still scrollable but it hides the scroll bar. */
 
@@ -1411,11 +1415,27 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 }
 
 
+/* Twitter Bootstrap Add Ons
+*******************************************************************/
+
+.container-no-pad {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.row .span0 {
+    width: 0px;
+}
+
+.row-fluid .span0 {
+    width: 0px;
+}
+
+
 /* Twitter Bootstrap Overrides
 *******************************************************************/
 
 ul.nav-tabs > li, ol.nav-tabs > li {
-    border: 1px solid #ddd;
     line-height: 12px;
     border-radius: 4px 4px 0 0;
     margin-top: 3px;
@@ -1428,10 +1448,8 @@ ul.nav-tabs > li:hover, ol.nav-tabs > li:hover {
     cursor: hand;
 }
 
-ul.nav-tabs > li.disabled:hover, ol.nav-tabs > li.disabled:hover,
-ul.nav-tabs > li.disabled a:hover, ol.nav-tabs > li.disabled a:hover {
+ul.nav-tabs > li.disabled:hover, ol.nav-tabs > li.disabled:hover {
     cursor: default;
-    border: none;
 }
 
 ul.nav-tabs > li:not(.active) > a, ol.nav-tabs > li:not(.active) > a,
@@ -1448,7 +1466,6 @@ ul.nav-tabs > li > a, ol.nav-tabs > li > a {
     line-height: 12px;
     font-weight: 400;
     color: #333333;
-    border: none;
 }
 
 ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
@@ -1473,7 +1490,6 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
         margin: 0;
     }
 }
-
 
 @media (min-width: 1200px) {
     .row {
@@ -1560,6 +1576,58 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     .offset1 {
         margin-left: 100px;
     }
+    .row-fluid [class*="span"] {
+        margin-left: 0%;
+        *margin-left: 0%;
+    }
+    .row-fluid .span12 {
+        width: 100%;
+        *width: 100%;
+    }
+    .row-fluid .span11 {
+        width: 91.66666666666666%;
+        *width: 91.66666666666666%;
+    }
+    .row-fluid .span10 {
+        width: 83.3333333333333%;
+        *width: 83.3333333333333%;
+    }
+    .row-fluid .span9 {
+        width: 75%;
+        *width: 75%;
+    }
+    .row-fluid .span8 {
+        width: 66.66666666666666%;
+        *width: 66.66666666666666%;
+    }
+    .row-fluid .span7 {
+        width: 58.33333333333333%;
+        *width: 58.33333333333333%;
+    }
+    .row-fluid .span6 {
+        width: 50%;
+        *width: 50%;
+    }
+    .row-fluid .span5 {
+        width: 41.66666666666666%;
+        *width: 41.66666666666666%;
+    }
+    .row-fluid .span4 {
+        width: 33.33333333333333%;
+        *width: 33.33333333333333%;
+    }
+    .row-fluid .span3 {
+        width: 25%;
+        *width: 25%;
+    }
+    .row-fluid .span2 {
+        width: 16.66666666666666%;
+        *width: 16.66666666666666%;
+    }
+    .row-fluid .span1 {
+        width: 8.33333333333333%;
+        *width: 8.33333333333333%;
+    }
 }
 
 @media (min-width: 980px) and (max-width: 1199px) {
@@ -1570,108 +1638,135 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     [class*="span"] {
         margin-left: 0px;
     }
-
     .container,
     .navbar-static-top .container,
     .navbar-fixed-top .container,
     .navbar-fixed-bottom .container {
         width: 960px;
     }
-
     .span12 {
         width: 960px;
     }
-
     .span11 {
         width: 880px;
     }
-
     .span10 {
         width: 800px;
     }
-
     .span9 {
         width: 720px;
     }
-
     .span8 {
         width: 640px;
     }
-
     .span7 {
         width: 560px;
     }
-
     .span6 {
         width: 480px;
     }
-
     .span5 {
         width: 400px;
     }
-
     .span4 {
         width: 320px;
     }
-
     .span3 {
         width: 240px;
     }
-
     .span2 {
         width: 160px;
     }
-
     .span1 {
         width: 80px;
     }
-
     .offset12 {
         margin-left: 960px;
     }
-
     .offset11 {
         margin-left: 880px;
     }
-
     .offset10 {
         margin-left: 800px;
     }
-
     .offset9 {
         margin-left: 720px;
     }
-
     .offset8 {
         margin-left: 640px;
     }
-
     .offset7 {
         margin-left: 560px;
     }
-
     .offset6 {
         margin-left: 480px;
     }
-
     .offset5 {
         margin-left: 400px;
     }
-
     .offset4 {
         margin-left: 320px;
     }
-
     .offset3 {
         margin-left: 240px;
     }
-
     .offset2 {
         margin-left: 160px;
     }
-
     .offset1 {
         margin-left: 80px;
+    }
+    .row-fluid [class*="span"] {
+        margin-left: 0%;
+        *margin-left: 0%;
+    }
+    .row-fluid .span12 {
+        width: 100%;
+        *width: 100%;
+    }
+    .row-fluid .span11 {
+        width: 91.66666666666666%;
+        *width: 91.66666666666666%;
+    }
+    .row-fluid .span10 {
+        width: 83.3333333333333%;
+        *width: 83.3333333333333%;
+    }
+    .row-fluid .span9 {
+        width: 75%;
+        *width: 75%;
+    }
+    .row-fluid .span8 {
+        width: 66.66666666666666%;
+        *width: 66.66666666666666%;
+    }
+    .row-fluid .span7 {
+        width: 58.33333333333333%;
+        *width: 58.33333333333333%;
+    }
+    .row-fluid .span6 {
+        width: 50%;
+        *width: 50%;
+    }
+    .row-fluid .span5 {
+        width: 41.66666666666666%;
+        *width: 41.66666666666666%;
+    }
+    .row-fluid .span4 {
+        width: 33.33333333333333%;
+        *width: 33.33333333333333%;
+    }
+    .row-fluid .span3 {
+        width: 25%;
+        *width: 25%;
+    }
+    .row-fluid .span2 {
+        width: 16.66666666666666%;
+        *width: 16.66666666666666%;
+    }
+    .row-fluid .span1 {
+        width: 8.33333333333333%;
+        *width: 8.33333333333333%;
     }
 }
 
@@ -1759,6 +1854,58 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     }
     .offset1 {
         margin-left: 62px;
+    }
+    .row-fluid [class*="span"] {
+        margin-left: 0%;
+        *margin-left: 0%;
+    }
+    .row-fluid .span12 {
+        width: 100%;
+        *width: 100%;
+    }
+    .row-fluid .span11 {
+        width: 91.66666666666666%;
+        *width: 91.66666666666666%;
+    }
+    .row-fluid .span10 {
+        width: 83.3333333333333%;
+        *width: 83.3333333333333%;
+    }
+    .row-fluid .span9 {
+        width: 75%;
+        *width: 75%;
+    }
+    .row-fluid .span8 {
+        width: 66.66666666666666%;
+        *width: 66.66666666666666%;
+    }
+    .row-fluid .span7 {
+        width: 58.33333333333333%;
+        *width: 58.33333333333333%;
+    }
+    .row-fluid .span6 {
+        width: 50%;
+        *width: 50%;
+    }
+    .row-fluid .span5 {
+        width: 41.66666666666666%;
+        *width: 41.66666666666666%;
+    }
+    .row-fluid .span4 {
+        width: 33.33333333333333%;
+        *width: 33.33333333333333%;
+    }
+    .row-fluid .span3 {
+        width: 25%;
+        *width: 25%;
+    }
+    .row-fluid .span2 {
+        width: 16.66666666666666%;
+        *width: 16.66666666666666%;
+    }
+    .row-fluid .span1 {
+        width: 8.33333333333333%;
+        *width: 8.33333333333333%;
     }
 }
 

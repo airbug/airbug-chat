@@ -427,7 +427,7 @@ var RoomService = Class.extend(EntityService, {
                 callback(throwable, room, user);
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access Rooms"));
         }
     },
 
@@ -478,7 +478,7 @@ var RoomService = Class.extend(EntityService, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess'));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access Rooms"));
         }
     },
 
@@ -537,7 +537,74 @@ var RoomService = Class.extend(EntityService, {
                 }
             });
         } else {
-            callback(new Exception('UnauthorizedAccess', {}, "Anonymous users cannot access Rooms"));
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access Rooms"));
+        }
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {{
+     *      name: string,
+     *      participantEmails,
+     *      chatMessage: {
+     *          body: {
+     *              parts: Array.<*>
+     *          }
+     *      }
+     * }} startRoomObject
+     * @param {function(Throwable, Room=)} callback
+     */
+    startRoom: function(requestContext, startRoomObject, callback) {
+        var _this           = this;
+        var roomData        = {
+            name: startRoomObject.name
+        };
+        var room            = this.roomManager.generateRoom(roomData);
+        var currentUser     = requestContext.get('currentUser');
+        var call     = requestContext.get("call");
+
+        if (currentUser.isNotAnonymous()) {
+            $series([
+                $task(function(flow) {
+                    _this.roomManager.createRoom(room, ['conversation'], function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.dbAddUserToRoom(currentUser, room, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.dbPopulateRoomAndRoomMembers(room, function(throwable, returnedRoom) {
+                        room = returnedRoom;
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.roomPusher.meldCallWithRoom(call.getCallUuid(), room, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.roomPusher.pushRoom(room, [call.getCallUuid()], function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.userPusher.pushUser(currentUser, [call.getCallUuid()], function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(null, room);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        } else {
+            callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot create Rooms"));
         }
     },
 

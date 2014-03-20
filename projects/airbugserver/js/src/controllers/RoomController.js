@@ -246,6 +246,21 @@ var RoomController = Class.extend(EntityController, {
                 roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
                     _this.processRetrieveEachResponse(responder, throwable, roomIds, roomMap, callback);
                 });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            startRoom:     function(request, responder, callback) {
+                var data                = request.getData();
+                var startRoomObject     = data.startRoomObject;
+                var requestContext      = request.requestContext;
+
+                roomService.startRoom(requestContext, startRoomObject, function(throwable, room) {
+                    _this.processCreateResponse(responder, throwable, room, callback);
+                });
             }
         });
         callback();

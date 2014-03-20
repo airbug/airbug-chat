@@ -80,6 +80,7 @@ var InteractionStatusService = Class.extend(Obj, {
      * @param {InteractionStatusManager} interactionStatusManager
      * @param {UserManager} userManager
      * @param {UserPusher} userPusher
+     * @param {AirbugCallManager} airbugCallManager
      */
     _constructor: function(logger, bugCallServer, interactionStatusManager, userManager, userPusher, airbugCallManager) {
 

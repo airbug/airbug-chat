@@ -11,6 +11,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormView')
 //@Require('airbug.FormViewEvent')
+//@Require('airbug.IMessageHandler')
 //@Require('airbug.PanelView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredAnnotation')
@@ -24,42 +25,48 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Exception               = bugpack.require('Exception');
-var CommandModule           = bugpack.require('airbug.CommandModule');
-var CreateRoomFormView      = bugpack.require('airbug.CreateRoomFormView');
-var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
-var PanelView               = bugpack.require('airbug.PanelView');
-var RoomModel               = bugpack.require('airbug.RoomModel');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+var Class                       = bugpack.require('Class');
+var Exception                   = bugpack.require('Exception');
+var CommandModule               = bugpack.require('airbug.CommandModule');
+var CreateRoomFormView          = bugpack.require('airbug.CreateRoomFormView');
+var FormViewEvent               = bugpack.require('airbug.FormViewEvent');
+var IMessageHandler             = bugpack.require('airbug.IMessageHandler');
+var PanelView                   = bugpack.require('airbug.PanelView');
+var RoomModel                   = bugpack.require('airbug.RoomModel');
+var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired               = AutowiredAnnotation.autowired;
-var bugmeta                 = BugMeta.context();
-var CommandType             = CommandModule.CommandType;
-var property                = PropertyAnnotation.property;
-var view                    = ViewBuilder.view;
+var autowired                   = AutowiredAnnotation.autowired;
+var bugmeta                     = BugMeta.context();
+var CommandType                 = CommandModule.CommandType;
+var property                    = PropertyAnnotation.property;
+var view                        = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CarapaceContainer}
+ * @implements {IMessageHandler}
+ */
 var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
@@ -72,7 +79,7 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -82,19 +89,25 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {CommandModule}
          */
-        this.commandModule      = null;
+        this.commandModule              = null;
+
+        /**
+         * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule       = null;
 
         /**
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule   = null;
+        this.navigationModule           = null;
 
-       /**
+        /**
          * @private
          * @type {RoomManagerModule}
          */
-        this.roomManagerModule  = null;
+        this.roomManagerModule          = null;
 
 
         // Views
@@ -117,6 +130,15 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.createRoomFormView.$el.find("input")[0].focus();
+        this.messageHandlerModule.registerMessageHandler(this);
+    },
 
     /**
      * @protected
@@ -146,18 +168,61 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
+     */
+    deactivateContainer: function(routerArgs) {
+        this._super(routerArgs);
+        this.messageHandlerModule.deregisterMessageHandler(this);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.createRoomFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+    },
+
+    /**
+     * @protected
      */
     initializeContainer: function() {
         this._super();
         this.createRoomFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
+
+
+    //-------------------------------------------------------------------------------
+    // IMessageHandler Implementation
+    //-------------------------------------------------------------------------------
+
     /**
-     * @protected
+     * @return {boolean}
      */
-    activateContainer: function() {
-        this._super();
-        this.createRoomFormView.$el.find("input")[0].focus();
+    doesSupportEmbed: function() {
+        return true;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    doesSupportSend: function() {
+        return false;
+    },
+
+    /**
+     * @param {*} messagePartObject
+     */
+    embedMessagePart: function(messagePartObject) {
+        //TODO BRN:
+    },
+
+    /**
+     * @param {*} messageObject
+     */
+    sendMessage: function(messageObject) {
+        //do nothing
     },
 
 
@@ -171,11 +236,11 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
      */
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
-        var formData     = event.getData().formData;
-        this.roomManagerModule.createRoom(formData, function(throwable, roomMeldDocument) {
+        var formData    = event.getData().formData;
+        this.roomManagerModule.startRoom(formData, function(throwable, roomMeldDocument) {
             if (!throwable) {
-                var roomId = roomMeldDocument.getData().id;
-                _this.navigationModule.navigate("room/" + roomId, {
+                var roomId  = roomMeldDocument.getData().id;
+                _this.navigationModule.navigate("conversation/" + roomId, {
                     trigger: true
                 });
             } else {
@@ -194,12 +259,20 @@ var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
 
 //-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(CreateRoomFormContainer, IMessageHandler);
+
+
+//-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(CreateRoomFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
+        property("messageHandlerModule").ref("messageHandlerModule"),
         property("navigationModule").ref("navigationModule"),
         property("roomManagerModule").ref("roomManagerModule")
     ])

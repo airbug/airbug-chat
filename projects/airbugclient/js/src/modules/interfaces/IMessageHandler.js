@@ -4,47 +4,57 @@
 
 //@Package('airbug')
 
-//@Export('ApplicationView')
+//@Export('IMessageHandler')
 
-//@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var ApplicationView = Class.extend(MustacheView, {
+/**
+ * @interface
+ */
+var IMessageHandler = Interface.declare({
 
     //-------------------------------------------------------------------------------
-    // Template
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="container-fluid container-no-pad column">' +
-                    '<div class="application-wrapper">' +
-                        '<div class="application">' +
-                            '<div id="application-header-{{cid}}" class="application-header">' +
-                            '</div>' +
-                            '<div id="application-{{cid}}" class="application-body">' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>'
+    /**
+     * @return {boolean}
+     */
+    doesSupportEmbed: function() {},
+
+    /**
+     * @return {boolean}
+     */
+    doesSupportSend: function() {},
+
+    /**
+     * @param {*} messagePartObject
+     */
+    embedMessagePart: function(messagePartObject) {},
+
+    /**
+     * @param {*} messageObject
+     */
+    sendMessage: function(messageObject) {}
 });
 
 
@@ -52,4 +62,4 @@ var ApplicationView = Class.extend(MustacheView, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ApplicationView", ApplicationView);
+bugpack.export('airbug.IMessageHandler', IMessageHandler);

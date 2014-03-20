@@ -11,8 +11,12 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.IconView')
 //@Require('airbug.ImageViewEvent')
+//@Require('airbug.MessageHandlerModule')
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -21,7 +25,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -32,8 +36,12 @@ var Class                               = bugpack.require('Class');
 var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
 var IconView                            = bugpack.require('airbug.IconView');
 var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
+var MessageHandlerModule                = bugpack.require('airbug.MessageHandlerModule');
 var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
 var TextView                            = bugpack.require('airbug.TextView');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
@@ -42,6 +50,9 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var autowired                           = AutowiredAnnotation.autowired;
+var bugmeta                             = BugMeta.context();
+var property                            = PropertyAnnotation.property;
 var view                                = ViewBuilder.view;
 
 
@@ -72,13 +83,20 @@ var SendImageNakedButtonContainer = Class.extend(CarapaceContainer, {
          * @type {NakedButtonView}
          */
         this.buttonView        = null;
-
     },
 
 
     //-------------------------------------------------------------------------------
     // CarapaceController Implementation
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.processMessageHandlerState();
+    },
 
     /**
      * @protected
@@ -102,7 +120,8 @@ var SendImageNakedButtonContainer = Class.extend(CarapaceContainer, {
                 .children([
                     view(TextView)
                         .attributes({
-                            text: " Send"
+                            text: " Send",
+                            disabled: true
                         })
                 ])
                 .build();
@@ -117,35 +136,70 @@ var SendImageNakedButtonContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.messageHandlerModule.removeEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
     },
 
     /**
      * @protected
      */
-    deinitializeContainer: function() {
+    initializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        this.messageHandlerModule.addEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    processMessageHandlerState: function() {
+        var handlerState = this.messageHandlerModule.getHandlerState();
+        if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.SEND_ONLY) {
+            this.buttonView.enableButton();
+        } else {
+            this.buttonView.disableButton();
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    initializeEventListeners: function() {
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-    deinitializeEventListeners: function() {
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
+    /**
+     * @private
+     * @param {Event} event
+     */
     hearButtonClickedEvent: function(event) {
         this.buttonView.dispatchEvent(new ImageViewEvent(ImageViewEvent.EventType.CLICKED_SEND, {}));
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearMessageHandlerModuleStateChanged: function(event) {
+        this.processMessageHandlerState();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SendImageNakedButtonContainer).with(
+    autowired().properties([
+        property("messageHandlerModule").ref("messageHandlerModule")
+    ])
+);
 
 
 //-------------------------------------------------------------------------------

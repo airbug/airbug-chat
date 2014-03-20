@@ -206,7 +206,9 @@ var ButtonView = Class.extend(MustacheView, {
      */
     handleButtonClick: function(event) {
         event.preventDefault();
-        this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED, {}));
+        if (!this.getAttribute("disabled")) {
+            this.dispatchEvent(new ButtonViewEvent(ButtonViewEvent.EventType.CLICKED, {}));
+        }
     }
 });
 

@@ -444,7 +444,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     hearListViewItemSelectedEvent: function(event) {
         var room    = event.getData();
         var roomId  = room.id;
-        this.navigationModule.navigate("room/" + roomId, {
+        this.navigationModule.navigate("conversation/" + roomId, {
             trigger: true
         });
     },

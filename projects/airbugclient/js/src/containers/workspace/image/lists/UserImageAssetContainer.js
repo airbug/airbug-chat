@@ -106,6 +106,12 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule                   = null;
+
+        /**
+         * @private
          * @type {UserAssetManagerModule}
          */
         this.userAssetManagerModule                 = null;
@@ -192,38 +198,21 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    deinitializeEventListeners: function() {
-        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
-        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
+        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
+        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
+        this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.hearClickedDelete, this);
     },
 
     /**
      * @protected
      */
-    initializeEventListeners: function() {
-        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.handleSendImageEvent, this);
-        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.handleDeleteImageEvent, this);
+    initializeContainer: function() {
+        this._super();
+        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
+        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
+        this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.hearClickedDelete, this);
     },
 
 
@@ -250,9 +239,28 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
     /**
      * @private
      */
+    embedImageMessagePart: function() {
+        var imageData           = this.userImageAssetModel.getData();
+        var imageMessagePart    = {
+            assetId: imageData.assetId,
+            type: "image",
+            url: imageData.url,
+            size: imageData.size,
+            midsizeMimeType: imageData.midsizeMimeType,
+            midsizeUrl: imageData.midsizeUrl,
+            mimeType: imageData.mimeType,
+            thumbnailMimeType: imageData.thumbnailMimeType,
+            thumbnailUrl: imageData.thumbnailUrl
+        };
+        this.messageHandlerModule.embedMessagePart(imageMessagePart);
+    },
+
+    /**
+     * @private
+     */
     sendImageChatMessage: function() {
-        var imageData = this.userImageAssetModel.getData();
-        var chatMessageObject = {
+        var imageData           = this.userImageAssetModel.getData();
+        var chatMessageObject   = {
             type: "image",
             body: {parts: [{
                 assetId: imageData.assetId,
@@ -266,7 +274,7 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
                 thumbnailUrl: imageData.thumbnailUrl
             }]}
         };
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageObject);
+        this.messageHandlerModule.sendMessage(chatMessageObject);
     },
 
 
@@ -278,16 +286,24 @@ var UserImageAssetContainer = Class.extend(CarapaceContainer, {
      * @private
      * @param {Event} event
      */
-    handleSendImageEvent: function(event) {
-        this.sendImageChatMessage();
+    hearClickedDelete: function(event) {
+        this.deleteUserAsset();
     },
 
     /**
      * @private
      * @param {Event} event
      */
-    handleDeleteImageEvent: function(event) {
-        this.deleteUserAsset();
+    hearClickedEmbed: function(event) {
+        this.embedImageMessagePart();
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    hearClickedSend: function(event) {
+        this.sendImageChatMessage();
     }
 });
 
@@ -300,6 +316,7 @@ bugmeta.annotate(UserImageAssetContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
         property("logger").ref("logger"),
+        property("messageHandlerModule").ref("messageHandlerModule"),
         property("userAssetManagerModule").ref("userAssetManagerModule")
     ])
 );

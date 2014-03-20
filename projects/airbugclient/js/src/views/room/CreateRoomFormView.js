@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
                         '</div>' +
                         '<div class="control-group">' +
                             '<label>Add Participants</label>' +
-                            '<input class="input-xxlarge" type="text" name="participants" placeholder="jill@JillAndJack.com, jack@JillAndJack.com">' +
+                            '<input class="input-xxlarge" type="text" name="participantEmails" placeholder="jill@JillAndJack.com, jack@JillAndJack.com">' +
                             '<span class="help-block">Add conversation participants by email. (Separated by commas)</span>' +
                         '</div>' +
                         '<div class="control-group">' +
@@ -93,6 +93,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
         });
     },
 
+
     //-------------------------------------------------------------------------------
     // Protected Methods
     //-------------------------------------------------------------------------------
@@ -136,6 +137,7 @@ var CreateRoomFormView = Class.extend(MustacheView, {
         this.submitForm();
     }
 });
+
 
 //-------------------------------------------------------------------------------
 // Exports

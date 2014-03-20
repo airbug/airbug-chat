@@ -142,7 +142,7 @@ var RoomPageController = Class.extend(ApplicationController, {
 //-------------------------------------------------------------------------------
 
 bugmeta.annotate(RoomPageController).with(
-    controller().route("room/:id"),
+    controller().route("conversation/:id"),
     autowired().properties([
         property("roomManagerModule").ref("roomManagerModule")
     ])

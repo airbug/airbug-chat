@@ -219,41 +219,20 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
         this.addContainerChild(this.closeButton, ".btn-group:last-child");
     },
 
-
-    //-------------------------------------------------------------------------------
-    // CodeEditorBaseWidgetContainer Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @private
+     * @protected
      */
-    initializeEventListeners: function() {
-        this._super();
-        this.codeEditorOverlayWidgetView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeEventListeners: function() {
+    deinitializeContainer: function() {
         this._super();
         this.codeEditorOverlayWidgetView.removeEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
     },
 
     /**
-     * @private
-     * @override
+     * @protected
      */
-    initializeCommandSubscriptions: function() {
-        //None
-    },
-
-    /**
-     * @private
-     * @override
-     */
-    deinitializeCommandSubscriptions: function() {
-        //None
+    initializeContainer: function() {
+        this._super();
+        this.codeEditorOverlayWidgetView.addEventListener(OverlayViewEvent.EventType.CLOSE, this.hearOverlayCloseEvent, this);
     },
 
 

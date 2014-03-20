@@ -22,6 +22,7 @@
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.IMessageHandler')
 //@Require('airbug.ListContainer')
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
@@ -60,6 +61,7 @@ var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFor
 var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
 var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
+var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
 var ListContainer                   = bugpack.require('airbug.ListContainer');
 var PanelView                       = bugpack.require('airbug.PanelView');
 var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
@@ -88,6 +90,11 @@ var $task                           = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {CarapaceContainer}
+ * @implements {IMessageHandler}
+ */
 var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
@@ -215,6 +222,12 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule                       = null;
+
+        /**
+         * @private
          * @type {UserManagerModule}
          */
         this.userManagerModule                          = null;
@@ -243,6 +256,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function(routerArgs) {
         this._super(routerArgs);
+        this.messageHandlerModule.registerMessageHandler(this);
         if (this.conversationModel.getProperty("id")) {
             this.loadChatMessageList(this.conversationModel.getProperty("id"));
             this.loadChatMessageStream(this.conversationModel.getProperty("id"));
@@ -294,37 +308,18 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
      */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeObservers();
-        this.deinitializeCommandSubscriptions();
+    deactivateContainer: function(routerArgs) {
+        this._super(routerArgs);
+        this.messageHandlerModule.deregisterMessageHandler(this);
     },
 
     /**
      * @protected
      */
-    initializeContainer: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.initializeObservers();
-        this.initializeCommandSubscriptions();
-    },
-
-    /**
-     *
-     */
-    initializeObservers: function() {
-        this.conversationModel.observe(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
-        this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
-        this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
-        this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
-        this.chatMessageStreamModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
-    },
-
-    /**
-     *
-     */
-    deinitializeObservers: function() {
         this.conversationModel.unobserve(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
         this.conversationModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
         this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
@@ -335,15 +330,47 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
+    initializeContainer: function() {
+        this._super();
+        this.conversationModel.observe(SetPropertyChange.CHANGE_TYPE, "id", this.observeConversationModelIdSetPropertyChange, this);
+        this.conversationModel.observe(ClearChange.CHANGE_TYPE, "", this.observeConversationModelClearChange, this);
+        this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
+        this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
+        this.chatMessageStreamModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
+
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IMessageHandler Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    doesSupportEmbed: function() {
+        return true;
     },
 
     /**
-     * @protected
+     * @return {boolean}
      */
-    initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.SUBMIT.CHAT_MESSAGE, this.handleSubmitChatMessageCommand, this);
+    doesSupportSend: function() {
+        return true;
+    },
+
+    /**
+     * @param {*} messagePartObject
+     */
+    embedMessagePart: function(messagePartObject) {
+        //TODO BRN:
+    },
+
+    /**
+     * @param {*} messageObject
+     */
+    sendMessage: function(messageObject) {
+        this.sendChatMessage(messageObject);
     },
 
 
@@ -754,14 +781,6 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
         }
     },
 
-    /**
-     * @param {PublisherMessage} message
-     */
-    handleSubmitChatMessageCommand: function(message) {
-        var chatMessageObject = message.getData();
-        this.sendChatMessage(chatMessageObject);
-    },
-
 
     //-------------------------------------------------------------------------------
     // Model Observers
@@ -817,6 +836,13 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
 
 //-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(ChatWidgetContainer, IMessageHandler);
+
+
+//-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
 
@@ -827,6 +853,7 @@ bugmeta.annotate(ChatWidgetContainer).with(
         property("commandModule").ref("commandModule"),
         property("currentUserManagerModule").ref("currentUserManagerModule"),
         property("logger").ref("logger"),
+        property("messageHandlerModule").ref("messageHandlerModule"),
         property("userManagerModule").ref("userManagerModule")
     ])
 );

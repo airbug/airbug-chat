@@ -222,7 +222,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
                     .name("roomChatBoxTwoColumnView")
                     .attributes({
                         rowStyle: MultiColumnView.RowStyle.FLUID,
-                        configuration: TwoColumnView.Configuration.THICK_RIGHT
+                        configuration: TwoColumnView.Configuration.EXTRA_THICK_RIGHT_SMALL
                     })
                     .appendTo(".box-body")
             ])

@@ -102,18 +102,11 @@ var User = Class.extend(Entity, {
      * @return {string}
      */
     getBetaKey: function() {
-        return this.getDeltaDocument().getData().betaKey;
+        return this.getEntityData().betaKey;
     },
 
     /**
-     * @return {Date}
-     */
-    getCreatedAt: function() {
-        return this.getDeltaDocument().getData().createdAt;
-    },
-
-    /**
-     * @return {*}
+     * @return {string}
      */
     getEmail: function() {
         return this.getEntityData().email;
@@ -155,8 +148,7 @@ var User = Class.extend(Entity, {
     },
 
     /**
-     *
-     * @returns {string|*}
+     * @return {string|*}
      */
     getPasswordHash: function() {
         return this.getEntityData().passwordHash;
@@ -331,6 +323,10 @@ bugmeta.annotate(User).with(
             .type("string"),
         property("passwordHash")
             .type("string"),
+        property("pseudo")
+            .type("boolean")
+            .require(true)
+            .default(false),
         property("roomIdSet")
             .type("Set")
             .collectionOf("string")

@@ -255,7 +255,7 @@ var ShareRoomContainer = Class.extend(CarapaceContainer, {
         var _this       = this;
         var button      = this.getViewTop().$el.find('.btn.copy-to-clipboard')[0];
         var currentUrl  = this.windowUtil.getUrl();
-        var copyText    = currentUrl + "#room/" + this.roomModel.getProperty("id");
+        var copyText    = currentUrl + "#conversation/" + this.roomModel.getProperty("id");
 
         this.clip       = new ZeroClipboard(button);
         var clip        = this.clip;

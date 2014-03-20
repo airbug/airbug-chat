@@ -111,6 +111,12 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
          */
         this.commandModule                  = null;
 
+        /**
+         * @private
+         * @type {MessageHandlerModule}
+         */
+        this.messageHandlerModule           = null;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -250,7 +256,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                         view(TextView)
                             .name("sendButtonTextView")
                             .attributes({
-                                text: "Ok"
+                                text: "Send"
                             })
                             .appendTo('#button-{{cid}}')
                     ])
@@ -345,9 +351,8 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                 text: formData.text
             }]}
         };
-        this.commandModule.relayCommand(CommandType.SUBMIT.CHAT_MESSAGE, chatMessageData);
+        this.messageHandlerModule.sendMessage(chatMessageData);
         this.textAreaView.setValue("");
-        this.sendButtonTextView.setText("Ok");
     },
 
     /**
@@ -416,11 +421,11 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
             this.processEnterKeyEvent(event);
         } else {
             var formData  = this.getFormData();
-            if (!/\S/.test(formData.text)) {
+            /*if (!/\S/.test(formData.text)) {
                 this.sendButtonTextView.setText("Ok");
             } else {
                 this.sendButtonTextView.setText("Send");
-            }
+            }*/
         }
     }
 });
@@ -432,7 +437,8 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
 
 bugmeta.annotate(ChatWidgetInputFormContainer).with(
     autowired().properties([
-        property("commandModule").ref("commandModule")
+        property("commandModule").ref("commandModule"),
+        property("messageHandlerModule").ref("messageHandlerModule")
     ])
 );
 

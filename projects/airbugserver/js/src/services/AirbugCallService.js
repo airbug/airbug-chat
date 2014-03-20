@@ -173,7 +173,9 @@ var AirbugCallService = Class.extend(Obj, {
         this.bugCallServer.registerCallProcessor(this);
 
         // NOTE BRN: We don't unprocess the call when it's closed because it's possible that it could reconnect later.
-        // TODO BRN: We need to create a scheduled cleanup task for removing calls after they've dropped and haven't reconnected.
+        // TODO BRN: When a call drops, we should move if from the primary AirbugCall set to a "deactivated" call set.
+        // We should also undo the look up mappings so that they do not interfere with status calculations. If the
+        // call reconnects, simply re-add the call back to the active AirbugCall set in redis
 
         callback();
     },
