@@ -247,6 +247,10 @@ var AirbugInitializer = Class.extend(Obj, {
 
                     _this.expressApp.set('port', config.getProperty("port"));
 
+                    _this.expressApp.use(function (req, res, next) {
+                        res.removeHeader("X-Powered-By");
+                        next();
+                    });
                     _this.expressApp.use(express.logger('dev'));
                     _this.expressApp.use(express.cookieParser(secret));
 
