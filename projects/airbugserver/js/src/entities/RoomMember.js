@@ -7,6 +7,7 @@
 //@Export('RoomMember')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
@@ -25,6 +26,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
@@ -45,6 +47,10 @@ var property                = PropertyAnnotation.property;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Entity}
+ */
 var RoomMember = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
@@ -142,7 +148,7 @@ var RoomMember = Class.extend(Entity, {
             this.room = room;
             this.setRoomId(room.getId());
         } else {
-            throw new Error("room must have an id first");
+            throw new Bug("IllegalState", {}, "room must have an id first");
         }
     },
 
@@ -161,7 +167,7 @@ var RoomMember = Class.extend(Entity, {
             this.user = user;
             this.setUserId(user.getId());
         } else {
-            throw new Error("user must have an id first");
+            throw new Bug("IllegalState", {}, "user must have an id first");
         }
     }
 });

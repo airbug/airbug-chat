@@ -7,6 +7,7 @@
 //@Export('Conversation')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('Set')
 //@Require('bugentity.Entity')
@@ -26,6 +27,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
 var Entity                  = bugpack.require('bugentity.Entity');
@@ -146,7 +148,7 @@ var Conversation = Class.extend(Entity, {
             this.owner = owner;
             this.setOwnerId(owner.getId());
         } else {
-            throw new Error("owner must have an id first");
+            throw new Bug("IllegalState", {}, "owner must have an id first");
         }
     }
 });

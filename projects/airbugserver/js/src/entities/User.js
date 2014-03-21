@@ -7,6 +7,7 @@
 //@Export('User')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('Set')
 //@Require('bugentity.Entity')
@@ -26,6 +27,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
 var Entity                  = bugpack.require('bugentity.Entity');
@@ -227,7 +229,7 @@ var User = Class.extend(Entity, {
             this.roomSet.add(room);
             this.addRoomId(room.getId());
         } else {
-            throw new Error("room must have an id before it can be added");
+            throw new Bug("IllegalState", {}, "room must have an id before it can be added");
         }
     },
 
@@ -254,7 +256,7 @@ var User = Class.extend(Entity, {
             this.roomSet.remove(room);
             this.removeRoomId(room.getId());
         } else {
-            throw new Error("room must have an id before it can be removed");
+            throw new Bug("IllegalState", {}, "room must have an id before it can be removed");
         }
     },
 

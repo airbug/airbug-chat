@@ -7,6 +7,7 @@
 //@Export('Room')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@require('Set')
 //@Require('bugentity.Entity')
@@ -26,6 +27,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
 var Entity                  = bugpack.require('bugentity.Entity');
@@ -156,13 +158,13 @@ var Room = Class.extend(Entity, {
      */
     addRoomMember: function(roomMember) {
         if (! roomMember) {
-            throw new Error("Error. Attempt to add non-existant room member");
+            throw new Bug("IllegalState", {}, "Attempt to add non-existant room member");
         }
         if (roomMember.getId()) {
             this.roomMemberSet.add(roomMember);
             this.addRoomMemberId(roomMember.getId());
         } else {
-            throw new Error("RoomMember must have an id before it can be added");
+            throw new Bug("IllegalState", {}, "RoomMember must have an id before it can be added");
         }
     },
 
@@ -188,7 +190,7 @@ var Room = Class.extend(Entity, {
             this.roomMemberSet.remove(roomMember);
             this.removeRoomMemberId(roomMember.getId());
         } else {
-            throw new Error("RoomMember must have an id before it can be removed");
+            throw new Bug( "IllegalState", {}, "RoomMember must have an id before it can be removed");
         }
     },
 
@@ -207,7 +209,7 @@ var Room = Class.extend(Entity, {
             this.conversation = conversation;
             this.setConversationId(conversation.getId());
         } else {
-            throw new Error("Conversation must have an id first");
+            throw new Bug("IllegalState", {}, "Conversation must have an id first");
         }
     }
 });

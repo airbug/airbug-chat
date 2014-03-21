@@ -7,6 +7,7 @@
 //@Export('Github')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
@@ -25,6 +26,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
@@ -148,7 +150,7 @@ var Github = Class.extend(Entity, {
             this.user = user;
             this.setUserId(user.getId());
         } else {
-            throw new Error("user entity must have an id first");
+            throw new Bug("IllegalState", {}, "user entity must have an id first");
         }
     }
 });

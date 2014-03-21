@@ -7,6 +7,7 @@
 //@Export('ChatMessage')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityAnnotation')
@@ -26,6 +27,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
 var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
@@ -189,7 +191,7 @@ var ChatMessage = Class.extend(Entity, {
             this.conversation = conversation;
             this.setConversationId(conversation.getId());
         } else {
-            throw new Error("Conversation must have an id first");
+            throw new Bug("IllegalState", {}, "Conversation must have an id first");
         }
     },
 
@@ -208,7 +210,7 @@ var ChatMessage = Class.extend(Entity, {
             this.senderUser = senderUser;
             this.setSenderUserId(senderUser.getId());
         } else {
-            throw new Error("senderUser must have an id first");
+            throw new Bug("IllegalState", {}, "senderUser must have an id first");
         }
     }
 });
