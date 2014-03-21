@@ -113,6 +113,12 @@ var AirbugClientInitializer = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Logger}
+         */
+        this.logger                 = null;
+
+        /**
+         * @private
          * @type {SocketIoConfig}
          */
         this.socketIoConfig        = null;
@@ -179,7 +185,6 @@ var AirbugClientInitializer = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                console.log("airbugApi.connect call");
                 _this.airbugApi.connect(null, function(throwable) {
                     flow.complete(throwable);
                 });
@@ -211,6 +216,7 @@ var AirbugClientInitializer = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     initializeTracking: function(callback) {
+        var _this               = this;
         var sonarbugClient      = this.sonarbugClient;
         var trackerModule       = this.trackerModule;
         var carapaceApplication = this.carapaceApplication;
@@ -221,26 +227,28 @@ var AirbugClientInitializer = Class.extend(Obj, {
                 trackerModule.track("RoutingRequest.Result", data);
             });
             trackerModule.setTrackingEnabled(true);
-            $series([
-                $task(function(flow) {
-                    sonarbugClient.configure("http://sonarbug.com:80/socket-api", function(error) {
-                        if (!error) {
-                            console.log('SonarBugClient configured');
-                        }
-                        flow.complete(error);
-                    });
-                }),
-                $task(function(flow) {
-                    trackerModule.initialize(function(error) {
-                        flow.complete(error);
-                    });
-                })
-            ]).execute(function(error) {
-                    if (!error) {
-                        console.log("tracking initialized");
-                    }
-                    callback(error);
+
+            // NOTE BRN: We configure sonarbug here but we don't wait for the connection since that slows down the load
+            // of the site. Tracking messages will queue up...
+
+            sonarbugClient.configure("http://sonarbug.com:80", function(error) {
+                if (!error) {
+                    _this.logger.info('SonarBugClient configured');
+                } else {
+                    _this.logger.error(error);
+                }
+            });
+
+            $task(function(flow) {
+                trackerModule.initialize(function(error) {
+                    flow.complete(error);
                 });
+            }).execute(function(error) {
+                if (!error) {
+                    console.log("tracking initialized");
+                }
+                callback(error);
+            });
         } else {
             trackerModule.setTrackingEnabled(false);
             callback();
@@ -269,6 +277,7 @@ bugmeta.annotate(AirbugClientInitializer).with(
             property("bugCallRouter").ref("bugCallRouter"),
             property("carapaceApplication").ref("carapaceApplication"),
             property("controllerScan").ref("controllerScan"),
+            property("logger").ref("logger"),
             property("socketIoConfig").ref("socketIoConfig"),
             property("sonarbugClient").ref("sonarbugClient"),
             property("trackerModule").ref("trackerModule"),
