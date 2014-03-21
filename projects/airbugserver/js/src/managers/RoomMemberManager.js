@@ -7,8 +7,8 @@
 //@Export('RoomMemberManager')
 //@Autoload
 
+//@Require('ArgUtil')
 //@Require('Class')
-//@Require('TypeUtil')
 //@Require('airbugserver.RoomMember')
 //@Require('bugentity.EntityManger')
 //@Require('bugentity.EntityManagerAnnotation')
@@ -27,8 +27,8 @@ var bugpack                     = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var ArgUtil                     = bugpack.require('ArgUtil');
 var Class                       = bugpack.require('Class');
-var TypeUtil                    = bugpack.require('TypeUtil');
 var RoomMember                  = bugpack.require('airbugserver.RoomMember');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
@@ -58,13 +58,18 @@ var RoomMemberManager = Class.extend(EntityManager, {
     /**
      * @param {RoomMember} roomMember
      * @param {(Array.<string> | function(Throwable, RoomMember))} dependencies
-     * @param {function(Throwable, RoomMember)=} callback
+     * @param {function(Throwable, RoomMember=)} callback
      */
     createRoomMember: function(roomMember, dependencies, callback) {
-        if (TypeUtil.isFunction(dependencies)) {
-            callback        = dependencies;
-            dependencies    = [];
-        }
+        var args = ArgUtil.process(arguments, [
+            {name: "roomMember", optional: false, type: "object"},
+            {name: "dependencies", optional: true, type: "array"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        roomMember      = args.roomMember;
+        dependencies    = args.dependencies;
+        callback        = args.callback;
+
         var options         = {};
         this.create(roomMember, options, dependencies, callback);
     },
