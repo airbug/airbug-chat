@@ -114,10 +114,32 @@ require('bugpack').context("*", function(bugpack) {
                     }
                 });
             });
+
+            this.getExpressApp().get('/client_api', function(request, response) {
+                var requestContext          = request.requestContext;
+                var session                 = requestContext.get("session");
+                var configObject            = _this.airbugClientConfig.toObject();
+                configObject.github.state   = session.getData().githubState;
+                configObject.github.emails  = session.getData().githubEmails;
+                response.render('home', {
+                    locals: {
+                        config: StringUtil.escapeString(JSON.stringify(configObject)),
+                        staticUrl: configObject.staticUrl
+                    }
+                }, function(error, html)  {
+                    if (error) {
+                        console.error(error);
+                        response.send(500, "an error occurred");
+                    } else {
+                        console.log('html:' + html);
+                        response.send(html);
+                    }
+                });
+            });
+
             callback();
         }
     });
-
 
     //-------------------------------------------------------------------------------
     // BugMeta
