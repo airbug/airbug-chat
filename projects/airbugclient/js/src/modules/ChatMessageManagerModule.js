@@ -106,7 +106,9 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
     /**
      * @param {{
-     *      body: {parts: Array.<{*}>}
+     *      body: {
+     *          parts: Array.<*>
+     *      },
      *      senderUserId:   string,
      *      sentAt:         Date,
      *      tryUuid:        string,
