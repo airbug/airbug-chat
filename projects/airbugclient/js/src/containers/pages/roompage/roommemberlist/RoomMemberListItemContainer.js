@@ -94,19 +94,19 @@ var RoomMemberListItemContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.selectableListItemView =
-            view(SelectableListItemView)
-                .model(this.roomMemberModel)
-                .children([
-                    view(UserStatusIndicatorView)
-                        .model(this.roomMemberModel)
-                        .appendTo('*[id|=list-item]'),
-                    view(UserNameView)
-                        .model(this.roomMemberModel)
-                        .attributes({classes: "text-simple"})
-                        .appendTo('*[id|=list-item]')
-                ])
-                .build();
+        view(SelectableListItemView)
+            .name("selectableListItemView")
+            .model(this.roomMemberModel)
+            .children([
+                view(UserStatusIndicatorView)
+                    .model(this.roomMemberModel)
+                    .appendTo("#list-item-{{cid}}"),
+                view(UserNameView)
+                    .model(this.roomMemberModel)
+                    .attributes({classes: "text-simple"})
+                    .appendTo("#list-item-{{cid}}")
+            ])
+            .build(this);
 
 
         // Wire Up Views

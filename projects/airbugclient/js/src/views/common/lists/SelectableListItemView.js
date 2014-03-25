@@ -37,17 +37,8 @@ var SelectableListItemView = Class.extend(ListItemView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="list-item list-item-{{attributes.size}} clickable-box">' +
+    template:   '<div id="list-item-{{cid}}" class="list-item list-item-{{attributes.size}} clickable-box">' +
                 '</div>',
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "list-item-" + this.cid;
-        return data;
-    },
 
 
     //-------------------------------------------------------------------------------

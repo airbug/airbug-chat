@@ -64,11 +64,11 @@ bugyarn.registerWinder("setupTestUserService", function(yarn) {
         "setupTestGithubManager",
         "setupTestUserPusher",
         "setupTestBetaKeyService",
-        "setupTestSignupManager",
+        "setupTestActionManager",
         "setupTestAirbugServerConfig"
     ]);
     yarn.wind({
-        userService: new UserService(this.logger, this.sessionManager, this.userManager, this.sessionService, this.airbugClientRequestPublisher, this.githubManager, this.userPusher, this.betaKeyService, this.signupManager, this.airbugServerConfig)
+        userService: new UserService(this.logger, this.sessionManager, this.userManager, this.sessionService, this.airbugClientRequestPublisher, this.githubManager, this.userPusher, this.betaKeyService, this.actionManager, this.airbugServerConfig)
     });
 });
 
@@ -170,7 +170,7 @@ var setupUserService = function(yarn, setupObject, callback) {
             });
         }),
         $task(function(flow) {
-            setupObject.signupManager.initializeModule(function(throwable) {
+            setupObject.actionManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });
         }),
@@ -191,6 +191,60 @@ var setupUserService = function(yarn, setupObject, callback) {
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var userServiceInstantiationTest = {
+    
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupMockSuccessPushTaskManager",
+            "setupTestLogger",
+            "setupTestSessionManager",
+            "setupTestUserManager",
+            "setupTestSessionService",
+            "setupTestAirbugClientRequestPublisher",
+            "setupTestGithubManager",
+            "setupTestUserPusher",
+            "setupTestBetaKeyService",
+            "setupTestActionManager",
+            "setupTestAirbugServerConfig"
+        ]);
+        this.testUserService    = new UserService(this.logger, this.sessionManager, this.userManager, this.sessionService, this.airbugClientRequestPublisher, this.githubManager, this.userPusher, this.betaKeyService, this.actionManager, this.airbugServerConfig);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(Class.doesExtend(this.testUserService, UserService),
+            "Assert instance of UserService");
+        test.assertEqual(this.testUserService.getActionManager(), this.actionManager,
+            "Assert .actionManager was set correctly");
+        test.assertEqual(this.testUserService.getAirbugClientRequestPublisher(), this.airbugClientRequestPublisher,
+            "Assert .airbugClientRequestPublisher was set correctly");
+        test.assertEqual(this.testUserService.getAirbugServerConfig(), this.airbugServerConfig,
+            "Assert .airbugServerConfig was set correctly");
+        test.assertEqual(this.testUserService.getBetaKeyService(), this.betaKeyService,
+            "Assert .betaKeyService was set correctly");
+        test.assertEqual(this.testUserService.getGithubManager(), this.githubManager,
+            "Assert .githubManager was set correctly");
+        test.assertEqual(this.testUserService.getLogger(), this.logger,
+            "Assert .logger was set correctly");
+        test.assertEqual(this.testUserService.getSessionManager(), this.sessionManager,
+            "Assert .sessionManager was set correctly");
+        test.assertEqual(this.testUserService.getSessionService(), this.sessionService,
+            "Assert .sessionService was set correctly");
+        test.assertEqual(this.testUserService.getUserManager(), this.userManager,
+            "Assert .userManager was set correctly");
+        test.assertEqual(this.testUserService.getUserPusher(), this.userPusher,
+            "Assert .userPusher was set correctly");
+    }
+};
 
 var userServiceRegisterUserWitNonExistingEmailTest = {
 
@@ -699,7 +753,7 @@ var userServiceLoginWithValidEmailButWrongPasswordTest = {
     }
 };
 
-var userServiceRegisterUserWithValidBetaKeyTest = {
+/*var userServiceRegisterUserWithValidBetaKeyTest = {
 
     async: true,
 
@@ -825,11 +879,15 @@ var userServiceRegisterUserWithInvalidBetaKeyTest = {
             }
         });
     }
-};
+};*/
 
 //-------------------------------------------------------------------------------
 // BugMeta
 //-------------------------------------------------------------------------------
+
+bugmeta.annotate(userServiceInstantiationTest).with(
+    test().name("UserService - instantiation test")
+);
 
 bugmeta.annotate(userServiceRegisterUserWitNonExistingEmailTest).with(
     test().name("UserService - register user with non-existing email test")
@@ -863,10 +921,10 @@ bugmeta.annotate(userServiceLoginWithValidEmailButWrongPasswordTest).with(
     test().name("UserService - login with valid email but wrong password test")
 );
 
-bugmeta.annotate(userServiceRegisterUserWithValidBetaKeyTest).with(
+/*bugmeta.annotate(userServiceRegisterUserWithValidBetaKeyTest).with(
     test().name("UserService - register user with a valid beta key test")
 );
 
 bugmeta.annotate(userServiceRegisterUserWithInvalidBetaKeyTest).with(
     test().name("UserService - register user with an invalid beta key test")
-);
+);*/

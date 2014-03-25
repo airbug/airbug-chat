@@ -6,8 +6,8 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbugserver.Signup')
-//@Require('airbugserver.SignupManager')
+//@Require('airbugserver.Action')
+//@Require('airbugserver.ActionManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
@@ -27,8 +27,8 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
-var Signup                 = bugpack.require('airbugserver.Signup');
-var SignupManager          = bugpack.require('airbugserver.SignupManager');
+var Action                  = bugpack.require('airbugserver.Action');
+var ActionManager           = bugpack.require('airbugserver.ActionManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
@@ -50,39 +50,23 @@ var $task                   = BugFlow.$task;
 // BugYarn
 //-------------------------------------------------------------------------------
 
-bugyarn.registerWeaver("testSignup", function(yarn, args) {
+bugyarn.registerWeaver("testAction", function(yarn, args) {
     yarn.spin([
-        "setupTestSignupManager"
+        "setupTestActionManager"
     ]);
 
-    var signupData         = args[0] || {};
-    var testSignupData     = Obj.merge(signupData, {
-        acceptedLanguages: "testAcceptedLanguages",
-        airbugVersion: "testAirbugVersion",
-        baseBetaKey: "testBaseBetKey",
-        betaKey: "testBetaKey",
-        city: "testCity",
-        country: "testCountry",
-        createdAt: new Date(Date.now()),
-        day: 1,
-        geoCoordinates: [1,1],
-        ipAddress: "127.0.01",
-        languages: ["testLanguage"],
-        month: 1,
-        secondaryBetaKeys: ["testSecondaryBetaKey"],
-        state: "testState",
-        updatedAt: new Date(Date.now()),
-        userAgent: "testUserAgent",
-        userId: "testUserId",
-        version: "testVersion",
-        number: "testNumber",
-        weekday: 1,
-        year: 1
+    var actionData         = args[0] || {};
+    var testActionData     = Obj.merge(actionData, {
+        actionData: {},
+        actionType: "testActionType",
+        actionVersion: "testActionVersion",
+        occurredAt: new Date(Date.now()),
+        userId: "testUserId"
     });
-    return this.signupManager.generateSignup(testSignupData);
+    return this.actionManager.generateAction(testActionData);
 });
 
-bugyarn.registerWinder("setupTestSignupManager", function(yarn) {
+bugyarn.registerWinder("setupTestActionManager", function(yarn) {
     yarn.spin([
         "setupTestEntityManagerStore",
         "setupTestSchemaManager",
@@ -90,9 +74,9 @@ bugyarn.registerWinder("setupTestSignupManager", function(yarn) {
         "setupTestEntityDeltaBuilder"
     ]);
     yarn.wind({
-        signupManager: new SignupManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder)
+        actionManager: new ActionManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder)
     });
-    this.signupManager.setEntityType("Signup");
+    this.actionManager.setEntityType("Action");
 });
 
 
@@ -100,7 +84,7 @@ bugyarn.registerWinder("setupTestSignupManager", function(yarn) {
 // Declare Setup Objects
 //-------------------------------------------------------------------------------
 
-var setupSignupManager = function(setupObject) {
+var setupActionManager = function(setupObject) {
     setupObject.schemaManager.processModule();
     setupObject.mongoDataStore.processModule();
 };
@@ -108,18 +92,18 @@ var setupSignupManager = function(setupObject) {
 var initializeManagers = function(setupObject, callback) {
     $series([
         $task(function(flow) {
-            setupObject.signupManager.initializeModule(function(throwable) {
+            setupObject.actionManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });
         })
     ]).execute(callback);
 };
 
-var setupSignupEntity = function(yarn, setupObject, callback) {
-    setupObject.testSignup = yarn.weave("testSignup");
+var setupActionEntity = function(yarn, setupObject, callback) {
+    setupObject.testAction = yarn.weave("testAction");
     $series([
         $task(function(flow) {
-            setupObject.signupManager.createSignup(setupObject.testSignup, function(throwable) {
+            setupObject.actionManager.createAction(setupObject.testAction, function(throwable) {
                 flow.complete(throwable);
             });
         })
@@ -131,7 +115,7 @@ var setupSignupEntity = function(yarn, setupObject, callback) {
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var signupManagerInstantiationTest = {
+var actionManagerInstantiationTest = {
 
     //-------------------------------------------------------------------------------
     // Setup Test
@@ -145,7 +129,7 @@ var signupManagerInstantiationTest = {
             "setupDummyMongoDataStore",
             "setupTestEntityDeltaBuilder"
         ]);
-        this.testSignupManager   = new SignupManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder);
+        this.testActionManager   = new ActionManager(this.entityManagerStore, this.schemaManager, this.mongoDataStore, this.entityDeltaBuilder);
     },
 
     //-------------------------------------------------------------------------------
@@ -153,20 +137,20 @@ var signupManagerInstantiationTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.testSignupManager, SignupManager),
-            "Assert instance of SignupManager");
-        test.assertEqual(this.testSignupManager.getEntityManagerStore(), this.entityManagerStore,
+        test.assertTrue(Class.doesExtend(this.testActionManager, ActionManager),
+            "Assert instance of ActionManager");
+        test.assertEqual(this.testActionManager.getEntityManagerStore(), this.entityManagerStore,
             "Assert .entityManagerStore was set correctly");
-        test.assertEqual(this.testSignupManager.getEntityDataStore(), this.mongoDataStore,
+        test.assertEqual(this.testActionManager.getEntityDataStore(), this.mongoDataStore,
             "Assert .entityDataStore was set correctly");
-        test.assertEqual(this.testSignupManager.getSchemaManager(), this.schemaManager,
+        test.assertEqual(this.testActionManager.getSchemaManager(), this.schemaManager,
             "Assert .schemaManager was set correctly");
-        test.assertEqual(this.testSignupManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
+        test.assertEqual(this.testActionManager.getEntityDeltaBuilder(), this.entityDeltaBuilder,
             "Assert .entityDeltaBuilder was set correctly");
     }
 };
 
-var signupManagerRetrieveSignupTest = {
+var actionManagerRetrieveActionTest = {
 
     async: true,
 
@@ -178,9 +162,9 @@ var signupManagerRetrieveSignupTest = {
         var _this = this;
         var yarn    = bugyarn.yarn(this);
         yarn.spin([
-            "setupTestSignupManager"
+            "setupTestActionManager"
         ]);
-        setupSignupManager(this);
+        setupActionManager(this);
         $series([
             $task(function(flow) {
                 initializeManagers(_this, function(throwable) {
@@ -188,7 +172,7 @@ var signupManagerRetrieveSignupTest = {
                 });
             }),
             $task(function(flow) {
-                setupSignupEntity(yarn, _this, function(throwable) {
+                setupActionEntity(yarn, _this, function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -208,10 +192,10 @@ var signupManagerRetrieveSignupTest = {
     test: function(test) {
         var _this = this;
         $task(function(flow) {
-            _this.signupManager.retrieveSignup(_this.testSignup.getId(), function(throwable, signup) {
+            _this.actionManager.retrieveAction(_this.testAction.getId(), function(throwable, action) {
                 if (!throwable) {
-                    test.assertEqual(signup.getId(), _this.testSignup.getId(),
-                        "retrievedSignup should return proper entity object");
+                    test.assertEqual(action.getId(), _this.testAction.getId(),
+                        "retrievedAction should return proper entity object");
                 }
                 flow.complete(throwable);
             });
@@ -230,10 +214,10 @@ var signupManagerRetrieveSignupTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(signupManagerInstantiationTest).with(
-    test().name("SignupManager - instantiation test")
+bugmeta.annotate(actionManagerInstantiationTest).with(
+    test().name("ActionManager - instantiation test")
 );
 
-bugmeta.annotate(signupManagerRetrieveSignupTest).with(
-    test().name("SignupManager - #retrieveSignupBySignup Test")
+bugmeta.annotate(actionManagerRetrieveActionTest).with(
+    test().name("ActionManager - #retrieveAction Test")
 );

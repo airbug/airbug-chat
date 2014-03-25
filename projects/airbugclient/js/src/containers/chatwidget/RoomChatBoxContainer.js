@@ -217,6 +217,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
                         view(RoomNameView)
                             .model(this.roomModel)
                             .appendTo('#subheader-center-{{cid}}')
+                            .attributes({
+                                classes: "room-header-title"
+                            })
                     ]),
                 view(TwoColumnView)
                     .name("roomChatBoxTwoColumnView")

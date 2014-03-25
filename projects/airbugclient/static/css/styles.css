@@ -29,12 +29,21 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
     cursor: hand;
 }
 
+.visible {
+    visibility: visible;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+
 /* Application CSS
 *******************************************************************/
 
 .application-wrapper {
     background-color: rgb(243, 243, 243);
-    border-top: 1px solid rgb(196, 196, 196);
+    border-top: 1px solid #c4c4c4;
     bottom: 0px;
     left: 0px;
     overflow: hidden;
@@ -223,16 +232,13 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
 }
 
 .subheader-wrapper {
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 32px;
     top: 0px;
     right: 0px;
     bottom: 0px;
     left: 0px;
     position: absolute;
     background-color: rgb(255, 255, 255);
-    border-color: rgb(196, 196, 196);
+    border-color: #c4c4c4;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -270,7 +276,7 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
 }
 
 .subheader-wrapper .button-wrapper {
-    padding: 2px 11px 0px 11px;
+    padding: 5px 11px 0px 11px;
 }
 
 .rightrow {
@@ -432,7 +438,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 
 .panel-wrapper {
     background-color: rgb(255, 255, 255);
-    border-color: rgb(196, 196, 196);
+    border-color: #c4c4c4;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -468,7 +474,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .panel-header {
-    border-bottom-color: rgb(196, 196, 196);
+    border-bottom-color: #c4c4c4;
     border-bottom-width: 1px;
     border-bottom-style: solid;
     height: 34px;
@@ -537,10 +543,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .box-header {
-    font-size: 18px;
-    font-weight: 500;
     left: 0px;
-    line-height: 32px;
     height: 46px;
     position: absolute;
     top: 0px;
@@ -573,11 +576,15 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .list-item {
-    border-bottom-color: rgb(196, 196, 196);
+    border-bottom-color: #c4c4c4;
     border-bottom-style: solid;
     border-bottom-width: 1px;
     position: relative;
     width: 100%;
+}
+
+.list-item-micro {
+    height: 27px;
 }
 
 .list-item-small {
@@ -633,7 +640,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     padding: 20px 20px 0px 20px;
     background-color: rgb(255, 255, 255);
     border-width: 1px;
-    border-color: rgb(196, 196, 196);
+    border-color: #c4c4c4;
     border-style: solid;
     border-radius: 5px;
 }
@@ -666,7 +673,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .user-name {
-    position: relative;
+    position: absolute;
     left: 34px;
     right: 5px;
 }
@@ -675,6 +682,12 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     left: 10px;
     position: absolute;
     right: 5px;
+}
+
+.room-header-title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 32px;
 }
 
 .room-member-name {
@@ -687,7 +700,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     width: 100%;
     height: 60px;
     border-bottom-width: 1px;
-    border-bottom-color: rgb(196, 196, 196);
+    border-bottom-color: #c4c4c4;
     border-bottom-style: solid;
     background-color: rgb(207, 226, 243); /* Old browsers */
     background: -moz-linear-gradient(top, rgb(207,226,243) 0%, rgb(41,137,216) 100%); /* FF3.6+ */
@@ -733,7 +746,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 
 .user-status-indicator {
     border-width: 1px;
-    border-color: rgb(196, 196, 196);
+    border-color: #c4c4c4;
     border-style: solid;
     border-radius: 6px;
     width: 12px;
@@ -787,7 +800,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .chat-unread-message-count {
-    background-color: rgb(196, 196, 196);
+    background-color: #c4c4c4;
     border-radius: 6px;
     color: rgb(255, 255, 255);
     font-size: 14px;
@@ -829,6 +842,69 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 .room-chatbox-header .box-header {
 
 }
+
+
+/* Room Summary
+*******************************************************************/
+
+.room-summary {
+
+}
+
+.room-summary-text {
+    display: block;
+    font-size: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.room-last-message-preview {
+    position: absolute;
+    width: 80%;
+    left: 5px;
+    top: 48px;
+    color: #aaaaaa;
+}
+
+.room-last-message-sent-by {
+    width: 50%;
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}
+
+.room-last-message-sent-at {
+    position: absolute;
+    width: 35%;
+    right: 5px;
+    top: 5px;
+    text-align: right;
+}
+
+.room-number-unread-messages-wrapper {
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+}
+
+.room-number-unread-messages {
+    border: 1px solid #c4c4c4;
+    background-color: #f3f3f3;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 10px;
+}
+
+.room-topic {
+    position: absolute;
+    width: 80%;
+    left: 5px;
+    top: 29px;
+}
+
 
 /* User Home Page CSS
 *******************************************************************/
@@ -888,7 +964,7 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     bottom: 30px;
     width: 97%;
     background-color: rgb(255, 255, 255);
-    border-color: rgb(196, 196, 196);
+    border-color: #c4c4c4;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -1130,6 +1206,8 @@ div.message-image:hover div.btn-toolbar {
 .login-header-text {
     padding-left: 20px;
     line-height: 38px;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .btn-github {
@@ -1150,6 +1228,8 @@ div.message-image:hover div.btn-toolbar {
 .registration-header-text {
     padding-left: 20px;
     line-height: 38px;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .terms-wrapper {
@@ -1438,7 +1518,7 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 ul.nav-tabs > li, ol.nav-tabs > li {
     line-height: 12px;
     border-radius: 4px 4px 0 0;
-    margin-top: 3px;
+    margin-top: 5px;
     margin-left: 3px;
     margin-bottom: -1px;
 }
@@ -1455,6 +1535,7 @@ ul.nav-tabs > li.disabled:hover, ol.nav-tabs > li.disabled:hover {
 ul.nav-tabs > li:not(.active) > a, ol.nav-tabs > li:not(.active) > a,
 ul.nav-tabs > li:not(.active) > a:hover, ol.nav-tabs > li:not(.active) > a:hover {
     background-color: #eeeeee;
+    border-color: #eeeeee #eeeeee #dddddd;
 }
 
 ul.nav-tabs > li > a:hover, ol.nav-tabs > li > a:hover {
@@ -1470,7 +1551,10 @@ ul.nav-tabs > li > a, ol.nav-tabs > li > a {
 
 ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     color: #333333;
-    border: none;
+}
+
+.nav > .disabled > a:hover, .nav > .disabled > a:focus {
+    background-color: #ffffff;
 }
 
 .control-group-space {

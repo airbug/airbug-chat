@@ -4,13 +4,13 @@
 
 //@Package('airbugserver')
 
-//@Export('SignupManager')
+//@Export('ActionManager')
 //@Autoload
 
 //@Require('Class')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('airbugserver.Signup')
+//@Require('airbugserver.Action')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
@@ -31,7 +31,7 @@ var bugpack                     = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
-var Signup                      = bugpack.require('airbugserver.Signup');
+var Action                      = bugpack.require('airbugserver.Action');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
 var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
@@ -51,80 +51,59 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SignupManager = Class.extend(EntityManager, {
+var ActionManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Signup} signup
-     * @param {(Array.<string> | function(Throwable, Signup))} dependencies
-     * @param {function(Throwable, Signup)=} callback
+     * @param {Action} action
+     * @param {(Array.<string> | function(Throwable, Action))} dependencies
+     * @param {function(Throwable, Action)=} callback
      */
-    createSignup: function(signup, dependencies, callback) {
+    createAction: function(action, dependencies, callback) {
         if(TypeUtil.isFunction(dependencies)){
             callback        = dependencies;
             dependencies    = [];
         }
         var options         = {};
-        this.create(signup, options, dependencies, callback);
+        this.create(action, options, dependencies, callback);
     },
 
     /**
-     * @param {Signup} signup
+     * @param {Action} action
      * @param {function(Throwable)} callback
      */
-    deleteSignup: function(signup, callback) {
-        this.delete(signup, callback);
+    deleteAction: function(action, callback) {
+        this.delete(action, callback);
     },
 
     /**
      * @param {{
-     *      acceptedLanguages: string,
-     *      airbugVersion: string,
-     *      baseBetaKey: string,
-     *      betaKey: string,
-     *      city: string,
-     *      country: string,
-     *      createdAt: Date,
-     *      day: number,
-     *      geoCoordinates: Array.<number>,
-     *      ipAddress: string,
-     *      languages: Array.<string>,
-     *      month: number,
-     *      secondaryBetaKeys: Array.<string>,
-     *      state: string,
-     *      updatedAt: Date,
-     *      userAgent: string,
-     *      userId: string,
-     *      version: string,
-     *      weekday: number,
-     *      year: number
-     * }} data
-     * @return {Signup}
+            actionData: Object,
+            actionType: string,
+            actionVersion: string,
+            createdAt: Date,
+            id: string,
+            occurredAt: Date,
+            updatedAt: Date,
+            userId: string
+        }} data
+     * @return {Action}
      */
-    generateSignup: function(data) {
-        if (!Class.doesExtend(data.geoCoordinates, Set)) {
-            data.geoCoordinates = new Set(data.geoCoordinates);
-        }
-        if (!Class.doesExtend(data.languages, Set)) {
-            data.languages = new Set(data.languages);
-        }
-        if (!Class.doesExtend(data.secondaryBetaKeys, Set)) {
-            data.secondaryBetaKeys = new Set(data.secondaryBetaKeys);
-        }
-        var signup = new Signup(data);
-        this.generate(signup);
-        return signup;
+    generateAction: function(data) {
+        var action = new Action(data);
+        this.generate(action);
+        return action;
     },
 
     /**
-     * @param {string} signupId
-     * @param {function(Throwable, Signup=)} callback
+     * @param {string} actionId
+     * @param {function(Throwable, Action=)} callback
      */
-    retrieveSignup: function(signupId, callback) {
-        this.retrieve(signupId, callback);
+    retrieveAction: function(actionId, callback) {
+        this.retrieve(actionId, callback);
     }
 });
 
@@ -133,9 +112,9 @@ var SignupManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(SignupManager).with(
-    entityManager("signupManager")
-        .ofType("Signup")
+bugmeta.annotate(ActionManager).with(
+    entityManager("actionManager")
+        .ofType("Action")
         .args([
             arg().ref("entityManagerStore"),
             arg().ref("schemaManager"),
@@ -149,4 +128,4 @@ bugmeta.annotate(SignupManager).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.SignupManager', SignupManager);
+bugpack.export('airbugserver.ActionManager', ActionManager);

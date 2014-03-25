@@ -20,7 +20,7 @@
 //@Require('airbug.ListViewEvent')
 //@Require('airbug.LoaderView')
 //@Require('airbug.PanelWithHeaderView')
-//@Require('airbug.RoomNameView')
+//@Require('airbug.RoomSummaryView')
 //@Require('airbug.SelectableListItemView')
 //@Require('airbug.TextView')
 //@Require('bugflow.BugFlow')
@@ -56,7 +56,7 @@ var ListView                    = bugpack.require('airbug.ListView');
 var ListViewEvent               = bugpack.require('airbug.ListViewEvent');
 var LoaderView                  = bugpack.require('airbug.LoaderView');
 var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
-var RoomNameView                = bugpack.require('airbug.RoomNameView');
+var RoomSummaryView             = bugpack.require('airbug.RoomSummaryView');
 var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
 var TextView                    = bugpack.require('airbug.TextView');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
@@ -281,14 +281,23 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {RoomModel} roomModel
      */
     buildRoomListItemView: function(roomModel) {
+
+        //TEST
+        roomModel.setProperty("numberUnreadMessages", 1);
+        roomModel.setProperty("lastMessagePreview", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        roomModel.setProperty("lastMessageSentAt", new Date());
+        roomModel.setProperty("lastMessageSentBy", "Brian Neisler");
+
         var selectableListItemView =
             view(SelectableListItemView)
                 .model(roomModel)
+                .attributes({
+                    size: "large"
+                })
                 .children([
-                    view(RoomNameView)
+                    view(RoomSummaryView)
                         .model(roomModel)
-                        .attributes({classes: "text-simple"})
-                        .appendTo('*[id|="list-item"]')
+                        .appendTo("#list-item-{{cid}}")
                 ])
                 .build();
 

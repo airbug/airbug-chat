@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('AddsSignupsForExistingUsersMigration')
+//@Export('AddsSignupActionsForExistingUsersMigration')
 //@Autoload
 
 //@Require('Class')
@@ -54,7 +54,7 @@ var $task                           = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
+var AddsSignupActionsForExistingUsersMigration = Class.extend(Migration, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -99,7 +99,7 @@ var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
      */
     up: function(callback) {
 
-        var SignupModel         = this.mongoDataStore.getMongooseModelForName("Signup");
+        var ActionModel         = this.mongoDataStore.getMongooseModelForName("Action");
         var UserModel           = this.mongoDataStore.getMongooseModelForName("User");
 
         var users = null;
@@ -114,14 +114,16 @@ var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
             $task(function(flow){
                 users.forEach(function(user){
                     signups.push({
+                        actionData: {},
+                        actionType: "signup",
+                        actionVersion: "0.0.1",
                         createdAt: user.createdAt,
-                        baseBetaKey: user.betaKey.split("+")[0],
-                        betaKey: user.betaKey,
-                        airbugVersion: '<0.0.17',
-                        version: "0.0.0"})
+                        occurredAt: user.createdAt,
+                        userId: user._id
+                    });
                 });
 
-                SignupModel.create(signups, function(error){
+                ActionModel.create(signups, function(error){
                     flow.complete(error);
                 });
             })
@@ -138,12 +140,12 @@ var AddsSignupsForExistingUsersMigration = Class.extend(Migration, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(AddsSignupsForExistingUsersMigration).with(
+bugmeta.annotate(AddsSignupActionsForExistingUsersMigration).with(
     migration()
         .appName("airbug")
         .appVersion("0.0.17")
-        .name("AddsSignupsForExistingUsersMigration")
-        .version("0.0.3"),
+        .name("AddsSignupActionsForExistingUsersMigration")
+        .version("0.0.1"),
     autowired()
         .properties([
             property("logger").ref("logger"),
@@ -156,4 +158,4 @@ bugmeta.annotate(AddsSignupsForExistingUsersMigration).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.AddsSignupsForExistingUsersMigration', AddsSignupsForExistingUsersMigration);
+bugpack.export('airbugserver.AddsSignupActionsForExistingUsersMigration', AddsSignupActionsForExistingUsersMigration);

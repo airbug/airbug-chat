@@ -74,7 +74,7 @@ var UserService = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher, betaKeyService, signupManager, airbugServerConfig) {
+    _constructor: function(logger, sessionManager, userManager, sessionService, airbugClientRequestPublisher, githubManager, userPusher, betaKeyService, actionManager, airbugServerConfig) {
 
         this._super();
 
@@ -85,15 +85,21 @@ var UserService = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {AirbugServerConfig}
+         * @type {ActionManager}
          */
-        this.airbugServerConfig                 = airbugServerConfig;
+        this.actionManager                      = actionManager;
 
         /**
          * @private
          * @type {AirbugClientRequestPublisher}
          */
         this.airbugClientRequestPublisher       = airbugClientRequestPublisher;
+
+        /**
+         * @private
+         * @type {AirbugServerConfig}
+         */
+        this.airbugServerConfig                 = airbugServerConfig;
 
         /**
          * @private
@@ -126,12 +132,6 @@ var UserService = Class.extend(Obj, {
         this.sessionService                     = sessionService;
 
         /**
-         *
-         * @type {SignupManager}
-         */
-        this.signupManager                      = signupManager;
-
-        /**
          * @private
          * @type {UserManager}
          */
@@ -150,10 +150,73 @@ var UserService = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {ActionManager}
+     */
+    getActionManager: function() {
+        return this.actionManager;
+    },
+
+    /**
      * @return {AirbugClientRequestPublisher}
      */
     getAirbugClientRequestPublisher: function() {
         return this.airbugClientRequestPublisher;
+    },
+
+    /**
+     * @return {AirbugServerConfig}
+     */
+    getAirbugServerConfig: function() {
+        return this.airbugServerConfig
+    },
+
+    /**
+     * @return {BetaKeyService}
+     */
+    getBetaKeyService: function() {
+        return this.betaKeyService;
+    },
+
+    /**
+     * @return {GithubManager}
+     */
+    getGithubManager: function() {
+        return this.githubManager;
+    },
+
+    /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
+    },
+
+    /**
+     * @return {SessionManager}
+     */
+    getSessionManager: function() {
+        return this.sessionManager;
+    },
+
+    /**
+     * @return {SessionService}
+     */
+    getSessionService: function() {
+        return this.sessionService;
+    },
+
+    /**
+     * @return {UserManager}
+     */
+    getUserManager: function() {
+        return this.userManager;
+    },
+
+    /**
+     * @return {UserPusher}
+     */
+    getUserPusher: function() {
+        return this.userPusher;
     },
 
 
@@ -415,7 +478,6 @@ var UserService = Class.extend(Obj, {
         var user        = null;
         var userEmail   = formData.email;
         var userObject  = formData;
-        var betaKey     = userObject.betaKey;
 
         $series([
             $task(function(flow) {
@@ -437,33 +499,20 @@ var UserService = Class.extend(Obj, {
                 } else if (!PasswordUtil.isValid(userObject.password)) {
                     flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
-                    _this.betaKeyService.validateAndIncrementBaseBetaKey(betaKey, function(throwable, valid){
-                        if(throwable) {
-                            flow.error(throwable);
+                    userObject.status               = currentUser.getStatus();
+                    userObject.agreedToTermsDate    = UserDefines.TOS_Date;
+                    user = _this.userManager.generateUser(userObject);
+                    bcrypt.genSalt(10, function(err, salt) {
+                        if (err) {
+                            flow.complete(err);
                         } else {
-                            if(valid) {
-                                flow.complete();
-                            } else {
-                                flow.complete(new Exception("InvalidBetaKey", {}, "Invalid beta key"));
-                            }
+                            bcrypt.hash(userObject.password, salt, function(err, crypted) {
+                                user.setPasswordHash(crypted);
+                                flow.complete(err);
+                            });
                         }
                     });
                 }
-            }),
-            $task(function(flow) {
-                userObject.status               = currentUser.getStatus();
-                userObject.agreedToTermsDate    = UserDefines.TOS_Date;
-                user = _this.userManager.generateUser(userObject);
-                bcrypt.genSalt(10, function(err, salt) {
-                    if (err) {
-                        flow.complete(err);
-                    } else {
-                        bcrypt.hash(userObject.password, salt, function(err, crypted) {
-                            user.setPasswordHash(crypted);
-                            flow.complete(err);
-                        });
-                    }
-                });
             }),
             $task(function(flow) {
                 _this.userManager.createUser(user, function(throwable) {
@@ -524,16 +573,14 @@ var UserService = Class.extend(Obj, {
 
             }),
             $task(function(flow){
-                var signup = _this.signupManager.generateSignup({
-                    airbugVersion: _this.airbugServerConfig.getAppVersion(),
-                    betaKey: betaKey,
-                    createdAt: user.getCreatedAt(),
-                    ipAddress: requestContext.get("ipAddress"),
-                    acceptedLanguages: requestContext.get("acceptedLanguages"),
-                    userAgent: requestContext.get("userAgent"),
+                var action = _this.actionManager.generateAction({
+                    actionData: {},
+                    actionType: "Signup",
+                    actionVersion: "0.0.1",
+                    occurredAt: new Date(Date.now()),
                     userId: user.getId()
                 });
-                _this.signupManager.createSignup(signup, function(throwable, returnedSignup){
+                _this.actionManager.createAction(action, function(throwable, returnedAction){
                     flow.complete(throwable);
                 });
             })
@@ -933,7 +980,7 @@ bugmeta.annotate(UserService).with(
             arg().ref("githubManager"),
             arg().ref("userPusher"),
             arg().ref("betaKeyService"),
-            arg().ref("signupManager"),
+            arg().ref("actionManager"),
             arg().ref("airbugServerConfig")
         ])
 );

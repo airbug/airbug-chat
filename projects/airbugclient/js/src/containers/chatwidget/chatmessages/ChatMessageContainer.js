@@ -188,22 +188,23 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.listItemView =
-            view(ListItemView)
-                .model(this.chatMessageModel)
-                .attributes({size: "flex"})
-                .children([
-                    view(ChatMessageView)
-                        .id("chatMessageView")
-                        .model(this.chatMessageModel)
-                ])
-                .build();
+        view(ListItemView)
+            .name("listItemView")
+            .model(this.chatMessageModel)
+            .attributes({
+                size: "flex"
+            })
+            .children([
+                view(ChatMessageView)
+                    .name("chatMessageView")
+                    .model(this.chatMessageModel)
+            ])
+            .build(this);
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.listItemView);
-        this.chatMessageView = this.findViewById("chatMessageView");
     },
 
     /**

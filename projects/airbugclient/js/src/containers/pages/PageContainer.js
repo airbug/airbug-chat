@@ -244,25 +244,25 @@ var PageContainer = Class.extend(ApplicationContainer, {
 
         if (hamburgerLeftIsOpen) {
             if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span9 span8 span6");
-                workspace.removeClass("span3 span0");
-                roomspace.addClass("span6");
+                roomspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                workspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                roomspace.addClass("span5");
                 workspace.addClass("span3");
             } else {
-                roomspace.removeClass("span11 span9  span8 span6");
-                workspace.removeClass("span3 span0");
-                roomspace.addClass("span9");
+                roomspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                workspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                roomspace.addClass("span8");
                 workspace.addClass("span0");
             }
         } else {
             if (workspaceIsOpen) {
-                roomspace.removeClass("span11 span9 span8 span6");
-                workspace.removeClass("span3 span0");
+                roomspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                workspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
                 roomspace.addClass("span8");
                 workspace.addClass("span3");
             } else {
-                roomspace.removeClass("span11 span9 span8 span6");
-                workspace.removeClass("span3 span0");
+                roomspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
+                workspace.removeClass("span12 span11 span10 span9 span8 span7 span6 span5 span4 span3 span2 span1 span0");
                 roomspace.addClass("span11");
                 workspace.addClass("span0");
             }

@@ -302,8 +302,6 @@ bugmeta.annotate(User).with(
             .type("boolean")
             .require(true)
             .default(true),
-        property("betaKey")
-            .type("string"),
         property("createdAt")
             .type("date")
             .require(true)
