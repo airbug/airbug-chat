@@ -4,17 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('RegistrationFormContainer')
+//@Export('LoginFormContainer')
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.CommandModule')
-//@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
+//@Require('airbug.LoginFormView')
 //@Require('airbug.RoomModel')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -33,7 +33,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var CommandModule           = bugpack.require('airbug.CommandModule');
-var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
+var LoginFormView           = bugpack.require('airbug.LoginFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -58,7 +58,7 @@ var view                    = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var RegistrationFormContainer = Class.extend(CarapaceContainer, {
+var LoginFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -100,9 +100,9 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {RegistrationFormView}
+         * @type {LoginFormView}
          */
-        this.registrationFormView       = null;
+        this.loginFormView       = null;
     },
 
 
@@ -113,21 +113,38 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    activateContainer: function() {
+        this._super();
+        this.loginFormView.$el.find("input")[0].focus();
+    },
+
+    /**
+     * @protected
+     */
     createContainer: function() {
         this._super();
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.registrationFormView =
-            view(RegistrationFormView)
+        this.loginFormView =
+            view(LoginFormView)
+                // .attributes({type: "primary", align: "left"})
                 .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.registrationFormView);
+        this.setViewTop(this.loginFormView);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.loginFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
     /**
@@ -135,15 +152,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.registrationFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
-        this.registrationFormView.$el.find("input[name='email']").focus();
+        this.loginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -158,12 +167,13 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var formData    = event.getData().formData;
+        this.currentUserManagerModule.loginUser(formData.email, formData.password, function(throwable, currentUser) {
+            console.log("Inside LoginFormContainer currentUserManagerModule#loginUser callback");
+            console.log("throwable:", throwable, " currentUser:", currentUser, " inside LoginFormContainer");
 
-        console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
-
-        this.currentUserManagerModule.registerUser(formData, function(throwable, currentUserMeldDocument) {
             if (!throwable) {
                 var finalDestination = _this.navigationModule.getFinalDestination();
+                console.log("finalDestination:", finalDestination);
                 if (finalDestination) {
                     _this.navigationModule.clearFinalDestination();
                     _this.navigationModule.navigate(finalDestination, {
@@ -175,7 +185,6 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
                     });
                 }
             } else {
-
                 //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
 
                 if (Class.doesExtend(throwable, Exception)) {
@@ -193,7 +202,7 @@ var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(RegistrationFormContainer).with(
+bugmeta.annotate(LoginFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
@@ -206,4 +215,4 @@ bugmeta.annotate(RegistrationFormContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.RegistrationFormContainer", RegistrationFormContainer);
+bugpack.export("airbug.LoginFormContainer", LoginFormContainer);

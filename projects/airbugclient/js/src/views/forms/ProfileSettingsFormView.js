@@ -36,7 +36,7 @@ var ProfileSettingsFormView = Class.extend(FormView, {
     //-------------------------------------------------------------------------------
 
     template:
-        '<form id="profile-settings-form-{{cid}}" class="profile-settings-form">' +
+        '<form id="profile-settings-form-{{cid}}" class="{{classes}} settings-form profile-settings-form">' +
             '<fieldset>' +
                 '<label for="input-first-name-{{cid}}">First Name</label>' +
                 '<input id="input-first-name-{{cid}}" class="input-xxlarge" type="text" name="firstName" placeholder="First Name" value="{{model.firstName}}">' +

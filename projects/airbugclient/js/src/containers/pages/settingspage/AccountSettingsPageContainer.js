@@ -11,6 +11,8 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
+//@Require('airbug.ChangePasswordFormContainer')
+//@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.SettingsPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
@@ -34,6 +36,8 @@ var ClearChange                         = bugpack.require('ClearChange');
 var Exception                           = bugpack.require('Exception');
 var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
 var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+var ChangePasswordFormContainer         = bugpack.require('airbug.ChangePasswordFormContainer');
+var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
 var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
@@ -69,6 +73,29 @@ var AccountSettingsPageContainer = Class.extend(SettingsPageContainer, {
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ChangePasswordFormContainer}
+         */
+        this.changePasswordFormContainer   = null;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {PanelWithHeaderView}
+         */
+        this.panelWithHeaderView            = null;
     },
 
 
@@ -91,7 +118,21 @@ var AccountSettingsPageContainer = Class.extend(SettingsPageContainer, {
     createContainer: function(routingArgs) {
         this._super(routingArgs);
 
+        // Create Views
+        //-------------------------------------------------------------------------------
 
+        view(PanelWithHeaderView)
+            .name("panelWithHeaderView")
+            .attributes({
+                headerTitle: "Change Password"
+            })
+            .build(this);
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
+        this.getTwoColumnView().addViewChild(this.panelWithHeaderView, "#column2of2-{{cid}}");
     },
 
     /**
@@ -99,23 +140,8 @@ var AccountSettingsPageContainer = Class.extend(SettingsPageContainer, {
      */
     createContainerChildren: function(routingArgs) {
         this._super(routingArgs);
-
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-
+        this.changePasswordFormContainer    = new ChangePasswordFormContainer(this.getCurrentUserModel());
+        this.addContainerChild(this.changePasswordFormContainer, "#panel-body-" + this.panelWithHeaderView.getCid());
     }
 });
 

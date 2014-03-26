@@ -7,7 +7,9 @@
 //@Export('UserManagerModule')
 //@Autoload
 
+//@Require('ArgUtil')
 //@Require('Class')
+//@Require('airbug.ApiDefines')
 //@Require('airbug.ManagerModule')
 //@Require('airbug.UserList')
 //@Require('airbug.UserModel')
@@ -27,7 +29,9 @@ var bugpack                         = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil                         = bugpack.require('ArgUtil');
 var Class                           = bugpack.require('Class');
+var ApiDefines                      = bugpack.require('airbug.ApiDefines');
 var ManagerModule                   = bugpack.require('airbug.ManagerModule');
 var UserList                        = bugpack.require('airbug.UserList');
 var UserModel                       = bugpack.require('airbug.UserModel');
@@ -95,7 +99,50 @@ var UserManagerModule = Class.extend(ManagerModule, {
      */
     updateUser: function(userId, updateObject, callback) {
         this.update("User", userId, updateObject, callback);
-    }
+    },
+
+    /**
+     * @param {string} userId
+     * @param {Object} updateObject
+     * @param {function(Throwable, MeldDocument=)} callback
+     */
+    updateUserPassword: function(userId, updateObject, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "userId", optional: false, type: "string"},
+            {name: "updateObject", optional: false, type: "object"},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        userId          = args.userId;
+        updateObject    = args.updateObject;
+        callback        = args.callback;
+
+        var _this = this;
+        var requestData = {
+            userId: userId,
+            updateObject: updateObject
+        };
+        var requestType = "updateUserPassword";
+        this.getAirbugApi().sendRequest(requestType, requestData, function(throwable, callResponse) {
+            if (!throwable)  {
+                var data = callResponse.getData();
+                if (callResponse.getType() === ApiDefines.Responses.SUCCESS) {
+                    var returnedMeldDocumentKey     = _this.meldBuilder.generateMeldDocumentKey("User", userId);
+                    var meldDocument        = _this.get(returnedMeldDocumentKey);
+                    callback(null, meldDocument);
+                } else if (callResponse.getType() === ApiDefines.Responses.EXCEPTION) {
+                    //TODO BRN: Handle common exceptions
+                    callback(data.exception);
+                } else if (callResponse.getType() === ApiDefines.Responses.ERROR) {
+                    //TODO BRN: Handle common errors
+                    callback(data.error);
+                } else {
+                    callback(null, callResponse);
+                }
+            } else {
+                callback(throwable);
+            }
+        });
+    },
 });
 
 

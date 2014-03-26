@@ -10,13 +10,14 @@
 //@Require('PasswordUtil')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.MustacheView')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -27,6 +28,8 @@ var Class           = bugpack.require('Class');
 var PasswordUtil    = bugpack.require('PasswordUtil');
 var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
+var JQuery          = bugpack.require('jquery.JQuery');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -134,7 +137,7 @@ var RegistrationFormView = Class.extend(MustacheView, {
                 }
             }
         });
-        jQuery.validator.addMethod("password", function(value, element) {
+        JQuery.validator.addMethod("password", function(value, element) {
             return PasswordUtil.isValid(value);
         }, PasswordUtil.requirementsString);
     },

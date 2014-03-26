@@ -316,24 +316,18 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                if (!password) {
-                    _this.logger.debug("No password was given");
-                    flow.complete(new Exception("InvalidPassword", {}, "No password was given"));
-                } else if (!user.getPasswordHash()) {
-                    _this.logger.warn("User does not have a password hash - userId:", user.getId());
-                    flow.complete(new Bug("PasswordHashNotFound", {}, "User did not have a password hash"));
-                } else {
-                    bcrypt.compare(password, user.getPasswordHash(), function(err, res) {
-                        if (err) {
-                            flow.complete(err);
-                        } else if (!res) {
+                _this.verifyPasswordMatch(password, user, function(throwable, result) {
+                    if (!throwable) {
+                        if (!result) {
                             _this.logger.info("Failed login for user. Incorrect password - userId:", user.getId());
                             flow.complete(new Exception("InvalidPassword", {}, "Could not login using given email and password"));
                         } else {
                             flow.complete();
                         }
-                    });
-                }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
             }),
             $task(function(flow) {
                 _this.loginUser(requestContext, user, function(throwable, user) {
@@ -708,13 +702,16 @@ var UserService = Class.extend(Obj, {
         });
     },
 
-    /*
+    /**
      * @param {RequestContext} requestContext
      * @param {string} userId
-     * @param {{*}} updates
-     * @param {function(Throwable, User)} callback
+     * @param {{
+     *      firstName: string,
+     *      lastName: string
+     * }} updateObject
+     * @param {function(Throwable, User=)} callback
      */
-    updateUser: function(requestContext, userId, updates, callback) {
+    updateUser: function(requestContext, userId, updateObject, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
         var call                = requestContext.get("call");
@@ -726,7 +723,7 @@ var UserService = Class.extend(Obj, {
                 _this.dbRetrieveUser(userId, function(throwable, returnedUser){
                     if (!throwable) {
                         if (returnedUser) {
-                            if (returnedUser.getId() === userId) {
+                            if (returnedUser.getId() === currentUser.getId()) {
                                 user = returnedUser;
                                 flow.complete();
                             } else {
@@ -741,28 +738,109 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                if (Obj.hasProperty(updates, "firstName")) {
-                    user.setFirstName(updates.firstName);
+                if (Obj.hasProperty(updateObject, "firstName")) {
+                    user.setFirstName(updateObject.firstName);
                 }
-                if (Obj.hasProperty(updates, "lastName")) {
-                    user.setLastName(updates.lastName);
+                if (Obj.hasProperty(updateObject, "lastName")) {
+                    user.setLastName(updateObject.lastName);
                 }
-                if (Obj.hasProperty(updates, "password")) {
-                    if (updates.password !== updates.confirmPassword) {
-                        flow.complete(new Exception("PasswordMismatch", {}, "Password and confirmPassword must match"));
-                    } else if (!PasswordUtil.isValid(updates.password)) {
-                        flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
-                    } else {
-                        _this.generatePasswordHash(updates.password, function(throwable, passwordHash) {
-                            if (!throwable) {
-                                user.setPasswordHash(passwordHash);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }
+                flow.complete();
+            }),
+            $task(function(flow) {
+                _this.userManager.updateUser(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.meldCallWithUser(call.getCallUuid(), user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.userPusher.pushUser(user, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, user);
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {RequestContext} requestContext
+     * @param {string} userId
+     * @param {{
+     *      confirmPassword: string,
+     *      password: string,
+     *      oldPassword: string
+     * }} updateObject
+     * @param {function(Throwable, User=)} callback
+     */
+    updateUserPassword:function(requestContext, userId, updateObject, callback) {
+        var _this               = this;
+        var currentUser         = requestContext.get("currentUser");
+        var call                = requestContext.get("call");
+        /** @type {User} */
+        var user                = null;
+
+        $series([
+            $task(function(flow) {
+                if (!Obj.hasProperty(updateObject, "password")) {
+                    flow.complete(new Exception("BadRequest", {}, "password required on updateObject"));
+                } else if (!Obj.hasProperty(updateObject, "confirmPassword")) {
+                    flow.complete(new Exception("BadRequest", {}, "confirmPassword required on updateObject"));
+                } else if (!Obj.hasProperty(updateObject, "oldPassword")) {
+                    flow.complete(new Exception("BadRequest", {}, "oldPassword required on updateObject"));
+                } else if (updateObject.password !== updateObject.confirmPassword) {
+                    flow.complete(new Exception("PasswordMismatch", {}, "Password and confirmPassword must match"));
+                } else if (!PasswordUtil.isValid(updateObject.password)) {
+                    flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
                     flow.complete();
                 }
+            }),
+            $task(function(flow) {
+                _this.dbRetrieveUser(userId, function(throwable, returnedUser){
+                    if (!throwable) {
+                        if (returnedUser) {
+                            if (returnedUser.getId() === currentUser.getId()) {
+                                user = returnedUser;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("UnauthorizedAccess", {}, "CurrentUser can only update their own user"));
+                            }
+                        } else {
+                            flow.error(new Exception("NotFound", {}, "Could not find User with the id '" + userId + "'"));
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.verifyPasswordMatch(updateObject.oldPassword, user, function(throwable, result) {
+                    if (!throwable) {
+                        if (!result) {
+                            flow.complete(new Exception("InvalidPassword", {}, "Could not update user's password because old password could not be verified"));
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(throwable);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.generatePasswordHash(updateObject.password, function(throwable, passwordHash) {
+                    if (!throwable) {
+                        user.setPasswordHash(passwordHash);
+                    }
+                    flow.complete(throwable);
+                });
             }),
             $task(function(flow) {
                 _this.userManager.updateUser(user, function(throwable) {
@@ -921,6 +999,38 @@ var UserService = Class.extend(Obj, {
         ]).execute(function(throwable) {
             if (!throwable) {
                 callback(null, user);
+            } else {
+                callback(throwable);
+            }
+        });
+    },
+
+    /**
+     * @param {string} password
+     * @param {User} user
+     * @param {function(Throwable, boolean=)} callback
+     */
+    verifyPasswordMatch: function(password, user, callback) {
+        var _this           = this;
+        var result          = false;
+        $task(function(flow) {
+            if (!password) {
+                flow.complete(new Exception("InvalidPassword", {}, "No password was given"));
+            } else if (!user.getPasswordHash()) {
+                flow.complete(new Bug("PasswordHashNotFound", {}, "User did not have a password hash"));
+            } else {
+                bcrypt.compare(password, user.getPasswordHash(), function(error, returnedResult) {
+                    if (!error) {
+                        result = returnedResult;
+                        flow.complete();
+                    } else {
+                        flow.complete(new Exception("BcryptError", {}, "Error occurred in bcrypt", [error]));
+                    }
+                });
+            }
+        }).execute(function(throwable) {
+            if (!throwable) {
+                callback(null, result);
             } else {
                 callback(throwable);
             }

@@ -4,17 +4,17 @@
 
 //@Package('airbug')
 
-//@Export('ProfileSettingsFormContainer')
+//@Export('RegistrationFormContainer')
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.CommandModule')
+//@Require('airbug.RegistrationFormView')
 //@Require('airbug.FormViewEvent')
-//@Require('airbug.ProfileSettingsFormView')
 //@Require('airbug.RoomModel')
+//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -23,48 +23,48 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                           = bugpack.require('Class');
-var Exception                       = bugpack.require('Exception');
-var CommandModule                   = bugpack.require('airbug.CommandModule');
-var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
-var ProfileSettingsFormView         = bugpack.require('airbug.ProfileSettingsFormView');
-var RoomModel                       = bugpack.require('airbug.RoomModel');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+var Class                   = bugpack.require('Class');
+var Exception               = bugpack.require('Exception');
+var CommandModule           = bugpack.require('airbug.CommandModule');
+var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
+var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+var RoomModel               = bugpack.require('airbug.RoomModel');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                         = BugMeta.context();
-var autowired                       = AutowiredAnnotation.autowired;
-var CommandType                     = CommandModule.CommandType;
-var property                        = PropertyAnnotation.property;
-var view                            = ViewBuilder.view;
+var bugmeta                 = BugMeta.context();
+var autowired               = AutowiredAnnotation.autowired;
+var CommandType             = CommandModule.CommandType;
+var property                = PropertyAnnotation.property;
+var view                    = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
+var RegistrationFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(currentUserModel) {
+    _constructor: function() {
 
         this._super();
 
@@ -72,16 +72,6 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CurrentUserModel}
-         */
-        this.currentUserModel           = currentUserModel;
-
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -94,15 +84,15 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @type {CurrentUserManagerModule}
          */
-        this.navigationModule           = null;
+        this.currentUserManagerModule   = null;
 
         /**
          * @private
-         * @type {UserManagerModule}
+         * @type {NavigationModule}
          */
-        this.userManagerModule          = null;
+        this.navigationModule           = null;
 
 
         // Views
@@ -110,9 +100,9 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {ProfileSettingsFormView}
+         * @type {RegistrationFormView}
          */
-        this.profileSettingsFormView    = null;
+        this.registrationFormView       = null;
     },
 
 
@@ -125,7 +115,7 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
      */
     activateContainer: function() {
         this._super();
-        this.profileSettingsFormView.$el.find("input")[0].focus();
+        this.registrationFormView.$el.find("input[name='email']").focus();
     },
 
     /**
@@ -137,16 +127,15 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(ProfileSettingsFormView)
-            .name("profileSettingsFormView")
-            .model(this.currentUserModel)
-            .build(this);
+        this.registrationFormView =
+            view(RegistrationFormView)
+                .build();
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.profileSettingsFormView);
+        this.setViewTop(this.registrationFormView);
     },
 
     /**
@@ -154,7 +143,7 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.profileSettingsFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+        this.registrationFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
     /**
@@ -162,7 +151,7 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.profileSettingsFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+        this.registrationFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -177,10 +166,26 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var formData    = event.getData().formData;
-        this.userManagerModule.updateUser(this.currentUserModel.getProperty("id"), formData, function(throwable, currentUser) {
+
+        console.log("Inside RegistrationFormContainer#hearFormSubmittedEvent");
+
+        this.currentUserManagerModule.registerUser(formData, function(throwable, currentUserMeldDocument) {
             if (!throwable) {
-                _this.commandModule.relayCommand(CommandType.FLASH.SUCCESS, {message: "Profile was updated successfully"});
+                var finalDestination = _this.navigationModule.getFinalDestination();
+                if (finalDestination) {
+                    _this.navigationModule.clearFinalDestination();
+                    _this.navigationModule.navigate(finalDestination, {
+                        trigger: true
+                    });
+                } else {
+                    _this.navigationModule.navigate("home", {
+                        trigger: true
+                    });
+                }
             } else {
+
+                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
+
                 if (Class.doesExtend(throwable, Exception)) {
                     _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
@@ -196,11 +201,11 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ProfileSettingsFormContainer).with(
+bugmeta.annotate(RegistrationFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
-        property("userManagerModule").ref("userManagerModule")
+        property("currentUserManagerModule").ref("currentUserManagerModule")
     ])
 );
 
@@ -209,4 +214,4 @@ bugmeta.annotate(ProfileSettingsFormContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ProfileSettingsFormContainer", ProfileSettingsFormContainer);
+bugpack.export("airbug.RegistrationFormContainer", RegistrationFormContainer);

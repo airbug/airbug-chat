@@ -81,6 +81,13 @@ var FormView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
+     *
+     */
+    clearForm: function() {
+        this.$el.find("input").val("");
+    },
+
+    /**
      * @return {Object}
      */
     getFormData: function() {

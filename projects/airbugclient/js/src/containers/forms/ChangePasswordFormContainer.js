@@ -4,13 +4,13 @@
 
 //@Package('airbug')
 
-//@Export('LoginFormContainer')
+//@Export('ChangePasswordFormContainer')
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('airbug.ChangePasswordFormView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.FormViewEvent')
-//@Require('airbug.LoginFormView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -23,48 +23,52 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Exception               = bugpack.require('Exception');
-var CommandModule           = bugpack.require('airbug.CommandModule');
-var LoginFormView           = bugpack.require('airbug.LoginFormView');
-var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
-var RoomModel               = bugpack.require('airbug.RoomModel');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+var Class                           = bugpack.require('Class');
+var Exception                       = bugpack.require('Exception');
+var ChangePasswordFormView          = bugpack.require('airbug.ChangePasswordFormView');
+var CommandModule                   = bugpack.require('airbug.CommandModule');
+var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
+var RoomModel                       = bugpack.require('airbug.RoomModel');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                 = BugMeta.context();
-var autowired               = AutowiredAnnotation.autowired;
-var CommandType             = CommandModule.CommandType;
-var property                = PropertyAnnotation.property;
-var view                    = ViewBuilder.view;
+var bugmeta                         = BugMeta.context();
+var autowired                       = AutowiredAnnotation.autowired;
+var CommandType                     = CommandModule.CommandType;
+var property                        = PropertyAnnotation.property;
+var view                            = ViewBuilder.view;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var LoginFormContainer = Class.extend(CarapaceContainer, {
+/**
+ * @class
+ * @extends {CarapaceContainer}
+ */
+var ChangePasswordFormContainer = Class.extend(CarapaceContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(currentUserModel) {
 
         this._super();
 
@@ -72,6 +76,16 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        // Models
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CurrentUserModel}
+         */
+        this.currentUserModel           = currentUserModel;
+
 
         // Modules
         //-------------------------------------------------------------------------------
@@ -84,15 +98,15 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {CurrentUserManagerModule}
-         */
-        this.currentUserManagerModule   = null;
-
-        /**
-         * @private
          * @type {NavigationModule}
          */
         this.navigationModule           = null;
+
+        /**
+         * @private
+         * @type {UserManagerModule}
+         */
+        this.userManagerModule          = null;
 
 
         // Views
@@ -100,9 +114,9 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
 
         /**
          * @private
-         * @type {LoginFormView}
+         * @type {ChangePasswordFormView}
          */
-        this.loginFormView       = null;
+        this.changePasswordFormView     = null;
     },
 
 
@@ -113,22 +127,38 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    activateContainer: function() {
+        this._super();
+        this.changePasswordFormView.$el.find("input")[0].focus();
+    },
+
+    /**
+     * @protected
+     */
     createContainer: function() {
         this._super();
 
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.loginFormView =
-            view(LoginFormView)
-                // .attributes({type: "primary", align: "left"})
-                .build();
+        view(ChangePasswordFormView)
+            .name("changePasswordFormView")
+            .model(this.currentUserModel)
+            .build(this);
 
 
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.loginFormView);
+        this.setViewTop(this.changePasswordFormView);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.changePasswordFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
     /**
@@ -136,15 +166,7 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.loginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
-        this.loginFormView.$el.find("input")[0].focus();
+        this.changePasswordFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 
@@ -159,26 +181,11 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
     hearFormSubmittedEvent: function(event) {
         var _this       = this;
         var formData    = event.getData().formData;
-        this.currentUserManagerModule.loginUser(formData.email, formData.password, function(throwable, currentUser) {
-            console.log("Inside LoginFormContainer currentUserManagerModule#loginUser callback");
-            console.log("throwable:", throwable, " currentUser:", currentUser, " inside LoginFormContainer");
-
+        this.userManagerModule.updateUserPassword(this.currentUserModel.getProperty("id"), formData, function(throwable, currentUser) {
             if (!throwable) {
-                var finalDestination = _this.navigationModule.getFinalDestination();
-                console.log("finalDestination:", finalDestination);
-                if (finalDestination) {
-                    _this.navigationModule.clearFinalDestination();
-                    _this.navigationModule.navigate(finalDestination, {
-                        trigger: true
-                    });
-                } else {
-                    _this.navigationModule.navigate("home", {
-                        trigger: true
-                    });
-                }
+                _this.changePasswordFormView.clearForm();
+                _this.commandModule.relayCommand(CommandType.FLASH.SUCCESS, {message: "Password was successfully changed"});
             } else {
-                //TODO BRN: Need to introduce some sort of error handling system that can take any error and figure out what to do with it and what to show the user
-
                 if (Class.doesExtend(throwable, Exception)) {
                     _this.commandModule.relayCommand(CommandType.FLASH.EXCEPTION, {message: throwable.getMessage()});
                 } else {
@@ -194,11 +201,11 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(LoginFormContainer).with(
+bugmeta.annotate(ChangePasswordFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),
-        property("currentUserManagerModule").ref("currentUserManagerModule")
+        property("userManagerModule").ref("userManagerModule")
     ])
 );
 
@@ -207,4 +214,4 @@ bugmeta.annotate(LoginFormContainer).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.LoginFormContainer", LoginFormContainer);
+bugpack.export("airbug.ChangePasswordFormContainer", ChangePasswordFormContainer);

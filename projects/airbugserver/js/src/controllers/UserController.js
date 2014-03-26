@@ -263,6 +263,22 @@ var UserController = Class.extend(EntityController, {
                 userService.updateUser(requestContext, userId, updateObject, function(throwable, user) {
                     _this.processUpdateResponse(responder, throwable, user, callback);
                 });
+            },
+
+            /**
+             * @param {IncomingRequest} request
+             * @param {CallResponder} responder
+             * @param {function(Throwable=)} callback
+             */
+            updateUserPassword: function(request, responder, callback) {
+                var data                = request.getData();
+                var userId              = data.userId;
+                var updateObject        = data.updateObject;
+                var requestContext      = request.requestContext;
+
+                userService.updateUserPassword(requestContext, userId, updateObject, function(throwable, user) {
+                    _this.processUpdateResponse(responder, throwable, user, callback);
+                });
             }
         });
         callback();

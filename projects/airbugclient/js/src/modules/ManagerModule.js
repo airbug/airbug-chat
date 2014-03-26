@@ -16,8 +16,8 @@
 //@Require('Set')
 //@Require('StringUtil')
 //@Require('TypeUtil')
-//@Require('airbug.ApiRequest')
 //@Require('airbug.ApiDefines')
+//@Require('airbug.ApiRequest')
 //@Require('airbug.RetrieveRequest')
 
 
@@ -41,8 +41,8 @@ var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 var StringUtil          = bugpack.require('StringUtil');
 var TypeUtil            = bugpack.require('TypeUtil');
-var ApiRequest          = bugpack.require('airbug.ApiRequest');
 var ApiDefines          = bugpack.require('airbug.ApiDefines');
+var ApiRequest          = bugpack.require('airbug.ApiRequest');
 var RetrieveRequest     = bugpack.require('airbug.RetrieveRequest');
 
 
