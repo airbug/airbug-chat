@@ -31,6 +31,10 @@ var ListViewEvent   = bugpack.require('airbug.ListViewEvent');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ListItemView}
+ */
 var SelectableListItemView = Class.extend(ListItemView, {
 
     //-------------------------------------------------------------------------------

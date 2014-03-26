@@ -90,7 +90,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(currentRoomModel) {
 
         this._super();
 
@@ -98,6 +98,12 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ListItemView}
+         */
+        this.currentActiveListItem      = null;
 
         /**
          * @private
@@ -114,6 +120,12 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         // Models
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {RoomModel}
+         */
+        this.currentRoomModel           = currentRoomModel;
 
         /**
          * @private
@@ -135,7 +147,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {CommandModule}
          */
-        this.commandModule      = null;
+        this.commandModule              = null;
 
         /**
          * @private
@@ -188,6 +200,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      * @param {Array<*>} routerArgs
      */
     activateContainer: function(routerArgs) {
+
         this._super(routerArgs);
         this.loadCurrentUser();
     },
@@ -248,6 +261,11 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
         this.currentUserModel.observe(AddChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetAddChange, this);
         this.currentUserModel.observe(RemoveChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemoveChange, this);
 
+        if (this.currentRoomModel) {
+            this.currentRoomModel.observe(SetPropertyChange.CHANGE_TYPE, "id", this.observeCurrentRoomIdSetPropertyChange, this);
+            this.currentRoomModel.observe(RemovePropertyChange.CHANGE_TYPE, "id", this.observeCurrentRoomIdRemovePropertyChange, this);
+        }
+
         this.roomList.observe(AddChange.CHANGE_TYPE, "", this.observeRoomListAdd, this);
         this.roomList.observe(ClearChange.CHANGE_TYPE, "", this.observeRoomListClear, this);
         this.roomList.observe(RemoveChange.CHANGE_TYPE, "", this.observeRoomListRemove, this);
@@ -303,6 +321,19 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
         this.listView.addViewChild(selectableListItemView);
         this.roomModelToListItemViewMap.put(roomModel, selectableListItemView);
+        if (this.currentRoomModel && this.currentRoomModel.getProperty("id") === roomModel.getProperty("id")) {
+            this.updateCurrentActiveListItem(selectableListItemView);
+        }
+    },
+
+    /**
+     * @private
+     */
+    clearCurrentActiveListItem: function() {
+        if (this.currentActiveListItem) {
+            this.currentActiveListItem.deactivateItem();
+            this.currentActiveListItem = null;
+        }
     },
 
     /**
@@ -434,6 +465,23 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
     /**
      * @private
+     */
+    refreshCurrentActiveListItem: function() {
+        this.clearCurrentActiveListItem();
+        if (this.currentRoomModel) {
+            var currentRoomId = this.currentRoomModel.getProperty("id");
+            if (currentRoomId) {
+                var roomModel = this.roomIdToRoomModelMap.get(currentRoomId);
+                if (roomModel) {
+                    var listItem = this.roomModelToListItemViewMap.get(roomModel);
+                    this.updateCurrentActiveListItem(listItem);
+                }
+            }
+        }
+    },
+
+    /**
+     * @private
      * @param {string} roomId
      */
     removeRoom: function(roomId) {
@@ -442,6 +490,16 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
             this.roomIdToRoomModelMap.remove(roomId);
             this.roomList.remove(roomModel);
         }
+    },
+
+    /**
+     * @private
+     * @param {ListItemView} listItemView
+     */
+    updateCurrentActiveListItem: function(listItemView) {
+        this.clearCurrentActiveListItem();
+        this.currentActiveListItem = listItemView;
+        this.currentActiveListItem.activateItem();
     },
 
 
@@ -472,6 +530,22 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
      */
     observeCurrentUserModelClearChange: function(change) {
         this.clearRoomList();
+    },
+
+    /**
+     * @private
+     * @param {SetPropertyChange} change
+     */
+    observeCurrentRoomIdSetPropertyChange: function(change) {
+        this.refreshCurrentActiveListItem();
+    },
+
+    /**
+     * @private
+     * @param {RemovePropertyChange} change
+     */
+    observeCurrentRoomIdRemovePropertyChange: function(change) {
+        this.clearCurrentActiveListItem();
     },
 
     /**

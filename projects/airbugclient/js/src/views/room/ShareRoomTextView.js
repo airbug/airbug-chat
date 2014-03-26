@@ -75,7 +75,7 @@ var ShareRoomTextView = Class.extend(TextView, {
      * @return {string}
      */
     generateText: function(roomName) {
-        return "Share conversation " + roomName;
+        return "Share conversation \"" + roomName + "\"";
     }
 });
 

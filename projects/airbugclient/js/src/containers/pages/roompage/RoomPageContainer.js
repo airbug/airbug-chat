@@ -214,7 +214,7 @@ var RoomPageContainer = Class.extend(PageContainer, {
         this.homeButtonContainer                    = new HomeButtonContainer();
         this.accountDropdownButtonContainer         = new AccountDropdownButtonContainer();
         this.roomChatBoxContainer                   = new RoomChatBoxContainer(this.roomModel);
-        this.roomListPanelContainer                 = new RoomListPanelContainer();
+        this.roomListPanelContainer                 = new RoomListPanelContainer(this.roomModel);
 
         this.shareRoomContainer                     = new ShareRoomContainer(this.roomModel);
         this.addContainerChild(this.shareRoomContainer,             ".page");

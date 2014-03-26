@@ -63,7 +63,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
      */
     _constructor: function(chatMessageList) {
 
-        this._super("No chat messages in this room");
+        this._super("No messages in this conversation");
 
 
         //-------------------------------------------------------------------------------

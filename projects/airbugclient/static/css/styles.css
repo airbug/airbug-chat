@@ -296,7 +296,7 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
     height: auto;
     padding: 8px;
     background-color: rgb(255, 255, 255);
-    border-color: rgb(207, 226, 243); /* Old browsers */
+    border-color: #cfe2f3; /* Old browsers */
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
@@ -610,6 +610,10 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     right: 0px;
 }
 
+.list-item.active {
+    background-color: #cfe2f3;
+}
+
 
 /* Text CSS
 *******************************************************************/
@@ -706,7 +710,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     border-bottom-width: 1px;
     border-bottom-color: #c4c4c4;
     border-bottom-style: solid;
-    background-color: rgb(207, 226, 243); /* Old browsers */
+    background-color: #cfe2f3; /* Old browsers */
     background: -moz-linear-gradient(top, rgb(207,226,243) 0%, rgb(41,137,216) 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(207,226,243)), color-stop(100%,rgb(41,137,216))); /* Chrome,Safari4+ */
     background: -webkit-linear-gradient(top, rgb(207,226,243) 0%,rgb(41,137,216) 100%); /* Chrome10+,Safari5.1+ */
@@ -1019,7 +1023,6 @@ div.previous-messages-loader {
 }
 
 div.message-image div.btn-toolbar {
-    visibility: hidden;
     position: absolute;
     bottom: 2px;
     left: 2px;
@@ -1037,12 +1040,8 @@ div.message-image div.btn-group:only-child {
     left: 2px;
 }
 
-div.message-image:hover div.btn-toolbar {
-    visibility: visible;
-}
-
 #roomChatBoxRowContainer .column1of2 .dropdown-menu {
-    background-color: rgb(207, 226, 243); /* Old browsers */
+    background-color: #cfe2f3; /* Old browsers */
 }
 
 .roommember-list-panel .panel-header .btn-group {
@@ -1161,10 +1160,6 @@ div.message-image:hover div.btn-toolbar {
 
 /* Hamburger Panel CSS
 *******************************************************************/
-
-.hamburger-panel-left>div, .hamburger-panel-right>div {
-    background-color: rgb(207, 226, 243); /* Old browsers */
-}
 
 .hamburger-panel-hidden {
     position: absolute;
