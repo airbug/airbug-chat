@@ -216,7 +216,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
                 view(ListView)
                     .name("listView")
                     .attributes({
-                        placeholder: "You have no rooms"
+                        placeholder: "You have no conversations"
                     })
                     .appendTo("#panel-body-{{cid}}")
                     .children([

@@ -103,7 +103,7 @@ var RoomMemberListItemContainer = Class.extend(CarapaceContainer, {
                     .appendTo("#list-item-{{cid}}"),
                 view(UserNameView)
                     .model(this.roomMemberModel)
-                    .attributes({classes: "text-simple"})
+                    .attributes({classes: "text-simple room-member-item"})
                     .appendTo("#list-item-{{cid}}")
             ])
             .build(this);

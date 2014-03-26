@@ -494,23 +494,19 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
+                userObject.status               = currentUser.getStatus();
+                userObject.agreedToTermsDate    = UserDefines.TOS_Date;
                 if (userObject.password !== userObject.confirmPassword) {
                     flow.complete(new Exception("PasswordMismatch", {}, "Password and confirmPassword must match"));
                 } else if (!PasswordUtil.isValid(userObject.password)) {
                     flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
                 } else {
-                    userObject.status               = currentUser.getStatus();
-                    userObject.agreedToTermsDate    = UserDefines.TOS_Date;
                     user = _this.userManager.generateUser(userObject);
-                    bcrypt.genSalt(10, function(err, salt) {
-                        if (err) {
-                            flow.complete(err);
-                        } else {
-                            bcrypt.hash(userObject.password, salt, function(err, crypted) {
-                                user.setPasswordHash(crypted);
-                                flow.complete(err);
-                            });
+                    _this.generatePasswordHash(userObject.password, function(throwable, passwordHash) {
+                        if (!throwable) {
+                            user.setPasswordHash(passwordHash);
                         }
+                        flow.complete(throwable);
                     });
                 }
             }),
@@ -721,7 +717,7 @@ var UserService = Class.extend(Obj, {
     updateUser: function(requestContext, userId, updates, callback) {
         var _this               = this;
         var currentUser         = requestContext.get("currentUser");
-        var call         = requestContext.get("call");
+        var call                = requestContext.get("call");
         /** @type {User} */
         var user                = null;
 
@@ -734,10 +730,10 @@ var UserService = Class.extend(Obj, {
                                 user = returnedUser;
                                 flow.complete();
                             } else {
-                                flow.error(new Exception("UnauthorizedAccess"));
+                                flow.error(new Exception("UnauthorizedAccess", {}, "CurrentUser can only update their own user"));
                             }
                         } else {
-                            flow.error(new Exception("NotFound"));
+                            flow.error(new Exception("NotFound", {}, "Could not find User with the id '" + userId + "'"));
                         }
                     } else {
                         flow.error(throwable);
@@ -745,18 +741,30 @@ var UserService = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                if (Obj.hasProperty(updates, "email")) {
-                    user.setEmail(updates.email);
-                }
                 if (Obj.hasProperty(updates, "firstName")) {
                     user.setFirstName(updates.firstName);
                 }
                 if (Obj.hasProperty(updates, "lastName")) {
                     user.setLastName(updates.lastName);
                 }
-                if (Obj.hasProperty(updates, "status")) {
-                    user.setStatus(updates.status);
+                if (Obj.hasProperty(updates, "password")) {
+                    if (updates.password !== updates.confirmPassword) {
+                        flow.complete(new Exception("PasswordMismatch", {}, "Password and confirmPassword must match"));
+                    } else if (!PasswordUtil.isValid(updates.password)) {
+                        flow.complete(new Exception("InvalidPassword", {}, "Invalid password"));
+                    } else {
+                        _this.generatePasswordHash(updates.password, function(throwable, passwordHash) {
+                            if (!throwable) {
+                                user.setPasswordHash(passwordHash);
+                            }
+                            flow.complete(throwable);
+                        });
+                    }
+                } else {
+                    flow.complete();
                 }
+            }),
+            $task(function(flow) {
                 _this.userManager.updateUser(user, function(throwable) {
                     flow.complete(throwable);
                 });
@@ -850,6 +858,27 @@ var UserService = Class.extend(Obj, {
         } else {
             this.createAnonymousUserAndSaveToSession(session, callback);
         }
+    },
+
+    /**
+     * @private
+     * @param {string} password
+     * @param {function(Throwable, string=)} callback
+     */
+    generatePasswordHash: function(password, callback) {
+        bcrypt.genSalt(10, function(err, salt) {
+            if (err) {
+                callback(new Bug("bcrypt error", {}, "An error occurred in bcrypt", [err]));
+            } else {
+                bcrypt.hash(password, salt, function(err, passwordHash) {
+                    if (!err) {
+                        callback(null, passwordHash);
+                    } else {
+                        callback(new Bug("bcrypt error", {}, "An error occurred in bcrypt", [err]))
+                    }
+                });
+            }
+        });
     },
 
     /**

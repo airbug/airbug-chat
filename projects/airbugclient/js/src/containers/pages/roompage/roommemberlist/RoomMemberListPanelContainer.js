@@ -103,7 +103,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -116,11 +116,13 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.panelView =
-            view(PanelWithHeaderView)
-                .id("roommember-list-panel-container")
-                .attributes({headerTitle: "Participants"})
-                .build();
+        view(PanelWithHeaderView)
+            .name("panelView")
+            .attributes({
+                classes: "roommember-list-panel",
+                headerTitle: "Participants"
+            })
+            .build(this);
 
 
         // Wire Up Views
@@ -136,12 +138,8 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.addRoomMemberButtonContainer   = new AddRoomMemberButtonContainer(this.roomModel);
         this.roomMemberListContainer        = new RoomMemberListContainer(this.roomModel);
-        this.addContainerChild(this.roomMemberListContainer,        "#panel-body-" + this.panelView.getCid());
-        this.addContainerChild(this.addRoomMemberButtonContainer, ".panel-header-nav-right");
-    },
-
-    initializeContainer: function() {
-        this._super();
+        this.addContainerChild(this.roomMemberListContainer, "#panel-body-" + this.panelView.getCid());
+        this.addContainerChild(this.addRoomMemberButtonContainer, "#panel-header-nav-right-" + this.panelView.getCid());
     }
 });
 

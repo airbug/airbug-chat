@@ -17,6 +17,7 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.LinkView')
+//@Require('airbug.MultiColumnView')
 //@Require('airbug.NavListDividerView')
 //@Require('airbug.NavListHeaderView')
 //@Require('airbug.NavListItemView')
@@ -53,6 +54,7 @@ var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEven
 var CommandModule                       = bugpack.require('airbug.CommandModule');
 var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
 var LinkView                            = bugpack.require('airbug.LinkView');
+var MultiColumnView                     = bugpack.require('airbug.MultiColumnView');
 var NavListDividerView                  = bugpack.require('airbug.NavListDividerView');
 var NavListHeaderView                   = bugpack.require('airbug.NavListHeaderView');
 var NavListItemView                     = bugpack.require('airbug.NavListItemView');
@@ -182,6 +184,12 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
          * @type {NavListItemView}
          */
         this.profileListItemView                    = null;
+
+        /**
+         * @private
+         * @type {TwoColumnView}
+         */
+        this.twoColumnView                          = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -193,6 +201,13 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
      */
     getAccountListItemView: function() {
         return this.accountListItemView;
+    },
+
+    /**
+     * @return {CurrentUserModel}
+     */
+    getCurrentUserModel: function() {
+        return this.currentUserModel;
     },
 
     /**
@@ -214,6 +229,13 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
      */
     getProfileListItemView: function() {
         return this.profileListItemView;
+    },
+
+    /**
+     * @return {TwoColumnView}
+     */
+    getTwoColumnView: function() {
+        return this.twoColumnView;
     },
 
 
@@ -252,7 +274,8 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
                 view(TwoColumnView)
                     .name("twoColumnView")
                     .attributes({
-                        configuration: TwoColumnView.Configuration.THICK_RIGHT_WITH_OFFSET_2
+                        configuration: TwoColumnView.Configuration.THICK_RIGHT_WITH_OFFSET_2,
+                        rowStyle: MultiColumnView.RowStyle.FLUID
                     })
                     .children([
                         view(PanelView)

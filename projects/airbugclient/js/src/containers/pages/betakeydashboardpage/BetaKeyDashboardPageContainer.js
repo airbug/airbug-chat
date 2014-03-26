@@ -178,52 +178,52 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        this.pageView =
-            view(PageView)
-                .children([
-                    view(PanelWithHeaderView)
-                        .attributes({headerTitle: "Beta Key Dashboard"})
-                        .children([
-                            view(FormView)
-                                .name("formView")
-                                .id("beta-key-form")
-                                .attributes({
-                                    classes: "form-inline"
-                                })
-                                .appendTo(".panel-body")
-                                .children([
-                                    view(InputView)
-                                        .id("beta-key-input-field")
-                                        .attributes({
-                                            placeholder: "Beta Key",
-                                            name: "betaKey",
-                                            type: "text"
-                                        })
-                                        .appendTo("#beta-key-form"),
-                                    view(NakedSubmitButtonView)
-                                        .name("submitButtonView")
-                                        .attributes({
-                                            size: ButtonView.Size.NORMAL,
-                                            type: ButtonView.Type.PRIMARY,
-                                            buttonName: "Search"
-                                        })
-                                        .appendTo("#beta-key-form")
-                                ]),
-                            view(TableView)
-                                .name("tableView")
-                                .appendTo(".panel-body")
-                                .children([
-                                    view(TableRowView)
-                                        .children([
-                                            view(TableHeadingView)
-                                                .attributes({text: "Beta Key"}),
-                                            view(TableHeadingView)
-                                                .attributes({text: "Count"})
-                                        ])
-                                ])
-                        ])
-                ])
-                .build(this);
+        view(PageView)
+            .name("pageView")
+            .children([
+                view(PanelWithHeaderView)
+                    .attributes({headerTitle: "Beta Key Dashboard"})
+                    .children([
+                        view(FormView)
+                            .name("formView")
+                            .id("beta-key-form")
+                            .attributes({
+                                classes: "form-inline"
+                            })
+                            .appendTo("#panel-body-{{cid}}")
+                            .children([
+                                view(InputView)
+                                    .id("beta-key-input-field")
+                                    .attributes({
+                                        placeholder: "Beta Key",
+                                        name: "betaKey",
+                                        type: "text"
+                                    })
+                                    .appendTo("#beta-key-form"),
+                                view(NakedSubmitButtonView)
+                                    .name("submitButtonView")
+                                    .attributes({
+                                        size: ButtonView.Size.NORMAL,
+                                        type: ButtonView.Type.PRIMARY,
+                                        buttonName: "Search"
+                                    })
+                                    .appendTo("#beta-key-form")
+                            ]),
+                        view(TableView)
+                            .name("tableView")
+                            .appendTo("#panel-body-{{cid}}")
+                            .children([
+                                view(TableRowView)
+                                    .children([
+                                        view(TableHeadingView)
+                                            .attributes({text: "Beta Key"}),
+                                        view(TableHeadingView)
+                                            .attributes({text: "Count"})
+                                    ])
+                            ])
+                    ])
+            ])
+            .build(this);
 
 
         // Wire Up Views

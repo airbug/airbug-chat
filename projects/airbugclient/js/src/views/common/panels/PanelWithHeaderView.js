@@ -10,10 +10,11 @@
 //@Require('airbug.MustacheView')
 
 
+//-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -34,8 +35,8 @@ var PanelWithHeaderView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="panel-wrapper">' +
-                    '<div id="{{id}}" class="panel">' +
+    template:   '<div id="panel-wrapper-{{cid}}" class="panel-wrapper">' +
+                    '<div id="panel-{{cid}}" class="panel {{classes}}">' +
                         '<div id="panel-header-{{cid}}" class="panel-header">' +
                             '<span id="panel-header-nav-left-{{cid}}" class="panel-header-nav-left"></span>' +
                             '<span class="panel-header-title text text-header">{{attributes.headerTitle}}</span>' +
@@ -44,13 +45,7 @@ var PanelWithHeaderView = Class.extend(MustacheView, {
                         '<div id="panel-body-{{cid}}" class="panel-body">' +
                         '</div>' +
                     '</div>' +
-                '</div>',
-
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "panel-" + this.cid;
-        return data;
-    }
+                '</div>'
 });
 
 

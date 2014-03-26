@@ -673,6 +673,10 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 }
 
 .user-name {
+
+}
+
+.room-member-item {
     position: absolute;
     left: 34px;
     right: 5px;
@@ -1041,21 +1045,27 @@ div.message-image:hover div.btn-toolbar {
     background-color: rgb(207, 226, 243); /* Old browsers */
 }
 
-#roommember-list-panel-container .panel-header .btn-group {
+.roommember-list-panel .panel-header .btn-group {
     display: inline-block;
     width: 15%;
     padding: 0px;
     margin: 0px;
 }
 
-#roommember-list-panel-container .panel-header .panel-header-nav-right {
+.roommember-list-panel .panel-header .panel-header-nav-right {
     display: inline-block;
     position: absolute;
     right: 0;
 }
 
-#roommember-list-panel-container .panel-header .panel-header-nav-right .btn {
+.roommember-list-panel .panel-header .panel-header-nav-right .btn {
     margin-top: 1px;
+}
+
+
+.profile-settings-form {
+    padding-top: 30px;
+    padding-left: 20px;
 }
 
 

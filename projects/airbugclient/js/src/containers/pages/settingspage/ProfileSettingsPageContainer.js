@@ -11,6 +11,8 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
+//@Require('airbug.PanelWithHeaderView')
+//@Require('airbug.ProfileSettingsFormContainer')
 //@Require('airbug.SettingsPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
@@ -34,6 +36,8 @@ var ClearChange                         = bugpack.require('ClearChange');
 var Exception                           = bugpack.require('Exception');
 var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
 var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+var ProfileSettingsFormContainer        = bugpack.require('airbug.ProfileSettingsFormContainer');
 var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
@@ -69,6 +73,29 @@ var ProfileSettingsPageContainer = Class.extend(SettingsPageContainer, {
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ProfileSettingsFormContainer}
+         */
+        this.profileSettingsFormContainer   = null;
+
+
+        // Views
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {PanelWithHeaderView}
+         */
+        this.panelWithHeaderView            = null;
     },
 
 
@@ -92,6 +119,21 @@ var ProfileSettingsPageContainer = Class.extend(SettingsPageContainer, {
         this._super(routingArgs);
 
 
+        // Create Views
+        //-------------------------------------------------------------------------------
+
+        view(PanelWithHeaderView)
+            .name("panelWithHeaderView")
+            .attributes({
+                headerTitle: "Public Profile"
+            })
+            .build(this);
+
+
+        // Wire Up Views
+        //-------------------------------------------------------------------------------
+
+        this.getTwoColumnView().addViewChild(this.panelWithHeaderView, "#column2of2-{{cid}}");
     },
 
     /**
@@ -99,23 +141,8 @@ var ProfileSettingsPageContainer = Class.extend(SettingsPageContainer, {
      */
     createContainerChildren: function(routingArgs) {
         this._super(routingArgs);
-
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-
+        this.profileSettingsFormContainer       = new ProfileSettingsFormContainer(this.getCurrentUserModel());
+        this.addContainerChild(this.profileSettingsFormContainer, "#panel-body-" + this.panelWithHeaderView.getCid());
     }
 });
 

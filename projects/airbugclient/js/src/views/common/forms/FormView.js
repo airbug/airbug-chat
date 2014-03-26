@@ -77,21 +77,6 @@ var FormView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data            = this._super();
-        data.classes        = this.attributes.classes;
-        data.id             = this.getId() || "form-" + this.cid;
-        return data;
-    },
-
-
-    //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 

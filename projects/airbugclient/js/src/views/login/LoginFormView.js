@@ -7,6 +7,7 @@
 //@Export('LoginFormView')
 
 //@Require('Class')
+//@Require('airbug.FormViewEvent')
 //@Require('airbug.MustacheView')
 
 
@@ -22,6 +23,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
 var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
@@ -44,7 +46,7 @@ var LoginFormView = Class.extend(MustacheView, {
                             '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
                         '</div>' +
                         '<div class="control-group">' +
-                            '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
+                            '<button id="login-button-{{cid}}" type="submit" class="btn ">Login</button>' +
                             '<span class="help-inline">Not a member yet? <a href="#signup">signup here</a></span>' +
                         '</div>' +
                     '</form>' +
