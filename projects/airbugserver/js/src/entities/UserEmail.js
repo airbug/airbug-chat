@@ -4,7 +4,7 @@
 
 //@Package('airbugserver')
 
-//@Export('Email')
+//@Export('UserEmail')
 //@Autoload
 
 //@Require('Class')
@@ -51,7 +51,7 @@ var property                = PropertyAnnotation.property;
  * @class
  * @extends {Entity}
  */
-var Email = Class.extend(Entity, {
+var UserEmail = Class.extend(Entity, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,9 +68,15 @@ var Email = Class.extend(Entity, {
 
         /**
          * @private
-         * @type {Set.<UserEmail>}
+         * @type {Email}
          */
-        this.userEmailSet   = new Set();
+        this.email          = null;
+
+        /**
+         * @private
+         * @type {User}
+         */
+        this.user           = null;
     },
 
 
@@ -79,87 +85,108 @@ var Email = Class.extend(Entity, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {boolean}
+     * @return {string}
      */
-    getBounced: function() {
-        return this.getEntityData().bounced;
+    getEmailId: function() {
+        return this.getEntityData().emailId;
     },
 
     /**
-     * @param {boolean} bounced
+     * @param {string} emailId
      */
-    setBounced: function(bounced) {
-        this.getEntityData().bounced = bounced;
-    },
-
-    /**
-     * @return {Date}
-     */
-    getBouncedAt: function() {
-        return this.getEntityData().bouncedAt;
-    },
-
-    /**
-     * @param {Date} bouncedAt
-     */
-    setBouncedAt: function(bouncedAt) {
-        this.getEntityData().bouncedAt = bouncedAt;
+    setEmailId: function(emailId) {
+        this.getEntityData().emailId = emailId;
     },
 
     /**
      * @return {boolean}
      */
-    getComplained: function() {
-        return this.getEntityData().complained;
+    getPrimary: function() {
+        return this.getEntityData().primary;
     },
 
     /**
-     * @param {boolean} complained
+     * @param {boolean} primary
      */
-    setComplained: function(complained) {
-        this.getEntityData().complained = complained;
-    },
-
-    /**
-     * @return {Date}
-     */
-    getComplainedAt: function() {
-        return this.getEntityData().complainedAt;
-    },
-
-    /**
-     * @param {Date} complainedAt
-     */
-    setComplainedAt: function(complainedAt) {
-        this.getEntityData().complainedAt = complainedAt;
+    setPrimary: function(primary) {
+        this.getEntityData().primary = primary;
     },
 
     /**
      * @return {string}
      */
-    getEmail: function() {
-        return this.getEntityData().string;
+    getUserId: function() {
+        return this.getEntityData().userId;
     },
 
     /**
-     * @param {string} email
+     * @param {string} userId
+     */
+    setUserId: function(userId) {
+        this.getEntityData().userId = userId;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    getValidated: function() {
+        return this.getEntityData().validated;
+    },
+
+    /**
+     * @param {boolean} validated
+     */
+    setValidated: function(validated) {
+        this.getEntityData().validated = validated;
+    },
+
+    /**
+     * @return {Date}
+     */
+    getValidatedAt: function() {
+        return this.getEntityData().validatedAt;
+    },
+
+    /**
+     * @param {Date} validatedAt
+     */
+    setValidatedAt: function(validatedAt) {
+        this.getEntityData().validatedAt = validatedAt;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Email}
+     */
+    getEmail: function() {
+        return this.email;
+    },
+
+    /**
+     * @param {Email} email
      */
     setEmail: function(email) {
-        this.getEntityData().email = email;
+        this.email = email;
+        this.setEmailId(email.getId());
     },
 
     /**
-     * @return {Set.<Email>}
+     * @return {User}
      */
-    getUserEmailSet: function() {
-        return this.userEmailSet;
+    getUser: function() {
+        return this.user;
     },
 
     /**
-     * @param {ISet.<UserEmail>} userEmailSet
+     * @param {User} user
      */
-    setUserEmailSet: function(userEmailSet) {
-        this.userEmailSet = userEmailSet;
+    setUser: function(user) {
+        this.user = user;
+        this.setUserId(user.getId());
     }
 });
 
@@ -168,41 +195,43 @@ var Email = Class.extend(Entity, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(Email).with(
-    entity("Email").properties([
-        property("bounced")
-            .type("boolean")
-            .require(true)
-            .default(false),
-        property("bouncedAt")
-            .type("date"),
-        property("complained")
-            .type("boolean")
-            .require(true)
-            .default(false),
-        property("complainedAt")
-            .type("date"),
-        property("createdAt")
-            .type("date")
-            .require(true)
-            .default(Date.now),
+bugmeta.annotate(UserEmail).with(
+    entity("UserEmail").properties([
         property("email")
+            .type("Email")
+            .populates(true)
+            .store(false),
+        property("emailId")
             .type("string")
-            .unique(true)
             .require(true)
-            .index(true),
+            .index(true)
+            .id(),
         property("id")
             .type("string")
             .primaryId(),
+        property("primary")
+            .type("boolean")
+            .require(true)
+            .default(false),
         property("updatedAt")
             .type("date")
             .require(true)
             .default(Date.now),
-        property("userEmailSet")
-            .type("Set")
-            .collectionOf("UserEmail")
+        property("user")
+            .type("User")
             .populates(true)
-            .store(false)
+            .store(false),
+        property("userId")
+            .type("string")
+            .require(true)
+            .index(true)
+            .id(),
+        property("validated")
+            .type("boolean")
+            .require(true)
+            .default(false),
+        property("validatedAt")
+            .type("date")
     ])
 );
 
@@ -211,4 +240,4 @@ bugmeta.annotate(Email).with(
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.Email', Email);
+bugpack.export('airbugserver.UserEmail', UserEmail);

@@ -231,34 +231,40 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                                     ])
                             ])
                     ]),
-                view(ButtonView)
-                    .name("chooseOrUploadImageButtonView")
-                    .appendTo("#column2of2-{{cid}}")
+                view(TwoColumnView)
                     .attributes({
-                        classes: "choose-or-upload-image-button-wrapper",
-                        buttonClasses: "choose-or-upload-image-button"
+                        configuration: TwoColumnView.Configuration.THICK_RIGHT,
+                        rowStyle: MultiColumnView.RowStyle.FLUID
                     })
                     .children([
-                        view(IconView)
+                        view(ButtonView)
+                            .name("chooseOrUploadImageButtonView")
+                            .appendTo("#column1of2-{{cid}}")
                             .attributes({
-                                type: IconView.Type.CAMERA
+                                buttonClasses: "choose-or-upload-image-button"
                             })
-                            .appendTo("#button-{{cid}}")
-                    ]),
-                view(ButtonView)
-                    .name("sendButtonView")
-                    .appendTo("#column2of2-{{cid}}")
-                    .attributes({
-                        classes: "chat-widget-input-send-button-wrapper",
-                        buttonClasses: "chat-widget-input-send-button"
-                    })
-                    .children([
-                        view(TextView)
-                            .name("sendButtonTextView")
+                            .children([
+                                view(IconView)
+                                    .attributes({
+                                        type: IconView.Type.CAMERA
+                                    })
+                                    .appendTo("#button-{{cid}}")
+                            ]),
+                        view(ButtonView)
+                            .name("sendButtonView")
+                            .appendTo("#column2of2-{{cid}}")
                             .attributes({
-                                text: "Send"
+                                classes: "chat-widget-input-send-button-wrapper",
+                                buttonClasses: "chat-widget-input-send-button"
                             })
-                            .appendTo('#button-{{cid}}')
+                            .children([
+                                view(TextView)
+                                    .name("sendButtonTextView")
+                                    .attributes({
+                                        text: "Send"
+                                    })
+                                    .appendTo('#button-{{cid}}')
+                            ])
                     ])
             ])
             .build(this);

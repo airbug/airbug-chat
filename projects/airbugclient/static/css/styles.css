@@ -978,21 +978,6 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     border-radius: 5px;
 }
 
-.chat-widget-input .button-wrapper {
-    position: absolute;
-    padding: 0px;
-}
-
-.choose-or-upload-image-button-wrapper {
-    left: 0;
-    width: 33%;
-}
-
-.chat-widget-input-send-button-wrapper {
-    right: -9%;
-    width: 74%;
-}
-
 .chat-widget-input .btn {
     position: absolute;
     margin: 2px 4px 4px 4px;
@@ -1995,15 +1980,5 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     .row-fluid .span1 {
         width: 8.33333333333333%;
         *width: 8.33333333333333%;
-    }
-}
-
-
-@-moz-document url-prefix() {
-    .application-body {
-        right: -20px;
-    }
-    .panel-body {
-        right: -20px;
     }
 }

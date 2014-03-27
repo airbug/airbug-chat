@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------------------
 
 //@Require('bugapp.Application')
-//@Require('airbugserver.AirbugServerApplication')
+//@Require('airbugworker.AirbugWorkerApplication')
 
 
 //-------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ var domain                      = require('domain');
 //-------------------------------------------------------------------------------
 
 var Application                 = bugpack.require('bugapp.Application');
-var AirbugServerApplication     = bugpack.require('airbugserver.AirbugServerApplication');
+var AirbugWorkerApplication     = bugpack.require('airbugworker.AirbugWorkerApplication');
 
 
 //-------------------------------------------------------------------------------
@@ -37,16 +37,16 @@ applicationDomain.on('error', function(error) {
     gracefulShutdown();
 });
 
-var application = new AirbugServerApplication();
+var application = new AirbugWorkerApplication();
 applicationDomain.add(application);
 applicationDomain.add(bugpack);
-applicationDomain.add(AirbugServerApplication);
+applicationDomain.add(AirbugWorkerApplication);
 
 applicationDomain.run(function() {
 
-    console.log("Starting airbug server...");
+    console.log("Starting airbug worker...");
     application.addEventListener(Application.EventTypes.STARTED, function(event) {
-        console.log("Airbug server successfully started");
+        console.log("Airbug worker successfully started");
     });
     application.addEventListener(Application.EventTypes.STOPPED, function(event) {
         process.exit();

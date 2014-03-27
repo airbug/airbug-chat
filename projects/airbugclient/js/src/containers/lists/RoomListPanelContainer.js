@@ -22,6 +22,7 @@
 //@Require('airbug.PanelWithHeaderView')
 //@Require('airbug.RoomSummaryView')
 //@Require('airbug.SelectableListItemView')
+//@Require('airbug.StartConversationButtonContainer')
 //@Require('airbug.TextView')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
@@ -35,49 +36,50 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
+var bugpack                             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var AddChange                   = bugpack.require('AddChange');
-var Class                       = bugpack.require('Class');
-var ClearChange                 = bugpack.require('ClearChange');
-var Exception                   = bugpack.require('Exception');
-var Map                         = bugpack.require('Map');
-var RemoveChange                = bugpack.require('RemoveChange');
-var RemovePropertyChange        = bugpack.require('RemovePropertyChange');
-var Set                         = bugpack.require('Set');
-var SetPropertyChange           = bugpack.require('SetPropertyChange');
-var CommandModule               = bugpack.require('airbug.CommandModule');
-var ListView                    = bugpack.require('airbug.ListView');
-var ListViewEvent               = bugpack.require('airbug.ListViewEvent');
-var LoaderView                  = bugpack.require('airbug.LoaderView');
-var PanelWithHeaderView         = bugpack.require('airbug.PanelWithHeaderView');
-var RoomSummaryView             = bugpack.require('airbug.RoomSummaryView');
-var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
-var TextView                    = bugpack.require('airbug.TextView');
-var BugFlow                     = bugpack.require('bugflow.BugFlow');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+var AddChange                           = bugpack.require('AddChange');
+var Class                               = bugpack.require('Class');
+var ClearChange                         = bugpack.require('ClearChange');
+var Exception                           = bugpack.require('Exception');
+var Map                                 = bugpack.require('Map');
+var RemoveChange                        = bugpack.require('RemoveChange');
+var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
+var Set                                 = bugpack.require('Set');
+var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+var CommandModule                       = bugpack.require('airbug.CommandModule');
+var ListView                            = bugpack.require('airbug.ListView');
+var ListViewEvent                       = bugpack.require('airbug.ListViewEvent');
+var LoaderView                          = bugpack.require('airbug.LoaderView');
+var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+var RoomSummaryView                     = bugpack.require('airbug.RoomSummaryView');
+var SelectableListItemView              = bugpack.require('airbug.SelectableListItemView');
+var StartConversationButtonContainer    = bugpack.require('airbug.StartConversationButtonContainer');
+var TextView                            = bugpack.require('airbug.TextView');
+var BugFlow                             = bugpack.require('bugflow.BugFlow');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta                     = BugMeta.context();
-var autowired                   = AutowiredAnnotation.autowired;
-var CommandType                 = CommandModule.CommandType;
-var property                    = PropertyAnnotation.property;
-var view                        = ViewBuilder.view;
-var $series                     = BugFlow.$series;
-var $task                       = BugFlow.$task;
+var bugmeta                             = BugMeta.context();
+var autowired                           = AutowiredAnnotation.autowired;
+var CommandType                         = CommandModule.CommandType;
+var property                            = PropertyAnnotation.property;
+var view                                = ViewBuilder.view;
+var $series                             = BugFlow.$series;
+var $task                               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -103,19 +105,29 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ListItemView}
          */
-        this.currentActiveListItem      = null;
+        this.currentActiveListItem                  = null;
 
         /**
          * @private
          * @type {Map.<string, RoomModel>}
          */
-        this.roomIdToRoomModelMap       = new Map();
+        this.roomIdToRoomModelMap                   = new Map();
 
         /**
          * @private
          * @type {Map.<RoomModel, SelectableListItemView>}
          */
-        this.roomModelToListItemViewMap = new Map();
+        this.roomModelToListItemViewMap             = new Map();
+
+
+        // Containers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {StartConversationButtonContainer}
+         */
+        this.startConversationButtonContainer       = null;
 
 
         // Models
@@ -125,19 +137,19 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {RoomModel}
          */
-        this.currentRoomModel           = currentRoomModel;
+        this.currentRoomModel                       = currentRoomModel;
 
         /**
          * @private
          * @type {CurrentUserModel}
          */
-        this.currentUserModel           = null;
+        this.currentUserModel                       = null;
 
         /**
          * @private
          * @type {RoomList}
          */
-        this.roomList                   = null;
+        this.roomList                               = null;
 
 
         // Modules
@@ -147,25 +159,25 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {CommandModule}
          */
-        this.commandModule              = null;
+        this.commandModule                          = null;
 
         /**
          * @private
          * @type {CurrentUserManagerModule}
          */
-        this.currentUserManagerModule   = null;
+        this.currentUserManagerModule               = null;
 
         /**
          * @private
          * @type {NavigationModule}
          */
-        this.navigationModule           = null;
+        this.navigationModule                       = null;
 
         /**
          * @private
          * @type {RoomManagerModule}
          */
-        this.roomManagerModule          = null;
+        this.roomManagerModule                      = null;
 
 
         // Views
@@ -175,19 +187,19 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
          * @private
          * @type {ListView}
          */
-        this.listView                   = null;
+        this.listView                               = null;
 
         /**
          * @private
          * @type {LoaderView}
          */
-        this.loaderView                 = null;
+        this.loaderView                             = null;
 
         /**
          * @private
          * @type {PanelView}
          */
-        this.panelView                  = null;
+        this.panelView                              = null;
     },
 
 
@@ -253,6 +265,15 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    createContainerChildren: function() {
+        this._super();
+        this.startConversationButtonContainer = new StartConversationButtonContainer();
+        this.addContainerChild(this.startConversationButtonContainer, "#panel-header-nav-right-" + this.panelView.getCid());
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.currentUserModel.observe(ClearChange.CHANGE_TYPE, "", this.observeCurrentUserModelClearChange, this);
@@ -286,10 +307,6 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     buildRoomModel: function(data, roomMeldDocument) {
         var roomModel = this.roomManagerModule.generateRoomModel(data, roomMeldDocument);
         this.roomIdToRoomModelMap.put(roomModel.getProperty("id"), roomModel);
-
-        //TEST
-        console.log("Adding roomModel - ", roomModel);
-
         this.roomList.add(roomModel);
         this.listView.hidePlaceholder();
     },

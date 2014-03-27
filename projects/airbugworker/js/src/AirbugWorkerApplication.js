@@ -2,15 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
+//@Package('airbugworker')
 
-//@Export('AirbugClientApplication')
+//@Export('AirbugWorkerApplication')
 //@Autoload
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugioc.AutowiredAnnotationProcessor')
-//@Require('bugioc.AutowiredScan')
 
 
 //-------------------------------------------------------------------------------
@@ -26,8 +24,6 @@ var bugpack                             = require('bugpack').context();
 
 var Class                               = bugpack.require('Class');
 var Application                         = bugpack.require('bugapp.Application');
-var AutowiredAnnotationProcessor        = bugpack.require('bugioc.AutowiredAnnotationProcessor');
-var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan');
 
 
 //-------------------------------------------------------------------------------
@@ -38,31 +34,7 @@ var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan'
  * @class
  * @extends {Application}
  */
-var AirbugClientApplication = Class.extend(Application, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @constructs
-     */
-    _constructor: function() {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {AutowiredScan}
-         */
-        this.autowiredScan      = new AutowiredScan(new AutowiredAnnotationProcessor(this.getIocContext()));
-    },
-
+var AirbugWorkerApplication = Class.extend(Application, {
 
     //-------------------------------------------------------------------------------
     // Application Methods
@@ -72,10 +44,18 @@ var AirbugClientApplication = Class.extend(Application, {
      * @protected
      */
     preProcessApplication: function() {
-        this.autowiredScan.scanAll();
-        this.autowiredScan.scanContinuous();
-        this.getConfigurationScan().scanAll();
-        this.getModuleScan().scanAll();
+        this.getConfigurationScan().scanBugpack('airbugworker.AirbugWorkerConfiguration');
+        this.getModuleScan().scanBugpacks([
+            "bugmarsh.MarshRegistry",
+            "bugmarsh.Marshaller",
+            "bugwork.WorkerCommandFactory",
+            "bugwork.WorkerContextFactory",
+            "bugwork.WorkerManager",
+            "bugwork.WorkerProcessFactory",
+            "bugwork.WorkerRegistry",
+            "loggerbug.Logger",
+            "airbugworker.AirbugWorkerInitializer"
+        ]);
     }
 });
 
@@ -84,4 +64,4 @@ var AirbugClientApplication = Class.extend(Application, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.AirbugClientApplication", AirbugClientApplication);
+bugpack.export('airbugworker.AirbugWorkerApplication', AirbugWorkerApplication);
