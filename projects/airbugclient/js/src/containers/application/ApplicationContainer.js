@@ -40,7 +40,7 @@ var CarapaceContainer                   = bugpack.require('carapace.CarapaceCont
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @extends {CarapaceContainer}
  */
 var ApplicationContainer = Class.extend(CarapaceContainer, {
@@ -58,8 +58,17 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------------
+
         // Views
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ApplicationHeaderView}
+         */
+        this.applicationHeaderView  = null;
 
         /**
          * @private
@@ -73,13 +82,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
          */
         this.bodyView               = null;
 
-        /**
-         * @private
-         * @type {ApplicationHeaderView}
-         */
-        this.applicationHeaderView  = null;
 
-        //-------------------------------------------------------------------------------
         // Containers
         //-------------------------------------------------------------------------------
 
@@ -96,6 +99,13 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
 
     /**
+     * return {ApplicationHeaderView}
+     */
+    getApplicationHeaderView: function() {
+        return this.applicationHeaderView;
+    },
+
+    /**
      * @return {ApplicationView}
      */
     getApplicationView: function() {
@@ -109,16 +119,9 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         return this.bodyView;
     },
 
-    /**
-     * return {ApplicationHeaderView}
-     */
-    getApplicationHeaderView: function() {
-        return this.applicationHeaderView;
-    },
-
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Overrides
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -131,11 +134,6 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
             this.initializeApplication();
         }
     },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
-    //-------------------------------------------------------------------------------
 
     /**
      * @protected
@@ -161,7 +159,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
     createContainerChildren: function() {
         this._super();
         this.notificationContainer = new NotificationContainer();
-        this.addContainerChild(this.notificationContainer, "body");
+        this.addContainerChild(this.notificationContainer, "#application-" + this.applicationView.getCid());
     },
 
     /**
@@ -176,7 +174,7 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -199,21 +197,23 @@ var ApplicationContainer = Class.extend(CarapaceContainer, {
         this.initializeCatchAllUncaughtErrorsFunction();
     },
 
+    /**
+     * @private
+     */
     initializeCatchAllUncaughtErrorsFunction: function() {
-        var _this = this;
-        var oldOnError = window.onerror;
+        var _this       = this;
+        var oldOnError  = window.onerror;
         window.onerror = function(errorMessage, url, lineNumber){
-            if(oldOnError){ //uncaught execption
+            if (oldOnError) {
                 var errorObject = {
                     errorMessage: errorMessage,
                     url: url,
                     lineNumber: lineNumber
                 };
-              var errorNotificationOverlayContainer = new ErrorNotificationOverlayContainer(errorObject);
-                _this.addContainerChild(errorNotificationOverlayContainer, "body");
+                var errorNotificationOverlayContainer = new ErrorNotificationOverlayContainer(errorObject);
+                _this.addContainerChild(errorNotificationOverlayContainer, "#application-" + _this.applicationView.getCid());
             }
-
-        return false;
+            return false;
         };
     }
 });
