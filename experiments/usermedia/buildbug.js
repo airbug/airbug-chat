@@ -40,7 +40,7 @@ buildProperties({
             name: "usermedia",
             version: "0.0.1",
             dependencies: {
-                bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+                bugpack: "https://s3.amazonaws.com/deploy-airbug/bugpack-0.0.5.tgz",
                 express: "3.2.x",
                 binaryjs: "0.1.x"
             },

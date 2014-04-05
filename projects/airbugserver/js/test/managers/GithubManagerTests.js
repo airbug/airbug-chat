@@ -9,7 +9,6 @@
 //@Require('airbugserver.GithubManager')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.EntityProcessor')
-//@Require('bugentity.EntityScan')
 //@Require('bugentity.SchemaManager')
 //@Require('bugentity.SchemaProperty')
 //@Require('bugflow.BugFlow')
@@ -34,7 +33,6 @@ var Github                  = bugpack.require('airbugserver.Github');
 var GithubManager           = bugpack.require('airbugserver.GithubManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var EntityProcessor         = bugpack.require('bugentity.EntityProcessor');
-var EntityScan              = bugpack.require('bugentity.EntityScan');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');

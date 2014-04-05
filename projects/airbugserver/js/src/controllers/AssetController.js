@@ -118,7 +118,7 @@ var AssetController = Class.extend(EntityController, {
                 if (entities) {
                     entities = entities.map(function(entity){
                         return entity.toObject();
-                    })
+                    });
                     assetJson = {"files": LiteralUtil.convertToLiteral(entities)};
                 }
                 if (throwable) {

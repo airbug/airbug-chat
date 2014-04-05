@@ -11,6 +11,7 @@
 //@Require('bugapp.Application')
 //@Require('bugentity.EntityManagerAnnotationProcessor')
 //@Require('bugentity.EntityManagerScan')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ var Class                               = bugpack.require('Class');
 var Application                         = bugpack.require('bugapp.Application');
 var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
 var EntityManagerScan                   = bugpack.require('bugentity.EntityManagerScan');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ var AirbugServerApplication = Class.extend(Application, {
          * @private
          * @type {EntityManagerScan}
          */
-        this.entityManagerScan  = new EntityManagerScan(new EntityManagerAnnotationProcessor(this.getIocContext()));
+        this.entityManagerScan  = new EntityManagerScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.getIocContext()));
     },
 
 

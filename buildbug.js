@@ -37,7 +37,7 @@ var nodejs              = enableModule('nodejs');
 var version             = "0.0.17";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz",
+    bugpack: "https://s3.amazonaws.com/deploy-airbug/bugpack-0.0.5.tgz",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",
@@ -65,6 +65,7 @@ buildProperties({
             "./projects/airbug/js/src",
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
+            "../bugcore/projects/bugcore/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
@@ -85,7 +86,6 @@ buildProperties({
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugioc/js/src",
-            "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugmvc/js/src",

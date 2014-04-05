@@ -11,6 +11,7 @@
 //@Require('bugapp.Application')
 //@Require('bugioc.AutowiredAnnotationProcessor')
 //@Require('bugioc.AutowiredScan')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ var Class                               = bugpack.require('Class');
 var Application                         = bugpack.require('bugapp.Application');
 var AutowiredAnnotationProcessor        = bugpack.require('bugioc.AutowiredAnnotationProcessor');
 var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ var AirbugClientApplication = Class.extend(Application, {
          * @private
          * @type {AutowiredScan}
          */
-        this.autowiredScan      = new AutowiredScan(new AutowiredAnnotationProcessor(this.getIocContext()));
+        this.autowiredScan      = new AutowiredScan(BugMeta.context(), new AutowiredAnnotationProcessor(this.getIocContext()));
     },
 
 

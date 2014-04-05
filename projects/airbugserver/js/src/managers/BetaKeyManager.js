@@ -217,7 +217,7 @@ var BetaKeyManager = Class.extend(EntityManager, {
 
         $series([
             $task(function(flow){
-                allBetaKeyObjects = allBetaKeys.map(function(key){
+                var allBetaKeyObjects = allBetaKeys.map(function(key) {
                     return {betaKey: key, baseKey: baseKey, isBaseKey: (key === baseKey), secondaryKeys: key.split("+").slice(1)};
                 });
 
