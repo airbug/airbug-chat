@@ -16,7 +16,7 @@
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -43,7 +43,7 @@ var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

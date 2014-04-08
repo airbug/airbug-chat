@@ -9,7 +9,7 @@
 //@Require('airbugserver.Session')
 //@Require('airbugserver.SessionData')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -28,7 +28,7 @@ var Cookie                  = bugpack.require('airbugserver.Cookie');
 var Session                 = bugpack.require('airbugserver.Session');
 var SessionData             = bugpack.require('airbugserver.SessionData');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

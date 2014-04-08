@@ -8,7 +8,7 @@
 //@Require('airbugserver.ChatMessageController')
 //@Require('airbugserver.EntityController')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var ChatMessageController   = bugpack.require('airbugserver.ChatMessageController');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

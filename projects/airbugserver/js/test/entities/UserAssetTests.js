@@ -9,7 +9,7 @@
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserAsset')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Asset                   = bugpack.require('airbugserver.Asset');
 var User                    = bugpack.require('airbugserver.User');
 var UserAsset               = bugpack.require('airbugserver.UserAsset');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

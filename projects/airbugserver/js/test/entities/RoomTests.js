@@ -9,7 +9,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.Room')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Set                     = bugpack.require('Set');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var Room                    = bugpack.require('airbugserver.Room');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

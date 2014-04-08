@@ -7,7 +7,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.ChatMessageCounter')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var ChatMessageCounter      = bugpack.require('airbugserver.ChatMessageCounter');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

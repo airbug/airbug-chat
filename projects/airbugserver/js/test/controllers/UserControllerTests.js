@@ -8,7 +8,7 @@
 //@Require('airbugserver.EntityController')
 //@Require('airbugserver.UserController')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var UserController          = bugpack.require('airbugserver.UserController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
