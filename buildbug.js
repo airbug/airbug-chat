@@ -11,6 +11,7 @@ var buildbug            = require('buildbug');
 
 var buildProject        = buildbug.buildProject;
 var buildProperties     = buildbug.buildProperties;
+var buildScript         = buildbug.buildScript;
 var buildTarget         = buildbug.buildTarget;
 var enableModule        = buildbug.enableModule;
 var parallel            = buildbug.parallel;
@@ -27,6 +28,7 @@ var bugpack             = enableModule('bugpack');
 var bugunit             = enableModule('bugunit');
 var clientjs            = enableModule('clientjs');
 var core                = enableModule('core');
+var lintbug             = enableModule("lintbug");
 var nodejs              = enableModule('nodejs');
 
 
@@ -291,6 +293,17 @@ buildProperties({
             ]
         }
     },
+    lint: {
+        targetPaths: [
+            "."
+        ],
+        ignorePatterns: [
+            ".*\\.buildbug$",
+            ".*\\.bugunit$",
+            ".*\\.git$",
+            ".*node_modules$"
+        ]
+    },
     marketingContent: {
         emailFacebookIcon: "./projects/marketing/static/img/airbug_email_facebook-icon.jpg",
         emailTwitterIcon: "./projects/marketing/static/img/airbug_email_twitter-icon.jpg",
@@ -301,15 +314,10 @@ buildProperties({
 
 
 //-------------------------------------------------------------------------------
-// Declare Tasks
+// Declare BuildTargets
 //-------------------------------------------------------------------------------
 
-
-//-------------------------------------------------------------------------------
-// Declare Flows
-//-------------------------------------------------------------------------------
-
-// Clean Flow
+// Clean BuildTarget
 //-------------------------------------------------------------------------------
 
 buildTarget('clean').buildFlow(
@@ -317,7 +325,7 @@ buildTarget('clean').buildFlow(
 );
 
 
-// Local Flow
+// Local BuildTarget
 //-------------------------------------------------------------------------------
 
 buildTarget('local').buildFlow(
@@ -474,13 +482,22 @@ buildTarget('local').buildFlow(
                         bucket: "{{local-bucket}}"
                     }
                 })
-            ])
+            ]),
+            targetTask('lint', {
+                properties: {
+                    targetPaths: buildProject.getProperty("bugjs.targetPaths"),
+                    ignores: buildProject.getProperty("bugjs.ignorePatterns"),
+                    lintTasks: [
+                        "fixExportAndRemovePackageAnnotations"
+                    ]
+                }
+            })
         ])
     ])
 ).makeDefault();
 
 
-// Prod Flow
+// Prod BuildTarget
 //-------------------------------------------------------------------------------
 
 buildTarget('prod').buildFlow(
@@ -726,7 +743,7 @@ buildTarget('prod').buildFlow(
 );
 
 
-// Marketing Flow
+// Marketing BuildTarget
 //-------------------------------------------------------------------------------
 
 buildTarget('marketing').buildFlow(
@@ -777,3 +794,16 @@ buildTarget('marketing').buildFlow(
         })
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Build Scripts
+//-------------------------------------------------------------------------------
+
+buildScript({
+    dependencies: [
+        "bugcore",
+        "bugflow"
+    ],
+    script: "../bugjs/lintbug.js"
+});
