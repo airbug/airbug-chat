@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ChatMessageTinkerButtonContainer')
+//@Export('airbug.ChatMessageTinkerButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

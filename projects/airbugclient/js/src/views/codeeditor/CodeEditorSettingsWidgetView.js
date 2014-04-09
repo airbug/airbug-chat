@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorSettingsWidgetView')
+//@Export('airbug.CodeEditorSettingsWidgetView')
 
 //@Require('Class')
 //@Require('airbug.FormViewEvent')

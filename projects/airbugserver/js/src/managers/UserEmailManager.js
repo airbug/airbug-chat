@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('UserEmailManager')
+//@Export('airbugserver.UserEmailManager')
 //@Autoload
 
 //@Require('ArgUtil')

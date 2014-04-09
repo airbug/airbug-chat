@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('EmbedImageButtonGroupContainer')
+//@Export('airbug.EmbedImageButtonGroupContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')

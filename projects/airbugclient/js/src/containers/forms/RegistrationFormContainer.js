@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RegistrationFormContainer')
+//@Export('airbug.RegistrationFormContainer')
 
 //@Require('Class')
 //@Require('Exception')

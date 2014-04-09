@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CurrentUserManagerModule')
+//@Export('airbug.CurrentUserManagerModule')
 //@Autoload
 
 //@Require('Class')

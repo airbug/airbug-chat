@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserImageAssetList')
+//@Export('airbug.UserImageAssetList')
 
 //@Require('Class')
 //@Require('carapace.CarapaceList')

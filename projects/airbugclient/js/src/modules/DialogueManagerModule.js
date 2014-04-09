@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('DialogueManagerModule')
+//@Export('airbug.DialogueManagerModule')
 //@Autoload
 
 //@Require('ArgUtil')

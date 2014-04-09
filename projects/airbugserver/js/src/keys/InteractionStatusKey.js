@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('InteractionStatusKey')
+//@Export('airbugserver.InteractionStatusKey')
 
 //@Require('ArgumentBug')
 //@Require('Class')

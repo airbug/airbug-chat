@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('MultiColumnView')
+//@Export('airbug.MultiColumnView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

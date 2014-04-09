@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugworker')
-
-//@Export('EmailBounceWorker')
+//@Export('airbugworker.EmailBounceWorker')
 //@Autoload
 
 //@Require('Class')

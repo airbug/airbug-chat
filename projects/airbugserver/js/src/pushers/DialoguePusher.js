@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('DialoguePusher')
+//@Export('airbugserver.DialoguePusher')
 //@Autoload
 
 //@Require('ArgUtil')

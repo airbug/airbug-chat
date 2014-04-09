@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('RoomMemberManager')
+//@Export('airbugserver.RoomMemberManager')
 //@Autoload
 
 //@Require('ArgUtil')

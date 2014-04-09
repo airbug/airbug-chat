@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('EntityController')
+//@Export('airbugserver.EntityController')
 
 //@Require('Class')
 //@Require('Exception')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ErrorNotificationOverlayContainer')
+//@Export('airbug.ErrorNotificationOverlayContainer')
 
 //@Require('Class')
 //@Require('airbug.BoxView')

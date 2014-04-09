@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BodyView')
+//@Export('airbug.BodyView')
 
 //@Require('Class')
 //@Require('carapace.CarapaceView')

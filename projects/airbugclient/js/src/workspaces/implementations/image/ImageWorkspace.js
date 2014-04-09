@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImageWorkspace')
+//@Export('airbug.ImageWorkspace')
 
 //@Require('Class')
 //@Require('Obj')

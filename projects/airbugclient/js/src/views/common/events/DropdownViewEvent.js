@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('DropdownViewEvent')
+//@Export('airbug.DropdownViewEvent')
 
 //@Require('Class')
 //@Require('Event')

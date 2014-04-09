@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('MessageContentTextView')
+//@Export('airbug.MessageContentTextView')
 
 //@Require('Class')
 //@Require('HtmlUtil')

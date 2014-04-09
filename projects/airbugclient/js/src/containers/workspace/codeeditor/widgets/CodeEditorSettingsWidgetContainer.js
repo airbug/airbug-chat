@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorSettingsWidgetContainer')
+//@Export('airbug.CodeEditorSettingsWidgetContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')

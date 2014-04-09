@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserManagerModule')
+//@Export('airbug.UserManagerModule')
 //@Autoload
 
 //@Require('ArgUtil')

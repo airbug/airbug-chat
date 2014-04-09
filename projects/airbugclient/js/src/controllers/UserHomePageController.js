@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserHomePageController')
+//@Export('airbug.UserHomePageController')
 //@Autoload
 
 //@Require('Class')

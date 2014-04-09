@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImageListContainer')
+//@Export('airbug.ImageListContainer')
 
 //@Require('AddChange')
 //@Require('Class')

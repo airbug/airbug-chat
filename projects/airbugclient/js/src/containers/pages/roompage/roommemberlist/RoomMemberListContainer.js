@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomMemberListContainer')
+//@Export('airbug.RoomMemberListContainer')
 
 //@Require('AddChange')
 //@Require('Class')

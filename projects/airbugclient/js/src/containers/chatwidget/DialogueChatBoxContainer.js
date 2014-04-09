@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('DialogueChatBoxContainer')
+//@Export('airbug.DialogueChatBoxContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

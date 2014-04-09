@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceWidgetContainer')
+//@Export('airbug.WorkspaceWidgetContainer')
 
 //@Require('Class')
 //@Require('carapace.CarapaceContainer')

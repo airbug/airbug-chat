@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RetrieveDialogueByUserIdForCurrentUserRequest')
+//@Export('airbug.RetrieveDialogueByUserIdForCurrentUserRequest')
 
 //@Require('Bug')
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('TextAreaView')
+//@Export('airbug.TextAreaView')
 
 //@Require('Class')
 //@Require('TypeUtil')

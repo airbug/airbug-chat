@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ProfileSettingsPageContainer')
+//@Export('airbug.ProfileSettingsPageContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

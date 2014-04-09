@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AddsChatMessageCountersAndIndexesMigration')
+//@Export('airbugserver.AddsChatMessageCountersAndIndexesMigration')
 //@Autoload
 
 //@Require('Class')

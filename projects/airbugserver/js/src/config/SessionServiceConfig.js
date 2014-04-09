@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('SessionServiceConfig')
+//@Export('airbugserver.SessionServiceConfig')
 
 //@Require('Class')
 //@Require('Config')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('PreviousMessagesLoaderContainer')
+//@Export('airbug.PreviousMessagesLoaderContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')

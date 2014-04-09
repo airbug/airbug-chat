@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('LoginPageContainer')
+//@Export('airbug.LoginPageContainer')
 
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')

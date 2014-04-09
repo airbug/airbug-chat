@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('DeleteImageButtonGroupContainer')
+//@Export('airbug.DeleteImageButtonGroupContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonGroupView')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CreateRoomFormContainer')
+//@Export('airbug.CreateRoomFormContainer')
 
 //@Require('Class')
 //@Require('Exception')

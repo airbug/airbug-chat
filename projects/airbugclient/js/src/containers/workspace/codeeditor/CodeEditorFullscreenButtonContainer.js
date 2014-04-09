@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorFullscreenButtonContainer')
+//@Export('airbug.CodeEditorFullscreenButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

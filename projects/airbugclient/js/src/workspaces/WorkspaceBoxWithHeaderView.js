@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceBoxWithHeaderView')
+//@Export('airbug.WorkspaceBoxWithHeaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

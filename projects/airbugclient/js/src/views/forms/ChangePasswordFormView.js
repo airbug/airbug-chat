@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ChangePasswordFormView')
+//@Export('airbug.ChangePasswordFormView')
 
 //@Require('Class')
 //@Require('PasswordUtil')

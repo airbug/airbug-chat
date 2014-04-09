@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RegistrationFormView')
+//@Export('airbug.RegistrationFormView')
 
 //@Require('Class')
 //@Require('PasswordUtil')

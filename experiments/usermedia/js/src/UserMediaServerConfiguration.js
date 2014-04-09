@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('usermedia')
-
-//@Export('UserMediaServerConfiguration')
+//@Export('usermedia.UserMediaServerConfiguration')
 //@Autoload
 
 //@Require('Class')

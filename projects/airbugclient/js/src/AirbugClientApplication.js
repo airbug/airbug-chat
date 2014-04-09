@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('AirbugClientApplication')
+//@Export('airbug.AirbugClientApplication')
 //@Autoload
 
 //@Require('Class')

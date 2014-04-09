@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('EntityPusher')
+//@Export('airbugserver.EntityPusher')
 
 //@Require('ArgUtil')
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ListViewEvent')
+//@Export('airbug.ListViewEvent')
 
 //@Require('Class')
 //@Require('Event')

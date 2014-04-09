@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('MappedMeldModel')
+//@Export('airbug.MappedMeldModel')
 
 //@Require('Class')
 //@Require('Map')

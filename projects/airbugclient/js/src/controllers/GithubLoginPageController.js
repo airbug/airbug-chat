@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('GithubLoginPageController')
+//@Export('airbug.GithubLoginPageController')
 //@Autoload
 
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomPageContainer')
+//@Export('airbug.RoomPageContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

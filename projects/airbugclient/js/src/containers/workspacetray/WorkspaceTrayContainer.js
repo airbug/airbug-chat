@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceTrayContainer')
+//@Export('airbug.WorkspaceTrayContainer')
 
 //@Require('Class')
 //@Require('Map')

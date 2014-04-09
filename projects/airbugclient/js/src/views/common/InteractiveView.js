@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('InteractiveView')
+//@Export('airbug.InteractiveView')
 
 //@Require('Class')
 //@Require('airbug.MouseEvent')

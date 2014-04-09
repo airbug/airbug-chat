@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('AccountSettingsPageController')
+//@Export('airbug.AccountSettingsPageController')
 //@Autoload
 
 //@Require('Class')

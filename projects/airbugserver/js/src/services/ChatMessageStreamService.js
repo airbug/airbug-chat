@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('ChatMessageStreamService')
+//@Export('airbugserver.ChatMessageStreamService')
 //@Autoload
 
 //@Require('Class')

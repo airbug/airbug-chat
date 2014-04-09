@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugworker')
-
-//@Export('AirbugWorkerInitializer')
+//@Export('airbugworker.AirbugWorkerInitializer')
 //@Autoload
 
 //@Require('Class')

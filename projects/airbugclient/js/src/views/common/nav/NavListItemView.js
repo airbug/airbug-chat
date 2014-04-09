@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NavListItemView')
+//@Export('airbug.NavListItemView')
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')

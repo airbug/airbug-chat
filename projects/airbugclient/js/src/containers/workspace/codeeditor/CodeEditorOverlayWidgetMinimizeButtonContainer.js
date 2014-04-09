@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorOverlayWidgetMinimizeButtonContainer')
+//@Export('airbug.CodeEditorOverlayWidgetMinimizeButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

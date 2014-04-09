@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('IMessageHandler')
+//@Export('airbug.IMessageHandler')
 
 //@Require('Interface')
 

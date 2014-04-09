@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('EmbedImageNakedButtonContainer')
+//@Export('airbug.EmbedImageNakedButtonContainer')
 
 //@Require('Class')
 //@Require('Event')

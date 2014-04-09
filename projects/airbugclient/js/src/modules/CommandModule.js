@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CommandModule')
+//@Export('airbug.CommandModule')
 //@Autoload
 
 //@Require('Class')

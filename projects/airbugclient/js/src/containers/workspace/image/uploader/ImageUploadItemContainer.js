@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImageUploadItemContainer')
+//@Export('airbug.ImageUploadItemContainer')
 
 //@Require('Class')
 //@Require('airbug.CommandModule')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NakedSubmitButtonView')
+//@Export('airbug.NakedSubmitButtonView')
 
 //@Require('Class')
 //@Require('airbug.NakedButtonView')

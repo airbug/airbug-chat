@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AddsOwnerTypeToConversationsMigration')
+//@Export('airbugserver.AddsOwnerTypeToConversationsMigration')
 //@Autoload
 
 //@Require('Class')

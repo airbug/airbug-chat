@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('GithubLoginButtonView')
+//@Export('airbug.GithubLoginButtonView')
 
 //@Require('Class')
 //@Require('airbug.ButtonView')

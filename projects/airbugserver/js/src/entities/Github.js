@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('Github')
+//@Export('airbugserver.Github')
 //@Autoload
 
 //@Require('Bug')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('InteractionStatusDefines')
+//@Export('airbug.InteractionStatusDefines')
 
 
 //-------------------------------------------------------------------------------

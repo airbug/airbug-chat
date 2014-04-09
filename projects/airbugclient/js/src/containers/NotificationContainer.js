@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NotificationContainer')
+//@Export('airbug.NotificationContainer')
 
 //@Require('Class')
 //@Require('airbug.CommandModule')

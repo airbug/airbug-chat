@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserImageAssetModel')
+//@Export('airbug.UserImageAssetModel')
 
 //@Require('Class')
 //@Require('airbug.MappedMeldModel')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomMemberModel')
+//@Export('airbug.RoomMemberModel')
 
 //@Require('Class')
 //@Require('airbug.MappedMeldModel')

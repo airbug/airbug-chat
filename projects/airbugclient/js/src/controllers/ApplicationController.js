@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ApplicationController')
+//@Export('airbug.ApplicationController')
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')

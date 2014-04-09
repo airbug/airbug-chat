@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('GithubApi')
+//@Export('airbugserver.GithubApi')
 //@Autowired
 
 //@Require('Class')

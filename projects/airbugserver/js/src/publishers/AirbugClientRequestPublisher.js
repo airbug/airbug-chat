@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AirbugClientRequestPublisher')
+//@Export('airbugserver.AirbugClientRequestPublisher')
 //@Autoload
 
 //@Require('ArgUtil')

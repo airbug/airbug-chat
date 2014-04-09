@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserRedirectPageController')
+//@Export('airbug.UserRedirectPageController')
 //@Autoload
 
 //@Require('Class')

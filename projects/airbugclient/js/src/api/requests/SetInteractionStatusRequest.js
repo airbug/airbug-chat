@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('SetInteractionStatusRequest')
+//@Export('airbug.SetInteractionStatusRequest')
 
 //@Require('Class')
 //@Require('airbug.ApiRequest')

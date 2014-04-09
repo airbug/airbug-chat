@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('UserImageAssetStreamManager')
+//@Export('airbugserver.UserImageAssetStreamManager')
 //@Autoload
 
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('MemoryCache')
+//@Export('airbug.MemoryCache')
 
 //@Require('Class')
 //@Require('Map')

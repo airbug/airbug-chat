@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('InteractionStatusManager')
+//@Export('airbugserver.InteractionStatusManager')
 //@Autoload
 
 //@Require('Class')

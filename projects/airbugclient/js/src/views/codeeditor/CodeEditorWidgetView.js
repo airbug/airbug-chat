@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorWidgetView')
+//@Export('airbug.CodeEditorWidgetView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

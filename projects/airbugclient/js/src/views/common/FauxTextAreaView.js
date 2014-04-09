@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('FauxTextAreaView')
+//@Export('airbug.FauxTextAreaView')
 
 //@Require('Class')
 //@Require('TypeUtil')

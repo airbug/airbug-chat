@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('UpdatesConversationIdForChatMessageCountersMigration')
+//@Export('airbugserver.UpdatesConversationIdForChatMessageCountersMigration')
 //@Autoload
 
 //@Require('Class')

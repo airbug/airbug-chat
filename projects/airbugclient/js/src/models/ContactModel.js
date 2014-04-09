@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ContactModel')
+//@Export('airbug.ContactModel')
 
 //@Require('Class')
 //@Require('Obj')

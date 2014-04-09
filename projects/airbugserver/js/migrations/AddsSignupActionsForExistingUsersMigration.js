@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AddsSignupActionsForExistingUsersMigration')
+//@Export('airbugserver.AddsSignupActionsForExistingUsersMigration')
 //@Autoload
 
 //@Require('Class')

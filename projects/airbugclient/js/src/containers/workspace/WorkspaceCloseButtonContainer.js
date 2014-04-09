@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceCloseButtonContainer')
+//@Export('airbug.WorkspaceCloseButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

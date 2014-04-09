@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImageListItemButtonToolbarContainer')
+//@Export('airbug.ImageListItemButtonToolbarContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonToolbarView')

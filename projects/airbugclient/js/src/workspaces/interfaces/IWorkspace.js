@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('IWorkspace')
+//@Export('airbug.IWorkspace')
 
 //@Require('Interface')
 

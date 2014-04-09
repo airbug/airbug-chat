@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('PageContainer')
+//@Export('airbug.PageContainer')
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')

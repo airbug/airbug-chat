@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('SlidePanelView')
+//@Export('airbug.SlidePanelView')
 
 //@Require('Class')
 //@Require('TypeUtil')

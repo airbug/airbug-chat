@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorWorkspaceContainer')
+//@Export('airbug.CodeEditorWorkspaceContainer')
 
 //@Require('Class')
 //@Require('airbug.BoxView')

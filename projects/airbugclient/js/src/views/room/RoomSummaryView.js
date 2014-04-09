@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomSummaryView')
+//@Export('airbug.RoomSummaryView')
 
 //@Require('Class')
 //@Require('DateUtil')

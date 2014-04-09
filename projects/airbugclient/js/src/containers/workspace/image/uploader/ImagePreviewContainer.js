@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImagePreviewContainer')
+//@Export('airbug.ImagePreviewContainer')
 
 //@Require('Class')
 //@Require('airbug.ImagePreviewView')

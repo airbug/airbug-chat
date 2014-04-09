@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('MessageHandlerModule')
+//@Export('airbug.MessageHandlerModule')
 //@Autoload
 
 //@Require('Bug')

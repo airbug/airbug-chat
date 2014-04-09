@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomMemberList')
+//@Export('airbug.RoomMemberList')
 
 //@Require('Class')
 //@Require('carapace.CarapaceList')

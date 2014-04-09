@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('TabView')
+//@Export('airbug.TabView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

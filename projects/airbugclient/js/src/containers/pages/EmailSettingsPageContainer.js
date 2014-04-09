@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('EmailSettingsPageContainer')
+//@Export('airbug.EmailSettingsPageContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NotificationSettingsPageContainer')
+//@Export('airbug.NotificationSettingsPageContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

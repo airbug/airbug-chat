@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('UserImageAssetStreamManagerModule')
+//@Export('airbug.UserImageAssetStreamManagerModule')
 //@Autoload
 
 //@Require('Class')

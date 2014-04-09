@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugservertest')
-
-//@Export('UserImageAssetStreamPusherStub')
+//@Export('airbugservertest.UserImageAssetStreamPusherStub')
 
 //@Require('Class')
 //@Require('Obj')

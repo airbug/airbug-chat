@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('ControllerManager')
+//@Export('airbugserver.ControllerManager')
 //@Autoload
 
 //@Require('ArgumentBug')

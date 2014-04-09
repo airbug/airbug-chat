@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NavigationModule')
+//@Export('airbug.NavigationModule')
 //@Autoload
 
 //@Require('Class')

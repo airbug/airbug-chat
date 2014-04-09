@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BetaKeyDashboardPageContainer')
+//@Export('airbug.BetaKeyDashboardPageContainer')
 
 //@Require('Class')
 //@Require('airbug.AccountDropdownButtonContainer')

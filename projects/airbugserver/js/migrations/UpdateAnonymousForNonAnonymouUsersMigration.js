@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('UpdatesAnonymousForNonAnonymousUsersMigration')
+//@Export('airbugserver.UpdatesAnonymousForNonAnonymousUsersMigration')
 //@Autoload
 
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomMemberListItemContainer')
+//@Export('airbug.RoomMemberListItemContainer')
 
 //@Require('Class')
 //@Require('airbug.SelectableListItemView')

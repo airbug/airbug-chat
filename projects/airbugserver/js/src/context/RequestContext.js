@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('RequestContext')
+//@Export('airbugserver.RequestContext')
 
 //@Require('Class')
 //@Require('Map')

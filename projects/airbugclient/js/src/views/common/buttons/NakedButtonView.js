@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NakedButtonView')
+//@Export('airbug.NakedButtonView')
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')

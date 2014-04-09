@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('OverlayViewEvent')
+//@Export('airbug.OverlayViewEvent')
 
 //@Require('Class')
 //@Require('Event')

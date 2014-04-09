@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BetaKeyModel')
+//@Export('airbug.BetaKeyModel')
 
 //@Require('Class')
 //@Require('airbug.MeldModel')

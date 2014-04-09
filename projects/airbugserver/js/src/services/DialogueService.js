@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('DialogueService')
+//@Export('airbugserver.DialogueService')
 //@Autoload
 
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ShareRoomContainer')
+//@Export('airbug.ShareRoomContainer')
 
 //@Require('Class')
 //@Require('airbug.BoxWithHeaderView')

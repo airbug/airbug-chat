@@ -39,7 +39,7 @@ var nodejs              = enableModule('nodejs');
 var version             = "0.0.17";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "https://s3.amazonaws.com/deploy-airbug/bugpack-0.0.5.tgz",
+    bugpack: "0.1.5",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",

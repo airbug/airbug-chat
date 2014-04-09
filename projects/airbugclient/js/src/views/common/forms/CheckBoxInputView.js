@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CheckBoxInputView')
+//@Export('airbug.CheckBoxInputView')
 
 //@Require('Class')
 //@Require('airbug.InputView')

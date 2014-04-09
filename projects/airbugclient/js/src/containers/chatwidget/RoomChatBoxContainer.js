@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomChatBoxContainer')
+//@Export('airbug.RoomChatBoxContainer')
 
 //@Require('Class')
 //@Require('ClearChange')

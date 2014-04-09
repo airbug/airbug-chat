@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WindowUtil')
+//@Export('airbug.WindowUtil')
 
 //@Require('Class')
 //@Require('Obj')

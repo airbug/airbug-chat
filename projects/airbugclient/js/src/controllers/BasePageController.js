@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BasePageController')
+//@Export('airbug.BasePageController')
 //@Autoload
 
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('Room')
+//@Export('airbugserver.Room')
 //@Autoload
 
 //@Require('Bug')

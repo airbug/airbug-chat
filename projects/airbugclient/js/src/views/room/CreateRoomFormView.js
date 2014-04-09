@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CreateRoomFormView')
+//@Export('airbug.CreateRoomFormView')
 
 //@Require('Class')
 //@Require('airbug.FormViewEvent')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('SelectableListItemView')
+//@Export('airbug.SelectableListItemView')
 
 //@Require('Class')
 //@Require('airbug.ListItemView')

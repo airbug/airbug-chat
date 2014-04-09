@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomLinkFauxTextFieldView')
+//@Export('airbug.RoomLinkFauxTextFieldView')
 
 //@Require('Class')
 //@Require('TypeUtil')

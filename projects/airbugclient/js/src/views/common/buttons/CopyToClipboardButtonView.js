@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CopyToClipboardButtonView')
+//@Export('airbug.CopyToClipboardButtonView')
 
 //@Require('Class')
 //@Require('airbug.ButtonView')

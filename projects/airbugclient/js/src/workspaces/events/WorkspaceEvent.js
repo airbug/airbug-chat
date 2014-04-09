@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceEvent')
+//@Export('airbug.WorkspaceEvent')
 
 //@Require('Class')
 //@Require('Event')

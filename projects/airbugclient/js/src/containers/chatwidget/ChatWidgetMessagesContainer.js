@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ChatWidgetMessagesContainer')
+//@Export('airbug.ChatWidgetMessagesContainer')
 
 //@Require('AddChange')
 //@Require('Bug')

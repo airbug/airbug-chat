@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BackButtonContainer')
+//@Export('airbug.BackButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

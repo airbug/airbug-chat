@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('UserController')
+//@Export('airbugserver.UserController')
 //@Autoload
 
 //@Require('Class')

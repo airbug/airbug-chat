@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CloseShareRoomOverlayButtonContainer')
+//@Export('airbug.CloseShareRoomOverlayButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

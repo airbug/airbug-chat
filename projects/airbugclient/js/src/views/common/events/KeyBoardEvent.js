@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('KeyBoardEvent')
+//@Export('airbug.KeyBoardEvent')
 
 //@Require('Class')
 //@Require('Event')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('LogoutPageController')
+//@Export('airbug.LogoutPageController')
 //@Autoload
 
 //@Require('Class')

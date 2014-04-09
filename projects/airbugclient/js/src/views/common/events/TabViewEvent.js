@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('TabViewEvent')
+//@Export('airbug.TabViewEvent')
 
 //@Require('Class')
 //@Require('Event')

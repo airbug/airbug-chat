@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('FormViewWithWrapper')
+//@Export('airbug.FormViewWithWrapper')
 
 //@Require('Class')
 //@Require('airbug.FormViewEvent')

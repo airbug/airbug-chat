@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('FormControlGroupView')
+//@Export('airbug.FormControlGroupView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

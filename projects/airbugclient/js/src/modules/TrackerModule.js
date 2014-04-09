@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('TrackerModule')
+//@Export('airbug.TrackerModule')
 //@Autoload
 
 //@Require('Class')

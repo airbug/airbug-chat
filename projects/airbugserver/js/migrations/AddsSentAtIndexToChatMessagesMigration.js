@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AddsSentAtIndexToChatMessagesMigration')
+//@Export('airbugserver.AddsSentAtIndexToChatMessagesMigration')
 //@Autoload
 
 //@Require('Bug')

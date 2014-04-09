@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('RoomLinkTextView')
+//@Export('airbug.RoomLinkTextView')
 
 //@Require('Class')
 //@Require('airbug.TextView')

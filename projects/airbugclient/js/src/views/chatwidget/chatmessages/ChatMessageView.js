@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ChatMessageView')
+//@Export('airbug.ChatMessageView')
 
 //@Require('Class')
 //@Require('DateUtil')

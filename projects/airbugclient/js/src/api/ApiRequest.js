@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ApiRequest')
+//@Export('airbug.ApiRequest')
 
 //@Require('ArgUtil')
 //@Require('Bug')

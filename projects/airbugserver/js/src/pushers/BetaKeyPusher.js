@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('BetaKeyPusher')
+//@Export('airbugserver.BetaKeyPusher')
 //@Autoload
 
 //@Require('Class')

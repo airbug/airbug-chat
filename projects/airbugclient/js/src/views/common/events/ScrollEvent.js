@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ScrollEvent')
+//@Export('airbug.ScrollEvent')
 
 //@Require('Class')
 //@Require('Event')

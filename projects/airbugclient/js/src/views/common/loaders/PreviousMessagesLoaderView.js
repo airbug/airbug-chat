@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('PreviousMessagesLoaderView')
+//@Export('airbug.PreviousMessagesLoaderView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

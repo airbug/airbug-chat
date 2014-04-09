@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('PinboardTrayButtonContainer')
+//@Export('airbug.PinboardTrayButtonContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')

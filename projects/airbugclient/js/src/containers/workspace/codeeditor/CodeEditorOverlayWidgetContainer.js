@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('CodeEditorOverlayWidgetContainer')
+//@Export('airbug.CodeEditorOverlayWidgetContainer')
 
 //@Require('Class')
 //@Require('ace.Ace')

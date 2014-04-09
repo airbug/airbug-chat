@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AssetPusher')
+//@Export('airbugserver.AssetPusher')
 //@Autoload
 
 //@Require('ArgUtil')

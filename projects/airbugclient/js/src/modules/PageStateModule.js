@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('PageStateModule')
+//@Export('airbug.PageStateModule')
 //@Autoload
 
 //@Require('Class')

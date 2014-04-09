@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('BetaKeyService')
+//@Export('airbugserver.BetaKeyService')
 //@Autoload
 
 //@Require('Bug')

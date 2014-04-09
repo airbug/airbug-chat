@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('EmailSettingsPageController')
+//@Export('airbug.EmailSettingsPageController')
 //@Autoload
 
 //@Require('Class')

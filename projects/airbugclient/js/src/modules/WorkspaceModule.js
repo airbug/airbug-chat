@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('WorkspaceModule')
+//@Export('airbug.WorkspaceModule')
 //@Autoload
 
 //@Require('Bug')

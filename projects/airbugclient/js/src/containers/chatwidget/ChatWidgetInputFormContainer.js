@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ChatWidgetInputFormContainer')
+//@Export('airbug.ChatWidgetInputFormContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonView')

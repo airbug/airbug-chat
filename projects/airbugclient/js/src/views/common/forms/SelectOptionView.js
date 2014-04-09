@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('SelectOptionView')
+//@Export('airbug.SelectOptionView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ImageUploadWidgetContainer')
+//@Export('airbug.ImageUploadWidgetContainer')
 
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')

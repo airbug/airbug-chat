@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('NotificationSettingsPageController')
+//@Export('airbug.NotificationSettingsPageController')
 //@Autoload
 
 //@Require('Class')

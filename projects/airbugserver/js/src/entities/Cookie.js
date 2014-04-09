@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('Cookie')
+//@Export('airbugserver.Cookie')
 //@Autoload
 
 //@Require('Class')

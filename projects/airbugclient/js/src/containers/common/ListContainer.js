@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('ListContainer')
+//@Export('airbug.ListContainer')
 
 //@Require('Class')
 //@Require('Event')

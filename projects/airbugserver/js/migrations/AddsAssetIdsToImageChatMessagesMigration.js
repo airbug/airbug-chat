@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
-
-//@Export('AddsAssetIdsToImageChatMessagesMigration')
+//@Export('airbugserver.AddsAssetIdsToImageChatMessagesMigration')
 //@Autoload
 
 //@Require('Class')

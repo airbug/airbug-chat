@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbug')
-
-//@Export('BetaKeyDashboardPageController')
+//@Export('airbug.BetaKeyDashboardPageController')
 //@Autoload
 
 //@Require('Class')
