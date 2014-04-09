@@ -344,7 +344,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
-                    "fixExportAndRemovePackageAnnotations"
+   
                 ]
             }
         }),
@@ -511,6 +511,15 @@ buildTarget('prod').buildFlow(
         // old source files are removed. We should figure out a better way of doing that.
 
         targetTask('clean'),
+        targetTask('lint', {
+            properties: {
+                targetPaths: buildProject.getProperty("lint.targetPaths"),
+                ignores: buildProject.getProperty("lint.ignorePatterns"),
+                lintTasks: [
+
+                ]
+            }
+        }),
         parallel([
 
             //Create test airbugserver package
