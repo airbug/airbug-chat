@@ -68,6 +68,8 @@ buildProperties({
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
             "../bugcore/projects/bugcore/js/src",
+            "../bugflow/projects/bugflow/js/src",
+            "../bugmeta/projects/bugmeta/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
@@ -86,13 +88,10 @@ buildProperties({
             "../bugjs/projects/bugcall/bugjars/client/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
-            "../bugjs/projects/bugflow/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
-            "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugmvc/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
-            "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/carapace/js/src",
             "../bugjs/projects/cookies/js/src",
             "../bugjs/projects/loggerbug/js/src",
@@ -100,6 +99,7 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/client/js/src",
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
@@ -127,6 +127,9 @@ buildProperties({
             "./projects/airbug/js/src",
             "./projects/airbugserver/js/src",
             "./projects/airbugserver/js/migrations",
+            "../bugflow/projects/bugflow/js/src",
+            "../bugcore/projects/bugcore/js/src",
+            "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
@@ -134,17 +137,12 @@ buildProperties({
             "../bugjs/projects/bugcall/bugjars/server/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
-            "../bugjs/projects/bugflow/js/src",
-            "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
-            "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugmarsh/js/src",
-            "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugmigrate/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtask/js/src",
-            "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/configbug/js/src",
             "../bugjs/projects/cookies/js/src",
             "../bugjs/projects/express/js/src",
@@ -154,6 +152,8 @@ buildProperties({
             "../bugjs/projects/redis/js/src",
             "../bugjs/projects/socketio/bugjars/server/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugmeta/projects/bugmeta/js/src",
+            "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbug/bugjars/server/js/src",
             "../meldbug/projects/meldbugserver/js/src"
@@ -177,16 +177,20 @@ buildProperties({
                 }
             },
             sourcePaths: [
+                "../buganno/projects/buganno/js/src",
                 "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
                 "../bugunit/projects/bugunit/js/src"
             ],
             scriptPaths: [
+                "../buganno/projects/buganno/js/scripts",
                 "../bugunit/projects/bugunit/js/scripts"
             ],
             testPaths: [
                 "./projects/airbug/js/test",
                 "./projects/airbugserver/js/test",
+                "../bugcore/projects/bugcore/js/test",
+                "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/aws/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/bugjars/core/js/test",
@@ -194,15 +198,11 @@ buildProperties({
                 "../bugjs/projects/bugcall/bugjars/server/js/test",
                 "../bugjs/projects/bugdelta/js/test",
                 "../bugjs/projects/bugentity/js/test",
-                "../bugjs/projects/bugflow/js/test",
                 "../bugjs/projects/bugioc/js/test",
-                "../bugjs/projects/bugjs/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
-                "../bugjs/projects/bugmeta/js/test",
                 "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
                 "../bugjs/projects/bugsub/js/test",
                 "../bugjs/projects/bugtask/js/test",
-                "../bugjs/projects/bugtrace/js/test",
                 "../bugjs/projects/configbug/js/test",
                 "../bugjs/projects/express/js/test",
                 "../bugjs/projects/handshaker/js/test",
@@ -211,6 +211,8 @@ buildProperties({
                 "../bugjs/projects/redis/js/test",
                 "../bugjs/projects/socketio/bugjars/server/js/test",
                 "../bugjs/projects/socketio/bugjars/socket/js/test",
+                "../bugmeta/projects/bugmeta/js/test",
+                "../bugtrace/projects/bugtrace/js/test",
                 "../meldbug/projects/meldbug/bugjars/core/js/test",
                 "../meldbug/projects/meldbug/bugjars/server/js/test",
                 "../meldbug/projects/meldbugserver/js/test"
@@ -231,24 +233,24 @@ buildProperties({
         ],
         sourcePaths: [
             "./projects/airbugworker/js/src",
+            "../bugcore/projects/bugcore/js/src",
+            "../bugflow/projects/bugflow/js/src",
+            "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
             "../bugjs/projects/bugcall/bugjars/publisher/js/src",
             "../bugjs/projects/bugdelta/js/src",
-            "../bugjs/projects/bugflow/js/src",
-            "../bugjs/projects/bugfs/js/src",
             "../bugjs/projects/bugioc/js/src",
-            "../bugjs/projects/bugjs/js/src",
             "../bugjs/projects/bugmarsh/js/src",
-            "../bugjs/projects/bugmeta/js/src",
             "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtask/js/src",
-            "../bugjs/projects/bugtrace/js/src",
             "../bugjs/projects/bugwork/js/src",
             "../bugjs/projects/configbug/js/src",
             "../bugjs/projects/loggerbug/js/src",
             "../bugjs/projects/redis/js/src",
-            "../bugjs/projects/socketio/bugjars/socket/js/src"
+            "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugmeta/projects/bugmeta/js/src",
+            "../bugtrace/projects/bugtrace/js/src",
         ],
         scriptPaths: [
             "../bugjs/projects/bugwork/js/scripts",
@@ -264,32 +266,34 @@ buildProperties({
                 }
             },
             sourcePaths: [
+                "../buganno/projects/buganno/js/src",
                 "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
                 "../bugunit/projects/bugunit/js/src"
             ],
             scriptPaths: [
+                "../buganno/projects/buganno/js/scripts",
                 "../bugunit/projects/bugunit/js/scripts"
             ],
             testPaths: [
                 "./projects/airbugworker/js/test",
+                "../bugcore/projects/bugcore/js/test",
+                "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/bugjars/core/js/test",
                 "../bugjs/projects/bugcall/bugjars/publisher/js/test",
                 "../bugjs/projects/bugdelta/js/test",
-                "../bugjs/projects/bugflow/js/test",
                 "../bugjs/projects/bugioc/js/test",
-                "../bugjs/projects/bugjs/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
-                "../bugjs/projects/bugmeta/js/test",
                 "../bugjs/projects/bugsub/js/test",
                 "../bugjs/projects/bugtask/js/test",
-                "../bugjs/projects/bugtrace/js/test",
                 "../bugjs/projects/bugwork/js/test",
                 "../bugjs/projects/configbug/js/test",
                 "../bugjs/projects/loggerbug/js/test",
                 "../bugjs/projects/redis/js/test",
-                "../bugjs/projects/socketio/bugjars/socket/js/test"
+                "../bugjs/projects/socketio/bugjars/socket/js/test",
+                "../bugmeta/projects/bugmeta/js/test",
+                "../bugtrace/projects/bugtrace/js/test"
             ]
         }
     },
@@ -335,6 +339,15 @@ buildTarget('local').buildFlow(
         // old source files are removed. We should figure out a better way of doing that.
 
         targetTask('clean'),
+        targetTask('lint', {
+            properties: {
+                targetPaths: buildProject.getProperty("lint.targetPaths"),
+                ignores: buildProject.getProperty("lint.ignorePatterns"),
+                lintTasks: [
+                    "fixExportAndRemovePackageAnnotations"
+                ]
+            }
+        }),
         parallel([
             series([
                 targetTask('copyContents', {
@@ -482,16 +495,7 @@ buildTarget('local').buildFlow(
                         bucket: "{{local-bucket}}"
                     }
                 })
-            ]),
-            targetTask('lint', {
-                properties: {
-                    targetPaths: buildProject.getProperty("bugjs.targetPaths"),
-                    ignores: buildProject.getProperty("bugjs.ignorePatterns"),
-                    lintTasks: [
-                        "fixExportAndRemovePackageAnnotations"
-                    ]
-                }
-            })
+            ])
         ])
     ])
 ).makeDefault();
