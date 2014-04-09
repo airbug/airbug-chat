@@ -26,7 +26,6 @@ var targetTask          = buildbug.targetTask;
 var aws                 = enableModule("aws");
 var bugpack             = enableModule('bugpack');
 var bugunit             = enableModule('bugunit');
-var clientjs            = enableModule('clientjs');
 var core                = enableModule('core');
 var lintbug             = enableModule("lintbug");
 var nodejs              = enableModule('nodejs');
@@ -39,7 +38,7 @@ var nodejs              = enableModule('nodejs');
 var version             = "0.0.17";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "0.1.5",
+    bugpack: "0.1.6",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",
