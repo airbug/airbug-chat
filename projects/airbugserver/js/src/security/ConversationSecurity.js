@@ -10,6 +10,7 @@
 //@Require('Exception')
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
+//@Require('bugfs.Path')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -52,12 +53,19 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var ConversationSecurity = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();

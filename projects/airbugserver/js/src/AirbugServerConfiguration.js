@@ -8,6 +8,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugClientConfig')
+//@Require('airbug.AirbugServerConfig')
 //@Require('airbugserver.GithubApi')
 //@Require('airbugserver.RequestContextBuilder')
 //@Require('airbugserver.SessionServiceConfig')

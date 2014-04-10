@@ -913,6 +913,10 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     top: 29px;
 }
 
+.start-conversation-button-group {
+    padding: 2px;
+}
+
 
 /* User Home Page CSS
 *******************************************************************/

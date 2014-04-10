@@ -14,6 +14,7 @@
 //@Require('airbug.DialogueNameView')
 //@Require('airbug.MultiColumnView')
 //@Require('airbug.OneColumnView')
+//@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomsHamburgerButtonContainer')
 //@Require('airbug.SubheaderView')
 //@Require('bugioc.AutowiredAnnotation')

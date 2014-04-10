@@ -234,6 +234,7 @@ var ChatWidgetInputFormContainer = Class.extend(CarapaceContainer, {
                         configuration: TwoColumnView.Configuration.THICK_RIGHT,
                         rowStyle: MultiColumnView.RowStyle.FLUID
                     })
+                    .appendTo("#column2of2-{{cid}}")
                     .children([
                         view(ButtonView)
                             .name("chooseOrUploadImageButtonView")

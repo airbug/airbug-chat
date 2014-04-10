@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Set')
 //@Require('airbugserver.UserEmail')
-//@Require('bugentity.EntityManger')
+//@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')

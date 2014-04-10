@@ -29,16 +29,18 @@ var bugunit             = enableModule('bugunit');
 var core                = enableModule('core');
 var lintbug             = enableModule("lintbug");
 var nodejs              = enableModule('nodejs');
+var uglifyjs            = enableModule("uglifyjs");
 
 
 //-------------------------------------------------------------------------------
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.17";
+var name                = "airbug";
+var version             = "0.0.18";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "0.1.6",
+    bugpack: "https://s3.amazonaws.com/airbug-brian/bugpack-0.1.9.tgz",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",
@@ -60,15 +62,23 @@ var dependencies        = {
 //-------------------------------------------------------------------------------
 
 buildProperties({
+    loader: {
+        source: "./projects/airbugclient/js/scripts/airbug-application-loader.js",
+        outputFile: "{{distPath}}/airbug-application-loader.js",
+        outputMinFile: "{{distPath}}/airbug-application-loader.min.js"
+    },
     static: {
-        outputPath: buildProject.getProperty("buildPath") + "/static",
+        buildPath: buildProject.getProperty("buildPath") + "/static",
+        name: name + "-static",
+        version: version,
+        outputFile: "{{distPath}}/{{static.name}}.js",
+        outputMinFile: "{{distPath}}/{{static.name}}.min.js",
         sourcePaths: [
             "./projects/airbug/js/src",
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
             "../bugcore/projects/bugcore/js/src",
             "../bugflow/projects/bugflow/js/src",
-            "../bugmeta/projects/bugmeta/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
@@ -98,6 +108,7 @@ buildProperties({
             "../bugjs/projects/socketio/bugjars/client/js/src",
             "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
             "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugmeta/projects/bugmeta/js/src",
             "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
@@ -338,7 +349,7 @@ buildTarget('local').buildFlow(
         // old source files are removed. We should figure out a better way of doing that.
 
         targetTask('clean'),
-        targetTask('lint', {
+        /*targetTask('lint', {
             properties: {
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
@@ -346,22 +357,63 @@ buildTarget('local').buildFlow(
    
                 ]
             }
-        }),
+        }),*/
         parallel([
+
             series([
-                targetTask('copyContents', {
-                    properties: {
-                        fromPaths: buildProject.getProperty("static.sourcePaths").concat(
-                            buildProject.getProperty("static.serverStickyPaths")
-                        ),
-                        intoPath: "{{static.outputPath}}"
-                    }
-                }),
-                targetTask('generateBugPackRegistry', {
-                    properties: {
-                        sourceRoot: "{{static.outputPath}}"
-                    }
-                }),
+                parallel([
+                    series([
+                        targetTask('copy', {
+                            properties: {
+                                fromPaths: ["{{loader.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        }),
+                        targetTask("uglifyjsMinify", {
+                            properties: {
+                                sources: ["{{loader.outputFile}}"],
+                                outputFile: "{{loader.outputMinFile}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
+                                fromPaths: buildProject.getProperty("static.sourcePaths"),
+                                intoPath: "{{static.buildPath}}"
+                            }
+                        }),
+                        targetTask('generateBugPackRegistry', {
+                            properties: {
+                                name: "{{static.name}}",
+                                sourceRoot: "{{static.buildPath}}"
+                            }
+                        }),
+                        targetTask("concat", {
+                            init: function(task, buildProject, properties) {
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("static.name"));
+                                var sources         = [];
+                                var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
+
+                                registryEntries.forEach(function(bugPackRegistryEntry) {
+                                    sources.push(bugPackRegistryEntry.getResolvedPath().getAbsolutePath());
+                                });
+                                task.updateProperties({
+                                    sources: sources
+                                });
+                            },
+                            properties: {
+                                outputFile: "{{static.outputFile}}"
+                            }
+                        }),
+                        targetTask("uglifyjsMinify", {
+                            properties: {
+                                sources: ["{{static.outputFile}}"],
+                                outputFile: "{{static.outputMinFile}}"
+                            }
+                        })
+                    ])
+                ]),
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
@@ -373,7 +425,13 @@ buildTarget('local').buildFlow(
                         ),
                         testPaths: buildProject.getProperty("server.unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths"),
-                        staticPaths: ["{{static.outputPath}}"]
+                        staticPaths: ([
+                            "{{static.buildPath}}",
+                            buildProject.getProperty("static.outputFile"),
+                            buildProject.getProperty("static.outputMinFile"),
+                            buildProject.getProperty("loader.outputFile"),
+                            buildProject.getProperty("loader.outputMinFile")
+                        ]).concat(buildProject.getProperty("static.serverStickyPaths"))
                     }
                 }),
                 targetTask('replaceTokens', {
@@ -432,7 +490,7 @@ buildTarget('local').buildFlow(
                         bucket: "{{local-bucket}}"
                     }
                 })
-            ]),
+            ])/*,
             series([
                 targetTask('createNodePackage', {
                     properties: {
@@ -494,7 +552,7 @@ buildTarget('local').buildFlow(
                         bucket: "{{local-bucket}}"
                     }
                 })
-            ])
+            ])*/
         ])
     ])
 ).makeDefault();
@@ -723,23 +781,24 @@ buildTarget('prod').buildFlow(
                     }
                 })
             ]),
+
             // Create static contents folder and upload contents to S3
 
             series([
                 targetTask('copyContents', {
                     properties: {
                         fromPaths: buildProject.getProperty("static.sourcePaths"),
-                        intoPath: "{{static.outputPath}}"
+                        intoPath: "{{static.buildPath}}"
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
                     properties: {
-                        sourceRoot: "{{static.outputPath}}"
+                        sourceRoot: "{{static.buildPath}}"
                     }
                 }),
                 targetTask("s3PutDirectoryContents", {
                     properties: {
-                        directory: "{{static.outputPath}}",
+                        directory: "{{static.buildPath}}",
                         options: {
                             acl: 'public-read',
                             gzip: true,

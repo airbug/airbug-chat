@@ -1,83 +1,103 @@
 //-------------------------------------------------------------------------------
-// Annotations
-//-------------------------------------------------------------------------------
-
-//@Require('bugapp.Application')
-//@Require('airbugserver.AirbugServerApplication')
-
-
-//-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context(module);
-var domain                      = require('domain');
+var bugpack         = require("bugpack");
+var domain          = require("domain");
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Context
 //-------------------------------------------------------------------------------
 
-var Application                 = bugpack.require('bugapp.Application');
-var AirbugServerApplication     = bugpack.require('airbugserver.AirbugServerApplication');
+bugpack.loadContext(module, function(error, bugpack) {
+    if (!error) {
+        bugpack.loadExports(["bugapp.Application", "airbugserver.AirbugServerApplication"], function(error) {
+            if (!error) {
+
+                //-------------------------------------------------------------------------------
+                // BugPack
+                //-------------------------------------------------------------------------------
+
+                var Application                 = bugpack.require("bugapp.Application");
+                var AirbugServerApplication     = bugpack.require("airbugserver.AirbugServerApplication");
 
 
-//-------------------------------------------------------------------------------
-// Script
-//-------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------
+                // Script
+                //-------------------------------------------------------------------------------
 
-var applicationDomain = domain.create();
-applicationDomain.on('error', function(error) {
+                var applicationDomain = domain.create();
+                applicationDomain.on("error", function(error) {
 
-    // Note: we're in dangerous territory!
-    // By definition, something unexpected occurred,
-    // which we probably didn't want.
-    // Anything can happen now!  Be very careful!
+                    console.log(error.message);
+                    console.log(error.stack);
 
-    gracefulShutdown();
-});
+                    // Note: we"re in dangerous territory!
+                    // By definition, something unexpected occurred,
+                    // which we probably didn"t want.
+                    // Anything can happen now!  Be very careful!
 
-var application = new AirbugServerApplication();
-applicationDomain.add(application);
-applicationDomain.add(bugpack);
-applicationDomain.add(AirbugServerApplication);
+                    gracefulShutdown();
+                });
 
-applicationDomain.run(function() {
+                var application = new AirbugServerApplication();
+                applicationDomain.add(application);
+                applicationDomain.add(bugpack);
+                applicationDomain.add(AirbugServerApplication);
 
-    console.log("Starting airbug server...");
-    application.addEventListener(Application.EventTypes.STARTED, function(event) {
-        console.log("Airbug server successfully started");
-    });
-    application.addEventListener(Application.EventTypes.STOPPED, function(event) {
-        process.exit();
-    });
-    application.addEventListener(Application.EventTypes.ERROR, function(event) {
-        if (application.isStarting()) {
-            process.exit(1);
-        } else if (application.isStarted()) {
-            gracefulShutdown();
-        } else if (application.isStopping()) {
-            //do nothing (try to finish up the stop)
-        } else {
-            process.exit(1);
-        }
-    });
+                applicationDomain.run(function() {
 
-    application.start();
-});
+                    console.log("Starting airbug server...");
+                    application.addEventListener(Application.EventTypes.STARTED, function(event) {
+                        console.log("Airbug server successfully started");
+                    });
+                    application.addEventListener(Application.EventTypes.STOPPED, function(event) {
+                        process.exit();
+                    });
+                    application.addEventListener(Application.EventTypes.ERROR, function(event) {
+                        var error = event.getData().error;
+                        console.log(error.message);
+                        console.log(error.stack);
+                        if (application.isStarting()) {
+                            process.exit(1);
+                        } else if (application.isStarted()) {
+                            gracefulShutdown();
+                        } else if (application.isStopping()) {
+                            //do nothing (try to finish up the stop)
+                        } else {
+                            process.exit(1);
+                        }
+                    });
 
-var gracefulShutdown = function() {
-    var killtimer = setTimeout(function() {
-        process.exit(1);
-    }, 10000);
-    killtimer.unref();
+                    application.start();
+                });
 
-    try {
-        application.stop();
-    } catch(error) {
+                var gracefulShutdown = function() {
+                    var killtimer = setTimeout(function() {
+                        process.exit(1);
+                    }, 10000);
+                    killtimer.unref();
+
+                    try {
+                        application.stop();
+                    } catch(error) {
+                        process.exit(1);
+                    }
+                };
+
+                process.on("SIGINT", gracefulShutdown);
+                process.on("SIGTERM", gracefulShutdown);
+
+            } else {
+                console.log(error.message);
+                console.log(error.stack);
+                process.exit(1);
+            }
+        });
+    } else {
+        console.log(error.message);
+        console.log(error.stack);
         process.exit(1);
     }
-};
-
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+});

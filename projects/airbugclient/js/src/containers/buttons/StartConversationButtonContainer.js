@@ -6,8 +6,9 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.IconView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -28,8 +29,9 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
+var ButtonGroupView         = bugpack.require('airbug.ButtonGroupView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
 var IconView                = bugpack.require('airbug.IconView');
 var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
 var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
@@ -51,12 +53,19 @@ var view                    = ViewBuilder.view;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ButtonContainer}
+ */
 var StartConversationButtonContainer = Class.extend(ButtonContainer, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super("StartConversationButton");
@@ -69,6 +78,12 @@ var StartConversationButtonContainer = Class.extend(ButtonContainer, {
 
         // Views
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ButtonGroupView}
+         */
+        this.buttonGroupView            = null;
 
         /**
          * @private
@@ -92,13 +107,22 @@ var StartConversationButtonContainer = Class.extend(ButtonContainer, {
         // Create Views
         //-------------------------------------------------------------------------------
 
-        view(ButtonView)
-            .name("buttonView")
-            .attributes({type: "primary", align: "left"})
+        view(ButtonGroupView)
+            .name("buttonGroupView")
+            .attributes({
+                align: "right",
+                classes: "start-conversation-button-group"
+            })
             .children([
-                view(IconView)
-                    .attributes({type: IconView.Type.PENCIL, color: IconView.Color.BLACK})
-                    .appendTo("#button-{{cid}}")
+                view(NakedButtonView)
+                    .name("buttonView")
+                    .attributes({type: "primary", align: "left"})
+                    .appendTo("#button-group-{{cid}}")
+                    .children([
+                        view(IconView)
+                            .attributes({type: IconView.Type.PENCIL, color: IconView.Color.WHITE})
+                            .appendTo("#button-{{cid}}")
+                    ])
             ])
             .build(this);
 
@@ -106,7 +130,7 @@ var StartConversationButtonContainer = Class.extend(ButtonContainer, {
         // Wire Up Views
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
+        this.setViewTop(this.buttonGroupView);
     },
 
     /**

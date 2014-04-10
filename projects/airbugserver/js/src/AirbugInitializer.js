@@ -346,6 +346,7 @@ var AirbugInitializer = Class.extend(Obj, {
      */
     buildConfigs: function(config) {
         this.airbugClientConfig.absorbConfig(config, [
+            "debug",
             "enableTracking",
             "github.clientId",
             "github.redirectUri",

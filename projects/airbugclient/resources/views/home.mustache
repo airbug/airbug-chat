@@ -62,8 +62,16 @@
         <!-- TODO BRN: Move these to cloudfront for delivery to avoid the additional DNS lookup-->
         <script src="//yandex.st/highlightjs/7.5/highlight.min.js"></script>
 
-        <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.0.1.min.js"></script>
-        <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.js"></script>
+        {{#debug}}
+            <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.1.9.js"></script>
+            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.js"></script>
+        {{/debug}}
+        {{^debug}}
+            <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.1.9.min.js"></script>
+            <script type="text/javascript" src="{{{staticUrl}}}/airbug-static.min.js"></script>
+            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.min.js"></script>
+        {{/debug}}
+
     </body>
 </html>
 

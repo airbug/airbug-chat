@@ -8,7 +8,7 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('airbugserver.RoomMember')
-//@Require('bugentity.EntityManger')
+//@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugmeta.BugMeta')

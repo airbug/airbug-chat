@@ -97,6 +97,7 @@ var HomePageController = Class.extend(Controller, {
             response.render('home', {
                 locals: {
                     config: StringUtil.escapeString(JSON.stringify(configObject)),
+                    debug: configObject.debug,
                     staticUrl: configObject.staticUrl
                 }
             }, function(error, html)  {
