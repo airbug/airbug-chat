@@ -67,7 +67,7 @@ var CodeEditorFullscreenButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

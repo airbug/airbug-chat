@@ -68,7 +68,7 @@ var ProfileSettingsFormContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Models

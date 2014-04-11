@@ -57,7 +57,7 @@ var MeldModel = Class.extend(CarapaceModel, {
         //TODO BRN: Add support for pass through properties from meld to model
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

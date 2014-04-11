@@ -25,249 +25,234 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var AddChange                           = bugpack.require('AddChange');
-var Class                               = bugpack.require('Class');
-var ClearChange                         = bugpack.require('ClearChange');
-var ISet                                = bugpack.require('ISet');
-var Map                                 = bugpack.require('Map');
-var Obj                                 = bugpack.require('Obj');
-var RemoveChange                        = bugpack.require('RemoveChange');
-var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
-var Set                                 = bugpack.require('Set');
-var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-var ListContainer                       = bugpack.require('airbug.ListContainer');
-var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
-var BugFlow                             = bugpack.require('bugflow.BugFlow');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired                           = AutowiredAnnotation.autowired;
-var bugmeta                             = BugMeta.context();
-var property                            = PropertyAnnotation.property;
-var view                                = ViewBuilder.view;
-var $series                             = BugFlow.$series;
-var $task                               = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {ListContainer}
- */
-var ImageListContainer = Class.extend(ListContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(userImageAssetList) {
+    var AddChange                           = bugpack.require('AddChange');
+    var Class                               = bugpack.require('Class');
+    var ClearChange                         = bugpack.require('ClearChange');
+    var ISet                                = bugpack.require('ISet');
+    var Map                                 = bugpack.require('Map');
+    var Obj                                 = bugpack.require('Obj');
+    var RemoveChange                        = bugpack.require('RemoveChange');
+    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
+    var Set                                 = bugpack.require('Set');
+    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+    var ListContainer                       = bugpack.require('airbug.ListContainer');
+    var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
+    var BugFlow                             = bugpack.require('bugflow.BugFlow');
+    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
-        this._super("No images in your list");
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired                           = AutowiredAnnotation.autowired;
+    var bugmeta                             = BugMeta.context();
+    var property                            = PropertyAnnotation.property;
+    var view                                = ViewBuilder.view;
+    var $series                             = BugFlow.$series;
+    var $task                               = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ListContainer}
+     */
+    var ImageListContainer = Class.extend(ListContainer, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {UserImageAssetList} userImageAssetList
+         */
+        _constructor: function(userImageAssetList) {
+
+            this._super("No images in your list");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                             = null;
+
+
+            // Models
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {UserImageAssetList}
+             */
+            this.userImageAssetList                 = userImageAssetList;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // CarapaceContainer Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        createContainerChildren: function() {
+            this._super();
+            this.processUserImageAssetList();
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.userImageAssetList.unobserve(AddChange.CHANGE_TYPE, "", this.observeUserImageAssetListAdd, this);
+            this.userImageAssetList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeUserImageAssetListClear, this);
+            this.userImageAssetList.unobserve(RemoveChange.CHANGE_TYPE, "", this.observeUserImageAssetListRemove, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.userImageAssetList.observe(AddChange.CHANGE_TYPE, "", this.observeUserImageAssetListAdd, this);
+            this.userImageAssetList.observe(ClearChange.CHANGE_TYPE, "", this.observeUserImageAssetListClear, this);
+            this.userImageAssetList.observe(RemoveChange.CHANGE_TYPE, "", this.observeUserImageAssetListRemove, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {UserImageAssetContainer} userImageAssetContainer
+         */
+        appendUserImageAssetContainer: function(userImageAssetContainer) {
+            this.hidePlaceholder();
+            this.addContainerChild(userImageAssetContainer, "#list-" + this.getListView().getCid());
+        },
+
+        /**
+         * @protected
+         * @param {UserImageAssetModel} userImageAssetModel
+         * @return {UserImageAssetContainer}
+         */
+        createUserImageAssetContainer: function(userImageAssetModel) {
+            if (!this.hasCarapaceModel(userImageAssetModel)) {
+                var userImageAssetContainer = new UserImageAssetContainer(userImageAssetModel);
+                this.mapModelToContainer(userImageAssetModel, userImageAssetContainer);
+                return userImageAssetContainer;
+            }
+            return null;
+        },
+
+
+        /**
+         * @protected
+         */
+        processUserImageAssetList: function() {
+            var _this = this;
+            this.userImageAssetList.forEach(function(userImageAssetModel) {
+                var userImageAssetContainer = _this.createUserImageAssetContainer(userImageAssetModel);
+                _this.appendUserImageAssetContainer(userImageAssetContainer);
+            });
+        },
+
+        /**
+         * @protected
+         * @param {UserImageAssetContainer} userImageAssetContainer
+         */
+        prependUserImageAssetContainer: function(userImageAssetContainer) {
+            this.hidePlaceholder();
+            this.prependContainerChild(userImageAssetContainer, "#list-" + this.getListView().getCid());
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+
+        //-------------------------------------------------------------------------------
+        // Model Observers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {Logger}
+         * @param {AddAtChange} change
          */
-        this.logger                             = null;
-
-
-        // Models
-        //-------------------------------------------------------------------------------
+        observeUserImageAssetListAdd: function(change){
+            var userImageAssetModel     = change.getValue();
+            var index                   = change.getIndex();
+            var userImageAssetContainer = this.createUserImageAssetContainer(userImageAssetModel);
+            if (index === 0) {
+                this.prependUserImageAssetContainer(userImageAssetContainer);
+            } else {
+                this.appendUserImageAssetContainer(userImageAssetContainer);
+            }
+        },
 
         /**
          * @private
-         * @type {UserImageAssetList}
+         * @param {ClearChange} change
          */
-        this.userImageAssetList                 = userImageAssetList;
-    },
+        observeUserImageAssetListClear: function(change) {
+            this.removeAllContainerChildren(true);
+            this.clearModelMap();
+            this.processUserImageAssetList();
+        },
 
-
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.processUserImageAssetList();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeObservers();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeObservers();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    deinitializeObservers: function() {
-        this.userImageAssetList.unobserve(AddChange.CHANGE_TYPE, "", this.observeUserImageAssetListAdd, this);
-        this.userImageAssetList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeUserImageAssetListClear, this);
-        this.userImageAssetList.unobserve(RemoveChange.CHANGE_TYPE, "", this.observeUserImageAssetListRemove, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeObservers: function() {
-        this.userImageAssetList.observe(AddChange.CHANGE_TYPE, "", this.observeUserImageAssetListAdd, this);
-        this.userImageAssetList.observe(ClearChange.CHANGE_TYPE, "", this.observeUserImageAssetListClear, this);
-        this.userImageAssetList.observe(RemoveChange.CHANGE_TYPE, "", this.observeUserImageAssetListRemove, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {UserImageAssetContainer} userImageAssetContainer
-     */
-    appendUserImageAssetContainer: function(userImageAssetContainer) {
-        this.hidePlaceholder();
-        this.addContainerChild(userImageAssetContainer, "#list-" + this.getListView().getCid());
-    },
-
-    /**
-     * @protected
-     * @param {UserImageAssetModel} userImageAssetModel
-     * @return {UserImageAssetContainer}
-     */
-    createUserImageAssetContainer: function(userImageAssetModel) {
-        if (!this.hasCarapaceModel(userImageAssetModel)) {
-            var userImageAssetContainer = new UserImageAssetContainer(userImageAssetModel);
-            this.mapModelToContainer(userImageAssetModel, userImageAssetContainer);
-            return userImageAssetContainer;
+        /**
+         * @private
+         * @param {RemoveAtChange} change
+         */
+        observeUserImageAssetListRemove: function(change) {
+            var userImageAssetModel         = change.getValue();
+            var userImageAssetContainer     = this.getContainerForModel(userImageAssetModel);
+            this.unmapModel(userImageAssetModel);
+            this.removeContainerChild(userImageAssetContainer, true);
         }
-        return null;
-    },
-
-
-    /**
-     * @protected
-     */
-    processUserImageAssetList: function() {
-        var _this = this;
-        this.userImageAssetList.forEach(function(userImageAssetModel) {
-            var userImageAssetContainer = _this.createUserImageAssetContainer(userImageAssetModel);
-            _this.appendUserImageAssetContainer(userImageAssetContainer);
-        });
-    },
-
-    /**
-     * @protected
-     * @param {UserImageAssetContainer} userImageAssetContainer
-     */
-    prependUserImageAssetContainer: function(userImageAssetContainer) {
-        this.hidePlaceholder();
-        this.prependContainerChild(userImageAssetContainer, "#list-" + this.getListView().getCid());
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
+    bugmeta.annotate(ImageListContainer).with(
+        autowired().properties([
+            property("logger").ref("logger")
+        ])
+    );
+
 
     //-------------------------------------------------------------------------------
-    // Model Observers
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {AddAtChange} change
-     */
-    observeUserImageAssetListAdd: function(change){
-        var userImageAssetModel     = change.getValue();
-        var index                   = change.getIndex();
-        var userImageAssetContainer = this.createUserImageAssetContainer(userImageAssetModel);
-        if (index === 0) {
-            this.prependUserImageAssetContainer(userImageAssetContainer);
-        } else {
-            this.appendUserImageAssetContainer(userImageAssetContainer);
-        }
-    },
-
-    /**
-     * @private
-     * @param {ClearChange} change
-     */
-    observeUserImageAssetListClear: function(change) {
-        this.removeAllContainerChildren(true);
-        this.clearModelMap();
-        this.processUserImageAssetList();
-    },
-
-    /**
-     * @private
-     * @param {RemoveAtChange} change
-     */
-    observeUserImageAssetListRemove: function(change) {
-        var userImageAssetModel         = change.getValue();
-        var userImageAssetContainer     = this.getContainerForModel(userImageAssetModel);
-        this.unmapModel(userImageAssetModel);
-        this.removeContainerChild(userImageAssetContainer, true);
-    }
+    bugpack.export("airbug.ImageListContainer", ImageListContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ImageListContainer).with(
-    autowired().properties([
-        property("logger").ref("logger")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ImageListContainer", ImageListContainer);

@@ -60,7 +60,7 @@ var RoomMemberListPanelContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Models

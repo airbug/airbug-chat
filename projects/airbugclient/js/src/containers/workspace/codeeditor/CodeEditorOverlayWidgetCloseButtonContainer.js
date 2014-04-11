@@ -66,7 +66,7 @@ var CodeEditorOverlayWidgetCloseButtonContainer = Class.extend(ButtonContainer, 
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -114,6 +114,14 @@ var CodeEditorOverlayWidgetCloseButtonContainer = Class.extend(ButtonContainer, 
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.buttonView);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorFullscreenCloseButtonClickedEvent, this);
     },
 
     /**

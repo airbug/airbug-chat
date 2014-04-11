@@ -40,7 +40,7 @@ var MappedMeldModel = Class.extend(CarapaceModel, {
     _constructor: function(dataObject, meldDocumentMap) {
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

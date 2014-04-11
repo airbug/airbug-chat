@@ -59,7 +59,7 @@ var ImageEditorWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

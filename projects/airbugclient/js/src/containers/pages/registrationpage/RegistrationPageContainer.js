@@ -76,7 +76,7 @@ var RegistrationPageContainer = Class.extend(ApplicationContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

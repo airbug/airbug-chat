@@ -13,132 +13,134 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var CarapaceController  = bugpack.require('carapace.CarapaceController');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta             = BugMeta.context();
-var autowired           = AutowiredAnnotation.autowired;
-var controller          = ControllerAnnotation.controller;
-var property            = PropertyAnnotation.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {CarapaceController}
- */
-var ApplicationController = Class.extend(CarapaceController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                       = bugpack.require('Class');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var CarapaceController          = bugpack.require('carapace.CarapaceController');
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var autowired                   = AutowiredAnnotation.autowired;
+    var controller                  = ControllerAnnotation.controller;
+    var property                    = PropertyAnnotation.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceController}
+     */
+    var ApplicationController = Class.extend(CarapaceController, {
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CurrentUserManagerModule}
+         * @constructs
          */
-        this.currentUserManagerModule   = null;
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CurrentUserManagerModule}
+             */
+            this.currentUserManagerModule   = null;
+
+            /**
+             * @private
+             * @type {NavigationModule}
+             */
+            this.navigationModule           = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceController Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {NavigationModule}
+         * @Override
+         * @protected
+         * @param {RoutingRequest} routingRequest
          */
-        this.navigationModule           = null;
+        filterRouting: function(routingRequest) {
 
-    },
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // CarapaceController Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    initializeController: function() {
-        this._super();
-    },
+        /**
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         * @param {function(Throwable, CurrentUser=)} callback
+         */
+        requireLogin: function(routingRequest, callback) {
+            var _this       = this;
+            var route       = routingRequest.getRoute().route;
+            var args        = routingRequest.getArgs();
 
-    /**
-     * @Override
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    filterRouting: function(routingRequest) {
-
-    },
-
-    /**
-     * @param {RoutingRequest} routingRequest
-     * @param {function(Throwable, CurrentUser=)} callback
-     */
-    requireLogin: function(routingRequest, callback) {
-        console.log("ApplicationController#requireLogin");
-        var _this       = this;
-        var route       = routingRequest.getRoute().route;
-        var args        = routingRequest.getArgs();
-
-        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
-            if (!throwable) {
-                if (currentUser.isLoggedIn()) {
-                    callback(null, currentUser);
+            this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+                if (!throwable) {
+                    if (currentUser.isLoggedIn()) {
+                        callback(null, currentUser);
+                    } else {
+                        _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
+                        _this.navigationModule.navigate("login", {
+                            trigger: true
+                        });
+                    }
                 } else {
-                    _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
-                    _this.navigationModule.navigate("login", {
-                        trigger: true
-                    });
+                    callback(throwable);
                 }
-            } else {
-                callback(throwable);
-            }
-        });
-    }
+            });
+        }
+    });
 
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(ApplicationController).with(
+        autowired().properties([
+            property("currentUserManagerModule").ref("currentUserManagerModule"),
+            property("navigationModule").ref("navigationModule")
+        ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.ApplicationController", ApplicationController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ApplicationController).with(
-    autowired().properties([
-        property("currentUserManagerModule").ref("currentUserManagerModule"),
-        property("navigationModule").ref("navigationModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ApplicationController", ApplicationController);
-

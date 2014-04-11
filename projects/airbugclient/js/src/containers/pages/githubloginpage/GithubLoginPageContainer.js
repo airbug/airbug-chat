@@ -67,7 +67,7 @@ var GithubLoginPageContainer = Class.extend(ApplicationContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -154,13 +154,6 @@ var GithubLoginPageContainer = Class.extend(ApplicationContainer, {
         this.signupButtonContainer          = new SignupButtonContainer();
         this.addContainerChild(this.signupButtonContainer, "#header-right");
         this.addContainerChild(this.githubLoginFormContainer, "#box-body-" + this.boxView.getCid());
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
     }
 });
 

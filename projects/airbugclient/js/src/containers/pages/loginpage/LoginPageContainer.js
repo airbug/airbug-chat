@@ -71,7 +71,7 @@ var LoginPageContainer = Class.extend(ApplicationContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

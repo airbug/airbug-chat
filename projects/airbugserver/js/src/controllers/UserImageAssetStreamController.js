@@ -58,7 +58,7 @@ var UserImageAssetStreamController = Class.extend(EntityController, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

@@ -63,7 +63,7 @@ var CodeEditorBaseWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Models

@@ -59,7 +59,7 @@ var DeleteImageNakedButtonContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Views
@@ -118,7 +118,7 @@ var DeleteImageNakedButtonContainer = Class.extend(CarapaceContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
     /**
@@ -126,21 +126,17 @@ var DeleteImageNakedButtonContainer = Class.extend(CarapaceContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
-    initializeEventListeners: function() {
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-    deinitializeEventListeners: function() {
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
+    /**
+     * @private
+     * @param {Event} event
+     */
     hearButtonClickedEvent: function(event) {
         this.buttonView.dispatchEvent(new ImageViewEvent(ImageViewEvent.EventType.CLICKED_DELETE, {}));
     }

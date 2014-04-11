@@ -41,7 +41,7 @@ var CurrentUser = Class.extend(Obj, {
     _constructor: function(meldDocument) {
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

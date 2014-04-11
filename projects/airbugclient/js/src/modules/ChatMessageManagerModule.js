@@ -80,7 +80,7 @@ var ChatMessageManagerModule = Class.extend(ManagerModule, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

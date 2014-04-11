@@ -42,6 +42,10 @@ var controller                  = ControllerAnnotation.controller;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {ApplicationController}
+ */
 var SettingsPageController = Class.extend(ApplicationController, {
 
     //-------------------------------------------------------------------------------

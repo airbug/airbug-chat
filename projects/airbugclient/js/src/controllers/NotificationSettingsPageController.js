@@ -14,104 +14,119 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var ApplicationController               = bugpack.require('airbug.ApplicationController');
-var NotificationSettingsPageContainer   = bugpack.require('airbug.NotificationSettingsPageContainer');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
-var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                             = BugMeta.context();
-var controller                          = ControllerAnnotation.controller;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var NotificationSettingsPageController = Class.extend(ApplicationController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                               = bugpack.require('Class');
+    var ApplicationController               = bugpack.require('airbug.ApplicationController');
+    var NotificationSettingsPageContainer   = bugpack.require('airbug.NotificationSettingsPageContainer');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
+    var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                             = BugMeta.context();
+    var controller                          = ControllerAnnotation.controller;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ApplicationController}
+     */
+    var NotificationSettingsPageController = Class.extend(ApplicationController, {
 
         //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-
-        // Containers
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {NotificationSettingsPageContainer}
+         * @constructs
          */
-        this.notificationSettingsPageContainer      = null;
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            // Containers
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {NotificationSettingsPageContainer}
+             */
+            this.notificationSettingsPageContainer      = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceController Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        createController: function() {
+            this._super();
+            this.notificationSettingsPageContainer = new NotificationSettingsPageContainer();
+            this.setContainerTop(this.notificationSettingsPageContainer);
+        },
+
+        /**
+         * @protected
+         */
+        destroyController: function() {
+            this._super();
+            this.notificationSettingsPageContainer = null;
+        },
+
+        /**
+         * @override
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        filterRouting: function(routingRequest) {
+            this.requireLogin(routingRequest, function(throwable, currentUser) {
+                if (!throwable) {
+                    routingRequest.accept();
+                } else {
+                    routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
+                }
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createController: function() {
-        this._super();
-        this.notificationSettingsPageContainer = new NotificationSettingsPageContainer();
-        this.setContainerTop(this.notificationSettingsPageContainer);
-    },
+    bugmeta.annotate(NotificationSettingsPageController).with(
+        controller().route("settings/notification")
+    );
 
-    /**
-     * @override
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    filterRouting: function(routingRequest) {
-        this.requireLogin(routingRequest, function(throwable, currentUser) {
-            if (!throwable) {
-                routingRequest.accept();
-            } else {
-                routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
-            }
-        });
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.NotificationSettingsPageController", NotificationSettingsPageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(NotificationSettingsPageController).with(
-    controller().route("settings/notification")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.NotificationSettingsPageController", NotificationSettingsPageController);

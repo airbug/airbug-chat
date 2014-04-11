@@ -96,7 +96,7 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -272,11 +272,34 @@ var RoomListPanelContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+        this.currentUserModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeCurrentUserModelClearChange, this);
+        this.currentUserModel.unobserve(SetPropertyChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetSetPropertyChange, this);
+        this.currentUserModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemovePropertyChange, this);
+        this.currentUserModel.unobserve(AddChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetAddChange, this);
+        this.currentUserModel.unobserve(RemoveChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemoveChange, this);
+
+        if (this.currentRoomModel) {
+            this.currentRoomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "id", this.observeCurrentRoomIdSetPropertyChange, this);
+            this.currentRoomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "id", this.observeCurrentRoomIdRemovePropertyChange, this);
+        }
+
+        this.roomList.unobserve(AddChange.CHANGE_TYPE, "", this.observeRoomListAdd, this);
+        this.roomList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomListClear, this);
+        this.roomList.unobserve(RemoveChange.CHANGE_TYPE, "", this.observeRoomListRemove, this);
+
+        this.listView.removeEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.currentUserModel.observe(ClearChange.CHANGE_TYPE, "", this.observeCurrentUserModelClearChange, this);
         this.currentUserModel.observe(SetPropertyChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetSetPropertyChange, this);
-        this.currentUserModel.observe(RemovePropertyChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemovePropertyChange, this)
+        this.currentUserModel.observe(RemovePropertyChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemovePropertyChange, this);
         this.currentUserModel.observe(AddChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetAddChange, this);
         this.currentUserModel.observe(RemoveChange.CHANGE_TYPE, "roomIdSet", this.observeRoomIdSetRemoveChange, this);
 

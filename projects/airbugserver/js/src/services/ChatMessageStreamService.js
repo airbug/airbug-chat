@@ -70,7 +70,7 @@ var ChatMessageStreamService = Class.extend(EntityService, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

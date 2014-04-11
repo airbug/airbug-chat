@@ -74,7 +74,7 @@ var ListContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -200,17 +200,17 @@ var ListContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.boxView.addEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
+        this.boxView.removeEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
     },
 
     /**
      * @protected
      */
-    deinitializeContainer: function() {
+    initializeContainer: function() {
         this._super();
-        this.boxView.removeEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
+        this.boxView.addEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
     },
 
 

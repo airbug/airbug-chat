@@ -75,7 +75,7 @@ var WorkspaceCloseButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

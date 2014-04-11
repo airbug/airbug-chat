@@ -10,113 +10,117 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var MouseEvent          = bugpack.require('airbug.MouseEvent');
-var MustacheView        = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {MustacheView}
- */
-var InteractiveView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(options) {
+    var Class               = bugpack.require('Class');
+    var MouseEvent          = bugpack.require('airbug.MouseEvent');
+    var MustacheView        = bugpack.require('airbug.MustacheView');
 
-        this._super(options);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {MustacheView}
+     */
+    var InteractiveView = Class.extend(MustacheView, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {Object} options
+         */
+        _constructor: function(options) {
+
+            this._super(options);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            var _this = this;
+            this.handleClick = function(event) {
+                //event.preventDefault();
+                if (!_this.getAttribute("disabled")) {
+                    _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.CLICK, {}));
+                }
+            };
+            this.handleMousedown = function(event) {
+                //event.preventDefault();
+                if (!_this.getAttribute("disabled")) {
+                    _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.DOWN, {}));
+                }
+            };
+            this.handleMouseup = function(event) {
+                //event.preventDefault();
+                if (!_this.getAttribute("disabled")) {
+                    _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.UP, {}));
+                }
+            };
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // CarapaceView Methods
         //-------------------------------------------------------------------------------
 
-        var _this = this;
-        this.handleClick = function(event) {
-            //event.preventDefault();
-            if (!_this.getAttribute("disabled")) {
-                _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.CLICK, {}));
-            }
-        };
-        this.handleMousedown = function(event) {
-            //event.preventDefault();
-            if (!_this.getAttribute("disabled")) {
-                _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.DOWN, {}));
-            }
-        };
-        this.handleMouseup = function(event) {
-            //event.preventDefault();
-            if (!_this.getAttribute("disabled")) {
-                _this.dispatchEvent(new MouseEvent(MouseEvent.EventType.UP, {}));
-            }
-        };
-    },
+        /**
+         * @protected
+         */
+        deinitializeView: function() {
+            this._super();
+            this.$el.off("click", this.handleClick);
+            this.$el.off("mousedown", this.handleMousedown);
+            this.$el.off("mouseup", this.handleMouseup);
+        },
+
+        /**
+         * @protected
+         */
+        initializeView: function() {
+            this._super();
+            this.$el.on("click", this.handleClick);
+            this.$el.on("mousedown", this.handleMousedown);
+            this.$el.on("mouseup", this.handleMouseup);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        disableView: function() {
+            this.setAttribute("disabled", true);
+        },
+
+        /**
+         *
+         */
+        enableView: function() {
+            this.setAttribute("disabled", false);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    deinitializeView: function() {
-        this._super();
-        this.$el.off("click", this.handleClick);
-        this.$el.off("mousedown", this.handleMousedown);
-        this.$el.off("mouseup", this.handleMouseup);
-    },
-
-    /**
-     * @protected
-     */
-    initializeView: function() {
-        this._super();
-        this.$el.on("click", this.handleClick);
-        this.$el.on("mousedown", this.handleMousedown);
-        this.$el.on("mouseup", this.handleMouseup);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    disableView: function() {
-        this.setAttribute("disabled", true);
-    },
-
-    /**
-     *
-     */
-    enableView: function() {
-        this.setAttribute("disabled", false);
-    }
+    bugpack.export("airbug.InteractiveView", InteractiveView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.InteractiveView", InteractiveView);

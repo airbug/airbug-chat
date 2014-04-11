@@ -75,7 +75,7 @@ var CodeEditorWidgetCloseButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

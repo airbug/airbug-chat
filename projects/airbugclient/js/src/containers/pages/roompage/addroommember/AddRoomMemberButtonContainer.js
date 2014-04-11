@@ -68,7 +68,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -100,7 +100,7 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -143,16 +143,28 @@ var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
     deinitializeContainer: function() {
         this._super();
         this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
     hearButtonClickedEvent: function(event) {
         this.commandModule.relayCommand(CommandType.DISPLAY.SHARE_ROOM_OVERLAY, {});
     }

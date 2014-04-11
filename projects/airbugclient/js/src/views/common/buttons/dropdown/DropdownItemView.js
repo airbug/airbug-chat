@@ -10,76 +10,80 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var DropdownViewEvent   = bugpack.require('airbug.DropdownViewEvent');
-var MustacheView        = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var DropdownItemView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<li><a id="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
+    var Class               = bugpack.require('Class');
+    var DropdownViewEvent   = bugpack.require('airbug.DropdownViewEvent');
+    var MustacheView        = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @class
+     * @extends {MustacheView}
      */
-    deinitializeView: function() {
-        this._super();
-        this.$el.unbind();
-    },
+    var DropdownItemView = Class.extend(MustacheView, {
 
-    /**
-     * @protected
-     */
-    initializeView: function() {
-        this._super();
-        var _this = this;
-        this.$el.bind('click', function(event) {
-            _this.handleDropdownItemClick(event);
-        });
-    },
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<li><a id="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceView Extensions
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        deinitializeView: function() {
+            this._super();
+            this.$el.unbind();
+        },
+
+        /**
+         * @protected
+         */
+        initializeView: function() {
+            this._super();
+            var _this = this;
+            this.$el.bind('click', function(event) {
+                _this.handleDropdownItemClick(event);
+            });
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // View Event Handlers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {jQuery.Event} event
+         */
+        handleDropdownItemClick: function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventType.DROPDOWN_SELECTED));
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // View Event Handlers
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {jQuery.Event} event
-     */
-    handleDropdownItemClick: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.dispatchEvent(new DropdownViewEvent(DropdownViewEvent.EventType.DROPDOWN_SELECTED));
-    }
+    bugpack.export("airbug.DropdownItemView", DropdownItemView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.DropdownItemView", DropdownItemView);

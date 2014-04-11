@@ -10,90 +10,94 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-var ScrollEvent     = bugpack.require('airbug.ScrollEvent');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BoxView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="box {{classes}}">' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var ScrollEvent     = bugpack.require('airbug.ScrollEvent');
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @class
+     * @extends {MustacheView}
      */
-    getBoxElement: function() {
-        return this.findElement("#box-{{cid}}");
-    },
+    var BoxView = Class.extend(MustacheView, {
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="box-{{cid}}" class="box {{classes}}">' +
+                    '</div>',
 
 
-    //-------------------------------------------------------------------------------
-    // MustacheView Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data    = this._super();
-        if (this.getAttribute("scroll")) {
-            data.classes += "scroll-box";
+        /**
+         * @return {$}
+         */
+        getBoxElement: function() {
+            return this.findElement("#box-{{cid}}");
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data    = this._super();
+            if (this.getAttribute("scroll")) {
+                data.classes += "scroll-box";
+            }
+            return data;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        deinitializeView: function() {
+            this._super();
+            this.getBoxElement().off();
+        },
+
+        /**
+         * @protected
+         */
+        initializeView: function() {
+            this._super();
+            var _this       = this;
+            this.getBoxElement().scroll(function(event) {
+                _this.dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL, _this.getBoxElement().scrollTop()));
+            });
         }
-        return data;
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    deinitializeView: function() {
-        this._super();
-        this.getBoxElement().off();
-    },
-
-    /**
-     * @protected
-     */
-    initializeView: function() {
-        this._super();
-        var _this       = this;
-        this.getBoxElement().scroll(function(event) {
-            _this.dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL, _this.getBoxElement().scrollTop()));
-        });
-    }
+    bugpack.export("airbug.BoxView", BoxView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BoxView", BoxView);

@@ -50,13 +50,17 @@ var TabsContainer = Class.extend(CarapaceContainer, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {Array.<{container: CarapaceContainer, text: string}>} tabs
+     */
     _constructor: function(tabs) {
 
         this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -64,6 +68,7 @@ var TabsContainer = Class.extend(CarapaceContainer, {
          * @type {Array.<{container: CarapaceContainer, text: string}>}
          */
         this.tabs         = tabs;
+
 
         // Views
         //-------------------------------------------------------------------------------
@@ -73,20 +78,23 @@ var TabsContainer = Class.extend(CarapaceContainer, {
          * @type {TabsView}
          */
         this.tabsView = null;
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
     },
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @protected
+     */
     activateContainer: function() {
+        this._super();
         $(this.getViewTop().getId()).tabs();
     },
 
+    /**
+     * @protected
+     */
     createContainer: function() {
         this._super();
 
@@ -106,58 +114,23 @@ var TabsContainer = Class.extend(CarapaceContainer, {
 
     },
 
+    /**
+     * @protected
+     */
     createContainerChildren: function() {
-        console.log("TabsContainer#createContainerChildren");
-        var _this = this;
         this._super();
 
+        var _this = this;
         this.tabs.forEach(function(tab){
-            console.log("TabsContainer#createContainerChildren for each add container child");
-
             _this.addContainerChild(tab.container);
-            console.log("container id:", tab.container.getViewTop().getId());
             var tabView = view(TabView)
                 .attributes({
                     href: tab.container.getViewTop().getId(),
                     text: tab.text
                 })
                 .build();
-
-            console.log("TabsContainer#createContainerChildren for each add view child");
-
             _this.getViewTop().addViewChild(tabView, "ul");
-
         });
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeEventListeners: function() {
-
-    },
-
-    /**
-     * @protected
-     */
-    initializeEventListeners: function() {
-
     }
 });
 

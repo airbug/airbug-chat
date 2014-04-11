@@ -90,7 +90,7 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -226,8 +226,14 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
+
+        this.editorTabView.removeEventListener(TabViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
+        this.getViewTop().$el.find("select#code-editor-mode").off();
+        this.getViewTop().$el.find("select#code-editor-theme").off();
+        this.getViewTop().$el.find("select#code-editor-tabsize").off();
+        this.getViewTop().$el.find("select#code-editor-whitespace").off();
+
+        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
     },
 
     /**
@@ -235,49 +241,14 @@ var CodeEditorSettingsWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
      */
     initializeContainer: function() {
         this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-    },
 
-
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     */
-    initializeEventListeners: function() {
         this.editorTabView.addEventListener(TabViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
         this.getViewTop().$el.find("select#code-editor-mode").change(       {context: this}, this.handleModeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-theme").change(      {context: this}, this.handleThemeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-tabsize").change(    {context: this}, this.handleTabSizeSelectionEvent);
         this.getViewTop().$el.find("select#code-editor-whitespace").change( {context: this}, this.handleWhitespaceSelectionEvent);
-    },
 
-    /**
-     * @private
-     */
-    deinitializeEventListeners: function() {
-        this.editorTabView.removeEventListener(TabViewEvent.EventType.CLICKED,  this.handleBackButtonClickedEvent,  this);
-        this.getViewTop().$el.find("select#code-editor-mode").off();
-        this.getViewTop().$el.find("select#code-editor-theme").off();
-        this.getViewTop().$el.find("select#code-editor-tabsize").off();
-        this.getViewTop().$el.find("select#code-editor-whitespace").off();
-    },
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.CODE_EDITOR.SET_MODE, this.handleSetModeCommand, this);
     },
 
 

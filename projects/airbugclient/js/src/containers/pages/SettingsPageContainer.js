@@ -361,22 +361,6 @@ var SettingsPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.homeButtonContainer,            "#header-left");
     },
 
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-
-    },
-
 
     //-------------------------------------------------------------------------------
     // Protected Methods

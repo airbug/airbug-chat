@@ -10,129 +10,133 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var LoginFormView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div class="form-wrapper">' +
-                    '<form class="form-horizontal">' +
-                        '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="email" name="email" placeholder="Email">' +
-                        '</div>' +
-                        '<div class="control-group">' +
-                            '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
-                        '</div>' +
-                        '<div class="control-group">' +
-                            '<button id="login-button-{{cid}}" type="submit" class="btn ">Login</button>' +
-                            '<span class="help-inline">Not a member yet? <a href="#signup">signup here</a></span>' +
-                        '</div>' +
-                    '</form>' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @class
+     * @extends {MustacheView}
      */
-    deinitializeView: function() {
-        this._super();
-        this.$el.find('login-button-' + this.cid).unbind();
-        this.$el.find('form').off();
-    },
+    var LoginFormView = Class.extend(MustacheView, {
 
-    /**
-     * @protected
-     */
-    initializeView: function() {
-        this._super();
-        var _this = this;
-        this.$el.find('form').on('submit', function(event) {
-            _this.handleSubmit(event);
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
-        });
-        this.$el.find('#login-button-' + this.cid).bind('click', function(event) {
-            _this.handleSubmit(event);
-            event.preventDefault();
-            event.stopPropagation();
-            return false;
-        });
-    },
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div class="form-wrapper">' +
+                        '<form class="form-horizontal">' +
+                            '<div class="control-group">' +
+                                '<input class="input-xxlarge" type="email" name="email" placeholder="Email">' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
+                            '</div>' +
+                            '<div class="control-group">' +
+                                '<button id="login-button-{{cid}}" type="submit" class="btn ">Login</button>' +
+                                '<span class="help-inline">Not a member yet? <a href="#signup">signup here</a></span>' +
+                            '</div>' +
+                        '</form>' +
+                    '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        deinitializeView: function() {
+            this._super();
+            this.$el.find('login-button-' + this.cid).unbind();
+            this.$el.find('form').off();
+        },
+
+        /**
+         * @protected
+         */
+        initializeView: function() {
+            this._super();
+            var _this = this;
+            this.$el.find('form').on('submit', function(event) {
+                _this.handleSubmit(event);
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            });
+            this.$el.find('#login-button-' + this.cid).bind('click', function(event) {
+                _this.handleSubmit(event);
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            });
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @return {Object}
+         */
+        getFormData: function() {
+
+            // TODO BRN: This won't work for multiple check boxes. Will need to improve this if we have a form with more than
+            // one checkbox.
+
+            var formData = {};
+            var formInputs = this.$el.find("form").serializeArray();
+            formInputs.forEach(function(formInput) {
+                formData[formInput.name] = formInput.value;
+            });
+            return formData;
+        },
+
+        /**
+         * @protected
+         */
+        submitForm: function() {
+            var formData = this.getFormData();
+            this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
+                formData: formData
+            }));
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param event
+         */
+        handleSubmit: function(event) {
+            this.submitForm();
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Protected Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @return {Object}
-     */
-    getFormData: function() {
-
-        // TODO BRN: This won't work for multiple check boxes. Will need to improve this if we have a form with more than
-        // one checkbox.
-
-        var formData = {};
-        var formInputs = this.$el.find("form").serializeArray();
-        formInputs.forEach(function(formInput) {
-            formData[formInput.name] = formInput.value;
-        });
-        return formData;
-    },
-
-    /**
-     * @protected
-     */
-    submitForm: function() {
-        var formData = this.getFormData();
-        this.dispatchEvent(new FormViewEvent(FormViewEvent.EventType.SUBMIT, {
-            formData: formData
-        }));
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // View Event Handlers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param event
-     */
-    handleSubmit: function(event) {
-        this.submitForm();
-    }
+    bugpack.export("airbug.LoginFormView", LoginFormView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.LoginFormView", LoginFormView);

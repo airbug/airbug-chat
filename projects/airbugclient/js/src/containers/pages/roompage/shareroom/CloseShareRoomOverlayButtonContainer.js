@@ -68,7 +68,7 @@ var CloseShareRoomOverlayButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -93,7 +93,7 @@ var CloseShareRoomOverlayButtonContainer = Class.extend(ButtonContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -137,16 +137,28 @@ var CloseShareRoomOverlayButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
     deinitializeContainer: function() {
         this._super();
         this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
     },
 
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
     hearButtonClickedEvent: function(event) {
         this.commandModule.relayCommand(CommandType.HIDE.SHARE_ROOM_OVERLAY, {});
     }

@@ -52,7 +52,7 @@ var ButtonGroupView = Class.extend(MustacheView, {
         var data = this._super();
         switch (this.getAttribute("align")) {
             case "right":
-                data.classes += "pull-right";
+                data.classes += " pull-right";
                 break;
         }
 

@@ -50,7 +50,7 @@ var ChatMessageImageContainer = Class.extend(ChatMessageContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

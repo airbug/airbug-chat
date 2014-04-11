@@ -14,138 +14,145 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
-var ButtonView                  = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
-var CommandModule               = bugpack.require('airbug.CommandModule');
-var IconView                    = bugpack.require('airbug.IconView');
-var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var CommandType                 = CommandModule.CommandType;
-var view                        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ImageEditorTrayButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                       = bugpack.require('Class');
+    var ButtonContainer             = bugpack.require('airbug.ButtonContainer');
+    var ButtonView                  = bugpack.require('airbug.ButtonView');
+    var ButtonViewEvent             = bugpack.require('airbug.ButtonViewEvent');
+    var CommandModule               = bugpack.require('airbug.CommandModule');
+    var IconView                    = bugpack.require('airbug.IconView');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
-        this._super("ImageEditorTrayButton");
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var CommandType                 = CommandModule.CommandType;
+    var view                        = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ButtonContainer}
+     */
+    var ImageEditorTrayButtonContainer = Class.extend(ButtonContainer, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super("ImageEditorTrayButton");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ButtonView}
+             */
+            this.buttonView                 = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
+        /**
+         * @protected
+         */
+        createContainer: function() {
 
-        // Views
+            this._super();
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(ButtonView)
+                .name("buttonView")
+                .attributes({
+                    size: ButtonView.Size.LARGE,
+                    type: "primary",
+                    align: "center",
+                    block: true
+                })
+                .children([
+                    view(IconView)
+                        .attributes({
+                            type: IconView.Type.PICTURE,
+                            color: IconView.Color.WHITE
+                        })
+                        .appendTo("#button-{{cid}}")
+                ])
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonView}
+         * @param {ButtonViewEvent} event
          */
-        this.buttonView                 = null;
-    },
+        hearImageEditorTrayButtonClickedEvent: function(event) {
+            this.getCommandModule().relayCommand(CommandType.TOGGLE.IMAGE_LIST, {});
+        }
+
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(ButtonView)
-            .name("buttonView")
-            .attributes({
-                size: ButtonView.Size.LARGE,
-                type: "primary",
-                align: "center",
-                block: true
-            })
-            .children([
-                view(IconView)
-                    .attributes({
-                        type: IconView.Type.PICTURE,
-                        color: IconView.Color.WHITE
-                    })
-                    .appendTo("#button-{{cid}}")
-            ])
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.buttonView);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearImageEditorTrayButtonClickedEvent, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearImageEditorTrayButtonClickedEvent: function(event) {
-        this.getCommandModule().relayCommand(CommandType.TOGGLE.IMAGE_LIST, {});
-    }
-
+    bugpack.export("airbug.ImageEditorTrayButtonContainer", ImageEditorTrayButtonContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ImageEditorTrayButtonContainer", ImageEditorTrayButtonContainer);

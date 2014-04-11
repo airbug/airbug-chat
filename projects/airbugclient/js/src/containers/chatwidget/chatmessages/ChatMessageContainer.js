@@ -74,7 +74,7 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Models
@@ -219,24 +219,22 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventlisteners();
+        this.chatMessageView.$el.find(".message-failed-false, .message-failed-true").off();
+        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
+        this.getChatMessageView().removeEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
     },
 
     /**
      * @protected
      */
-    initializeEventListeners: function() {
+    initializeContainer: function() {
+        this._super();
         var _this = this;
+
+        //TODO BRN: This is super hacky. Should not be using classes like this to listen for events since we can't
+        // guarantee that the classes will still be there if the message is successful. Fix this...
 
         this.chatMessageView.$el.find(".message-failed-false, .message-failed-true")
             .on("click", function(event) {
@@ -248,15 +246,6 @@ var ChatMessageContainer = Class.extend(CarapaceContainer, {
             });
         this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
         this.getChatMessageView().addEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeEventlisteners: function() {
-        this.chatMessageView.$el.find(".message-failed-false, .message-failed-true").off();
-        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
-        this.getChatMessageView().removeEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
     },
 
 

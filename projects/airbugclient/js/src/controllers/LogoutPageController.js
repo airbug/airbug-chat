@@ -15,103 +15,118 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta     = BugMeta.context();
-var autowired   = AutowiredAnnotation.autowired;
-var controller  = ControllerAnnotation.controller;
-var property    = PropertyAnnotation.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var LogoutPageController = Class.extend(ApplicationController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta     = BugMeta.context();
+    var autowired   = AutowiredAnnotation.autowired;
+    var controller  = ControllerAnnotation.controller;
+    var property    = PropertyAnnotation.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ApplicationController}
+     */
+    var LogoutPageController = Class.extend(ApplicationController, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @protected
+             * @type {LoginPageContainer}
+             */
+            this.loginPageContainer = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // CarapaceController Methods
         //-------------------------------------------------------------------------------
 
         /**
          * @protected
-         * @type {LoginPageContainer}
          */
-        this.loginPageContainer = null;
-    },
+        createController: function() {
+            this._super();
+            this.loginPageContainer = new LoginPageContainer();
+            this.setContainerTop(this.loginPageContainer);
+        },
+
+        /**
+         * @protected
+         */
+        destroyController: function() {
+            this._super();
+            this.loginPageContainer = null;
+        },
+
+        /**
+         * @override
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        filterRouting: function(routingRequest) {
+            this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+                if (currentUser.isLoggedIn()) {
+                    routingRequest.reject();
+                } else {
+                    routingRequest.accept();
+                }
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createController: function() {
-        this._super();
-        this.loginPageContainer = new LoginPageContainer();
-        this.setContainerTop(this.loginPageContainer);
-    },
+    bugmeta.annotate(LogoutPageController).with(
+        controller().route("loggedout")
+    );
 
-    /**
-     * @override
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    filterRouting: function(routingRequest) {
-        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
-            if (currentUser.isLoggedIn()) {
-                routingRequest.reject();
-            } else {
-                routingRequest.accept();
-            }
-        });
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.LogoutPageController", LogoutPageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(LogoutPageController).with(
-    controller().route("loggedout")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.LogoutPageController", LogoutPageController);

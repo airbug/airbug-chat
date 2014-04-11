@@ -14,81 +14,85 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ApplicationController   = bugpack.require('airbug.ApplicationController');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                 = BugMeta.context();
-var autowired               = AutowiredAnnotation.autowired;
-var controller              = ControllerAnnotation.controller;
-var property                = PropertyAnnotation.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BasePageController = Class.extend(ApplicationController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Extensions
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                 = BugMeta.context();
+    var autowired               = AutowiredAnnotation.autowired;
+    var controller              = ControllerAnnotation.controller;
+    var property                = PropertyAnnotation.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @override
-     * @protected
-     * @param {RoutingRequest} routingRequest
+     * @class
+     * @extends {ApplicationController}
      */
-    filterRouting: function(routingRequest) {
-        var _this = this;
-        this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
-            if (!throwable) {
-                if (currentUser && currentUser.isLoggedIn()) {
-                    routingRequest.forward("home", {
-                        trigger: true
-                    });
+    var BasePageController = Class.extend(ApplicationController, {
+
+        //-------------------------------------------------------------------------------
+        // CarapaceController Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @override
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        filterRouting: function(routingRequest) {
+            var _this = this;
+            this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+                if (!throwable) {
+                    if (currentUser && currentUser.isLoggedIn()) {
+                        routingRequest.forward("home", {
+                            trigger: true
+                        });
+                    } else {
+                        routingRequest.forward("login", {
+                            trigger: true
+                        });
+                    }
                 } else {
-                    routingRequest.forward("login", {
-                        trigger: true
-                    });
+                    throw throwable;
                 }
-            } else {
-                throw throwable;
-            }
-        });
-    }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(BasePageController).with(
+        controller().route("")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.BasePageController", BasePageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(BasePageController).with(
-    controller().route("")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BasePageController", BasePageController);

@@ -651,7 +651,7 @@ var ChatWidgetContainer = Class.extend(CarapaceContainer, {
 
         var chatMessageObject = this.chatMessageManagerModule.generateChatMessageObject(Obj.merge({
             conversationId: this.conversationModel.getProperty("id"),
-            sentAt: new Date().toString(),
+            sentAt: new Date(),
             pending: true,
             failed: false
         }, chatMessageData));

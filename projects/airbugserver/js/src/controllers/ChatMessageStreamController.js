@@ -56,7 +56,7 @@ var ChatMessageStreamController = Class.extend(EntityController, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

@@ -68,7 +68,7 @@ var RoomMemberController = Class.extend(EntityController, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

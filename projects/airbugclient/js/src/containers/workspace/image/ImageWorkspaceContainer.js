@@ -70,7 +70,7 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Containers
@@ -119,7 +119,12 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
     deinitializeContainer: function() {
         this._super();
         this.getWorkspaceModule().deregisterWorkspace(ImageWorkspace.WORKSPACE_NAME);
-        this.deinitializeCommandSubscriptions();
+
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
+        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
+        this.commandModule.unsubscribe(CommandType.SAVE.TO_IMAGE_LIST, this.handleSaveToImageListCommand, this);
+        this.commandModule.unsubscribe(CommandType.TOGGLE.IMAGE_LIST, this.handleToggleImageListCommand, this);
     },
 
     /**
@@ -131,34 +136,12 @@ var ImageWorkspaceContainer = Class.extend(WorkspaceContainer, {
         this.imageListWidgetContainer.hideWidget();
         this.imageUploadWidgetContainer.hideWidget();
         this.getWorkspaceModule().registerWorkspace(ImageWorkspace.WORKSPACE_NAME, this);
-        this.initializeCommandSubscriptions();
-    },
 
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
         this.commandModule.subscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
         this.commandModule.subscribe(CommandType.SAVE.TO_IMAGE_LIST, this.handleSaveToImageListCommand, this);
         this.commandModule.subscribe(CommandType.TOGGLE.IMAGE_LIST, this.handleToggleImageListCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_EDITOR, this.handleDisplayImageEditorCommand, this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_LIST, this.handleDisplayImageListCommand, this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.IMAGE_UPLOAD, this.handleDisplayImageUploadCommand, this);
-        this.commandModule.unsubscribe(CommandType.SAVE.TO_IMAGE_LIST, this.handleSaveToImageListCommand, this);
-        this.commandModule.unsubscribe(CommandType.TOGGLE.IMAGE_LIST, this.handleToggleImageListCommand, this);
     },
 
 

@@ -65,7 +65,7 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -117,35 +117,21 @@ var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.initializeObservers();
-    },
-
-    /**
-     * @protected
-     */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeObservers();
-    },
-
-    /**
-     * @protected
-     */
-    initializeObservers: function() {
-        this.chatMessageList.observe(AddChange.CHANGE_TYPE, "", this.observeChatMessageListAdd, this);
-        this.chatMessageList.observe(ClearChange.CHANGE_TYPE, "", this.observeChatMessageListClear, this);
-        this.chatMessageList.observe(RemoveChange.CHANGE_TYPE, "", this.observeChatMessageListRemove, this);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeObservers: function() {
         this.chatMessageList.unobserve(AddChange.CHANGE_TYPE, "", this.observeChatMessageListAdd, this);
         this.chatMessageList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeChatMessageListClear, this);
         this.chatMessageList.unobserve(RemoveChange.CHANGE_TYPE, "", this.observeChatMessageListRemove, this);
+    },
+
+    /**
+     * @protected
+     */
+    initializeContainer: function() {
+        this._super();
+        this.chatMessageList.observe(AddChange.CHANGE_TYPE, "", this.observeChatMessageListAdd, this);
+        this.chatMessageList.observe(ClearChange.CHANGE_TYPE, "", this.observeChatMessageListClear, this);
+        this.chatMessageList.observe(RemoveChange.CHANGE_TYPE, "", this.observeChatMessageListRemove, this);
     },
 
 

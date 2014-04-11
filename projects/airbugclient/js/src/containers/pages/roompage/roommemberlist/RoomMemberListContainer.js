@@ -88,7 +88,7 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -219,6 +219,25 @@ var RoomMemberListContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.listView);
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+        this._super();
+
+        this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomModelClearChange, this);
+        this.roomModel.unobserve(SetPropertyChange.CHANGE_TYPE, "roomMemberIdSet", this.observeRoomMemberIdSetSetPropertyChange, this);
+        this.roomModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "roomMemberIdSet", this.observeRoomMemberIdSetRemovePropertyChange, this)
+        this.roomModel.unobserve(AddChange.CHANGE_TYPE, "roomMemberIdSet", this.observeRoomMemberIdSetAddChange, this);
+        this.roomModel.unobserve(RemoveChange.CHANGE_TYPE, "roomMemberIdSet", this.observeRoomMemberIdSetRemoveChange, this);
+
+        this.roomMemberList.unobserve(AddChange.CHANGE_TYPE, "", this.observeRoomMemberListAdd, this);
+        this.roomMemberList.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomMemberListClear, this);
+        this.roomMemberList.unobserve(RemoveChange.CHANGE_TYPE, "", this.observeRoomMemberListRemove, this);
+
+        this.listView.removeEventListener(ListViewEvent.EventType.ITEM_SELECTED, this.hearListViewItemSelectedEvent, this);
     },
 
     /**

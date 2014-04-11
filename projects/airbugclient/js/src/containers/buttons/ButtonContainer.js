@@ -15,184 +15,172 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var CommandModule           = bugpack.require('airbug.CommandModule');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired   = AutowiredAnnotation.autowired;
-var bugmeta     = BugMeta.context();
-var property    = PropertyAnnotation.property;
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {CarapaceContainer}
- */
-var ButtonContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(buttonName) {
+    var Class                   = bugpack.require('Class');
+    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired   = AutowiredAnnotation.autowired;
+    var bugmeta     = BugMeta.context();
+    var property    = PropertyAnnotation.property;
+    var view        = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceContainer}
+     */
+    var ButtonContainer = Class.extend(CarapaceContainer, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {string} buttonName
+         */
+        _constructor: function(buttonName) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.buttonName         = buttonName;
+
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CommandModule}
+             */
+            this.commandModule      = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getButtonName: function() {
+            return this.buttonName;
+        },
+
+        /**
+         * @return {CommandModule}
+         */
+        getCommandModule: function() {
+            return this.commandModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        isActive: function() {
+            return this.active;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {boolean} active
+         */
+        setActive: function(active) {
+            this.getViewTop().setAttribute("active", active);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {string}
+         * @param {ButtonViewEvent} event
          */
-        this.buttonName         = buttonName;
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {CommandModule}
-         */
-        this.commandModule      = null;
-    },
+        hearViewTopButtonClickedEvent: function(event) {
+            this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getButtonName: function() {
-        return this.buttonName;
-    },
-
-    /**
-     * @return {CommandModule}
-     */
-    getCommandModule: function() {
-        return this.commandModule;
-    },
+    bugmeta.annotate(ButtonContainer).with(
+        autowired().properties([
+            property("commandModule").ref("commandModule")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Convenience Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    isActive: function() {
-        return this.active;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
-        this.deinitializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearViewTopButtonClickedEvent, this);
-        this.initializeEventListeners();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeEventListeners: function() {
-        //TODO BRN: Remove this method
-    },
-
-    /**
-     * @protected
-     */
-    initializeEventListeners: function() {
-        //TODO BRN: Remove this method
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {boolean} active
-     */
-    setActive: function(active) {
-        this.getViewTop().setAttribute("active", active);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearViewTopButtonClickedEvent: function(event) {
-        this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: this.buttonName});
-    }
+    bugpack.export("airbug.ButtonContainer", ButtonContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ButtonContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ButtonContainer", ButtonContainer);

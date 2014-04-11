@@ -19,298 +19,275 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var BoxView                             = bugpack.require('airbug.BoxView');
-var CodeEditorSettingsWidgetContainer   = bugpack.require('airbug.CodeEditorSettingsWidgetContainer');
-var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
-var CodeEditorWorkspace                 = bugpack.require('airbug.CodeEditorWorkspace');
-var CommandModule                       = bugpack.require('airbug.CommandModule');
-var FormViewEvent                       = bugpack.require('airbug.FormViewEvent');
-var WorkspaceContainer                  = bugpack.require('airbug.WorkspaceContainer');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired                           = AutowiredAnnotation.autowired;
-var bugmeta                             = BugMeta.context();
-var CommandType                         = CommandModule.CommandType;
-var property                            = PropertyAnnotation.property;
-var view                                = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                               = bugpack.require('Class');
+    var BoxView                             = bugpack.require('airbug.BoxView');
+    var CodeEditorSettingsWidgetContainer   = bugpack.require('airbug.CodeEditorSettingsWidgetContainer');
+    var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
+    var CodeEditorWorkspace                 = bugpack.require('airbug.CodeEditorWorkspace');
+    var CommandModule                       = bugpack.require('airbug.CommandModule');
+    var FormViewEvent                       = bugpack.require('airbug.FormViewEvent');
+    var WorkspaceContainer                  = bugpack.require('airbug.WorkspaceContainer');
+    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired                           = AutowiredAnnotation.autowired;
+    var bugmeta                             = BugMeta.context();
+    var CommandType                         = CommandModule.CommandType;
+    var property                            = PropertyAnnotation.property;
+    var view                                = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {WorkspaceContainer}
+     */
+    var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CommandModule}
+             */
+            this.commandModule                      = null;
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {BoxView}
+             */
+            this.boxView                            = null;
+
+
+            // Containers
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CodeEditorWidgetContainer}
+             */
+            this.codeEditorWidgetContainer          = null;
+
+            /**
+             * @private
+             * @type {CodeEditorSettingsWidgetContainer}
+             */
+            this.codeEditorSettingsWidgetContainer  = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
-        // Modules
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(BoxView)
+                .name("boxView")
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.boxView);
+        },
+
+        /**
+         * @protected
+         */
+        createContainerChildren: function() {
+            this._super();
+            this.codeEditorWidgetContainer          = new CodeEditorWidgetContainer();
+            this.codeEditorSettingsWidgetContainer  = new CodeEditorSettingsWidgetContainer();
+            this.addContainerChild(this.codeEditorWidgetContainer, "#box-" + this.boxView.getCid());
+            this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#box-" + this.boxView.getCid());
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.getWorkspaceModule().deregisterWorkspace(CodeEditorWorkspace.WORKSPACE_NAME);
+
+            this.codeEditorSettingsWidgetContainer.getViewTop().removeEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
+
+            this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
+            this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
+            this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.codeEditorWidgetContainer.hideWidget();
+            this.codeEditorSettingsWidgetContainer.hideWidget();
+            this.getWorkspaceModule().registerWorkspace(CodeEditorWorkspace.WORKSPACE_NAME, this);
+
+            this.codeEditorSettingsWidgetContainer.getViewTop().addEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
+
+            this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
+            this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
+            this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {CommandModule}
+         * @param {Event} event
          */
-        this.commandModule                      = null;
+        handleSettingsChangeEvent: function(event) {
+            var data = event.getData();
+            var setting = data.setting;
 
-        // Views
+            switch(setting) {
+                case "mode":
+                    var mode        = data.mode;
+                    this.codeEditorWidgetContainer.setEditorMode(mode);
+                    break;
+                case "theme":
+                    var theme       = data.theme;
+                    this.codeEditorWidgetContainer.setEditorTheme(theme);
+                    break;
+                case "fontSize":
+                    var fontSize    = data.fontSize;
+                    this.codeEditorWidgetContainer.setEditorFontSize(fontSize);
+                    break;
+                case "tabSize":
+                    var tabSize     = data.tabSize;
+                    this.codeEditorWidgetContainer.setEditorTabSize(tabSize);
+                    break;
+                case "tabType":
+                    var tabType     = data.tabType;
+                    this.codeEditorWidgetContainer.setEditorTabType(tabType);
+                    break;
+                case "whitespace":
+                    var whitespaceBoolean = (data.whitespace === "true") ? true : false;
+                    this.codeEditorWidgetContainer.setEditorShowInvisibles(whitespaceBoolean);
+                    break;
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Message Handlers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {BoxView}
+         * @param {PublisherMessage} message
          */
-        this.boxView                            = null;
-
-
-        // Containers
-        //-------------------------------------------------------------------------------
+        handleDisplayCodeEditorCommand: function(message) {
+            this.displayCodeEditor();
+        },
 
         /**
          * @private
-         * @type {CodeEditorWidgetContainer}
+         * @param {PublisherMessage} message
          */
-        this.codeEditorWidgetContainer          = null;
+        handleDisplayCodeEditorSettingsCommand: function(message) {
+            this.displayCodeEditorSettings();
+        },
 
         /**
          * @private
-         * @type {CodeEditorSettingsWidgetContainer}
+         * @param {Message} message
          */
-        this.codeEditorSettingsWidgetContainer  = null;
-    },
+        handleToggleCodeEditorCommand: function(message) {
+            this.toggleCodeEditor();
+        },
 
+        /**
+         * @private
+         */
+        displayCodeEditor: function() {
+            this.showWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+        },
 
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Methods
-    //-------------------------------------------------------------------------------
+        /**
+         * @private
+         */
+        displayCodeEditorSettings: function() {
+            this.showWidget(this.codeEditorSettingsWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+        },
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(BoxView)
-            .name("boxView")
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.boxView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.codeEditorWidgetContainer          = new CodeEditorWidgetContainer();
-        this.codeEditorSettingsWidgetContainer  = new CodeEditorSettingsWidgetContainer();
-        this.addContainerChild(this.codeEditorWidgetContainer, "#box-" + this.boxView.getCid());
-        this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#box-" + this.boxView.getCid());
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.getWorkspaceModule().deregisterWorkspace(CodeEditorWorkspace.WORKSPACE_NAME);
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.codeEditorWidgetContainer.hideWidget();
-        this.codeEditorSettingsWidgetContainer.hideWidget();
-        this.getWorkspaceModule().registerWorkspace(CodeEditorWorkspace.WORKSPACE_NAME, this);
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
-        this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    deinitializeEventListeners: function() {
-        this.codeEditorSettingsWidgetContainer.getViewTop().removeEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
-    },
-
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
-        this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
-        this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
-    },
-
-    /**
-     * @private
-     */
-    initializeEventListeners: function() {
-        this.codeEditorSettingsWidgetContainer.getViewTop().addEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
-    },
-
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleSettingsChangeEvent: function(event) {
-        var data = event.getData();
-        var setting = data.setting;
-
-        switch(setting) {
-            case "mode":
-                var mode        = data.mode;
-                this.codeEditorWidgetContainer.setEditorMode(mode);
-                break;
-            case "theme":
-                var theme       = data.theme;
-                this.codeEditorWidgetContainer.setEditorTheme(theme);
-                break;
-            case "fontSize":
-                var fontSize    = data.fontSize;
-                this.codeEditorWidgetContainer.setEditorFontSize(fontSize);
-                break;
-            case "tabSize":
-                var tabSize     = data.tabSize;
-                this.codeEditorWidgetContainer.setEditorTabSize(tabSize);
-                break;
-            case "tabType":
-                var tabType     = data.tabType;
-                this.codeEditorWidgetContainer.setEditorTabType(tabType);
-                break;
-            case "whitespace":
-                var whitespaceBoolean = (data.whitespace === "true") ? true : false;
-                this.codeEditorWidgetContainer.setEditorShowInvisibles(whitespaceBoolean);
-                break;
+        /**
+         * @private
+         */
+        toggleCodeEditor: function() {
+            this.toggleWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Message Handlers
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleDisplayCodeEditorCommand: function(message) {
-        this.displayCodeEditor();
-    },
+    bugmeta.annotate(CodeEditorWorkspaceContainer).with(
+        autowired().properties([
+            property("commandModule").ref("commandModule")
+        ])
+    );
 
-    /**
-     * @private
-     * @param {PublisherMessage} message
-     */
-    handleDisplayCodeEditorSettingsCommand: function(message) {
-        this.displayCodeEditorSettings();
-    },
 
-    /**
-     * @private
-     * @param {Message} message
-     */
-    handleToggleCodeEditorCommand: function(message) {
-        this.toggleCodeEditor();
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    displayCodeEditor: function() {
-        this.showWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
-    },
-
-    /**
-     * @private
-     */
-    displayCodeEditorSettings: function() {
-        this.showWidget(this.codeEditorSettingsWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
-    },
-
-    /**
-     * @private
-     */
-    toggleCodeEditor: function() {
-        this.toggleWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
-    }
+    bugpack.export("airbug.CodeEditorWorkspaceContainer", CodeEditorWorkspaceContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorWorkspaceContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.CodeEditorWorkspaceContainer", CodeEditorWorkspaceContainer);

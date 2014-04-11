@@ -31,7 +31,7 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
 var bugpack                             = require('bugpack').context();
@@ -100,7 +100,7 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -257,37 +257,8 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
-        this._super();
-        this.initializeEventListeners();
-        this.initializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
     deinitializeContainer: function() {
         this._super();
-        this.deinitializeEventListeners();
-        this.deinitializeCommandSubscriptions();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    deinitializeCommandSubscriptions: function() {
-
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeEventListeners: function() {
         this.imageListTabView.removeEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().removeEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);
@@ -296,14 +267,9 @@ var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
     /**
      * @protected
      */
-    initializeCommandSubscriptions: function() {
+    initializeContainer: function() {
+        this._super();
 
-    },
-
-    /**
-     * @protected
-     */
-    initializeEventListeners: function() {
         this.imageListTabView.addEventListener(TabViewEvent.EventType.CLICKED, this.handleUploadListLinkButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleAddByUrlButtonClicked, this);
         this.imageUploadAddByUrlContainer.getViewTop().addEventListener("AddByUrlCompleted", this.handleAddByUrlCompletedEvent, this);

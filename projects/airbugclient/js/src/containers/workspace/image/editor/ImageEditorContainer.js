@@ -15,182 +15,128 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var BoxView                             = bugpack.require('airbug.BoxView');
-var CommandModule                       = bugpack.require('airbug.CommandModule');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ImageEditorContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                               = bugpack.require('Class');
+    var BoxView                             = bugpack.require('airbug.BoxView');
+    var CommandModule                       = bugpack.require('airbug.CommandModule');
+    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired                           = AutowiredAnnotation.autowired;
+    var bugmeta                             = BugMeta.context();
+    var CommandType                         = CommandModule.CommandType;
+    var property                            = PropertyAnnotation.property;
+    var view                                = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceContainer}
+     */
+    var ImageEditorContainer = Class.extend(CarapaceContainer, {
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        // Models
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CommandModule}
+         * @constructs
          */
-        this.commandModule              = null;
+        _constructor: function() {
 
-        // Views
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CommandModule}
+             */
+            this.commandModule              = null;
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {BoxView}
+             */
+            this.boxView                    = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BoxView}
+         * @protected
          */
-        this.boxView                    = null;
+        createContainer: function() {
+            this._super();
 
 
-        // Containers
-        //-------------------------------------------------------------------------------
+            // Create Models
+            //-------------------------------------------------------------------------------
 
 
-    },
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(BoxView)
+                .name("boxView")
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.boxView);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {Array<*>} routerArgs
-     */
-    activateContainer: function(routerArgs) {
-        this._super(routerArgs);
+    bugmeta.annotate(ImageEditorContainer).with(
+        autowired().properties([
+            property("commandModule").ref("commandModule")
+        ])
+    );
 
-    },
-
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Models
-        //-------------------------------------------------------------------------------
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(BoxView)
-            .name("boxView")
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.boxView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.initializeCommandSubscriptions();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.deinitializeCommandSubscriptions();
-    },
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    initializeCommandSubscriptions: function() {
-
-    },
-
-    /**
-     * @private
-     */
-    deinitializeCommandSubscriptions: function() {
-
-    }
-
-    //-------------------------------------------------------------------------------
-    // Event Handlers
-    //-------------------------------------------------------------------------------
-
+    bugpack.export("airbug.ImageEditorContainer", ImageEditorContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ImageEditorContainer).with(
-    autowired().properties([
-        property("commandModule").ref("commandModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ImageEditorContainer", ImageEditorContainer);

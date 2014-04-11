@@ -67,7 +67,7 @@ var CodeEditorOverlayWidgetMinimizeButtonContainer = Class.extend(ButtonContaine
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

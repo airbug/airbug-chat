@@ -52,7 +52,7 @@ var PreviousMessagesLoaderContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -100,27 +100,6 @@ var PreviousMessagesLoaderContainer = Class.extend(CarapaceContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.previousMessagesLoaderView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
     }
 
 

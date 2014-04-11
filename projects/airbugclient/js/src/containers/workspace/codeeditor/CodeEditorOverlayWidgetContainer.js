@@ -87,7 +87,7 @@ var CodeEditorOverlayWidgetContainer = Class.extend(CodeEditorBaseWidgetContaine
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

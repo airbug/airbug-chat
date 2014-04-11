@@ -57,7 +57,7 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -106,8 +106,9 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
-    createContainerChildren: function() {
+    deinitializeContainer: function() {
         this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearRoomsHamburgerButtonClickedEvent, this);
     },
 
     /**
@@ -116,14 +117,6 @@ var RoomsHamburgerButtonContainer = Class.extend(ButtonContainer, {
     initializeContainer: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearRoomsHamburgerButtonClickedEvent, this);
-
-    },
-
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
     },
 
 

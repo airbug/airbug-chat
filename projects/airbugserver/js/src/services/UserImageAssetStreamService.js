@@ -70,7 +70,7 @@ var UserImageAssetStreamService = Class.extend(EntityService, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

@@ -84,7 +84,7 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // Modules
@@ -129,6 +129,14 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
     //-------------------------------------------------------------------------------
     // CarapaceContainer Extensions
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    activateContainer: function() {
+        this._super();
+        this.githubLoginFormView.$el.find("input")[0].focus();
+    },
 
     /**
      * @protected
@@ -236,17 +244,17 @@ var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.githubLoginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+        this.githubLoginFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
     /**
      * @protected
      */
-    activateContainer: function() {
+    initializeContainer: function() {
         this._super();
-        this.githubLoginFormView.$el.find("input")[0].focus();
+        this.githubLoginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
     },
 
 

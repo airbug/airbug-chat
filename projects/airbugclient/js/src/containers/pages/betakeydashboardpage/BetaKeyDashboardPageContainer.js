@@ -88,7 +88,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -242,15 +242,21 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
         this.addContainerChild(this.accountDropdownButtonContainer, '#header-right');
     },
 
+    /**
+     * @protected
+     */
+    deinitializeContainer: function() {
+//        this.formView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmitEvent, this);
+        this.submitButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSubmitButtonClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         console.log("formView:", this.formView);
 //        this.formView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmitEvent, this);
         this.submitButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSubmitButtonClickedEvent, this);
-    },
-
-    deinitializeContainer: function() {
-//        this.formView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmitEvent, this);
-        this.submitButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSubmitButtonClickedEvent, this);
     },
 
     handleSubmitButtonClickedEvent: function() {

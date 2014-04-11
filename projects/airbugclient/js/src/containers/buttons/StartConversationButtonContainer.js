@@ -72,7 +72,7 @@ var StartConversationButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -143,17 +143,17 @@ var StartConversationButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
-    initializeContainer: function() {
+    deinitializeContainer: function() {
         this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
-
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
     },
 
     /**
      * @protected
      */
-    activateContainer: function() {
+    initializeContainer: function() {
         this._super();
+        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
     },
 
 

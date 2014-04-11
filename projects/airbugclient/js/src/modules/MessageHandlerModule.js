@@ -65,7 +65,7 @@ var MessageHandlerModule = Class.extend(EventDispatcher, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

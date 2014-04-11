@@ -83,7 +83,7 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -253,6 +253,9 @@ var RoomChatBoxContainer = Class.extend(CarapaceContainer, {
         this.addContainerChild(this.roomMemberListPanelContainer,       "#column1of2-" + this.roomChatBoxTwoColumnView.getCid());
     },
 
+    /**
+     * @protected
+     */
     deinitializeContainer: function() {
         this._super();
         this.roomModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeRoomModelClearChange, this);

@@ -66,7 +66,7 @@ var ChatMessageTinkerButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 
@@ -118,13 +118,6 @@ var ChatMessageTinkerButtonContainer = Class.extend(ButtonContainer, {
         //-------------------------------------------------------------------------------
 
         this.setViewTop(this.buttonView);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
     }
 });
 

@@ -58,7 +58,7 @@ var ConversationController = Class.extend(EntityController, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

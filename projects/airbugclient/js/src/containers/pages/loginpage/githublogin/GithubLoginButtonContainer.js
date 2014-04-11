@@ -69,7 +69,7 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -107,7 +107,7 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // CarapaceContainer Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -133,10 +133,23 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
     /**
      * @protected
      */
+    deinitializeContainer: function() {
+        this._super();
+        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearGithubLoginButtonClickedEvent, this);
+    },
+
+    /**
+     * @protected
+     */
     initializeContainer: function() {
         this._super();
         this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearGithubLoginButtonClickedEvent, this);
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private

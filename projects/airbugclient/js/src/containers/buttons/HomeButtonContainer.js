@@ -17,162 +17,165 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var IconView                = bugpack.require('airbug.IconView');
-var TextView                = bugpack.require('airbug.TextView');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired               = AutowiredAnnotation.autowired;
-var bugmeta                 = BugMeta.context();
-var property                = PropertyAnnotation.property;
-var view                    = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {ButtonContainer}
- */
-var HomeButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                   = bugpack.require('Class');
+    var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
+    var ButtonView              = bugpack.require('airbug.ButtonView');
+    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var IconView                = bugpack.require('airbug.IconView');
+    var TextView                = bugpack.require('airbug.TextView');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
-        this._super("HomeButton");
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var property                = PropertyAnnotation.property;
+    var view                    = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @constructor
+     * @extends {ButtonContainer}
+     */
+    var HomeButtonContainer = Class.extend(ButtonContainer, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super("HomeButton");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {NavigationModule}
+             */
+            this.navigationModule   = null;
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ButtonView}
+             */
+            this.buttonView         = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
 
-        // Modules
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(ButtonView)
+                .name("buttonView")
+                .attributes({
+                    type: "primary",
+                    align: "left"
+                })
+                .children([
+                    view(TextView)
+                        .attributes({text: "Home"})
+                        .appendTo("#button-{{cid}}")
+                ])
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearHomeButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearHomeButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {NavigationModule}
+         * @param {ButtonViewEvent} event
          */
-        this.navigationModule   = null;
-
-
-        // Views
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ButtonView}
-         */
-        this.buttonView         = null;
-    },
+        hearHomeButtonClickedEvent: function(event) {
+            this.navigationModule.navigate("home", {
+                trigger: true
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(ButtonView)
-            .name("buttonView")
-            .attributes({
-                type: "primary",
-                align: "left"
-            })
-            .children([
-                view(TextView)
-                    .attributes({text: "Home"})
-                    .appendTo("#button-{{cid}}")
-            ])
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.buttonView);
-    },
-
-    /**
-     * @protected
-     */
-    initializeEventListeners: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearHomeButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeEventListeners: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearHomeButtonClickedEvent, this);
-    },
+    bugmeta.annotate(HomeButtonContainer).with(
+        autowired().properties([
+            property("navigationModule").ref("navigationModule")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearHomeButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("home", {
-            trigger: true
-        });
-    }
+    bugpack.export("airbug.HomeButtonContainer", HomeButtonContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(HomeButtonContainer).with(
-    autowired().properties([
-        property("navigationModule").ref("navigationModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.HomeButtonContainer", HomeButtonContainer);

@@ -14,104 +14,118 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var ApplicationController               = bugpack.require('airbug.ApplicationController');
-var EmailSettingsPageContainer          = bugpack.require('airbug.EmailSettingsPageContainer');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
-var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                             = BugMeta.context();
-var controller                          = ControllerAnnotation.controller;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EmailSettingsPageController = Class.extend(ApplicationController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                               = bugpack.require('Class');
+    var ApplicationController               = bugpack.require('airbug.ApplicationController');
+    var EmailSettingsPageContainer          = bugpack.require('airbug.EmailSettingsPageContainer');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
+    var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                             = BugMeta.context();
+    var controller                          = ControllerAnnotation.controller;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ApplicationController}
+     */
+    var EmailSettingsPageController = Class.extend(ApplicationController, {
 
         //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-
-        // Containers
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {EmailSettingsPageContainer}
+         * @constructs
          */
-        this.emailSettingsPageContainer     = null;
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            // Containers
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {EmailSettingsPageContainer}
+             */
+            this.emailSettingsPageContainer     = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceController Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        createController: function() {
+            this._super();
+            this.emailSettingsPageContainer = new EmailSettingsPageContainer();
+            this.setContainerTop(this.emailSettingsPageContainer);
+        },
+
+        /**
+         * @protected
+         */
+        destroyController: function() {
+            this._super();
+            this.emailSettingsPageContainer = null;
+        },
+
+        /**
+         * @override
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        filterRouting: function(routingRequest) {
+            this.requireLogin(routingRequest, function(throwable, currentUser) {
+                if (!throwable) {
+                    routingRequest.accept();
+                } else {
+                    routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
+                }
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createController: function() {
-        this._super();
-        this.emailSettingsPageContainer = new EmailSettingsPageContainer();
-        this.setContainerTop(this.emailSettingsPageContainer);
-    },
+    bugmeta.annotate(EmailSettingsPageController).with(
+        controller().route("settings/email")
+    );
 
-    /**
-     * @override
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    filterRouting: function(routingRequest) {
-        this.requireLogin(routingRequest, function(throwable, currentUser) {
-            if (!throwable) {
-                routingRequest.accept();
-            } else {
-                routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
-            }
-        });
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.EmailSettingsPageController", EmailSettingsPageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(EmailSettingsPageController).with(
-    controller().route("settings/email")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.EmailSettingsPageController", EmailSettingsPageController);
