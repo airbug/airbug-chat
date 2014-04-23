@@ -75,13 +75,16 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ImageListContainer = Class.extend(ListContainer, {
 
+        _name: "airbug.ImageListContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
 
         /**
          * @constructs
-         * @param {UserImageAssetList} userImageAssetList
+         * @param {ObservableList.<UserImageAssetModel>} userImageAssetList
          */
         _constructor: function(userImageAssetList) {
 
@@ -104,7 +107,7 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {UserImageAssetList}
+             * @type {ObservableList.<UserImageAssetModel>}
              */
             this.userImageAssetList                 = userImageAssetList;
         },
@@ -170,7 +173,6 @@ require('bugpack').context("*", function(bugpack) {
             return null;
         },
 
-
         /**
          * @protected
          */
@@ -193,19 +195,15 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Private Methods
-        //-------------------------------------------------------------------------------
-
-
-        //-------------------------------------------------------------------------------
         // Model Observers
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @param {AddAtChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetListAdd: function(change){
+        observeUserImageAssetListAdd: function(observation) {
+            var change                   = /** @type {AddAtChange} */(observation.getChange());
             var userImageAssetModel     = change.getValue();
             var index                   = change.getIndex();
             var userImageAssetContainer = this.createUserImageAssetContainer(userImageAssetModel);
@@ -218,9 +216,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {ClearChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetListClear: function(change) {
+        observeUserImageAssetListClear: function(observation) {
             this.removeAllContainerChildren(true);
             this.clearModelMap();
             this.processUserImageAssetList();
@@ -228,9 +226,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {RemoveAtChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetListRemove: function(change) {
+        observeUserImageAssetListRemove: function(observation) {
+            var change                      = /** @type {RemoveAtChange} */(observation.getChange());
             var userImageAssetModel         = change.getValue();
             var userImageAssetContainer     = this.getContainerForModel(userImageAssetModel);
             this.unmapModel(userImageAssetModel);

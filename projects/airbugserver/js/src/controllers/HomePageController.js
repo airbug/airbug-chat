@@ -15,122 +15,127 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var StringUtil          = bugpack.require('StringUtil');
-var Controller          = bugpack.require('airbugserver.Controller');
-var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                 = ArgAnnotation.arg;
-var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Controller}
- */
-var HomePageController = Class.extend(Controller, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var StringUtil          = bugpack.require('StringUtil');
+    var Controller          = bugpack.require('airbugserver.Controller');
+    var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                 = ArgAnnotation.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleAnnotation.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {ExpressApp} expressApp
-     * @param {AirbugClientConfig} airbugClientConfig
+     * @class
+     * @extends {Controller}
      */
-    _constructor: function(controllerManager, expressApp, airbugClientConfig) {
+    var HomePageController = Class.extend(Controller, {
 
-        this._super(controllerManager, expressApp);
+        _name: "airbugserver.HomePageController",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AirbugClientConfig}
+         * @constructs
+         * @param {ControllerManager} controllerManager
+         * @param {ExpressApp} expressApp
+         * @param {AirbugClientConfig} airbugClientConfig
          */
-        this.airbugClientConfig     = airbugClientConfig;
-    },
+        _constructor: function(controllerManager, expressApp, airbugClientConfig) {
+
+            this._super(controllerManager, expressApp);
 
 
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    configureController: function(callback) {
-        var _this = this;
-        this.getExpressApp().get('/app', function(request, response) {
-            var requestContext          = request.requestContext;
-            var session                 = requestContext.get("session");
-            var configObject            = _this.airbugClientConfig.toObject();
-            configObject.github.state   = session.getData().githubState;
-            configObject.github.emails  = session.getData().githubEmails;
-            response.render('home', {
-                locals: {
-                    config: StringUtil.escapeString(JSON.stringify(configObject)),
-                    debug: configObject.debug,
-                    staticUrl: configObject.staticUrl
-                }
-            }, function(error, html)  {
-                if (error) {
-                    console.error(error);
-                    response.send(500, "an error occurred");
-                } else {
-                    console.log('html:' + html);
-                    response.send(html);
-                }
+            /**
+             * @private
+             * @type {AirbugClientConfig}
+             */
+            this.airbugClientConfig     = airbugClientConfig;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        configureController: function(callback) {
+            var _this = this;
+            this.getExpressApp().get('/app', function(request, response) {
+                var requestContext          = request.requestContext;
+                var session                 = requestContext.get("session");
+                var configObject            = _this.airbugClientConfig.toObject();
+                configObject.github.state   = session.getData().githubState;
+                configObject.github.emails  = session.getData().githubEmails;
+                response.render('home', {
+                    locals: {
+                        config: StringUtil.escapeString(JSON.stringify(configObject)),
+                        debug: configObject.debug,
+                        js: configObject.js,
+                        staticUrl: configObject.staticUrl
+                    }
+                }, function(error, html)  {
+                    if (error) {
+                        console.error(error);
+                        response.send(500, "an error occurred");
+                    } else {
+                        console.log('html:' + html);
+                        response.send(html);
+                    }
+                });
             });
-        });
-        callback();
-    }
+            callback();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(HomePageController).with(
+        module("homePageController")
+            .args([
+                arg().ref("controllerManager"),
+                arg().ref("expressApp"),
+                arg().ref("airbugClientConfig")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.HomePageController', HomePageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(HomePageController).with(
-    module("homePageController")
-        .args([
-            arg().ref("controllerManager"),
-            arg().ref("expressApp"),
-            arg().ref("airbugClientConfig")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.HomePageController', HomePageController);

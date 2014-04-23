@@ -55,6 +55,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var UserRedirectPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.UserRedirectPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

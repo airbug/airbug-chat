@@ -406,7 +406,7 @@ var UserAssetService = Class.extend(Obj, {
                                     if (!mappedException) {
                                         mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                     }
-                                    mappedException.putThrowable(key, new Exception('NotFound', {objectId: key}, "Could not find UserAsset with id '" + key + "'"));
+                                    mappedException.putCause(key, new Exception('NotFound', {objectId: key}, "Could not find UserAsset with id '" + key + "'"));
                                 }
                             });
                             flow.complete();

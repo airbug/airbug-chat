@@ -53,6 +53,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var RegistrationPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.RegistrationPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

@@ -11,132 +11,182 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Map                     = bugpack.require('Map');
-var Obj                     = bugpack.require('Obj');
-var CarapaceModel           = bugpack.require('carapace.CarapaceModel');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MappedMeldModel = Class.extend(CarapaceModel, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(dataObject, meldDocumentMap) {
+    var Class                   = bugpack.require('Class');
+    var Map                     = bugpack.require('Map');
+    var Obj                     = bugpack.require('Obj');
+    var CarapaceModel           = bugpack.require('carapace.CarapaceModel');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceModel}
+     */
+    var MappedMeldModel = Class.extend(CarapaceModel, {
+
+        _name: "airbug.MappedMeldModel",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, MeldDocument>}
+         * @constructs
+         * @param {Object} dataObject
+         * @param {Map.<string, MeldDocument>} meldDocumentMap
          */
-        this.meldDocumentMap = new Map();
+        _constructor: function(dataObject, meldDocumentMap) {
 
-        this._super(dataObject);
-        
-        var _this = this;
-        meldDocumentMap.forEach(function(meldDocument, key) {
-            _this.putMeldDocument(key, meldDocument);
-        });
-    },
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
+            /**
+             * @private
+             * @type {Map.<string, MeldDocument>}
+             */
+            this.meldDocumentMap = new Map();
 
+            this._super(dataObject);
 
-    //-------------------------------------------------------------------------------
-    // BugModel Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    clear: function() {
-        var _this = this;
-        this.meldDocumentMap.forEach(function(meldDocument, key) {
-            _this.removeMeldDocument(key);
-        });
-        this.clearProperties();
-        this.reinitialize();
-    },
+            var _this = this;
+            meldDocumentMap.forEach(function(meldDocument, key) {
+                _this.putMeldDocument(key, meldDocument);
+            });
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // BugModel Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {string} key
-     * @returns {MeldDocument}
-     */
-    getMeldDocument: function(key) {
-        return this.meldDocumentMap.get(key);
-    },
+        /**
+         *
+         */
+        clear: function() {
+            var _this = this;
+            this.meldDocumentMap.forEach(function(meldDocument, key) {
+                _this.removeMeldDocument(key);
+            });
+            this.clearProperties();
+        },
 
-    /**
-     * @protected
-     * @param {string} key
-     * @param {MeldDocument} meldDocument
-     */
-    processMeldDocument: function(key, meldDocument) {
+        /**
+         * @protected
+         */
+        createModel: function() {
+            this._super();
+            this.processMeldDocuments();
+        },
 
-    },
+        /**
+         * @protected
+         */
+        destroyModel: function() {
+            this._super();
+            this.unprocessMeldDocuments();
+        },
 
-    /**
-     * @protected
-     * @param {string} key
-     * @param {MeldDocument} meldDocument
-     */
-    unprocessMeldDocument: function(key, meldDocument) {
 
-    },
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {string} key
-     * @param {MeldDocument} meldDocument
-     */
-    putMeldDocument: function(key, meldDocument) {
-        if (this.meldDocumentMap.containsKey(key)) {
-            this.removeMeldDocument(key);
+        /**
+         * @protected
+         * @param {string} key
+         * @returns {MeldDocument}
+         */
+        getMeldDocument: function(key) {
+            return this.meldDocumentMap.get(key);
+        },
+
+        /**
+         * @protected
+         * @param {string} key
+         * @param {MeldDocument} meldDocument
+         */
+        processMeldDocument: function(key, meldDocument) {
+
+        },
+
+        /**
+         * @protected
+         */
+        processMeldDocuments: function() {
+            var _this = this;
+            this.meldDocumentMap.forEach(function(meldDocument, key) {
+                _this.processMeldDocument(key, meldDocument);
+            });
+        },
+
+        /**
+         * @protected
+         * @param {string} key
+         * @param {MeldDocument} meldDocument
+         */
+        unprocessMeldDocument: function(key, meldDocument) {
+
+        },
+
+        /**
+         * @protected
+         */
+        unprocessMeldDocuments: function() {
+            var _this = this;
+            this.meldDocumentMap.forEach(function(meldDocument, key) {
+                _this.unprocessMeldDocument(key, meldDocument);
+            });
+        },
+
+        /**
+         * @protected
+         * @param {string} key
+         * @param {MeldDocument} meldDocument
+         */
+        putMeldDocument: function(key, meldDocument) {
+            if (this.meldDocumentMap.containsKey(key)) {
+                this.removeMeldDocument(key);
+            }
+            this.meldDocumentMap.put(key, meldDocument);
+            if (this.isCreated()) {
+                this.processMeldDocument(key, meldDocument);
+                this.reinitialize();
+            }
+        },
+
+        /**
+         * @protected
+         * @param {string} key
+         */
+        removeMeldDocument: function(key) {
+            if (this.meldDocumentMap.containsKey(key)) {
+                var meldDocument = this.meldDocumentMap.remove(key);
+                if (this.isCreated()) {
+                    this.unprocessMeldDocument(key, meldDocument);
+                    this.reinitialize();
+                }
+            }
         }
-        this.meldDocumentMap.put(key, meldDocument);
-        this.processMeldDocument(key, meldDocument);
-        this.reinitialize();
-    },
+    });
 
-    /**
-     * @protected
-     * @param {string} key
-     */
-    removeMeldDocument: function(key) {
-        if (this.meldDocumentMap.containsKey(key)) {
-            var meldDocument = this.meldDocumentMap.remove(key);
-            this.unprocessMeldDocument(key, meldDocument);
-            this.reinitialize();
-        }
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.MappedMeldModel", MappedMeldModel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.MappedMeldModel", MappedMeldModel);

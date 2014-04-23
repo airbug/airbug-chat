@@ -324,13 +324,13 @@ var DialogueService = Class.extend(EntityService, {
                                     if (!mappedException) {
                                         mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                     }
-                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find Dialogue with the id '" + key + "'"));
+                                    mappedException.putCause(key, new Exception("NotFound", {objectId: key}, "Could not find Dialogue with the id '" + key + "'"));
                                 } else if (!dialogue.getUserIdPair().contains(currentUser.getId())) {
                                     dialogueMap.remove(key);
                                     if (!mappedException) {
                                         mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                     }
-                                    mappedException.putThrowable(key, new Exception('UnauthorizedAccess', {objectId: key}, "CurrentUser does not have access to Dialogue with the id '" + key + "'"));
+                                    mappedException.putCause(key, new Exception('UnauthorizedAccess', {objectId: key}, "CurrentUser does not have access to Dialogue with the id '" + key + "'"));
                                 }
                             });
                         }

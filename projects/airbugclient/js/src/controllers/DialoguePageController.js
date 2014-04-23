@@ -55,6 +55,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var DialoguePageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.DialoguePageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

@@ -17,120 +17,123 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var ArgumentBug         = bugpack.require('ArgumentBug');
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
-var Controller          = bugpack.require('airbugserver.Controller');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                 = ArgAnnotation.arg;
-var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
-var $iterableParallel   = BugFlow.$iterableParallel;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ControllerManager = Class.extend(Obj, {
+    var ArgumentBug         = bugpack.require('ArgumentBug');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var Controller          = bugpack.require('airbugserver.Controller');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Simplify References
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var arg                 = ArgAnnotation.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleAnnotation.module;
+    var $iterableParallel   = BugFlow.$iterableParallel;
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var ControllerManager = Class.extend(Obj, {
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<Controller>}
+         * @constructs
          */
-        this.registeredControlerSet = new Set();
-    },
+        _constructor: function() {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Set.<Controller>}
-     */
-    getRegisteredControllerSet: function() {
-        return this.registeredControlerSet;
-    },
+            /**
+             * @private
+             * @type {Set.<Controller>}
+             */
+            this.registeredControlerSet = new Set();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initialize: function(callback) {
-        //TEST
-        console.log("Initializing ControllerManager");
+        /**
+         * @return {Set.<Controller>}
+         */
+        getRegisteredControllerSet: function() {
+            return this.registeredControlerSet;
+        },
 
-        $iterableParallel(this.registeredControlerSet, function(flow, controller) {
-            controller.configure(function(throwable) {
-                flow.complete(throwable);
-            });
-        }).execute(callback);
-    },
 
-    /**
-     * @param {Controller} controller
-     */
-    registerController: function(controller) {
-        if (Class.doesExtend(controller, Controller)) {
-            this.registeredControlerSet.add(controller);
-        } else {
-            throw new ArgumentBug(ArgumentBug.ILLEGAL, "controller", controller, "parameter must extend Controller");
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        initialize: function(callback) {
+            $iterableParallel(this.registeredControlerSet, function(flow, controller) {
+                controller.configure(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
+        },
+
+        /**
+         * @param {Controller} controller
+         */
+        registerController: function(controller) {
+            if (Class.doesExtend(controller, Controller)) {
+                this.registeredControlerSet.add(controller);
+            } else {
+                throw new ArgumentBug(ArgumentBug.ILLEGAL, "controller", controller, "parameter must extend Controller");
+            }
         }
-    }
 
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(ControllerManager).with(
+        module("controllerManager")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.ControllerManager', ControllerManager);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(ControllerManager).with(
-    module("controllerManager")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.ControllerManager', ControllerManager);

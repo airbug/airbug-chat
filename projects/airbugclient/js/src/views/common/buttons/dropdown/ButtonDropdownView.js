@@ -32,6 +32,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ButtonDropdownView = Class.extend(ButtonView, {
 
+        _name: "airbug.ButtonDropdownView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
@@ -58,7 +61,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceView Methods
+        // BugView Methods
         //-------------------------------------------------------------------------------
 
         /**

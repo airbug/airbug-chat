@@ -9,41 +9,48 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var WorkspaceBoxWithHeaderView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="workspace-widget box box-with-header {{classes}}">' +
-            '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
-            '</div>' +
-            '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
-            '</div>' +
-        '</div>'
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {MustacheView}
+     */
+    var WorkspaceBoxWithHeaderView = Class.extend(MustacheView, {
+
+        _name: "airbug.WorkspaceBoxWithHeaderView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="box-{{cid}}" class="workspace-widget box box-with-header {{classes}}">' +
+                '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
+                '</div>' +
+                '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
+                '</div>' +
+            '</div>'
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.WorkspaceBoxWithHeaderView", WorkspaceBoxWithHeaderView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.WorkspaceBoxWithHeaderView", WorkspaceBoxWithHeaderView);

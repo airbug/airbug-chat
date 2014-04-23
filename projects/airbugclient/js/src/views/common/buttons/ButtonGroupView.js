@@ -9,60 +9,63 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {MustacheView}
- */
-var ButtonGroupView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="button-group-{{cid}}" class="btn-group {{classes}}">' +
-        '</div>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data = this._super();
-        switch (this.getAttribute("align")) {
-            case "right":
-                data.classes += " pull-right";
-                break;
+    var ButtonGroupView = Class.extend(MustacheView, {
+
+        _name: "airbug.ButtonGroupView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="button-group-{{cid}}" class="btn-group {{classes}}">' +
+            '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data = this._super();
+            switch (this.getAttribute("align")) {
+                case "right":
+                    data.classes += " pull-right";
+                    break;
+            }
+
+            return data;
         }
+    });
 
-        return data;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.ButtonGroupView", ButtonGroupView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ButtonGroupView", ButtonGroupView);

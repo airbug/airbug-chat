@@ -49,6 +49,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var NotificationSettingsPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.NotificationSettingsPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

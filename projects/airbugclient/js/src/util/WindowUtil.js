@@ -9,168 +9,170 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var WindowUtil = Class.extend(Obj, {
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {window|*|window.window} window
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(window) {
+    var WindowUtil = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbug.WindowUtil",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {window|*|window.window}
+         * @constructs
+         * @param {window|*|window.window} window
          */
-        this.window = window;
-    },
+        _constructor: function(window) {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {window|*|window.window}
-     */
-    getWindow: function() {
-        return this.window;
-    },
+            /**
+             * @private
+             * @type {window|*|window.window}
+             */
+            this.window = window;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    // If URL is http://www.somedomain.com:8000/account/search?filter=a#top
+        /**
+         * @return {window|*|window.window}
+         */
+        getWindow: function() {
+            return this.window;
+        },
 
-    /**
-     * http://www.somedomain.com:8000
-     * @return {string}
-     */
-    getBaseUrl: function() {
-        var protocol    = this.getProtocol();
-        var host        = this.getHost();
-        return protocol + "//" + host;
-    },
 
-    /**
-     * http://www.somedomain.com:8000/account/search
-     * @return {string}
-     */
-    getUrl: function() {
-        var protocol    = this.getProtocol();
-        var host        = this.getHost();
-        var pathname    = this.getPathname();
-        return protocol + "//" + host + pathname;
-    },
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * #top
-     * @return {string}
-     */
-    getHash: function() {
-        return this.window.location.hash;
-    },
+        // If URL is http://www.somedomain.com:8000/account/search?filter=a#top
 
-    /**
-     * www.somedomain.com:8000
-     * @return {string}
-     */
-    getHost: function() {
-        return this.window.location.host;
-    },
+        /**
+         * http://www.somedomain.com:8000
+         * @return {string}
+         */
+        getBaseUrl: function() {
+            var protocol    = this.getProtocol();
+            var host        = this.getHost();
+            return protocol + "//" + host;
+        },
 
-    /**
-     * www.somedomain.com
-     * @return {string}
-     */
-    getHostname: function() {
-        return this.window.location.hostname;
-    },
+        /**
+         * http://www.somedomain.com:8000/account/search
+         * @return {string}
+         */
+        getUrl: function() {
+            var protocol    = this.getProtocol();
+            var host        = this.getHost();
+            var pathname    = this.getPathname();
+            return protocol + "//" + host + pathname;
+        },
 
-    /**
-     * http://www.somedomain.com:8000/account/search?filter=a#top
-     * @return {string}
-     */
-    getHref: function() {
-        return this.window.location.href.toString();
-    },
+        /**
+         * #top
+         * @return {string}
+         */
+        getHash: function() {
+            return this.window.location.hash;
+        },
 
-    /**
-     * /account/search
-     * @returns {string}
-     */
-    getPathname: function() {
-        return window.location.pathname;
-    },
+        /**
+         * www.somedomain.com:8000
+         * @return {string}
+         */
+        getHost: function() {
+            return this.window.location.host;
+        },
 
-    /**
-     * 8000
-     * @returns {number}
-     */
-    getPort: function() {
-        var windowPort  = window.location.port;
-        var port        = 80;
-        if (windowPort !== "") {
-            port = (windowPort - 0);
+        /**
+         * www.somedomain.com
+         * @return {string}
+         */
+        getHostname: function() {
+            return this.window.location.hostname;
+        },
+
+        /**
+         * http://www.somedomain.com:8000/account/search?filter=a#top
+         * @return {string}
+         */
+        getHref: function() {
+            return this.window.location.href.toString();
+        },
+
+        /**
+         * /account/search
+         * @returns {string}
+         */
+        getPathname: function() {
+            return window.location.pathname;
+        },
+
+        /**
+         * 8000
+         * @returns {number}
+         */
+        getPort: function() {
+            var windowPort  = window.location.port;
+            var port        = 80;
+            if (windowPort !== "") {
+                port = (windowPort - 0);
+            }
+            return port;
+        },
+
+        /**
+         * http:
+         * @return {string}
+         */
+        getProtocol: function() {
+            return this.window.location.protocol;
+        },
+
+        /**
+         * ?filter=a
+         * @return {string}
+         */
+        getQuery: function() {
+            return this.window.location.search;
         }
-        return port;
-    },
+    });
 
-    /**
-     * http:
-     * @return {string}
-     */
-    getProtocol: function() {
-        return this.window.location.protocol;
-    },
 
-    /**
-     * ?filter=a
-     * @return {string}
-     */
-    getQuery: function() {
-        return this.window.location.search;
-    }
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.WindowUtil", WindowUtil);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.WindowUtil", WindowUtil);

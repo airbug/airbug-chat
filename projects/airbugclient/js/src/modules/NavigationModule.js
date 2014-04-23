@@ -16,172 +16,195 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Map                             = bugpack.require('Map');
-var Obj                             = bugpack.require('Obj');
-var Url                             = bugpack.require('Url');
-var TypeUtil                        = bugpack.require('TypeUtil');
-var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                             = ArgAnnotation.arg;
-var bugmeta                         = BugMeta.context();
-var module                          = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var NavigationModule = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(carapaceRouter, window) {
+    var Class                           = bugpack.require('Class');
+    var Map                             = bugpack.require('Map');
+    var Obj                             = bugpack.require('Obj');
+    var Url                             = bugpack.require('Url');
+    var TypeUtil                        = bugpack.require('TypeUtil');
+    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                             = ArgAnnotation.arg;
+    var bugmeta                         = BugMeta.context();
+    var module                          = ModuleAnnotation.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var NavigationModule = Class.extend(Obj, {
+
+        _name: "airbug.NavigationModule",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CarapaceRouter}
+         * @constructs
+         * @param {CarapaceRouter} carapaceRouter
+         * @param {Window} window
          */
-        this.carapaceRouter         = carapaceRouter;
+        _constructor: function(carapaceRouter, window) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CarapaceRouter}
+             */
+            this.carapaceRouter         = carapaceRouter;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.finalDestination       = null;
+
+            /**
+             * @private
+             * @type {Map<number, string>}
+             */
+            this.goBackIdToFragmentMap  = new Map();
+
+            /**
+             * @private
+             * @type {number}
+             */
+            this.lastGoBackId           = 0;
+
+            /**
+             * @private
+             * @type {Window}
+             */
+            this.window                 = window;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.finalDestination       = null;
+        getFinalDestination: function() {
+            return this.finalDestination;
+        },
 
         /**
-         * @private
-         * @type {Map<number, string>}
+         * @param {string} finalDestination
          */
-        this.goBackIdToFragmentMap  = new Map();
+        setFinalDestination: function(finalDestination) {
+            this.finalDestination = finalDestination;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {number}
+         *
          */
-        this.lastGoBackId           = 0;
+        clearFinalDestination: function() {
+            this.finalDestination = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Window}
+         * @param {string} goBackId
+         * @param {Object} options
          */
-        this.window                 = window;
-    },
+        goBack: function(goBackId, options) {
+            var goBackFragment = this.goBackIdToFragmentMap.get(goBackId);
+            if (TypeUtil.isString(goBackFragment)) {
+                this.goBackIdToFragmentMap.remove(goBackId);
+                this.navigate(goBackFragment, options);
+            }
+        },
+
+        /**
+         * @return {number}
+         */
+        markPreviousGoBack: function() {
+            var previousFragment = this.carapaceRouter.getPreviousFragment();
+            var goBackId = ++this.lastGoBackId;
+            this.goBackIdToFragmentMap.put(goBackId, previousFragment);
+            return goBackId;
+        },
+
+        /**
+         * @param {string} fragment
+         * @param {Object} options
+         */
+        navigate: function(fragment, options) {
+            this.carapaceRouter.navigate(fragment, options);
+        },
+
+        /**
+         * @param {(string | Url)} url
+         */
+        navigateToUrl: function(url) {
+            var href = undefined;
+            if (Class.doesExtend(url, Url)) {
+                href = url.toString();
+            } else if (TypeUtil.isString(url)) {
+                href = url;
+            } else {
+                throw new Error("'url' must be a string or a Url instance");
+            }
+            this.window.location.href = href;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} goBackId
-     * @param {Object} options
-     */
-    goBack: function(goBackId, options) {
-        var goBackFragment = this.goBackIdToFragmentMap.get(goBackId);
-        if (TypeUtil.isString(goBackFragment)) {
-            this.goBackIdToFragmentMap.remove(goBackId);
-            this.navigate(goBackFragment, options);
-        }
-    },
+    bugmeta.annotate(NavigationModule).with(
+        module("navigationModule")
+            .args([
+                arg("carapaceRouter").ref("carapaceRouter"),
+                arg("window").ref("window")
+            ])
+    );
 
-    /**
-     * @return {number}
-     */
-    markPreviousGoBack: function() {
-        var previousFragment = this.carapaceRouter.getPreviousFragment();
-        var goBackId = ++this.lastGoBackId;
-        this.goBackIdToFragmentMap.put(goBackId, previousFragment);
-        return goBackId;
-    },
 
-    /**
-     * @param {string} fragment
-     * @param {Object} options
-     */
-    navigate: function(fragment, options) {
-        this.carapaceRouter.navigate(fragment, options);
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {(string | Url)} url
-     */
-    navigateToUrl: function(url) {
-        var href = undefined;
-        if (Class.doesExtend(url, Url)) {
-            href = url.toString();
-        } else if (TypeUtil.isString(url)) {
-            href = url;
-        } else {
-            throw new Error("'url' must be a string or a Url instance");
-        }
-        this.window.location.href = href;
-    },
-
-    /**
-     * @return {string}
-     */
-    getFinalDestination: function() {
-        return this.finalDestination;
-    },
-
-    /**
-     */
-    clearFinalDestination: function() {
-        this.finalDestination = null;
-    },
-
-    /**
-     * @param {string} finalDestination
-     */
-    setFinalDestination: function(finalDestination) {
-        this.finalDestination = finalDestination;
-    }
+    bugpack.export("airbug.NavigationModule", NavigationModule);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(NavigationModule).with(
-    module("navigationModule")
-        .args([
-            arg("carapaceRouter").ref("carapaceRouter"),
-            arg("window").ref("window")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.NavigationModule", NavigationModule);

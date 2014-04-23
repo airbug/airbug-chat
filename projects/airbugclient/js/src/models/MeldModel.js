@@ -13,138 +13,164 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var ArgumentBug             = bugpack.require('ArgumentBug');
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var TypeUtil                = bugpack.require('TypeUtil');
-var CarapaceModel           = bugpack.require('carapace.CarapaceModel');
-var MeldDocument            = bugpack.require('meldbug.MeldDocument');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {CarapaceModel}
- */
-var MeldModel = Class.extend(CarapaceModel, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var ArgumentBug             = bugpack.require('ArgumentBug');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var TypeUtil                = bugpack.require('TypeUtil');
+    var CarapaceModel           = bugpack.require('carapace.CarapaceModel');
+    var MeldDocument            = bugpack.require('meldbug.MeldDocument');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Object} dataObject
-     * @param {MeldDocument} meldDocument
+     * @class
+     * @extends {CarapaceModel}
      */
-    _constructor: function(dataObject, meldDocument) {
+    var MeldModel = Class.extend(CarapaceModel, {
 
-        this._super(dataObject);
+        _name: "airbug.MeldModel",
 
-        //TODO BRN: Add support for pass through properties from meld to model
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {MeldDocument}
+         * @constructs
+         * @param {Object} dataObject
+         * @param {MeldDocument} meldDocument
          */
-        this.meldDocument   = undefined;
+        _constructor: function(dataObject, meldDocument) {
 
-        this.setMeldDocument(meldDocument);
-    },
+            this._super(dataObject);
+
+            //TODO BRN: Add support for pass through properties from meld to model
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MeldDocument}
+             */
+            this.meldDocument   = undefined;
+
+            this.setMeldDocument(meldDocument);
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {MeldDocument}
-     */
-    getMeldDocument: function() {
-        return this.meldDocument;
-    },
+        /**
+         * @return {MeldDocument}
+         */
+        getMeldDocument: function() {
+            return this.meldDocument;
+        },
 
-    /**
-     *
-     */
-    removeMeldDocument: function() {
-        if (this.meldDocument) {
-            this.deinitialize();
-            this.meldDocument = undefined;
-            this.unprocessMeldDocument();
-        }
-    },
-
-    /**
-     * @param {MeldDocument} meldDocument
-     */
-    setMeldDocument: function(meldDocument) {
-        if (!Obj.equals(this.meldDocument, meldDocument)) {
-            this.removeMeldDocument();
-            if (Class.doesExtend(meldDocument, MeldDocument)) {
-                this.meldDocument = meldDocument;
-                this.processMeldDocument();
-                this.reinitialize();
-            } else if (!TypeUtil.isUndefined(meldDocument) && !TypeUtil.isNull(meldDocument)) {
-                throw new ArgumentBug(ArgumentBug.ILLEGAL, "meldDocument", meldDocument, "parameter must either be undefined or a MeldDocument");
+        /**
+         *
+         */
+        removeMeldDocument: function() {
+            if (this.meldDocument) {
+                this.deinitialize();
+                this.meldDocument = undefined;
+                this.unprocessMeldDocument();
             }
+        },
+
+        /**
+         * @param {MeldDocument} meldDocument
+         */
+        setMeldDocument: function(meldDocument) {
+            if (!Obj.equals(this.meldDocument, meldDocument)) {
+                this.removeMeldDocument();
+                if (Class.doesExtend(meldDocument, MeldDocument)) {
+                    this.meldDocument = meldDocument;
+                    if (this.isCreated()) {
+                        this.processMeldDocument();
+                        this.reinitialize();
+                    }
+                } else if (!TypeUtil.isUndefined(meldDocument) && !TypeUtil.isNull(meldDocument)) {
+                    throw new ArgumentBug(ArgumentBug.ILLEGAL, "meldDocument", meldDocument, "parameter must either be undefined or a MeldDocument");
+                }
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // BugModel Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @override
+         */
+        clear: function() {
+            this.removeMeldDocument();
+            this.clearProperties();
+            this.reinitialize();
+        },
+
+        /**
+         * @protected
+         */
+        createModel: function() {
+            this._super();
+            if (this.meldDocument) {
+                this.processMeldDocument();
+            }
+        },
+
+        /**
+         * @protected
+         */
+        destroyModel: function() {
+            this._super();
+            if (this.meldDocument) {
+                this.unprocessMeldDocument();
+                this.meldDocument = null;
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        processMeldDocument: function() {
+
+        },
+
+        /**
+         * @protected
+         */
+        unprocessMeldDocument: function() {
+
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // BugModel Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @override
-     */
-    clear: function() {
-        this.removeMeldDocument();
-        this.clearProperties();
-        this.reinitialize();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    processMeldDocument: function() {
-
-    },
-
-    /**
-     * @protected
-     */
-    unprocessMeldDocument: function() {
-
-    }
+    bugpack.export("airbug.MeldModel", MeldModel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.MeldModel", MeldModel);

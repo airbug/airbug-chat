@@ -9,46 +9,48 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class = bugpack.require('Class');
+    var Event = bugpack.require('Event');
 
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Event = bugpack.require('Event');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ImageViewEvent = Class.extend(Event, {});
+    /**
+     * @class
+     * @extends {Event}
+     */
+    var ImageViewEvent = Class.extend(Event, {});
 
 
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Static Variables
+    //-------------------------------------------------------------------------------
 
-/**
- * @enum {string}
- */
-ImageViewEvent.EventType = {
-    CLICKED_DELETE: "ImageViewEvent:ClickedDelete",
-    CLICKED_EDIT:   "ImageViewEvent:ClickedEdit",
-    CLICKED_EMBED:  "ImageViewEvent:ClickedEmbed",
-    CLICKED_SAVE:   "ImageViewEvent:ClickedSave",
-    CLICKED_SEND:   "ImageViewEvent:ClickedSend",
-    CLICKED_TINKER: "ImageViewEvent:ClickedEdit"
-};
+    /**
+     * @static
+     * @enum {string}
+     */
+    ImageViewEvent.EventType = {
+        CLICKED_EDIT:   "ImageViewEvent:ClickedEdit",
+        CLICKED_SAVE:   "ImageViewEvent:ClickedSave",
+        CLICKED_TINKER: "ImageViewEvent:ClickedEdit"
+    };
 
 
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.ImageViewEvent", ImageViewEvent);
+    bugpack.export("airbug.ImageViewEvent", ImageViewEvent);
+});

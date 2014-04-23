@@ -17,175 +17,171 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonGroupView         = bugpack.require('airbug.ButtonGroupView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
-var IconView                = bugpack.require('airbug.IconView');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired               = AutowiredAnnotation.autowired;
-var bugmeta                 = BugMeta.context();
-var property                = PropertyAnnotation.property;
-var view                    = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {ButtonContainer}
- */
-var StartConversationButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
+    var ButtonGroupView         = bugpack.require('airbug.ButtonGroupView');
+    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
+    var IconView                = bugpack.require('airbug.IconView');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var property                = PropertyAnnotation.property;
+    var view                    = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {ButtonContainer}
      */
-    _constructor: function() {
+    var StartConversationButtonContainer = Class.extend(ButtonContainer, {
 
-        this._super("StartConversationButton");
+        _name: "airbug.StartConversationButtonContainer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
+        /**
+         * @constructs
+         */
+        _constructor: function() {
 
-        // Views
+            this._super("StartConversationButton");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ButtonGroupView}
+             */
+            this.buttonGroupView            = null;
+
+            /**
+             * @private
+             * @type {ButtonView}
+             */
+            this.buttonView                 = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Extensions
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(ButtonGroupView)
+                .name("buttonGroupView")
+                .attributes({
+                    align: "right",
+                    classes: "start-conversation-button-group"
+                })
+                .children([
+                    view(NakedButtonView)
+                        .name("buttonView")
+                        .attributes({type: "primary", align: "left"})
+                        .appendTo("#button-group-{{cid}}")
+                        .children([
+                            view(IconView)
+                                .attributes({type: IconView.Type.PENCIL, color: IconView.Color.WHITE})
+                                .appendTo("#button-{{cid}}")
+                        ])
+                ])
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonGroupView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonGroupView}
+         * @param {ButtonViewEvent} event
          */
-        this.buttonGroupView            = null;
-
-        /**
-         * @private
-         * @type {ButtonView}
-         */
-        this.buttonView                 = null;
-    },
+        hearStartConversationButtonClickedEvent: function(event) {
+            this.navigationModule.navigate("home", {
+                trigger: true
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(ButtonGroupView)
-            .name("buttonGroupView")
-            .attributes({
-                align: "right",
-                classes: "start-conversation-button-group"
-            })
-            .children([
-                view(NakedButtonView)
-                    .name("buttonView")
-                    .attributes({type: "primary", align: "left"})
-                    .appendTo("#button-group-{{cid}}")
-                    .children([
-                        view(IconView)
-                            .attributes({type: IconView.Type.PENCIL, color: IconView.Color.WHITE})
-                            .appendTo("#button-{{cid}}")
-                    ])
-            ])
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.buttonGroupView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearStartConversationButtonClickedEvent, this);
-    },
+    bugmeta.annotate(StartConversationButtonContainer).with(
+        autowired().properties([
+            property("navigationModule").ref("navigationModule")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearStartConversationButtonClickedEvent: function(event) {
-        this.navigationModule.navigate("home", {
-            trigger: true
-        });
-    }
+    bugpack.export("airbug.StartConversationButtonContainer", StartConversationButtonContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(StartConversationButtonContainer).with(
-    autowired().properties([
-        property("navigationModule").ref("navigationModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.StartConversationButtonContainer", StartConversationButtonContainer);

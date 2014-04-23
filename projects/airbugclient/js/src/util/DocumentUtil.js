@@ -9,83 +9,85 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var DocumentUtil = Class.extend(Obj, {
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {document|*|HTMLDocument} document
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(document) {
+    var DocumentUtil = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbug.DocumentUtil",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {document|*|HTMLDocument}
+         * @constructs
+         * @param {document|*|HTMLDocument} document
          */
-        this.document = document;
-    },
+        _constructor: function(document) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {document|*|HTMLDocument}
+             */
+            this.document = document;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {document|*|HTMLDocument}
+         */
+        getDocument: function() {
+            return this.document;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} title
+         */
+        setTitle: function(title) {
+            this.document.title = title;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {document|*|HTMLDocument}
-     */
-    getDocument: function() {
-        return this.document;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} title
-     */
-    setTitle: function(title) {
-        this.document.title = title;
-    }
+    bugpack.export("airbug.DocumentUtil", DocumentUtil);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.DocumentUtil", DocumentUtil);

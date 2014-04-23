@@ -11,6 +11,7 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+//@Require('ObservableList')
 //@Require('RemoveChange')
 //@Require('RemovePropertyChange')
 //@Require('Set')
@@ -22,13 +23,13 @@
 //@Require('airbug.IconView')
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImageListContainer')
-//@Require('airbug.NakedButtonView')
 //@Require('airbug.TabsView')
 //@Require('airbug.TabView')
 //@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
 //@Require('airbug.UserImageAssetContainer')
-//@Require('airbug.UserImageAssetList')
+//@Require('airbug.UserImageAssetModel')
+//@Require('airbug.UserImageAssetStreamModel')
 //@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
@@ -36,6 +37,7 @@
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
 
@@ -56,6 +58,7 @@ require('bugpack').context("*", function(bugpack) {
     var List                                = bugpack.require('List');
     var Map                                 = bugpack.require('Map');
     var Obj                                 = bugpack.require('Obj');
+    var ObservableList                      = bugpack.require('ObservableList');
     var RemoveChange                        = bugpack.require('RemoveChange');
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var Set                                 = bugpack.require('Set');
@@ -67,13 +70,13 @@ require('bugpack').context("*", function(bugpack) {
     var IconView                            = bugpack.require('airbug.IconView');
     var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
     var ImageListContainer                  = bugpack.require('airbug.ImageListContainer');
-    var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
     var TabsView                            = bugpack.require('airbug.TabsView');
     var TabView                             = bugpack.require('airbug.TabView');
     var TabViewEvent                        = bugpack.require('airbug.TabViewEvent');
     var TextView                            = bugpack.require('airbug.TextView');
     var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
-    var UserImageAssetList                  = bugpack.require('airbug.UserImageAssetList');
+    var UserImageAssetModel                 = bugpack.require('airbug.UserImageAssetModel');
+    var UserImageAssetStreamModel           = bugpack.require('airbug.UserImageAssetStreamModel');
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
     var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
@@ -81,6 +84,7 @@ require('bugpack').context("*", function(bugpack) {
     var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -91,6 +95,7 @@ require('bugpack').context("*", function(bugpack) {
     var autowired                           = AutowiredAnnotation.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
+    var model                               = ModelBuilder.model;
     var property                            = PropertyAnnotation.property;
     var view                                = ViewBuilder.view;
     var $series                             = BugFlow.$series;
@@ -106,6 +111,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {WorkspaceWidgetContainer}
      */
     var ImageListWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
+
+        _name: "airbug.ImageListWidgetContainer",
+
 
         //-------------------------------------------------------------------------------
         // Constructor
@@ -131,6 +139,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {ObservableList.<UserImageAssetModel>}
+             */
+            this.userImageAssetList                     = new ObservableList();
+
+            /**
+             * @private
              * @type {Map}
              */
             this.userAssetIdToUserImageAssetModelMap    = new Map();
@@ -144,12 +158,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {UserImageAssetStreamModel}
              */
             this.userImageAssetStreamModel              = null;
-
-            /**
-             * @private
-             * @type {UserImageAssetList}
-             */
-            this.userImageAssetList                     = null;
 
 
             // Modules
@@ -261,8 +269,10 @@ require('bugpack').context("*", function(bugpack) {
             // Create Models
             //-------------------------------------------------------------------------------
 
-            this.userImageAssetStreamModel  = this.userImageAssetStreamManagerModule.generateUserImageAssetStreamModel({});
-            this.userImageAssetList         = this.userAssetManagerModule.generateUserImageAssetList();
+            model(UserImageAssetStreamModel)
+                .name("userImageAssetStreamModel")
+                .build(this);
+
 
             // Create Views
             //-------------------------------------------------------------------------------
@@ -354,6 +364,14 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
+        destroyContainer: function() {
+            this._super();
+            this.clearUserImageAssetList();
+        },
+
+        /**
+         * @protected
+         */
         initializeContainer: function() {
             this._super();
 
@@ -379,6 +397,7 @@ require('bugpack').context("*", function(bugpack) {
             if (!this.userAssetIdToUserImageAssetModelMap.containsKey(userImageAssetModel.getProperty("id"))) {
                 this.userAssetIdToUserImageAssetModelMap.put(userImageAssetModel.getProperty("id"), userImageAssetModel);
                 this.userImageAssetList.add(userImageAssetModel);
+                this.addModel(userImageAssetModel);
             }
         },
 
@@ -390,7 +409,13 @@ require('bugpack').context("*", function(bugpack) {
          * @return {UserImageAssetModel}
          */
         buildUserImageAssetModel: function(data, imageAssetMeldDocument, userAssetMeldDocument) {
-            return this.userAssetManagerModule.generateUserImageAssetModel(data, imageAssetMeldDocument, userAssetMeldDocument);
+            return model(UserImageAssetModel)
+                .args([
+                    data,
+                    imageAssetMeldDocument,
+                    userAssetMeldDocument
+                ])
+                .build();
         },
 
         /**
@@ -419,7 +444,12 @@ require('bugpack').context("*", function(bugpack) {
          * @protected
          */
         clearUserImageAssetList: function() {
+            var _this = this;
+            this.userImageAssetList.forEach(function(roomModel) {
+                _this.removeModel(roomModel);
+            });
             this.userImageAssetList.clear();
+            this.userAssetIdToUserImageAssetModelMap.clear();
         },
 
         /**
@@ -515,7 +545,7 @@ require('bugpack').context("*", function(bugpack) {
         loadUserImageAssetStream: function() {
             var _this = this;
             this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser){
-                if(!throwable) {
+                if (!throwable) {
                     var userId = currentUser.getId();
                     console.log("userId:", userId);
                     _this.userImageAssetStreamManagerModule.retrieveUserImageAssetStream(userId, function(throwable, meldDocument){
@@ -542,6 +572,7 @@ require('bugpack').context("*", function(bugpack) {
             if (userImageAssetModel) {
                 this.userAssetIdToUserImageAssetModelMap.remove(userAssetId);
                 this.userImageAssetList.remove(userImageAssetModel);
+                this.removeModel(userImageAssetModel);
             }
         },
 
@@ -552,7 +583,8 @@ require('bugpack').context("*", function(bugpack) {
         prependUserImageAssetModel: function(userImageAssetModel) {
             if (!this.userAssetIdToUserImageAssetModelMap.containsKey(userImageAssetModel.getProperty("id"))) {
                 this.userAssetIdToUserImageAssetModelMap.put(userImageAssetModel.getProperty("id"), userImageAssetModel);
-                this.userImageAssetList.prepend(userImageAssetModel);
+                this.userImageAssetList.addAt(0, userImageAssetModel);
+                this.addModel(userImageAssetModel);
             }
         },
 
@@ -563,26 +595,29 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {AddChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetIdSetAddChange: function(change) {
+        observeUserImageAssetIdSetAddChange: function(observation) {
+            var change  = /** @type {AddChange} */(observation.getChange());
             this.loadUserImageAsset(change.getValue());
         },
 
         /**
          * @private
-         * @param {RemoveChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetIdSetRemoveChange: function(change) {
+        observeUserImageAssetIdSetRemoveChange: function(observation) {
+            var change  = /** @type {RemoveChange} */(observation.getChange());
             this.removeUserImageAsset(change.getValue());
         },
 
         /**
          * @private
-         * @param {SetPropertyChange} change
+         * @param {Observation} observation
          */
-        observeUserImageAssetIdSetPropertyChange: function(change) {
-            var _this = this;
+        observeUserImageAssetIdSetPropertyChange: function(observation) {
+            var _this       = this;
+            var change      = /** @type {SetPropertyChange} */(observation.getChange());
             if (Class.doesImplement(change.getPropertyValue(), ISet)) {
                 change.getPropertyValue().forEach(function(userAssetId) {
                     _this.loadUserImageAsset(userAssetId);

@@ -8,56 +8,59 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Interface = bugpack.require('Interface');
-
-
-//-------------------------------------------------------------------------------
-// Declare Interface
-//-------------------------------------------------------------------------------
-
-/**
- * @interface
- */
-var IMessageHandler = Interface.declare({
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Interface = bugpack.require('Interface');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Interface
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {boolean}
+     * @interface
      */
-    doesSupportEmbed: function() {},
+    var IMessageHandler = Interface.declare({
 
-    /**
-     * @return {boolean}
-     */
-    doesSupportSend: function() {},
+        _name: "airbug.IMessageHandler",
 
-    /**
-     * @param {*} messagePartObject
-     */
-    embedMessagePart: function(messagePartObject) {},
 
-    /**
-     * @param {*} messageObject
-     */
-    sendMessage: function(messageObject) {}
+        //-------------------------------------------------------------------------------
+        // Interface Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        doesSupportEmbed: function() {},
+
+        /**
+         * @return {boolean}
+         */
+        doesSupportSend: function() {},
+
+        /**
+         * @param {*} messagePartObject
+         */
+        embedMessagePart: function(messagePartObject) {},
+
+        /**
+         * @param {*} messageObject
+         */
+        sendMessage: function(messageObject) {}
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbug.IMessageHandler', IMessageHandler);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbug.IMessageHandler', IMessageHandler);

@@ -13,76 +13,79 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var ApplicationController       = bugpack.require('airbug.ApplicationController');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
-var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                     = BugMeta.context();
-var controller                  = ControllerAnnotation.controller;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {ApplicationController}
- */
-var SettingsPageController = Class.extend(ApplicationController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                       = bugpack.require('Class');
+    var ApplicationController       = bugpack.require('airbug.ApplicationController');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var controller                  = ControllerAnnotation.controller;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @override
-     * @protected
-     * @param {RoutingRequest} routingRequest
+     * @class
+     * @extends {ApplicationController}
      */
-    filterRouting: function(routingRequest) {
-        var _this = this;
-        this.requireLogin(routingRequest, function(throwable, currentUser) {
-            if (!throwable) {
-                routingRequest.forward("settings/profile", {
-                    trigger: true
-                });
-            } else {
-                routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
-            }
-        });
-    }
+    var SettingsPageController = Class.extend(ApplicationController, {
+
+        _name: "airbug.SettingsPageController",
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceController Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @override
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        filterRouting: function(routingRequest) {
+            var _this = this;
+            this.requireLogin(routingRequest, function(throwable, currentUser) {
+                if (!throwable) {
+                    routingRequest.forward("settings/profile", {
+                        trigger: true
+                    });
+                } else {
+                    routingRequest.reject(RoutingRequest.RejectReason.ERROR, {throwable: throwable});
+                }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(SettingsPageController).with(
+        controller().route("settings")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.SettingsPageController", SettingsPageController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(SettingsPageController).with(
-    controller().route("settings")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.SettingsPageController", SettingsPageController);

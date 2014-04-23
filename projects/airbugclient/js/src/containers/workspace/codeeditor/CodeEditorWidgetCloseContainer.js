@@ -18,167 +18,167 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var CommandModule           = bugpack.require('airbug.CommandModule');
-var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
-var IconView                = bugpack.require('airbug.IconView');
-var TextView                = bugpack.require('airbug.TextView');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired               = AutowiredAnnotation.autowired;
-var bugmeta                 = BugMeta.context();
-var CommandType             = CommandModule.CommandType;
-var property                = PropertyAnnotation.property;
-var view                    = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {ButtonContainer}
- */
-var CodeEditorWidgetCloseButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
+    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
+    var IconView                = bugpack.require('airbug.IconView');
+    var TextView                = bugpack.require('airbug.TextView');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var CommandType             = CommandModule.CommandType;
+    var property                = PropertyAnnotation.property;
+    var view                    = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {ButtonContainer}
      */
-    _constructor: function() {
+    var CodeEditorWidgetCloseButtonContainer = Class.extend(ButtonContainer, {
 
-        this._super("CodeEditorWidgetCloseButton");
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super("CodeEditorWidgetCloseButton");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {NakedButtonView}
+             */
+            this.buttonView             = null;
+
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {WorkspaceModule}
+             */
+            this.workspaceModule        = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // CarapaceContainer Extensions
         //-------------------------------------------------------------------------------
 
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
 
-        // Views
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(NakedButtonView)
+                .name("buttonView")
+                .attributes({
+                    size: NakedButtonView.Size.SMALL,
+                    type: NakedButtonView.Type.LINK
+                })
+                .children([
+                    view(IconView)
+                        .attributes({
+                            type: IconView.Type.REMOVE
+                        })
+                        .appendTo("#button-{{cid}}")
+                ])
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorWidgetCloseButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorWidgetCloseButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {NakedButtonView}
+         * @param {ButtonViewEvent} event
          */
-        this.buttonView             = null;
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {WorkspaceModule}
-         */
-        this.workspaceModule        = null;
-    },
+        hearCodeEditorWidgetCloseButtonClickedEvent: function(event) {
+            this.workspaceModule.closeWorkspace();
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(NakedButtonView)
-            .name("buttonView")
-            .attributes({
-                size: NakedButtonView.Size.SMALL,
-                type: NakedButtonView.Type.LINK
-            })
-            .children([
-                view(IconView)
-                    .attributes({
-                        type: IconView.Type.REMOVE
-                    })
-                    .appendTo('*[id|="button"]')
-            ])
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.buttonView);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorWidgetCloseButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearCodeEditorWidgetCloseButtonClickedEvent, this);
-    },
+    bugmeta.annotate(CodeEditorWidgetCloseButtonContainer).with(
+        autowired().properties([
+            property("workspaceModule").ref("workspaceModule")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearCodeEditorWidgetCloseButtonClickedEvent: function(event) {
-        this.workspaceModule.closeWorkspace();
-    }
+    bugpack.export("airbug.CodeEditorWidgetCloseButtonContainer", CodeEditorWidgetCloseButtonContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(CodeEditorWidgetCloseButtonContainer).with(
-    autowired().properties([
-        property("workspaceModule").ref("workspaceModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.CodeEditorWidgetCloseButtonContainer", CodeEditorWidgetCloseButtonContainer);

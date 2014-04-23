@@ -131,6 +131,25 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {FourColumnView}
+         */
+        getFourColumnView: function() {
+            return this.fourColumnView;
+        },
+
+        /**
+         * @return {PageView}
+         */
+        getPageView: function() {
+            return this.pageView;
+        },
+
+
+        //-------------------------------------------------------------------------------
         // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 

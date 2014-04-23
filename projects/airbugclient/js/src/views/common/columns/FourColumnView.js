@@ -32,6 +32,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var FourColumnView = Class.extend(MultiColumnView, {
 
+        _name: "airbug.FourColumnView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------

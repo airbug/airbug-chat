@@ -16,143 +16,138 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
-var CommandModule       = bugpack.require('airbug.CommandModule');
-var NakedButtonView     = bugpack.require('airbug.NakedButtonView');
-var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
-var IconView            = bugpack.require('airbug.IconView');
-var TextView            = bugpack.require('airbug.TextView');
-var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {ButtonContainer}
- */
-var CodeEditorFullscreenButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
+    var CommandModule       = bugpack.require('airbug.CommandModule');
+    var NakedButtonView     = bugpack.require('airbug.NakedButtonView');
+    var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
+    var IconView            = bugpack.require('airbug.IconView');
+    var TextView            = bugpack.require('airbug.TextView');
+    var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var CommandType         = CommandModule.CommandType;
+    var view                = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @constructor
+     * @extends {ButtonContainer}
      */
-    _constructor: function() {
+    var CodeEditorFullscreenButtonContainer = Class.extend(ButtonContainer, {
 
-        this._super("code-editor-fullscreen-button");
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super("code-editor-fullscreen-button");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ButtonGroupView}
+             */
+            this.buttonView         = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // CarapaceContainer Extensions
         //-------------------------------------------------------------------------------
 
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
 
-        // Modules
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(NakedButtonView)
+                .name("buttonView")
+                .attributes({
+                    size: NakedButtonView.Size.SMALL,
+                    type: NakedButtonView.Type.LINK
+                })
+                .children([
+                    view(IconView)
+                        .attributes({
+                            type: IconView.Type.FULLSCREEN
+                        })
+                        .appendTo("#button-{{cid}}")
+                ])
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        },
+
+
         //-------------------------------------------------------------------------------
-
-
-        // Views
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ButtonGroupView}
+         * @param {ButtonViewEvent} event
          */
-        this.buttonView         = null;
-    },
+        hearButtonClickedEvent: function(event) {
 
-
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        this.buttonView =
-                view(NakedButtonView)
-                    .attributes({
-                        size: NakedButtonView.Size.SMALL,
-                        type: NakedButtonView.Type.LINK
-                    })
-                    .children([
-                        view(IconView)
-                            .attributes({
-                                type: IconView.Type.FULLSCREEN
-                            })
-                            .appendTo('button[id|="button"]')
-                    ])
-                .build();
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.buttonView);
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
+        }
+    });
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-
-    }
+    bugpack.export("airbug.CodeEditorFullscreenButtonContainer", CodeEditorFullscreenButtonContainer);
 });
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.CodeEditorFullscreenButtonContainer", CodeEditorFullscreenButtonContainer);

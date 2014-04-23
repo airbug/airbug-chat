@@ -49,6 +49,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var EmailSettingsPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.EmailSettingsPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

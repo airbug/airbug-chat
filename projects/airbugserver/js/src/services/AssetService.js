@@ -324,7 +324,7 @@ var AssetService = Class.extend(Obj, {
                                     if (!mappedException) {
                                         mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                     }
-                                    mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find Asset by the id '" + key + "'"));
+                                    mappedException.putCause(key, new Exception("NotFound", {objectId: key}, "Could not find Asset by the id '" + key + "'"));
                                 }
                             });
                         }

@@ -39,7 +39,7 @@ var UserStatusIndicatorView = Class.extend(MustacheView, {
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Methods
+    // BugView Methods
     //-------------------------------------------------------------------------------
 
     /**

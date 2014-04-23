@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.MessageContentImageView')
+//@Export('airbug.MessagePartImageView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -32,7 +32,10 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {MustacheView}
      */
-    var MessageContentImageView = Class.extend(MustacheView, {
+    var MessagePartImageView = Class.extend(MustacheView, {
+
+        _name: "airbug.MessagePartImageView",
+
 
         //-------------------------------------------------------------------------------
         // Template
@@ -94,7 +97,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceView Methods
+        // BugView Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -154,5 +157,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.MessageContentImageView", MessageContentImageView);
+    bugpack.export("airbug.MessagePartImageView", MessagePartImageView);
 });

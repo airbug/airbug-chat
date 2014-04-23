@@ -51,6 +51,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var BasePageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.BasePageController",
+
+
         //-------------------------------------------------------------------------------
         // CarapaceController Methods
         //-------------------------------------------------------------------------------

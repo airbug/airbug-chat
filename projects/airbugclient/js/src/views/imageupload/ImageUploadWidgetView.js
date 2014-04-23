@@ -70,6 +70,13 @@ var ImageUploadWidgetView = Class.extend(MustacheView, {
     /**
      * @return {$}
      */
+    getFileUploadWidgetElement: function() {
+        return this.findElement("#file-upload-widget-{{cid}}");
+    },
+
+    /**
+     * @return {$}
+     */
     getImageUploadDropzoneElement: function() {
         return this.findElement("#image-upload-dropzone-{{cid}}");
     }

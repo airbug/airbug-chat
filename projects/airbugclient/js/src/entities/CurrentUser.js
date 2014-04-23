@@ -9,102 +9,108 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var CurrentUser = Class.extend(Obj, {
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Declare Class
     //-------------------------------------------------------------------------------
 
-    _constructor: function(meldDocument) {
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var CurrentUser = Class.extend(Obj, {
+
+        _name: "airbug.CurrentUser",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {MeldDocument}
+         * @constructs
+         * @param {MeldDocument} meldDocument
          */
-        this.meldDocument = meldDocument;
-    },
+        _constructor: function(meldDocument) {
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MeldDocument}
+             */
+            this.meldDocument = meldDocument;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @returns {MeldDocument}
-     */
-    getMeldDocument: function() {
-        return this.meldDocument;
-    },
+        /**
+         * @returns {MeldDocument}
+         */
+        getMeldDocument: function() {
+            return this.meldDocument;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getFullName: function() {
-        var data = this.meldDocument.getData();
-        return data.firstName + " " + data.lastName;
-    },
+        /**
+         * @return {string}
+         */
+        getFullName: function() {
+            var data = this.meldDocument.getData();
+            return data.firstName + " " + data.lastName;
+        },
 
-    /**
-     * @return {string}
-     */
-    getId: function() {
-        return this.meldDocument.getData().id;
-    },
+        /**
+         * @return {string}
+         */
+        getId: function() {
+            return this.meldDocument.getData().id;
+        },
 
-    /**
-     * @return {Set.<string>}
-     */
-    getRoomIdSet: function() {
-        return this.meldDocument.getData().roomIdSet;
-    },
+        /**
+         * @return {Set.<string>}
+         */
+        getRoomIdSet: function() {
+            return this.meldDocument.getData().roomIdSet;
+        },
 
-    /**
-     * @return {boolean}
-     */
-    isLoggedIn: function() {
-        if(!this.meldDocument){
-            return false;
-        } else {
-            return !this.meldDocument.getData().anonymous;
+        /**
+         * @return {boolean}
+         */
+        isLoggedIn: function() {
+            if(!this.meldDocument){
+                return false;
+            } else {
+                return !this.meldDocument.getData().anonymous;
+            }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.CurrentUser", CurrentUser);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.CurrentUser", CurrentUser);

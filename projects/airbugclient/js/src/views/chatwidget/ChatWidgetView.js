@@ -9,55 +9,62 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ChatWidgetView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="chat-widget">' +
-                    '<div id="chat-widget-messages-{{cid}}" class="chat-widget-messages image-upload-dropzone">' +
-                    '</div>' +
-                    '<div id="chat-widget-input-{{cid}}" class="chat-widget-input">' +
-                    '</div>' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // Mustache Mehtods
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "chat-widget";
-        return data;
-    }
+    var ChatWidgetView = Class.extend(MustacheView, {
+
+        _name: "airbug.ChatWidgetView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="{{id}}" class="chat-widget">' +
+                        '<div id="chat-widget-messages-{{cid}}" class="chat-widget-messages image-upload-dropzone">' +
+                        '</div>' +
+                        '<div id="chat-widget-input-{{cid}}" class="chat-widget-input">' +
+                        '</div>' +
+                    '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // Mustache Mehtods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data    = this._super();
+            data.id     = this.getId() || "chat-widget";
+            return data;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.ChatWidgetView", ChatWidgetView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ChatWidgetView", ChatWidgetView);

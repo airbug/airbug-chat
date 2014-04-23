@@ -6,39 +6,66 @@
 
 //@Require('Class')
 //@Require('carapace.CarapaceView')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var CarapaceView    = bugpack.require('carapace.CarapaceView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BodyView = Class.extend(CarapaceView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Implementation
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    el: $('body')
+    var Class           = bugpack.require('Class');
+    var CarapaceView    = bugpack.require('carapace.CarapaceView');
+    var JQuery          = bugpack.require('jquery.JQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceView}
+     */
+    var BodyView = Class.extend(CarapaceView, {
+
+        _name: "airbug.BodyView",
+
+
+        //-------------------------------------------------------------------------------
+        // Attributes
+        //-------------------------------------------------------------------------------
+
+        el: JQuery('body'),
+
+
+        //-------------------------------------------------------------------------------
+        // BugView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        destroyView: function() {
+            this.removeAllListeners();
+            this.$el.off();
+            this.clearModel();
+            if (this.viewParent) {
+                this.viewParent.removeViewChild(this);
+            }
+            this.garbageDisposal.removeDisposable(this);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.BodyView", BodyView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BodyView", BodyView);

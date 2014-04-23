@@ -9,8 +9,6 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.BetaKeyDashboardPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
 
 
@@ -28,8 +26,6 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController           = bugpack.require('airbug.ApplicationController');
     var BetaKeyDashboardPageContainer   = bugpack.require('airbug.BetaKeyDashboardPageContainer');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
     var ControllerAnnotation            = bugpack.require('carapace.ControllerAnnotation');
 
 
@@ -37,10 +33,8 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta     = BugMeta.context();
-    var autowired   = AutowiredAnnotation.autowired;
-    var controller  = ControllerAnnotation.controller;
-    var property    = PropertyAnnotation.property;
+    var bugmeta                         = BugMeta.context();
+    var controller                      = ControllerAnnotation.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -52,6 +46,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {ApplicationController}
      */
     var BetaKeyDashboardPageController = Class.extend(ApplicationController, {
+
+        _name: "airbug.BetaKeyDashboardPageController",
+
 
         //-------------------------------------------------------------------------------
         // Constructor

@@ -53,6 +53,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var GithubLoginPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.GithubLoginPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

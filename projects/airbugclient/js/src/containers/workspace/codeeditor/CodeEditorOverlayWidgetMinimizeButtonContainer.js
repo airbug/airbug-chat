@@ -16,91 +16,85 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
-var CommandModule       = bugpack.require('airbug.CommandModule');
-var NakedButtonView     = bugpack.require('airbug.NakedButtonView');
-var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
-var IconView            = bugpack.require('airbug.IconView');
-var TextView            = bugpack.require('airbug.TextView');
-var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var CommandType = CommandModule.CommandType;
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {ButtonContainer}
- */
-var CodeEditorOverlayWidgetMinimizeButtonContainer = Class.extend(ButtonContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
+    var CommandModule       = bugpack.require('airbug.CommandModule');
+    var NakedButtonView     = bugpack.require('airbug.NakedButtonView');
+    var ButtonViewEvent     = bugpack.require('airbug.ButtonViewEvent');
+    var IconView            = bugpack.require('airbug.IconView');
+    var TextView            = bugpack.require('airbug.TextView');
+    var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var CommandType         = CommandModule.CommandType;
+    var view                = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {ButtonContainer}
      */
-    _constructor: function() {
-
-        this._super("code-editor-overlay-minimize-button");
-
+    var CodeEditorOverlayWidgetMinimizeButtonContainer = Class.extend(ButtonContainer, {
 
         //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-
-        // Views
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {ButtonGroupView}
+         * @constructs
          */
-        this.buttonView         = null;
-    },
+        _constructor: function() {
+
+            this._super("code-editor-overlay-minimize-button");
 
 
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
+            // Views
+            //-------------------------------------------------------------------------------
 
-        // Create Views
+            /**
+             * @private
+             * @type {ButtonGroupView}
+             */
+            this.buttonView         = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Extensions
         //-------------------------------------------------------------------------------
 
-        this.buttonView =
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
             view(NakedButtonView)
+                .name("buttonView")
                 .attributes({
                     size: NakedButtonView.Size.SMALL
                 })
@@ -109,49 +103,50 @@ var CodeEditorOverlayWidgetMinimizeButtonContainer = Class.extend(ButtonContaine
                         .attributes({
                             type: IconView.Type.RESIZE_SMALL
                         })
-                        .appendTo('button[id|="button"]')
+                        .appendTo("#button-{{cid}}")
                 ])
-                .build();
+                .build(this);
 
 
-        // Wire Up Views
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.buttonView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.buttonView);
-    },
+        /**
+         * @private
+         * @param {ButtonViewEvent} event
+         */
+        hearButtonClickedEvent: function(event) {
 
-    /**
-     * @protected
-     */
-    deinitializeContainer: function() {
-        this._super();
-        this.buttonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
-    /**
-     * @protected
-     */
-    initializeContainer: function() {
-        this._super();
-        this.buttonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearButtonClickedEvent, this);
-    },
-
+        }
+    });
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {ButtonViewEvent} event
-     */
-    hearButtonClickedEvent: function(event) {
-
-    }
+    bugpack.export("airbug.CodeEditorOverlayWidgetMinimizeButtonContainer", CodeEditorOverlayWidgetMinimizeButtonContainer);
 });
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.CodeEditorOverlayWidgetMinimizeButtonContainer", CodeEditorOverlayWidgetMinimizeButtonContainer);

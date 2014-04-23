@@ -509,7 +509,7 @@ var RoomService = Class.extend(EntityService, {
                                         if (!mappedException) {
                                             mappedException = new MappedThrowable(MappedThrowable.MAPPED);
                                         }
-                                        mappedException.putThrowable(key, new Exception("NotFound", {objectId: key}, "Could not find room by the id '" + key + "'"));
+                                        mappedException.putCause(key, new Exception("NotFound", {objectId: key}, "Could not find room by the id '" + key + "'"));
                                     }
                                 });
                             }

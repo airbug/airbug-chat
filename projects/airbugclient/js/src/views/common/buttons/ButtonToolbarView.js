@@ -9,60 +9,63 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {MustacheView}
- */
-var ButtonToolbarView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="button-toolbar-{{cid}}" class="btn-toolbar {{classes}}">' +
-        '</div>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data = this._super();
-        switch (this.attributes.align) {
-            case "right":
-                data.classes += "pull-right";
-                break;
+    var ButtonToolbarView = Class.extend(MustacheView, {
+
+        _name: "airbug.ButtonToolbarView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="button-toolbar-{{cid}}" class="btn-toolbar {{classes}}">' +
+            '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data = this._super();
+            switch (this.attributes.align) {
+                case "right":
+                    data.classes += "pull-right";
+                    break;
+            }
+
+            return data;
         }
+    });
 
-        return data;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.ButtonToolbarView", ButtonToolbarView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ButtonToolbarView", ButtonToolbarView);

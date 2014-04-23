@@ -36,26 +36,70 @@ require('bugpack').context("*", function(bugpack) {
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div class="form-wrapper">' +
-            '<form class="form-horizontal">' +
-            '<div class="control-group">' +
-            'We noticed that your GitHub email address ' +
-            '</div>' +
-            '<div class="control-group">' +
-            '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' + // TODO - dkk - change this so it is radio buttons
-            '</div>' +
-            '<div class="control-group">' +
-            '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
-            '</div>' +
-            '<div class="control-group">' +
-            '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
-            '</div>' +
-            '</form>' +
+        template:
+            '<div class="form-wrapper">' +
+                '<form class="form-horizontal">' +
+                    '<div class="control-group">' +
+                        'We noticed that your GitHub email address ' +
+                    '</div>' +
+                    '<div class="control-group">' +
+                        '<input class="input-xxlarge" type="text" name="email" placeholder="Email">' + // TODO - dkk - change this so it is radio buttons
+                    '</div>' +
+                    '<div class="control-group">' +
+                        '<input class="input-xxlarge" type="password" name="password" placeholder="Password">' +
+                    '</div>' +
+                    '<div class="control-group">' +
+                        '<button id="login-button-{{cid}}" type="submit" class="btn">Login</button>' +
+                    '</div>' +
+                '</form>' +
             '</div>',
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceView Methods
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {Object} options
+         */
+        _constructor: function(options) {
+
+            this._super(options);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            var _this = this;
+
+            /**
+             * @private
+             * @param {jQuery.Event} event
+             */
+            this.hearFormSubmit = function(event) {
+                _this.handleSubmit(event);
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            };
+
+            /**
+             * @private
+             * @param {jQuery.Event} event
+             */
+            this.hearLoginButtonClick = function(event) {
+                _this.handleSubmit(event);
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            };
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // BugView Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -63,8 +107,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeView: function() {
             this._super();
-            this.$el.find('login-button-' + this.cid).unbind();
-            this.$el.find('form').off();
+            this.findElement("form").off("submit", this.hearFormSubmit);
+            this.findElement("#login-button-{{cid}}").off("click", this.hearLoginButtonClick);
         },
 
         /**
@@ -72,19 +116,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeView: function() {
             this._super();
-            var _this = this;
-            this.$el.find('form').on('submit', function(event) {
-                _this.handleSubmit(event);
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
-            });
-            this.$el.find('#login-button-' + this.cid).bind('click', function(event) {
-                _this.handleSubmit(event);
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
-            });
+            this.findElement("form").on("submit", this.hearFormSubmit);
+            this.findElement("#login-button-{{cid}}").on("click", this.hearLoginButtonClick);
         },
 
 

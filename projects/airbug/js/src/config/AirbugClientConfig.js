@@ -10,165 +10,193 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Config      = bugpack.require('Config');
-var TypeUtil    = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Config}
- */
-var AirbugClientConfig = Class.extend(Config, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Config      = bugpack.require('Config');
+    var TypeUtil    = bugpack.require('TypeUtil');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {boolean}
+     * @class
+     * @extends {Config}
      */
-    getDebug: function() {
-        return this.getProperty("debug");
-    },
+    var AirbugClientConfig = Class.extend(Config, {
 
-    /**
-     * @param {boolean} debug
-     */
-    setDebug: function(debug) {
-        this.setProperty("debug", debug);
-    },
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    getEnableTracking: function() {
-        return this.getProperty("enableTracking");
-    },
+        /**
+         * @return {boolean}
+         */
+        getDebug: function() {
+            return this.getProperty("debug");
+        },
 
-    /**
-     * @param {boolean} enableTracking
-     */
-    setEnableTracking: function(enableTracking) {
-        this.setProperty("enableTracking", enableTracking);
-    },
+        /**
+         * @param {boolean} debug
+         */
+        setDebug: function(debug) {
+            this.setProperty("debug", debug);
+        },
 
-    /**
-     * @returns {string}
-     */
-    getGithubClientId: function() {
-        return this.getProperty("github.clientId");
-    },
+        /**
+         * @return {boolean}
+         */
+        getEnableTracking: function() {
+            return this.getProperty("enableTracking");
+        },
 
-    /**
-     * @param {string} clientId
-     */
-    setGithubClientId: function(clientId) {
-        this.setProperty("github.clientId", clientId);
-    },
+        /**
+         * @param {boolean} enableTracking
+         */
+        setEnableTracking: function(enableTracking) {
+            this.setProperty("enableTracking", enableTracking);
+        },
 
-    /**
-     * @returns {*}
-     */
-    getGithubEmails: function() {
-        return this.getProperty("github.emails");
-    },
+        /**
+         * @returns {string}
+         */
+        getGithubClientId: function() {
+            return this.getProperty("github.clientId");
+        },
 
-    /**
-     * @param {array} emails
-     */
-    setGithubEmails: function(emails) {
-        this.setProperty('github.emails', emails);
-    },
+        /**
+         * @param {string} clientId
+         */
+        setGithubClientId: function(clientId) {
+            this.setProperty("github.clientId", clientId);
+        },
 
-    /**
-     * @returns {string}
-     */
-    getGithubScope: function() {
-        return this.getProperty("github.scope");
-    },
+        /**
+         * @returns {*}
+         */
+        getGithubEmails: function() {
+            return this.getProperty("github.emails");
+        },
 
-    /**
-     * @param {string} scope
-     */
-    setGithubScope: function(scope) {
-        this.setProperty("github.scope", scope);
-    },
+        /**
+         * @param {array} emails
+         */
+        setGithubEmails: function(emails) {
+            this.setProperty('github.emails', emails);
+        },
 
-    /**
-     * @returns {string}
-     */
-    getGithubState: function() {
-        return this.getProperty("github.state");
-    },
+        /**
+         * @returns {string}
+         */
+        getGithubScope: function() {
+            return this.getProperty("github.scope");
+        },
 
-    /**
-     * @param {string} state
-     */
-    setGithubState: function(state) {
-        this.setProperty("github.state", state);
-    },
+        /**
+         * @param {string} scope
+         */
+        setGithubScope: function(scope) {
+            this.setProperty("github.scope", scope);
+        },
 
-    /**
-     * @return {string}
-     */
-    getGoogleAnalyticsId: function() {
-        return this.getProperty("googleAnalyticsId");
-    },
+        /**
+         * @returns {string}
+         */
+        getGithubState: function() {
+            return this.getProperty("github.state");
+        },
 
-    /**
-     * @param {string} googleAnalyticsId
-     */
-    setGoogleAnalyticsId: function(googleAnalyticsId) {
-        this.setProperty("googleAnalyticsId", googleAnalyticsId);
-    },
+        /**
+         * @param {string} state
+         */
+        setGithubState: function(state) {
+            this.setProperty("github.state", state);
+        },
 
-    /**
-     * @return {string}
-     */
-    getStaticUrl: function() {
-        return this.getProperty("staticUrl");
-    },
+        /**
+         * @return {string}
+         */
+        getGoogleAnalyticsId: function() {
+            return this.getProperty("googleAnalyticsId");
+        },
 
-    /**
-     * @param {string} staticUrl
-     */
-    setStaticUrl: function(staticUrl) {
-        this.setProperty("staticUrl", staticUrl);
-    },
+        /**
+         * @param {string} googleAnalyticsId
+         */
+        setGoogleAnalyticsId: function(googleAnalyticsId) {
+            this.setProperty("googleAnalyticsId", googleAnalyticsId);
+        },
 
-    /**
-     * @return {string}
-     */
-    getStickyStaticUrl: function() {
-        return this.getProperty("stickyStaticUrl");
-    },
+        /**
+         * @return {boolean}
+         */
+        getJsConcat: function() {
+            return this.getProperty("js.concat");
+        },
 
-    /**
-     * @param {string} stickyStaticUrl
-     */
-    setStickyStaticUrl: function(stickyStaticUrl) {
-        this.setProperty("stickyStaticUrl", stickyStaticUrl);
-    }
+        /**
+         * @param {boolean} concat
+         */
+        setJsConcat: function(concat) {
+            return this.setProperty("js.concat", concat);
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getJsMinify: function() {
+            return this.getProperty("js.minify");
+        },
+
+        /**
+         * @param {boolean} minify
+         */
+        setJsMinify: function(minify) {
+            return this.setProperty("js.minify", minify);
+        },
+
+        /**
+         * @return {string}
+         */
+        getStaticUrl: function() {
+            return this.getProperty("staticUrl");
+        },
+
+        /**
+         * @param {string} staticUrl
+         */
+        setStaticUrl: function(staticUrl) {
+            this.setProperty("staticUrl", staticUrl);
+        },
+
+        /**
+         * @return {string}
+         */
+        getStickyStaticUrl: function() {
+            return this.getProperty("stickyStaticUrl");
+        },
+
+        /**
+         * @param {string} stickyStaticUrl
+         */
+        setStickyStaticUrl: function(stickyStaticUrl) {
+            this.setProperty("stickyStaticUrl", stickyStaticUrl);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.AirbugClientConfig", AirbugClientConfig);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.AirbugClientConfig", AirbugClientConfig);

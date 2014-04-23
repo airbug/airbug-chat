@@ -159,16 +159,6 @@ require('bugpack').context("*", function(bugpack) {
             this.addContainerChild(this.notificationContainer, "#application-" + this.applicationView.getCid());
         },
 
-        /**
-         * @override
-         * @protected
-         */
-        destroyContainer: function() {
-            this.applicationHeaderView.dispose();
-            this.applicationView.dispose();
-            this.viewTop = null;
-        },
-
 
         //-------------------------------------------------------------------------------
         // Private Methods

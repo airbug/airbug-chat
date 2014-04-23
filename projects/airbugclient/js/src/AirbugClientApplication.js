@@ -13,75 +13,78 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var Application                         = bugpack.require('bugapp.Application');
-var AutowiredAnnotationProcessor        = bugpack.require('bugioc.AutowiredAnnotationProcessor');
-var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Application}
- */
-var AirbugClientApplication = Class.extend(Application, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                               = bugpack.require('Class');
+    var Application                         = bugpack.require('bugapp.Application');
+    var AutowiredAnnotationProcessor        = bugpack.require('bugioc.AutowiredAnnotationProcessor');
+    var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Application}
      */
-    _constructor: function() {
+    var AirbugClientApplication = Class.extend(Application, {
 
-        this._super();
+        _name: "airbug.AirbugClientApplication",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AutowiredScan}
+         * @constructs
          */
-        this.autowiredScan      = new AutowiredScan(BugMeta.context(), new AutowiredAnnotationProcessor(this.getIocContext()));
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {AutowiredScan}
+             */
+            this.autowiredScan      = new AutowiredScan(BugMeta.context(), new AutowiredAnnotationProcessor(this.getIocContext()));
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Application Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        preProcessApplication: function() {
+            this.autowiredScan.scanAll();
+            this.autowiredScan.scanContinuous();
+            this.getConfigurationScan().scanAll();
+            this.getModuleScan().scanAll();
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Application Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    preProcessApplication: function() {
-        this.autowiredScan.scanAll();
-        this.autowiredScan.scanContinuous();
-        this.getConfigurationScan().scanAll();
-        this.getModuleScan().scanAll();
-    }
+    bugpack.export("airbug.AirbugClientApplication", AirbugClientApplication);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.AirbugClientApplication", AirbugClientApplication);

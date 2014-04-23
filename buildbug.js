@@ -37,10 +37,10 @@ var uglifyjs            = enableModule("uglifyjs");
 //-------------------------------------------------------------------------------
 
 var name                = "airbug";
-var version             = "0.0.18";
+var version             = "0.0.20";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "https://s3.amazonaws.com/airbug-brian/bugpack-0.1.9.tgz",
+    bugpack: "0.1.12",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",
@@ -97,6 +97,7 @@ buildProperties({
             "../bugjs/projects/bugcall/bugjars/client/js/src",
             "../bugjs/projects/bugcall/bugjars/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
+            "../bugjs/projects/bugdispose/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmvc/js/src",
@@ -556,6 +557,191 @@ buildTarget('local').buildFlow(
         ])
     ])
 ).makeDefault();
+
+
+
+// Short BuildTarget
+//-------------------------------------------------------------------------------
+
+buildTarget('short').buildFlow(
+    series([
+
+        // TODO BRN: This "clean" task is temporary until we're not modifying the build so much. This also ensures that
+        // old source files are removed. We should figure out a better way of doing that.
+
+        targetTask('clean'),
+        parallel([
+
+            series([
+                parallel([
+                    series([
+                        targetTask('copy', {
+                            properties: {
+                                fromPaths: ["{{loader.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
+                                fromPaths: buildProject.getProperty("static.sourcePaths"),
+                                intoPath: "{{static.buildPath}}"
+                            }
+                        }),
+                        targetTask('generateBugPackRegistry', {
+                            properties: {
+                                name: "{{static.name}}",
+                                sourceRoot: "{{static.buildPath}}"
+                            }
+                        }),
+                        targetTask("concat", {
+                            init: function(task, buildProject, properties) {
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("static.name"));
+                                var sources         = [];
+                                var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
+
+                                registryEntries.forEach(function(bugPackRegistryEntry) {
+                                    sources.push(bugPackRegistryEntry.getResolvedPath().getAbsolutePath());
+                                });
+                                task.updateProperties({
+                                    sources: sources
+                                });
+                            },
+                            properties: {
+                                outputFile: "{{static.outputFile}}"
+                            }
+                        })
+                    ])
+                ]),
+                targetTask('createNodePackage', {
+                    properties: {
+                        packageJson: buildProject.getProperty("server.packageJson"),
+                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
+                            buildProject.getProperty("server.unitTest.sourcePaths")
+                        ),
+                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
+                            buildProject.getProperty("server.unitTest.scriptPaths")
+                        ),
+                        testPaths: buildProject.getProperty("server.unitTest.testPaths"),
+                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
+                        staticPaths: ([
+                            "{{static.buildPath}}",
+                            buildProject.getProperty("static.outputFile"),
+                            buildProject.getProperty("loader.outputFile")
+                        ]).concat(buildProject.getProperty("static.serverStickyPaths"))
+                    }
+                }),
+                targetTask('replaceTokens', {
+                    properties: {
+                        tokenObjects: [
+                            {token: "{{BUILD_VERSION}}", replacementValue: version, filePaths: [buildProject.getProperty("buildPath") + "/airbugserver/" + version + "/resources/config"]}
+                        ]
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var nodePackage = nodejs.findNodePackage(
+                            buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: nodePackage.getBuildPath(),
+                            ignore: ["static"]
+                        });
+                    }
+                }),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: "{{server.packageJson.name}}",
+                        packageVersion: "{{server.packageJson.version}}"
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("server.packageJson.name"),
+                            buildProject.getProperty("server.packageJson.version"));
+                        task.updateProperties({
+                            file: packedNodePackage.getFilePath(),
+                            options: {
+
+                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
+
+                                acl: 'public-read',
+                                encrypt: true
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: "{{local-bucket}}"
+                    }
+                })
+            ])/*,
+            series([
+                targetTask('createNodePackage', {
+                    properties: {
+                        packageJson: buildProject.getProperty("worker.packageJson"),
+                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
+                        sourcePaths: buildProject.getProperty("worker.sourcePaths").concat(
+                            buildProject.getProperty("worker.unitTest.sourcePaths")
+                        ),
+                        scriptPaths: buildProject.getProperty("worker.scriptPaths").concat(
+                            buildProject.getProperty("worker.unitTest.scriptPaths")
+                        ),
+                        testPaths: buildProject.getProperty("worker.unitTest.testPaths")
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var nodePackage = nodejs.findNodePackage(
+                            buildProject.getProperty("worker.packageJson.name"),
+                            buildProject.getProperty("worker.packageJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: nodePackage.getBuildPath()
+                        });
+                    }
+                }),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: buildProject.getProperty("worker.packageJson.name"),
+                        packageVersion: buildProject.getProperty("worker.packageJson.version")
+                    }
+                }),
+                targetTask('startNodeModuleTests', {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(
+                            buildProject.getProperty("worker.packageJson.name"),
+                            buildProject.getProperty("worker.packageJson.version")
+                        );
+                        task.updateProperties({
+                            modulePath: packedNodePackage.getFilePath()
+                        });
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("worker.packageJson.name"),
+                            buildProject.getProperty("worker.packageJson.version"));
+                        task.updateProperties({
+                            file: packedNodePackage.getFilePath(),
+                            options: {
+
+                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
+
+                                acl: 'public-read',
+                                encrypt: true
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: "{{local-bucket}}"
+                    }
+                })
+            ])*/
+        ])
+    ])
+);
 
 
 // Prod BuildTarget

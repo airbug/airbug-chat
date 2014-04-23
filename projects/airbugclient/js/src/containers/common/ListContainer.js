@@ -18,10 +18,10 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {});
 
 
 //-------------------------------------------------------------------------------
@@ -204,6 +204,15 @@ var ListContainer = Class.extend(CarapaceContainer, {
         this._super();
         this.boxView.removeEventListener(ScrollEvent.EventType.SCROLL, this.hearScrollEvent, this);
     },
+
+    /**
+    * @protected
+    */
+    destroyContainer: function() {
+        this._super();
+        this.clearModelMap();
+    },
+
 
     /**
      * @protected

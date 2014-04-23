@@ -12,126 +12,129 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var TypeUtil            = bugpack.require('TypeUtil');
-var MeldModel           = bugpack.require('airbug.MeldModel');
-var MeldDocumentEvent   = bugpack.require('meldbug.MeldDocumentEvent');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {MeldModel}
- */
-var ContactModel = Class.extend(MeldModel, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var MeldModel           = bugpack.require('airbug.MeldModel');
+    var MeldDocumentEvent   = bugpack.require('meldbug.MeldDocumentEvent');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {MeldDocument}
+     * @class
+     * @extends {MeldModel}
      */
-    getContactMeldDocument: function() {
-        return this.getMeldDocument();
-    },
+    var ContactModel = Class.extend(MeldModel, {
 
-    /**
-     * @param {MeldDocument} contactMeldDocument
-     */
-    setContactMeldDocument: function(contactMeldDocument) {
-        this.setMeldDocument(contactMeldDocument);
-    },
+        _name: "airbug.ContactModel",
 
 
-    //-------------------------------------------------------------------------------
-    // BugModel Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    initializeModel: function() {
-        this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
-                .on(MeldDocumentEvent.EventTypes.CHANGE)
-                .where("data.deltaChange.propertyName")
-                .in(["id", "contactUserId", "ownerUserId"])
-                .call(this.hearMeldPropertySetChange, this);
+        /**
+         * @return {MeldDocument}
+         */
+        getContactMeldDocument: function() {
+            return this.getMeldDocument();
+        },
+
+        /**
+         * @param {MeldDocument} contactMeldDocument
+         */
+        setContactMeldDocument: function(contactMeldDocument) {
+            this.setMeldDocument(contactMeldDocument);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // BugModel Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        deinitializeModel: function() {
+            this._super();
+            if (this.getMeldDocument()) {
+                this.getMeldDocument()
+                    .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
+            }
+        },
+
+        /**
+         * @protected
+         */
+        initializeModel: function() {
+            this._super();
+            if (this.getMeldDocument()) {
+                this.getMeldDocument()
+                    .on(MeldDocumentEvent.EventTypes.CHANGE)
+                    .where("data.deltaChange.propertyName")
+                    .in(["id", "contactUserId", "ownerUserId"])
+                    .call(this.hearMeldPropertySetChange, this);
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // MeldModel Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        processMeldDocument: function() {
+            this._super();
+            var contactData    = this.getMeldDocument().getData();
+            this.setProperty("id", contactData.id);
+            this.setProperty("contactUserId", contactData.contactUserId);
+            this.setProperty("ownerUserId", contactData.ownerUserId);
+        },
+
+        /**
+         * @protected
+         */
+        unprocessMeldDocument: function() {
+            this._super();
+            this.removeProperty("id");
+            this.removeProperty("contactUserId");
+            this.removeProperty("ownerUserId");
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearMeldPropertySetChange: function(event) {
+            var deltaChange     = event.getData().deltaChange;
+            var propertyName    = deltaChange.getPropertyName();
+            this.setProperty(propertyName, deltaChange.getPropertyValue());
         }
-    },
-
-    /**
-     * @protected
-     */
-    deinitializeModel: function() {
-        this._super();
-        if (this.getMeldDocument()) {
-            this.getMeldDocument()
-                .off(MeldDocumentEvent.EventTypes.CHANGE, this.hearMeldPropertySetChange, this);
-        }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // MeldModel Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    processMeldDocument: function() {
-        this._super();
-        var contactData    = this.getMeldDocument().getData();
-        this.setProperty("id", contactData.id);
-        this.setProperty("contactUserId", contactData.contactUserId);
-        this.setProperty("ownerUserId", contactData.ownerUserId);
-    },
-
-    /**
-     * @protected
-     */
-    unprocessMeldDocument: function() {
-        this._super();
-        this.removeProperty("id");
-        this.removeProperty("contactUserId");
-        this.removeProperty("ownerUserId");
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearMeldPropertySetChange: function(event) {
-        var deltaChange     = event.getData().deltaChange;
-        var propertyName    = deltaChange.getPropertyName();
-        this.setProperty(propertyName, deltaChange.getPropertyValue());
-    }
+    bugpack.export("airbug.ContactModel", ContactModel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ContactModel", ContactModel);

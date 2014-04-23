@@ -34,11 +34,43 @@ require('bugpack').context("*", function(bugpack) {
      */
     var DropdownItemView = Class.extend(MustacheView, {
 
+        _name: "airbug.DropdownItemView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
         template:   '<li><a id="dropdown-item-{{cid}}" tabindex="-1"></a></li>',
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {Object} options
+         */
+        _constructor: function(options) {
+
+            this._super(options);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            var _this = this;
+
+            /**
+             * @private
+             * @param {jQuery.Event} event
+             */
+            this.hearDropdownItemClick = function(event) {
+                _this.handleDropdownItemClick(event);
+            };
+        },
 
 
         //-------------------------------------------------------------------------------
@@ -50,7 +82,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeView: function() {
             this._super();
-            this.$el.unbind();
+            this.$el.off('click', this.hearDropdownItemClick);
         },
 
         /**
@@ -58,10 +90,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeView: function() {
             this._super();
-            var _this = this;
-            this.$el.bind('click', function(event) {
-                _this.handleDropdownItemClick(event);
-            });
+            this.$el.on('click', this.hearDropdownItemClick);
         },
 
 

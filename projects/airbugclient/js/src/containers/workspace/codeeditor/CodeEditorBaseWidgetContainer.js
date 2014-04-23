@@ -152,6 +152,7 @@ var CodeEditorBaseWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
         this.codeEditorView.setEditorUseSoftTabs(true);
         this.codeEditorView.setEditorFontSize(12);
         this.codeEditorView.setEditorShowInvisibles(true);
+        this.codeEditorView.setEditorDragEnabled(true);
     },
 
     /**

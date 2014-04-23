@@ -9,6 +9,10 @@
         "scope": "user, repo, gist, notifications, user:email"
     },
     "googleAnalyticsId" : "",
+    "js" : {
+        "concat" : false,
+        "minify" : false
+    },
     "mongoDbIp": "localhost",
     "port": 8000,
     "hostName": "localhost",

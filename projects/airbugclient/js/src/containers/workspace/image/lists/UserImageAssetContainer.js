@@ -5,10 +5,15 @@
 //@Export('airbug.UserImageAssetContainer')
 
 //@Require('Class')
+//@Require('airbug.ButtonGroupView')
+//@Require('airbug.ButtonToolbarView')
+//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageListItemButtonToolbarContainer')
+//@Require('airbug.IconView')
 //@Require('airbug.ImageListItemView')
-//@Require('airbug.ImageViewEvent')
+//@Require('airbug.MessageHandlerModule')
+//@Require('airbug.NakedButtonView')
+//@Require('airbug.TextView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -28,10 +33,15 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                                   = bugpack.require('Class');
+    var ButtonGroupView                         = bugpack.require('airbug.ButtonGroupView');
+    var ButtonToolbarView                       = bugpack.require('airbug.ButtonToolbarView');
+    var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
     var CommandModule                           = bugpack.require('airbug.CommandModule');
-    var ImageListItemButtonToolbarContainer     = bugpack.require('airbug.ImageListItemButtonToolbarContainer');
+    var IconView                                = bugpack.require('airbug.IconView');
     var ImageListItemView                       = bugpack.require('airbug.ImageListItemView');
-    var ImageViewEvent                          = bugpack.require('airbug.ImageViewEvent');
+    var MessageHandlerModule                    = bugpack.require('airbug.MessageHandlerModule');
+    var NakedButtonView                         = bugpack.require('airbug.NakedButtonView');
+    var TextView                                = bugpack.require('airbug.TextView');
     var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
     var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
@@ -66,6 +76,10 @@ require('bugpack').context("*", function(bugpack) {
         // Constructor
         //-------------------------------------------------------------------------------
 
+        /**
+         * @constructs
+         * @param {UserImageAssetModel} userImageAssetModel
+         */
         _constructor: function(userImageAssetModel) {
 
             this._super();
@@ -119,19 +133,33 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {ButtonToolbarView}
+             */
+            this.buttonToolbarView                      = null;
+
+            /**
+             * @private
+             * @type {NakedButtonView}
+             */
+            this.deleteButtonView                       = null;
+
+            /**
+             * @private
+             * @type {NakedButtonView}
+             */
+            this.embedButtonView                       = null;
+            
+            /**
+             * @private
              * @type {ImageListItemView}
              */
             this.imageListItemView                      = null;
 
-
-            // Containers
-            //-------------------------------------------------------------------------------
-
             /**
              * @private
-             * @type {ImageListItemButtonToolbarContainer}
+             * @type {NakedButtonView}
              */
-            this.imageListItemButtonToolbarContainer    = null;
+            this.sendButtonView                         = null;
         },
 
 
@@ -146,13 +174,6 @@ require('bugpack').context("*", function(bugpack) {
             return this.userImageAssetModel;
         },
 
-        /**
-         * @return {ImageAssetModel}
-         */
-        getImageAssetModel: function() {
-            return this.imageAssetModel;
-        },
-
 
         //-------------------------------------------------------------------------------
         // CarapaceContainer Methods
@@ -161,35 +182,90 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        createContainer: function() {
+        activateContainer: function() {
             this._super();
-
-
-            // Create Models
-            //-------------------------------------------------------------------------------
-
-
-            // Create Views
-            //-------------------------------------------------------------------------------
-
-            this.imageListItemView =
-                view(ImageListItemView)
-                    .model(this.userImageAssetModel)
-                    .build();
-
-            // Wire Up Views
-            //-------------------------------------------------------------------------------
-
-            this.setViewTop(this.imageListItemView);
+            this.processMessageHandlerState();
         },
 
         /**
          * @protected
          */
-        createContainerChildren: function() {
+        createContainer: function() {
             this._super();
-            this.imageListItemButtonToolbarContainer   = new ImageListItemButtonToolbarContainer();
-            this.addContainerChild(this.imageListItemButtonToolbarContainer, "#image-list-item-{{cid}}");
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(ImageListItemView)
+                .name("imageListItemView")
+                .model(this.userImageAssetModel)
+                .children([
+                    view(ButtonToolbarView)
+                        .name("buttonToolbarView")
+                        .appendTo("#image-list-item-{{cid}}")
+                        .children([
+                            view(ButtonGroupView)
+                                .appendTo("#button-toolbar-{{cid}}")
+                                .children([
+                                    view(NakedButtonView)
+                                        .name("deleteButtonView")
+                                        .appendTo("#button-group-{{cid}}")
+                                        .attributes({
+                                            type: NakedButtonView.Type.DANGER
+                                        })
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.TRASH,
+                                                    color: IconView.Color.WHITE
+                                                })
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .appendTo("#button-toolbar-{{cid}}")
+                                .children([
+                                    view(NakedButtonView)
+                                        .name("embedButtonView")
+                                        .appendTo("#button-group-{{cid}}")
+                                        .attributes({
+                                            type: NakedButtonView.Type.DEFAULT
+                                        })
+                                        .children([
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Embed",
+                                                    disabled: true
+                                                })
+                                        ])
+                                ]),
+                            view(ButtonGroupView)
+                                .appendTo("#button-toolbar-{{cid}}")
+                                .children([
+                                    view(NakedButtonView)
+                                        .name("sendButtonView")
+                                        .appendTo("#button-group-{{cid}}")
+                                        .attributes({
+                                            type: NakedButtonView.Type.DEFAULT
+                                        })
+                                        .children([
+                                            view(TextView)
+                                                .attributes({
+                                                    text: "Send",
+                                                    disabled: true
+                                                })
+                                        ])
+                                ])
+                        ])
+                ])
+                .build(this);
+
+
+            // Wire Up
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.imageListItemView);
+            this.addModel(this.userImageAssetModel);
         },
 
         /**
@@ -197,9 +273,10 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeContainer: function() {
             this._super();
-            this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
-            this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
-            this.imageListItemView.removeEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.hearClickedDelete, this);
+            this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClicked, this);
+            this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClicked, this);
+            this.deleteButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearDeleteButtonClicked, this);
+            this.messageHandlerModule.removeEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
         },
 
         /**
@@ -207,9 +284,10 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeContainer: function() {
             this._super();
-            this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_SEND, this.hearClickedSend, this);
-            this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_EMBED, this.hearClickedEmbed, this);
-            this.imageListItemView.addEventListener(ImageViewEvent.EventType.CLICKED_DELETE, this.hearClickedDelete, this);
+            this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClicked, this);
+            this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClicked, this);
+            this.deleteButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearDeleteButtonClicked, this);
+            this.messageHandlerModule.addEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
         },
 
 
@@ -255,6 +333,23 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
+        processMessageHandlerState: function() {
+            var handlerState = this.messageHandlerModule.getHandlerState();
+            if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.EMBED_ONLY) {
+                this.embedButtonView.enableButton();
+            } else {
+                this.embedButtonView.disableButton();
+            }
+            if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.SEND_ONLY) {
+                this.sendButtonView.enableButton();
+            } else {
+                this.sendButtonView.disableButton();
+            }
+        },
+
+        /**
+         * @private
+         */
         sendImageChatMessage: function() {
             var imageData           = this.userImageAssetModel.getData();
             var chatMessageObject   = {
@@ -283,7 +378,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {Event} event
          */
-        hearClickedDelete: function(event) {
+        hearDeleteButtonClicked: function(event) {
             this.deleteUserAsset();
         },
 
@@ -291,7 +386,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {Event} event
          */
-        hearClickedEmbed: function(event) {
+        hearEmbedButtonClicked: function(event) {
             this.embedImageMessagePart();
         },
 
@@ -299,7 +394,15 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {Event} event
          */
-        hearClickedSend: function(event) {
+        hearMessageHandlerModuleStateChanged: function(event) {
+            this.processMessageHandlerState();
+        },
+
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearSendButtonClicked: function(event) {
             this.sendImageChatMessage();
         }
     });

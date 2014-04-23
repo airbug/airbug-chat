@@ -49,6 +49,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ProfileSettingsPageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.ProfileSettingsPageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

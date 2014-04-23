@@ -5,6 +5,7 @@
 //@Export('airbug.NakedButtonView')
 
 //@Require('Class')
+//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.MustacheView')
 
@@ -20,6 +21,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
+    var ButtonView      = bugpack.require('airbug.ButtonView');
     var ButtonViewEvent = bugpack.require('airbug.ButtonViewEvent');
     var MustacheView    = bugpack.require('airbug.MustacheView');
 
@@ -34,11 +36,14 @@ require('bugpack').context("*", function(bugpack) {
      */
     var NakedButtonView = Class.extend(MustacheView, {
 
+        _name: "airbug.NakedButtonView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template: '<button id="{{id}}" class="btn {{buttonClasses}}"></button>',
+        template: '<button id="button-{{cid}}" class="btn {{buttonClasses}}"></button>',
 
 
         //-------------------------------------------------------------------------------
@@ -58,9 +63,10 @@ require('bugpack').context("*", function(bugpack) {
             // Private Properties
             //-------------------------------------------------------------------------------
 
-            if (!this.id) {
-                this.id = "button-" + this.cid;
-            }
+            var _this = this;
+            this.hearButtonClick = function(event) {
+                _this.handleButtonClick(event);
+            };
         },
 
 
@@ -85,7 +91,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeView: function() {
             this._super();
-            this.findElement('#' + this.getId()).off();
+            this.getButtonElement().off("click", this.hearButtonClick);
         },
 
         /**
@@ -93,15 +99,12 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeView: function() {
             this._super();
-            var _this = this;
-            this.findElement('#' + this.getId()).on('click', function(event) {
-                _this.handleButtonClick(event);
-            });
+            this.getButtonElement().on("click", this.hearButtonClick);
         },
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceView Methods
+        // BugView Methods
         //-------------------------------------------------------------------------------
 
         /**

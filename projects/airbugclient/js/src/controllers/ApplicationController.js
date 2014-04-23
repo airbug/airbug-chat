@@ -50,6 +50,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ApplicationController = Class.extend(CarapaceController, {
 
+        _name: "airbug.ApplicationController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

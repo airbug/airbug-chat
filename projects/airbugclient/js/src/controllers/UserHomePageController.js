@@ -53,6 +53,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var UserHomePageController = Class.extend(ApplicationController, {
 
+        _name: "airbug.UserHomePageController",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

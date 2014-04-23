@@ -8,7 +8,7 @@
 //@Require('airbug.BoxView')
 //@Require('airbug.CodeEditorSettingsWidgetContainer')
 //@Require('airbug.CodeEditorWidgetContainer')
-//@require('airbug.CodeEditorWorkspace')
+//@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.CommandModule')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.WorkspaceContainer')
@@ -62,6 +62,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {WorkspaceContainer}
      */
     var CodeEditorWorkspaceContainer = Class.extend(WorkspaceContainer, {
+
+        _name: "airbug.CodeEditorWorkspaceContainer",
+
 
         //-------------------------------------------------------------------------------
         // Constructor

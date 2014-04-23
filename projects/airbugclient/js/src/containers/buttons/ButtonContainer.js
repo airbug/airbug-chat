@@ -38,10 +38,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired   = AutowiredAnnotation.autowired;
-    var bugmeta     = BugMeta.context();
-    var property    = PropertyAnnotation.property;
-    var view        = ViewBuilder.view;
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var property                = PropertyAnnotation.property;
+    var view                    = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------
@@ -53,6 +53,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {CarapaceContainer}
      */
     var ButtonContainer = Class.extend(CarapaceContainer, {
+
+        _name: "airbug.ButtonContainer",
+
 
         //-------------------------------------------------------------------------------
         // Constructor

@@ -150,6 +150,20 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @return {boolean}
+         */
+        getEditorDragEnabled: function() {
+            return this.editor.getOption("dragEnabled");
+        },
+
+        /**
+         * @param {boolean} dragEnabled
+         */
+        setEditorDragEnabled: function(dragEnabled) {
+            this.editor.setOption("dragEnabled", dragEnabled)
+        },
+
+        /**
          * @return {number}
          */
         getEditorFontSize: function() {
@@ -316,7 +330,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceView Methods
+        // BugView Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -333,6 +347,15 @@ require('bugpack').context("*", function(bugpack) {
         initializeView: function() {
             this._super();
             this.editor.selection.on("changeSelection", this.handleChangeSelection);
+        },
+
+        /**
+         * @protected
+         */
+        destroyView: function() {
+            this._super();
+            this.editor.destroy();
+            this.editor = null;
         },
 
         /**

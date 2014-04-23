@@ -20,262 +20,269 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Bug                             = bugpack.require('Bug');
-var Class                           = bugpack.require('Class');
-var Exception                       = bugpack.require('Exception');
-var Obj                             = bugpack.require('Obj');
-var SetInteractionStatusRequest     = bugpack.require('airbug.SetInteractionStatusRequest');
-var CallEvent                       = bugpack.require('bugcall.CallEvent');
-var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
-var BugFlow                         = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                             = ArgAnnotation.arg;
-var bugmeta                         = BugMeta.context();
-var module                          = ModuleAnnotation.module;
-var $series                         = BugFlow.$series;
-var $task                           = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var InteractionStatusDelegate = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Bug                             = bugpack.require('Bug');
+    var Class                           = bugpack.require('Class');
+    var Exception                       = bugpack.require('Exception');
+    var Obj                             = bugpack.require('Obj');
+    var SetInteractionStatusRequest     = bugpack.require('airbug.SetInteractionStatusRequest');
+    var CallEvent                       = bugpack.require('bugcall.CallEvent');
+    var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
+    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                             = ArgAnnotation.arg;
+    var bugmeta                         = BugMeta.context();
+    var module                          = ModuleAnnotation.module;
+    var $series                         = BugFlow.$series;
+    var $task                           = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {AirbugApi} airbugApi
-     * @param {Logger} logger
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(airbugApi, logger) {
+    var InteractionStatusDelegate = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbug.InteractionStatusDelegate",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {AirbugApi} airbugApi
+         * @param {Logger} logger
+         */
+        _constructor: function(airbugApi, logger) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {InteractionStatusDefines.Status}
+             */
+            this.acknowledgedStatus     = null;
+
+            /**
+             * @private
+             * @type {AirbugApi}
+             */
+            this.airbugApi              = airbugApi;
+
+            /**
+             * @private
+             * @type {SetInteractionStatusRequest}
+             */
+            this.currentRequest         = null;
+
+            /**
+             * @private
+             * @type {InteractionStatusDefines.Status}
+             */
+            this.desiredStatus          = null;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.listeningForReconnect  = false;
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                 = logger;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {InteractionStatusDefines.Status}
+         */
+        getAcknowledgedStatus: function() {
+            return this.acknowledgedStatus;
+        },
+
+        /**
+         * @return {AirbugApi}
+         */
+        getAirbugApi: function() {
+            return this.airbugApi;
+        },
+
+        /**
+         * @return {SetInteractionStatusRequest}
+         */
+        getCurrentRequest: function() {
+            return this.currentRequest;
+        },
+
+        /**
+         * @return {InteractionStatusDefines.Status}
+         */
+        getDesiredStatus: function() {
+            return this.desiredStatus;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isListeningForReconnect: function() {
+            return this.listeningForReconnect;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {InteractionStatusDefines.Status} interactionStatus
+         */
+        setInteractionStatus: function(interactionStatus) {
+            if (this.desiredStatus !== interactionStatus) {
+                this.desiredStatus = interactionStatus;
+                this.syncInteractionStatus();
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {InteractionStatusDefines.Status}
+         * @param {InteractionStatusDefines.Status} interactionStatus
+         * @returns {SetInteractionStatusRequest}
          */
-        this.acknowledgedStatus     = null;
+        factorySetInteractionStatusRequest: function(interactionStatus) {
+            return new SetInteractionStatusRequest(interactionStatus);
+        },
 
         /**
          * @private
-         * @type {AirbugApi}
          */
-        this.airbugApi              = airbugApi;
+        startListeningForReconnect: function() {
+            if (!this.isListeningForReconnect()) {
+                this.listeningForReconnect = true;
+                this.airbugApi.addEventListener(CallEvent.STARTED, this.hearCallStarted, this);
+            }
+        },
 
         /**
          * @private
-         * @type {SetInteractionStatusRequest}
          */
-        this.currentRequest         = null;
+        stopListeningForReconnect: function() {
+            if (this.isListeningForReconnect()) {
+                this.listeningForReconnect = false;
+                this.airbugApi.removeEventListener(CallEvent.STARTED, this.hearCallStarted, this);
+            }
+        },
 
         /**
          * @private
-         * @type {InteractionStatusDefines.Status}
+         * @param {InteractionStatusDefines.Status} interactionStatus
          */
-        this.desiredStatus          = null;
+        sendSetInteractionStatusRequest: function(interactionStatus) {
+            var _this       = this;
+            var request     = this.factorySetInteractionStatusRequest(interactionStatus);
+            this.currentRequest = request;
+            request.addCallback(function(throwable) {
+                _this.currentRequest = null;
+                if (!throwable) {
+                    _this.acknowledgedStatus = interactionStatus;
+                    if (_this.acknowledgedStatus !== _this.desiredStatus) {
+                        _this.syncInteractionStatus();
+                    }
+                } else {
+                    if (Class.doesExtend(throwable, RequestFailedException)) {
+                        _this.startListeningForReconnect();
+                    } else {
+                        _this.logger.error(throwable.message, throwable.stack);
+                    }
+                }
+            });
+            this.airbugApi.sendApiRequest(request, function(throwable, outgoingRequest) {
+                if (throwable) {
+                    _this.logger.error(throwable);
+                }
+            });
+        },
 
         /**
          * @private
-         * @type {boolean}
          */
-        this.listeningForReconnect  = false;
+        syncInteractionStatus: function() {
+            if (this.desiredStatus !== this.acknowledgedStatus) {
+                if (!this.currentRequest) {
+                    this.sendSetInteractionStatusRequest(this.desiredStatus);
+                }
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {Logger}
+         * @param {CallEvent} event
          */
-        this.logger                 = logger;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {InteractionStatusDefines.Status}
-     */
-    getAcknowledgedStatus: function() {
-        return this.acknowledgedStatus;
-    },
-
-    /**
-     * @return {AirbugApi}
-     */
-    getAirbugApi: function() {
-        return this.airbugApi;
-    },
-
-    /**
-     * @return {SetInteractionStatusRequest}
-     */
-    getCurrentRequest: function() {
-        return this.currentRequest;
-    },
-
-    /**
-     * @return {InteractionStatusDefines.Status}
-     */
-    getDesiredStatus: function() {
-        return this.desiredStatus;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isListeningForReconnect: function() {
-        return this.listeningForReconnect;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {InteractionStatusDefines.Status} interactionStatus
-     */
-    setInteractionStatus: function(interactionStatus) {
-        if (this.desiredStatus !== interactionStatus) {
-            this.desiredStatus = interactionStatus;
+        hearCallStarted: function(event) {
+            this.stopListeningForReconnect();
             this.syncInteractionStatus();
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {InteractionStatusDefines.Status} interactionStatus
-     * @returns {SetInteractionStatusRequest}
-     */
-    factorySetInteractionStatusRequest: function(interactionStatus) {
-        return new SetInteractionStatusRequest(interactionStatus);
-    },
-
-    /**
-     * @private
-     */
-    startListeningForReconnect: function() {
-        if (!this.isListeningForReconnect()) {
-            this.listeningForReconnect = true;
-            this.airbugApi.addEventListener(CallEvent.STARTED, this.hearCallStarted, this);
-        }
-    },
-
-    /**
-     * @private
-     */
-    stopListeningForReconnect: function() {
-        if (this.isListeningForReconnect()) {
-            this.listeningForReconnect = false;
-            this.airbugApi.removeEventListener(CallEvent.STARTED, this.hearCallStarted, this);
-        }
-    },
-
-    /**
-     * @private
-     * @param {InteractionStatusDefines.Status} interactionStatus
-     */
-    sendSetInteractionStatusRequest: function(interactionStatus) {
-        var _this       = this;
-        var request     = this.factorySetInteractionStatusRequest(interactionStatus);
-        this.currentRequest = request;
-        request.addCallback(function(throwable) {
-            _this.currentRequest = null;
-            if (!throwable) {
-                _this.acknowledgedStatus = interactionStatus;
-                if (_this.acknowledgedStatus !== _this.desiredStatus) {
-                    _this.syncInteractionStatus();
-                }
-            } else {
-                if (Class.doesExtend(throwable, RequestFailedException)) {
-                    _this.startListeningForReconnect();
-                } else {
-                    _this.logger.error(throwable.message, throwable.stack);
-                }
-            }
-        });
-        this.airbugApi.sendApiRequest(request, function(throwable, outgoingRequest) {
-            if (throwable) {
-                _this.logger.error(throwable);
-            }
-        });
-    },
-
-    /**
-     * @private
-     */
-    syncInteractionStatus: function() {
-        if (this.desiredStatus !== this.acknowledgedStatus) {
-            if (!this.currentRequest) {
-                this.sendSetInteractionStatusRequest(this.desiredStatus);
-            }
-        }
-    },
+    bugmeta.annotate(InteractionStatusDelegate).with(
+        module("interactionStatusDelegate")
+            .args([
+                arg().ref("airbugApi"),
+                arg().ref("logger")
+            ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {CallEvent} event
-     */
-    hearCallStarted: function(event) {
-        this.stopListeningForReconnect();
-        this.syncInteractionStatus();
-    }
+    bugpack.export('airbug.InteractionStatusDelegate', InteractionStatusDelegate);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(InteractionStatusDelegate).with(
-    module("interactionStatusDelegate")
-        .args([
-            arg().ref("airbugApi"),
-            arg().ref("logger")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbug.InteractionStatusDelegate', InteractionStatusDelegate);

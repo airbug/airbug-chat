@@ -14,14 +14,16 @@
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.DialogueChatBoxContainer')
+//@Require('airbug.DialogueModel')
 //@Require('airbug.HomeButtonContainer')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
-//@Require('airbug.RoomModel')
+//@Require('airbug.UserModel')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
+//@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
 
@@ -45,14 +47,16 @@ require('bugpack').context("*", function(bugpack) {
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var DialogueChatBoxContainer            = bugpack.require('airbug.DialogueChatBoxContainer');
+    var DialogueModel                       = bugpack.require('airbug.DialogueModel');
     var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
-    var RoomModel                           = bugpack.require('airbug.RoomModel');
+    var UserModel                           = bugpack.require('airbug.UserModel');
     var BugFlow                             = bugpack.require('bugflow.BugFlow');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -63,6 +67,7 @@ require('bugpack').context("*", function(bugpack) {
     var autowired                           = AutowiredAnnotation.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
+    var model                               = ModelBuilder.model;
     var property                            = PropertyAnnotation.property;
     var view                                = ViewBuilder.view;
     var $series                             = BugFlow.$series;
@@ -84,7 +89,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @construcs
+         * @constructs
          */
         _constructor: function() {
 
@@ -113,6 +118,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {null}
+             */
+            this.codeEditorOverlayWidgetContainer       = null;
+
+            /**
+             * @private
              * @type {DialogueChatBoxContainer}
              */
             this.dialougeChatBoxContainer               = null;
@@ -122,12 +133,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {HomeButtonContainer}
              */
             this.homeButtonContainer                    = null;
-
-            /**
-             * @private
-             * @type {RoomMemberListPanelContainer}
-             */
-            this.roomMemberListPanelContainer           = null;
 
             /**
              * @private
@@ -208,15 +213,20 @@ require('bugpack').context("*", function(bugpack) {
          */
         createContainer: function(routingArgs) {
             this._super(routingArgs);
-            console.log("routingArgs:", routingArgs);
 
             var id = routingArgs[0];
 
             // Create Models
             //-------------------------------------------------------------------------------
 
-            this.dialogueModel          = this.dialogueManagerModule.generateDialogueModel({id: id});
-            this.otherUserModel         = this.userManagerModule.generateUserModel({});
+            model(DialogueModel)
+                .data({id: id})
+                .name("dialogueModel")
+                .build(this);
+
+            model(UserModel)
+                .name("otherUserModel")
+                .build(this);
         },
 
         /**
@@ -224,15 +234,18 @@ require('bugpack').context("*", function(bugpack) {
          */
         createContainerChildren: function(routingArgs) {
             this._super(routingArgs);
-            this.homeButtonContainer                    = new HomeButtonContainer();
+
             this.accountDropdownButtonContainer         = new AccountDropdownButtonContainer();
+            this.codeEditorOverlayWidgetContainer       = new CodeEditorOverlayWidgetContainer();
             this.dialougeChatBoxContainer               = new DialogueChatBoxContainer(this.dialogueModel, this.otherUserModel);
+            this.homeButtonContainer                    = new HomeButtonContainer();
             this.roomListPanelContainer                 = new RoomListPanelContainer();
 
-            this.addContainerChild(this.accountDropdownButtonContainer, "#header-right");
-            this.addContainerChild(this.homeButtonContainer,            "#header-left");
-            this.addContainerChild(this.roomListPanelContainer,         ".column1of4");
-            this.addContainerChild(this.dialougeChatBoxContainer,       ".column2of4");
+            this.addContainerChild(this.accountDropdownButtonContainer,     "#header-right");
+            this.addContainerChild(this.codeEditorOverlayWidgetContainer,   "#page-" + this.getPageView().getCid());
+            this.addContainerChild(this.dialougeChatBoxContainer,           "#column2of4-" + this.getFourColumnView().getCid());
+            this.addContainerChild(this.homeButtonContainer,                "#header-left");
+            this.addContainerChild(this.roomListPanelContainer,             "#column1of4-" + this.getFourColumnView().getCid());
         },
 
         /**
@@ -265,6 +278,8 @@ require('bugpack').context("*", function(bugpack) {
 
             this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_FULLSCREEN, this.handleDisplayCodeEditorOverlayWidgetCommand, this);
             this.commandModule.subscribe(CommandType.HIDE.CODE_EDITOR_FULLSCREEN, this.handleHideCodeEditorOverlayWidgetCommand, this);
+
+            this.codeEditorOverlayWidgetContainer.getViewTop().hide();
         },
 
 
@@ -359,7 +374,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Message} message
          */
         handleDisplayCodeEditorOverlayWidgetCommand: function(message) {
-            console.log("handleDisplayCodeEditorOverlayWidgetCommand");
             var data            = message.getData();
             var tabSize         = data.tabSize;
             var cursorPosition  = data.cursorPosition;
@@ -367,11 +381,8 @@ require('bugpack').context("*", function(bugpack) {
             var text            = data.text;
             var mode            = data.mode;
             var theme           = data.theme;
-            console.log("data:", data);
-            if(!this.codeEditorOverlayWidgetContainer){
-                this.codeEditorOverlayWidgetContainer = new CodeEditorOverlayWidgetContainer();
-            }
-            this.addContainerChild(this.codeEditorOverlayWidgetContainer, ".page");
+
+            this.codeEditorOverlayWidgetContainer.getViewTop().show();
             this.codeEditorOverlayWidgetContainer.setEditorText(text);
             this.codeEditorOverlayWidgetContainer.setEditorMode(mode);
             this.codeEditorOverlayWidgetContainer.setEditorShowInvisibles(showInvisibles);
@@ -396,7 +407,6 @@ require('bugpack').context("*", function(bugpack) {
             this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_THEME,      {theme: theme});
             this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_TABSIZE,    {tabSize: tabSize});
             this.codeEditorOverlayWidgetContainer.getViewTop().hide();
-            this.removeContainerChild(this.codeEditorOverlayWidgetContainer);
         },
 
 
@@ -406,33 +416,35 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {RemovePropertyChange} change
+         * @param {Observation} observation
          */
-        observeUserIdPairRemovePropertyChange: function(change) {
+        observeUserIdPairRemovePropertyChange: function(observation) {
             this.clearOtherUser();
         },
 
         /**
          * @private
-         * @param {SetPropertyChange} change
+         * @param {Observation} observation
          */
-        observeUserIdPairSetPropertyChange: function(change) {
+        observeUserIdPairSetPropertyChange: function(observation) {
+            var change = /** @type {SetPropertyChange} */(observation.getChange());
             this.clearOtherUser();
             this.loadOtherUser(change.getPropertyValue());
         },
 
         /**
          * @private
-         * @param {ClearChange} change
+         * @param {Observation} observation
          */
-        observeDialogueModelClearChange: function(change) {
+        observeDialogueModelClearChange: function(observation) {
             this.clearOtherUser();
         },
 
         /**
          * @private
+         * @param {Observation} observation
          */
-        observeOtherUserNameChange: function() {
+        observeOtherUserNameChange: function(observation) {
             var fullName    = "";
             var firstName   = this.otherUserModel.getProperty("firstName");
             if (firstName) {

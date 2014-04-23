@@ -9,48 +9,55 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {CarapaceContainer}
      */
-    hideWidget: function() {
-        this.getViewTop().hide();
-    },
+    var WorkspaceWidgetContainer = Class.extend(CarapaceContainer, {
 
-    /**
-     *
-     */
-    showWidget: function() {
-        this.getViewTop().show();
-    }
+        _name: "airbug.WorkspaceWidgetContainer",
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        hideWidget: function() {
+            this.getViewTop().hide();
+        },
+
+        /**
+         *
+         */
+        showWidget: function() {
+            this.getViewTop().show();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.WorkspaceWidgetContainer", WorkspaceWidgetContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.WorkspaceWidgetContainer", WorkspaceWidgetContainer);

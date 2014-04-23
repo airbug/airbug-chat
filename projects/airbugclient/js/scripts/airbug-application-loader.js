@@ -49,7 +49,7 @@
     // Context
     //-------------------------------------------------------------------------------
 
-    if (_appConfig.debug) {
+    if (!_appConfig.js.concat) {
 
         //NOTE BRN: In debug mode we need to load the bugpack-registry.json so that we can load all files individually
 

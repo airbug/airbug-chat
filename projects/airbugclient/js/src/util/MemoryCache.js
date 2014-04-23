@@ -10,99 +10,101 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Map                     = bugpack.require('Map');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var MemoryCache = Class.extend(Obj, {
+    var Class                   = bugpack.require('Class');
+    var Map                     = bugpack.require('Map');
+    var Obj                     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function() {
+    var MemoryCache = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbug.MemoryCache",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, *>}
+         * @constructs
          */
-        this.cacheMap = new Map();
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Map.<string, *>}
+             */
+            this.cacheMap = new Map();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Map.<string, *>}
+         */
+        getCacheMap: function() {
+            return this.document;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} key
+         * @return {*}
+         */
+        getCache: function(key) {
+            return this.cacheMap.get(key);
+        },
+
+        /**
+         * @param {string} key
+         */
+        removeCache: function(key) {
+            this.cacheMap.remove(key);
+        },
+
+        /**
+         * @param {string} key
+         * @param {*} value
+         */
+        setCache: function(key, value) {
+            this.cacheMap.put(key, value);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Map.<string, *>}
-     */
-    getCacheMap: function() {
-        return this.document;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} key
-     * @return {*}
-     */
-    getCache: function(key) {
-        return this.cacheMap.get(key);
-    },
-
-    /**
-     * @param {string} key
-     */
-    removeCache: function(key) {
-        this.cacheMap.remove(key);
-    },
-
-    /**
-     * @param {string} key
-     * @param {*} value
-     */
-    setCache: function(key, value) {
-        this.cacheMap.put(key, value);
-    }
+    bugpack.export("airbug.MemoryCache", MemoryCache);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.MemoryCache", MemoryCache);
