@@ -500,6 +500,7 @@ require('bugpack').context("*", function(bugpack) {
                 $task(function(flow) {
                     userObject.status               = currentUser.getStatus();
                     userObject.agreedToTermsDate    = UserDefines.TOS_Date;
+                    userObject.anonymous            = false;
                     if (userObject.password !== userObject.confirmPassword) {
                         flow.complete(new Exception("PasswordMismatch", {}, "Password and confirmPassword must match"));
                     } else if (!PasswordUtil.isValid(userObject.password)) {
