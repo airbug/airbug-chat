@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.EmbeddedMessagePreviewView')
+//@Export('airbug.MessagePartPreviewView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -30,33 +30,8 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {MustacheView}
      */
-    var EmbeddedMessagePreviewView = Class.extend(MustacheView, {
-
-        //-------------------------------------------------------------------------------
-        // Template
-        //-------------------------------------------------------------------------------
-
-        template:
-            '<div id="embedded-message-preview-{{cid}}" class="embedded-message-preview">' +
-                '<div id="chat-widget-messages-{{cid}}" class="chat-widget-messages image-upload-dropzone">' +
-                '</div>' +
-                '<div id="chat-widget-input-{{cid}}" class="chat-widget-input">' +
-                '</div>' +
-            '</div>',
-
-
-        //-------------------------------------------------------------------------------
-        // Mustache Mehtods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @return {Object}
-         */
-        generateTemplateData: function() {
-            var data    = this._super();
-            data.id     = this.getId() || "chat-widget";
-            return data;
-        }
+    var MessagePartPreviewView = Class.extend(MustacheView, {
+        _name: "airbug.MessagePartPreviewView"
     });
 
 
@@ -64,5 +39,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.EmbeddedMessagePreviewView", EmbeddedMessagePreviewView);
+    bugpack.export("airbug.MessagePartPreviewView", MessagePartPreviewView);
 });

@@ -5,8 +5,8 @@
 //@Export('airbug.MessagePartImageView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
 //@Require('airbug.ImageViewEvent')
+//@Require('airbug.MessagePartView')
 
 
 //-------------------------------------------------------------------------------
@@ -19,9 +19,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
-    var ImageViewEvent  = bugpack.require('airbug.ImageViewEvent');
+    var Class               = bugpack.require('Class');
+    var ImageViewEvent      = bugpack.require('airbug.ImageViewEvent');
+    var MessagePartView     = bugpack.require('airbug.MessagePartView');
 
 
     //-------------------------------------------------------------------------------
@@ -30,9 +30,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MustacheView}
+     * @extends {MessagePartView}
      */
-    var MessagePartImageView = Class.extend(MustacheView, {
+    var MessagePartImageView = Class.extend(MessagePartView, {
 
         _name: "airbug.MessagePartImageView",
 
@@ -44,9 +44,9 @@ require('bugpack').context("*", function(bugpack) {
         //NOTE: SUNG Temporarily using an href for the full size image until we have implemented our own full size view.
 
         template:
-            '<div id="message-image-{{cid}}" class="message-image image-preview">' +
+            '<div id="message-part-{{cid}}" class="message-image image-preview">' +
                 '<a id="image-link-{{cid}}" href="{{model.url}}" target="_blank"> ' +
-                    '<img id="image-{{cid}}" src={{model.midsizeUrl}} />' +
+                    '<img id="image-{{cid}}" src="{{model.midsizeUrl}}" />' +
                 '</a>' +
                 '<div class="btn-toolbar">' +
                     '<div class="btn-group">' +
@@ -91,8 +91,8 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {$}
          */
-        getMessageImageElement: function() {
-            return this.findElement("message-image-{{cid}}");
+        getMessagePartElement: function() {
+            return this.findElement("message-part-{{cid}}");
         },
 
 

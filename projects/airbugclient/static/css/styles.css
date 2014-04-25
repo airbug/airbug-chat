@@ -1007,6 +1007,21 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     margin-left: 2px;
 }
 
+.message-part-preview-wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.message-part-preview-remove-button {
+    position: absolute;
+    right: -10px;
+    top: -5px
+}
+
+.message-part-preview-image {
+    max-width: 200px;
+}
+
 div.previous-messages-loader {
     text-align: center;
 }
@@ -1349,28 +1364,28 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 /* FileUpload CSS
 *******************************************************************/
 
-#file-upload-widget {
+.file-upload-widget {
     margin-bottom: 10px;
 }
 
-#file-upload-widget .btn-toolbar:first-child {
+.file-upload-widget .btn-toolbar:first-child {
     margin-bottom: 0px;
 }
 
-#file-upload-widget .btn-toolbar:last-child {
+.file-upload-widget .btn-toolbar:last-child {
     margin-top: 5px;
     margin-bottom: 0px;
 }
 
-#file-upload-widget .control-group {
+.file-upload-widget .control-group {
     width: 100%;
 }
 
-#file-upload-widget .control-group .control-label {
+.file-upload-widget .control-group .control-label {
     width: 17%;
 }
 
-#file-upload-widget .btn-toolbar:last-child .btn-group {
+.file-upload-widget .btn-toolbar:last-child .btn-group {
     width: 82%;
 }
 
@@ -1451,6 +1466,10 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     right: 3px;
     top: 0px;
     bottom: 3px;
+}
+
+.image-upload-spacing {
+    padding-left: 10px;
 }
 
 #image-upload-add-by-url-container {

@@ -10,12 +10,15 @@
 //@Require('airbug.CreateRoomFormView')
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.IMessageHandler')
+//@Require('airbug.MessagePartModel')
+//@Require('airbug.MessagePartPreviewContainer')
 //@Require('airbug.PanelView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
 
@@ -35,12 +38,15 @@ require('bugpack').context("*", function(bugpack) {
     var CreateRoomFormView          = bugpack.require('airbug.CreateRoomFormView');
     var FormViewEvent               = bugpack.require('airbug.FormViewEvent');
     var IMessageHandler             = bugpack.require('airbug.IMessageHandler');
+    var MessagePartModel            = bugpack.require('airbug.MessagePartModel');
+    var MessagePartPreviewContainer = bugpack.require('airbug.MessagePartPreviewContainer');
     var PanelView                   = bugpack.require('airbug.PanelView');
     var RoomModel                   = bugpack.require('airbug.RoomModel');
     var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var ModelBuilder                = bugpack.require('carapace.ModelBuilder');
     var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
@@ -51,6 +57,7 @@ require('bugpack').context("*", function(bugpack) {
     var autowired                   = AutowiredAnnotation.autowired;
     var bugmeta                     = BugMeta.context();
     var CommandType                 = CommandModule.CommandType;
+    var model                       = ModelBuilder.model;
     var property                    = PropertyAnnotation.property;
     var view                        = ViewBuilder.view;
 
@@ -66,10 +73,16 @@ require('bugpack').context("*", function(bugpack) {
      */
     var CreateRoomFormContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.CreateRoomFormContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
 
+        /**
+         * @constructs
+         */
         _constructor: function() {
 
             this._super();
@@ -79,6 +92,13 @@ require('bugpack').context("*", function(bugpack) {
             // Private Properties
             //-------------------------------------------------------------------------------
 
+            /**
+             * @private
+             * @type {MessagePartPreviewContainer}
+             */
+            this.messagePartPreviewContainer    = null;
+
+
             // Modules
             //-------------------------------------------------------------------------------
 
@@ -86,25 +106,35 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {CommandModule}
              */
-            this.commandModule              = null;
+            this.commandModule                  = null;
 
             /**
              * @private
              * @type {MessageHandlerModule}
              */
-            this.messageHandlerModule       = null;
+            this.messageHandlerModule           = null;
 
             /**
              * @private
              * @type {NavigationModule}
              */
-            this.navigationModule           = null;
+            this.navigationModule               = null;
 
             /**
              * @private
              * @type {RoomManagerModule}
              */
-            this.roomManagerModule          = null;
+            this.roomManagerModule              = null;
+
+
+            // Models
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MessagePartModel}
+             */
+            this.embeddedMessagePartModel       = null;
 
 
             // Views
@@ -114,13 +144,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {CreateRoomFormView}
              */
-            this.createRoomFormView = null;
+            this.createRoomFormView             = null;
 
             /**
              * @private
              * @type {PanelView}
              */
-            this.createRoomPanel    = null;
+            this.createRoomPanelView            = null;
         },
 
 
@@ -143,24 +173,40 @@ require('bugpack').context("*", function(bugpack) {
         createContainer: function() {
             this._super();
 
+            // Create Models
+            //-------------------------------------------------------------------------------
+
+            model(MessagePartModel)
+                .name("embeddedMessagePartModel")
+                .build(this);
+
+
             // Create Views
             //-------------------------------------------------------------------------------
 
-            this.createRoomPanel =
-                view(PanelView)
-                    .children([
-                        view(CreateRoomFormView)
-                            .id("createRoomForm")
-                            .appendTo("#panel-body-{{cid}}")
-                    ])
-                    .build();
+            view(PanelView)
+                .name("createRoomPanelView")
+                .children([
+                    view(CreateRoomFormView)
+                        .name("createRoomFormView")
+                        .appendTo("#panel-body-{{cid}}")
+                ])
+                .build(this);
 
 
             // Wire Up Views
             //-------------------------------------------------------------------------------
 
-            this.setViewTop(this.createRoomPanel);
-            this.createRoomFormView = this.findViewById("createRoomForm");
+            this.setViewTop(this.createRoomPanelView);
+        },
+
+        /**
+         * @protected
+         */
+        createContainerChildren: function() {
+            this._super();
+            this.messagePartPreviewContainer = new MessagePartPreviewContainer(this.embeddedMessagePartModel);
+            this.addContainerChild(this.messagePartPreviewContainer, "#embedded-message-part-preview-" + this.createRoomFormView.getCid());
         },
 
         /**
@@ -212,7 +258,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} messagePartObject
          */
         embedMessagePart: function(messagePartObject) {
-            //TODO BRN: Add the message part to the preview of the create room container
+            this.embeddedMessagePartModel.setProperties(messagePartObject);
         },
 
         /**
@@ -234,6 +280,11 @@ require('bugpack').context("*", function(bugpack) {
         hearFormSubmittedEvent: function(event) {
             var _this       = this;
             var formData    = event.getData().formData;
+
+            //TODO BRN: Add embedded message here if one exists
+
+
+
             this.roomManagerModule.startRoom(formData, function(throwable, roomMeldDocument) {
                 if (!throwable) {
                     var roomId  = roomMeldDocument.getData().id;

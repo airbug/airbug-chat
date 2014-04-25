@@ -73,6 +73,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ImageUploadItemContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.ImageUploadItemContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -166,6 +169,14 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
         // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        activateContainer: function() {
+            this._super();
+            this.processMessageHandlerState();
+        },
 
         /**
          * @protected

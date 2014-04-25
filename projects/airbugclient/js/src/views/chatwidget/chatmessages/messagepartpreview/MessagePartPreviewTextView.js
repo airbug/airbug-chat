@@ -2,12 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.MessagePartTextView')
+//@Export('airbug.MessagePartPreviewTextView')
 
 //@Require('Class')
 //@Require('HtmlUtil')
 //@Require('IdGenerator')
-//@Require('airbug.MessagePartView')
+//@Require('airbug.MessagePartPreviewView')
 //@Require('jquery.JQuery')
 
 
@@ -24,7 +24,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var HtmlUtil                = bugpack.require('HtmlUtil');
     var IdGenerator             = bugpack.require('IdGenerator');
-    var MessagePartView         = bugpack.require('airbug.MessagePartView');
+    var MessagePartPreviewView  = bugpack.require('airbug.MessagePartPreviewView');
     var JQuery                  = bugpack.require('jquery.JQuery');
 
 
@@ -34,11 +34,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MessagePartView}
+     * @extends {MessagePartPreviewView}
      */
-    var MessagePartTextView = Class.extend(MessagePartView, {
+    var MessagePartPreviewTextView = Class.extend(MessagePartPreviewView, {
 
-        _name: "airbug.MessagePartTextView",
+        _name: "airbug.MessagePartPreviewTextView",
 
 
         //-------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="message-part-{{cid}}" class="message-part">' +
+            '<div id="message-part-preview-{{cid}}" class="message-part-preview message-part-preview-text">' +
                 '<p id="message-text-{{cid}}" class="message-text">{{{text}}}</p>' +
             '</div>',
 
@@ -54,6 +54,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
         // Convenience Methods
         //-------------------------------------------------------------------------------
+
+        /**
+         * @return {$}
+         */
+        getMessagePartPreview: function() {
+            return this.findElement("#message-part-preview-{{cid}}");
+        },
 
         /**
          * @return {$}
@@ -103,7 +110,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} text
-         * @returns {string}
+         * @return {string}
          */
         renderText: function(text) {
             var html = HtmlUtil.stringToHtml(text);
@@ -130,14 +137,14 @@ require('bugpack').context("*", function(bugpack) {
                     setTimeout(function() {
                         var gistFrame = JQuery("#" + iframeId)[0];
                         var gistFrameHTML = '<html>' +
-                                '<body>' +
-                                    '<script type="text/javascript" src="' + match + '.js"></script>' +
-                                    '<script>' +
-                                        'var newHeight = document.body.scrollHeight;' +
-                                        'var i = parent.document.getElementById("' + iframeId + '");' +
-                                        'i.style.height = parseInt(newHeight) + "px";' +
-                                    '</script>' +
-                                '</body>' +
+                            '<body>' +
+                            '<script type="text/javascript" src="' + match + '.js"></script>' +
+                            '<script>' +
+                            'var newHeight = document.body.scrollHeight;' +
+                            'var i = parent.document.getElementById("' + iframeId + '");' +
+                            'i.style.height = parseInt(newHeight) + "px";' +
+                            '</script>' +
+                            '</body>' +
                             '</html>';
                         var gistFrameDoc = gistFrame.document;
 
@@ -173,5 +180,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.MessagePartTextView", MessagePartTextView);
+    bugpack.export("airbug.MessagePartPreviewTextView", MessagePartPreviewTextView);
 });

@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
         // Template
         //-------------------------------------------------------------------------------
 
-        template: '<button id="button-{{cid}}" class="btn {{buttonClasses}}"></button>',
+        template: '<button id="button-{{cid}}" class="btn {{buttonClasses}} {{classes}}"></button>',
 
 
         //-------------------------------------------------------------------------------

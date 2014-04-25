@@ -100,6 +100,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ImageUploadWidgetContainer = Class.extend(WorkspaceWidgetContainer, {
 
+        _name: "airbug.ImageUploadWidgetContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

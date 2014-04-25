@@ -2,10 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.MessagePartCodeView')
+//@Export('airbug.MessagePartPreviewImageView')
 
 //@Require('Class')
-//@Require('airbug.MessagePartView')
+//@Require('airbug.MessagePartPreviewView')
 
 
 //-------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var MessagePartView     = bugpack.require('airbug.MessagePartView');
+    var Class                   = bugpack.require('Class');
+    var MessagePartPreviewView  = bugpack.require('airbug.MessagePartPreviewView');
 
 
     //-------------------------------------------------------------------------------
@@ -28,31 +28,39 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MessagePartView}
+     * @extends {MessagePartPreviewView}
      */
-    var MessagePartCodeView = Class.extend(MessagePartView, {
+    var MessagePartPreviewImageView = Class.extend(MessagePartPreviewView, {
 
-        _name: "airbug.MessagePartCodeView",
+        _name: "airbug.MessagePartPreviewImageView",
 
 
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="message-part-{{cid}}" class="message-code">' +
-                        '<pre><code id="code-{{cid}}" class="{{model.codeLanguage}}">{{model.code}}</code></pre>' +
-                    '</div>',
+        template:
+            '<div id="message-part-preview-{{cid}}" class="message-part-preview message-part-preview-image">' +
+                '<img id="image-{{cid}}" src="{{model.midsizeUrl}}" />' +
+            '</div>',
 
 
         //-------------------------------------------------------------------------------
-        // Convenience Methods
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
         /**
          * @return {$}
          */
-        getCodeElement: function() {
-            return this.findElement("#code-{{cid}}");
+        getImageElement: function() {
+            return this.findElement("#image-{{cid}}");
+        },
+
+        /**
+         * @return {$}
+         */
+        getMessagePartPreviewElement: function() {
+            return this.findElement("message-part-preview-{{cid}}");
         },
 
 
@@ -62,34 +70,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @protected
-         */
-        createView: function() {
-            this._super();
-            var codeBlock = this.getCodeElement().find("pre").get()[0];
-            if (codeBlock) {
-                hljs.highlightBlock(codeBlock);
-            }
-        },
-
-        /**
-         * @protected
          * @param {string} propertyName
          * @param {string} propertyValue
          */
         renderModelProperty: function(propertyName, propertyValue) {
             this._super(propertyName, propertyValue);
             switch (propertyName) {
-                case "code":
-                    var codeElement = this.getCodeElement();
-                    codeElement.text(propertyValue);
-                    var codeBlock = codeElement.find("pre").get()[0];
-                    if (codeBlock) {
-                        hljs.highlightBlock(codeBlock);
-                    }
-                    break;
-                case "codeLanguage":
-                    this.getCodeElement().removeClass();
-                    this.getCodeElement().addClass(propertyValue);
+                case "midsizeUrl":
+                    this.getImageElement().attr("src", propertyValue);
                     break;
             }
         }
@@ -100,5 +88,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.MessagePartCodeView", MessagePartCodeView);
+    bugpack.export("airbug.MessagePartPreviewImageView", MessagePartPreviewImageView);
 });

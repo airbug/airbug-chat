@@ -39,10 +39,10 @@ var ImageUploadWidgetView = Class.extend(MustacheView, {
             '</div>' +
             '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
                 '<div id="image-upload-dropzone-{{cid}}" class="box image-upload-dropzone">' +
-                    '<div class="image-upload-border">' +
+                    '<div class="image-upload-border image-upload-spacing">' +
                         '<h4>Drag an image here</h4>' +
                         '<span>Or, you can...</span>' +
-                        '<form id="file-upload-widget" class="form-horizontal" enctype="multipart/form-data">' +
+                        '<form id="file-upload-widget-{{cid}}" class="file-upload-widget form-horizontal" enctype="multipart/form-data">' +
                             '<div class="btn-toolbar">' +
                                 '<div class="btn-group">' +
                                     '<button class="btn btn-success fileinput-button">' +

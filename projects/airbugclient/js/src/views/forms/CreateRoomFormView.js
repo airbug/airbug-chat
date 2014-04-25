@@ -34,12 +34,15 @@ require('bugpack').context("*", function(bugpack) {
      */
     var CreateRoomFormView = Class.extend(MustacheView, {
 
+        _name: "airbug.CreateRoomFormView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
         template:
-            '<div class="form-wrapper-naked">' +
+            '<div id="create-room-form-{{cid}}}}" class="form-wrapper-naked">' +
                 '<form class="form-horizontal create-conversation-form">' +
                     '<legend>Start a conversation</legend>' +
                     '<div class="control-group">' +
@@ -54,6 +57,8 @@ require('bugpack').context("*", function(bugpack) {
                     '<div class="control-group">' +
                         '<label>Message</label>' +
                         '<textarea rows="5" name="chatMessage"/>' +
+                    '</div>' +
+                    '<div id="embedded-message-part-preview-{{cid}}" class="control-group">' +
                     '</div>' +
                     '<div class="control-group">' +
                         '<button id="submit-button-{{cid}}" type="button" class="btn">Start a conversation</button>' +
