@@ -121,7 +121,7 @@ require('bugpack').context("*", function(bugpack) {
                 var configObject            = _this.airbugClientConfig.toObject();
                 configObject.github.state   = session.getData().githubState;
                 configObject.github.emails  = session.getData().githubEmails;
-                response.render('home', {
+                response.render('client_api', {
                     locals: {
                         config: StringUtil.escapeString(JSON.stringify(configObject)),
                         staticUrl: configObject.staticUrl
