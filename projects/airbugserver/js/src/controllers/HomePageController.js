@@ -124,6 +124,8 @@ require('bugpack').context("*", function(bugpack) {
                 response.render('client_api', {
                     locals: {
                         config: StringUtil.escapeString(JSON.stringify(configObject)),
+                        debug: configObject.debug,
+                        js: configObject.js,
                         staticUrl: configObject.staticUrl
                     }
                 }, function(error, html)  {

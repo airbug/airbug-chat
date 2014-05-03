@@ -62,6 +62,11 @@ var dependencies        = {
 //-------------------------------------------------------------------------------
 
 buildProperties({
+    bridge: {
+        source: "./projects/airbugclient/js/scripts/airbug-api-bridge.js",
+        outputFile: "{{distPath}}/airbug-api-bridge.js",
+        outputMinFile: "{{distPath}}/airbug-api-bridge.min.js"
+    },
     loader: {
         source: "./projects/airbugclient/js/scripts/airbug-application-loader.js",
         outputFile: "{{distPath}}/airbug-application-loader.js",
@@ -366,6 +371,20 @@ buildTarget('local').buildFlow(
                     series([
                         targetTask('copy', {
                             properties: {
+                                fromPaths: ["{{bridge.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        }),
+                        targetTask("uglifyjsMinify", {
+                            properties: {
+                                sources: ["{{bridge.outputFile}}"],
+                                outputFile: "{{bridge.outputMinFile}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copy', {
+                            properties: {
                                 fromPaths: ["{{loader.source}}"],
                                 intoPath: "{{distPath}}"
                             }
@@ -431,7 +450,9 @@ buildTarget('local').buildFlow(
                             buildProject.getProperty("static.outputFile"),
                             buildProject.getProperty("static.outputMinFile"),
                             buildProject.getProperty("loader.outputFile"),
-                            buildProject.getProperty("loader.outputMinFile")
+                            buildProject.getProperty("loader.outputMinFile"),
+                            buildProject.getProperty("bridge.outputFile"),
+                            buildProject.getProperty("bridge.outputMinFile")
                         ]).concat(buildProject.getProperty("static.serverStickyPaths"))
                     }
                 }),
@@ -577,6 +598,14 @@ buildTarget('short').buildFlow(
                     series([
                         targetTask('copy', {
                             properties: {
+                                fromPaths: ["{{bridge.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copy', {
+                            properties: {
                                 fromPaths: ["{{loader.source}}"],
                                 intoPath: "{{distPath}}"
                             }
@@ -627,6 +656,7 @@ buildTarget('short').buildFlow(
                         resourcePaths: buildProject.getProperty("server.resourcePaths"),
                         staticPaths: ([
                             "{{static.buildPath}}",
+                            buildProject.getProperty("bridge.outputFile"),
                             buildProject.getProperty("static.outputFile"),
                             buildProject.getProperty("loader.outputFile")
                         ]).concat(buildProject.getProperty("static.serverStickyPaths"))

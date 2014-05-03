@@ -11,9 +11,29 @@
             var _appConfig = JSON.parse("{{{config}}}");
         </script>
 
-        <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.1.12.min.js"></script>
         <script type="text/javascript" src="{{{staticUrl}}}/airbug-api-bridge.js"></script>
-        <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.js"></script>
+        {{#js.minify}}
+            <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.1.12.min.js"></script>
+        {{/js.minify}}
+        {{^js.minify}}
+            <script type="text/javascript" src="//d1jply0oquv2ju.cloudfront.net/bugpack-0.1.12.js"></script>
+        {{/js.minify}}
+
+        {{#js.concat}}
+            {{#js.minify}}
+                <script type="text/javascript" src="{{{staticUrl}}}/airbug-static.min.js"></script>
+            {{/js.minify}}
+            {{^js.minify}}
+                <script type="text/javascript" src="{{{staticUrl}}}/airbug-static.js"></script>
+            {{/js.minify}}
+        {{/js.concat}}
+
+        {{#js.minify}}
+            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.min.js"></script>
+        {{/js.minify}}
+        {{^js.minify}}
+            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.js"></script>
+        {{/js.minify}}
     </body>
 </html>
 
