@@ -129,7 +129,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {*} cursorPosition
+         * @param {{
+         *      column: number,
+         *      row: number
+         * }} cursorPosition
          */
         setEditorCursorPosition: function(cursorPosition) {
             this.editor.moveCursorToPosition(cursorPosition);
