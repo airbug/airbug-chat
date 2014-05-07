@@ -245,12 +245,8 @@ require('bugpack').context("*", function(bugpack) {
         animateScrollToCarapaceModel: function(carapaceModel, duration) {
             var carapaceContainer = this.carapaceModelToCarapaceContainerMap.get(carapaceModel);
             if (carapaceContainer) {
-                var value = this.boxView.getBoxElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
-                this.boxView.getBoxElement().animate({
-                    scrollTop: value
-                }, {
-                    duration: duration
-                });
+                var value = this.boxView.getScrollTop() + carapaceContainer.getViewTop().$el.position().top;
+                this.boxView.animateScrollTo(value, duration);
             }
         },
 
@@ -274,8 +270,8 @@ require('bugpack').context("*", function(bugpack) {
         scrollToCarapaceModel: function(carapaceModel) {
             var carapaceContainer = this.carapaceModelToCarapaceContainerMap.get(carapaceModel);
             if (carapaceContainer) {
-                var value = this.boxView.getBoxElement().scrollTop() + carapaceContainer.getViewTop().$el.position().top;
-                this.boxView.getBoxElement().scrollTop(value);
+                var value = this.boxView.getScrollTop() + carapaceContainer.getViewTop().$el.position().top;
+                this.boxView.scrollTo(value);
             }
         },
 
@@ -350,7 +346,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {number} scrollTop
          */
         calculateScrollState: function(scrollTop) {
-            var scrollAreaHeight    = this.boxView.getBoxElement().height();
+            var scrollAreaHeight    = this.boxView.getBoxBodyElement().height();
             var listHeight          = this.listView.getListElement().height();
             if (listHeight <= scrollAreaHeight) {
                 this.updateScrollState(ListContainer.ScrollState.NO_SCROLL);

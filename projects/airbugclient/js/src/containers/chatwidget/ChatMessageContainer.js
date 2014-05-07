@@ -102,7 +102,7 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ChatMessageContainer = Class.extend(CarapaceContainer, {
 
-        _name: "airbug.ChatMessageContainer'",
+        _name: "airbug.ChatMessageContainer",
 
 
         //-------------------------------------------------------------------------------

@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Requires
 //-------------------------------------------------------------------------------
@@ -695,89 +696,8 @@ buildTarget('short').buildFlow(
                         packageName: "{{server.packageJson.name}}",
                         packageVersion: "{{server.packageJson.version}}"
                     }
-                }),
-                targetTask("s3PutFile", {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("server.packageJson.name"),
-                            buildProject.getProperty("server.packageJson.version"));
-                        task.updateProperties({
-                            file: packedNodePackage.getFilePath(),
-                            options: {
-
-                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
-
-                                acl: 'public-read',
-                                encrypt: true
-                            }
-                        });
-                    },
-                    properties: {
-                        bucket: "{{local-bucket}}"
-                    }
                 })
-            ])/*,
-            series([
-                targetTask('createNodePackage', {
-                    properties: {
-                        packageJson: buildProject.getProperty("worker.packageJson"),
-                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
-                        sourcePaths: buildProject.getProperty("worker.sourcePaths").concat(
-                            buildProject.getProperty("worker.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("worker.scriptPaths").concat(
-                            buildProject.getProperty("worker.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("worker.unitTest.testPaths")
-                    }
-                }),
-                targetTask('generateBugPackRegistry', {
-                    init: function(task, buildProject, properties) {
-                        var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version")
-                        );
-                        task.updateProperties({
-                            sourceRoot: nodePackage.getBuildPath()
-                        });
-                    }
-                }),
-                targetTask('packNodePackage', {
-                    properties: {
-                        packageName: buildProject.getProperty("worker.packageJson.name"),
-                        packageVersion: buildProject.getProperty("worker.packageJson.version")
-                    }
-                }),
-                targetTask('startNodeModuleTests', {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(
-                            buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version")
-                        );
-                        task.updateProperties({
-                            modulePath: packedNodePackage.getFilePath()
-                        });
-                    }
-                }),
-                targetTask("s3PutFile", {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version"));
-                        task.updateProperties({
-                            file: packedNodePackage.getFilePath(),
-                            options: {
-
-                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
-
-                                acl: 'public-read',
-                                encrypt: true
-                            }
-                        });
-                    },
-                    properties: {
-                        bucket: "{{local-bucket}}"
-                    }
-                })
-            ])*/
+            ])
         ])
     ])
 );

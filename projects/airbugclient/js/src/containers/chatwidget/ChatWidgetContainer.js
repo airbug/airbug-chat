@@ -750,8 +750,10 @@ require('bugpack').context("*", function(bugpack) {
                     .data(chatMessageObject)
                     .build(this);
             this.chatMessageList.add(chatMessageModel);
-
             this.chatMessageTryUuidToChatMessageModelMap.put(chatMessageModel.getProperty("tryUuid"), chatMessageModel);
+
+            // Animate to the new ChatMessage
+            this.chatWidgetMessagesContainer.animateScrollToCarapaceModel(chatMessageModel, 600);
 
             /** @type {CurrentUser} */
             var currentUser             = undefined;

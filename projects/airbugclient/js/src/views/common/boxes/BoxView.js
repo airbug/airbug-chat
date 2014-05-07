@@ -70,6 +70,13 @@ require('bugpack').context("*", function(bugpack) {
             return this.findElement("#box-{{cid}}");
         },
 
+        /**
+         * @return {number}
+         */
+        getScrollTop: function() {
+            return this.getBoxBodyElement().scrollTop();
+        },
+
 
         //-------------------------------------------------------------------------------
         // MustacheView Methods
@@ -118,7 +125,7 @@ require('bugpack').context("*", function(bugpack) {
             this._super();
             var _this       = this;
             this.getBoxBodyElement().scroll(function(event) {
-                _this.dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL, _this.getBoxElement().scrollTop()));
+                _this.dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL, _this.getBoxBodyElement().scrollTop()));
             });
         },
 
@@ -153,10 +160,29 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
+         * @param {number} value
+         * @param {number} duration
+         */
+        animateScrollTo: function(value, duration) {
+            this.getBoxBodyElement().animate({
+                scrollTop: value
+            }, {
+                duration: duration
+            });
+        },
+
+        /**
          *
          */
         collapse: function() {
             this.setAttribute("collapsed", true);
+        },
+
+        /**
+         * @param {number} value
+         */
+        scrollTo: function(value) {
+            this.getBoxBodyElement().scrollTop(value);
         },
 
         /**
