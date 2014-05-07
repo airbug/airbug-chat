@@ -41,7 +41,7 @@ var NavListDividerView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getNavListDividerElement: function() {
         return this.findElement("#nav-list-divider-{{cid}}");

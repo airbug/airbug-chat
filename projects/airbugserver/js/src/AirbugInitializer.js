@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -266,6 +276,9 @@ require('bugpack').context("*", function(bugpack) {
                             next();
                         });
                         _this.expressApp.use(express.logger('dev'));
+
+                        //NOTE BRN: Put static before other entries so that session and other paths aren't executed on static paths
+                        _this.expressApp.use('/static', express.static(path.resolve(__dirname, '../static')));
                         _this.expressApp.use(express.cookieParser(secret));
 
                         _this.expressApp.use(function(req, res, next) {
@@ -278,7 +291,6 @@ require('bugpack').context("*", function(bugpack) {
                         _this.expressApp.use(express.favicon(path.resolve(__dirname, '../static/img/airbug-icon.png')));
                         _this.expressApp.use(express.bodyParser());
                         _this.expressApp.use(express.methodOverride()); // put and delete support for html 4 and older
-                        _this.expressApp.use('/static', express.static(path.resolve(__dirname, '../static')));
                         _this.expressApp.use(_this.expressApp.getApp().router);
                     });
 

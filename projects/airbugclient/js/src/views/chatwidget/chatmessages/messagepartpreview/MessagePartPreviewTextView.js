@@ -56,14 +56,14 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getMessagePartPreview: function() {
             return this.findElement("#message-part-preview-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getMessageText: function() {
             return this.findElement("#message-text-{{cid}}");

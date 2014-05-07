@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,6 +22,7 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
+//@Require('airbug.DivView')
 //@Require('airbug.IconView')
 //@Require('airbug.MessagePartPreviewCodeView')
 //@Require('airbug.MessagePartPreviewImageView')
@@ -40,6 +51,7 @@ require('bugpack').context("*", function(bugpack) {
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
     var ButtonView                      = bugpack.require('airbug.ButtonView');
     var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+    var DivView                         = bugpack.require('airbug.DivView');
     var IconView                        = bugpack.require('airbug.IconView');
     var MessagePartPreviewCodeView      = bugpack.require('airbug.MessagePartPreviewCodeView');
     var MessagePartPreviewImageView     = bugpack.require('airbug.MessagePartPreviewImageView');
@@ -102,6 +114,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {DivView}
+             */
+            this.divView                       = null;
+
+            /**
+             * @private
              * @type {MessagePartPreviewView}
              */
             this.messagePartPreviewView         = null;
@@ -133,26 +151,31 @@ require('bugpack').context("*", function(bugpack) {
             // Create Views
             //-------------------------------------------------------------------------------
 
-            view(WellView)
-                .name("wellView")
+            view(DivView)
+                .name("divView")
                 .attributes({
                     classes: "message-part-preview-wrapper"
                 })
                 .children([
-                    view(NakedButtonView)
-                        .name("removeButtonView")
-                        .appendTo("#well-{{cid}}")
-                        .attributes({
-                            type: ButtonView.Type.LINK,
-                            align: "right",
-                            classes: "message-part-preview-remove-button"
-                        })
+                    view(WellView)
+                        .name("wellView")
+                        .appendTo("#div-{{cid}}")
                         .children([
-                            view(IconView)
+                            view(NakedButtonView)
+                                .name("removeButtonView")
+                                .appendTo("#well-{{cid}}")
                                 .attributes({
-                                    type: IconView.Type.REMOVE
+                                    type: ButtonView.Type.LINK,
+                                    align: "right",
+                                    classes: "message-part-preview-remove-button"
                                 })
-                                .appendTo("#button-{{cid}}")
+                                .children([
+                                    view(IconView)
+                                        .attributes({
+                                            type: IconView.Type.REMOVE
+                                        })
+                                        .appendTo("#button-{{cid}}")
+                                ])
                         ])
                 ])
                 .build(this);
@@ -163,7 +186,7 @@ require('bugpack').context("*", function(bugpack) {
             // Wire Up Views
             //-------------------------------------------------------------------------------
 
-            this.setViewTop(this.wellView);
+            this.setViewTop(this.divView);
             this.addModel(this.messagePartModel);
         },
 
@@ -224,9 +247,9 @@ require('bugpack').context("*", function(bugpack) {
                             throw new Bug("UnsupportedMessagePart", {}, "Unsupported message part type '" + messageType + "'");
                     }
                     this.wellView.addViewChild(this.messagePartPreviewView, "#well-{{cid}}");
-                    this.wellView.show();
+                    this.divView.css('display', 'inline-block');
                 } else {
-                    this.wellView.hide();
+                    this.divView.css('display', 'none');
                 }
             }
         },
@@ -237,7 +260,7 @@ require('bugpack').context("*", function(bugpack) {
         destroyMessagePartPreviewView: function() {
             if (this.messagePartPreviewView) {
                 this.wellView.removeViewChild(this.messagePartPreviewView);
-                this.wellView.hide();
+                this.divView.css('display', 'none');
                 this.messagePartPreviewView.destroy();
                 this.messagePartPreviewView = null;
             }

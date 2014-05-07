@@ -55,7 +55,7 @@ var ListItemView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getListItemElement: function() {
         return this.findElement("#list-item-{{cid}}");

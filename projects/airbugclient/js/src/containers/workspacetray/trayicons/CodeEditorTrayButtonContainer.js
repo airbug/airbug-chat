@@ -52,6 +52,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var CodeEditorTrayButtonContainer = Class.extend(ButtonContainer, {
 
+        _name: "airbug.CodeEditorTrayButtonContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -153,7 +156,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {ButtonViewEvent} event
          */
         hearCodeEditorTrayButtonClickedEvent: function(event) {
-            this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_EDITOR, {});
+            this.getCommandModule().relayCommand(CommandType.TOGGLE.CODE_WORKSPACE, {});
         }
     });
 

@@ -50,7 +50,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getCodeElement: function() {
             return this.findElement("#code-{{cid}}");

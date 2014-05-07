@@ -52,35 +52,35 @@ var RoomSummaryView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getRoomLastMessagePreviewElement: function() {
         return this.findElement("#room-last-message-preview-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getRoomLastMessageSentAtElement: function() {
         return this.findElement("#room-last-message-sent-at-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getRoomLastMessageSentByElement: function() {
         return this.findElement("#room-last-message-sent-by-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getRoomTopicElement: function() {
         return this.findElement("#room-topic-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getRoomNumberUnreadMessagesElement: function() {
         return this.findElement("#room-number-unread-messages-{{cid}}");

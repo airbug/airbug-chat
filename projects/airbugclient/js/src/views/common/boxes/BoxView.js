@@ -34,20 +34,37 @@ require('bugpack').context("*", function(bugpack) {
      */
     var BoxView = Class.extend(MustacheView, {
 
+        _name: "airbug.BoxView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="box-{{cid}}" class="box {{classes}}">' +
-                    '</div>',
+        attributes: {
+            size: "BoxView:Size:Fill"
+        },
+
+        template:
+            '<div id="box-{{cid}}" class="box {{classes}}">' +
+                '<div id="box-body-{{cid}}" class="box-body">' +
+                '</div>' +
+            '</div>',
 
 
         //-------------------------------------------------------------------------------
-        // Getters and Setters
+        // Convenience Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
+         */
+        getBoxBodyElement: function() {
+            return this.findElement("#box-body-{{cid}}");
+        },
+
+        /**
+         * @return {jQuery}
          */
         getBoxElement: function() {
             return this.findElement("#box-{{cid}}");
@@ -64,7 +81,19 @@ require('bugpack').context("*", function(bugpack) {
         generateTemplateData: function() {
             var data    = this._super();
             if (this.getAttribute("scroll")) {
-                data.classes += "scroll-box";
+                data.classes += " scroll-box";
+            }
+            if (this.getAttribute("collapsed")) {
+                data.classes += " collapsed-box";
+            }
+
+            switch (this.getAttribute("size")) {
+                case BoxView.Size.AUTO:
+                    data.classes += " auto-box";
+                    break;
+                case BoxView.Size.FILL:
+                    data.classes += " fill-box";
+                    break;
             }
             return data;
         },
@@ -79,7 +108,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeView: function() {
             this._super();
-            this.getBoxElement().off();
+            this.getBoxBodyElement().off();
         },
 
         /**
@@ -88,11 +117,69 @@ require('bugpack').context("*", function(bugpack) {
         initializeView: function() {
             this._super();
             var _this       = this;
-            this.getBoxElement().scroll(function(event) {
+            this.getBoxBodyElement().scroll(function(event) {
                 _this.dispatchEvent(new ScrollEvent(ScrollEvent.EventType.SCROLL, _this.getBoxElement().scrollTop()));
             });
+        },
+
+        /**
+         * @protected
+         * @param {string} attributeName
+         * @param {*} attributeValue
+         */
+        renderAttribute: function(attributeName, attributeValue) {
+            switch (attributeName) {
+                case "collapsed":
+                    if (attributeValue) {
+                        this.getBoxElement().addClass("collapsed-box");
+                    } else {
+                        this.getBoxElement().removeClass("collapsed-box");
+                    }
+                    break;
+                case "size":
+                    this.getBoxElement().removeClass("auto-box fill-box");
+                    if (attributeValue === BoxView.Size.AUTO) {
+                        this.getBoxElement().addClass("auto-box");
+                    } else {
+                        this.getBoxElement().addClass("fill-box");
+                    }
+                    break;
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        collapse: function() {
+            this.setAttribute("collapsed", true);
+        },
+
+        /**
+         *
+         */
+        uncollapse: function() {
+            this.setAttribute("collapsed", false);
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    BoxView.Size = {
+        AUTO: "BoxView:Size:Auto",
+        FILL: "BoxView:Size:Fill"
+    };
 
 
     //-------------------------------------------------------------------------------

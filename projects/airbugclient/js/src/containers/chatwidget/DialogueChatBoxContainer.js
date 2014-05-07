@@ -224,7 +224,7 @@ require('bugpack').context("*", function(bugpack) {
                 .children([
                     view(SubheaderView)
                         .name("dialogueChatBoxSubheaderView")
-                        .appendTo(".box-header")
+                        .appendTo("#box-header-{{cid}}")
                         .children([
                             view(DialogueNameView)
                                 .model(this.otherUserModel)
@@ -236,7 +236,7 @@ require('bugpack').context("*", function(bugpack) {
                             rowStyle: MultiColumnView.RowStyle.FLUID,
                             configuration: OneColumnView.Configuration.FULL
                         })
-                        .appendTo(".box-body")
+                        .appendTo("#box-body-{{cid}}")
                 ])
                 .build(this);
 

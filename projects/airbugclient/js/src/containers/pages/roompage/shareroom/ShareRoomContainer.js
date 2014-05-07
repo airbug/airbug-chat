@@ -75,6 +75,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ShareRoomContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.ShareRoomContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -163,7 +166,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceContainer Extensions
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
         /**

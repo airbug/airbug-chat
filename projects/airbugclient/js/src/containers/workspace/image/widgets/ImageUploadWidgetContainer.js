@@ -5,6 +5,7 @@
 //@Export('airbug.ImageUploadWidgetContainer')
 
 //@Require('Class')
+//@Require('airbug.BoxView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
@@ -46,6 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
+    var BoxView                             = bugpack.require('airbug.BoxView');
     var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
     var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
     var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
@@ -149,6 +151,12 @@ require('bugpack').context("*", function(bugpack) {
              * @type {TabView}
              */
             this.imageListTabView               = null;
+
+            /**
+             * @private
+             * @type {BoxView}
+             */
+            this.imageUploadListBox             = null;
 
             /**
              * @private
@@ -292,7 +300,13 @@ require('bugpack').context("*", function(bugpack) {
 
                                         ])
                                 ])
-                        ])
+                        ]),
+                    view(BoxView)
+                        .name("imageUploadListBox")
+                        .appendTo("#image-upload-list-{{cid}}")
+                        .attributes({
+                            size: BoxView.Size.AUTO
+                        })
 
                 ])
                 .build(this);
@@ -418,7 +432,7 @@ require('bugpack').context("*", function(bugpack) {
                                 .data({name: filename})
                                 .build(_this);
                         var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
-                        _this.addContainerChild(imageUploadItemContainer, "#image-upload-list-" + _this.imageUploadWidgetView.getCid());
+                        _this.addContainerChild(imageUploadItemContainer, "#box-body" + _this.imageUploadListBox.getCid());
 
                         //hide send button if this is a drop from the chat messages div
                         data.context = imageUploadItemContainer.getViewTop().$el;
@@ -494,7 +508,7 @@ require('bugpack').context("*", function(bugpack) {
                     .build();
             var imageUploadItemContainer = new ImageUploadItemContainer(imageAssetModel);
             this.getViewTop().$el.find(".box-body .box>span").hide();
-            this.addContainerChild(imageUploadItemContainer, "#image-upload-list-" + this.imageUploadWidgetView.getCid());
+            this.addContainerChild(imageUploadItemContainer, "#box-body-" + this.imageUploadListBox.getCid());
             this.assetManagerModule.addAssetFromUrl(url, function(throwable, meldDocument) {
                 if (!throwable) {
                     var data = {

@@ -55,6 +55,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var NotificationContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.NotificationContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,7 +15,7 @@
 //@Export('airbug.WorkspaceBoxWithHeaderView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.BoxView')
 
 
 //-------------------------------------------------------------------------------
@@ -19,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var BoxView         = bugpack.require('airbug.BoxView');
 
 
     //-------------------------------------------------------------------------------
@@ -28,9 +38,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MustacheView}
+     * @extends {BoxView}
      */
-    var WorkspaceBoxWithHeaderView = Class.extend(MustacheView, {
+    var WorkspaceBoxWithHeaderView = Class.extend(BoxView, {
 
         _name: "airbug.WorkspaceBoxWithHeaderView",
 
@@ -39,7 +49,8 @@ require('bugpack').context("*", function(bugpack) {
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="box-{{cid}}" class="workspace-widget box box-with-header {{classes}}">' +
+        template:
+            '<div id="box-{{cid}}" class="workspace-widget box box-with-header {{classes}}">' +
                 '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
                 '</div>' +
                 '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +

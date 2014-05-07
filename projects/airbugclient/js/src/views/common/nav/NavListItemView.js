@@ -47,7 +47,7 @@ var NavListItemView = Class.extend(InteractiveView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getNavListItemElement: function() {
         return this.findElement("#nav-list-item-{{cid}}");

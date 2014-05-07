@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -88,9 +98,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ConversationModel} conversationModel
+         * @param {MessagePartModel} messagePartModel
          */
-        _constructor: function(conversationModel) {
+        _constructor: function(messagePartModel) {
 
             this._super();
 
@@ -101,9 +111,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ConversationModel}
+             * @type {MessagePartModel}
              */
-            this.conversationModel              = conversationModel;
+            this.messagePartModel               = messagePartModel;
 
 
             // Modules
@@ -194,6 +204,7 @@ require('bugpack').context("*", function(bugpack) {
             view(TwoColumnView)
                 .name("twoColumnView")
                 .attributes({
+                    classes: "chat-widget-input",
                     configuration: TwoColumnView.Configuration.THIN_RIGHT,
                     rowStyle: MultiColumnView.RowStyle.FLUID
                 })
@@ -275,10 +286,11 @@ require('bugpack').context("*", function(bugpack) {
                 .build(this);
 
 
-            // Wire Up Views
+            // Wire Up
             //-------------------------------------------------------------------------------
 
             this.setViewTop(this.twoColumnView);
+            this.addModel(this.messagePartModel);
         },
 
         /**
@@ -347,19 +359,21 @@ require('bugpack').context("*", function(bugpack) {
         relayChatMessage: function() {
             // currently only supports text chatmessages via this function
             var formData = this.getFormData();
-            if (/\S/.test(formData.text)) {
-                if (!formData.type) {
-                    formData.type = "text";
-                }
+            if (/\S/.test(formData.text) || this.messagePartModel.getProperty("type")) {
                 var chatMessageData = {
-                    type: formData.type,
+                    type: "text",
                     body: {parts: [{
                         type: "text",
                         text: formData.text
                     }]}
                 };
+                if (this.messagePartModel && this.messagePartModel.getProperty("type")) {
+                    chatMessageData.body.parts.push(this.messagePartModel.toLiteral());
+                    chatMessageData.type = "multipart";
+                }
                 this.messageHandlerModule.sendMessage(chatMessageData);
                 this.textAreaView.setValue("");
+                this.messagePartModel.clear();
             }
         },
 

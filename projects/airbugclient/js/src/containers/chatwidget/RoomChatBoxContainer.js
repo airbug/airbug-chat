@@ -225,11 +225,11 @@ require('bugpack').context("*", function(bugpack) {
                 .children([
                     view(SubheaderView)
                         .name("roomChatBoxSubheaderView")
-                        .appendTo(".box-header")
+                        .appendTo("#box-header-{{cid}}")
                         .children([
                             view(RoomNameView)
                                 .model(this.roomModel)
-                                .appendTo('#subheader-center-{{cid}}')
+                                .appendTo("#subheader-center-{{cid}}")
                                 .attributes({
                                     classes: "room-header-title"
                                 })
@@ -240,7 +240,7 @@ require('bugpack').context("*", function(bugpack) {
                             rowStyle: MultiColumnView.RowStyle.FLUID,
                             configuration: TwoColumnView.Configuration.EXTRA_THICK_RIGHT_SMALL
                         })
-                        .appendTo(".box-body")
+                        .appendTo("#box-body-{{cid}}")
                 ])
                 .build(this);
 

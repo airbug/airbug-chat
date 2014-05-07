@@ -164,11 +164,6 @@ require('bugpack').context("*", function(bugpack) {
             if (this.bridge) {
                 this.bridge.registerMessageProcessor(this);
                 this.bridge.ready = true;
-                
-                //TEST
-                setTimeout(function() {
-                    _this.displayNotification("Here's an awesome test message");
-                }, 1000);
             }
 
             callback();

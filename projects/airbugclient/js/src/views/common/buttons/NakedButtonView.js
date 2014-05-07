@@ -75,7 +75,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getButtonElement: function() {
             return this.findElement("#button-{{cid}}");

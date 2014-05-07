@@ -55,6 +55,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ImageEditorContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.ImageEditorContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getMessageText: function() {
             return this.findElement("#message-text-{{cid}}");

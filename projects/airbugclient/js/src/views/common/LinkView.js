@@ -41,7 +41,7 @@ var LinkView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getLinkElement: function() {
         return this.$el;

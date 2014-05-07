@@ -33,10 +33,10 @@ var ThreeColumnView = Class.extend(MultiColumnView, {
     // CarapaceView Implementation
     //-------------------------------------------------------------------------------
 
-    template:       '<div id={{id}} class="{{rowStyle}} column 3column-container">' +
-                        '<div class="{{leftColumnSpan}}  {{leftHamburger}}  column   column1of3"></div>' +
-                        '<div class="{{centerColumnSpan}}                   column   column2of3"></div>' +
-                        '<div class="{{rightColumnSpan}} {{rightHamburger}} column   column3of3"></div>' +
+    template:       '<div id={{id}} class="{{rowStyle}} column-fill 3column-container">' +
+                        '<div class="{{leftColumnSpan}}  {{leftHamburger}}  column-fill   column1of3"></div>' +
+                        '<div class="{{centerColumnSpan}}                   column-fill   column2of3"></div>' +
+                        '<div class="{{rightColumnSpan}} {{rightHamburger}} column-fill   column3of3"></div>' +
                     '</div>',
 
 

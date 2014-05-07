@@ -53,7 +53,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getDropdownButtonElement: function() {
             return this.findElement("#dropdown-button-{{cid}}");

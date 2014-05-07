@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,109 +19,112 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Config      = bugpack.require('Config');
-var TypeUtil    = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Config}
- */
-var AirbugServerConfig = Class.extend(Config, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Config      = bugpack.require('Config');
+    var TypeUtil    = bugpack.require('TypeUtil');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string} appVersion
+     * @class
+     * @extends {Config}
      */
-    getAppVersion: function() {
-        return this.getProperty("appVersion");
-    },
+    var AirbugServerConfig = Class.extend(Config, {
 
-    /**
-     * @param {string} appVersion
-     */
-    setAppVersion: function(appVersion) {
-        this.setProperty("appVersion", appVersion);
-    },
+        _name: "airbug.AirbugServerConfig",
 
-    /**
-     * @returns {string}
-     */
-    getGithubClientId: function() {
-        return this.getProperty("github.clientId");
-    },
 
-    /**
-     * @param {string} clientId
-     */
-    setGithubClientId: function(clientId) {
-        this.setProperty("github.clientId", clientId);
-    },
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @returns {string}
-     */
-    getGithubClientSecret: function() {
-        return this.getProperty("github.clientSecret");
-    },
+        /**
+         * @return {string} appVersion
+         */
+        getAppVersion: function() {
+            return this.getProperty("appVersion");
+        },
 
-    /**
-     * @param {string} clientSecret
-     */
-    setGithubClientSecret: function(clientSecret) {
-        this.setProperty("github.clientSecret", clientSecret);
-    },
+        /**
+         * @param {string} appVersion
+         */
+        setAppVersion: function(appVersion) {
+            this.setProperty("appVersion", appVersion);
+        },
 
-    /**
-     * @return {string}
-     */
-    getStaticUrl: function() {
-        return this.getProperty("staticUrl");
-    },
+        /**
+         * @returns {string}
+         */
+        getGithubClientId: function() {
+            return this.getProperty("github.clientId");
+        },
 
-    /**
-     * @param {string} staticUrl
-     */
-    setStaticUrl: function(staticUrl) {
-        this.setProperty("staticUrl", staticUrl);
-    },
+        /**
+         * @param {string} clientId
+         */
+        setGithubClientId: function(clientId) {
+            this.setProperty("github.clientId", clientId);
+        },
 
-    /**
-     * @return {string}
-     */
-    getStickyStaticUrl: function() {
-        return this.getProperty("stickyStaticUrl");
-    },
+        /**
+         * @returns {string}
+         */
+        getGithubClientSecret: function() {
+            return this.getProperty("github.clientSecret");
+        },
 
-    /**
-     * @param {string} stickyStaticUrl
-     */
-    setStickyStaticUrl: function(stickyStaticUrl) {
-        this.setProperty("stickyStaticUrl", stickyStaticUrl);
-    }
+        /**
+         * @param {string} clientSecret
+         */
+        setGithubClientSecret: function(clientSecret) {
+            this.setProperty("github.clientSecret", clientSecret);
+        },
+
+        /**
+         * @return {string}
+         */
+        getStaticUrl: function() {
+            return this.getProperty("staticUrl");
+        },
+
+        /**
+         * @param {string} staticUrl
+         */
+        setStaticUrl: function(staticUrl) {
+            this.setProperty("staticUrl", staticUrl);
+        },
+
+        /**
+         * @return {string}
+         */
+        getStickyStaticUrl: function() {
+            return this.getProperty("stickyStaticUrl");
+        },
+
+        /**
+         * @param {string} stickyStaticUrl
+         */
+        setStickyStaticUrl: function(stickyStaticUrl) {
+            this.setProperty("stickyStaticUrl", stickyStaticUrl);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.AirbugServerConfig", AirbugServerConfig);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.AirbugServerConfig", AirbugServerConfig);

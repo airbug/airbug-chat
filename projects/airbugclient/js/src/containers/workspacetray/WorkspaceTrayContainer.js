@@ -64,6 +64,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var WorkspaceTrayContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.WorkspaceTrayContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

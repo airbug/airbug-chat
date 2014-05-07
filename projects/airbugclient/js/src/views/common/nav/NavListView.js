@@ -43,7 +43,7 @@ var NavListView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getNavListElement: function() {
         return this.findElement("#nav-list-{{cid}}");

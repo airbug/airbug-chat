@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,16 +24,14 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('TypeUtil')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.ChatMessageTinkerButtonContainer')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.ImageViewEvent')
 //@Require('airbug.ListItemView')
-//@Require('airbug.MessagePartCodeView')
-//@Require('airbug.MessagePartImageView')
+//@Require('airbug.MessagePartCodeContainer')
+//@Require('airbug.MessagePartImageContainer')
 //@Require('airbug.MessagePartModel')
-//@Require('airbug.MessagePartTextView')
+//@Require('airbug.MessagePartTextContainer')
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugioc.AutowiredAnnotation')
@@ -54,16 +62,14 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var TypeUtil                            = bugpack.require('TypeUtil');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
-    var ChatMessageTinkerButtonContainer    = bugpack.require('airbug.ChatMessageTinkerButtonContainer');
     var ChatMessageView                     = bugpack.require('airbug.ChatMessageView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
     var ListItemView                        = bugpack.require('airbug.ListItemView');
-    var MessagePartCodeView                 = bugpack.require('airbug.MessagePartCodeView');
-    var MessagePartImageView                = bugpack.require('airbug.MessagePartImageView');
+    var MessagePartCodeContainer            = bugpack.require('airbug.MessagePartCodeContainer');
+    var MessagePartImageContainer           = bugpack.require('airbug.MessagePartImageContainer');
     var MessagePartModel                    = bugpack.require('airbug.MessagePartModel');
-    var MessagePartTextView                 = bugpack.require('airbug.MessagePartTextView');
+    var MessagePartTextContainer            = bugpack.require('airbug.MessagePartTextContainer');
     var PanelView                           = bugpack.require('airbug.PanelView');
     var RequestFailedException              = bugpack.require('bugcall.RequestFailedException');
     var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
@@ -120,13 +126,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ObservableList.<MessagePartModel>}
              */
-            this.messagePartList                        = new ObservableList();
+            this.messagePartList                            = new ObservableList();
 
             /**
              * @private
-             * @type {Map.<MessagePartModel, MessagePartView>}
+             * @type {Map.<MessagePartModel, MessagePartContainer>}
              */
-            this.messagePartModelToMessagePartViewMap   = new Map();
+            this.messagePartModelToMessagePartContainerMap  = new Map();
 
 
             // Models
@@ -136,7 +142,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ChatMessageModel}
              */
-            this.chatMessageModel                       = chatMessageModel;
+            this.chatMessageModel                           = chatMessageModel;
 
 
             // Views
@@ -146,23 +152,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ChatMessageView}
              */
-            this.chatMessageView                        = null;
+            this.chatMessageView                            = null;
 
             /**
              * @private
              * @type {ListItemView}
              */
-            this.listItemView                           = null;
-
-
-            // Containers
-            //-------------------------------------------------------------------------------
-
-            /**
-             * @private
-             * @type {ChatMessageTinkerButtonContainer}
-             */
-            this.chatMessageTinkerButtonContainer       = null;
+            this.listItemView                               = null;
 
 
             // Modules
@@ -172,19 +168,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ChatMessageManagerModule}
              */
-            this.chatMessageManagerModule               = null;
-
-            /**
-             * @private
-             * @type {CommandModule}
-             */
-            this.commandModule                          = null;
+            this.chatMessageManagerModule                   = null;
 
             /**
              * @private
              * @type {UserManagerModule}
              */
-            this.userManagerModule                      = null;
+            this.userManagerModule                          = null;
         },
 
 
@@ -240,10 +230,6 @@ require('bugpack').context("*", function(bugpack) {
                 ])
                 .build(this);
 
-            var messageBody = this.chatMessageModel.getProperty("body");
-            if (messageBody) {
-                this.createMessageBody(messageBody);
-            }
 
             // Wire Up
             //-------------------------------------------------------------------------------
@@ -258,10 +244,9 @@ require('bugpack').context("*", function(bugpack) {
         createContainerChildren: function() {
             var type = this.chatMessageModel.getProperty("type");
 
-            //TODO BRN: This will no longer work since all message types are "multi-part"
-            if (type === "code") {
-                this.chatMessageTinkerButtonContainer = new ChatMessageTinkerButtonContainer();
-                this.addContainerChild(this.chatMessageTinkerButtonContainer, ".message-controls");
+            var messageBody = this.chatMessageModel.getProperty("body");
+            if (messageBody) {
+                this.createMessageBody(messageBody);
             }
         },
 
@@ -271,8 +256,6 @@ require('bugpack').context("*", function(bugpack) {
         deinitializeContainer: function() {
             this._super();
             this.chatMessageView.$el.find(".message-failed-false, .message-failed-true").off();
-            this.getViewTop().removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
-            this.chatMessageView.removeEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
 
             //TODO BRN: Should listen for changes to body.parts array (need to add observable parts for arrays)
 
@@ -291,7 +274,7 @@ require('bugpack').context("*", function(bugpack) {
         destroyContainer: function() {
             this._super();
             this.clearMessagePartList();
-            this.destroyAllMessagePartViews();
+            this.destroyAllMessagePartContainers();
         },
 
         /**
@@ -312,8 +295,6 @@ require('bugpack').context("*", function(bugpack) {
                     _this.handleChatMessageRetry();
                     return false;
                 });
-            this.getViewTop().addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChatMessageTinker, this);
-            this.chatMessageView.addEventListener(ImageViewEvent.EventType.CLICKED_SAVE, this.handleSaveImageToListButtonClickedEvent, this);
 
             //TODO BRN: Add observers to the model body.parts
             this.chatMessageModel.observe(ClearChange.CHANGE_TYPE, "", this.observeChatMessageClearChange, this);
@@ -346,32 +327,23 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {MessagePartModel} messagePartModel
          */
-        buildMessagePartView: function(messagePartModel) {
-            var messagePartView     = null;
+        buildMessagePartContainer: function(messagePartModel) {
+            var messagePartContainer    = null;
             switch (messagePartModel.getProperty("type")) {
                 case "code":
-                    messagePartView =
-                        view(MessagePartCodeView)
-                            .model(messagePartModel)
-                            .build();
+                    messagePartContainer = new MessagePartCodeContainer(messagePartModel);
                     break;
                 case "image":
-                    messagePartView =
-                        view(MessagePartImageView)
-                            .model(messagePartModel)
-                            .build();
+                    messagePartContainer = new MessagePartImageContainer(messagePartModel);
                     break;
                 case "text":
-                    messagePartView =
-                        view(MessagePartTextView)
-                            .model(messagePartModel)
-                            .build();
+                    messagePartContainer = new MessagePartTextContainer(messagePartModel);
                     break;
                 default:
                     throw new Bug("UnsupportedMessagePart", {}, "Unsupported message part type '" + messagePartModel.getProperty("type") + "'");
             }
-            this.chatMessageView.addViewChild(messagePartView, "#message-body-{{cid}}");
-            this.messagePartModelToMessagePartViewMap.put(messagePartModel, messagePartView);
+            this.addContainerChild(messagePartContainer, "#message-body-" + this.chatMessageView.getCid());
+            this.messagePartModelToMessagePartContainerMap.put(messagePartModel, messagePartContainer);
         },
 
         /**
@@ -399,24 +371,24 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
-        destroyAllMessagePartViews: function() {
+        destroyAllMessagePartContainers: function() {
             var _this = this;
-            this.messagePartModelToMessagePartViewMap.forEach(function(messagePartView) {
-                _this.chatMessageView.removeViewChild(messagePartView);
-                messagePartView.destroy();
+            this.messagePartModelToMessagePartContainerMap.forEach(function(messagePartContainer) {
+                _this.removeContainerChild(messagePartContainer);
+                messagePartContainer.destroy();
             });
-            this.messagePartModelToMessagePartViewMap.clear();
+            this.messagePartModelToMessagePartContainerMap.clear();
         },
 
         /**
          * @private
          * @param {MessagePartModel} messagePartModel
          */
-        destroyMessagePartView: function(messagePartModel) {
-            var messagePartView = this.messagePartModelToMessagePartViewMap.remove(messagePartModel);
-            if (messagePartView) {
-                this.chatMessageView.removeViewChild(messagePartView);
-                messagePartView.destroy();
+        destroyMessagePartContainer: function(messagePartModel) {
+            var messagePartContainer = this.messagePartModelToMessagePartContainerMap.remove(messagePartModel);
+            if (messagePartContainer) {
+                this.removeContainerChild(messagePartContainer);
+                messagePartContainer.destroy();
             }
         },
 
@@ -441,7 +413,7 @@ require('bugpack').context("*", function(bugpack) {
         processMessagePartList: function() {
             var _this = this;
             this.messagePartList.forEach(function(messagePartModel) {
-                _this.buildMessagePartView(messagePartModel);
+                _this.buildMessagePartContainer(messagePartModel);
             });
         },
 
@@ -503,35 +475,6 @@ require('bugpack').context("*", function(bugpack) {
             });
         },
 
-        /**
-         * @private
-         * @param {ButtonViewEvent} event
-         */
-        handleChatMessageTinker: function(event) {
-            console.log("handleChatMessageTinker");
-            if (this.chatMessageModel.getProperty("type") === "code") {
-                var code = this.chatMessageModel.getProperty("code");
-                var codeLanguage = this.getChatMessageModel().getProperty("codeLanguage");
-                this.commandModule.relayCommand(CommandType.DISPLAY.CODE_EDITOR, {});
-                this.commandModule.relayCommand(CommandType.CODE_EDITOR.SET_MODE, {mode: "ace/mode/" + codeLanguage});
-                this.commandModule.relayCommand(CommandType.DISPLAY.CODE, {code: code});
-                //TODO Future Feature Figure out a way to remember the reference to the original chatMessage
-                //Display Code command will overwrite whatever is currently inside the ace editor
-                //May want to provide a warning or option to create a new code editor tab/workspace
-                //Or at least explain it in the demo video
-            }
-        },
-
-        /**
-         * @private
-         * @param {ImageViewEvent} event
-         */
-        handleSaveImageToListButtonClickedEvent: function(event) {
-            var data            = event.getData();
-            var assetId         = data.assetId;
-            this.commandModule.relayCommand(CommandType.SAVE.TO_IMAGE_LIST, {assetId: assetId});
-        },
-
 
         //-------------------------------------------------------------------------------
         // Observers
@@ -576,7 +519,7 @@ require('bugpack').context("*", function(bugpack) {
         observeMessagePartListAdd: function(observation) {
             var change  = /** @type {AddChange} */(observation.getChange());
             var model   = change.getValue();
-            this.buildMessagePartView(model);
+            this.buildMessagePartContainer(model);
         },
 
         /**
@@ -584,8 +527,8 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Observation} observation
          */
         observeMessagePartListClear: function(observation) {
-            this.destroyAllMessagePartViews();
-            this.messagePartModelToMessagePartViewMap.clear();
+            this.destroyAllMessagePartContainers();
+            this.messagePartModelToMessagePartContainerMap.clear();
             this.processMessagePartList();
         },
 
@@ -596,7 +539,7 @@ require('bugpack').context("*", function(bugpack) {
         observeMessagePartListRemove: function(observation) {
             var change  = /** @type {RemoveChange} */(observation.getChange());
             var model   = change.getValue();
-            this.destroyMessagePartView(model);
+            this.destroyMessagePartContainer(model);
         }
     });
 
@@ -608,8 +551,7 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.annotate(ChatMessageContainer).with(
         autowired().properties([
             property("chatMessageManagerModule").ref("chatMessageManagerModule"),
-            property("userManagerModule").ref("userManagerModule"),
-            property("commandModule").ref("commandModule")
+            property("userManagerModule").ref("userManagerModule")
         ])
     );
 

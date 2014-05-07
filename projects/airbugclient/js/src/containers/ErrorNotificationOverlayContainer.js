@@ -59,6 +59,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ErrorNotificationOverlayContainer = Class.extend(CarapaceContainer, {
 
+        _name: "airbug.ErrorNotificationOverlayContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -135,14 +138,19 @@ require('bugpack').context("*", function(bugpack) {
                         .appendTo("#overlay-{{cid}}")
                         .children([
                             view(TextView)
+                                .appendTo("#box-body-{{cid}}")
                                 .attributes({text: "An uncaught error or timeout has occurred."}),
                             view(TextView)
+                                .appendTo("#box-body-{{cid}}")
                                 .attributes({text: "airbug is sorry for the inconvenience."}),
                             view(TextView)
+                                .appendTo("#box-body-{{cid}}")
                                 .attributes({text: "Please refresh your browser window."}),
                             view(TextView)
+                                .appendTo("#box-body-{{cid}}")
                                 .attributes({text: "Error Details:" + this.errorObject.errorMessage}),
                             view(TextView)
+                                .appendTo("#box-body-{{cid}}")
                                 .attributes({text: "Error Details:" + this.errorObject.url + "" + this.errorObject.lineNumber}),
                         ])
                 ])

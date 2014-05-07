@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 html, body {
     position: relative;
     min-width: 1200px;
@@ -10,11 +19,17 @@ html, body {
     margin-top: 0px!important;
     position: absolute!important;
 }
+
 .center {
     text-align: center;
 }
 
-.column {
+.row-fill {
+    width: 100%;
+    position: relative;
+}
+
+.column-fill {
     height: 100%;
     position: relative;
 }
@@ -46,7 +61,7 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
     border-top: 1px solid #c4c4c4;
     bottom: 0px;
     left: 0px;
-    overflow: hidden;
+    overflow: scroll;
     position: absolute;
     right: 40px;
     top: 0px;
@@ -54,6 +69,7 @@ ol.dropdown-menu li:not(.divider), ol.dropdown-menu li:not(.divider) > a {
 
 .application {
     height: 100%;
+    min-height: 420px;
     position: relative;
     width: 100%;
 }
@@ -517,9 +533,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
 *******************************************************************/
 
 .box {
-    height: 100%;
     position: relative;
-    width: 100%;
 }
 
 .box-body {
@@ -530,7 +544,7 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     width: 100%;
 }
 
-.box-with-header .box-body {
+.box-with-header > .box-body {
     margin-top: 46px;
 }
 
@@ -558,8 +572,22 @@ div.page-overlay>.overlay-body.fullscreen-overlay {
     height: 25%;
 }
 
-.scroll-box {
+.collapsed-box > .box-body {
+    height: 0;
+}
+
+.scroll-box > .box-body {
     overflow-y: scroll;
+}
+
+.fill-box {
+    height: 100%;
+    width: 100%;
+}
+
+.auto-box {
+    height: auto;
+    width: auto;
 }
 
 
@@ -951,12 +979,35 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     bottom: 0px;
     height: auto;
     width: auto;
-    margin-bottom: 5.5em;
+}
+
+.chat-widget-messages-large {
+    margin-bottom: 80px;
+}
+
+.chat-widget-messages-small {
+    margin-bottom: 270px;
 }
 
 .chat-widget-input {
-    min-height: 5.5em;
     bottom: 0;
+}
+
+.chat-widget-input-large {
+    height: 270px;
+}
+
+.chat-widget-input-small {
+    height: 80px;
+}
+
+.chat-widget-input > .box-with-header > .box-header {
+    height: 80px;
+}
+
+.chat-widget-input > .box-with-header > .box-body {
+    margin-top: 80px;
+    margin-bottom: 2px;
 }
 
 .chat-widget-input .column2of2 {
@@ -982,7 +1033,8 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     border-radius: 5px;
 }
 
-.chat-widget-input .btn {
+.choose-or-upload-image-button {
+    width: 98%;
     position: absolute;
     margin: 2px 4px 4px 4px;
     top: 0;
@@ -992,12 +1044,15 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     border-radius: 5px;
 }
 
-.choose-or-upload-image-button {
-    width: 98%;
-}
-
 .chat-widget-input-send-button {
     width: 97%;
+    position: absolute;
+    margin: 2px 4px 4px 4px;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 50px;
+    border-radius: 5px;
 }
 
 .chat-widget-input .control-group-checkbox {
@@ -1007,9 +1062,16 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     margin-left: 2px;
 }
 
+
+.chat-widget-input .message-part-preview-code code {
+    max-height: 138px;
+}
+
 .message-part-preview-wrapper {
     display: inline-block;
     position: relative;
+    margin: 0;
+    max-width: 100%;
 }
 
 .message-part-preview-remove-button {
@@ -1018,8 +1080,27 @@ form.create-conversation-form input, form.create-conversation-form textarea {
     top: -5px
 }
 
-.message-part-preview-image {
+.message-part-preview {
+
+}
+
+.message-part-preview-code {
+    overflow: scroll
+}
+
+.message-part-preview-code > pre{
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.chat-widget-input .message-part-preview-image {
     max-width: 200px;
+    max-height: 148px;
+}
+
+.message-part-preview-image > img {
+    max-height: 100%;
 }
 
 div.previous-messages-loader {
@@ -1341,6 +1422,10 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
     height: 100%;
 }
 
+.code-editor-settings {
+    margin-left: 10px;
+}
+
 
 /* ImageList CSS
 *******************************************************************/
@@ -1360,6 +1445,11 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 .image-list-container .box-footer .btn-group .btn:last-child {
     width: 80%
 }
+
+.image-preview {
+    margin-left: 10px;
+}
+
 
 /* FileUpload CSS
 *******************************************************************/
@@ -1470,6 +1560,7 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 
 .image-upload-spacing {
     padding-left: 10px;
+    padding-right: 10px;
 }
 
 #image-upload-add-by-url-container {
@@ -1505,6 +1596,27 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 
 .gist-embed {
     border: none;
+}
+
+
+
+/* HLJS Overrides
+*******************************************************************/
+
+pre code {
+    overflow: scroll;
+    white-space: pre;
+    padding: 5px;
+    word-wrap: normal;
+}
+
+
+/* Twitter Bootstrap Work Arounds
+*******************************************************************/
+
+/* strange jiggling of image preview items when hovering over button in image list (Chrome only) */
+.image-list-item .btn-group > .btn:hover, .image-list-item .btn-group > .btn:focus, .image-list-item .btn-group > .btn:active, .image-list-item .btn-group > .btn.active {
+    z-index: 0;
 }
 
 
@@ -1605,7 +1717,7 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
         width: 1200px;
     }
     .span11 {
-        width: 1100px;
+        width: 730px;
     }
     .span10 {
         width: 1000px;
@@ -1641,7 +1753,7 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
         margin-left: 1200px;
     }
     .offset11 {
-        margin-left: 1100px;
+        margin-left: 730px;
     }
     .offset10 {
         margin-left: 1000px;
@@ -2003,5 +2115,393 @@ ul.nav-tabs > li.disabled > a, ol.nav-tabs > li.disabled > a {
     .row-fluid .span1 {
         width: 8.33333333333333%;
         *width: 8.33333333333333%;
+    }
+}
+
+
+.column {
+    *zoom: 1;
+}
+
+[class*="stack"] {
+    float: left;
+    min-width: 1px;
+    margin-top: 0px;
+}
+
+@media (min-height: 797px) {
+    .stack12 {
+        height: 797px;
+    }
+    .stack11 {
+        height: 730px;
+    }
+    .stack10 {
+        height: 664px;
+    }
+    .stack9 {
+        height: 598px;
+    }
+    .stack8 {
+        height: 800px;
+    }
+    .stack7 {
+        height: 700px;
+    }
+    .stack6 {
+        height: 600px;
+    }
+    .stack5 {
+        height: 500px;
+    }
+    .stack4 {
+        height: 400px;
+    }
+    .stack3 {
+        height: 300px;
+    }
+    .stack2 {
+        height: 200px;
+    }
+    .stack1 {
+        height: 100px;
+    }
+    .offstack12 {
+        margin-top: 797px;
+    }
+    .offstack11 {
+        margin-top: 730px;
+    }
+    .offstack10 {
+        margin-top: 664px;
+    }
+    .offstack9 {
+        margin-top: 598px;
+    }
+    .offstack8 {
+        margin-top: 800px;
+    }
+    .offstack7 {
+        margin-top: 700px;
+    }
+    .offstack6 {
+        margin-top: 600px;
+    }
+    .offstack5 {
+        margin-top: 500px;
+    }
+    .offstack4 {
+        margin-top: 400px;
+    }
+    .offstack3 {
+        margin-top: 300px;
+    }
+    .offstack2 {
+        margin-top: 200px;
+    }
+    .offstack1 {
+        margin-top: 100px;
+    }
+    .column-fluid [class*="stack"] {
+        margin-top: 0%;
+        *margin-top: 0%;
+    }
+    .column-fluid .stack12 {
+        height: 100%;
+        *height: 100%;
+    }
+    .column-fluid .stack11 {
+        height: 91.66666666666666%;
+        *height: 91.66666666666666%;
+    }
+    .column-fluid .stack10 {
+        height: 83.3333333333333%;
+        *height: 83.3333333333333%;
+    }
+    .column-fluid .stack9 {
+        height: 75%;
+        *height: 75%;
+    }
+    .column-fluid .stack8 {
+        height: 66.66666666666666%;
+        *height: 66.66666666666666%;
+    }
+    .column-fluid .stack7 {
+        height: 58.33333333333333%;
+        *height: 58.33333333333333%;
+    }
+    .column-fluid .stack6 {
+        height: 50%;
+        *height: 50%;
+    }
+    .column-fluid .stack5 {
+        height: 41.66666666666666%;
+        *height: 41.66666666666666%;
+    }
+    .column-fluid .stack4 {
+        height: 33.33333333333333%;
+        *height: 33.33333333333333%;
+    }
+    .column-fluid .stack3 {
+        height: 25%;
+        *height: 25%;
+    }
+    .column-fluid .stack2 {
+        height: 16.66666666666666%;
+        *height: 16.66666666666666%;
+    }
+    .column-fluid .stack1 {
+        height: 8.33333333333333%;
+        *height: 8.33333333333333%;
+    }
+}
+
+@media (min-height: 980px) and (max-height: 1199px) {
+    .stack12 {
+        height: 960px;
+    }
+    .stack11 {
+        height: 880px;
+    }
+    .stack10 {
+        height: 800px;
+    }
+    .stack9 {
+        height: 720px;
+    }
+    .stack8 {
+        height: 640px;
+    }
+    .stack7 {
+        height: 560px;
+    }
+    .stack6 {
+        height: 480px;
+    }
+    .stack5 {
+        height: 400px;
+    }
+    .stack4 {
+        height: 320px;
+    }
+    .stack3 {
+        height: 240px;
+    }
+    .stack2 {
+        height: 160px;
+    }
+    .stack1 {
+        height: 80px;
+    }
+    .offstack12 {
+        margin-top: 960px;
+    }
+    .offstack11 {
+        margin-top: 880px;
+    }
+    .offstack10 {
+        margin-top: 800px;
+    }
+    .offstack9 {
+        margin-top: 720px;
+    }
+    .offstack8 {
+        margin-top: 640px;
+    }
+    .offstack7 {
+        margin-top: 560px;
+    }
+    .offstack6 {
+        margin-top: 480px;
+    }
+    .offstack5 {
+        margin-top: 400px;
+    }
+    .offstack4 {
+        margin-top: 320px;
+    }
+    .offstack3 {
+        margin-top: 240px;
+    }
+    .offstack2 {
+        margin-top: 160px;
+    }
+    .offstack1 {
+        margin-top: 80px;
+    }
+    .column-fluid .stack12 {
+        height: 100%;
+        *height: 100%;
+    }
+    .column-fluid .stack11 {
+        height: 91.66666666666666%;
+        *height: 91.66666666666666%;
+    }
+    .column-fluid .stack10 {
+        height: 83.3333333333333%;
+        *height: 83.3333333333333%;
+    }
+    .column-fluid .stack9 {
+        height: 75%;
+        *height: 75%;
+    }
+    .column-fluid .stack8 {
+        height: 66.66666666666666%;
+        *height: 66.66666666666666%;
+    }
+    .column-fluid .stack7 {
+        height: 58.33333333333333%;
+        *height: 58.33333333333333%;
+    }
+    .column-fluid .stack6 {
+        height: 50%;
+        *height: 50%;
+    }
+    .column-fluid .stack5 {
+        height: 41.66666666666666%;
+        *height: 41.66666666666666%;
+    }
+    .column-fluid .stack4 {
+        height: 33.33333333333333%;
+        *height: 33.33333333333333%;
+    }
+    .column-fluid .stack3 {
+        height: 25%;
+        *height: 25%;
+    }
+    .column-fluid .stack2 {
+        height: 16.66666666666666%;
+        *height: 16.66666666666666%;
+    }
+    .column-fluid .stack1 {
+        height: 8.33333333333333%;
+        *height: 8.33333333333333%;
+    }
+}
+
+@media (min-height: 768px) and (max-height: 979px) {
+    .stack12 {
+        height: 744px;
+    }
+    .stack11 {
+        height: 682px;
+    }
+    .stack10 {
+        height: 620px;
+    }
+    .stack9 {
+        height: 558px;
+    }
+    .stack8 {
+        height: 496px;
+    }
+    .stack7 {
+        height: 434px;
+    }
+    .stack6 {
+        height: 372px;
+    }
+    .stack5 {
+        height: 310px;
+    }
+    .stack4 {
+        height: 248px;
+    }
+    .stack3 {
+        height: 186px;
+    }
+    .stack2 {
+        height: 124px;
+    }
+    .stack1 {
+        height: 62px;
+    }
+    .offstack12 {
+        margin-top: 744px;
+    }
+    .offstack11 {
+        margin-top: 682px;
+    }
+    .offstack10 {
+        margin-top: 620px;
+    }
+    .offstack9 {
+        margin-top: 558px;
+    }
+    .offstack8 {
+        margin-top: 496px;
+    }
+    .offstack7 {
+        margin-top: 434px;
+    }
+    .offstack6 {
+        margin-top: 372px;
+    }
+    .offstack5 {
+        margin-top: 310px;
+    }
+    .offstack4 {
+        margin-top: 248px;
+    }
+    .offstack3 {
+        margin-top: 186px;
+    }
+    .offstack2 {
+        margin-top: 124px;
+    }
+    .offstack1 {
+        margin-top: 62px;
+    }
+    .column-fluid [class*="stack"] {
+        margin-top: 0%;
+        *margin-top: 0%;
+    }
+    .column-fluid .stack12 {
+        height: 100%;
+        *height: 100%;
+    }
+    .column-fluid .stack11 {
+        height: 91.66666666666666%;
+        *height: 91.66666666666666%;
+    }
+    .column-fluid .stack10 {
+        height: 83.3333333333333%;
+        *height: 83.3333333333333%;
+    }
+    .column-fluid .stack9 {
+        height: 75%;
+        *height: 75%;
+    }
+    .column-fluid .stack8 {
+        height: 66.66666666666666%;
+        *height: 66.66666666666666%;
+    }
+    .column-fluid .stack7 {
+        height: 58.33333333333333%;
+        *height: 58.33333333333333%;
+    }
+    .column-fluid .stack6 {
+        height: 50%;
+        *height: 50%;
+    }
+    .column-fluid .stack5 {
+        height: 41.66666666666666%;
+        *height: 41.66666666666666%;
+    }
+    .column-fluid .stack4 {
+        height: 33.33333333333333%;
+        *height: 33.33333333333333%;
+    }
+    .column-fluid .stack3 {
+        height: 25%;
+        *height: 25%;
+    }
+    .column-fluid .stack2 {
+        height: 16.66666666666666%;
+        *height: 16.66666666666666%;
+    }
+    .column-fluid .stack1 {
+        height: 8.33333333333333%;
+        *height: 8.33333333333333%;
     }
 }

@@ -53,7 +53,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getPanelBodyElement: function() {
             return this.findElement("#panel-body-" + this.getCid());

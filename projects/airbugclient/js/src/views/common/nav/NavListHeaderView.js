@@ -41,7 +41,7 @@ var NavListHeaderView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getNavListHeaderElement: function() {
         return this.findElement("#nav-list-header-{{cid}}");

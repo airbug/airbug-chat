@@ -49,10 +49,16 @@ require('bugpack').context("*", function(bugpack) {
      */
     var PinboardTrayButtonContainer = Class.extend(ButtonContainer, {
 
+        _name: "airbug.PinboardTrayButtonContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
 
+        /**
+         * @constructs
+         */
         _constructor: function() {
 
             this._super("PinboardTrayButton");
