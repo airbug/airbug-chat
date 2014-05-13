@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,88 +18,90 @@
 //@Require('Class')
 //@Require('bugapp.Application')
 //@Require('bugentity.EntityManagerAnnotationProcessor')
-//@Require('bugentity.EntityManagerScan')
+//@Require('bugentity.EntityManagerAnnotationScan')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var Application                         = bugpack.require('bugapp.Application');
-var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
-var EntityManagerScan                   = bugpack.require('bugentity.EntityManagerScan');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Application}
- */
-var AirbugServerApplication = Class.extend(Application, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                               = bugpack.require('Class');
+    var Application                         = bugpack.require('bugapp.Application');
+    var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
+    var EntityManagerAnnotationScan                   = bugpack.require('bugentity.EntityManagerAnnotationScan');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Application}
      */
-    _constructor: function() {
+    var AirbugServerApplication = Class.extend(Application, {
 
-        this._super();
+        _name: "airbugserver.AirbugServerApplication",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {EntityManagerScan}
+         * @constructs
          */
-        this.entityManagerScan  = new EntityManagerScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.getIocContext()));
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {EntityManagerAnnotationScan}
+             */
+            this.entityManagerAnnotationScan    = new EntityManagerAnnotationScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.getIocContext()));
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Application Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        preProcessApplication: function() {
+            this.getConfigurationScan().scanBugpacks([
+                "airbugserver.AirbugServerConfiguration",
+                "meldbugserver.MeldbugServerConfiguration"
+            ]);
+            this.entityManagerAnnotationScan.scanAll();
+            this.getModuleScan().scanAll({
+                excludes: [
+                    "bugmigrate.MigrationInitializer",
+                    "bugmigrate.MigrationManager"
+                ]
+            });
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Application Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    preProcessApplication: function() {
-        this.getConfigurationScan().scanBugpacks([
-            "airbugserver.AirbugServerConfiguration",
-            "meldbugserver.MeldbugServerConfiguration"
-        ]);
-        this.entityManagerScan.scanAll();
-        this.getModuleScan().scanAll({
-            excludes: [
-                "bugmigrate.MigrationInitializer",
-                "bugmigrate.MigrationManager"
-            ]
-        });
-
-    }
+    bugpack.export('airbugserver.AirbugServerApplication', AirbugServerApplication);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.AirbugServerApplication', AirbugServerApplication);

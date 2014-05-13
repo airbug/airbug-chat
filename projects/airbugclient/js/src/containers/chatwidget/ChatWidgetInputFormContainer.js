@@ -15,10 +15,10 @@
 //@Export('airbug.ChatWidgetInputFormContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CheckBoxInputView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.DivView')
 //@Require('airbug.FormControlGroupView')
 //@Require('airbug.FormView')
 //@Require('airbug.FormViewEvent')
@@ -26,6 +26,7 @@
 //@Require('airbug.KeyBoardEvent')
 //@Require('airbug.LabelView')
 //@Require('airbug.MultiColumnView')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.TextAreaView')
 //@Require('airbug.TextView')
 //@Require('airbug.TwoColumnView')
@@ -47,10 +48,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var ButtonView              = bugpack.require('airbug.ButtonView');
     var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
     var CheckBoxInputView       = bugpack.require('airbug.CheckBoxInputView');
     var CommandModule           = bugpack.require('airbug.CommandModule');
+    var DivView                 = bugpack.require('airbug.DivView');
     var FormControlGroupView    = bugpack.require('airbug.FormControlGroupView');
     var FormView                = bugpack.require('airbug.FormView');
     var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
@@ -58,6 +59,7 @@ require('bugpack').context("*", function(bugpack) {
     var KeyBoardEvent           = bugpack.require('airbug.KeyBoardEvent');
     var LabelView               = bugpack.require('airbug.LabelView');
     var MultiColumnView         = bugpack.require('airbug.MultiColumnView');
+    var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
     var TextAreaView            = bugpack.require('airbug.TextAreaView');
     var TextView                = bugpack.require('airbug.TextView');
     var TwoColumnView           = bugpack.require('airbug.TwoColumnView');
@@ -221,11 +223,18 @@ require('bugpack').context("*", function(bugpack) {
                                     classes: "control-group-textarea"
                                 })
                                 .children([
-                                    view(TextAreaView)
-                                        .name("textAreaView")
+                                    view(DivView)
                                         .attributes({
-                                            name: "text"
+                                            classes: "chat-widget-input-spacing"
                                         })
+                                        .children([
+                                            view(TextAreaView)
+                                                .name("textAreaView")
+                                                .attributes({
+                                                    name: "text",
+                                                    classes: "chat-widget-input-textarea"
+                                                })
+                                        ])
                                 ]),
                             view(FormControlGroupView)
                                 .attributes({
@@ -253,33 +262,44 @@ require('bugpack').context("*", function(bugpack) {
                         })
                         .appendTo("#column2of2-{{cid}}")
                         .children([
-                            view(ButtonView)
-                                .name("chooseOrUploadImageButtonView")
+                            view(DivView)
                                 .appendTo("#column1of2-{{cid}}")
                                 .attributes({
-                                    buttonClasses: "choose-or-upload-image-button"
+                                    classes: "chat-widget-input-spacing chat-widget-input-button-wrapper"
                                 })
                                 .children([
-                                    view(IconView)
+                                    view(NakedButtonView)
+                                        .name("chooseOrUploadImageButtonView")
                                         .attributes({
-                                            type: IconView.Type.CAMERA
+                                            classes: "btn-fill chat-widget-input-button"
                                         })
-                                        .appendTo("#button-{{cid}}")
+                                        .children([
+                                            view(IconView)
+                                                .attributes({
+                                                    type: IconView.Type.CAMERA
+                                                })
+                                                .appendTo("#button-{{cid}}")
+                                        ])
                                 ]),
-                            view(ButtonView)
-                                .name("sendButtonView")
+                            view(DivView)
                                 .appendTo("#column2of2-{{cid}}")
                                 .attributes({
-                                    classes: "chat-widget-input-send-button-wrapper",
-                                    buttonClasses: "chat-widget-input-send-button"
+                                    classes: "chat-widget-input-spacing chat-widget-input-button-wrapper"
                                 })
                                 .children([
-                                    view(TextView)
-                                        .name("sendButtonTextView")
+                                    view(NakedButtonView)
+                                        .name("sendButtonView")
                                         .attributes({
-                                            text: "Send"
+                                            classes: "btn-fill chat-widget-input-button"
                                         })
-                                        .appendTo('#button-{{cid}}')
+                                        .children([
+                                            view(TextView)
+                                                .name("sendButtonTextView")
+                                                .attributes({
+                                                    text: "Send"
+                                                })
+                                                .appendTo('#button-{{cid}}')
+                                        ])
                                 ])
                         ])
                 ])

@@ -12,7 +12,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.DivView')
+//@Export('airbug.WorkspaceView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {MustacheView}
      */
-    var DivView = Class.extend(MustacheView, {
+    var WorkspaceView = Class.extend(MustacheView, {
 
-        _name: "airbug.DivView",
+        _name: "airbug.WorkspaceView",
 
 
         //-------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="div-{{cid}}" class="{{classes}}">' +
+            '<div id="workspace-{{cid}}" class="workspace {{classes}}">' +
             '</div>'
     });
 
@@ -60,5 +60,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.DivView", DivView);
+    bugpack.export("airbug.WorkspaceView", WorkspaceView);
 });

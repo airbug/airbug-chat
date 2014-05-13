@@ -127,9 +127,9 @@ require('bugpack').context("*", function(bugpack) {
             this.imageEditorWidgetContainer     = new ImageEditorWidgetContainer();
             this.imageListWidgetContainer       = new ImageListWidgetContainer();
             this.imageUploadWidgetContainer     = new ImageUploadWidgetContainer();
-            this.addContainerChild(this.imageEditorWidgetContainer, "#box-body-" + this.getBoxView().getCid());
-            this.addContainerChild(this.imageListWidgetContainer, "#box-body-" + this.getBoxView().getCid());
-            this.addContainerChild(this.imageUploadWidgetContainer, "#box-body-" + this.getBoxView().getCid());
+            this.addContainerChild(this.imageEditorWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
+            this.addContainerChild(this.imageListWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
+            this.addContainerChild(this.imageUploadWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
         },
 
         /**

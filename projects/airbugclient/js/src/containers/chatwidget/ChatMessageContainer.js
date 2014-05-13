@@ -32,7 +32,6 @@
 //@Require('airbug.MessagePartImageContainer')
 //@Require('airbug.MessagePartModel')
 //@Require('airbug.MessagePartTextContainer')
-//@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
@@ -70,7 +69,6 @@ require('bugpack').context("*", function(bugpack) {
     var MessagePartImageContainer           = bugpack.require('airbug.MessagePartImageContainer');
     var MessagePartModel                    = bugpack.require('airbug.MessagePartModel');
     var MessagePartTextContainer            = bugpack.require('airbug.MessagePartTextContainer');
-    var PanelView                           = bugpack.require('airbug.PanelView');
     var RequestFailedException              = bugpack.require('bugcall.RequestFailedException');
     var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');

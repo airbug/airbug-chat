@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -36,11 +46,14 @@ require('bugpack').context("*", function(bugpack) {
      */
     var TextAreaView = Class.extend(MustacheView, {
 
+        _name: "airbug.TextAreaView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<textarea id="{{id}}" name="{{attributes.name}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>',
+        template:   '<textarea id="text-area-{{cid}}" class="{{classes}}" name="{{attributes.name}}" rows="{{attributes.rows}}">{{attributes.placeholder}}</textarea>',
 
 
         //-------------------------------------------------------------------------------
@@ -53,7 +66,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         generateTemplateData: function() {
             var data = this._super();
-            data.id = this.getId() || "text-area-" + this.getCid();
             if (!TypeUtil.isNumber(data.attributes.rows)) {
                 data.attributes.rows = 2;
             }

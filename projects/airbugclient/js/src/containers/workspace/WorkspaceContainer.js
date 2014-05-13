@@ -7,8 +7,8 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('airbug.BoxView')
 //@Require('airbug.IWorkspace')
+//@Require('airbug.WorkspaceView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -29,8 +29,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
-    var BoxView                         = bugpack.require('airbug.BoxView');
     var IWorkspace                      = bugpack.require('airbug.IWorkspace');
+    var WorkspaceView                   = bugpack.require('airbug.WorkspaceView');
     var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -119,22 +119,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {BoxView}
+             * @type {WorkspaceView}
              */
-            this.boxView                        = null;
+            this.workspaceView                  = null;
         },
 
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
         //-------------------------------------------------------------------------------
-
-        /**
-         * @return {BoxView}
-         */
-        getBoxView: function() {
-            return this.boxView;
-        },
 
         /**
          * @return {string}
@@ -157,6 +150,13 @@ require('bugpack').context("*", function(bugpack) {
             return this.workspaceModule;
         },
 
+        /**
+         * @return {WorkspaceView}
+         */
+        getWorkspaceView: function() {
+            return this.workspaceView;
+        },
+        
 
         //-------------------------------------------------------------------------------
         // Convenience Methods
@@ -178,14 +178,14 @@ require('bugpack').context("*", function(bugpack) {
          *
          */
         hideWorkspace: function() {
-            this.boxView.hide();
+            this.workspaceView.hide();
         },
 
         /**
          *
          */
         showWorkspace: function() {
-            this.boxView.show();
+            this.workspaceView.show();
         },
 
 
@@ -203,15 +203,15 @@ require('bugpack').context("*", function(bugpack) {
             // Create Views
             //-------------------------------------------------------------------------------
 
-            view(BoxView)
-                .name("boxView")
+            view(WorkspaceView)
+                .name("workspaceView")
                 .build(this);
 
 
             // Wire Up Views
             //-------------------------------------------------------------------------------
 
-            this.setViewTop(this.boxView);
+            this.setViewTop(this.workspaceView);
         },
 
         /**

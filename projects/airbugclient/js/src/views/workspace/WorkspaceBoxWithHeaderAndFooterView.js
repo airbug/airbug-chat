@@ -12,10 +12,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.DivView')
+//@Export('airbug.WorkspaceBoxWithHeaderAndFooterView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.BoxView')
 
 
 //-------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var BoxView         = bugpack.require('airbug.BoxView');
 
 
     //-------------------------------------------------------------------------------
@@ -38,11 +38,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MustacheView}
+     * @extends {BoxView}
      */
-    var DivView = Class.extend(MustacheView, {
+    var WorkspaceBoxWithHeaderAndFooterView = Class.extend(BoxView, {
 
-        _name: "airbug.DivView",
+        _name: "airbug.WorkspaceBoxWithHeaderAndFooterView",
 
 
         //-------------------------------------------------------------------------------
@@ -50,15 +50,20 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="div-{{cid}}" class="{{classes}}">' +
+            '<div id="box-{{cid}}" class="workspace-widget box box-with-header box-with-footer {{classes}}">' +
+                '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
+                '</div>' +
+                '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
+                '</div>' +
+                '<div id="box-footer-{{cid}}" class="workspace-widget-footer box-footer">' +
+                '</div>' +
             '</div>'
     });
-
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.DivView", DivView);
+    bugpack.export("airbug.WorkspaceBoxWithHeaderAndFooterView", WorkspaceBoxWithHeaderAndFooterView);
 });

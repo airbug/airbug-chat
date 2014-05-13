@@ -224,7 +224,7 @@ var InteractionStatusManager = Class.extend(Obj, {
                         if (returnedUserId) {
                             userId = returnedUserId;
                         } else {
-                            throwable = new Exception("NotFound");
+                            throwable = new Exception("NotFound", {}, "Could not find userId for callUuid '" + callUuid + "'");
                         }
                     }
                     flow.complete(throwable);

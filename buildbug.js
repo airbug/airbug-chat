@@ -72,8 +72,13 @@ var dependencies        = {
 //-------------------------------------------------------------------------------
 
 buildProperties({
+    name: name,
+    version: version
+});
+
+buildProperties({
     bridge: {
-        source: "./projects/airbugclient/js/scripts/airbug-api-bridge.js",
+        source: "./projects/airbugplugin/js/scripts/airbug-api-bridge.js",
         outputFile: "{{distPath}}/airbug-api-bridge.js",
         outputMinFile: "{{distPath}}/airbug-api-bridge.min.js"
     },
@@ -83,9 +88,9 @@ buildProperties({
         outputMinFile: "{{distPath}}/airbug-application-loader.min.js"
     },
     static: {
-        buildPath: buildProject.getProperty("buildPath") + "/static",
+        buildPath: buildProject.getProperty("buildPath") + "/static/{{name}}/{{version}}",
         name: name + "-static",
-        version: version,
+        version: "{{version}}",
         outputFile: "{{distPath}}/{{static.name}}.js",
         outputMinFile: "{{distPath}}/{{static.name}}.min.js",
         sourcePaths: [
@@ -248,9 +253,9 @@ buildProperties({
     worker:  {
         packageJson: {
             name: "airbugworker",
-                version: version,
-                dependencies: dependencies,
-                scripts: {
+            version: version,
+            dependencies: dependencies,
+            scripts: {
                 start: "node ./scripts/airbug-worker-application-start.js"
             }
         },
@@ -285,9 +290,9 @@ buildProperties({
         unitTest: {
             packageJson: {
                 name: "airbugworker-test",
-                    version: version,
-                    dependencies: dependencies,
-                    scripts: {
+                version: version,
+                dependencies: dependencies,
+                scripts: {
                     start: "node ./scripts/airbug-worker-application-start.js"
                 }
             },
@@ -375,7 +380,6 @@ buildTarget('local').buildFlow(
             }
         }),*/
         parallel([
-
             series([
                 parallel([
                     series([

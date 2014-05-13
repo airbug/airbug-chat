@@ -7,11 +7,12 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.WorkspaceBoxWithHeaderAndFooterView')
+//@Export('airbug.ImageUploadView')
 
 //@Require('Class')
 //@Require('airbug.BoxView')
@@ -39,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {BoxView}
      */
-    var WorkspaceBoxWithHeaderAndFooterView = Class.extend(BoxView, {
+    var ImageUploadView = Class.extend(BoxView, {
 
-        _name: "airbug.WorkspaceBoxWithHeaderAndFooterView",
+        _name: "airbug.ImageUploadView",
 
 
         //-------------------------------------------------------------------------------
@@ -49,14 +50,29 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="box-{{cid}}" class="workspace-widget box box-with-header box-with-footer {{classes}}">' +
-                '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
+            '<div id="image-upload-{{cid}}" class="box image-upload image-upload-dropzone {{classes}}">' +
+                '<div class="image-upload-border image-upload-spacing">' +
+                    '<h4>Drag an image here</h4>' +
+                    '<span>Or, you can...</span>' +
+                    '<div id="image-upload-from-computer-{{cid}}"></div>' +
+                    '<span>Or, even...</span>' +
+                    '<div id="image-upload-from-url-{{cid}}"></div>' +
+                    '<div id="image-upload-list-{{cid}}">' +
+                    '</div>' +
                 '</div>' +
-                '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
-                '</div>' +
-                '<div id="box-footer-{{cid}}" class="workspace-widget-footer box-footer">' +
-                '</div>' +
-            '</div>'
+            '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {jQuery}
+         */
+        getImageUploadElement: function() {
+            return this.findElement("#image-upload-dropzone-{{cid}}");
+        }
     });
 
 
@@ -64,5 +80,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.WorkspaceBoxWithHeaderAndFooterView", WorkspaceBoxWithHeaderAndFooterView);
+    bugpack.export("airbug.ImageUploadView", ImageUploadView);
 });

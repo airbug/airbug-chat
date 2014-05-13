@@ -120,8 +120,8 @@ require('bugpack').context("*", function(bugpack) {
             this._super();
             this.codeEditorWidgetContainer          = new CodeEditorWidgetContainer();
             this.codeEditorSettingsWidgetContainer  = new CodeEditorSettingsWidgetContainer();
-            this.addContainerChild(this.codeEditorWidgetContainer, "#box-body-" + this.getBoxView().getCid());
-            this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#box-body-" + this.getBoxView().getCid());
+            this.addContainerChild(this.codeEditorWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
+            this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
         },
 
         /**
