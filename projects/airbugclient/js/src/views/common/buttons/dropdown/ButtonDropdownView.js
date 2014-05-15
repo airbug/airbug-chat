@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -39,14 +49,16 @@ require('bugpack').context("*", function(bugpack) {
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="dropdown-button-wrapper-{{cid}}" class="button-wrapper {{classes}}">' +
-                        '<div class="btn-group">' +
-                            '<button id="dropdown-button-{{cid}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
-                            '</button>' +
-                            '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
-                            '</ul>' +
-                        '</div>' +
-                    '</div>',
+        template:
+            '<div id="dropdown-button-wrapper-{{cid}}" class="button-wrapper {{classes}}">' +
+                '<div class="btn-group {{direction}}">' +
+                    '<button id="dropdown-button-{{cid}}" class="btn dropdown-toggle {{buttonClasses}}" data-toggle="dropdown">' +
+                    '</button>' +
+                    '<ul id="dropdown-list-{{cid}}" class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
+                    '</ul>' +
+                '</div>' +
+            '</div>',
+
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
@@ -70,8 +82,41 @@ require('bugpack').context("*", function(bugpack) {
         initializeView: function() {
             this._super();
             this.getDropdownButtonElement().dropdown();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data = this._super();
+            data.direction = "";
+            switch (this.getAttribute("direction")) {
+                case ButtonDropdownView.DropDirection.UP:
+                    data.direction = "dropup";
+                    break;
+            }
+            return data;
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    ButtonDropdownView.DropDirection = {
+        DOWN: "ButtonDropdownView:DropDirection:Down",
+        UP: "ButtonDropdownView:DropDirection:Up"
+    };
 
 
     //-------------------------------------------------------------------------------

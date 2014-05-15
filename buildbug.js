@@ -59,7 +59,7 @@ var dependencies        = {
     imagemagick: "0.1.3",
     mu2express: "0.0.1",
     mongodb: "1.3.23",
-    mongoose: "3.8.4",
+    mongoose: "3.8.9",
     redis: "0.10.0",
     "socket.io": "0.9.16",
     bcrypt: "0.7.7",

@@ -35,7 +35,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
     var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
-    var EntityManagerAnnotationScan                   = bugpack.require('bugentity.EntityManagerAnnotationScan');
+    var EntityManagerAnnotationScan         = bugpack.require('bugentity.EntityManagerAnnotationScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
