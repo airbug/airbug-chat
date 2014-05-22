@@ -63,9 +63,10 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
-         * @param {AirbugClientConfig} airbugClientConfig
+         * @param {AirbugStaticConfig} airbugClientConfig
+         * @param {AirbugStaticConfig} airbugPluginConfig
          */
-        _constructor: function(controllerManager, expressApp, airbugClientConfig) {
+        _constructor: function(controllerManager, expressApp, airbugClientConfig, airbugPluginConfig) {
 
             this._super(controllerManager, expressApp);
 
@@ -76,9 +77,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugClientConfig}
+             * @type {AirbugStaticConfig}
              */
             this.airbugClientConfig     = airbugClientConfig;
+
+            /**
+             * @private
+             * @type {AirbugStaticConfig}
+             */
+            this.airbugPluginConfig     = airbugPluginConfig;
         },
 
 
@@ -115,13 +122,13 @@ require('bugpack').context("*", function(bugpack) {
                 });
             });
 
-            this.getExpressApp().get('/client_api', function(request, response) {
+            this.getExpressApp().get('/plugin', function(request, response) {
                 var requestContext          = request.requestContext;
                 var session                 = requestContext.get("session");
-                var configObject            = _this.airbugClientConfig.toObject();
+                var configObject            = _this.airbugPluginConfig.toObject();
                 configObject.github.state   = session.getData().githubState;
                 configObject.github.emails  = session.getData().githubEmails;
-                response.render('client_api', {
+                response.render('plugin', {
                     locals: {
                         config: StringUtil.escapeString(JSON.stringify(configObject)),
                         debug: configObject.debug,

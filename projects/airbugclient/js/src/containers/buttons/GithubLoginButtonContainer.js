@@ -74,9 +74,9 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 
         /**
          * @private
-         * @type {AirbugClientConfig}
+         * @type {AirbugStaticConfig}
          */
-        this.airbugClientConfig = null;
+        this.airbugStaticConfig = null;
 
         /**
          * @private
@@ -182,10 +182,10 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
             host: "github.com",
             path: "/login/oauth/authorize",
             query: {
-                client_id: this.airbugClientConfig.getGithubClientId(),
+                client_id: this.airbugStaticConfig.getGithubClientId(),
                 redirect_uri: githubRedirectUri,
-                scope: this.airbugClientConfig.getGithubScope(),
-                state: this.airbugClientConfig.getGithubState()
+                scope: this.airbugStaticConfig.getGithubScope(),
+                state: this.airbugStaticConfig.getGithubState()
             }
         });
         this.navigationModule.navigateToUrl(githubUrl);
@@ -199,7 +199,7 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 
 bugmeta.annotate(GithubLoginButtonContainer).with(
     autowired().properties([
-        property("airbugClientConfig").ref("airbugClientConfig"),
+        property("airbugStaticConfig").ref("airbugStaticConfig"),
         property("navigationModule").ref("navigationModule"),
         property("window").ref("window")
     ])

@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
                     '<div id="image-upload-from-computer-{{cid}}"></div>' +
                     '<span>Or, even...</span>' +
                     '<div id="image-upload-from-url-{{cid}}"></div>' +
-                    '<div id="image-upload-list-{{cid}}">' +
+                    '<div id="image-upload-list-{{cid}}" class="image-upload-list">' +
                     '</div>' +
                 '</div>' +
             '</div>',
@@ -71,7 +71,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {jQuery}
          */
         getImageUploadElement: function() {
-            return this.findElement("#image-upload-dropzone-{{cid}}");
+            return this.findElement("#image-upload-{{cid}}");
         }
     });
 

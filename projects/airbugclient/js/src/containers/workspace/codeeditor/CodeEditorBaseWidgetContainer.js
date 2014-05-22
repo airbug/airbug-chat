@@ -101,9 +101,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugClientConfig}
+             * @type {AirbugStaticConfig}
              */
-            this.airbugClientConfig                     = null;
+            this.airbugStaticConfig                     = null;
 
 
             // Views
@@ -457,7 +457,7 @@ require('bugpack').context("*", function(bugpack) {
 
     bugmeta.annotate(CodeEditorBaseWidgetContainer).with(
         autowired().properties([
-            property("airbugClientConfig").ref("airbugClientConfig"),
+            property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),
             property("pageStateModule").ref("pageStateModule")
         ])

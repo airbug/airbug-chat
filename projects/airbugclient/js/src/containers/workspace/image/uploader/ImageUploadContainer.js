@@ -186,17 +186,6 @@ require('bugpack').context("*", function(bugpack) {
 
             // Create Views
             //-------------------------------------------------------------------------------
-            /*<form id="file-upload-widget-{{cid}}" class="file-upload-widget form-horizontal" enctype="multipart/form-data">' +
-            '<div class="btn-toolbar">' +
-            '<div class="btn-group">' +
-                '<button class="btn btn-success fileinput-button">' +
-                    '<i class="icon-plus icon-white"></i>' +
-                    '<span>Choose an image to upload</span>' +
-                    '<input id="file-upload-widget-input" type="file" name="files[]">' +
-                        '</button>' +
-                    '</div>' +
-                '</div>' +
-            '</form>' +*/
 
             view(ImageUploadView)
                 .name("imageUploadView")
@@ -336,6 +325,10 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          */
         initializeUploadWidget: function() {
+
+            //TEST
+            console.log("initializing upload widget - this.imageUploadView.getImageUploadElement():" + this.imageUploadView.getImageUploadElement()[0]);
+
             var _this = this;
             this.imageUploadFormView.$el.fileupload({
                 url: 'api/uploadAsset',
@@ -343,7 +336,7 @@ require('bugpack').context("*", function(bugpack) {
                 singleFileUploads: true,
                 sequentialUploads: true,
                 dataType: 'json',
-                dropzone: this.imageUploadView.getImageUploadElement(),
+                dropZone: this.imageUploadView.getImageUploadElement(),
                 pastezone: this.imageUploadView.getImageUploadElement(),
                 //            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i, //does not work without jquery ui components
                 //            maxFileSize: 5000000, // 5 MB //does not work without jquery ui components

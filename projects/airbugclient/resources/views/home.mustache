@@ -77,18 +77,18 @@
 
         {{#js.concat}}
             {{#js.minify}}
-                <script type="text/javascript" src="{{{staticUrl}}}/airbug-static.min.js"></script>
+                <script type="text/javascript" src="{{{staticUrl}}}/airbugclient.min.js"></script>
             {{/js.minify}}
             {{^js.minify}}
-                <script type="text/javascript" src="{{{staticUrl}}}/airbug-static.js"></script>
+                <script type="text/javascript" src="{{{staticUrl}}}/airbugclient.js"></script>
             {{/js.minify}}
         {{/js.concat}}
 
         {{#js.minify}}
-            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.min.js"></script>
+            <script type="text/javascript" src="{{{staticUrl}}}/airbugclient-application-loader.min.js"></script>
         {{/js.minify}}
         {{^js.minify}}
-            <script type="text/javascript" src="{{{staticUrl}}}/airbug-application-loader.js"></script>
+            <script type="text/javascript" src="{{{staticUrl}}}/airbugclient-application-loader.js"></script>
         {{/js.minify}}
     </body>
 </html>

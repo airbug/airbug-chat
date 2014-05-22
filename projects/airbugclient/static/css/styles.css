@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 html, body {
     position: relative;
     min-width: 1200px;
@@ -1463,6 +1464,20 @@ input[readonly].faux-textfield, textarea[readonly].faux-textarea {
 .file-upload-item .progress {
     margin-bottom: 8px;
 }
+
+.image-upload-modal-wrapper {
+    height: 400px;
+}
+
+.image-upload-list {
+    position: absolute;
+    bottom: 5px;
+    top: 190px;
+    left: 5px;
+    right: 5px;
+    overflow: scroll;
+}
+
 
 @charset "UTF-8";
 /*

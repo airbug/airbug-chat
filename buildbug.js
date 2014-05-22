@@ -82,19 +82,16 @@ buildProperties({
         outputFile: "{{distPath}}/airbug-api-bridge.js",
         outputMinFile: "{{distPath}}/airbug-api-bridge.min.js"
     },
-    loader: {
-        source: "./projects/airbugclient/js/scripts/airbug-application-loader.js",
-        outputFile: "{{distPath}}/airbug-application-loader.js",
-        outputMinFile: "{{distPath}}/airbug-application-loader.min.js"
-    },
-    static: {
-        buildPath: buildProject.getProperty("buildPath") + "/static/{{name}}/{{version}}",
-        name: name + "-static",
+    client: {
+        buildPath: buildProject.getProperty("buildPath") + "/{{client.name}}/{{client.version}}",
+        name: "airbugclient",
         version: "{{version}}",
-        outputFile: "{{distPath}}/{{static.name}}.js",
-        outputMinFile: "{{distPath}}/{{static.name}}.min.js",
+        outputFile: "{{distPath}}/{{client.name}}.js",
+        outputMinFile: "{{distPath}}/{{client.name}}.min.js",
         sourcePaths: [
-            "./projects/airbug/js/src",
+            "./libraries/airbug/js/src",
+            "./libraries/api/js/src",
+            "./libraries/ui/js/src",
             "./projects/airbugclient/js/src",
             "./projects/airbugclient/static",
             "../bugcore/projects/bugcore/js/src",
@@ -142,20 +139,79 @@ buildProperties({
             "../bugjs/external/acesnippets/js/src",
             "../bugjs/external/acethemes/js/src",
             "../bugjs/external/aceworkers/js/src"
-        ]
+        ],
+        loader: {
+            source: "./projects/airbugclient/js/scripts/airbugclient-application-loader.js",
+            outputFile: "{{distPath}}/airbugclient-application-loader.js",
+            outputMinFile: "{{distPath}}/airbugclient-application-loader.min.js"
+        }
+    },
+    plugin: {
+        buildPath: buildProject.getProperty("buildPath") + "/{{plugin.name}}/{{plugin.version}}",
+        name: "airbugplugin",
+        version: "{{version}}",
+        outputFile: "{{distPath}}/{{plugin.name}}.js",
+        outputMinFile: "{{distPath}}/{{plugin.name}}.min.js",
+        sourcePaths: [
+            "./libraries/airbug/js/src",
+            "./libraries/api/js/src",
+            "./libraries/ui/js/src",
+            "./projects/airbugplugin/js/src",
+            "./projects/airbugplugin/static",
+            "../bugcore/projects/bugcore/js/src",
+            "../bugflow/projects/bugflow/js/src",
+            "../bugjs/external/backbone/js/src",
+            "../bugjs/external/bootstrap2/js/src",
+            "../bugjs/external/bootstrap2/static",
+            "../bugjs/external/jquery/js/src",
+            "../bugjs/external/jquery-plugins/js/src/fileupload",
+            "../bugjs/external/jquery-plugins/js/src/selectText",
+            "../bugjs/external/jquery-plugins/js/src/validator",
+            "../bugjs/external/mustache/js/src",
+            "../bugjs/external/socket-io/js/src",
+            "../bugjs/external/socialbuttons/static",
+            "../bugjs/external/underscore/js/src",
+            "../bugjs/external/zeroclipboard/js/src",
+            "../bugjs/external/zeroclipboard/static",
+            "../bugjs/projects/bugapp/js/src",
+            "../bugjs/projects/bugcall/bugjars/client/js/src",
+            "../bugjs/projects/bugcall/bugjars/core/js/src",
+            "../bugjs/projects/bugdelta/js/src",
+            "../bugjs/projects/bugdispose/js/src",
+            "../bugjs/projects/bugioc/js/src",
+            "../bugjs/projects/bugmarsh/js/src",
+            "../bugjs/projects/bugmvc/js/src",
+            "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
+            "../bugjs/projects/carapace/js/src",
+            "../bugjs/projects/cookies/js/src",
+            "../bugjs/projects/loggerbug/js/src",
+            "../bugjs/projects/session/js/src",
+            "../bugjs/projects/socketio/bugjars/client/js/src",
+            "../bugjs/projects/socketio/bugjars/factorybrowser/js/src",
+            "../bugjs/projects/socketio/bugjars/socket/js/src",
+            "../bugmeta/projects/bugmeta/js/src",
+            "../bugtrace/projects/bugtrace/js/src",
+            "../meldbug/projects/meldbug/bugjars/core/js/src",
+            "../meldbug/projects/meldbugclient/js/src",
+            "../sonarbug/projects/sonarbugclient/js/src"
+        ],
+        loader: {
+            source: "./projects/airbugplugin/js/scripts/airbugplugin-application-loader.js",
+            outputFile: "{{distPath}}/airbugplugin-application-loader.js",
+            outputMinFile: "{{distPath}}/airbugplugin-application-loader.min.js"
+        }
     },
     server: {
         packageJson: {
             name: "airbugserver",
             version: version,
-            main: "./lib/AirBugServer.js",
             dependencies: dependencies,
             scripts: {
-                start: "node ./scripts/airbug-server-application-start.js"
+                start: "node ./scripts/airbugserver-application-start.js"
             }
         },
         sourcePaths: [
-            "./projects/airbug/js/src",
+            "./libraries/airbug/js/src",
             "./projects/airbugserver/js/src",
             "./projects/airbugserver/js/migrations",
             "../bugflow/projects/bugflow/js/src",
@@ -195,16 +251,16 @@ buildProperties({
         ],
         resourcePaths: [
             "./projects/airbugclient/resources",
+            "./projects/airbugplugin/resources",
             "./projects/airbugserver/resources"
         ],
         unitTest: {
             packageJson: {
                 name: "airbugserver-test",
                 version: version,
-                main: "./lib/AirBugServer.js",
                 dependencies: dependencies,
                 scripts: {
-                    start: "node ./scripts/airbug-server-application-start.js"
+                    start: "node ./scripts/airbugserver-application-start.js"
                 }
             },
             sourcePaths: [
@@ -218,7 +274,7 @@ buildProperties({
                 "../bugunit/projects/bugunit/js/scripts"
             ],
             testPaths: [
-                "./projects/airbug/js/test",
+                "./libraries/airbug/js/test",
                 "./projects/airbugserver/js/test",
                 "../bugcore/projects/bugcore/js/test",
                 "../bugflow/projects/bugflow/js/test",
@@ -256,7 +312,7 @@ buildProperties({
             version: version,
             dependencies: dependencies,
             scripts: {
-                start: "node ./scripts/airbug-worker-application-start.js"
+                start: "node ./scripts/airbugworker-application-start.js"
             }
         },
         resourcePaths: [
@@ -293,7 +349,7 @@ buildProperties({
                 version: version,
                 dependencies: dependencies,
                 scripts: {
-                    start: "node ./scripts/airbug-worker-application-start.js"
+                    start: "node ./scripts/airbugworker-application-start.js"
                 }
             },
             sourcePaths: [
@@ -399,33 +455,33 @@ buildTarget('local').buildFlow(
                     series([
                         targetTask('copy', {
                             properties: {
-                                fromPaths: ["{{loader.source}}"],
+                                fromPaths: ["{{client.loader.source}}"],
                                 intoPath: "{{distPath}}"
                             }
                         }),
                         targetTask("uglifyjsMinify", {
                             properties: {
-                                sources: ["{{loader.outputFile}}"],
-                                outputFile: "{{loader.outputMinFile}}"
+                                sources: ["{{client.loader.outputFile}}"],
+                                outputFile: "{{client.loader.outputMinFile}}"
                             }
                         })
                     ]),
                     series([
                         targetTask('copyContents', {
                             properties: {
-                                fromPaths: buildProject.getProperty("static.sourcePaths"),
-                                intoPath: "{{static.buildPath}}"
+                                fromPaths: buildProject.getProperty("client.sourcePaths"),
+                                intoPath: "{{client.buildPath}}/js"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
-                                name: "{{static.name}}",
-                                sourceRoot: "{{static.buildPath}}"
+                                name: "{{client.name}}",
+                                sourceRoot: "{{client.buildPath}}/js"
                             }
                         }),
                         targetTask("concat", {
                             init: function(task, buildProject, properties) {
-                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("static.name"));
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("client.name"));
                                 var sources         = [];
                                 var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
 
@@ -437,13 +493,64 @@ buildTarget('local').buildFlow(
                                 });
                             },
                             properties: {
-                                outputFile: "{{static.outputFile}}"
+                                outputFile: "{{client.outputFile}}"
                             }
                         }),
                         targetTask("uglifyjsMinify", {
                             properties: {
-                                sources: ["{{static.outputFile}}"],
-                                outputFile: "{{static.outputMinFile}}"
+                                sources: ["{{client.outputFile}}"],
+                                outputFile: "{{client.outputMinFile}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copy', {
+                            properties: {
+                                fromPaths: ["{{plugin.loader.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        }),
+                        targetTask("uglifyjsMinify", {
+                            properties: {
+                                sources: ["{{plugin.loader.outputFile}}"],
+                                outputFile: "{{plugin.loader.outputMinFile}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
+                                fromPaths: buildProject.getProperty("plugin.sourcePaths"),
+                                intoPath: "{{plugin.buildPath}}"
+                            }
+                        }),
+                        targetTask('generateBugPackRegistry', {
+                            properties: {
+                                name: "{{plugin.name}}",
+                                sourceRoot: "{{plugin.buildPath}}"
+                            }
+                        }),
+                        targetTask("concat", {
+                            init: function(task, buildProject, properties) {
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("plugin.name"));
+                                var sources         = [];
+                                var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
+
+                                registryEntries.forEach(function(bugPackRegistryEntry) {
+                                    sources.push(bugPackRegistryEntry.getResolvedPath().getAbsolutePath());
+                                });
+                                task.updateProperties({
+                                    sources: sources
+                                });
+                            },
+                            properties: {
+                                outputFile: "{{plugin.outputFile}}"
+                            }
+                        }),
+                        targetTask("uglifyjsMinify", {
+                            properties: {
+                                sources: ["{{plugin.outputFile}}"],
+                                outputFile: "{{plugin.outputMinFile}}"
                             }
                         })
                     ])
@@ -460,14 +567,14 @@ buildTarget('local').buildFlow(
                         testPaths: buildProject.getProperty("server.unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths"),
                         staticPaths: ([
-                            "{{static.buildPath}}",
-                            buildProject.getProperty("static.outputFile"),
-                            buildProject.getProperty("static.outputMinFile"),
-                            buildProject.getProperty("loader.outputFile"),
-                            buildProject.getProperty("loader.outputMinFile"),
+                            "{{client.buildPath}}",
+                            buildProject.getProperty("client.outputFile"),
+                            buildProject.getProperty("client.outputMinFile"),
+                            buildProject.getProperty("client.loader.outputFile"),
+                            buildProject.getProperty("client.loader.outputMinFile"),
                             buildProject.getProperty("bridge.outputFile"),
                             buildProject.getProperty("bridge.outputMinFile")
-                        ]).concat(buildProject.getProperty("static.serverStickyPaths"))
+                        ]).concat(buildProject.getProperty("client.serverStickyPaths"))
                     }
                 }),
                 targetTask('replaceTokens', {
@@ -620,7 +727,15 @@ buildTarget('short').buildFlow(
                     series([
                         targetTask('copy', {
                             properties: {
-                                fromPaths: ["{{loader.source}}"],
+                                fromPaths: ["{{client.loader.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copy', {
+                            properties: {
+                                fromPaths: ["{{plugin.loader.source}}"],
                                 intoPath: "{{distPath}}"
                             }
                         })
@@ -628,19 +743,19 @@ buildTarget('short').buildFlow(
                     series([
                         targetTask('copyContents', {
                             properties: {
-                                fromPaths: buildProject.getProperty("static.sourcePaths"),
-                                intoPath: "{{static.buildPath}}"
+                                fromPaths: buildProject.getProperty("client.sourcePaths"),
+                                intoPath: "{{client.buildPath}}"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
-                                name: "{{static.name}}",
-                                sourceRoot: "{{static.buildPath}}"
+                                name: "{{client.name}}",
+                                sourceRoot: "{{client.buildPath}}"
                             }
                         }),
                         targetTask("concat", {
                             init: function(task, buildProject, properties) {
-                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("static.name"));
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("client.name"));
                                 var sources         = [];
                                 var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
 
@@ -652,7 +767,38 @@ buildTarget('short').buildFlow(
                                 });
                             },
                             properties: {
-                                outputFile: "{{static.outputFile}}"
+                                outputFile: "{{client.outputFile}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
+                                fromPaths: buildProject.getProperty("plugin.sourcePaths"),
+                                intoPath: "{{plugin.buildPath}}"
+                            }
+                        }),
+                        targetTask('generateBugPackRegistry', {
+                            properties: {
+                                name: "{{plugin.name}}",
+                                sourceRoot: "{{plugin.buildPath}}"
+                            }
+                        }),
+                        targetTask("concat", {
+                            init: function(task, buildProject, properties) {
+                                var bugpackRegistry = bugpack.findBugPackRegistry(buildProject.getProperty("plugin.name"));
+                                var sources         = [];
+                                var registryEntries = bugpackRegistry.getRegistryEntriesInDependentOrder();
+
+                                registryEntries.forEach(function(bugPackRegistryEntry) {
+                                    sources.push(bugPackRegistryEntry.getResolvedPath().getAbsolutePath());
+                                });
+                                task.updateProperties({
+                                    sources: sources
+                                });
+                            },
+                            properties: {
+                                outputFile: "{{plugin.outputFile}}"
                             }
                         })
                     ])
@@ -669,11 +815,13 @@ buildTarget('short').buildFlow(
                         testPaths: buildProject.getProperty("server.unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths"),
                         staticPaths: ([
-                            "{{static.buildPath}}",
+                            "{{client.buildPath}}",
                             buildProject.getProperty("bridge.outputFile"),
-                            buildProject.getProperty("static.outputFile"),
-                            buildProject.getProperty("loader.outputFile")
-                        ]).concat(buildProject.getProperty("static.serverStickyPaths"))
+                            buildProject.getProperty("client.outputFile"),
+                            buildProject.getProperty("client.loader.outputFile"),
+                            buildProject.getProperty("plugin.outputFile"),
+                            buildProject.getProperty("plugin.loader.outputFile")
+                        ]).concat(buildProject.getProperty("client.serverStickyPaths"))
                     }
                 }),
                 targetTask('replaceTokens', {
@@ -740,7 +888,7 @@ buildTarget('prod').buildFlow(
                         scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
                             buildProject.getProperty("server.unitTest.scriptPaths")
                         ),
-                        staticPaths: buildProject.getProperty("static.serverStickyPaths"),
+                        staticPaths: buildProject.getProperty("client.serverStickyPaths"),
                         testPaths: buildProject.getProperty("server.unitTest.testPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths")
                     }
@@ -792,7 +940,7 @@ buildTarget('prod').buildFlow(
                         packageJson: buildProject.getProperty("server.packageJson"),
                         sourcePaths: buildProject.getProperty("server.sourcePaths"),
                         scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        staticPaths: buildProject.getProperty("static.serverStickyPaths"),
+                        staticPaths: buildProject.getProperty("client.serverStickyPaths"),
                         resourcePaths: buildProject.getProperty("server.resourcePaths")
                     }
                 }),
@@ -936,18 +1084,18 @@ buildTarget('prod').buildFlow(
             series([
                 targetTask('copyContents', {
                     properties: {
-                        fromPaths: buildProject.getProperty("static.sourcePaths"),
-                        intoPath: "{{static.buildPath}}"
+                        fromPaths: buildProject.getProperty("client.sourcePaths"),
+                        intoPath: "{{client.buildPath}}"
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
                     properties: {
-                        sourceRoot: "{{static.buildPath}}"
+                        sourceRoot: "{{client.buildPath}}"
                     }
                 }),
                 targetTask("s3PutDirectoryContents", {
                     properties: {
-                        directory: "{{static.buildPath}}",
+                        directory: "{{client.buildPath}}",
                         options: {
                             acl: 'public-read',
                             gzip: true,

@@ -492,7 +492,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {DropdownViewEvent} event
          */
         hearUploadPhotoItemDropdownSelected: function(event) {
-            //TODO BRN: Show existing item modal
+            this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD_MODAL, {});
         },
 
         /**

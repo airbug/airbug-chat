@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,106 +19,113 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var NotificationView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="notification-container {{attributes.classes}}">' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "notification-container";
-        return data;
-    },
+    var NotificationView = Class.extend(MustacheView, {
 
-    /**
-     * @param {string} message
-     * @param {number=} delay
-     */
-    flashErrorMessage: function(message, delay) {
-        this.flash(
-            '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
-                message +
-            '</div>', delay);
-    },
+        _name: "airbug.NotificationView",
 
-    /**
-     * @param {string} message
-     * @param {number=} delay
-     */
-    flashExceptionMessage: function(message, delay) {
-        this.flash(
-            '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
-                message +
-            '</div>', delay);
-    },
 
-    /**
-     * @param {string} message
-     * @param {number=} delay
-     */
-    flashSuccessMessage: function(message, delay) {
-        this.flash(
-            '<div id="notification-message" class="notification-message alert alert-success">' +
-                message +
-            '</div>', delay);
-    },
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} message
-     * @param {number=} delay
-     */
-    flashMessage: function(message, delay) {
-        this.flash(
-            '<div id="notification-message" class="notification-message alert alert-info">' +
-                message +
+        template:   '<div id="{{id}}" class="notification-container {{attributes.classes}}">' +
+                    '</div>',
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data    = this._super();
+            data.id     = this.getId() || "notification-container";
+            return data;
+        },
+
+        /**
+         * @param {string} message
+         * @param {number=} delay
+         */
+        flashErrorMessage: function(message, delay) {
+            this.flash(
+                '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
+                    message +
                 '</div>', delay);
-    },
+        },
 
-    /**
-     * @private
-     * @param {string} html
-     * @param {number=} delay
-     */
-    flash: function(html, delay) {
-        var delay = delay || 5000;
-        var notificationContainer = $(this.$el[0]);
-        notificationContainer.prepend(html).show();
-        setTimeout(function() {
-            notificationContainer.fadeOut(500, function() {
-                notificationContainer.children("div").remove();
-            });
-        }, delay);
-    }
+        /**
+         * @param {string} message
+         * @param {number=} delay
+         */
+        flashExceptionMessage: function(message, delay) {
+            this.flash(
+                '<div id="notification-message" class="notification-message error-notification alert alert-error">' +
+                    message +
+                '</div>', delay);
+        },
+
+        /**
+         * @param {string} message
+         * @param {number=} delay
+         */
+        flashSuccessMessage: function(message, delay) {
+            this.flash(
+                '<div id="notification-message" class="notification-message alert alert-success">' +
+                    message +
+                '</div>', delay);
+        },
+
+        /**
+         * @param {string} message
+         * @param {number=} delay
+         */
+        flashMessage: function(message, delay) {
+            this.flash(
+                '<div id="notification-message" class="notification-message alert alert-info">' +
+                    message +
+                '</div>', delay);
+        },
+
+        /**
+         * @private
+         * @param {string} html
+         * @param {number=} delay
+         */
+        flash: function(html, delay) {
+            var delay = delay || 5000;
+            var notificationContainer = $(this.$el[0]);
+            notificationContainer.prepend(html).show();
+            setTimeout(function() {
+                notificationContainer.fadeOut(500, function() {
+                    notificationContainer.children("div").remove();
+                });
+            }, delay);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.NotificationView", NotificationView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.NotificationView", NotificationView);

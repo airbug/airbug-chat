@@ -17,7 +17,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('airbug.AirbugClientConfig')
+//@Require('airbug.AirbugStaticConfig')
 //@Require('airbug.AirbugServerConfig')
 //@Require('airbugserver.GithubApi')
 //@Require('airbugserver.RequestContextBuilder')
@@ -72,7 +72,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                           = bugpack.require('Class');
     var Obj                             = bugpack.require('Obj');
-    var AirbugClientConfig              = bugpack.require('airbug.AirbugClientConfig');
+    var AirbugStaticConfig              = bugpack.require('airbug.AirbugStaticConfig');
     var AirbugServerConfig              = bugpack.require('airbug.AirbugServerConfig');
     var GithubApi                       = bugpack.require('airbugserver.GithubApi');
     var RequestContextBuilder           = bugpack.require('airbugserver.RequestContextBuilder');
@@ -129,10 +129,17 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {AirbugClientConfig}
+         * @return {AirbugStaticConfig}
          */
         airbugClientConfig: function() {
-            return new AirbugClientConfig();
+            return new AirbugStaticConfig();
+        },
+
+        /**
+         * @return {AirbugStaticConfig}
+         */
+        airbugPluginConfig: function() {
+            return new AirbugStaticConfig();
         },
 
         /**
@@ -303,35 +310,14 @@ require('bugpack').context("*", function(bugpack) {
 
     bugmeta.annotate(AirbugServerConfiguration).with(
         configuration("airbugServerConfiguration").modules([
-
-            //-------------------------------------------------------------------------------
-            // AirBugServer
-            //-------------------------------------------------------------------------------
-
+            module("airbugClientConfig"),
+            module("airbugPluginConfig"),
+            module("airbugServerConfig"),
+            module('awsUploader'),
+            module("bugCallRouter"),
             module("console"),
             module("cookie"),
             module("cookieSignature"),
-            module("http"),
-            module("https"),
-            module("imagemagick"),
-            module("github"),
-            module("mongoose"),
-            module("requestContextBuilder"),
-
-
-            //-------------------------------------------------------------------------------
-            // Config
-            //-------------------------------------------------------------------------------
-
-            module("airbugClientConfig"),
-            module("airbugServerConfig"),
-            module("sessionServiceConfig"),
-
-
-            //-------------------------------------------------------------------------------
-            // Express
-            //-------------------------------------------------------------------------------
-
             module("express"),
             module("expressApp")
                 .args([
@@ -342,33 +328,20 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("http"),
                     arg().ref("expressApp")
                 ]),
-
-
-
-            //-------------------------------------------------------------------------------
-            // BugJs
-            //-------------------------------------------------------------------------------
-
-            module('awsUploader'),
-
-
-            //-------------------------------------------------------------------------------
-            // Util
-            //-------------------------------------------------------------------------------
-
-            module("handshaker"),
             module("githubApi")
                 .args([
                     arg().ref("https"),
                     arg().ref("github"),
                     arg().ref("airbugServerConfig")
                 ]),
-
-
-            //-------------------------------------------------------------------------------
-            // Sockets
-            //-------------------------------------------------------------------------------
-
+            module("handshaker"),
+            module("http"),
+            module("https"),
+            module("imagemagick"),
+            module("github"),
+            module("mongoose"),
+            module("requestContextBuilder"),
+            module("sessionServiceConfig"),
             module("socketIoManager")
                 .args([
                     arg().ref("socketIoServer")
@@ -379,14 +352,7 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("expressServer"),
                     arg().ref("handshaker")
                 ]),
-            module("socketIoServerConfig"),
-
-
-            //-------------------------------------------------------------------------------
-            // BugCall
-            //-------------------------------------------------------------------------------
-
-            module("bugCallRouter")
+            module("socketIoServerConfig")
         ])
     );
 

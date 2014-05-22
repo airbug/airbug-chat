@@ -34,6 +34,7 @@
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.ImageUploadModalContainer')
 //@Require('airbug.IMessageHandler')
 //@Require('airbug.ListContainer')
 //@Require('airbug.MessagePartModel')
@@ -79,6 +80,7 @@ require('bugpack').context("*", function(bugpack) {
     var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
     var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
     var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var ImageUploadModalContainer       = bugpack.require('airbug.ImageUploadModalContainer');
     var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
     var ListContainer                   = bugpack.require('airbug.ListContainer');
     var MessagePartModel                = bugpack.require('airbug.MessagePartModel');
@@ -231,6 +233,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {ImageUploadModalContainer}
+             */
+            this.imageUploadModalContainer                  = null;
+
+            /**
+             * @private
              * @type {MessagePartPreviewContainer}
              */
             this.messagePartPreviewContainer                = null;
@@ -361,6 +369,8 @@ require('bugpack').context("*", function(bugpack) {
             this.addContainerChild(this.chatWidgetMessagesContainer, '#panel-body-' + this.messagesPanelView.getCid());
             this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer(this.embeddedMessagePartModel);
             this.addContainerChild(this.chatWidgetInputFormContainer, "#box-header-" + this.inputBoxView.getCid());
+            this.imageUploadModalContainer          = new ImageUploadModalContainer();
+            this.addContainerChild(this.imageUploadModalContainer, "#chat-widget-modals-" + this.chatWidgetView.getCid());
             this.messagePartPreviewContainer = new MessagePartPreviewContainer(this.embeddedMessagePartModel);
             this.addContainerChild(this.messagePartPreviewContainer, "#box-body-" + this.inputBoxView.getCid())
         },

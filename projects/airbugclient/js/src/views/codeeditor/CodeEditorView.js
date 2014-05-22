@@ -87,9 +87,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugClientConfig}
+             * @type {AirbugStaticConfig}
              */
-            this.airbugClientConfig                     = null;
+            this.airbugStaticConfig                     = null;
 
             var _this = this;
             this.handleChangeSelection  = function(event) {
@@ -366,7 +366,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         make: function() {
             var element = this._super();
-            Ace.config.set("basePath", this.airbugClientConfig.getStickyStaticUrl());
+            Ace.config.set("basePath", this.airbugStaticConfig.getStickyStaticUrl());
             this.editor          = Ace.edit(element[0]);
             return element;
         }
@@ -379,7 +379,7 @@ require('bugpack').context("*", function(bugpack) {
 
     bugmeta.annotate(CodeEditorView).with(
         autowired().properties([
-            property("airbugClientConfig").ref("airbugClientConfig")
+            property("airbugStaticConfig").ref("airbugStaticConfig")
         ])
     );
 

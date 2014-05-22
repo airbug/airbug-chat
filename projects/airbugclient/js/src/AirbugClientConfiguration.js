@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -17,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Url')
-//@Require('airbug.AirbugClientConfig')
+//@Require('airbug.AirbugStaticConfig')
 //@Require('airbug.DocumentUtil')
 //@Require('airbug.MemoryCache')
 //@Require('airbug.WindowUtil')
@@ -49,7 +50,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
     var Url                         = bugpack.require('Url');
-    var AirbugClientConfig          = bugpack.require('airbug.AirbugClientConfig');
+    var AirbugStaticConfig          = bugpack.require('airbug.AirbugStaticConfig');
     var DocumentUtil                = bugpack.require('airbug.DocumentUtil');
     var MemoryCache                 = bugpack.require('airbug.MemoryCache');
     var WindowUtil                  = bugpack.require('airbug.WindowUtil');
@@ -99,10 +100,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {AirbugClientConfig}
+         * @returns {AirbugStaticConfig}
          */
-        airbugClientConfig: function() {
-            return new AirbugClientConfig(_appConfig);
+        airbugStaticConfig: function() {
+            return new AirbugStaticConfig(_appConfig);
         },
 
         /**
@@ -210,8 +211,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     bugmeta.annotate(AirbugClientConfiguration).with(
-        configuration("airbugClientConfiguration").modules([
-            module("airbugClientConfig"),
+        configuration("airbugStaticConfiguration").modules([
+            module("airbugStaticConfig"),
             module("browserSocketIoFactory"),
             module("bugCallRouter")
                 .args([

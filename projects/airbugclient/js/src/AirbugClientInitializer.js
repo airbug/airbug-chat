@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -98,9 +99,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugClientConfig}
+             * @type {AirbugStaticConfig}
              */
-            this.airbugClientConfig    = null;
+            this.airbugStaticConfig    = null;
 
             /**
              * @private
@@ -187,7 +188,7 @@ require('bugpack').context("*", function(bugpack) {
 
             ZeroClipboard.config({
                 allowScriptAccess: "always",
-                moviePath: this.airbugClientConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf",
+                moviePath: this.airbugStaticConfig.getStaticUrl() + "/zeroclipboard/ZeroClipboard.swf",
                 trustedDomains: [
                     this.windowUtil.getHost()
                 ],
@@ -236,7 +237,7 @@ require('bugpack').context("*", function(bugpack) {
             var trackerModule       = this.trackerModule;
             var carapaceApplication = this.carapaceApplication;
 
-            if (this.airbugClientConfig.getEnableTracking()) {
+            if (this.airbugStaticConfig.getEnableTracking()) {
                 carapaceApplication.addEventListener(RoutingRequest.EventType.PROCESSED, function(event) {
                     var data = event.getData();
                     trackerModule.track("RoutingRequest.Result", data);
@@ -287,7 +288,7 @@ require('bugpack').context("*", function(bugpack) {
         module("airbugClientInitializer")
             .properties([
                 property("airbugApi").ref("airbugApi"),
-                property("airbugClientConfig").ref("airbugClientConfig"),
+                property("airbugStaticConfig").ref("airbugStaticConfig"),
                 property("bugCallClient").ref("bugCallClient"),
                 property("bugCallRouter").ref("bugCallRouter"),
                 property("carapaceApplication").ref("carapaceApplication"),

@@ -101,9 +101,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugClientConfig}
+             * @type {AirbugStaticConfig}
              */
-            this.airbugClientConfig         = null;
+            this.airbugStaticConfig         = null;
 
             /**
              * @private
@@ -157,7 +157,7 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             // TODO - dkk - use the emails from the client config after testing
-            //var emails = this.airbugClientConfig.getGithubEmails();
+            //var emails = this.airbugStaticConfig.getGithubEmails();
             //var emails = ['email1@example.com', 'email2@example.com', 'email3@example.com'];
             var emails = ['email1@example.com'];
 
@@ -316,7 +316,7 @@ require('bugpack').context("*", function(bugpack) {
 
     bugmeta.annotate(GithubLoginFormContainer).with(
         autowired().properties([
-            property("airbugClientConfig").ref("airbugClientConfig"),
+            property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),
             property("navigationModule").ref("navigationModule"),
             property("currentUserManagerModule").ref("currentUserManagerModule")

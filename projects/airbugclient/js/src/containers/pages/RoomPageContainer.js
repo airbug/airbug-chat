@@ -220,8 +220,7 @@ require('bugpack').context("*", function(bugpack) {
             this.roomListPanelContainer                 = new RoomListPanelContainer(this.roomModel);
 
             this.shareRoomContainer                     = new ShareRoomContainer(this.roomModel);
-            this.addContainerChild(this.shareRoomContainer,             ".page");
-
+            this.addContainerChild(this.shareRoomContainer,             "#page-" + this.getPageView().getCid());
 
             this.addContainerChild(this.accountDropdownButtonContainer, "#header-right");
             this.addContainerChild(this.homeButtonContainer,            "#header-left");

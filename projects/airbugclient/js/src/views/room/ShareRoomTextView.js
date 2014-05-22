@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,77 +19,84 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var TextView        = bugpack.require('airbug.TextView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ShareRoomTextView = Class.extend(TextView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // BugView Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var TextView        = bugpack.require('airbug.TextView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {string} propertyName
-     * @param {*} propertyValue
+     * @class
+     * @extends {TextView}
      */
-    renderModelProperty: function(propertyName, propertyValue) {
-        this._super(propertyName, propertyValue);
-        switch (propertyName) {
-            case "name":
-                this.getTextElement().text(this.generateText(propertyValue));
-                break;
+    var ShareRoomTextView = Class.extend(TextView, {
+
+        _name: "airbug.ShareRoomTextView",
+
+
+        //-------------------------------------------------------------------------------
+        // BugView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {string} propertyName
+         * @param {*} propertyValue
+         */
+        renderModelProperty: function(propertyName, propertyValue) {
+            this._super(propertyName, propertyValue);
+            switch (propertyName) {
+                case "name":
+                    this.getTextElement().text(this.generateText(propertyValue));
+                    break;
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data            = this._super();
+            data.text           = this.generateText(this.getModel().getProperty("name"));
+            return data;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {string} roomName
+         * @return {string}
+         */
+        generateText: function(roomName) {
+            return "Share conversation \"" + roomName + "\"";
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data            = this._super();
-        data.text           = this.generateText(this.getModel().getProperty("name"));
-        return data;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {string} roomName
-     * @return {string}
-     */
-    generateText: function(roomName) {
-        return "Share conversation \"" + roomName + "\"";
-    }
+    bugpack.export("airbug.ShareRoomTextView", ShareRoomTextView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.ShareRoomTextView", ShareRoomTextView);
