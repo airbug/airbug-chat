@@ -181,28 +181,34 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {Object=} messageObject
-         * @param {function(Throwable=)} callback
+         * @param {function(Object=)} callback
          */
         processMessage: function(messageObject, callback) {
-            console.log("processMessage called with " + JSON.stringify(messageObject), null);
+            console.log("BridgeModule processMessage()");
 
-            if (messageObject.class === "currentUserManager" && messageObject.action === "login") {
-                console.log("BridgeModule logging in...");
-                callback("BridgeModule logging in...");
+            if (messageObject.type === "LoginRequest") {
+                var username = messageObject.data.username;
+                var password = messageObject.data.password;
                 var _this = this;
-                var username = messageObject.username;
-                var password = messageObject.password;
-
                 this.currentUserManagerModule.loginUser(username, password, function(throwable) {
                     if (!throwable) {
                         var currentUserMeldDocument = _this.currentUserManagerModule.currentUser.meldDocument;
-                        callback(null, _this.marshaller.marshalData(currentUserMeldDocument));
+                        callback({
+                            "type": "LoginSuccess",
+                            "data": _this.marshaller.marshalData(currentUserMeldDocument)
+                        });
                     } else {
-                        callback(JSON.stringify(throwable), null);
+                        callback({
+                            "type": "LoginError",
+                            "data": JSON.stringify(throwable)
+                        });
                     }
                 });
             } else {
-                callback("Unsupported message sent to BridgeModule", null);
+                callback({
+                            "type": "MessageError",
+                            "data": "Unsupported message sent to BridgeModule"
+                        });
             }
         },
 
@@ -217,9 +223,11 @@ require('bugpack').context("*", function(bugpack) {
         displayNotification: function(message) {
             if (this.bridge) {
                 this.bridge.sendMessage({
-                    type: "DisplayNotification",
+                    type: "UserNotification",
                     data: {
-                        message: message
+                        title: "Title",
+                        subtitle: "Subtitle",
+                        informativeText: "This is a test notification!"
                     }
                 })
             } else {

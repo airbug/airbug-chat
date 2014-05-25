@@ -38,6 +38,7 @@ Bridge.prototype = {
 
     receiveMessage: function(messageString) {
         var messageObject = JSON.parse(messageString);
+
         if (this.ready) {
             this.processMessage(messageObject);
         } else {
@@ -47,6 +48,7 @@ Bridge.prototype = {
 
     sendMessage: function(messageObject) {
         var messageString = JSON.stringify(messageObject);
+
         //Send messageString to the native layer
         if (this.receiverCallback) {
             this.receiverCallback(messageString);
@@ -55,7 +57,10 @@ Bridge.prototype = {
     },
 
     processMessage: function(messageObject) {
-        this.messageProcessor.processMessage(messageObject);
+        var _this = this;
+        this.messageProcessor.processMessage(messageObject, function(responseObject) {
+            _this.sendMessage(responseObject);
+        });
     },
 
     registerMessageProcessor: function(messageProcessor) {
@@ -79,3 +84,6 @@ Bridge.prototype = {
 };
 
 window.bridge = new Bridge();
+
+// Helps get around issue where native code can't access the proper context when calling the bridge's prototype functions
+window.receiveMessage = window.bridge.receiveMessage;
