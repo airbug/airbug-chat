@@ -46,6 +46,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ChatWidgetMessagesContainer = Class.extend(ListContainer, {
 
+        _name: "airbug.ChatWidgetMessagesContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------

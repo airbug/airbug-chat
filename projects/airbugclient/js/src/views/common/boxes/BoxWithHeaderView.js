@@ -5,54 +5,64 @@
 //@Export('airbug.BoxWithHeaderView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.BoxView')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BoxWithHeaderView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-header {{classes}}">' +
-                    '<div id="box-header-{{cid}}" class="box-header">' +
-                    '</div>' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var BoxView         = bugpack.require('airbug.BoxView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {BoxView}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
-    }
+    var BoxWithHeaderView = Class.extend(BoxView, {
+
+        _name: "airbug.BoxWithHeaderView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<div id="box-{{cid}}" class="box box-with-header {{classes}}">' +
+                        '<div id="box-header-{{cid}}" class="box-header">' +
+                        '</div>' +
+                        '<div id="box-body-{{cid}}" class="box-body">' +
+                        '</div>' +
+                    '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {jQuery}
+         */
+        getBoxHeaderElement: function() {
+            return this.findElement("#box-header-{{cid}}");
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.BoxWithHeaderView", BoxWithHeaderView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BoxWithHeaderView", BoxWithHeaderView);

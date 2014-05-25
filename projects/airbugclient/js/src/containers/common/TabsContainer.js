@@ -12,130 +12,134 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var TabsView                = bugpack.require('airbug.TabsView');
-var TabView                 = bugpack.require('airbug.TabView');
-var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {CarapaceContainer}
- */
-var TabsContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var TabsView                = bugpack.require('airbug.TabsView');
+    var TabView                 = bugpack.require('airbug.TabView');
+    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var view                    = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Array.<{container: CarapaceContainer, text: string}>} tabs
+     * @class
+     * @extends {CarapaceContainer}
      */
-    _constructor: function(tabs) {
+    var TabsContainer = Class.extend(CarapaceContainer, {
 
-        this._super();
+        _name: "airbug.TabsContainer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Array.<{container: CarapaceContainer, text: string}>}
+         * @constructs
+         * @param {Array.<{container: CarapaceContainer, text: string}>} tabs
          */
-        this.tabs         = tabs;
+        _constructor: function(tabs) {
+
+            this._super();
 
 
-        // Views
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Array.<{container: CarapaceContainer, text: string}>}
+             */
+            this.tabs           = tabs;
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {TabsView}
+             */
+            this.tabsView       = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {TabsView}
+         * @protected
          */
-        this.tabsView = null;
-    },
+        activateContainer: function() {
+            this._super();
+            $(this.getViewTop().getId()).tabs();
+        },
+
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            view(TabsView)
+                .name("tabsView")
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.tabsView);
+
+        },
+
+        /**
+         * @protected
+         */
+        createContainerChildren: function() {
+            this._super();
+
+            var _this = this;
+            this.tabs.forEach(function(tab){
+                _this.addContainerChild(tab.container);
+                var tabView = view(TabView)
+                    .attributes({
+                        href: tab.container.getViewTop().getId(),
+                        text: tab.text
+                    })
+                    .build();
+                _this.getViewTop().addViewChild(tabView, "ul");
+            });
+        }
+    });
 
     //-------------------------------------------------------------------------------
-    // CarapaceContainer Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
-        $(this.getViewTop().getId()).tabs();
-    },
-
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        view(TabsView)
-            .name("tabsView")
-            .build(this);
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.tabsView);
-
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-
-        var _this = this;
-        this.tabs.forEach(function(tab){
-            _this.addContainerChild(tab.container);
-            var tabView = view(TabView)
-                .attributes({
-                    href: tab.container.getViewTop().getId(),
-                    text: tab.text
-                })
-                .build();
-            _this.getViewTop().addViewChild(tabView, "ul");
-        });
-    }
+    bugpack.export("airbug.TabsContainer", TabsContainer);
 });
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.TabsContainer", TabsContainer);

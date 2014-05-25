@@ -41,7 +41,7 @@ var DialogueNameView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getDialogueNameElement: function() {
         return this.findElement("#dialogue-name-{{cid}}");

@@ -1,8 +1,18 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.WorkspaceBoxWithHeaderView')
+//@Export('airbug.DivView')
 
 //@Require('Class')
 //@Require('airbug.MustacheView')
@@ -30,27 +40,25 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {MustacheView}
      */
-    var WorkspaceBoxWithHeaderView = Class.extend(MustacheView, {
+    var DivView = Class.extend(MustacheView, {
 
-        _name: "airbug.WorkspaceBoxWithHeaderView",
+        _name: "airbug.DivView",
 
 
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="box-{{cid}}" class="workspace-widget box box-with-header {{classes}}">' +
-                '<div id="box-header-{{cid}}" class="workspace-widget-header box-header">' +
-                '</div>' +
-                '<div id="box-body-{{cid}}" class="workspace-widget-body box-body">' +
-                '</div>' +
+        template:
+            '<div id="div-{{cid}}" class="{{classes}}">' +
             '</div>'
     });
+
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.WorkspaceBoxWithHeaderView", WorkspaceBoxWithHeaderView);
+    bugpack.export("airbug.DivView", DivView);
 });

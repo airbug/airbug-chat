@@ -9,63 +9,71 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MultiColumnView     = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data      = this._super();
-        data.rowStyle = "row";
+    var MultiColumnView     = Class.extend(MustacheView, {
 
-        switch (this.attributes.rowStyle) {
-            case MultiColumnView.RowStyle.FLUID:
-                data.rowStyle = "row-fluid";
-                break;
+        _name: "airbug.MultiColumnView",
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data      = this._super();
+            data.rowStyle = "row";
+
+            switch (this.attributes.rowStyle) {
+                case MultiColumnView.RowStyle.FLUID:
+                    data.rowStyle = "row-fluid";
+                    break;
+            }
+            return data;
         }
-        return data;
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {number}
+     */
+    MultiColumnView.RowStyle = {
+        DEFAULT: 1,
+        FIXED: 1,
+        FLUID: 2
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.MultiColumnView", MultiColumnView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Properites
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {number}
- */
-MultiColumnView.RowStyle = {
-    DEFAULT: 1,
-    FIXED: 1,
-    FLUID: 2
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.MultiColumnView", MultiColumnView);

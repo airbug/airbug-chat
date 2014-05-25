@@ -40,11 +40,11 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="four-column-{{cid}}" class="{{rowStyle}} column 3column-container {{classes}}">' +
-                '<div id="column1of4-{{cid}}" class="column column1of4 leftrow {{leftColumnSpan}} {{leftHamburger}}"></div>' +
-                '<div id="column2of4-{{cid}}" class="column column2of4 {{centerLeftColumnSpan}}"></div>' +
-                '<div id="column3of4-{{cid}}" class="column column3of4 {{centerRightColumnSpan}} "></div>' +
-                '<div id="column4of4-{{cid}}" class="column column4of4 rightrow {{rightColumnSpan}} {{rightHamburger}}"></div>' +
+            '<div id="four-column-{{cid}}" class="{{rowStyle}} column-fill 3column-container {{classes}}">' +
+                '<div id="column1of4-{{cid}}" class="column-fill column1of4 leftrow {{leftColumnSpan}} {{leftHamburger}}"></div>' +
+                '<div id="column2of4-{{cid}}" class="column-fill column2of4 {{centerLeftColumnSpan}}"></div>' +
+                '<div id="column3of4-{{cid}}" class="column-fill column3of4 {{centerRightColumnSpan}} "></div>' +
+                '<div id="column4of4-{{cid}}" class="column-fill column4of4 rightrow {{rightColumnSpan}} {{rightHamburger}}"></div>' +
             '</div>',
 
 
@@ -53,28 +53,28 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getColumn1Of4Element: function() {
             return this.findElement("#column1of4-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getColumn2Of4Element: function() {
             return this.findElement("#column2of4-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getColumn3Of4Element: function() {
             return this.findElement("#column3of4-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getColumn4Of4Element: function() {
             return this.findElement("#column4of4-{{cid}}");

@@ -88,9 +88,11 @@ require('bugpack').context("*", function(bugpack) {
         TOGGLE: {
             CODE_EDITOR:            "CommandModuleCommand::toggle::codeEditor",
             CODE_EDITOR_SETTINGS:   "CommandModuleCommand::toggle::codeEditorSettings",
+            CODE_WORKSPACE:         "CommandModuleCommand::toggle::codeWorkspace",
             HAMBURGER_LEFT:         "CommandModuleCommand::toggle::hamburgerLeft",
             HAMBURGER_RIGHT:        "CommandModuleCommand::toggle::hamburgerRight",
-            IMAGE_LIST:             "CommandModuleCommand::toggle::imageList"
+            IMAGE_LIST:             "CommandModuleCommand::toggle::imageList",
+            IMAGE_WORKSPACE:        "CommandModuleCommand::toggle::imageWorkspace"
         },
         DISPLAY: {
             CODE:                   "CommandModuleCommand::display::code",

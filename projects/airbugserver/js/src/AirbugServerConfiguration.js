@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -34,343 +44,356 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-var connect                         = require('connect');
-var cookie                          = require('cookie');
-var cookie_signature                = require('cookie-signature');
-var express                         = require('express');
-var github                          = require('github');
-var http                            = require('http');
-var https                           = require('https');
-var imagemagick                     = require('imagemagick');
-var mongoose                        = require('mongoose');
-var mu2express                      = require('mu2express');
-var path                            = require('path');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var AirbugClientConfig              = bugpack.require('airbug.AirbugClientConfig');
-var AirbugServerConfig              = bugpack.require('airbug.AirbugServerConfig');
-var GithubApi                       = bugpack.require('airbugserver.GithubApi');
-var RequestContextBuilder           = bugpack.require('airbugserver.RequestContextBuilder');
-var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
-var AwsConfig                       = bugpack.require('aws.AwsConfig');
-var AwsUploader                     = bugpack.require('aws.AwsUploader');
-var BugFlow                         = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnotation');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var Marshaller                      = bugpack.require('bugmarsh.Marshaller');
-var MarshRegistry                   = bugpack.require('bugmarsh.MarshRegistry');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var BugCallRouter                   = bugpack.require('bugroute:bugcall.BugCallRouter');
-var Configbug                       = bugpack.require('configbug.Configbug');
-var ExpressApp                      = bugpack.require('express.ExpressApp');
-var ExpressServer                   = bugpack.require('express.ExpressServer');
-var Handshaker                      = bugpack.require('handshaker.Handshaker');
-var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
-var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
-var SocketIoServerConfig            = bugpack.require('socketio:server.SocketIoServerConfig');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                     = ArgAnnotation.arg;
-var bugmeta                 = BugMeta.context();
-var configuration           = ConfigurationAnnotation.configuration;
-var module                  = ModuleAnnotation.module;
-var property                = PropertyAnnotation.property;
-var $parallel               = BugFlow.$parallel;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var AirbugServerConfiguration = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Config Methods
+    // Common Modules
+    //-------------------------------------------------------------------------------
+
+    var connect                         = require('connect');
+    var cookie                          = require('cookie');
+    var cookie_signature                = require('cookie-signature');
+    var express                         = require('express');
+    var github                          = require('github');
+    var http                            = require('http');
+    var https                           = require('https');
+    var imagemagick                     = require('imagemagick');
+    var mongoose                        = require('mongoose');
+    var mu2express                      = require('mu2express');
+    var path                            = require('path');
+
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var AirbugClientConfig              = bugpack.require('airbug.AirbugClientConfig');
+    var AirbugServerConfig              = bugpack.require('airbug.AirbugServerConfig');
+    var GithubApi                       = bugpack.require('airbugserver.GithubApi');
+    var RequestContextBuilder           = bugpack.require('airbugserver.RequestContextBuilder');
+    var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
+    var AwsConfig                       = bugpack.require('aws.AwsConfig');
+    var AwsUploader                     = bugpack.require('aws.AwsUploader');
+    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+    var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnotation');
+    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var Marshaller                      = bugpack.require('bugmarsh.Marshaller');
+    var MarshRegistry                   = bugpack.require('bugmarsh.MarshRegistry');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var BugCallRouter                   = bugpack.require('bugroute:bugcall.BugCallRouter');
+    var Configbug                       = bugpack.require('configbug.Configbug');
+    var ExpressApp                      = bugpack.require('express.ExpressApp');
+    var ExpressServer                   = bugpack.require('express.ExpressServer');
+    var Handshaker                      = bugpack.require('handshaker.Handshaker');
+    var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
+    var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
+    var SocketIoServerConfig            = bugpack.require('socketio:server.SocketIoServerConfig');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var configuration           = ConfigurationAnnotation.configuration;
+    var module                  = ModuleAnnotation.module;
+    var property                = PropertyAnnotation.property;
+    var $parallel               = BugFlow.$parallel;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {AirbugClientConfig}
+     * @class
+     * @extends {Obj}
      */
-    airbugClientConfig: function() {
-        return new AirbugClientConfig();
-    },
+    var AirbugServerConfiguration = Class.extend(Obj, {
 
-    /**
-     * @return {AirbugServerConfig}
-     */
-    airbugServerConfig: function() {
-        return new AirbugServerConfig();
-    },
+        _name: "airbugserver.AirbugServerConfiguration",
 
-    /**
-     * @return {AwsUploader}
-     */
-    awsUploader: function() {
-        var configPath = path.resolve(__dirname, '..') + '/resources/config/aws-config.json';
-        // TODO - dkk - check to see if configPath exists
-        // TODO - dkk - figure out a better way of configuring this
-        return new AwsUploader(configPath);
-    },
 
-    /**
-     * @return {BugCallRouter}
-     */
-    bugCallRouter: function() {
-        return new BugCallRouter();
-    },
+        //-------------------------------------------------------------------------------
+        // Config Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {console|Console}
-     */
-    console: function() {
-        return console;
-    },
+        /**
+         * @return {AirbugClientConfig}
+         */
+        airbugClientConfig: function() {
+            return new AirbugClientConfig();
+        },
 
-    /**
-     * @return {*}
-     */
-    cookie: function() {
-        return cookie;
-    },
+        /**
+         * @return {AirbugServerConfig}
+         */
+        airbugServerConfig: function() {
+            return new AirbugServerConfig();
+        },
 
-    /**
-     * @return {*}
-     */
-    cookieSignature: function() {
-        return cookie_signature;
-    },
+        /**
+         * @return {AwsUploader}
+         */
+        awsUploader: function() {
+            var configPath = path.resolve(__dirname, '..') + '/resources/config/aws-config.json';
+            // TODO - dkk - check to see if configPath exists
+            // TODO - dkk - figure out a better way of configuring this
+            return new AwsUploader(configPath);
+        },
 
-    /**
-     * @return {Express}
-     */
-    express: function() {
-        return express;
-    },
+        /**
+         * @return {BugCallRouter}
+         */
+        bugCallRouter: function() {
+            return new BugCallRouter();
+        },
 
-    /**
-     * @param {Express} express
-     * @return {ExpressApp}
-     */
-    expressApp: function(express) {
-        return new ExpressApp(express);
-    },
+        /**
+         * @return {console|Console}
+         */
+        console: function() {
+            return console;
+        },
 
-    /**
-     * @param {http} http
-     * @param {ExpressApp} expressApp
-     * @return {ExpressServer}
-     */
-    expressServer: function(http, expressApp) {
-        return new ExpressServer(http, expressApp);
-    },
+        /**
+         * @return {*}
+         */
+        cookie: function() {
+            return cookie;
+        },
 
-    /**
-     * @return {*}
-     */
-    github: function() {
-        return github;
-    },
+        /**
+         * @return {*}
+         */
+        cookieSignature: function() {
+            return cookie_signature;
+        },
 
-    /**
-     * @param {https} https
-     * @param {github} github
-     * @param {AirbugServerConfig} airbugServerConfig
-     * @return {GithubApi}
-     */
-    githubApi: function(https, github, airbugServerConfig) {
-        return new GithubApi(https, github, airbugServerConfig);
-    },
+        /**
+         * @return {Express}
+         */
+        express: function() {
+            return express;
+        },
 
-    /**
-     * @return {Handshaker}
-     */
-    handshaker: function() {
-        return new Handshaker([]);
-    },
+        /**
+         * @param {Express} express
+         * @return {ExpressApp}
+         */
+        expressApp: function(express) {
+            return new ExpressApp(express);
+        },
 
-    /**
-     * @return {*}
-     */
-    http: function() {
-        return http;
-    },
+        /**
+         * @param {http} http
+         * @param {ExpressApp} expressApp
+         * @return {ExpressServer}
+         */
+        expressServer: function(http, expressApp) {
+            return new ExpressServer(http, expressApp);
+        },
 
-    /**
-     * @return {*}
-     */
-    https: function() {
-        return https;
-    },
+        /**
+         * @return {*}
+         */
+        github: function() {
+            return github;
+        },
 
-    /**
-     * @return {*}
-     */
-    imagemagick: function() {
-        return imagemagick;
-    },
+        /**
+         * @param {https} https
+         * @param {github} github
+         * @param {AirbugServerConfig} airbugServerConfig
+         * @return {GithubApi}
+         */
+        githubApi: function(https, github, airbugServerConfig) {
+            return new GithubApi(https, github, airbugServerConfig);
+        },
 
-    /**
-     * @return {*}
-     */
-    mongoose: function() {
-        return mongoose;
-    },
+        /**
+         * @return {Handshaker}
+         */
+        handshaker: function() {
+            return new Handshaker([]);
+        },
 
-    /**
-     * @return {RequestContextBuilder}
-     */
-    requestContextBuilder: function() {
-        return new RequestContextBuilder();
-    },
+        /**
+         * @return {*}
+         */
+        http: function() {
+            return http;
+        },
 
-    /**
-     * @return {SessionServiceConfig}
-     */
-    sessionServiceConfig: function() {
-        return new SessionServiceConfig({});
-    },
+        /**
+         * @return {*}
+         */
+        https: function() {
+            return https;
+        },
 
-    /**
-     * @param {SocketIoServer} socketIoServer
-     * @return {SocketIoManager}
-     */
-    socketIoManager: function(socketIoServer) {
-        return new SocketIoManager(socketIoServer, '/api/airbug');
-    },
+        /**
+         * @return {*}
+         */
+        imagemagick: function() {
+            return imagemagick;
+        },
 
-    /**
-     * @param {SocketIoServerConfig} config
-     * @param {ExpressServer} expressServer
-     * @param {Handshaker} handshaker
-     * @return {SocketIoServer}
-     */
-    socketIoServer: function(config, expressServer, handshaker) {
-        return new SocketIoServer(config, expressServer, handshaker);
-    },
+        /**
+         * @return {*}
+         */
+        mongoose: function() {
+            return mongoose;
+        },
 
-    /**
-     * @return {SocketIoServerConfig}
-     */
-    socketIoServerConfig: function() {
-        return new SocketIoServerConfig({});
-    }
+        /**
+         * @return {RequestContextBuilder}
+         */
+        requestContextBuilder: function() {
+            return new RequestContextBuilder();
+        },
+
+        /**
+         * @return {SessionServiceConfig}
+         */
+        sessionServiceConfig: function() {
+            return new SessionServiceConfig({});
+        },
+
+        /**
+         * @param {SocketIoServer} socketIoServer
+         * @return {SocketIoManager}
+         */
+        socketIoManager: function(socketIoServer) {
+            return new SocketIoManager(socketIoServer, '/api/airbug');
+        },
+
+        /**
+         * @param {SocketIoServerConfig} config
+         * @param {ExpressServer} expressServer
+         * @param {Handshaker} handshaker
+         * @return {SocketIoServer}
+         */
+        socketIoServer: function(config, expressServer, handshaker) {
+            return new SocketIoServer(config, expressServer, handshaker);
+        },
+
+        /**
+         * @return {SocketIoServerConfig}
+         */
+        socketIoServerConfig: function() {
+            return new SocketIoServerConfig({});
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(AirbugServerConfiguration).with(
+        configuration("airbugServerConfiguration").modules([
+
+            //-------------------------------------------------------------------------------
+            // AirBugServer
+            //-------------------------------------------------------------------------------
+
+            module("console"),
+            module("cookie"),
+            module("cookieSignature"),
+            module("http"),
+            module("https"),
+            module("imagemagick"),
+            module("github"),
+            module("mongoose"),
+            module("requestContextBuilder"),
+
+
+            //-------------------------------------------------------------------------------
+            // Config
+            //-------------------------------------------------------------------------------
+
+            module("airbugClientConfig"),
+            module("airbugServerConfig"),
+            module("sessionServiceConfig"),
+
+
+            //-------------------------------------------------------------------------------
+            // Express
+            //-------------------------------------------------------------------------------
+
+            module("express"),
+            module("expressApp")
+                .args([
+                    arg().ref("express")
+                ]),
+            module("expressServer")
+                .args([
+                    arg().ref("http"),
+                    arg().ref("expressApp")
+                ]),
+
+
+
+            //-------------------------------------------------------------------------------
+            // BugJs
+            //-------------------------------------------------------------------------------
+
+            module('awsUploader'),
+
+
+            //-------------------------------------------------------------------------------
+            // Util
+            //-------------------------------------------------------------------------------
+
+            module("handshaker"),
+            module("githubApi")
+                .args([
+                    arg().ref("https"),
+                    arg().ref("github"),
+                    arg().ref("airbugServerConfig")
+                ]),
+
+
+            //-------------------------------------------------------------------------------
+            // Sockets
+            //-------------------------------------------------------------------------------
+
+            module("socketIoManager")
+                .args([
+                    arg().ref("socketIoServer")
+                ]),
+            module("socketIoServer").
+                args([
+                    arg().ref("socketIoServerConfig"),
+                    arg().ref("expressServer"),
+                    arg().ref("handshaker")
+                ]),
+            module("socketIoServerConfig"),
+
+
+            //-------------------------------------------------------------------------------
+            // BugCall
+            //-------------------------------------------------------------------------------
+
+            module("bugCallRouter")
+        ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbugserver.AirbugServerConfiguration", AirbugServerConfiguration);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(AirbugServerConfiguration).with(
-    configuration("airbugServerConfiguration").modules([
-
-        //-------------------------------------------------------------------------------
-        // AirBugServer
-        //-------------------------------------------------------------------------------
-
-        module("console"),
-        module("cookie"),
-        module("cookieSignature"),
-        module("http"),
-        module("https"),
-        module("imagemagick"),
-        module("github"),
-        module("mongoose"),
-        module("requestContextBuilder"),
-
-
-        //-------------------------------------------------------------------------------
-        // Config
-        //-------------------------------------------------------------------------------
-
-        module("airbugClientConfig"),
-        module("airbugServerConfig"),
-        module("sessionServiceConfig"),
-
-
-        //-------------------------------------------------------------------------------
-        // Express
-        //-------------------------------------------------------------------------------
-
-        module("express"),
-        module("expressApp")
-            .args([
-                arg().ref("express")
-            ]),
-        module("expressServer")
-            .args([
-                arg().ref("http"),
-                arg().ref("expressApp")
-            ]),
-
-
-
-        //-------------------------------------------------------------------------------
-        // BugJs
-        //-------------------------------------------------------------------------------
-
-        module('awsUploader'),
-
-
-        //-------------------------------------------------------------------------------
-        // Util
-        //-------------------------------------------------------------------------------
-
-        module("handshaker"),
-        module("githubApi")
-            .args([
-                arg().ref("https"),
-                arg().ref("github"),
-                arg().ref("airbugServerConfig")
-            ]),
-
-
-        //-------------------------------------------------------------------------------
-        // Sockets
-        //-------------------------------------------------------------------------------
-
-        module("socketIoManager")
-            .args([
-                arg().ref("socketIoServer")
-            ]),
-        module("socketIoServer").
-            args([
-                arg().ref("socketIoServerConfig"),
-                arg().ref("expressServer"),
-                arg().ref("handshaker")
-            ]),
-        module("socketIoServerConfig"),
-
-
-        //-------------------------------------------------------------------------------
-        // BugCall
-        //-------------------------------------------------------------------------------
-
-        module("bugCallRouter")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbugserver.AirbugServerConfiguration", AirbugServerConfiguration);

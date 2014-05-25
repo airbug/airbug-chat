@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,112 +22,118 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var GithubLoginButtonContainer      = bugpack.require('airbug.GithubLoginButtonContainer');
-var PanelView                       = bugpack.require('airbug.PanelView');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var view                            = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {CarapaceContainer}
- */
-var AlternateLoginPanelContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                           = bugpack.require('Class');
+    var GithubLoginButtonContainer      = bugpack.require('airbug.GithubLoginButtonContainer');
+    var PanelView                       = bugpack.require('airbug.PanelView');
+    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var view                            = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceContainer}
+     */
+    var AlternateLoginPanelContainer = Class.extend(CarapaceContainer, {
+
+        _name: "airbug.AlternateLoginPanelContainer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        // Views
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {PanelView}
+         * @constructs
          */
-        this.panelView                      = null;
+        _constructor: function() {
+
+            this._super();
 
 
-        // Containers
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {PanelView}
+             */
+            this.panelView                      = null;
+
+
+            // Containers
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @protected
+             * @type {GithubLoginButtonContainer}
+             */
+            this.githubLoginButtonContainer     = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
         /**
          * @protected
-         * @type {GithubLoginButtonContainer}
          */
-        this.githubLoginButtonContainer     = null;
-    },
+        createContainer: function() {
+            this._super();
+
+
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            this.panelView =
+                view(PanelView)
+                    .build();
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.panelView);
+        },
+
+        /**
+         * @protected
+         */
+        createContainerChildren: function() {
+            this._super();
+            this.githubLoginButtonContainer = new GithubLoginButtonContainer();
+            this.addContainerChild(this.githubLoginButtonContainer, "#panel-body-" + this.panelView.getCid());
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceController Implementation
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
-        //-------------------------------------------------------------------------------
-
-        this.panelView =
-            view(PanelView)
-                .build();
-
-
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
-
-        this.setViewTop(this.panelView);
-    },
-
-    /**
-     * @protected
-     */
-    createContainerChildren: function() {
-        this._super();
-        this.githubLoginButtonContainer = new GithubLoginButtonContainer();
-        this.addContainerChild(this.githubLoginButtonContainer, "#panel-body-" + this.panelView.getCid());
-    }
+    bugpack.export("airbug.AlternateLoginPanelContainer", AlternateLoginPanelContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.AlternateLoginPanelContainer", AlternateLoginPanelContainer);

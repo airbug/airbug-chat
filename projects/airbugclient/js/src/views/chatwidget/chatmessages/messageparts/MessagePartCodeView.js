@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -39,9 +49,11 @@ require('bugpack').context("*", function(bugpack) {
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="message-part-{{cid}}" class="message-code">' +
-                        '<pre><code id="code-{{cid}}" class="{{model.codeLanguage}}">{{model.code}}</code></pre>' +
-                    '</div>',
+        template:
+            '<div id="message-part-{{cid}}" class="message-code message-part">' +
+                '<div id="message-part-controls-{{cid}}" class="message-part-controls"></div>' +
+                '<pre><code id="code-{{cid}}" class="{{model.codeLanguage}}">{{model.code}}</code></pre>' +
+            '</div>',
 
 
         //-------------------------------------------------------------------------------
@@ -49,7 +61,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getCodeElement: function() {
             return this.findElement("#code-{{cid}}");
@@ -65,7 +77,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         createView: function() {
             this._super();
-            var codeBlock = this.getCodeElement().find("pre").get()[0];
+            var codeBlock = this.getCodeElement().get()[0];
             if (codeBlock) {
                 hljs.highlightBlock(codeBlock);
             }
@@ -82,7 +94,7 @@ require('bugpack').context("*", function(bugpack) {
                 case "code":
                     var codeElement = this.getCodeElement();
                     codeElement.text(propertyValue);
-                    var codeBlock = codeElement.find("pre").get()[0];
+                    var codeBlock = codeElement.get()[0];
                     if (codeBlock) {
                         hljs.highlightBlock(codeBlock);
                     }

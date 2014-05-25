@@ -41,7 +41,7 @@ var TextView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getTextElement: function() {
         return this.$el;

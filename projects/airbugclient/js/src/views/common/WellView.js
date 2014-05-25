@@ -52,7 +52,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getWellElement: function() {
             return this.findElement("#well-{{cid}}");

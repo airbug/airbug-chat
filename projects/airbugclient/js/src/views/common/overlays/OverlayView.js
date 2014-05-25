@@ -55,14 +55,14 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getOverlayElement: function() {
             return this.findElement("#overlay-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getOverlayBackgroundElement: function() {
             return this.findElement("#overlay-background-{{cid}}");

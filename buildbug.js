@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Requires
 //-------------------------------------------------------------------------------
@@ -49,7 +59,7 @@ var dependencies        = {
     imagemagick: "0.1.3",
     mu2express: "0.0.1",
     mongodb: "1.3.23",
-    mongoose: "3.8.4",
+    mongoose: "3.8.9",
     redis: "0.10.0",
     "socket.io": "0.9.16",
     bcrypt: "0.7.7",
@@ -62,8 +72,13 @@ var dependencies        = {
 //-------------------------------------------------------------------------------
 
 buildProperties({
+    name: name,
+    version: version
+});
+
+buildProperties({
     bridge: {
-        source: "./projects/airbugclient/js/scripts/airbug-api-bridge.js",
+        source: "./projects/airbugplugin/js/scripts/airbug-api-bridge.js",
         outputFile: "{{distPath}}/airbug-api-bridge.js",
         outputMinFile: "{{distPath}}/airbug-api-bridge.min.js"
     },
@@ -73,9 +88,9 @@ buildProperties({
         outputMinFile: "{{distPath}}/airbug-application-loader.min.js"
     },
     static: {
-        buildPath: buildProject.getProperty("buildPath") + "/static",
+        buildPath: buildProject.getProperty("buildPath") + "/static/{{name}}/{{version}}",
         name: name + "-static",
-        version: version,
+        version: "{{version}}",
         outputFile: "{{distPath}}/{{static.name}}.js",
         outputMinFile: "{{distPath}}/{{static.name}}.min.js",
         sourcePaths: [
@@ -238,9 +253,9 @@ buildProperties({
     worker:  {
         packageJson: {
             name: "airbugworker",
-                version: version,
-                dependencies: dependencies,
-                scripts: {
+            version: version,
+            dependencies: dependencies,
+            scripts: {
                 start: "node ./scripts/airbug-worker-application-start.js"
             }
         },
@@ -275,9 +290,9 @@ buildProperties({
         unitTest: {
             packageJson: {
                 name: "airbugworker-test",
-                    version: version,
-                    dependencies: dependencies,
-                    scripts: {
+                version: version,
+                dependencies: dependencies,
+                scripts: {
                     start: "node ./scripts/airbug-worker-application-start.js"
                 }
             },
@@ -365,7 +380,6 @@ buildTarget('local').buildFlow(
             }
         }),*/
         parallel([
-
             series([
                 parallel([
                     series([
@@ -686,89 +700,8 @@ buildTarget('short').buildFlow(
                         packageName: "{{server.packageJson.name}}",
                         packageVersion: "{{server.packageJson.version}}"
                     }
-                }),
-                targetTask("s3PutFile", {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("server.packageJson.name"),
-                            buildProject.getProperty("server.packageJson.version"));
-                        task.updateProperties({
-                            file: packedNodePackage.getFilePath(),
-                            options: {
-
-                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
-
-                                acl: 'public-read',
-                                encrypt: true
-                            }
-                        });
-                    },
-                    properties: {
-                        bucket: "{{local-bucket}}"
-                    }
                 })
-            ])/*,
-            series([
-                targetTask('createNodePackage', {
-                    properties: {
-                        packageJson: buildProject.getProperty("worker.packageJson"),
-                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
-                        sourcePaths: buildProject.getProperty("worker.sourcePaths").concat(
-                            buildProject.getProperty("worker.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("worker.scriptPaths").concat(
-                            buildProject.getProperty("worker.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("worker.unitTest.testPaths")
-                    }
-                }),
-                targetTask('generateBugPackRegistry', {
-                    init: function(task, buildProject, properties) {
-                        var nodePackage = nodejs.findNodePackage(
-                            buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version")
-                        );
-                        task.updateProperties({
-                            sourceRoot: nodePackage.getBuildPath()
-                        });
-                    }
-                }),
-                targetTask('packNodePackage', {
-                    properties: {
-                        packageName: buildProject.getProperty("worker.packageJson.name"),
-                        packageVersion: buildProject.getProperty("worker.packageJson.version")
-                    }
-                }),
-                targetTask('startNodeModuleTests', {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(
-                            buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version")
-                        );
-                        task.updateProperties({
-                            modulePath: packedNodePackage.getFilePath()
-                        });
-                    }
-                }),
-                targetTask("s3PutFile", {
-                    init: function(task, buildProject, properties) {
-                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("worker.packageJson.name"),
-                            buildProject.getProperty("worker.packageJson.version"));
-                        task.updateProperties({
-                            file: packedNodePackage.getFilePath(),
-                            options: {
-
-                                //TODO BRN: In order to protect this file we need to limit the access to this artifact and provide some sort of http auth access so that the artifacts are retrievable via npm install. This would need to be done in a server wrapper.
-
-                                acl: 'public-read',
-                                encrypt: true
-                            }
-                        });
-                    },
-                    properties: {
-                        bucket: "{{local-bucket}}"
-                    }
-                })
-            ])*/
+            ])
         ])
     ])
 );

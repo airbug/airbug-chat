@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 /**
  * @constructor
  */
@@ -29,13 +38,16 @@ var Bridge = function() {
 
     /**
      * @private
-     * @type {null}
+     * @type {function(string)}
      */
     this.receiverCallback   = null;
 };
 
 Bridge.prototype = {
 
+    /**
+     * @param {string} messageString
+     */
     receiveMessage: function(messageString) {
         var messageObject = JSON.parse(messageString);
 
@@ -46,6 +58,12 @@ Bridge.prototype = {
         }
     },
 
+    /**
+     * @param {{
+     *      type: string,
+     *      data: Object
+     * }} messageObject
+     */
     sendMessage: function(messageObject) {
         var messageString = JSON.stringify(messageObject);
 
@@ -53,9 +71,14 @@ Bridge.prototype = {
         if (this.receiverCallback) {
             this.receiverCallback(messageString);
         }
-        //execute callback once that message has been ack.
     },
 
+    /**
+     * @param {{
+     *      type: string,
+     *      data: Object
+     * }} messageObject
+     */
     processMessage: function(messageObject) {
         var _this = this;
         this.messageProcessor.processMessage(messageObject, function(responseObject) {
@@ -63,6 +86,11 @@ Bridge.prototype = {
         });
     },
 
+    /**
+     * @param {{
+     *      processMessage: function({type: string, data: Object})
+     * }} messageProcessor
+     */
     registerMessageProcessor: function(messageProcessor) {
         if (!this.messageProcessor) {
             this.messageProcessor = messageProcessor;
@@ -78,8 +106,16 @@ Bridge.prototype = {
         }
     },
 
-    queueMessage: function(messageObject, callback) {
-        this.queue.push({ messageObject: messageObject});
+    /**
+     * @param {{
+     *      type: string,
+     *      data: Object
+     * }} messageObject
+     */
+    queueMessage: function(messageObject) {
+        this.queue.push({
+            messageObject: messageObject
+        });
     }
 };
 

@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,48 +18,50 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Event           = bugpack.require('Event');
 
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Event}
- */
-var WorkspaceEvent = Class.extend(Event, {});
+    /**
+     * @class
+     * @extends {Event}
+     */
+    var WorkspaceEvent = Class.extend(Event, {
+        _name: "airbug.WorkspaceEvent"
+    });
 
 
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Static Variables
+    //-------------------------------------------------------------------------------
 
-/**
- * @static
- * @enum {string}
- */
-WorkspaceEvent.EventType = {
-    CHANGED: "WorkspaceEvent:Changed",
-    CLOSED: "WorkspaceEvent:Closed",
-    OPENED: "WorkspaceEvent:Opened"
-};
+    /**
+     * @static
+     * @enum {string}
+     */
+    WorkspaceEvent.EventType = {
+        CHANGED: "WorkspaceEvent:Changed",
+        CLOSED: "WorkspaceEvent:Closed",
+        OPENED: "WorkspaceEvent:Opened"
+    };
 
 
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-bugpack.export("airbug.WorkspaceEvent", WorkspaceEvent);
+    bugpack.export("airbug.WorkspaceEvent", WorkspaceEvent);
+});

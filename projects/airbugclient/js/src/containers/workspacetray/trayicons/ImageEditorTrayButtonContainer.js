@@ -50,6 +50,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var ImageEditorTrayButtonContainer = Class.extend(ButtonContainer, {
 
+        _name: "airbug.ImageEditorTrayButtonContainer",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -144,7 +147,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {ButtonViewEvent} event
          */
         hearImageEditorTrayButtonClickedEvent: function(event) {
-            this.getCommandModule().relayCommand(CommandType.TOGGLE.IMAGE_LIST, {});
+            this.getCommandModule().relayCommand(CommandType.TOGGLE.IMAGE_WORKSPACE, {});
         }
 
     });

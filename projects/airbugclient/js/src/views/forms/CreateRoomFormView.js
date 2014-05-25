@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         template:
-            '<div id="create-room-form-{{cid}}}}" class="form-wrapper-naked">' +
+            '<div id="create-room-form-{{cid}}" class="form-wrapper-naked">' +
                 '<form class="form-horizontal create-conversation-form">' +
                     '<legend>Start a conversation</legend>' +
                     '<div class="control-group">' +

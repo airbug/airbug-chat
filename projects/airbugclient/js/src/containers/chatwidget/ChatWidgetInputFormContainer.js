@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,10 +15,14 @@
 //@Export('airbug.ChatWidgetInputFormContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
+//@Require('airbug.ButtonDropdownView')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CheckBoxInputView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.DivView')
+//@Require('airbug.DropdownItemDividerView')
+//@Require('airbug.DropdownItemView')
+//@Require('airbug.DropdownViewEvent')
 //@Require('airbug.FormControlGroupView')
 //@Require('airbug.FormView')
 //@Require('airbug.FormViewEvent')
@@ -16,6 +30,8 @@
 //@Require('airbug.KeyBoardEvent')
 //@Require('airbug.LabelView')
 //@Require('airbug.MultiColumnView')
+//@Require('airbug.NakedButtonDropdownView')
+//@Require('airbug.NakedButtonView')
 //@Require('airbug.TextAreaView')
 //@Require('airbug.TextView')
 //@Require('airbug.TwoColumnView')
@@ -36,37 +52,43 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var ButtonView              = bugpack.require('airbug.ButtonView');
-    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-    var CheckBoxInputView       = bugpack.require('airbug.CheckBoxInputView');
-    var CommandModule           = bugpack.require('airbug.CommandModule');
-    var FormControlGroupView    = bugpack.require('airbug.FormControlGroupView');
-    var FormView                = bugpack.require('airbug.FormView');
-    var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
-    var IconView                = bugpack.require('airbug.IconView');
-    var KeyBoardEvent           = bugpack.require('airbug.KeyBoardEvent');
-    var LabelView               = bugpack.require('airbug.LabelView');
-    var MultiColumnView         = bugpack.require('airbug.MultiColumnView');
-    var TextAreaView            = bugpack.require('airbug.TextAreaView');
-    var TextView                = bugpack.require('airbug.TextView');
-    var TwoColumnView           = bugpack.require('airbug.TwoColumnView');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var ButtonDropdownView              = bugpack.require('airbug.ButtonDropdownView');
+    var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+    var CheckBoxInputView               = bugpack.require('airbug.CheckBoxInputView');
+    var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var DivView                         = bugpack.require('airbug.DivView');
+    var DropdownItemDividerView         = bugpack.require('airbug.DropdownItemDividerView');
+    var DropdownItemView                = bugpack.require('airbug.DropdownItemView');
+    var DropdownViewEvent               = bugpack.require('airbug.DropdownViewEvent');
+    var FormControlGroupView            = bugpack.require('airbug.FormControlGroupView');
+    var FormView                        = bugpack.require('airbug.FormView');
+    var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
+    var IconView                        = bugpack.require('airbug.IconView');
+    var KeyBoardEvent                   = bugpack.require('airbug.KeyBoardEvent');
+    var LabelView                       = bugpack.require('airbug.LabelView');
+    var MultiColumnView                 = bugpack.require('airbug.MultiColumnView');
+    var NakedButtonDropdownView         = bugpack.require('airbug.NakedButtonDropdownView');
+    var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
+    var TextAreaView                    = bugpack.require('airbug.TextAreaView');
+    var TextView                        = bugpack.require('airbug.TextView');
+    var TwoColumnView                   = bugpack.require('airbug.TwoColumnView');
+    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredAnnotation.autowired;
-    var bugmeta                 = BugMeta.context();
-    var CommandType             = CommandModule.CommandType;
-    var property                = PropertyAnnotation.property;
-    var view                    = ViewBuilder.view;
+    var autowired                       = AutowiredAnnotation.autowired;
+    var bugmeta                         = BugMeta.context();
+    var CommandType                     = CommandModule.CommandType;
+    var property                        = PropertyAnnotation.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------
@@ -88,9 +110,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ConversationModel} conversationModel
+         * @param {MessagePartModel} messagePartModel
          */
-        _constructor: function(conversationModel) {
+        _constructor: function(messagePartModel) {
 
             this._super();
 
@@ -101,9 +123,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ConversationModel}
+             * @type {MessagePartModel}
              */
-            this.conversationModel              = conversationModel;
+            this.messagePartModel               = messagePartModel;
 
 
             // Modules
@@ -133,9 +155,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ButtonView}
+             * @type {DropdownItemView}
              */
-            this.chooseOrUploadImageButtonView  = null;
+            this.chooseExistingItemView         = null;
 
             /**
              * @private
@@ -157,6 +179,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {DropdownItemView}
+             */
+            this.takeScreenshotItemView         = null;
+
+            /**
+             * @private
              * @type {TextAreaView}
              */
             this.textAreaView                   = null;
@@ -166,6 +194,12 @@ require('bugpack').context("*", function(bugpack) {
              * @type {TwoColumnView}
              */
             this.twoColumnView                  = null;
+
+            /**
+             * @private
+             * @type {DropdownItemView}
+             */
+            this.uploadPhotoItemView            = null;
         },
 
 
@@ -194,6 +228,7 @@ require('bugpack').context("*", function(bugpack) {
             view(TwoColumnView)
                 .name("twoColumnView")
                 .attributes({
+                    classes: "chat-widget-input",
                     configuration: TwoColumnView.Configuration.THIN_RIGHT,
                     rowStyle: MultiColumnView.RowStyle.FLUID
                 })
@@ -210,11 +245,18 @@ require('bugpack').context("*", function(bugpack) {
                                     classes: "control-group-textarea"
                                 })
                                 .children([
-                                    view(TextAreaView)
-                                        .name("textAreaView")
+                                    view(DivView)
                                         .attributes({
-                                            name: "text"
+                                            classes: "chat-widget-input-spacing"
                                         })
+                                        .children([
+                                            view(TextAreaView)
+                                                .name("textAreaView")
+                                                .attributes({
+                                                    name: "text",
+                                                    classes: "chat-widget-input-textarea"
+                                                })
+                                        ])
                                 ]),
                             view(FormControlGroupView)
                                 .attributes({
@@ -242,43 +284,85 @@ require('bugpack').context("*", function(bugpack) {
                         })
                         .appendTo("#column2of2-{{cid}}")
                         .children([
-                            view(ButtonView)
-                                .name("chooseOrUploadImageButtonView")
+                            view(DivView)
                                 .appendTo("#column1of2-{{cid}}")
                                 .attributes({
-                                    buttonClasses: "choose-or-upload-image-button"
+                                    classes: "chat-widget-input-spacing chat-widget-input-button-wrapper"
                                 })
                                 .children([
-                                    view(IconView)
+                                    view(NakedButtonDropdownView)
                                         .attributes({
-                                            type: IconView.Type.CAMERA
+                                            buttonClasses: "btn-fill chat-widget-input-button",
+                                            classes: "btn-fill",
+                                            direction: ButtonDropdownView.DropDirection.UP
                                         })
-                                        .appendTo("#button-{{cid}}")
+                                        .children([
+                                            view(IconView)
+                                                .appendTo("#dropdown-button-{{cid}}")
+                                                .attributes({
+                                                    type: IconView.Type.CAMERA,
+                                                    color: IconView.Color.BLACK
+                                                }),
+                                            view(DropdownItemView)
+                                                .name("uploadPhotoItemView")
+                                                .appendTo("#dropdown-list-{{cid}}")
+                                                .children([
+                                                    view(TextView)
+                                                        .appendTo("#dropdown-item-{{cid}}")
+                                                        .attributes({text: "Upload Photo"})
+                                                ]),
+                                            view(DropdownItemDividerView)
+                                                .appendTo("#dropdown-list-{{cid}}"),
+                                            view(DropdownItemView)
+                                                .name("chooseExistingItemView")
+                                                .appendTo("#dropdown-list-{{cid}}")
+                                                .children([
+                                                    view(TextView)
+                                                        .appendTo("#dropdown-item-{{cid}}")
+                                                        .attributes({text: "Choose Existing"})
+                                                ]),
+                                            view(DropdownItemDividerView)
+                                                .appendTo("#dropdown-list-{{cid}}"),
+                                            view(DropdownItemView)
+                                                .name("takeScreenshotItemView")
+                                                .appendTo("#dropdown-list-{{cid}}")
+                                                .children([
+                                                    view(TextView)
+                                                        .appendTo("#dropdown-item-{{cid}}")
+                                                        .attributes({text: "Take Screenshot"})
+                                                ])
+                                        ])
                                 ]),
-                            view(ButtonView)
-                                .name("sendButtonView")
+                            view(DivView)
                                 .appendTo("#column2of2-{{cid}}")
                                 .attributes({
-                                    classes: "chat-widget-input-send-button-wrapper",
-                                    buttonClasses: "chat-widget-input-send-button"
+                                    classes: "chat-widget-input-spacing chat-widget-input-button-wrapper"
                                 })
                                 .children([
-                                    view(TextView)
-                                        .name("sendButtonTextView")
+                                    view(NakedButtonView)
+                                        .name("sendButtonView")
                                         .attributes({
-                                            text: "Send"
+                                            classes: "btn-fill chat-widget-input-button"
                                         })
-                                        .appendTo('#button-{{cid}}')
+                                        .children([
+                                            view(TextView)
+                                                .name("sendButtonTextView")
+                                                .attributes({
+                                                    text: "Send"
+                                                })
+                                                .appendTo('#button-{{cid}}')
+                                        ])
                                 ])
                         ])
                 ])
                 .build(this);
 
 
-            // Wire Up Views
+            // Wire Up
             //-------------------------------------------------------------------------------
 
             this.setViewTop(this.twoColumnView);
+            this.addModel(this.messagePartModel);
         },
 
         /**
@@ -286,11 +370,13 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeContainer: function() {
             this._super();
-            this.chooseOrUploadImageButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
-            this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.handleKeyPressEvent, this);
-            this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
-            this.twoColumnView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-            this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
+            this.chooseExistingItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearChooseExistingItemDropdownSelected, this);
+            this.takeScreenshotItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearTakeScreenshotItemDropdownSelected, this);
+            this.uploadPhotoItemView.removeEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearUploadPhotoItemDropdownSelected, this);
+            this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.hearKeyPressEvent, this);
+            this.textAreaView.removeEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.hearKeyUpEvent, this);
+            this.twoColumnView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+            this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
         },
 
         /**
@@ -298,11 +384,13 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeContainer: function() {
             this._super();
-            this.chooseOrUploadImageButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleChooseOrUploadImageViewClickedEvent, this);
-            this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.handleKeyPressEvent, this);
-            this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.handleKeyUpEvent, this);
-            this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.handleFormSubmittedEvent, this);
-            this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.handleSendButtonClickedEvent, this);
+            this.chooseExistingItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearChooseExistingItemDropdownSelected, this);
+            this.takeScreenshotItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearTakeScreenshotItemDropdownSelected, this);
+            this.uploadPhotoItemView.addEventListener(DropdownViewEvent.EventType.DROPDOWN_SELECTED, this.hearUploadPhotoItemDropdownSelected, this);
+            this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_PRESS, this.hearKeyPressEvent, this);
+            this.textAreaView.addEventListener(KeyBoardEvent.EventTypes.KEY_UP, this.hearKeyUpEvent, this);
+            this.twoColumnView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+            this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClickedEvent, this);
         },
 
 
@@ -347,19 +435,21 @@ require('bugpack').context("*", function(bugpack) {
         relayChatMessage: function() {
             // currently only supports text chatmessages via this function
             var formData = this.getFormData();
-            if (/\S/.test(formData.text)) {
-                if (!formData.type) {
-                    formData.type = "text";
-                }
+            if (/\S/.test(formData.text) || this.messagePartModel.getProperty("type")) {
                 var chatMessageData = {
-                    type: formData.type,
+                    type: "text",
                     body: {parts: [{
                         type: "text",
                         text: formData.text
                     }]}
                 };
+                if (this.messagePartModel && this.messagePartModel.getProperty("type")) {
+                    chatMessageData.body.parts.push(this.messagePartModel.toLiteral());
+                    chatMessageData.type = "multipart";
+                }
                 this.messageHandlerModule.sendMessage(chatMessageData);
                 this.textAreaView.setValue("");
+                this.messagePartModel.clear();
             }
         },
 
@@ -376,24 +466,50 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // View Event Handlers
+        // Event Listeners
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @param {ButtonViewEvent} event
+         * @param {DropdownViewEvent} event
          */
-        handleChooseOrUploadImageViewClickedEvent: function(event) {
-            this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
+        hearChooseExistingItemDropdownSelected: function(event) {
+            //TODO BRN: Show existing item modal
+        },
+
+        /**
+         * @private
+         * @param {DropdownViewEvent} event
+         */
+        hearTakeScreenshotItemDropdownSelected: function(event) {
+            //TODO BRN: Determine if user has an open plugin connection
+            //if so, send server command to take a screenshot
+            //otherwise,
+        },
+
+        /**
+         * @private
+         * @param {DropdownViewEvent} event
+         */
+        hearUploadPhotoItemDropdownSelected: function(event) {
+            //TODO BRN: Show existing item modal
         },
 
         /**
          * @private
          * @param {ButtonViewEvent} event
          */
-        handleSendButtonClickedEvent: function(event) {
+        /*hearChooseOrUploadImageViewClickedEvent: function(event) {
+            this.commandModule.relayCommand(CommandType.DISPLAY.IMAGE_UPLOAD, {});
+        },*/
+
+        /**
+         * @private
+         * @param {ButtonViewEvent} event
+         */
+        hearSendButtonClickedEvent: function(event) {
             // fires off FormViewEvent.EventType.SUBMIT
-            // gets picked up by the handleFormSubmittedEvent event listener function
+            // gets picked up by the hearFormSubmittedEvent event listener function
             this.commandModule.relayMessage(CommandModule.MessageType.BUTTON_CLICKED, {buttonName: "ChatWidgetInputFormSendButton"});
             this.relayChatMessage();
         },
@@ -402,7 +518,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {FormViewEvent} event
          */
-        handleFormSubmittedEvent: function(event) {
+        hearFormSubmittedEvent: function(event) {
             this.relayChatMessage();
         },
 
@@ -410,7 +526,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {KeyBoardEvent} event
          */
-        handleKeyPressEvent: function(event) {
+        hearKeyPressEvent: function(event) {
             var key     = event.getKeyCode();
             if (key === 13) {
                 var htmlEvent = event.getData().event;
@@ -423,7 +539,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {KeyBoardEvent} event
          */
-        handleKeyUpEvent: function(event) {
+        hearKeyUpEvent: function(event) {
             var key     = event.getKeyCode();
             if (key === 13) {
                 this.processEnterKeyEvent(event);

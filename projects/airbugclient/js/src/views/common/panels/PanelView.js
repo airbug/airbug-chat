@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -36,12 +46,15 @@ require('bugpack').context("*", function(bugpack) {
      */
     var PanelView = Class.extend(MustacheView, {
 
+        _name: "airbug.PanelView",
+
+
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="{{id}}-wrapper" class="panel-wrapper {{classes}}">' +
-                        '<div id="{{id}}" class="panel">' +
+        template:   '<div id="panel-wrapper-{{cid}}}}" class="panel-wrapper panel-spacing {{classes}}">' +
+                        '<div id="panel-{{cid}}" class="panel">' +
                             '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
                             '</div>' +
                         '</div>' +
@@ -53,25 +66,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getPanelBodyElement: function() {
-            return this.findElement("#panel-body-" + this.getCid());
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // MustacheView Methods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @protected
-         * @returns {*}
-         */
-        generateTemplateData: function() {
-            var data    = this._super();
-            data.id     = this.getId() || "panel-" + this.getCid();
-            return data;
+            return this.findElement("#panel-body-{{cid}}");
         },
 
 

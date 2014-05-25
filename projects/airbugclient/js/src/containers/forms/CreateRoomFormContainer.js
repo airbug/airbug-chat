@@ -92,6 +92,10 @@ require('bugpack').context("*", function(bugpack) {
             // Private Properties
             //-------------------------------------------------------------------------------
 
+
+            // Containers
+            //-------------------------------------------------------------------------------
+
             /**
              * @private
              * @type {MessagePartPreviewContainer}

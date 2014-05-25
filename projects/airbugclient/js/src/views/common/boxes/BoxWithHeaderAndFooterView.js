@@ -5,47 +5,55 @@
 //@Export('airbug.BoxWithHeaderAndFooterView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.BoxView')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BoxWithHeaderAndFooterView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="box-{{cid}}" class="box box-with-header box-with-footer {{classes}}">' +
-                    '<div id="box-header-{{cid}}" class="box-header">' +
-                    '</div>' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
-                '</div>'
+    var Class           = bugpack.require('Class');
+    var BoxView         = bugpack.require('airbug.BoxView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {BoxView}
+     */
+    var BoxWithHeaderAndFooterView = Class.extend(BoxView, {
+
+        _name: "airbug.BoxWithHeaderAndFooterView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:
+            '<div id="box-{{cid}}" class="box box-with-header box-with-footer {{classes}}">' +
+                '<div id="box-header-{{cid}}" class="box-header">' +
+                '</div>' +
+                '<div id="box-body-{{cid}}" class="box-body">' +
+                '</div>' +
+                '<div id="box-footer-{{cid}}" class="box-footer">' +
+                '</div>' +
+            '</div>'
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.BoxWithHeaderAndFooterView", BoxWithHeaderAndFooterView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BoxWithHeaderAndFooterView", BoxWithHeaderAndFooterView);

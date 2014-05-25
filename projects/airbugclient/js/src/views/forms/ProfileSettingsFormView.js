@@ -54,14 +54,14 @@ var ProfileSettingsFormView = Class.extend(FormView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getInputFirstNameElement: function() {
         return this.findElement("#input-first-name-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getInputLastNameElement: function() {
         return this.findElement("#input-last-name-{{cid}}");

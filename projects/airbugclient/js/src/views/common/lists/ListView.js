@@ -44,14 +44,14 @@ var ListView = Class.extend(MustacheView, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getListElement: function() {
         return this.findElement("#list-{{cid}}");
     },
 
     /**
-     * @return {$}
+     * @return {jQuery}
      */
     getPlaceholderElement: function() {
         return this.findElement("#list-view-placeholder-{{cid}}");

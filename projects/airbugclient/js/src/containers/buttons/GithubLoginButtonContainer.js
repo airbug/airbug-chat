@@ -180,12 +180,14 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
         var githubUrl = new Url({
             protocol: "https",
             host: "github.com",
-            path: "/login/oauth/authorize"
-        })
-            .addUrlQuery("client_id", this.airbugClientConfig.getGithubClientId())
-            .addUrlQuery("redirect_uri", githubRedirectUri)
-            .addUrlQuery("scope", this.airbugClientConfig.getGithubScope())
-            .addUrlQuery("state", this.airbugClientConfig.getGithubState());
+            path: "/login/oauth/authorize",
+            query: {
+                client_id: this.airbugClientConfig.getGithubClientId(),
+                redirect_uri: githubRedirectUri,
+                scope: this.airbugClientConfig.getGithubScope(),
+                state: this.airbugClientConfig.getGithubState()
+            }
+        });
         this.navigationModule.navigateToUrl(githubUrl);
     }
 });

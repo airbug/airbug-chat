@@ -5,9 +5,10 @@
 //@Export('airbug.WorkspaceContainer')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
-//@Require('airbug.BoxView')
 //@Require('airbug.IWorkspace')
+//@Require('airbug.WorkspaceView')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -16,237 +17,390 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var BoxView                         = bugpack.require('airbug.BoxView');
-var IWorkspace                      = bugpack.require('airbug.IWorkspace');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired                   = AutowiredAnnotation.autowired;
-var bugmeta                     = BugMeta.context();
-var property                    = PropertyAnnotation.property;
-var view                        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {CarapaceContainer}
- * @implements {IWorkspace}
- */
-var WorkspaceContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                           = bugpack.require('Class');
+    var Map                             = bugpack.require('Map');
+    var Obj                             = bugpack.require('Obj');
+    var IWorkspace                      = bugpack.require('airbug.IWorkspace');
+    var WorkspaceView                   = bugpack.require('airbug.WorkspaceView');
+    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired                   = AutowiredAnnotation.autowired;
+    var bugmeta                     = BugMeta.context();
+    var property                    = PropertyAnnotation.property;
+    var view                        = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceContainer}
+     * @implements {IWorkspace}
+     */
+    var WorkspaceContainer = Class.extend(CarapaceContainer, {
+
+        _name: "airbug.WorkspaceContainer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {WorkspaceWidgetContainer}
+         * @constructs
+         * @param {string} workspaceName
          */
-        this.currentWidget                  = null;
+        _constructor: function(workspaceName) {
+
+            this._super();
 
 
-        // Views
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.currentWidgetName              = null;
+
+            /**
+             * @private
+             * @type {Map.<string, WorkspaceWidgetContainer>}
+             */
+            this.widgetMap                      = new Map();
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.workspaceName                  = workspaceName;
+
+
+            // Modules
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {PageStateModule}
+             */
+            this.pageStateModule                = null;
+
+            /**
+             * @private
+             * @type {WorkspaceModule}
+             */
+            this.workspaceModule                = null;
+
+
+            // Views
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {WorkspaceView}
+             */
+            this.workspaceView                  = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BoxView}
+         * @return {string}
          */
-        this.boxView                        = null;
+        getCurrentWidgetName: function() {
+            return this.currentWidgetName;
+        },
 
         /**
-         * @private
-         * @type {WorkspaceModule}
+         * @param {string} widgetName
          */
-        this.workspaceModule                = null;
-    },
+        setCurrentWidgetName: function(widgetName) {
+            this.currentWidgetName = widgetName;
+        },
 
+        /**
+         * @return {WorkspaceModule}
+         */
+        getWorkspaceModule: function() {
+            return this.workspaceModule;
+        },
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        /**
+         * @return {WorkspaceView}
+         */
+        getWorkspaceView: function() {
+            return this.workspaceView;
+        },
+        
 
-    /**
-     * @return {BoxView}
-     */
-    getBoxView: function() {
-        return this.boxView;
-    },
-
-    /**
-     * @return {WorkspaceWidgetContainer}
-     */
-    getCurrentWidget: function() {
-        return this.currentWidget;
-    },
-
-    /**
-     * @return {WorkspaceModule}
-     */
-    getWorkspaceModule: function() {
-        return this.workspaceModule;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IWorkspace Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    hideWorkspace: function() {
-        this.boxView.hide();
-        this.currentWidget = null;
-    },
-
-    /**
-     *
-     */
-    showWorkspace: function() {
-        this.boxView.show();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
-
-
-        // Create Views
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
         //-------------------------------------------------------------------------------
 
-        view(BoxView)
-            .name("boxView") //NOTE This was #image-editor-widget
-            .build(this);
+        /**
+         * @return {WorkspaceWidgetContainer}
+         */
+        getCurrentWidget: function() {
+            return this.widgetMap.get(this.currentWidgetName);
+        },
 
 
-        // Wire Up Views
+        //-------------------------------------------------------------------------------
+        // IWorkspace Implementation
         //-------------------------------------------------------------------------------
 
-        this.setViewTop(this.boxView);
-    },
+        /**
+         *
+         */
+        hideWorkspace: function() {
+            this.workspaceView.hide();
+        },
+
+        /**
+         *
+         */
+        showWorkspace: function() {
+            this.workspaceView.show();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {WorkspaceWidgetContainer} widget
-     * @param {string} workspaceName
-     */
-    hideWidget: function(widget, workspaceName) {
-        this.updateCurrentWidget(null);
-        this.getWorkspaceModule().closeWorkspace(workspaceName);
-    },
-
-    /**
-     * @protected
-     * @param {WorkspaceWidgetContainer} widget
-     * @param {string} workspaceName
-     */
-    showWidget: function(widget, workspaceName) {
-        this.updateCurrentWidget(widget);
-        this.getWorkspaceModule().openWorkspace(workspaceName);
-    },
-
-    /**
-     * @protected
-     * @param {WorkspaceWidgetContainer} widget
-     * @param {string} workspaceName
-     */
-    toggleWidget: function(widget, workspaceName) {
-        if (Obj.equals(this.currentWidget, widget)) {
-            this.hideWidget(widget, workspaceName);
-        } else {
-            this.showWidget(widget, workspaceName);
-        }
-    },
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
+            // Create Views
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {WorkspaceWidgetContainer} widget
-     */
-    updateCurrentWidget: function(widget) {
-        if (this.currentWidget !== widget) {
-            if (this.currentWidget) {
-                this.currentWidget.hideWidget();
+            view(WorkspaceView)
+                .name("workspaceView")
+                .build(this);
+
+
+            // Wire Up Views
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.workspaceView);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeContainer: function() {
+            this._super();
+            this.pageStateModule.putState(WorkspaceContainer.PageStates.CURRENT_WIDGET + ":" + this.workspaceName, this.currentWidgetName);
+            this.workspaceModule.deregisterWorkspace(this.workspaceName);
+        },
+
+        /**
+         * @protected
+         */
+        initializeContainer: function() {
+            this._super();
+            this.workspaceModule.registerWorkspace(this.workspaceName, this);
+            this.currentWidgetName = this.pageStateModule.getState(WorkspaceContainer.PageStates.CURRENT_WIDGET + ":" + this.workspaceName);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        closeCurrentWidget: function() {
+            this.updateCurrentWidget(null);
+            this.workspaceModule.closeWorkspace(this.workspaceName);
+        },
+
+        /**
+         * @protected
+         */
+        closeWorkspace: function() {
+
+        },
+
+        /**
+         * @protected
+         * @param {string} widgetName
+         */
+        deregisterWidget: function(widgetName) {
+            var widget = this.widgetMap.remove(widgetName);
+            widget.hideWidget();
+        },
+
+        hideAllWidgets: function() {
+
+        },
+
+        /**
+         * @protected
+         */
+        hideCurrentWidget: function() {
+            var currentWidget = this.getCurrentWidget();
+            if (currentWidget) {
+                currentWidget.hideWidget();
             }
-            this.currentWidget = widget;
-            if (this.currentWidget) {
-                this.currentWidget.showWidget();
+        },
+
+        /**
+         * @protected
+         * @param {string} widgetName
+         */
+        openWidget: function(widgetName) {
+            this.updateCurrentWidget(widgetName);
+            this.getWorkspaceModule().openWorkspace(this.workspaceName);
+        },
+
+        /**
+         * @protected
+         */
+        openWorkspace: function() {
+
+        },
+
+        /**
+         * @protected
+         * @param {string} widgetName
+         * @param {WorkspaceWidgetContainer} widget
+         */
+        registerWidget: function(widgetName, widget) {
+            this.widgetMap.put(widgetName, widget);
+            if (this.currentWidgetName === widgetName) {
+                widget.showWidget();
+            } else {
+                widget.hideWidget();
+            }
+        },
+
+        /**
+         * @protected
+         */
+        showCurrentWidget: function() {
+            var currentWidget = this.getCurrentWidget();
+            if (currentWidget) {
+                currentWidget.showWidget();
+            }
+        },
+
+        /**
+         * @protected
+         * @param {string} widgetName
+         */
+        showWidget: function(widgetName) {
+            this.updateCurrentWidget(widgetName);
+            this.getWorkspaceModule().openWorkspace(this.workspaceName);
+        },
+
+        /**
+         * @protected
+         * @param {string} widgetName
+         */
+        toggleWidget: function(widgetName) {
+            if (Obj.equals(this.currentWidgetName, widgetName)) {
+                this.hideWidget(widgetName);
+            } else {
+                this.showWidget(widgetName);
+            }
+        },
+
+        /**
+         * @protected
+         */
+        toggleWorkspace: function() {
+            this.getWorkspaceModule().toggleWorkspace(this.workspaceName);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {string} widgetName
+         */
+        updateCurrentWidget: function(widgetName) {
+            if (this.currentWidgetName !== widgetName) {
+                if (this.currentWidgetName) {
+                    this.hideCurrentWidget();
+                }
+                this.setCurrentWidgetName(widgetName);
+                if (this.currentWidgetName) {
+                    this.showCurrentWidget();
+                }
             }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    WorkspaceContainer.PageStates = {
+        CURRENT_WIDGET: "WorkspaceContainer:PageState:CurrentWidget"
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Implement Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(WorkspaceContainer, IWorkspace);
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(WorkspaceContainer).with(
+        autowired().properties([
+            property("pageStateModule").ref("pageStateModule"),
+            property("workspaceModule").ref("workspaceModule")
+        ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.WorkspaceContainer", WorkspaceContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Implement Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(WorkspaceContainer, IWorkspace);
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(WorkspaceContainer).with(
-    autowired().properties([
-        property("workspaceModule").ref("workspaceModule")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.WorkspaceContainer", WorkspaceContainer);

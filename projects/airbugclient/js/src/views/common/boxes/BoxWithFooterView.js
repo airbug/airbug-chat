@@ -5,54 +5,53 @@
 //@Export('airbug.BoxWithFooterView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('airbug.BoxView')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BoxWithFooterView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}" class="box box-with-footer {{attributes.classes}}">' +
-                    '<div id="box-body-{{cid}}" class="box-body">' +
-                    '</div>' +
-                    '<div id="box-footer-{{cid}}" class="box-footer">' +
-                    '</div>' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var BoxView         = bugpack.require('airbug.BoxView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {BoxView}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "box-" + this.getCid();
-        return data;
-    }
+    var BoxWithFooterView = Class.extend(BoxView, {
+
+        _name: "airbug.BoxWithFooterView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:
+            '<div id="box-{{cid}}" class="box box-with-footer {{classes}}">' +
+                '<div id="box-body-{{cid}}" class="box-body">' +
+                '</div>' +
+                '<div id="box-footer-{{cid}}" class="box-footer">' +
+                '</div>' +
+            '</div>'
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.BoxWithFooterView", BoxWithFooterView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.BoxWithFooterView", BoxWithFooterView);

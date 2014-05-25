@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,51 +21,64 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var TypeUtil        = bugpack.require('TypeUtil');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var SlidePanelView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<div id="{{id}}-wrapper" class="panel-wrapper slide-left">' +
-                    '<div id="{{id}}" class="panel">' +
-                        '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
-                        '</div>' +
-                    '</div>' +
-                '</div>',
+    var Class           = bugpack.require('Class');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {MustacheView}
      */
-    generateTemplateData: function() {
-        var data    = this._super();
-        data.id     = this.getId() || "panel-" + this.cid;
-        return data;
-    }
+    var SlidePanelView = Class.extend(MustacheView, {
+
+        _name: "airbug.SlidePanelView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:
+            '<div id="{{id}}-wrapper" class="panel-wrapper slide-left panel-spacing">' +
+                '<div id="{{id}}" class="panel">' +
+                    '<div id="panel-body-{{cid}}" class="panel-body panel-body-no-header">' +
+                    '</div>' +
+                '</div>' +
+            '</div>',
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data    = this._super();
+            data.id     = this.getId() || "panel-" + this.cid;
+            return data;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.SlidePanelView", SlidePanelView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.SlidePanelView", SlidePanelView);

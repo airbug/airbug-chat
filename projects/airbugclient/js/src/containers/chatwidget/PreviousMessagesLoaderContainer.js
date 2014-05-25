@@ -12,107 +12,104 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                                   = bugpack.require('Class');
-var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
-var PreviousMessagesLoaderView              = bugpack.require('airbug.PreviousMessagesLoaderView');
-var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
-var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var view        = ViewBuilder.view;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var PreviousMessagesLoaderContainer = Class.extend(CarapaceContainer, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                                   = bugpack.require('Class');
+    var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
+    var PreviousMessagesLoaderView              = bugpack.require('airbug.PreviousMessagesLoaderView');
+    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var view                                    = ViewBuilder.view;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CarapaceContainer}
+     */
+    var PreviousMessagesLoaderContainer = Class.extend(CarapaceContainer, {
+
+        _name: "airbug.PreviousMessagesLoaderContainer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-
-        // Modules
-        //-------------------------------------------------------------------------------
-
-
-
-        // Views
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {PreviousMessagesLoaderView}
+         * @constructs
          */
-        this.previousMessagesLoaderView = null;
-    },
+        _constructor: function() {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // CarapaceContainer Extensions
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    activateContainer: function() {
-        this._super();
-    },
+            // Views
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    createContainer: function() {
-        this._super();
+            /**
+             * @private
+             * @type {PreviousMessagesLoaderView}
+             */
+            this.previousMessagesLoaderView = null;
+        },
 
-        // Create Views
+
+        //-------------------------------------------------------------------------------
+        // CarapaceContainer Extensions
         //-------------------------------------------------------------------------------
 
-        this.previousMessagesLoaderView =
-            view(PreviousMessagesLoaderView)
-                .build();
+        /**
+         * @protected
+         */
+        activateContainer: function() {
+            this._super();
+        },
 
-        // Wire Up Views
-        //-------------------------------------------------------------------------------
+        /**
+         * @protected
+         */
+        createContainer: function() {
+            this._super();
 
-        this.setViewTop(this.previousMessagesLoaderView);
-    }
+            // Create Views
+            //-------------------------------------------------------------------------------
+
+            this.previousMessagesLoaderView =
+                view(PreviousMessagesLoaderView)
+                    .build();
+
+            // Wire Up
+            //-------------------------------------------------------------------------------
+
+            this.setViewTop(this.previousMessagesLoaderView);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-
+    bugpack.export("airbug.PreviousMessagesLoaderContainer", PreviousMessagesLoaderContainer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.PreviousMessagesLoaderContainer", PreviousMessagesLoaderContainer);

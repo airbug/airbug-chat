@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,57 +18,64 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var UserNameView = Class.extend(MustacheView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Template
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    template:   '<span id="user-name-{{cid}}" class="text user-name {{attributes.classes}}">{{model.firstName}} {{model.lastName}}</span>',
+    var Class           = bugpack.require('Class');
+    var MustacheView    = bugpack.require('airbug.MustacheView');
 
 
     //-------------------------------------------------------------------------------
-    // CarapaceView Extensions
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {string} propertyName
-     * @param {*} propertyValue
+     * @class
+     * @extends {MustacheView}
      */
-    renderModelProperty: function(propertyName, propertyValue) {
-        this._super(propertyName, propertyValue);
+    var UserNameView = Class.extend(MustacheView, {
 
-        switch (propertyName) {
-            case "firstName":
-            case "lastName":
-                this.findElement('#user-name-' + this.getCid()).text(this.model.getProperty("firstName") + " " + this.model.getProperty("lastName"));
-                break;
+        _name: "airbug.UserNameView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template:   '<span id="user-name-{{cid}}" class="text user-name {{attributes.classes}}">{{model.firstName}} {{model.lastName}}</span>',
+
+
+        //-------------------------------------------------------------------------------
+        // CarapaceView Extensions
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {string} propertyName
+         * @param {*} propertyValue
+         */
+        renderModelProperty: function(propertyName, propertyValue) {
+            this._super(propertyName, propertyValue);
+
+            switch (propertyName) {
+                case "firstName":
+                case "lastName":
+                    this.findElement('#user-name-' + this.getCid()).text(this.model.getProperty("firstName") + " " + this.model.getProperty("lastName"));
+                    break;
+            }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("airbug.UserNameView", UserNameView);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.UserNameView", UserNameView);

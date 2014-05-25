@@ -34,8 +34,8 @@ var OneColumnView = Class.extend(MultiColumnView, {
     //-------------------------------------------------------------------------------
 
     template:
-        '<div id=column-{{cid}} class="{{rowStyle}} column 1column-container {{classes}}">' +
-            '<div id="column1of1-{{cid}}" class="{{columnSpan}} column column1of1"></div>' +
+        '<div id=column-{{cid}} class="{{rowStyle}} column-fill 1column-container {{classes}}">' +
+            '<div id="column1of1-{{cid}}" class="{{columnSpan}} column-fill column1of1"></div>' +
         '</div>',
 
 

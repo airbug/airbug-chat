@@ -75,7 +75,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function() {
 
-            this._super();
+            this._super(CodeEditorWorkspace.WORKSPACE_NAME);
 
 
             //-------------------------------------------------------------------------------
@@ -90,15 +90,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {CommandModule}
              */
             this.commandModule                      = null;
-
-            // Views
-            //-------------------------------------------------------------------------------
-
-            /**
-             * @private
-             * @type {BoxView}
-             */
-            this.boxView                            = null;
 
 
             // Containers
@@ -125,33 +116,12 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        createContainer: function() {
-            this._super();
-
-
-            // Create Views
-            //-------------------------------------------------------------------------------
-
-            view(BoxView)
-                .name("boxView")
-                .build(this);
-
-
-            // Wire Up Views
-            //-------------------------------------------------------------------------------
-
-            this.setViewTop(this.boxView);
-        },
-
-        /**
-         * @protected
-         */
         createContainerChildren: function() {
             this._super();
             this.codeEditorWidgetContainer          = new CodeEditorWidgetContainer();
             this.codeEditorSettingsWidgetContainer  = new CodeEditorSettingsWidgetContainer();
-            this.addContainerChild(this.codeEditorWidgetContainer, "#box-" + this.boxView.getCid());
-            this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#box-" + this.boxView.getCid());
+            this.addContainerChild(this.codeEditorWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
+            this.addContainerChild(this.codeEditorSettingsWidgetContainer, "#workspace-" + this.getWorkspaceView().getCid());
         },
 
         /**
@@ -159,13 +129,16 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeContainer: function() {
             this._super();
-            this.getWorkspaceModule().deregisterWorkspace(CodeEditorWorkspace.WORKSPACE_NAME);
+
+            this.deregisterWidget(CodeEditorWorkspace.WidgetNames.EDITOR);
+            this.deregisterWidget(CodeEditorWorkspace.WidgetNames.SETTINGS);
 
             this.codeEditorSettingsWidgetContainer.getViewTop().removeEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
 
             this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
             this.commandModule.unsubscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
             this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
+            this.commandModule.unsubscribe(CommandType.TOGGLE.CODE_WORKSPACE, this.handleToggleCodeWorkspaceCommand, this);
         },
 
         /**
@@ -173,15 +146,46 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeContainer: function() {
             this._super();
-            this.codeEditorWidgetContainer.hideWidget();
-            this.codeEditorSettingsWidgetContainer.hideWidget();
-            this.getWorkspaceModule().registerWorkspace(CodeEditorWorkspace.WORKSPACE_NAME, this);
+
+            if (!this.getCurrentWidgetName()) {
+                this.setCurrentWidgetName(CodeEditorWorkspace.WidgetNames.EDITOR);
+            }
+
+            this.registerWidget(CodeEditorWorkspace.WidgetNames.EDITOR, this.codeEditorWidgetContainer);
+            this.registerWidget(CodeEditorWorkspace.WidgetNames.SETTINGS, this.codeEditorSettingsWidgetContainer);
 
             this.codeEditorSettingsWidgetContainer.getViewTop().addEventListener(FormViewEvent.EventType.CHANGE, this.handleSettingsChangeEvent, this);
 
             this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR, this.handleDisplayCodeEditorCommand, this);
             this.commandModule.subscribe(CommandType.DISPLAY.CODE_EDITOR_SETTINGS, this.handleDisplayCodeEditorSettingsCommand, this);
             this.commandModule.subscribe(CommandType.TOGGLE.CODE_EDITOR, this.handleToggleCodeEditorCommand, this);
+            this.commandModule.subscribe(CommandType.TOGGLE.CODE_WORKSPACE, this.handleToggleCodeWorkspaceCommand, this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         */
+        openCodeEditor: function() {
+            this.openWidget(CodeEditorWorkspace.WidgetNames.EDITOR);
+        },
+
+        /**
+         * @private
+         */
+        openCodeEditorSettings: function() {
+            this.openWidget(CodeEditorWorkspace.WidgetNames.SETTINGS);
+        },
+
+        /**
+         * @private
+         */
+        toggleCodeEditor: function() {
+            this.toggleWidget(CodeEditorWorkspace.WidgetNames.EDITOR);
         },
 
 
@@ -235,7 +239,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {PublisherMessage} message
          */
         handleDisplayCodeEditorCommand: function(message) {
-            this.displayCodeEditor();
+            this.openCodeEditor();
         },
 
         /**
@@ -243,7 +247,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {PublisherMessage} message
          */
         handleDisplayCodeEditorSettingsCommand: function(message) {
-            this.displayCodeEditorSettings();
+            this.openCodeEditorSettings();
         },
 
         /**
@@ -256,23 +260,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
+         * @param {Message} message
          */
-        displayCodeEditor: function() {
-            this.showWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
-        },
-
-        /**
-         * @private
-         */
-        displayCodeEditorSettings: function() {
-            this.showWidget(this.codeEditorSettingsWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
-        },
-
-        /**
-         * @private
-         */
-        toggleCodeEditor: function() {
-            this.toggleWidget(this.codeEditorWidgetContainer, CodeEditorWorkspace.WORKSPACE_NAME);
+        handleToggleCodeWorkspaceCommand: function(message) {
+            this.toggleWorkspace();
         }
     });
 

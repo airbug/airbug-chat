@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -17,6 +27,7 @@
 //@Require('Set')
 //@Require('SetPropertyChange')
 //@Require('Throwable')
+//@Require('airbug.BoxWithHeaderView')
 //@Require('airbug.ChatMessageModel')
 //@Require('airbug.ChatMessageStreamModel')
 //@Require('airbug.ChatWidgetInputFormContainer')
@@ -26,6 +37,7 @@
 //@Require('airbug.IMessageHandler')
 //@Require('airbug.ListContainer')
 //@Require('airbug.MessagePartModel')
+//@Require('airbug.MessagePartPreviewContainer')
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
@@ -60,6 +72,7 @@ require('bugpack').context("*", function(bugpack) {
     var Set                             = bugpack.require('Set');
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
     var Throwable                       = bugpack.require('Throwable');
+    var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView');
     var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
     var ChatMessageStreamModel          = bugpack.require('airbug.ChatMessageStreamModel');
     var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
@@ -69,6 +82,7 @@ require('bugpack').context("*", function(bugpack) {
     var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
     var ListContainer                   = bugpack.require('airbug.ListContainer');
     var MessagePartModel                = bugpack.require('airbug.MessagePartModel');
+    var MessagePartPreviewContainer     = bugpack.require('airbug.MessagePartPreviewContainer');
     var PanelView                       = bugpack.require('airbug.PanelView');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
@@ -189,6 +203,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {BoxWithHeaderView}
+             */
+            this.inputBoxView                               = null;
+
+            /**
+             * @private
              * @type {PanelView}
              */
             this.messagesPanelView                          = null;
@@ -208,6 +228,12 @@ require('bugpack').context("*", function(bugpack) {
              * @type {ChatWidgetMessagesContainer}
              */
             this.chatWidgetMessagesContainer                = null;
+
+            /**
+             * @private
+             * @type {MessagePartPreviewContainer}
+             */
+            this.messagePartPreviewContainer                = null;
 
 
             // Modules
@@ -306,7 +332,13 @@ require('bugpack').context("*", function(bugpack) {
                 .children([
                     view(PanelView)
                         .name("messagesPanelView")
-                        .appendTo("#chat-widget-messages-{{cid}}")
+                        .appendTo("#chat-widget-messages-{{cid}}"),
+                    view(BoxWithHeaderView)
+                        .name("inputBoxView")
+                        .appendTo("#chat-widget-input-{{cid}}")
+                        .attributes({
+                            collapsed: true
+                        })
                 ])
                 .build(this);
 
@@ -316,6 +348,8 @@ require('bugpack').context("*", function(bugpack) {
 
             this.setViewTop(this.chatWidgetView);
             this.addModel(this.conversationModel);
+            this.addModel(this.chatMessageStreamModel);
+            this.addModel(this.embeddedMessagePartModel);
         },
 
         /**
@@ -325,8 +359,10 @@ require('bugpack').context("*", function(bugpack) {
             this._super();
             this.chatWidgetMessagesContainer        = new ChatWidgetMessagesContainer(this.chatMessageList);
             this.addContainerChild(this.chatWidgetMessagesContainer, '#panel-body-' + this.messagesPanelView.getCid());
-            this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer();
-            this.addContainerChild(this.chatWidgetInputFormContainer, "#chat-widget-input-{{cid}}");
+            this.chatWidgetInputFormContainer       = new ChatWidgetInputFormContainer(this.embeddedMessagePartModel);
+            this.addContainerChild(this.chatWidgetInputFormContainer, "#box-header-" + this.inputBoxView.getCid());
+            this.messagePartPreviewContainer = new MessagePartPreviewContainer(this.embeddedMessagePartModel);
+            this.addContainerChild(this.messagePartPreviewContainer, "#box-body-" + this.inputBoxView.getCid())
         },
 
         /**
@@ -356,6 +392,9 @@ require('bugpack').context("*", function(bugpack) {
             this.chatMessageStreamModel.unobserve(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
             this.chatMessageStreamModel.unobserve(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
             this.chatMessageStreamModel.unobserve(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
+            this.embeddedMessagePartModel.unobserve(ClearChange.CHANGE_TYPE, "", this.observeMessagePartClearChange, this);
+            this.embeddedMessagePartModel.unobserve(RemovePropertyChange.CHANGE_TYPE, "type", this.observeMessagePartTypeRemovePropertyChange, this);
+            this.embeddedMessagePartModel.unobserve(SetPropertyChange.CHANGE_TYPE, "type", this.observeMessagePartTypeSetPropertyChange, this);
         },
 
         /**
@@ -368,6 +407,9 @@ require('bugpack').context("*", function(bugpack) {
             this.chatMessageStreamModel.observe(AddChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetAddChange, this);
             this.chatMessageStreamModel.observe(RemoveChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetRemoveChange, this);
             this.chatMessageStreamModel.observe(SetPropertyChange.CHANGE_TYPE, "chatMessageIdSet", this.observeChatMessageIdSetSetPropertyChange, this);
+            this.embeddedMessagePartModel.observe(ClearChange.CHANGE_TYPE, "", this.observeMessagePartClearChange, this);
+            this.embeddedMessagePartModel.observe(RemovePropertyChange.CHANGE_TYPE, "type", this.observeMessagePartTypeRemovePropertyChange, this);
+            this.embeddedMessagePartModel.observe(SetPropertyChange.CHANGE_TYPE, "type", this.observeMessagePartTypeSetPropertyChange, this);
         },
 
 
@@ -393,7 +435,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} messagePartObject
          */
         embedMessagePart: function(messagePartObject) {
-            //TODO BRN:
+            this.embeddedMessagePartModel.setProperties(messagePartObject);
         },
 
         /**
@@ -702,18 +744,16 @@ require('bugpack').context("*", function(bugpack) {
                 failed: false
             }, chatMessageData));
 
-            if (this.embeddedMessagePartModel) {
-
-            }
-
             /** @type {ChatMessageModel} */
             var chatMessageModel =
                 model(ChatMessageModel)
                     .data(chatMessageObject)
                     .build(this);
             this.chatMessageList.add(chatMessageModel);
-
             this.chatMessageTryUuidToChatMessageModelMap.put(chatMessageModel.getProperty("tryUuid"), chatMessageModel);
+
+            // Animate to the new ChatMessage
+            this.chatWidgetMessagesContainer.animateScrollToCarapaceModel(chatMessageModel, 600);
 
             /** @type {CurrentUser} */
             var currentUser             = undefined;
@@ -886,6 +926,34 @@ require('bugpack').context("*", function(bugpack) {
             this.clearChatMessageList();
             this.loadChatMessageList(change.getPropertyValue());
             this.loadChatMessageStream(change.getPropertyValue());
+        },
+
+        /**
+         * @private
+         * @param {Observation} observation
+         */
+        observeMessagePartClearChange: function(observation) {
+            this.inputBoxView.collapse();
+            this.chatWidgetView.setAttribute("inputSize", ChatWidgetView.InputSize.SMALL);
+        },
+
+        /**
+         * @private
+         * @param {Observation} observation
+         */
+        observeMessagePartTypeRemovePropertyChange: function(observation) {
+            this.inputBoxView.collapse();
+            this.chatWidgetView.setAttribute("inputSize", ChatWidgetView.InputSize.SMALL);
+        },
+
+        /**
+         * @private
+         * @param {Observation} observation
+         */
+        observeMessagePartTypeSetPropertyChange: function(observation) {
+            this.chatWidgetView.setAttribute("inputSize", ChatWidgetView.InputSize.LARGE);
+            this.inputBoxView.uncollapse();
+            this.messagePartPreviewContainer.forceReflow();
         }
     });
 

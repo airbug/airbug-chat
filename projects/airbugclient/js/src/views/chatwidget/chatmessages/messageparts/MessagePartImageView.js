@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -68,28 +78,28 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getImageElement: function() {
             return this.findElement("#image-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getImageLinkElement: function() {
             return this.findElement("#image-link-{{cid}}");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getImageSaveButtonElement: function() {
             return this.findElement(".btn-toolbar > .btn-group:last-child > button:last-child");
         },
 
         /**
-         * @return {$}
+         * @return {jQuery}
          */
         getMessagePartElement: function() {
             return this.findElement("message-part-{{cid}}");

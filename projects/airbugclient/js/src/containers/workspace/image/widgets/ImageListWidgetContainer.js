@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,7 +16,6 @@
 
 //@Require('AddChange')
 //@Require('Class')
-//@Require('ClearChange')
 //@Require('ISet')
 //@Require('List')
 //@Require('Map')
@@ -18,7 +27,6 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.ButtonGroupView')
 //@Require('airbug.ButtonToolbarView')
-//@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.ImageAssetModel')
@@ -27,7 +35,6 @@
 //@Require('airbug.TabView')
 //@Require('airbug.TabViewEvent')
 //@Require('airbug.TextView')
-//@Require('airbug.UserImageAssetContainer')
 //@Require('airbug.UserImageAssetModel')
 //@Require('airbug.UserImageAssetStreamModel')
 //@Require('airbug.WorkspaceBoxWithHeaderView')
@@ -53,7 +60,6 @@ require('bugpack').context("*", function(bugpack) {
 
     var AddChange                           = bugpack.require('AddChange');
     var Class                               = bugpack.require('Class');
-    var ClearChange                         = bugpack.require('ClearChange');
     var ISet                                = bugpack.require('ISet');
     var List                                = bugpack.require('List');
     var Map                                 = bugpack.require('Map');
@@ -65,7 +71,6 @@ require('bugpack').context("*", function(bugpack) {
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
     var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var IconView                            = bugpack.require('airbug.IconView');
     var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
@@ -74,7 +79,6 @@ require('bugpack').context("*", function(bugpack) {
     var TabView                             = bugpack.require('airbug.TabView');
     var TabViewEvent                        = bugpack.require('airbug.TabViewEvent');
     var TextView                            = bugpack.require('airbug.TextView');
-    var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
     var UserImageAssetModel                 = bugpack.require('airbug.UserImageAssetModel');
     var UserImageAssetStreamModel           = bugpack.require('airbug.UserImageAssetStreamModel');
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
@@ -199,12 +203,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {WorkspaceBoxWithHeaderAndFooterView}
-             */
-            this.boxView                                = null;
-
-            /**
-             * @private
              * @type {TabView}
              */
             this.imageListTabView                       = null;
@@ -227,6 +225,12 @@ require('bugpack').context("*", function(bugpack) {
              */
             this.widgetControlButtonGroupView           = null;
 
+            /**
+             * @private
+             * @type {WorkspaceBoxWithHeaderView}
+             */
+            this.workspaceBoxView                       = null;
+
 
             // Containers
             //-------------------------------------------------------------------------------
@@ -235,7 +239,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {WorkspaceCloseButtonContainer}
              */
-            this.closeButton                            = null;
+            this.closeButtonContainer                   = null;
 
             /**
              * @private
@@ -278,7 +282,7 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             view(WorkspaceBoxWithHeaderView)
-                .name("boxView")
+                .name("workspaceBoxView")
                 .attributes({
                     classes: "image-list-container"
                 })
@@ -332,7 +336,7 @@ require('bugpack').context("*", function(bugpack) {
             // Wire Up Views
             //-------------------------------------------------------------------------------
 
-            this.setViewTop(this.boxView);
+            this.setViewTop(this.workspaceBoxView);
         },
 
         /**
@@ -340,10 +344,10 @@ require('bugpack').context("*", function(bugpack) {
          */
         createContainerChildren: function() {
             this._super();
-            this.closeButton        = new WorkspaceCloseButtonContainer();
-            this.addContainerChild(this.closeButton, "#button-group-" + this.widgetControlButtonGroupView.getCid());
-            this.imageListContainer = new ImageListContainer(this.userImageAssetList);
-            this.addContainerChild(this.imageListContainer, "#box-body-" + this.boxView.getCid());
+            this.closeButtonContainer   = new WorkspaceCloseButtonContainer();
+            this.addContainerChild(this.closeButtonContainer, "#button-group-" + this.widgetControlButtonGroupView.getCid());
+            this.imageListContainer     = new ImageListContainer(this.userImageAssetList);
+            this.addContainerChild(this.imageListContainer, "#box-body-" + this.workspaceBoxView.getCid());
         },
 
         /**

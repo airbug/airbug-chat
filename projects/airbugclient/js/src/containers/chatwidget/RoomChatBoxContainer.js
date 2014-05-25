@@ -12,6 +12,7 @@
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
 //@Require('airbug.MultiColumnView')
+//@Require('airbug.PanelView')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.RoomOptionsDropdownButtonContainer')
@@ -44,6 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var ChatWidgetContainer                     = bugpack.require('airbug.ChatWidgetContainer');
     var ConversationModel                       = bugpack.require('airbug.ConversationModel');
     var MultiColumnView                         = bugpack.require('airbug.MultiColumnView');
+    var PanelView                               = bugpack.require('airbug.PanelView');
     var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
     var RoomNameView                            = bugpack.require('airbug.RoomNameView');
     var RoomOptionsDropdownButtonContainer      = bugpack.require('airbug.RoomOptionsDropdownButtonContainer');
@@ -186,7 +188,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // CarapaceController Implementation
+        // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -223,16 +225,23 @@ require('bugpack').context("*", function(bugpack) {
                     classes: "room-chatbox-header"
                 })
                 .children([
-                    view(SubheaderView)
-                        .name("roomChatBoxSubheaderView")
-                        .appendTo(".box-header")
+                    view(PanelView)
+                        .appendTo("#box-header-{{cid}}")
+                        .attributes({
+                            classes: "panel-overflow"
+                        })
                         .children([
-                            view(RoomNameView)
-                                .model(this.roomModel)
-                                .appendTo('#subheader-center-{{cid}}')
-                                .attributes({
-                                    classes: "room-header-title"
-                                })
+                            view(SubheaderView)
+                                .name("roomChatBoxSubheaderView")
+                                .appendTo("#panel-body-{{cid}}")
+                                .children([
+                                    view(RoomNameView)
+                                        .model(this.roomModel)
+                                        .appendTo("#subheader-center-{{cid}}")
+                                        .attributes({
+                                            classes: "room-header-title"
+                                        })
+                                ])
                         ]),
                     view(TwoColumnView)
                         .name("roomChatBoxTwoColumnView")
@@ -240,7 +249,7 @@ require('bugpack').context("*", function(bugpack) {
                             rowStyle: MultiColumnView.RowStyle.FLUID,
                             configuration: TwoColumnView.Configuration.EXTRA_THICK_RIGHT_SMALL
                         })
-                        .appendTo(".box-body")
+                        .appendTo("#box-body-{{cid}}")
                 ])
                 .build(this);
 
