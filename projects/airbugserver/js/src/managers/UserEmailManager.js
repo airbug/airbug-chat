@@ -56,7 +56,7 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 var UserEmailManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**

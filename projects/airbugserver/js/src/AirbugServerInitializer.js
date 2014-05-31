@@ -104,21 +104,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AirbugStaticConfig}
-             */
-            this.airbugClientConfig                 = null;
-
-            /**
-             * @private
-             * @type {AirbugStaticConfig}
-             */
-            this.airbugPluginConfig                 = null;
-
-            /**
-             * @private
              * @type {AirbugServerConfig}
              */
             this.airbugServerConfig                 = null;
+
+            /**
+             * @private
+             * @type {AirbugStaticConfig}
+             */
+            this.airbugStaticConfig                 = null;
 
             /**
              * @private
@@ -379,7 +373,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Config} config
          */
         buildConfigs: function(config) {
-            this.airbugClientConfig.absorbConfig(config, [
+            this.airbugStaticConfig.absorbConfig(config, [
                 "debug",
                 "enableTracking",
                 "github.clientId",
@@ -387,23 +381,10 @@ require('bugpack').context("*", function(bugpack) {
                 "github.scope",
                 "googleAnalyticsId",
                 "js.concat",
-                "js.minify"
+                "js.minify",
+                "staticUrl",
+                "stickyStaticUrl"
             ]);
-            this.airbugClientConfig.setStaticUrl(config.getProperty("client.staticUrl"));
-            this.airbugClientConfig.setStickyStaticUrl(config.getProperty("client.stickyStaticUrl"));
-
-            this.airbugPluginConfig.absorbConfig(config, [
-                "debug",
-                "enableTracking",
-                "github.clientId",
-                "github.redirectUri",
-                "github.scope",
-                "googleAnalyticsId",
-                "js.concat",
-                "js.minify"
-            ]);
-            this.airbugPluginConfig.setStaticUrl(config.getProperty("plugin.staticUrl"));
-            this.airbugPluginConfig.setStickyStaticUrl(config.getProperty("plugin.stickyStaticUrl"));
 
             this.airbugServerConfig.absorbConfig(config, [
                 "appVersion",
@@ -465,9 +446,8 @@ require('bugpack').context("*", function(bugpack) {
         module("airbugServerInitializer")
             .properties([
                 property("airbugCallService").ref("airbugCallService"),
-                property("airbugClientConfig").ref("airbugClientConfig"),
-                property("airbugPluginConfig").ref("airbugPluginConfig"),
                 property("airbugServerConfig").ref("airbugServerConfig"),
+                property("airbugStaticConfig").ref("airbugStaticConfig"),
                 property("awsUploader").ref("awsUploader"),
                 property("bugCallRouter").ref("bugCallRouter"),
                 property("bugCallServer").ref("bugCallServer"),

@@ -17,6 +17,8 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
+//@Require('bugcontroller.ControllerAnnotationProcessor')
+//@Require('bugcontroller.ControllerAnnotationScan')
 //@Require('bugentity.EntityManagerAnnotationProcessor')
 //@Require('bugentity.EntityManagerAnnotationScan')
 //@Require('bugmeta.BugMeta')
@@ -34,6 +36,8 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
+    var ControllerAnnotationProcessor       = bugpack.require('bugcontroller.ControllerAnnotationProcessor');
+    var ControllerAnnotationScan            = bugpack.require('bugcontroller.ControllerAnnotationScan');
     var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
     var EntityManagerAnnotationScan         = bugpack.require('bugentity.EntityManagerAnnotationScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -70,6 +74,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {ControllerAnnotationScan}
+             */
+            this.controllerAnnotationScan       = new ControllerAnnotationScan(BugMeta.context(), new ControllerAnnotationProcessor(this.getIocContext()));
+
+            /**
+             * @private
              * @type {EntityManagerAnnotationScan}
              */
             this.entityManagerAnnotationScan    = new EntityManagerAnnotationScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.getIocContext()));
@@ -88,6 +98,7 @@ require('bugpack').context("*", function(bugpack) {
                 "airbugserver.AirbugServerConfiguration",
                 "meldbugserver.MeldbugServerConfiguration"
             ]);
+            this.controllerAnnotationScan.scanAll();
             this.entityManagerAnnotationScan.scanAll();
             this.getModuleScan().scanAll({
                 excludes: [

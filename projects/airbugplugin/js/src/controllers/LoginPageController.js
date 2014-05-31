@@ -7,18 +7,19 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.ApplicationController')
+//@Export('airbugplugin.LoginPageController')
+//@Autoload
 
 //@Require('Class')
+//@Require('airbug.ApplicationController')
+//@Require('airbugplugin.LoginPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
-//@Require('carapace.CarapaceController')
 
 
 //-------------------------------------------------------------------------------
@@ -31,22 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
-    var CarapaceController          = bugpack.require('carapace.CarapaceController');
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var LoginPageContainer      = bugpack.require('airbugplugin.LoginPageContainer');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredAnnotation.autowired;
-    var controller                  = ControllerAnnotation.controller;
-    var property                    = PropertyAnnotation.property;
+    var bugmeta                 = BugMeta.context();
+    var controller              = ControllerAnnotation.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -55,11 +53,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {CarapaceController}
+     * @extends {ApplicationController}
      */
-    var ApplicationController = Class.extend(CarapaceController, {
+    var LoginPageController = Class.extend(ApplicationController, {
 
-        _name: "airbug.ApplicationController",
+        _name: "airbugplugin.LoginPageController'",
 
 
         //-------------------------------------------------------------------------------
@@ -79,16 +77,10 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             /**
-             * @private
-             * @type {CurrentUserManagerModule}
+             * @protected
+             * @type {LoginPageContainer}
              */
-            this.currentUserManagerModule   = null;
-
-            /**
-             * @private
-             * @type {NavigationModule}
-             */
-            this.navigationModule           = null;
+            this.loginPageContainer = null;
         },
 
 
@@ -97,41 +89,39 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @Override
+         * @protected
+         */
+        createController: function() {
+            this._super();
+            this.loginPageContainer = new LoginPageContainer();
+            this.setContainerTop(this.loginPageContainer);
+        },
+
+        /**
+         * @protected
+         */
+        destroyController: function() {
+            this._super();
+            this.loginPageContainer = null;
+        },
+
+        /**
+         * @override
          * @protected
          * @param {RoutingRequest} routingRequest
          */
         filterRouting: function(routingRequest) {
-
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // Protected Methods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @protected
-         * @param {RoutingRequest} routingRequest
-         * @param {function(Throwable, CurrentUser=)} callback
-         */
-        requireLogin: function(routingRequest, callback) {
-            var _this       = this;
-            var route       = routingRequest.getRoute().route;
-            var args        = routingRequest.getArgs();
-
-            this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+            this.getCurrentUserManagerModule().retrieveCurrentUser(function(throwable, currentUser) {
                 if (!throwable) {
-                    if (currentUser.isLoggedIn()) {
-                        callback(null, currentUser);
-                    } else {
-                        _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
-                        _this.navigationModule.navigate("login", {
+                    if (currentUser && currentUser.isLoggedIn()) {
+                        routingRequest.forward("home", {
                             trigger: true
                         });
+                    } else {
+                        routingRequest.accept();
                     }
                 } else {
-                    callback(throwable);
+                    throw throwable;
                 }
             });
         }
@@ -142,11 +132,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ApplicationController).with(
-        autowired().properties([
-            property("currentUserManagerModule").ref("currentUserManagerModule"),
-            property("navigationModule").ref("navigationModule")
-        ])
+    bugmeta.annotate(LoginPageController).with(
+        controller().route("login")
     );
 
 
@@ -154,5 +141,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.ApplicationController", ApplicationController);
+    bugpack.export("airbugplugin.LoginPageController", LoginPageController);
 });

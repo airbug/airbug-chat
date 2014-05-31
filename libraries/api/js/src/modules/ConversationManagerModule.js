@@ -23,7 +23,6 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                           = bugpack.require('Class');
-    var ConversationModel               = bugpack.require('airbug.ConversationModel');
     var ManagerModule                   = bugpack.require('airbug.ManagerModule');
     var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
     var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');

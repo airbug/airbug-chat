@@ -11,16 +11,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.RegistrationPageController')
-//@Autoload
+//@Export('airbug.ApplicationController')
 
 //@Require('Class')
-//@Require('airbug.ApplicationController')
-//@Require('airbug.RegistrationPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.CarapaceController')
 
 
 //-------------------------------------------------------------------------------
@@ -34,22 +31,19 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
-    var ApplicationController       = bugpack.require('airbug.ApplicationController');
-    var RegistrationPageContainer   = bugpack.require('airbug.RegistrationPageContainer');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
     var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var CarapaceController          = bugpack.require('carapace.CarapaceController');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta     = BugMeta.context();
-    var autowired   = AutowiredAnnotation.autowired;
-    var controller  = ControllerAnnotation.controller;
-    var property    = PropertyAnnotation.property;
+    var bugmeta                     = BugMeta.context();
+    var autowired                   = AutowiredAnnotation.autowired;
+    var property                    = PropertyAnnotation.property;
 
 
     //-------------------------------------------------------------------------------
@@ -58,11 +52,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {ApplicationController}
+     * @extends {CarapaceController}
      */
-    var RegistrationPageController = Class.extend(ApplicationController, {
+    var ApplicationController = Class.extend(CarapaceController, {
 
-        _name: "airbug.RegistrationPageController",
+        _name: "airbug.ApplicationController",
 
 
         //-------------------------------------------------------------------------------
@@ -82,10 +76,35 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             /**
-             * @protected
-             * @type {RegistrationPageContainer}
+             * @private
+             * @type {CurrentUserManagerModule}
              */
-            this.registrationPageContainer = null;
+            this.currentUserManagerModule   = null;
+
+            /**
+             * @private
+             * @type {NavigationModule}
+             */
+            this.navigationModule           = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {CurrentUserManagerModule}
+         */
+        getCurrentUserManagerModule: function() {
+            return this.currentUserManagerModule;
+        },
+
+        /**
+         * @return {NavigationModule}
+         */
+        getNavigationModule: function() {
+            return this.navigationModule;
         },
 
 
@@ -94,35 +113,41 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @protected
-         */
-        createController: function() {
-            this._super();
-            this.registrationPageContainer = new RegistrationPageContainer();
-            this.setContainerTop(this.registrationPageContainer);
-        },
-
-        /**
-         * @protected
-         */
-        destroyController: function() {
-            this._super();
-            this.registrationPageContainer = null;
-        },
-
-        /**
-         * @override
+         * @Override
          * @protected
          * @param {RoutingRequest} routingRequest
          */
         filterRouting: function(routingRequest) {
+
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         * @param {function(Throwable, CurrentUser=)} callback
+         */
+        requireLogin: function(routingRequest, callback) {
+            var _this       = this;
+            var route       = routingRequest.getRoute().route;
+            var args        = routingRequest.getArgs();
+
             this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
-                if (currentUser && currentUser.isLoggedIn()) { //bandaid
-                    routingRequest.forward("home", {
-                        trigger: true
-                    });
+                if (!throwable) {
+                    if (currentUser.isLoggedIn()) {
+                        callback(null, currentUser);
+                    } else {
+                        _this.navigationModule.setFinalDestination(route.split(/\//)[0] + '/' + args.join("\/"));
+                        _this.navigationModule.navigate("login", {
+                            trigger: true
+                        });
+                    }
                 } else {
-                    routingRequest.accept();
+                    callback(throwable);
                 }
             });
         }
@@ -133,8 +158,11 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RegistrationPageController).with(
-        controller().route("signup")
+    bugmeta.annotate(ApplicationController).with(
+        autowired().properties([
+            property("currentUserManagerModule").ref("currentUserManagerModule"),
+            property("navigationModule").ref("navigationModule")
+        ])
     );
 
 
@@ -142,5 +170,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.RegistrationPageController", RegistrationPageController);
+    bugpack.export("airbug.ApplicationController", ApplicationController);
 });

@@ -17,19 +17,15 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Url')
 //@Require('airbug.AirbugStaticConfig')
 //@Require('airbug.DocumentUtil')
 //@Require('airbug.MemoryCache')
 //@Require('airbug.WindowUtil')
 //@Require('bugcall.Call')
-//@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('bugroute:bugcall.BugCallRouter')
 //@Require('carapace.ControllerScan')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
@@ -49,19 +45,15 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
-    var Url                         = bugpack.require('Url');
     var AirbugStaticConfig          = bugpack.require('airbug.AirbugStaticConfig');
     var DocumentUtil                = bugpack.require('airbug.DocumentUtil');
     var MemoryCache                 = bugpack.require('airbug.MemoryCache');
     var WindowUtil                  = bugpack.require('airbug.WindowUtil');
     var Call                        = bugpack.require('bugcall.Call');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
     var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
     var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
     var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var BugCallRouter               = bugpack.require('bugroute:bugcall.BugCallRouter');
     var ControllerScan              = bugpack.require('carapace.ControllerScan');
     var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
     var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
@@ -73,13 +65,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series                     = BugFlow.$series;
-    var $task                       = BugFlow.$task;
     var arg                         = ArgAnnotation.arg;
     var bugmeta                     = BugMeta.context();
     var configuration               = ConfigurationAnnotation.configuration;
     var module                      = ModuleAnnotation.module;
-    var property                    = PropertyAnnotation.property;
 
 
     //-------------------------------------------------------------------------------
@@ -114,19 +103,11 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {BugCallClient} bugCallRequestEventDispatcher
-         * @return {BugCallRouter}
-         */
-        bugCallRouter: function(bugCallRequestEventDispatcher) {
-            return new BugCallRouter(bugCallRequestEventDispatcher);
-        },
-
-        /**
          * @param {Logger} logger
          * @return {Call}
          */
         call: function(logger) {
-            return new Call(logger);
+            return new Call(logger, "client");
         },
 
         /**
@@ -211,13 +192,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     bugmeta.annotate(AirbugClientConfiguration).with(
-        configuration("airbugStaticConfiguration").modules([
+        configuration("airbugClientConfiguration").modules([
             module("airbugStaticConfig"),
             module("browserSocketIoFactory"),
-            module("bugCallRouter")
-                .args([
-                    arg().ref("bugCallClient")
-                ]),
             module("call")
                 .args([
                     arg().ref("logger")

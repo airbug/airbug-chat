@@ -23,8 +23,6 @@
 //@Require('Set')
 //@Require('Url')
 //@Require('UuidGenerator')
-//@Require('airbugserver.IBuildRequestContext')
-//@Require('airbugserver.RequestContext')
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
 //@Require('aws.S3Api')
@@ -64,8 +62,6 @@ require('bugpack').context("*", function(bugpack) {
     var Set                     = bugpack.require('Set');
     var Url                     = bugpack.require('Url');
     var UuidGenerator           = bugpack.require('UuidGenerator');
-    var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
-    var RequestContext          = bugpack.require('airbugserver.RequestContext');
     var AwsConfig               = bugpack.require('aws.AwsConfig');
     var AwsUploader             = bugpack.require('aws.AwsUploader');
     var S3Api                   = bugpack.require('aws.S3Api');

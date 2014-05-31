@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,329 +19,321 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('Set')
-//@Require('UuidGenerator')
-//@Require('airbugserver.IBuildRequestContext')
-//@Require('airbugserver.RequestContext')
-//@Require('aws.AwsConfig')
-//@Require('aws.AwsUploader')
-//@Require('aws.S3Api')
-//@Require('aws.S3Bucket')
 //@Require('bugflow.BugFlow')
-//@Require('bugfs.Path')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-var path                    = require('path');
-var http                    = require('http');
-var https                   = require('https');
-var fs                      = require('fs');
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Bug                     = bugpack.require('Bug');
-var Class                   = bugpack.require('Class');
-var Exception               = bugpack.require('Exception');
-var Obj                     = bugpack.require('Obj');
-var Set                     = bugpack.require('Set');
-var UuidGenerator           = bugpack.require('UuidGenerator');
-var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
-var RequestContext          = bugpack.require('airbugserver.RequestContext');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var Path                    = bugpack.require('bugfs.Path');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                     = ArgAnnotation.arg;
-var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
-var $parallel               = BugFlow.$parallel;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-var $iterableParallel       = BugFlow.$iterableParallel;
-var $forEachParallel        = BugFlow.$forEachParallel;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BetaKeyService = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, betaKeyManager, betaKeyPusher) {
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var Obj                     = bugpack.require('Obj');
+    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleAnnotation.module;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var BetaKeyService = Class.extend(Obj, {
+
+        _name: "airbugserver.BetaKeyService",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BetaKeyManager}
+         * @constructs
+         * @param {Logger} logger
+         * @param {BetaKeyManager} betaKeyManager
+         * @param {BetaKeyPusher} betaKeyPusher
          */
-        this.betaKeyManager     = betaKeyManager;
+        _constructor: function(logger, betaKeyManager, betaKeyPusher) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {BetaKeyManager}
+             */
+            this.betaKeyManager     = betaKeyManager;
+
+            /**
+             * @private
+             * @type {BetaKeyPusher}
+             */
+            this.betaKeyPusher      = betaKeyPusher;
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger             = logger;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BetaKeyPusher}
+         * @return {BetaKeyManager}
          */
-        this.betaKeyPusher      = betaKeyPusher;
+        getBetaKeyManager: function() {
+            return this.betaKeyManager;
+        },
 
         /**
-         * @private
-         * @type {Logger}
+         * @return {BetaKeyPusher}
          */
-        this.logger             = logger;
-    },
+        getBetaKeyPusher: function() {
+            return this.betaKeyPusher;
+        },
+
+        /**
+         * @return {Logger}
+         */
+        getLogger: function() {
+            return this.logger;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {BetaKeyManager}
-     */
-    getBetaKeyManager: function() {
-        return this.betaKeyManager;
-    },
+        /**
+         * @param {string} betaKey
+         * @param {function(?Error)} callback
+         */
+        incrementCountForBetaKeyAndParentKeys: function(betaKey, callback) {
+            this.betaKeyManager.incrementCountForBetaKeyAndParentKeys(betaKey, callback);
+        },
 
-    /**
-     * @return {BetaKeyPusher}
-     */
-    getBetaKeyPusher: function() {
-        return this.betaKeyPusher;
-    },
+        /**
+         * @param {RequestContext} requestContext
+         * @param {string} betaKey
+         * @param {function(Throwable, BetaKey=)} callback
+         */
+        retrieveBetaKeyByBetaKey: function(requestContext, betaKey, callback) {
+            var _this           = this;
+            var call            = requestContext.get("call");
+            var currentUser     = requestContext.get('currentUser');
 
-    /**
-     * @return {Logger}
-     */
-    getLogger: function() {
-        return this.logger;
-    },
+            /** @type {BetaKey} */
+            var betaKey           = null;
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} betaKey
-     * @param {function(?Error)} callback
-     */
-    incrementCountForBetaKeyAndParentKeys: function(betaKey, callback) {
-        this.betaKeyManager.incrementCountForBetaKeyAndParentKeys(betaKey, callback);
-    },
-
-    /*
-     * @param {RequestContext} requestContext
-     * @param {string} betaKey
-     * @param {function(Throwable, BetaKey=} callback
-     */
-    retrieveBetaKeyByBetaKey: function(requestContext, betaKey, callback) {
-        var _this           = this;
-        var call            = requestContext.get("call");
-        var currentUser     = requestContext.get('currentUser');
-
-        /** @type {BetaKey} */
-        var betaKey           = null;
-
-        if (currentUser.isNotAnonymous()) {
-            $series([
-                $task(function(flow) {
-                    _this.dbRetrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
-                        if (!throwable) {
-                            if (returnedBetaKey) {
-                                betaKey = returnedBetaKey;
-                                flow.complete(throwable);
+            if (currentUser.isNotAnonymous()) {
+                $series([
+                    $task(function(flow) {
+                        _this.dbRetrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
+                            if (!throwable) {
+                                if (returnedBetaKey) {
+                                    betaKey = returnedBetaKey;
+                                    flow.complete(throwable);
+                                } else {
+                                    flow.error(new Exception('NotFound'));
+                                }
                             } else {
-                                flow.error(new Exception('NotFound'));
+                                flow.error(throwable);
                             }
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.betaKeyPusher.meldCallWithBetaKey(call.getCallUuid(), betaKey, function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.betaKeyPusher.pushBetaKeyToCall(betaKey, call.getCallUuid(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    })
+                ]).execute(function(throwable) {
+                        if (!throwable) {
+                            callback(null, betaKey);
                         } else {
-                            flow.error(throwable);
+                            callback(throwable);
                         }
                     });
-                }),
-                $task(function(flow) {
-                    _this.betaKeyPusher.meldCallWithBetaKey(call.getCallUuid(), betaKey, function(throwable) {
-                        flow.complete(throwable);
+            } else {
+                callback(new Exception('UnauthorizedAccess'));
+            }
+        },
+
+        /**
+         * @param {RequestContext} requestContext
+         * @param {function(Throwable, List.<BetaKey>=)} callback
+         */
+        retrieveAllBetaKeys: function(requestContext, callback) {
+            var _this           = this;
+            var call            = requestContext.get("call");
+            var currentUser     = requestContext.get('currentUser');
+
+            /** @type {List.<BetaKey>} */
+            var betaKeyList          = null;
+
+            if (currentUser.isNotAnonymous()) {
+                $series([
+                    $task(function(flow) {
+                        _this.dbRetrieveAllBetaKeys(function(throwable, returnedBetaKeyList) {
+                            if (!throwable) {
+                                if (returnedBetaKeyList) {
+                                    betaKeyList = returnedBetaKeyList;
+                                    flow.complete(throwable);
+                                } else {
+                                    flow.error(new Exception('NotFound'));
+                                }
+                            } else {
+                                flow.error(throwable);
+                            }
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.betaKeyPusher.meldCallWithBetaKeys(call.getCallUuid(), betaKeyList.toArray(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this.betaKeyPusher.pushBetaKeysToCall(betaKeyList.toArray(), call.getCallUuid(), function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    })
+                ]).execute(function(throwable) {
+                        if (!throwable) {
+                            callback(null, betaKeyList);
+                        } else {
+                            callback(throwable);
+                        }
                     });
-                }),
-                $task(function(flow) {
-                    _this.betaKeyPusher.pushBetaKeyToCall(betaKey, call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
+            } else {
+                callback(new Exception('UnauthorizedAccess'));
+            }
+        },
+
+        /**
+         * @param {string} betaKey
+         * @param {function(Throwable, boolean=)} callback
+         */
+        validateAndIncrementBaseBetaKey: function(betaKey, callback) {
+            this.betaKeyManager.validateAndIncrementBaseBetaKey(betaKey, callback);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {function(Throwable, List.<BetaKey>=)} callback
+         */
+        dbRetrieveAllBetaKeys: function(callback) {
+            var betaKeys         = null;
+            var betaKeyManager   = this.betaKeyManager;
+            $task(function(flow) {
+                betaKeyManager.retrieveAllBetaKeys(function(throwable, returnedBetaKeys) {
+                    if (!throwable) {
+                        if (returnedBetaKeys) {
+                            betaKeys = returnedBetaKeys;
+                        } else {
+                            throwable = new Exception('NotFound');
+                        }
+                    }
+                    flow.complete(throwable);
+                });
+            }).execute(function(throwable) {
+                    if (!throwable) {
+                        callback(null, betaKeys);
+                    } else {
+                        callback(throwable);
+                    }
+                });
+        },
+
+        /**
+         * @private
+         * @param {string} betaKey
+         * @param {function(Throwable, BetaKey=)} callback
+         */
+        dbRetrieveBetaKeyByBetaKey: function(betaKey, callback) {
+            var betaKey          = null;
+            var betaKeyManager   = this.betaKeyManager;
+            $task(function(flow) {
+                betaKeyManager.retrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
+                    if (!throwable) {
+                        if (returnedBetaKey) {
+                            betaKey = returnedBetaKey;
+                        } else {
+                            throwable = new Exception('NotFound');
+                        }
+                    }
+                    flow.complete(throwable);
+                });
+            }).execute(function(throwable) {
                     if (!throwable) {
                         callback(null, betaKey);
                     } else {
                         callback(throwable);
                     }
                 });
-        } else {
-            callback(new Exception('UnauthorizedAccess'));
         }
-    },
+    });
 
-    /*
-     * @param {RequestContext} requestContext
-     * @param {function(Throwable, List.<BetaKey>=} callback
-     */
-    retrieveAllBetaKeys: function(requestContext, callback) {
-        var _this           = this;
-        var call            = requestContext.get("call");
-        var currentUser     = requestContext.get('currentUser');
-
-        /** @type {List.<BetaKey>} */
-        var betaKeyList          = null;
-
-        if (currentUser.isNotAnonymous()) {
-            $series([
-                $task(function(flow) {
-                    _this.dbRetrieveAllBetaKeys(function(throwable, returnedBetaKeyList) {
-                        if (!throwable) {
-                            if (returnedBetaKeyList) {
-                                betaKeyList = returnedBetaKeyList;
-                                flow.complete(throwable);
-                            } else {
-                                flow.error(new Exception('NotFound'));
-                            }
-                        } else {
-                            flow.error(throwable);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this.betaKeyPusher.meldCallWithBetaKeys(call.getCallUuid(), betaKeyList.toArray(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.betaKeyPusher.pushBetaKeysToCall(betaKeyList.toArray(), call.getCallUuid(), function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                    if (!throwable) {
-                        callback(null, betaKeyList);
-                    } else {
-                        callback(throwable);
-                    }
-                });
-        } else {
-            callback(new Exception('UnauthorizedAccess'));
-        }
-    },
-
-    /**
-     *
-     * @param {string} betaKey
-     * @param {function(Error, boolean} callback
-     */
-    validateAndIncrementBaseBetaKey: function(betaKey, callback) {
-        this.betaKeyManager.validateAndIncrementBaseBetaKey(betaKey, callback);
-    },
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {function(Throwable, List.<BetaKey>=)} callback
-     */
-    dbRetrieveAllBetaKeys: function(callback) {
-        var betaKeys         = null;
-        var betaKeyManager   = this.betaKeyManager;
-        $task(function(flow) {
-            betaKeyManager.retrieveAllBetaKeys(function(throwable, returnedBetaKeys) {
-                if (!throwable) {
-                    if (returnedBetaKeys) {
-                        betaKeys = returnedBetaKeys;
-                    } else {
-                        throwable = new Exception('NotFound');
-                    }
-                }
-                flow.complete(throwable);
-            });
-        }).execute(function(throwable) {
-                if (!throwable) {
-                    callback(null, betaKeys);
-                } else {
-                    callback(throwable);
-                }
-            });
-    },
+    bugmeta.annotate(BetaKeyService).with(
+        module("betaKeyService")
+            .args([
+                arg().ref("logger"),
+                arg().ref("betaKeyManager"),
+                arg().ref("betaKeyPusher")
+            ])
+    );
 
-    /**
-     * @private
-     * @param {string} betaKey
-     * @param {function(Throwable, BetaKey=)} callback
-     */
-    dbRetrieveBetaKeyByBetaKey: function(betaKey, callback) {
-        var betaKey          = null;
-        var betaKeyManager   = this.betaKeyManager;
-        $task(function(flow) {
-            betaKeyManager.retrieveBetaKeyByBetaKey(betaKey, function(throwable, returnedBetaKey) {
-                if (!throwable) {
-                    if (returnedBetaKey) {
-                        betaKey = returnedBetaKey;
-                    } else {
-                        throwable = new Exception('NotFound');
-                    }
-                }
-                flow.complete(throwable);
-            });
-        }).execute(function(throwable) {
-                if (!throwable) {
-                    callback(null, betaKey);
-                } else {
-                    callback(throwable);
-                }
-            });
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.BetaKeyService', BetaKeyService);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(BetaKeyService).with(
-    module("betaKeyService")
-        .args([
-            arg().ref("logger"),
-            arg().ref("betaKeyManager"),
-            arg().ref("betaKeyPusher")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.BetaKeyService', BetaKeyService);

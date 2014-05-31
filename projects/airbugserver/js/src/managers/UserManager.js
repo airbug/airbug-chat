@@ -56,7 +56,7 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 var UserManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**

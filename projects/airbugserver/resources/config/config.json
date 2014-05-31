@@ -1,9 +1,5 @@
 {
     "appVersion": "{{BUILD_VERSION}}",
-    "client": {
-        "staticUrl": "/static/client",
-        "stickyStaticUrl": "/static/client"
-    },
     "cookieDomain": "",
     "cookieSecret": "some secret, seriously don't tell",
     "cookieMaxAge": 86400000,
@@ -18,10 +14,6 @@
         "minify" : false
     },
     "mongoDbIp": "localhost",
-    "plugin": {
-        "staticUrl": "/static/plugin",
-        "stickyStaticUrl": "/static/plugin"
-    },
     "port": 8000,
     "hostName": "localhost",
     "redis": {
@@ -29,5 +21,7 @@
         "port": 6379
     },
     "sessionKey": "airbug.sid",
-    "sslEnabled": false
+    "sslEnabled": false,
+    "staticUrl": "/static",
+    "stickyStaticUrl": "/static"
 }

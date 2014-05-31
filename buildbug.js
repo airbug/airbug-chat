@@ -83,7 +83,9 @@ buildProperties({
         outputMinFile: "{{distPath}}/airbug-api-bridge.min.js"
     },
     client: {
-        buildPath: buildProject.getProperty("buildPath") + "/{{client.name}}/{{client.version}}",
+        buildPath: "{{buildPath}}/{{client.name}}/{{client.version}}",
+        jsBuildPath: "{{client.buildPath}}/js",
+        staticBuildPath: "{{client.buildPath}}/static",
         name: "airbugclient",
         version: "{{version}}",
         outputFile: "{{distPath}}/{{client.name}}.js",
@@ -91,33 +93,32 @@ buildProperties({
         sourcePaths: [
             "./libraries/airbug/js/src",
             "./libraries/api/js/src",
+            "./libraries/common-web/js/src",
             "./libraries/ui/js/src",
             "./projects/airbugclient/js/src",
-            "./projects/airbugclient/static",
             "../bugcore/projects/bugcore/js/src",
             "../bugflow/projects/bugflow/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
-            "../bugjs/external/bootstrap2/static",
             "../bugjs/external/jquery/js/src",
             "../bugjs/external/jquery-plugins/js/src/fileupload",
             "../bugjs/external/jquery-plugins/js/src/selectText",
             "../bugjs/external/jquery-plugins/js/src/validator",
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/socket-io/js/src",
-            "../bugjs/external/socialbuttons/static",
             "../bugjs/external/underscore/js/src",
             "../bugjs/external/zeroclipboard/js/src",
-            "../bugjs/external/zeroclipboard/static",
             "../bugjs/projects/bugapp/js/src",
-            "../bugjs/projects/bugcall/bugjars/client/js/src",
-            "../bugjs/projects/bugcall/bugjars/core/js/src",
+            "../bugjs/projects/bugcall/libraries/client/js/src",
+            "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugdispose/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmvc/js/src",
+            "../bugjs/projects/bugrequest/libraries/context/js/src",
+            "../bugjs/projects/bugrequest/libraries/core/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/carapace/js/src",
             "../bugjs/projects/cookies/js/src",
@@ -131,6 +132,12 @@ buildProperties({
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
+        ],
+        staticPaths: [
+            "./projects/airbugclient/static",
+            "../bugjs/external/bootstrap2/static",
+            "../bugjs/external/socialbuttons/static",
+            "../bugjs/external/zeroclipboard/static",
         ],
         serverStickyPaths: [
             "../bugjs/external/aceexts/js/src",
@@ -147,7 +154,9 @@ buildProperties({
         }
     },
     plugin: {
-        buildPath: buildProject.getProperty("buildPath") + "/{{plugin.name}}/{{plugin.version}}",
+        buildPath: "{{buildPath}}/{{plugin.name}}/{{plugin.version}}",
+        jsBuildPath: "{{plugin.buildPath}}/js",
+        staticBuildPath: "{{plugin.buildPath}}/static",
         name: "airbugplugin",
         version: "{{version}}",
         outputFile: "{{distPath}}/{{plugin.name}}.js",
@@ -155,32 +164,31 @@ buildProperties({
         sourcePaths: [
             "./libraries/airbug/js/src",
             "./libraries/api/js/src",
+            "./libraries/common-web/js/src",
             "./libraries/ui/js/src",
             "./projects/airbugplugin/js/src",
-            "./projects/airbugplugin/static",
             "../bugcore/projects/bugcore/js/src",
             "../bugflow/projects/bugflow/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
-            "../bugjs/external/bootstrap2/static",
             "../bugjs/external/jquery/js/src",
             "../bugjs/external/jquery-plugins/js/src/fileupload",
             "../bugjs/external/jquery-plugins/js/src/selectText",
             "../bugjs/external/jquery-plugins/js/src/validator",
             "../bugjs/external/mustache/js/src",
             "../bugjs/external/socket-io/js/src",
-            "../bugjs/external/socialbuttons/static",
             "../bugjs/external/underscore/js/src",
             "../bugjs/external/zeroclipboard/js/src",
-            "../bugjs/external/zeroclipboard/static",
             "../bugjs/projects/bugapp/js/src",
-            "../bugjs/projects/bugcall/bugjars/client/js/src",
-            "../bugjs/projects/bugcall/bugjars/core/js/src",
+            "../bugjs/projects/bugcall/libraries/client/js/src",
+            "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugdispose/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmvc/js/src",
+            "../bugjs/projects/bugrequest/libraries/context/js/src",
+            "../bugjs/projects/bugrequest/libraries/core/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/carapace/js/src",
             "../bugjs/projects/cookies/js/src",
@@ -194,6 +202,12 @@ buildProperties({
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
+        ],
+        staticPaths: [
+            "./projects/airbugplugin/static",
+            "../bugjs/external/bootstrap2/static",
+            "../bugjs/external/socialbuttons/static",
+            "../bugjs/external/zeroclipboard/static",
         ],
         loader: {
             source: "./projects/airbugplugin/js/scripts/airbugplugin-application-loader.js",
@@ -219,14 +233,17 @@ buildProperties({
             "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugapp/js/src",
-            "../bugjs/projects/bugcall/bugjars/core/js/src",
-            "../bugjs/projects/bugcall/bugjars/publisher/js/src",
-            "../bugjs/projects/bugcall/bugjars/server/js/src",
+            "../bugjs/projects/bugcall/libraries/core/js/src",
+            "../bugjs/projects/bugcall/libraries/publisher/js/src",
+            "../bugjs/projects/bugcall/libraries/server/js/src",
+            "../bugjs/projects/bugcontroller/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmigrate/js/src",
+            "../bugjs/projects/bugrequest/libraries/context/js/src",
+            "../bugjs/projects/bugrequest/libraries/core/js/src",
             "../bugjs/projects/bugroute/bugjars/bugcall/js/src",
             "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtask/js/src",
@@ -280,13 +297,16 @@ buildProperties({
                 "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/aws/js/test",
                 "../bugjs/projects/bugapp/js/test",
-                "../bugjs/projects/bugcall/bugjars/core/js/test",
-                "../bugjs/projects/bugcall/bugjars/publisher/js/test",
-                "../bugjs/projects/bugcall/bugjars/server/js/test",
+                "../bugjs/projects/bugcall/libraries/core/js/test",
+                "../bugjs/projects/bugcall/libraries/publisher/js/test",
+                "../bugjs/projects/bugcall/libraries/server/js/test",
+                "../bugjs/projects/bugcontroller/js/test",
                 "../bugjs/projects/bugdelta/js/test",
                 "../bugjs/projects/bugentity/js/test",
                 "../bugjs/projects/bugioc/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
+                "../bugjs/projects/bugrequest/libraries/context/js/test",
+                "../bugjs/projects/bugrequest/libraries/core/js/test",
                 "../bugjs/projects/bugroute/bugjars/bugcall/js/test",
                 "../bugjs/projects/bugsub/js/test",
                 "../bugjs/projects/bugtask/js/test",
@@ -324,8 +344,8 @@ buildProperties({
             "../bugflow/projects/bugflow/js/src",
             "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/bugapp/js/src",
-            "../bugjs/projects/bugcall/bugjars/core/js/src",
-            "../bugjs/projects/bugcall/bugjars/publisher/js/src",
+            "../bugjs/projects/bugcall/libraries/core/js/src",
+            "../bugjs/projects/bugcall/libraries/publisher/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
@@ -367,8 +387,8 @@ buildProperties({
                 "../bugcore/projects/bugcore/js/test",
                 "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/bugapp/js/test",
-                "../bugjs/projects/bugcall/bugjars/core/js/test",
-                "../bugjs/projects/bugcall/bugjars/publisher/js/test",
+                "../bugjs/projects/bugcall/libraries/core/js/test",
+                "../bugjs/projects/bugcall/libraries/publisher/js/test",
                 "../bugjs/projects/bugdelta/js/test",
                 "../bugjs/projects/bugioc/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
@@ -469,14 +489,22 @@ buildTarget('local').buildFlow(
                     series([
                         targetTask('copyContents', {
                             properties: {
+                                fromPaths: buildProject.getProperty("client.staticPaths"),
+                                intoPath: "{{client.staticBuildPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
                                 fromPaths: buildProject.getProperty("client.sourcePaths"),
-                                intoPath: "{{client.buildPath}}/js"
+                                intoPath: "{{client.jsBuildPath}}"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
                                 name: "{{client.name}}",
-                                sourceRoot: "{{client.buildPath}}/js"
+                                sourceRoot: "{{client.jsBuildPath}}"
                             }
                         }),
                         targetTask("concat", {
@@ -520,14 +548,22 @@ buildTarget('local').buildFlow(
                     series([
                         targetTask('copyContents', {
                             properties: {
+                                fromPaths: buildProject.getProperty("plugin.staticPaths"),
+                                intoPath: "{{plugin.staticBuildPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
                                 fromPaths: buildProject.getProperty("plugin.sourcePaths"),
-                                intoPath: "{{plugin.buildPath}}"
+                                intoPath: "{{plugin.jsBuildPath}}"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
                                 name: "{{plugin.name}}",
-                                sourceRoot: "{{plugin.buildPath}}"
+                                sourceRoot: "{{plugin.jsBuildPath}}"
                             }
                         }),
                         targetTask("concat", {
@@ -558,23 +594,38 @@ buildTarget('local').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
-                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
-                            buildProject.getProperty("server.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
-                            buildProject.getProperty("server.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("server.unitTest.testPaths"),
-                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
-                        staticPaths: ([
-                            "{{client.buildPath}}",
-                            buildProject.getProperty("client.outputFile"),
-                            buildProject.getProperty("client.outputMinFile"),
-                            buildProject.getProperty("client.loader.outputFile"),
-                            buildProject.getProperty("client.loader.outputMinFile"),
-                            buildProject.getProperty("bridge.outputFile"),
-                            buildProject.getProperty("bridge.outputMinFile")
-                        ]).concat(buildProject.getProperty("client.serverStickyPaths"))
+                        packagePaths: {
+                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
+                                buildProject.getProperty("server.unitTest.sourcePaths")
+                            ),
+                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
+                                buildProject.getProperty("server.unitTest.scriptPaths")
+                            ),
+                            "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./resources": buildProject.getProperty("server.resourcePaths"),
+                            "./static": buildProject.getProperty("client.serverStickyPaths").concat([
+                                "{{client.staticBuildPath}}",
+                                "{{plugin.staticBuildPath}}"
+                            ]),
+                            "./static/js/client": [
+                                "{{client.jsBuildPath}}",
+                                buildProject.getProperty("client.outputFile"),
+                                buildProject.getProperty("client.outputMinFile"),
+                                buildProject.getProperty("client.loader.outputFile"),
+                                buildProject.getProperty("client.loader.outputMinFile")
+                            ],
+                            "./static/js/plugin": [
+                                "{{plugin.jsBuildPath}}",
+                                buildProject.getProperty("plugin.outputFile"),
+                                buildProject.getProperty("plugin.outputMinFile"),
+                                buildProject.getProperty("plugin.loader.outputFile"),
+                                buildProject.getProperty("plugin.loader.outputMinFile")
+                            ],
+                            "./static/js/bridge": [
+                                buildProject.getProperty("bridge.outputFile"),
+                                buildProject.getProperty("bridge.outputMinFile")
+                            ]
+                        }
                     }
                 }),
                 targetTask('replaceTokens', {
@@ -701,7 +752,6 @@ buildTarget('local').buildFlow(
 ).makeDefault();
 
 
-
 // Short BuildTarget
 //-------------------------------------------------------------------------------
 
@@ -733,10 +783,10 @@ buildTarget('short').buildFlow(
                         })
                     ]),
                     series([
-                        targetTask('copy', {
+                        targetTask('copyContents', {
                             properties: {
-                                fromPaths: ["{{plugin.loader.source}}"],
-                                intoPath: "{{distPath}}"
+                                fromPaths: buildProject.getProperty("client.staticPaths"),
+                                intoPath: "{{client.staticBuildPath}}"
                             }
                         })
                     ]),
@@ -744,13 +794,13 @@ buildTarget('short').buildFlow(
                         targetTask('copyContents', {
                             properties: {
                                 fromPaths: buildProject.getProperty("client.sourcePaths"),
-                                intoPath: "{{client.buildPath}}"
+                                intoPath: "{{client.jsBuildPath}}"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
                                 name: "{{client.name}}",
-                                sourceRoot: "{{client.buildPath}}"
+                                sourceRoot: "{{client.jsBuildPath}}"
                             }
                         }),
                         targetTask("concat", {
@@ -772,16 +822,32 @@ buildTarget('short').buildFlow(
                         })
                     ]),
                     series([
+                        targetTask('copy', {
+                            properties: {
+                                fromPaths: ["{{plugin.loader.source}}"],
+                                intoPath: "{{distPath}}"
+                            }
+                        })
+                    ]),
+                    series([
+                        targetTask('copyContents', {
+                            properties: {
+                                fromPaths: buildProject.getProperty("plugin.staticPaths"),
+                                intoPath: "{{plugin.staticBuildPath}}"
+                            }
+                        })
+                    ]),
+                    series([
                         targetTask('copyContents', {
                             properties: {
                                 fromPaths: buildProject.getProperty("plugin.sourcePaths"),
-                                intoPath: "{{plugin.buildPath}}"
+                                intoPath: "{{plugin.jsBuildPath}}"
                             }
                         }),
                         targetTask('generateBugPackRegistry', {
                             properties: {
                                 name: "{{plugin.name}}",
-                                sourceRoot: "{{plugin.buildPath}}"
+                                sourceRoot: "{{plugin.jsBuildPath}}"
                             }
                         }),
                         targetTask("concat", {
@@ -806,28 +872,43 @@ buildTarget('short').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
-                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
-                            buildProject.getProperty("server.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
-                            buildProject.getProperty("server.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("server.unitTest.testPaths"),
-                        resourcePaths: buildProject.getProperty("server.resourcePaths"),
-                        staticPaths: ([
-                            "{{client.buildPath}}",
-                            buildProject.getProperty("bridge.outputFile"),
-                            buildProject.getProperty("client.outputFile"),
-                            buildProject.getProperty("client.loader.outputFile"),
-                            buildProject.getProperty("plugin.outputFile"),
-                            buildProject.getProperty("plugin.loader.outputFile")
-                        ]).concat(buildProject.getProperty("client.serverStickyPaths"))
+                        packagePaths: {
+                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
+                                buildProject.getProperty("server.unitTest.sourcePaths")
+                            ),
+                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
+                                buildProject.getProperty("server.unitTest.scriptPaths")
+                            ),
+                            "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./resources": buildProject.getProperty("server.resourcePaths"),
+                            "./static": buildProject.getProperty("client.serverStickyPaths").concat([
+                                "{{client.staticBuildPath}}",
+                                "{{plugin.staticBuildPath}}"
+                            ]),
+                            "./static/js/client": [
+                                "{{client.jsBuildPath}}",
+                                buildProject.getProperty("client.outputFile"),
+                                buildProject.getProperty("client.loader.outputFile")
+                            ],
+                            "./static/js/plugin": [
+                                "{{plugin.jsBuildPath}}",
+                                buildProject.getProperty("plugin.outputFile"),
+                                buildProject.getProperty("plugin.loader.outputFile")
+                            ],
+                            "./static/js/bridge": [
+                                buildProject.getProperty("bridge.outputFile")
+                            ]
+                        }
                     }
                 }),
                 targetTask('replaceTokens', {
                     properties: {
                         tokenObjects: [
-                            {token: "{{BUILD_VERSION}}", replacementValue: version, filePaths: [buildProject.getProperty("buildPath") + "/airbugserver/" + version + "/resources/config"]}
+                            {
+                                token: "{{BUILD_VERSION}}",
+                                replacementValue: version,
+                                filePaths: [buildProject.getProperty("buildPath") + "/airbugserver/" + version + "/resources/config"]
+                            }
                         ]
                     }
                 }),

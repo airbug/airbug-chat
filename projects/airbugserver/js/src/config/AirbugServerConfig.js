@@ -12,7 +12,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.AirbugServerConfig')
+//@Export('airbugserver.AirbugServerConfig')
 
 //@Require('Class')
 //@Require('Config')
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
      */
     var AirbugServerConfig = Class.extend(Config, {
 
-        _name: "airbug.AirbugServerConfig",
+        _name: "airbugserver.AirbugServerConfig",
 
 
         //-------------------------------------------------------------------------------
@@ -127,5 +127,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.AirbugServerConfig", AirbugServerConfig);
+    bugpack.export("airbugserver.AirbugServerConfig", AirbugServerConfig);
 });

@@ -18,9 +18,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugStaticConfig')
-//@Require('airbug.AirbugServerConfig')
+//@Require('airbugserver.AirbugServerConfig')
 //@Require('airbugserver.GithubApi')
-//@Require('airbugserver.RequestContextBuilder')
 //@Require('airbugserver.SessionServiceConfig')
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
@@ -29,15 +28,9 @@
 //@Require('bugioc.ConfigurationAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugioc.PropertyAnnotation')
-//@Require('bugmarsh.Marshaller')
-//@Require('bugmarsh.MarshRegistry')
 //@Require('bugmeta.BugMeta')
-//@Require('bugroute:bugcall.BugCallRouter')
-//@Require('configbug.Configbug')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
-//@Require('handshaker.Handshaker')
-//@Require('mongo.MongoDataStore')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:server.SocketIoServer')
 //@Require('socketio:server.SocketIoServerConfig')
@@ -73,9 +66,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var Obj                             = bugpack.require('Obj');
     var AirbugStaticConfig              = bugpack.require('airbug.AirbugStaticConfig');
-    var AirbugServerConfig              = bugpack.require('airbug.AirbugServerConfig');
+    var AirbugServerConfig              = bugpack.require('airbugserver.AirbugServerConfig');
     var GithubApi                       = bugpack.require('airbugserver.GithubApi');
-    var RequestContextBuilder           = bugpack.require('airbugserver.RequestContextBuilder');
     var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
     var AwsConfig                       = bugpack.require('aws.AwsConfig');
     var AwsUploader                     = bugpack.require('aws.AwsUploader');
@@ -84,14 +76,9 @@ require('bugpack').context("*", function(bugpack) {
     var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnotation');
     var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
     var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
-    var Marshaller                      = bugpack.require('bugmarsh.Marshaller');
-    var MarshRegistry                   = bugpack.require('bugmarsh.MarshRegistry');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var BugCallRouter                   = bugpack.require('bugroute:bugcall.BugCallRouter');
-    var Configbug                       = bugpack.require('configbug.Configbug');
     var ExpressApp                      = bugpack.require('express.ExpressApp');
     var ExpressServer                   = bugpack.require('express.ExpressServer');
-    var Handshaker                      = bugpack.require('handshaker.Handshaker');
     var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
     var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
     var SocketIoServerConfig            = bugpack.require('socketio:server.SocketIoServerConfig');
@@ -131,14 +118,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {AirbugStaticConfig}
          */
-        airbugClientConfig: function() {
-            return new AirbugStaticConfig();
-        },
-
-        /**
-         * @return {AirbugStaticConfig}
-         */
-        airbugPluginConfig: function() {
+        airbugStaticConfig: function() {
             return new AirbugStaticConfig();
         },
 
@@ -157,13 +137,6 @@ require('bugpack').context("*", function(bugpack) {
             // TODO - dkk - check to see if configPath exists
             // TODO - dkk - figure out a better way of configuring this
             return new AwsUploader(configPath);
-        },
-
-        /**
-         * @return {BugCallRouter}
-         */
-        bugCallRouter: function() {
-            return new BugCallRouter();
         },
 
         /**
@@ -229,13 +202,6 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {Handshaker}
-         */
-        handshaker: function() {
-            return new Handshaker([]);
-        },
-
-        /**
          * @return {*}
          */
         http: function() {
@@ -261,13 +227,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         mongoose: function() {
             return mongoose;
-        },
-
-        /**
-         * @return {RequestContextBuilder}
-         */
-        requestContextBuilder: function() {
-            return new RequestContextBuilder();
         },
 
         /**
@@ -310,11 +269,9 @@ require('bugpack').context("*", function(bugpack) {
 
     bugmeta.annotate(AirbugServerConfiguration).with(
         configuration("airbugServerConfiguration").modules([
-            module("airbugClientConfig"),
-            module("airbugPluginConfig"),
             module("airbugServerConfig"),
+            module("airbugStaticConfig"),
             module('awsUploader'),
-            module("bugCallRouter"),
             module("console"),
             module("cookie"),
             module("cookieSignature"),
@@ -334,13 +291,11 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("github"),
                     arg().ref("airbugServerConfig")
                 ]),
-            module("handshaker"),
             module("http"),
             module("https"),
             module("imagemagick"),
             module("github"),
             module("mongoose"),
-            module("requestContextBuilder"),
             module("sessionServiceConfig"),
             module("socketIoManager")
                 .args([

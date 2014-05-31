@@ -50,7 +50,7 @@ var entityManager               = EntityManagerAnnotation.entityManager;
 var RoomMemberManager = Class.extend(EntityManager, {
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**

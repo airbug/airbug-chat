@@ -45,7 +45,7 @@
         var application         = new AirbugClientApplication();
         window.application      = application;
         application.addEventListener(Application.EventTypes.STARTED, function (event) {
-            console.log("Airbug client application successfully started");
+            console.log("AirbugClientApplication successfully started");
         });
         application.addEventListener(Application.EventTypes.ERROR, function (event) {
             throw event.getData().error;
@@ -63,7 +63,7 @@
 
         //NOTE BRN: In debug mode we need to load the bugpack-registry.json so that we can load all files individually
 
-        bugpack.loadContext(_appConfig.staticUrl + "/js", function(error, bugpack) {
+        bugpack.loadContext(_appConfig.staticUrl + "/js/client", function(error, bugpack) {
             if (!error) {
                 bugpack.loadExports(["bugapp.Application", "airbug.AirbugClientApplication"], function(error) {
                     if (!error) {

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,287 +19,302 @@
 //@Require('Exception')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
+//@Require('bugcontroller.ControllerAnnotation')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var LiteralUtil         = bugpack.require('LiteralUtil');
-var EntityController    = bugpack.require('airbugserver.EntityController');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                 = ArgAnnotation.arg;
-var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var UserAssetController = Class.extend(EntityController, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService, marshaller) {
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var LiteralUtil             = bugpack.require('LiteralUtil');
+    var EntityController        = bugpack.require('airbugserver.EntityController');
+    var ControllerAnnotation    = bugpack.require('bugcontroller.ControllerAnnotation');
+    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
-        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var controller              = ControllerAnnotation.controller;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {EntityController}
+     */
+    var UserAssetController = Class.extend(EntityController, {
+
+        _name: "airbugserver.UserAssetController",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AssetService}
+         * @constructs
+         * @param {ControllerManager} controllerManager
+         * @param {ExpressApp} expressApp
+         * @param {BugCallRouter} bugCallRouter
+         * @param {UserAssetService} userAssetService
+         * @param {Marshaller} marshaller
          */
-        this.userAssetService            = userAssetService;
-    },
+        _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService, marshaller) {
 
+            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {AssetService}
-     */
-    getUserAssetService: function() {
-        return this.userAssetService;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    configureController: function(callback) {
-        var _this               = this;
-        var userAssetService    = this.getUserAssetService();
-
+            /**
+             * @private
+             * @type {AssetService}
+             */
+            this.userAssetService            = userAssetService;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // BugCall Routes
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
-        this.bugCallRouter.addAll({
+        /**
+         * @return {AssetService}
+         */
+        getUserAssetService: function() {
+            return this.userAssetService;
+        },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            createUserAsset: function(request, responder, callback) {
-                console.log("UserAssetController#createUserAsset");
-                var data                = request.getData();
-                var userAssetObject     = data.object;
-                var requestContext      = request.requestContext;
-                userAssetService.createUserAsset(requestContext, userAssetObject, function(throwable, userAsset) {
-                    _this.processCreateResponse(responder, throwable, userAsset, callback);
-                });
-            },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            deleteUserAsset: function(request, responder, callback) {
-                console.log("UserAssetController#deleteUserAsset");
-                var data                = request.getData();
-                var userAssetId         = data.objectId;
-                var requestContext      = request.requestContext;
-                userAssetService.deleteUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
-                    _this.processDeleteResponse(responder, throwable, userAsset, callback);
-                });
-             },
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=, UserAsset)} callback
-             */
-            renameUserAsset: function(request, responder, callback) {
-                console.log("UserAssetController#renameUserAsset");
-                var data                = request.getData();
-                var userAssetId         = data.userAssetId;
-                var userAssetName       = data.userAssetName;
-                var requestContext      = request.requestContext;
-                userAssetService.renameUserAsset(requestContext, userAssetId, userAssetName, function(throwable, userAsset) {
-                    _this.processUpdateResponse(responder, throwable, userAsset, callback);
-                });
-            },
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        configureController: function(callback) {
+            var _this               = this;
+            var userAssetService    = this.getUserAssetService();
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserAsset: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserAsset");
-                var data                = request.getData();
-                var userAssetId         = data.objectId;
-                var requestContext      = request.requestContext;
-                console.log("data", data);
-                console.log("userAssetId ", userAssetId);
-                userAssetService.retrieveUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
-                    _this.processRetrieveResponse(responder, throwable, userAsset, callback);
-                });
-            },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserAssets: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserAssets");
-                var data                = request.getData();
-                var userAssetIds        = data.objectIds;
-                var requestContext      = request.requestContext;
-                userAssetService.retrieveUserAssets(requestContext, userAssetIds, function(throwable, userAssetMap) {
-                    _this.processRetrieveEachResponse(responder, throwable, userAssetIds, userAssetMap, callback);
-                });
-            },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserAssetsForCurrentUser: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserAssetsForCurrentUser");
-                var data                = request.getData();
-                var requestContext      = request.requestContext;
-                var currentUser         = requestContext.get('currentUser');
-                var currentUserId       = currentUser.getId();
+            //-------------------------------------------------------------------------------
+            // BugCall Routes
+            //-------------------------------------------------------------------------------
 
-                userAssetService.retrieveUserAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
-                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
-                });
-            },
+            this.bugCallRouter.addAll({
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserImageAssetsForCurrentUser: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserImageAssetsForCurrentUser");
-                var data                = request.getData();
-                var requestContext      = request.requestContext;
-                var currentUser         = requestContext.get('currentUser');
-                var currentUserId       = currentUser.getId();
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                createUserAsset: function(request, responder, callback) {
+                    console.log("UserAssetController#createUserAsset");
+                    var data                = request.getData();
+                    var userAssetObject     = data.object;
+                    var requestContext      = request.requestContext;
+                    userAssetService.createUserAsset(requestContext, userAssetObject, function(throwable, userAsset) {
+                        _this.processCreateResponse(responder, throwable, userAsset, callback);
+                    });
+                },
 
-                userAssetService.retrieveUserImageAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
-                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
-                });
-            },
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                deleteUserAsset: function(request, responder, callback) {
+                    console.log("UserAssetController#deleteUserAsset");
+                    var data                = request.getData();
+                    var userAssetId         = data.objectId;
+                    var requestContext      = request.requestContext;
+                    userAssetService.deleteUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
+                        _this.processDeleteResponse(responder, throwable, userAsset, callback);
+                    });
+                 },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserAssetsForCurrentUserSortByCreatedAt: function(request, responder, callback) {
-                var data                = request.getData();
-                var requestContext      = request.requestContext;
-                var currentUser         = requestContext.get('currentUser');
-                var currentUserId       = currentUser.getId();
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=, UserAsset)} callback
+                 */
+                renameUserAsset: function(request, responder, callback) {
+                    console.log("UserAssetController#renameUserAsset");
+                    var data                = request.getData();
+                    var userAssetId         = data.userAssetId;
+                    var userAssetName       = data.userAssetName;
+                    var requestContext      = request.requestContext;
+                    userAssetService.renameUserAsset(requestContext, userAssetId, userAssetName, function(throwable, userAsset) {
+                        _this.processUpdateResponse(responder, throwable, userAsset, callback);
+                    });
+                },
 
-                userAssetService.retrieveUserAssetsByUserIdSortByCreatedAt(requestContext, currentUserId, function(throwable, userAssetList) {
-                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
-                });
-            },
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserAsset: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserAsset");
+                    var data                = request.getData();
+                    var userAssetId         = data.objectId;
+                    var requestContext      = request.requestContext;
+                    console.log("data", data);
+                    console.log("userAssetId ", userAssetId);
+                    userAssetService.retrieveUserAsset(requestContext, userAssetId, function(throwable, userAsset) {
+                        _this.processRetrieveResponse(responder, throwable, userAsset, callback);
+                    });
+                },
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserAssetsByUserId: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserAssetsByUserId");
-                var data                = request.getData();
-                var userId              = data.objectId;
-                var requestContext      = request.requestContext;
-                var currentUser         = requestContext.get('currentUser');
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserAssets: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserAssets");
+                    var data                = request.getData();
+                    var userAssetIds        = data.objectIds;
+                    var requestContext      = request.requestContext;
+                    userAssetService.retrieveUserAssets(requestContext, userAssetIds, function(throwable, userAssetMap) {
+                        _this.processRetrieveEachResponse(responder, throwable, userAssetIds, userAssetMap, callback);
+                    });
+                },
 
-                userAssetService.retrieveUserAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
-                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
-                });
-            },
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserAssetsForCurrentUser: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserAssetsForCurrentUser");
+                    var data                = request.getData();
+                    var requestContext      = request.requestContext;
+                    var currentUser         = requestContext.get('currentUser');
+                    var currentUserId       = currentUser.getId();
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveUserImageAssetsByUserId: function(request, responder, callback) {
-                console.log("UserAssetController#retrieveUserImageAssetsByUserId");
-                var data                = request.getData();
-                var userId              = data.objectId;
-                var requestContext      = request.requestContext;
-                var currentUser         = requestContext.get('currentUser');
+                    userAssetService.retrieveUserAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
+                        _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                    });
+                },
 
-                userAssetService.retrieveUserImageAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
-                    _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
-                });
-            }
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserImageAssetsForCurrentUser: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserImageAssetsForCurrentUser");
+                    var data                = request.getData();
+                    var requestContext      = request.requestContext;
+                    var currentUser         = requestContext.get('currentUser');
+                    var currentUserId       = currentUser.getId();
 
-        });
-        callback();
-    }
+                    userAssetService.retrieveUserImageAssetsByUserId(requestContext, currentUserId, function(throwable, userAssetList) {
+                        _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserAssetsForCurrentUserSortByCreatedAt: function(request, responder, callback) {
+                    var data                = request.getData();
+                    var requestContext      = request.requestContext;
+                    var currentUser         = requestContext.get('currentUser');
+                    var currentUserId       = currentUser.getId();
+
+                    userAssetService.retrieveUserAssetsByUserIdSortByCreatedAt(requestContext, currentUserId, function(throwable, userAssetList) {
+                        _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserAssetsByUserId: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserAssetsByUserId");
+                    var data                = request.getData();
+                    var userId              = data.objectId;
+                    var requestContext      = request.requestContext;
+                    var currentUser         = requestContext.get('currentUser');
+
+                    userAssetService.retrieveUserAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
+                        _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveUserImageAssetsByUserId: function(request, responder, callback) {
+                    console.log("UserAssetController#retrieveUserImageAssetsByUserId");
+                    var data                = request.getData();
+                    var userId              = data.objectId;
+                    var requestContext      = request.requestContext;
+                    var currentUser         = requestContext.get('currentUser');
+
+                    userAssetService.retrieveUserImageAssetsByUserId(requestContext, userId, function(throwable, userAssetList) {
+                        _this.processRetrieveListResponse(responder, throwable, userAssetList, callback);
+                    });
+                }
+
+            });
+            callback();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(UserAssetController).with(
+        controller("userAssetController")
+            .args([
+                arg().ref("controllerManager"),
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("userAssetService"),
+                arg().ref("marshaller")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.UserAssetController', UserAssetController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(UserAssetController).with(
-    module("userAssetController")
-        .args([
-            arg().ref("controllerManager"),
-            arg().ref("expressApp"),
-            arg().ref("bugCallRouter"),
-            arg().ref("userAssetService"),
-            arg().ref("marshaller")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.UserAssetController', UserAssetController);

@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,7 +15,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('airbug.AirbugServerConfig')
+//@Require('airbugserver.AirbugServerConfig')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
@@ -31,7 +32,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var AirbugServerConfig      = bugpack.require('airbug.AirbugServerConfig');
+    var AirbugServerConfig      = bugpack.require('airbugserver.AirbugServerConfig');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');

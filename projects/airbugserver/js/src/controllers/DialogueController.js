@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,224 +18,227 @@
 //@Require('Class')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
+//@Require('bugcontroller.ControllerAnnotation')
 //@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var LiteralUtil         = bugpack.require('LiteralUtil');
-var EntityController    = bugpack.require('airbugserver.EntityController');
-var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                 = ArgAnnotation.arg;
-var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {EntityController}
- */
-var DialogueController = Class.extend(EntityController, {
+    var Class                   = bugpack.require('Class');
+    var LiteralUtil             = bugpack.require('LiteralUtil');
+    var EntityController        = bugpack.require('airbugserver.EntityController');
+    var ControllerAnnotation    = bugpack.require('bugcontroller.ControllerAnnotation');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var controller              = ControllerAnnotation.controller;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {ControllerManager} controllerManager
-     * @param {ExpressApp} expressApp
-     * @param {BugCallRouter} bugCallRouter
-     * @param {DialogueService} dialogueService
+     * @class
+     * @extends {EntityController}
      */
-    _constructor: function(controllerManager, expressApp, bugCallRouter, dialogueService, marshaller) {
+    var DialogueController = Class.extend(EntityController, {
 
-        this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+        _name: "airbugserver.DialogueController",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {DialogueService}
+         * @constructs
+         * @param {ControllerManager} controllerManager
+         * @param {ExpressApp} expressApp
+         * @param {BugCallRouter} bugCallRouter
+         * @param {DialogueService} dialogueService
+         * @param {Marshaller} marshaller
          */
-        this.dialogueService                = dialogueService;
-    },
+        _constructor: function(controllerManager, expressApp, bugCallRouter, dialogueService, marshaller) {
+
+            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {DialogueService}
-     */
-    getDialogueService: function() {
-        return this.dialogueService;
-    },
+            /**
+             * @private
+             * @type {DialogueService}
+             */
+            this.dialogueService                = dialogueService;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    configureController: function(callback) {
-        var _this               = this;
-        var expressApp          = this.getExpressApp();
-        var dialogueService     = this.getDialogueService();
-
-        // REST API
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
-        expressApp.get('/api/v1/dialogue/:id', function(request, response){
-            var requestContext  = request.requestContext;
-            var dialogueId      = request.params.id;
-            dialogueService.retrieveDialogue(requestContext, dialogueId, function(throwable, entity){
-                _this.processAjaxRetrieveResponse(response, throwable, entity);
-            });
-        });
+        /**
+         * @return {DialogueService}
+         */
+        getDialogueService: function() {
+            return this.dialogueService;
+        },
 
-        expressApp.post('/api/v1/dialogue', function(request, response){
-            var requestContext  = request.requestContext;
-            var dialogue        = request.body;
-            dialogueService.createDialogue(requestContext, dialogue, function(throwable, entity){
-                _this.processAjaxCreateResponse(response, throwable, entity);
-            });
-        });
 
-        expressApp.put('/api/v1/dialogue/:id', function(request, response){
-            var requestContext  = request.requestContext;
-            var dialogueId      = request.params.id;
-            var updates         = request.body;
-            dialogueService.updateDialogue(requestContext, dialogueId, updates, function(throwable, entity){
-                _this.processAjaxUpdateResponse(response, throwable, entity);sponse.json(dialogueJson);
-            });
-        });
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-        expressApp.delete('/api/v1/dialogue/:id', function(request, response){
-            var _this           = this;
-            var requestContext  = request.requestContext;
-            var dialogueId      = request.params.id;
-            dialogueService.deleteDialogue(requestContext, dialogueId, function(throwable){
-                _this.processAjaxDeleteResponse(response, throwable, entity);
-            });
-        });
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        configureController: function(callback) {
+            var _this               = this;
+            var expressApp          = this.getExpressApp();
+            var dialogueService     = this.getDialogueService();
 
-        this.bugCallRouter.addAll({
+            // REST API
+            //-------------------------------------------------------------------------------
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            createDialogue:     function(request, responder, callback) {
-                var data                = request.getData();
-                var dialogueData        = data.object;
-                var requestContext      = request.requestContext;
-
-                dialogueService.createDialogue(requestContext, dialogueData, function(throwable, dialogue) {
-                    _this.processCreateResponse(responder, throwable, dialogue, callback);
+            expressApp.get('/api/v1/dialogue/:id', function(request, response){
+                var requestContext  = request.requestContext;
+                var dialogueId      = request.params.id;
+                dialogueService.retrieveDialogue(requestContext, dialogueId, function(throwable, entity){
+                    _this.processAjaxRetrieveResponse(response, throwable, entity);
                 });
-            },
+            });
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveDialogue:   function(request, responder, callback) {
-                var data                = request.getData();
-                var dialogueId          = data.objectId;
-                var requestContext      = request.requestContext;
-
-                dialogueService.retrieveDialogue(requestContext, dialogueId, function(throwable, dialogue) {
-                    _this.processRetrieveResponse(responder, throwable, dialogue, callback);
+            expressApp.post('/api/v1/dialogue', function(request, response){
+                var requestContext  = request.requestContext;
+                var dialogue        = request.body;
+                dialogueService.createDialogue(requestContext, dialogue, function(throwable, entity){
+                    _this.processAjaxCreateResponse(response, throwable, entity);
                 });
-            },
+            });
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveDialogueByUserIdForCurrentUser:   function(request, responder, callback) {
-                var data                = request.getData();
-                var userId              = data.userId;
-                var requestContext      = request.requestContext;
-
-                dialogueService.retrieveDialogueByUserIdForCurrentUser(requestContext, userId, function(throwable, dialogue) {
-                    _this.processRetrieveResponse(responder, throwable, dialogue, callback);
+            expressApp.put('/api/v1/dialogue/:id', function(request, response){
+                var requestContext  = request.requestContext;
+                var dialogueId      = request.params.id;
+                var updates         = request.body;
+                dialogueService.updateDialogue(requestContext, dialogueId, updates, function(throwable, entity){
+                    _this.processAjaxUpdateResponse(response, throwable, entity);sponse.json(dialogueJson);
                 });
-            },
+            });
 
-            /**
-             * @param {IncomingRequest} request
-             * @param {CallResponder} responder
-             * @param {function(Throwable=)} callback
-             */
-            retrieveDialogues: function(request, responder, callback) {
-                var data                = request.getData();
-                var dialogueIds         = data.objectIds;
-                var requestContext      = request.requestContext;
-
-                dialogueService.retrieveDialogues(requestContext, dialogueIds, function(throwable, dialogueMap) {
-                    _this.processRetrieveEachResponse(responder, throwable, dialogueIds, dialogueMap, callback);
+            expressApp.delete('/api/v1/dialogue/:id', function(request, response){
+                var _this           = this;
+                var requestContext  = request.requestContext;
+                var dialogueId      = request.params.id;
+                dialogueService.deleteDialogue(requestContext, dialogueId, function(throwable){
+                    _this.processAjaxDeleteResponse(response, throwable, entity);
                 });
-            }
-        });
-        callback();
-    }
+            });
+
+            this.bugCallRouter.addAll({
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                createDialogue:     function(request, responder, callback) {
+                    var data                = request.getData();
+                    var dialogueData        = data.object;
+                    var requestContext      = request.requestContext;
+
+                    dialogueService.createDialogue(requestContext, dialogueData, function(throwable, dialogue) {
+                        _this.processCreateResponse(responder, throwable, dialogue, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveDialogue:   function(request, responder, callback) {
+                    var data                = request.getData();
+                    var dialogueId          = data.objectId;
+                    var requestContext      = request.requestContext;
+
+                    dialogueService.retrieveDialogue(requestContext, dialogueId, function(throwable, dialogue) {
+                        _this.processRetrieveResponse(responder, throwable, dialogue, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveDialogueByUserIdForCurrentUser:   function(request, responder, callback) {
+                    var data                = request.getData();
+                    var userId              = data.userId;
+                    var requestContext      = request.requestContext;
+
+                    dialogueService.retrieveDialogueByUserIdForCurrentUser(requestContext, userId, function(throwable, dialogue) {
+                        _this.processRetrieveResponse(responder, throwable, dialogue, callback);
+                    });
+                },
+
+                /**
+                 * @param {IncomingRequest} request
+                 * @param {CallResponder} responder
+                 * @param {function(Throwable=)} callback
+                 */
+                retrieveDialogues: function(request, responder, callback) {
+                    var data                = request.getData();
+                    var dialogueIds         = data.objectIds;
+                    var requestContext      = request.requestContext;
+
+                    dialogueService.retrieveDialogues(requestContext, dialogueIds, function(throwable, dialogueMap) {
+                        _this.processRetrieveEachResponse(responder, throwable, dialogueIds, dialogueMap, callback);
+                    });
+                }
+            });
+            callback();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(DialogueController).with(
+        controller("dialogueController")
+            .args([
+                arg().ref("controllerManager"),
+                arg().ref("expressApp"),
+                arg().ref("bugCallRouter"),
+                arg().ref("dialogueService"),
+                arg().ref("marshaller")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.DialogueController', DialogueController);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(DialogueController).with(
-    module("dialogueController")
-        .args([
-            arg().ref("controllerManager"),
-            arg().ref("expressApp"),
-            arg().ref("bugCallRouter"),
-            arg().ref("dialogueService"),
-            arg().ref("marshaller")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.DialogueController', DialogueController);

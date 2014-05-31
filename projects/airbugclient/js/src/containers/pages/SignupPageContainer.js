@@ -12,7 +12,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.RegistrationPageContainer')
+//@Export('airbug.SignupPageContainer')
 
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
@@ -56,9 +56,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                      = AutowiredAnnotation.autowired;
-    var bugmeta                        = BugMeta.context();
-    var property                       = PropertyAnnotation.property;
+    var autowired                       = AutowiredAnnotation.autowired;
+    var bugmeta                         = BugMeta.context();
+    var property                        = PropertyAnnotation.property;
     var view                            = ViewBuilder.view;
 
 
@@ -70,9 +70,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {ApplicationContainer}
      */
-    var RegistrationPageContainer = Class.extend(ApplicationContainer, {
+    var SignupPageContainer = Class.extend(ApplicationContainer, {
 
-        _name: "airbug.RegistrationPageContainer",
+        _name: "airbug.SignupPageContainer",
 
 
         //-------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RegistrationPageContainer).with(
+    bugmeta.annotate(SignupPageContainer).with(
         autowired().properties([
             property("documentUtil").ref("documentUtil")
         ])
@@ -210,5 +210,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.RegistrationPageContainer", RegistrationPageContainer);
+    bugpack.export("airbug.SignupPageContainer", SignupPageContainer);
 });

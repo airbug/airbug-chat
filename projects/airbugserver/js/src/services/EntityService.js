@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -7,81 +17,88 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('Set')
 //@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Exception           = bugpack.require('Exception');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $parallel           = BugFlow.$parallel;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
-var $iterableParallel   = BugFlow.$iterableParallel;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityService = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Obj                 = bugpack.require('Obj');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var $parallel           = BugFlow.$parallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var EntityService = Class.extend(Obj, {
+
+        _name: "airbugserver.EntityService",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Logger}
+         * @constructs
          */
-        this.logger                 = null;
+        _constructor: function() {
 
-    }
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                 = null;
+        }
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
-
+    bugpack.export('airbugserver.EntityService', EntityService);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.EntityService', EntityService);

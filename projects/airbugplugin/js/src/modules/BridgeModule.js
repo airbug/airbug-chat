@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.BridgeModule')
+//@Export('airbugplugin.BridgeModule')
 //@Autoload
 
 //@Require('Class')

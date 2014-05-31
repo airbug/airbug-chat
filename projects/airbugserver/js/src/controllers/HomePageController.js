@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('StringUtil')
-//@Require('airbugserver.Controller')
+//@Require('bugcontroller.Controller')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
@@ -27,7 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
     var StringUtil          = bugpack.require('StringUtil');
-    var Controller          = bugpack.require('airbugserver.Controller');
+    var Controller          = bugpack.require('bugcontroller.Controller');
     var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
     var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
@@ -63,12 +73,11 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
-         * @param {AirbugStaticConfig} airbugClientConfig
-         * @param {AirbugStaticConfig} airbugPluginConfig
+         * @param {AirbugStaticConfig} airbugStaticConfig
          */
-        _constructor: function(controllerManager, expressApp, airbugClientConfig, airbugPluginConfig) {
+        _constructor: function(controllerManager, expressApp, airbugStaticConfig) {
 
-            this._super(controllerManager, expressApp);
+            this._super(controllerManager);
 
 
             //-------------------------------------------------------------------------------
@@ -79,13 +88,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {AirbugStaticConfig}
              */
-            this.airbugClientConfig     = airbugClientConfig;
+            this.airbugStaticConfig     = airbugStaticConfig;
 
             /**
              * @private
-             * @type {AirbugStaticConfig}
+             * @type {ExpressApp}
              */
-            this.airbugPluginConfig     = airbugPluginConfig;
+            this.expressApp             = expressApp;
         },
 
 
@@ -98,10 +107,10 @@ require('bugpack').context("*", function(bugpack) {
          */
         configureController: function(callback) {
             var _this = this;
-            this.getExpressApp().get('/app', function(request, response) {
+            this.expressApp.get('/app', function(request, response) {
                 var requestContext          = request.requestContext;
                 var session                 = requestContext.get("session");
-                var configObject            = _this.airbugClientConfig.toObject();
+                var configObject            = _this.airbugStaticConfig.toObject();
                 configObject.github.state   = session.getData().githubState;
                 configObject.github.emails  = session.getData().githubEmails;
                 response.render('home', {
@@ -122,10 +131,10 @@ require('bugpack').context("*", function(bugpack) {
                 });
             });
 
-            this.getExpressApp().get('/plugin', function(request, response) {
+            this.expressApp.get('/plugin', function(request, response) {
                 var requestContext          = request.requestContext;
                 var session                 = requestContext.get("session");
-                var configObject            = _this.airbugPluginConfig.toObject();
+                var configObject            = _this.airbugStaticConfig.toObject();
                 configObject.github.state   = session.getData().githubState;
                 configObject.github.emails  = session.getData().githubEmails;
                 response.render('plugin', {
@@ -159,7 +168,7 @@ require('bugpack').context("*", function(bugpack) {
             .args([
                 arg().ref("controllerManager"),
                 arg().ref("expressApp"),
-                arg().ref("airbugClientConfig")
+                arg().ref("airbugStaticConfig")
             ])
     );
 

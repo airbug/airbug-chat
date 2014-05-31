@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,238 +18,262 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('Set')
-//@Require('airbugserver.IBuildRequestContext')
-//@Require('airbugserver.RequestContext')
 //@Require('bugcall.CallEvent')
+//@Require('bugcall.IncomingRequest')
 //@Require('bugcall.IProcessCall')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.IInitializeModule')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
+//@Require('bugrequest.IBuildRequestContext')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Exception               = bugpack.require('Exception');
-var Obj                     = bugpack.require('Obj');
-var IBuildRequestContext    = bugpack.require('airbugserver.IBuildRequestContext');
-var RequestContext          = bugpack.require('airbugserver.RequestContext');
-var CallEvent               = bugpack.require('bugcall.CallEvent');
-var IProcessCall            = bugpack.require('bugcall.IProcessCall');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                     = ArgAnnotation.arg;
-var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- * @implements {IBuildRequestContext}
- * @implements {IInitializeModule}
- * @implements {IProcessCall}
- */
-var AirbugCallService = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var Obj                     = bugpack.require('Obj');
+    var CallEvent               = bugpack.require('bugcall.CallEvent');
+    var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
+    var IProcessCall            = bugpack.require('bugcall.IProcessCall');
+    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
+    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleAnnotation.module;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {BugCallServer} bugCallServer
-     * @param {AirbugCallManager} airbugCallManager
-     * @param {SessionManager} sessionManager
+     * @class
+     * @extends {Obj}
+     * @implements {IBuildRequestContext}
+     * @implements {IInitializeModule}
+     * @implements {IProcessCall}
      */
-    _constructor: function(bugCallServer, airbugCallManager, sessionManager) {
+    var AirbugCallService = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbugserver.AirbugCallService",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AirbugCallManager}
+         * @constructs
+         * @param {BugCallServer} bugCallServer
+         * @param {AirbugCallManager} airbugCallManager
+         * @param {SessionManager} sessionManager
          */
-        this.airbugCallManager          = airbugCallManager;
+        _constructor: function(bugCallServer, airbugCallManager, sessionManager) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {AirbugCallManager}
+             */
+            this.airbugCallManager          = airbugCallManager;
+
+            /**
+             * @private
+             * @type {BugCallServer}
+             */
+            this.bugCallServer              = bugCallServer;
+
+            /**
+             * @private
+             * @type {SessionManager}
+             */
+            this.sessionManager             = sessionManager;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BugCallServer}
+         * @return {AirbugCallManager}
          */
-        this.bugCallServer              = bugCallServer;
+        getAirbugCallManager: function() {
+            return this.airbugCallManager;
+        },
 
         /**
-         * @private
-         * @type {SessionManager}
+         * @return {BugCallServer}
          */
-        this.sessionManager             = sessionManager;
-    },
+        getBugCallServer: function() {
+            return this.bugCallServer;
+        },
+
+        /**
+         * @return {SessionManager}
+         */
+        getSessionManager: function() {
+            return this.sessionManager;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IBuildRequestContext Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {AirbugCallManager}
-     */
-    getAirbugCallManager: function() {
-        return this.airbugCallManager;
-    },
-
-    /**
-     * @return {BugCallServer}
-     */
-    getBugCallServer: function() {
-        return this.bugCallServer;
-    },
-
-    /**
-     * @return {SessionManager}
-     */
-    getSessionManager: function() {
-        return this.sessionManager;
-    },
+        /**
+         * @param {RequestContext} requestContext
+         * @param {function(Throwable=)} callback
+         */
+        buildRequestContext: function(requestContext, callback) {
+            var call        = null;
+            var request     = requestContext.getRequest();
+            if (Class.doesExtend(request, IncomingRequest)) {
+                call = request.getCall();
+            }
+            requestContext.set("call", call);
+            callback();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // IBuildRequestContext Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IInitializeModule Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {RequestContext} requestContext
-     * @param {function(Throwable=)} callback
-     */
-    buildRequestContext: function(requestContext, callback) {
-        var call = null;
-        if (requestContext.getType() === RequestContext.Types.BUGCALL) {
-            call = requestContext.getRequest().getCall();
-        }
-        requestContext.set("call", call);
-        callback();
-    },
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModule: function(callback) {
+            this.bugCallServer.deregisterCallProcessor(this);
+            callback();
+        },
 
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        initializeModule: function(callback) {
+            this.bugCallServer.registerCallProcessor(this);
 
-    //-------------------------------------------------------------------------------
-    // IInitializeModule Implementation
-    //-------------------------------------------------------------------------------
+            // NOTE BRN: We don't unprocess the call when it's closed because it's possible that it could reconnect later.
+            // TODO BRN: When a call drops, we should move if from the primary AirbugCall set to a "deactivated" call set.
+            // We should also undo the look up mappings so that they do not interfere with status calculations. If the
+            // call reconnects, simply re-add the call back to the active AirbugCall set in redis
 
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    deinitializeModule: function(callback) {
-        this.bugCallServer.deregisterCallProcessor(this);
-        callback();
-    },
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initializeModule: function(callback) {
-        this.bugCallServer.registerCallProcessor(this);
-
-        // NOTE BRN: We don't unprocess the call when it's closed because it's possible that it could reconnect later.
-        // TODO BRN: When a call drops, we should move if from the primary AirbugCall set to a "deactivated" call set.
-        // We should also undo the look up mappings so that they do not interfere with status calculations. If the
-        // call reconnects, simply re-add the call back to the active AirbugCall set in redis
-
-        callback();
-    },
+            callback();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // IProcessCall Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IProcessCall Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Call} call
-     * @param {function(Throwable=)} callback
-     */
-    processCall: function(call, callback) {
-        var _this           = this;
-        var callConnection  = call.getConnection();
-        var sessionId       = callConnection.getHandshake().sessionId;
-        var session         = null;
-        $series([
-            $task(function(flow) {
-                _this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, returnedSession) {
-                    if (!throwable) {
-                        session = returnedSession;
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                if (session) {
-                    _this.airbugCallManager.createAirbugCall(call.getCallUuid(), sessionId, session.getUserId(), function(throwable) {
+        /**
+         * @param {Call} call
+         * @param {function(Throwable=)} callback
+         */
+        processCall: function(call, callback) {
+            var _this           = this;
+            var callConnection  = call.getConnection();
+            var sessionId       = callConnection.getHandshake().sessionId;
+            var session         = null;
+            $series([
+                $task(function(flow) {
+                    _this.sessionManager.retrieveSessionBySid(sessionId, function(throwable, returnedSession) {
+                        if (!throwable) {
+                            session = returnedSession;
+                        }
                         flow.complete(throwable);
                     });
-                } else {
-                    flow.error(new Exception("NotFound", {}, "Could not find session by the id - sessionId:" + sessionId));
-                }
-            })
-        ]).execute(callback);
-    }
+                }),
+                $task(function(flow) {
+                    if (session) {
+                        var airbugCall = _this.airbugCallManager.generateAirbugCall({
+                            callType: call.getCallType(),
+                            callUuid: call.getCallUuid(),
+                            open: call.isOpen(),
+                            sessionId: sessionId,
+                            userId: session.getUserId()
+                        });
+                        _this.airbugCallManager.createAirbugCall(airbugCall, function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(new Exception("NotFound", {}, "Could not find session by the id - sessionId:" + sessionId));
+                    }
+                })
+            ]).execute(callback);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Service Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {RequestContext} requestContext
+         * @param {string} callUuid
+         * @param {function(Throwable, AirbugCall=)} callback
+         */
+        retrieveAirbugCall: function(requestContext, callUuid, callback) {
+
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(AirbugCallService, IBuildRequestContext);
+    Class.implement(AirbugCallService, IInitializeModule);
+    Class.implement(AirbugCallService, IProcessCall);
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(AirbugCallService).with(
+        module("airbugCallService")
+            .args([
+                arg().ref("bugCallServer"),
+                arg().ref("airbugCallManager"),
+                arg().ref("sessionManager")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.AirbugCallService', AirbugCallService);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(AirbugCallService, IBuildRequestContext);
-Class.implement(AirbugCallService, IInitializeModule);
-Class.implement(AirbugCallService, IProcessCall);
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(AirbugCallService).with(
-    module("airbugCallService")
-        .args([
-            arg().ref("bugCallServer"),
-            arg().ref("airbugCallManager"),
-            arg().ref("sessionManager")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.AirbugCallService', AirbugCallService);

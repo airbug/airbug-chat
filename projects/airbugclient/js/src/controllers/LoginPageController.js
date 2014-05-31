@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -18,8 +19,6 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.LoginPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerAnnotation')
 
 
@@ -37,8 +36,6 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController   = bugpack.require('airbug.ApplicationController');
     var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
     var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
 
 
@@ -47,9 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta     = BugMeta.context();
-    var autowired   = AutowiredAnnotation.autowired;
     var controller  = ControllerAnnotation.controller;
-    var property    = PropertyAnnotation.property;
 
 
     //-------------------------------------------------------------------------------

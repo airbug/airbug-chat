@@ -175,16 +175,12 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeModule: function(callback) {
             var _this                       = this;
-            var carapaceApplication         = this.carapaceApplication;
-            var controllerScan              = this.controllerScan;
-            var socketIoConfig              = this.socketIoConfig;
             var port                        = this.windowUtil.getPort();
             var baseUrl                     = this.windowUtil.getBaseUrl();
 
-
-            socketIoConfig.setHost(baseUrl + "/api/airbug");
-            socketIoConfig.setResource("api/socket");
-            socketIoConfig.setPort(port);
+            this.socketIoConfig.setHost(baseUrl + "/api/airbug");
+            this.socketIoConfig.setResource("api/socket");
+            this.socketIoConfig.setPort(port);
 
             ZeroClipboard.config({
                 allowScriptAccess: "always",
@@ -195,8 +191,7 @@ require('bugpack').context("*", function(bugpack) {
                 forceHandCursor: true
             });
 
-            controllerScan.scan();
-
+            this.controllerScan.scan();
             this.bugCallClient.registerRequestProcessor(this.bugCallRouter);
 
             $series([
@@ -211,7 +206,7 @@ require('bugpack').context("*", function(bugpack) {
                     });
                 }),
                 $task(function(flow) {
-                    carapaceApplication.start(function(error) {
+                    _this.carapaceApplication.start(function(error) {
                         if (!error) {
                             var spinner = JQuery("#application-loading-spinner");
                             spinner.hide();

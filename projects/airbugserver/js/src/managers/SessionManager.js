@@ -16,6 +16,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('Map')
 //@Require('Set')
 //@Require('TypeUtil')
@@ -39,6 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
+    var Exception                   = bugpack.require('Exception');
     var Map                         = bugpack.require('Map');
     var Set                         = bugpack.require('Set');
     var TypeUtil                    = bugpack.require('TypeUtil');
@@ -74,7 +76,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Public Instance Methods
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -102,7 +104,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {Session} session
-         * @param {(Array.<string> | function(Throwable, Session))} dependencies
+         * @param {(Array.<string> | function(Throwable, Session=))} dependencies
          * @param {function(Throwable, Session)=} callback
          */
         createSession: function(session, dependencies, callback) {
@@ -127,19 +129,22 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {Session} session
-         * @param {function(Throwable)} callback
+         * @param {function(Throwable=)} callback
          */
         deleteSession: function(session, callback) {
             this.delete(session, callback);
         },
 
         /**
-         *
+         * @param {string} sid
+         * @param {function(Throwable=)} callback
          */
         deleteSessionBySid: function(sid, callback) {
             this.getDataStore().remove({sid: sid}, function(throwable) {
-                if (callback) {
-                    callback(throwable);
+                if (!throwable) {
+                    callback();
+                } else {
+                    callback(new Exception("MongoError", {}, "Error occurred in Mongo DB", [throwable]));
                 }
             });
         },
@@ -178,7 +183,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         retrieveAllSessions: function(callback) {
             var _this = this;
-            this.dataStore.find({}).lean(true).exec(function(throwable, dbObjects) {
+            this.getDataStore().find({}).lean(true).exec(function(throwable, dbObjects) {
                 if (!throwable) {
                     var newMap = new Map();
                     dbObjects.forEach(function(dbObject) {
@@ -215,7 +220,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         retrieveSessionBySid: function(sid, callback) {
             var _this = this;
-            this.dataStore.findOne({sid: sid}).lean(true).exec(function(throwable, dbObject) {
+            this.getDataStore().findOne({sid: sid}).lean(true).exec(function(throwable, dbObject) {
                 if (!throwable) {
                     var entityObject = null;
                     if (dbObject) {
@@ -235,7 +240,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         retrieveSessionsByUserId: function(userId, callback) {
             var _this = this;
-            this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
+            this.getDataStore().find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
                 if (!throwable) {
                     var newSet = new Set();
                     dbObjects.forEach(function(dbObject) {
