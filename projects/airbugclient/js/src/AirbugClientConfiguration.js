@@ -26,9 +26,9 @@
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('socketio:client.SocketIoClient')
-//@Require('socketio:client.SocketIoConfig')
-//@Require('socketio:factorybrowser.BrowserSocketIoFactory')
+//@Require('socketio.SocketIoClient')
+//@Require('socketio.SocketIoConfig')
+//@Require('socketio.BrowserSocketIoFactory')
 //@Require('sonarbugclient.SonarbugClient')
 
 
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
     var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
     var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
-    var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
-    var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
+    var SocketIoClient              = bugpack.require('socketio.SocketIoClient');
+    var SocketIoConfig              = bugpack.require('socketio.SocketIoConfig');
+    var BrowserSocketIoFactory      = bugpack.require('socketio.BrowserSocketIoFactory');
     var SonarbugClient              = bugpack.require('sonarbugclient.SonarbugClient');
 
 

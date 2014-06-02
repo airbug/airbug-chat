@@ -31,9 +31,9 @@
 //@Require('bugmeta.BugMeta')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
-//@Require('socketio:server.SocketIoManager')
-//@Require('socketio:server.SocketIoServer')
-//@Require('socketio:server.SocketIoServerConfig')
+//@Require('socketio.SocketIoManager')
+//@Require('socketio.SocketIoServer')
+//@Require('socketio.SocketIoServerConfig')
 
 
 //-------------------------------------------------------------------------------
@@ -79,9 +79,9 @@ require('bugpack').context("*", function(bugpack) {
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var ExpressApp                      = bugpack.require('express.ExpressApp');
     var ExpressServer                   = bugpack.require('express.ExpressServer');
-    var SocketIoManager                 = bugpack.require('socketio:server.SocketIoManager');
-    var SocketIoServer                  = bugpack.require('socketio:server.SocketIoServer');
-    var SocketIoServerConfig            = bugpack.require('socketio:server.SocketIoServerConfig');
+    var SocketIoManager                 = bugpack.require('socketio.SocketIoManager');
+    var SocketIoServer                  = bugpack.require('socketio.SocketIoServer');
+    var SocketIoServerConfig            = bugpack.require('socketio.SocketIoServerConfig');
 
 
     //-------------------------------------------------------------------------------
