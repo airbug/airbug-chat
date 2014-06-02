@@ -18,7 +18,7 @@
 //@Require('airbug.AccountSettingsPageContainer')
 //@Require('airbug.ApplicationController')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
 
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var AccountSettingsPageContainer        = bugpack.require('airbug.AccountSettingsPageContainer');
     var ApplicationController               = bugpack.require('airbug.ApplicationController');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag                = bugpack.require('carapace.ControllerTag');
     var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
 
 
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                             = BugMeta.context();
-    var controller                          = ControllerAnnotation.controller;
+    var controller                          = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AccountSettingsPageController).with(
+    bugmeta.tag(AccountSettingsPageController).with(
         controller().route("settings/account")
     );
 

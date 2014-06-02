@@ -42,8 +42,8 @@ var AirbugWorkerApplication = Class.extend(Application, {
      * @protected
      */
     preProcessApplication: function() {
-        this.getConfigurationScan().scanBugpack('airbugworker.AirbugWorkerConfiguration');
-        this.getModuleScan().scanBugpacks([
+        this.getConfigurationTagScan().scanBugpack('airbugworker.AirbugWorkerConfiguration');
+        this.getModuleTagScan().scanBugpacks([
             "bugmarsh.MarshRegistry",
             "bugmarsh.Marshaller",
             "bugwork.WorkerCommandFactory",

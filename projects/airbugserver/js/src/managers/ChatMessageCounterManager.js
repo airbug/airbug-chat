@@ -10,8 +10,8 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessageCounter')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -31,8 +31,8 @@ var Exception                   = bugpack.require('Exception');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var ChatMessageCounter          = bugpack.require('airbugserver.ChatMessageCounter');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -40,9 +40,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ var ChatMessageCounterManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ChatMessageCounterManager).with(
+bugmeta.tag(ChatMessageCounterManager).with(
     entityManager("chatMessageCounterManager")
         .ofType("ChatMessageCounter")
         .args([

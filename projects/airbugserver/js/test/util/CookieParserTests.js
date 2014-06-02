@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('airbugserver.CookieParser')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -26,7 +26,7 @@ var cookie                  = require('cookie');
 var Class                   = bugpack.require('Class');
 var CookieParser            = bugpack.require('airbugserver.CookieParser');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -36,7 +36,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -77,6 +77,6 @@ var cookieParserInstantiationTest = {
             "Assert .cookieModule was set correctly");
     }
 };
-bugmeta.annotate(cookieParserInstantiationTest).with(
+bugmeta.tag(cookieParserInstantiationTest).with(
     test().name("CookieParser - instantiation test")
 );

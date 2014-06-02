@@ -11,8 +11,8 @@
 //@Require('Obj')
 //@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -33,8 +33,8 @@ var MappedThrowable         = bugpack.require('MappedThrowable');
 var Obj                     = bugpack.require('Obj');
 var EntityService           = bugpack.require('airbugserver.EntityService');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -43,8 +43,8 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
-var property                = PropertyAnnotation.property;
+var module                  = ModuleTag.module;
+var property                = PropertyTag.property;
 var $iterableParallel       = BugFlow.$iterableParallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -201,7 +201,7 @@ var ChatMessageStreamService = Class.extend(EntityService, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ChatMessageStreamService).with(
+bugmeta.tag(ChatMessageStreamService).with(
     module("chatMessageStreamService")
         .properties([
             property("chatMessageStreamManager").ref("chatMessageStreamManager"),

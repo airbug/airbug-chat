@@ -9,7 +9,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.GithubApi')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var GithubApi               = bugpack.require('airbugserver.GithubApi');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -39,7 +39,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ var githubApiInstantiationTest = {
             "Assert .airbugServerConfig was set correctly");
     }
 };
-bugmeta.annotate(githubApiInstantiationTest).with(
+bugmeta.tag(githubApiInstantiationTest).with(
     test().name("GithubApi - instantiation test")
 );
 
@@ -172,7 +172,7 @@ var githubApiGetAuthTokenTest = {
     }
 };
 
-bugmeta.annotate(githubApiGetAuthTokenTest).with(
+bugmeta.tag(githubApiGetAuthTokenTest).with(
     test().name("GitHubApi - getAuthToken tests")
 );
 
@@ -237,6 +237,6 @@ var githubApiRetrieveGithubUserTest = {
     }
 };
 
-bugmeta.annotate(githubApiRetrieveGithubUserTest).with(
+bugmeta.tag(githubApiRetrieveGithubUserTest).with(
     test().name("GitHubApi - retrieveGithubUser tests")
 );

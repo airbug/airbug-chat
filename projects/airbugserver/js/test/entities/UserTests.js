@@ -7,7 +7,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.User')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var User                    = bugpack.require('airbugserver.User');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ var userGetterSetterTests = {
 
 };
 
-bugmeta.annotate(userInstantiationTests).with(
+bugmeta.tag(userInstantiationTests).with(
     test().name("User instantiation Tests")
 );
-bugmeta.annotate(userGetterSetterTests).with(
+bugmeta.tag(userGetterSetterTests).with(
     test().name("User getter/setter Tests")
 );

@@ -18,7 +18,7 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.ProfileSettingsPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
 
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController               = bugpack.require('airbug.ApplicationController');
     var ProfileSettingsPageContainer        = bugpack.require('airbug.ProfileSettingsPageContainer');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation                = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag                = bugpack.require('carapace.ControllerTag');
     var RoutingRequest                      = bugpack.require('carapace.RoutingRequest');
 
 
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                             = BugMeta.context();
-    var controller                          = ControllerAnnotation.controller;
+    var controller                          = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ProfileSettingsPageController).with(
+    bugmeta.tag(ProfileSettingsPageController).with(
         controller().route("settings/profile")
     );
 

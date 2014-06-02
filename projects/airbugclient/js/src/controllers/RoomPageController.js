@@ -18,9 +18,9 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.RoomPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('carapace.ControllerAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
 
@@ -38,9 +38,9 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController       = bugpack.require('airbug.ApplicationController');
     var RoomPageContainer           = bugpack.require('airbug.RoomPageContainer');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
+    var ControllerTag        = bugpack.require('carapace.ControllerTag');
     var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
 
 
@@ -49,9 +49,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredAnnotation.autowired;
-    var controller                  = ControllerAnnotation.controller;
-    var property                    = PropertyAnnotation.property;
+    var autowired                   = AutowiredTag.autowired;
+    var controller                  = ControllerTag.controller;
+    var property                    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RoomPageController).with(
+    bugmeta.tag(RoomPageController).with(
         controller().route("conversation/:id"),
         autowired().properties([
             property("roomManagerModule").ref("roomManagerModule")

@@ -18,8 +18,8 @@
 //@Require('airbug.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 //@Require('jquery.JQuery')
@@ -49,8 +49,8 @@ require('bugpack').context("*", function(bugpack) {
     var TextView                        = bugpack.require('airbug.TextView');
     var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
     var JQuery                          = bugpack.require('jquery.JQuery');
@@ -61,10 +61,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var $                               = JQuery;
-    var autowired                       = AutowiredAnnotation.autowired;
+    var autowired                       = AutowiredTag.autowired;
     var bugmeta                         = BugMeta.context();
     var CommandType                     = CommandModule.CommandType;
-    var property                        = PropertyAnnotation.property;
+    var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
 
 
@@ -346,7 +346,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(CodeEditorSettingsWidgetContainer).with(
+    bugmeta.tag(CodeEditorSettingsWidgetContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule")
         ])

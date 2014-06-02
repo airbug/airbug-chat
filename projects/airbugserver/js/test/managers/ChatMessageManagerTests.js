@@ -10,7 +10,7 @@
 //@Require('airbugserver.ChatMessageManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -31,7 +31,7 @@ var ChatMessage             = bugpack.require('airbugserver.ChatMessage');
 var ChatMessageManager      = bugpack.require('airbugserver.ChatMessageManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -41,7 +41,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -108,7 +108,7 @@ var chatMessageManagerInstantiationTest = {
             "Assert .entityDeltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(chatMessageManagerInstantiationTest).with(
+bugmeta.tag(chatMessageManagerInstantiationTest).with(
     test().name("ChatMessageManager - instantiation test")
 );
 
@@ -162,6 +162,6 @@ bugmeta.annotate(chatMessageManagerInstantiationTest).with(
 //        //setter tests:
 //    }
 //};
-//bugmeta.annotate(chatMessageManagerAddIndexToConditionUsingIndexAndBatchSizeTest).with(
+//bugmeta.tag(chatMessageManagerAddIndexToConditionUsingIndexAndBatchSizeTest).with(
 //    test().name('ChatMessage#addIndexToConditionUsingIndexAndBatchSize Test')
 //);

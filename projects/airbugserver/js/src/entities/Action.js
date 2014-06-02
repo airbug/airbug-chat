@@ -8,9 +8,9 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.IndexAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugentity.EntityTag')
+//@Require('bugentity.IndexTag')
+//@Require('bugentity.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,9 +27,9 @@ require('bugpack').context("*", function(bugpack) {
     var Bug                     = bugpack.require('Bug');
     var Class                   = bugpack.require('Class');
     var Entity                  = bugpack.require('bugentity.Entity');
-    var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-    var IndexAnnotation         = bugpack.require('bugentity.IndexAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+    var EntityTag        = bugpack.require('bugentity.EntityTag');
+    var IndexTag         = bugpack.require('bugentity.IndexTag');
+    var PropertyTag      = bugpack.require('bugentity.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -38,9 +38,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var entity                  = EntityAnnotation.entity;
-    var index                   = IndexAnnotation.index;
-    var property                = PropertyAnnotation.property;
+    var entity                  = EntityTag.entity;
+    var index                   = IndexTag.index;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Action).with(
+    bugmeta.tag(Action).with(
         entity("Action")
             .properties([
                 property("actionData")

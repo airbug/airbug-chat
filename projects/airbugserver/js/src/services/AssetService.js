@@ -29,8 +29,8 @@
 //@Require('aws.S3Bucket')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.Path')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -68,8 +68,8 @@ require('bugpack').context("*", function(bugpack) {
     var S3Bucket                = bugpack.require('aws.S3Bucket');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
     var Path                    = bugpack.require('bugfs.Path');
-    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag           = bugpack.require('bugioc.ArgTag');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -77,9 +77,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var module                  = ModuleAnnotation.module;
+    var module                  = ModuleTag.module;
     var $parallel               = BugFlow.$parallel;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
@@ -574,7 +574,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AssetService).with(
+    bugmeta.tag(AssetService).with(
         module("assetService")
             .args([
                 arg().ref("logger"),

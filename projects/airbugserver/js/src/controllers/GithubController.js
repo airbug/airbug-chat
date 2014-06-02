@@ -20,9 +20,9 @@
 //@Require('Obj')
 //@Require('airbug.GithubDefines')
 //@Require('airbugserver.EntityController')
-//@Require('bugcontroller.ControllerAnnotation')
+//@Require('bugcontroller.ControllerTag')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -41,9 +41,9 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                     = bugpack.require('Obj');
     var GithubDefines           = bugpack.require('airbug.GithubDefines');
     var EntityController        = bugpack.require('airbugserver.EntityController');
-    var ControllerAnnotation    = bugpack.require('bugcontroller.ControllerAnnotation');
+    var ControllerTag    = bugpack.require('bugcontroller.ControllerTag');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var ArgTag           = bugpack.require('bugioc.ArgTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -51,9 +51,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var controller              = ControllerAnnotation.controller;
+    var controller              = ControllerTag.controller;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
 
@@ -164,7 +164,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(GithubController).with(
+    bugmeta.tag(GithubController).with(
         controller("githubController")
             .args([
                 arg().ref("controllerManager"),

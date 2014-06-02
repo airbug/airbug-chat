@@ -8,7 +8,7 @@
 //@Require('airbugserver.RoomMemberController')
 //@Require('airbugserver.EntityController')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var RoomMemberController      = bugpack.require('airbugserver.RoomMemberController');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta = BugMeta.context();
-var test = TestAnnotation.test;
+var test = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -70,6 +70,6 @@ var roomMemberControllerInstantiationTest = {
             "Assert marshaller is not undefined");
     }
 };
-bugmeta.annotate(roomMemberControllerInstantiationTest).with(
+bugmeta.tag(roomMemberControllerInstantiationTest).with(
     test().name("RoomMemberController - instantiation Test")
 );

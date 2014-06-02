@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('airbug.ApplicationController')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
 
@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var ApplicationController       = bugpack.require('airbug.ApplicationController');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag        = bugpack.require('carapace.ControllerTag');
     var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
 
 
@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var controller                  = ControllerAnnotation.controller;
+    var controller                  = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SettingsPageController).with(
+    bugmeta.tag(SettingsPageController).with(
         controller().route("settings")
     );
 

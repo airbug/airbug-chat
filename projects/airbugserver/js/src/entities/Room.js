@@ -19,8 +19,8 @@
 //@Require('Class')
 //@require('Set')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugentity.EntityTag')
+//@Require('bugentity.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -38,8 +38,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Set                     = bugpack.require('Set');
     var Entity                  = bugpack.require('bugentity.Entity');
-    var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+    var EntityTag        = bugpack.require('bugentity.EntityTag');
+    var PropertyTag      = bugpack.require('bugentity.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -48,8 +48,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var entity                  = EntityAnnotation.entity;
-    var property                = PropertyAnnotation.property;
+    var entity                  = EntityTag.entity;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Room).with(
+    bugmeta.tag(Room).with(
         entity("Room").properties([
             property("conversation")
                 .type("Conversation")

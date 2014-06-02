@@ -19,7 +19,7 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbugplugin.SignupPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController       = bugpack.require('airbug.ApplicationController');
     var SignupPageContainer         = bugpack.require('airbugplugin.SignupPageContainer');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag        = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var controller                  = ControllerAnnotation.controller;
+    var controller                  = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SignupPageController).with(
+    bugmeta.tag(SignupPageController).with(
         controller().route("signup")
     );
 

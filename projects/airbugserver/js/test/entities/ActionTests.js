@@ -6,7 +6,7 @@
 
 //@Require('airbugserver.Action')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -22,7 +22,7 @@ var bugpack                 = require('bugpack').context();
 
 var Action                  = bugpack.require('airbugserver.Action');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -32,7 +32,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -216,12 +216,12 @@ var actionMongooseSchemaTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(actionInstantiationTest).with(
+bugmeta.tag(actionInstantiationTest).with(
     test().name("Action - instantiation Test")
 );
-bugmeta.annotate(actionDeepCloneTest).with(
+bugmeta.tag(actionDeepCloneTest).with(
     test().name("Action - #clone deep Test")
 );
-bugmeta.annotate(actionMongooseSchemaTest).with(
+bugmeta.tag(actionMongooseSchemaTest).with(
     test().name("Action - mongoose schema Test")
 );

@@ -9,7 +9,7 @@
 //@Require('airbugserver.DialogueManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var Dialogue                = bugpack.require('airbugserver.Dialogue');
 var DialogueManager         = bugpack.require('airbugserver.DialogueManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -39,7 +39,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -100,6 +100,6 @@ var dialogueManagerInstantiationTest = {
             "Assert .entityDeltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(dialogueManagerInstantiationTest).with(
+bugmeta.tag(dialogueManagerInstantiationTest).with(
     test().name("DialogueManager - instantiation test")
 );

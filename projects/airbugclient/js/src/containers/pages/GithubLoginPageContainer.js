@@ -12,8 +12,8 @@
 //@Require('airbug.PageView')
 //@Require('airbug.SignupButtonContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -35,8 +35,8 @@ require('bugpack').context("*", function(bugpack) {
     var PageView                        = bugpack.require('airbug.PageView');
     var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
@@ -45,8 +45,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var autowired                       = AutowiredAnnotation.autowired;
-    var property                        = PropertyAnnotation.property;
+    var autowired                       = AutowiredTag.autowired;
+    var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
 
 
@@ -171,7 +171,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(GithubLoginPageContainer).with(
+    bugmeta.tag(GithubLoginPageContainer).with(
         autowired().properties([
             property("navigationModule").ref("navigationModule")
         ])

@@ -22,9 +22,9 @@
 //@Require('airbug.UserDefines')
 //@Require('bugcall.CallEvent')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -45,9 +45,9 @@ require('bugpack').context("*", function(bugpack) {
     var UserDefines                 = bugpack.require('airbug.UserDefines');
     var CallEvent                   = bugpack.require('bugcall.CallEvent');
     var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
     var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -55,9 +55,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var module                  = ModuleAnnotation.module;
+    var module                  = ModuleTag.module;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
 
@@ -363,7 +363,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(InteractionStatusService).with(
+    bugmeta.tag(InteractionStatusService).with(
         module("interactionStatusService")
             .args([
                 arg().ref("logger"),

@@ -10,8 +10,8 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.Conversation')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -31,8 +31,8 @@ var Set                         = bugpack.require('Set');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var Conversation                = bugpack.require('airbugserver.Conversation');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -40,9 +40,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ var ConversationManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ConversationManager).with(
+bugmeta.tag(ConversationManager).with(
     entityManager("conversationManager")
         .ofType("Conversation")
         .args([

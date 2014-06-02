@@ -19,8 +19,8 @@
 //@Require('airbug.ImageViewEvent')
 //@Require('airbug.MessagePartContainer')
 //@Require('airbug.MessagePartImageView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
@@ -40,8 +40,8 @@ require('bugpack').context("*", function(bugpack) {
     var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
     var MessagePartContainer                = bugpack.require('airbug.MessagePartContainer');
     var MessagePartImageView                = bugpack.require('airbug.MessagePartImageView');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
@@ -50,10 +50,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -160,7 +160,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(MessagePartImageContainer).with(
+    bugmeta.tag(MessagePartImageContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule")
         ])

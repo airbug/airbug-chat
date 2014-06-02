@@ -23,8 +23,8 @@
 //@Require('airbug.TableRowView')
 //@Require('airbug.TableView')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -57,8 +57,8 @@ var TableHeadingView                    = bugpack.require('airbug.TableHeadingVi
 var TableRowView                        = bugpack.require('airbug.TableRowView');
 var TableView                           = bugpack.require('airbug.TableView');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
 var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -66,9 +66,9 @@ var ViewBuilder                         = bugpack.require('carapace.ViewBuilder'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                           = AutowiredAnnotation.autowired;
+var autowired                           = AutowiredTag.autowired;
 var bugmeta                             = BugMeta.context();
-var property                            = PropertyAnnotation.property;
+var property                            = PropertyTag.property;
 var view                                = ViewBuilder.view;
 
 
@@ -327,7 +327,7 @@ var BetaKeyDashboardPageContainer = Class.extend(ApplicationContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyDashboardPageContainer).with(
+bugmeta.tag(BetaKeyDashboardPageContainer).with(
     autowired().properties([
         property("betaKeyManagerModule").ref("betaKeyManagerModule"),
         property("documentUtil").ref("documentUtil")

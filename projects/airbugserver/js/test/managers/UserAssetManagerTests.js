@@ -16,7 +16,7 @@
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -43,7 +43,7 @@ var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -53,7 +53,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -419,15 +419,15 @@ var userAssetManagerRetrieveUserAssetTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(userAssetManagerInstantiationTest).with(
+bugmeta.tag(userAssetManagerInstantiationTest).with(
     test().name("UserAssetManager - instantiation test")
 );
-bugmeta.annotate(userAssetManagerCreateUserAssetTest).with(
+bugmeta.tag(userAssetManagerCreateUserAssetTest).with(
     test().name("UserAssetManager - #createUserAsset Test")
 );
-bugmeta.annotate(userAssetManagerDeleteUserAssetTest).with(
+bugmeta.tag(userAssetManagerDeleteUserAssetTest).with(
     test().name("UserAssetManager - #deleteUserAsset Test")
 );
-bugmeta.annotate(userAssetManagerRetrieveUserAssetTest).with(
+bugmeta.tag(userAssetManagerRetrieveUserAssetTest).with(
     test().name("UserAssetManager - #retrieveUserAsset Test")
 );

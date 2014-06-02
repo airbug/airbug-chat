@@ -20,8 +20,8 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -49,8 +49,8 @@ require('bugpack').context("*", function(bugpack) {
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var BugFs                           = bugpack.require('bugfs.BugFs');
     var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -59,8 +59,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
-    var property                        = PropertyAnnotation.property;
+    var module                          = ModuleTag.module;
+    var property                        = PropertyTag.property;
     var $parallel                       = BugFlow.$parallel;
     var $series                         = BugFlow.$series;
     var $task                           = BugFlow.$task;
@@ -442,7 +442,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AirbugServerInitializer).with(
+    bugmeta.tag(AirbugServerInitializer).with(
         module("airbugServerInitializer")
             .properties([
                 property("airbugCallService").ref("airbugCallService"),

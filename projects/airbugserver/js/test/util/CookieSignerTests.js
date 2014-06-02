@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('airbugserver.CookieSigner')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -26,7 +26,7 @@ var cookie_signature        = require('cookie-signature');
 var Class                   = bugpack.require('Class');
 var CookieSigner            = bugpack.require('airbugserver.CookieSigner');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -36,7 +36,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -89,6 +89,6 @@ var cookieSignerInstantiationTest = {
             "Assert .config was set correctly");
     }
 };
-bugmeta.annotate(cookieSignerInstantiationTest).with(
+bugmeta.tag(cookieSignerInstantiationTest).with(
     test().name("CookieSigner - instantiation test")
 );

@@ -14,8 +14,8 @@
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.TwoColumnView')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -39,8 +39,8 @@ require('bugpack').context("*", function(bugpack) {
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
     var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -48,10 +48,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -245,7 +245,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(UserHomePageContainer).with(
+    bugmeta.tag(UserHomePageContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule"),
             property("documentUtil").ref("documentUtil")

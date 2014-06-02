@@ -12,8 +12,8 @@
 //@Require('Exception')
 //@Require('Map')
 //@Require('airbug.IMessageHandler')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -34,8 +34,8 @@ require('bugpack').context("*", function(bugpack) {
     var Exception                       = bugpack.require('Exception');
     var Map                             = bugpack.require('Map');
     var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -43,9 +43,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgAnnotation.arg;
+    var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(MessageHandlerModule).with(
+    bugmeta.tag(MessageHandlerModule).with(
         module("messageHandlerModule")
     );
 

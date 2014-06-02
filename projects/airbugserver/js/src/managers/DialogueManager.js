@@ -10,8 +10,8 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.Dialogue')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -32,8 +32,8 @@ var Pair                        = bugpack.require('Pair');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var Dialogue                    = bugpack.require('airbugserver.Dialogue');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -41,9 +41,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 var ObjectId                    = mongoose.Types.ObjectId;
 
 
@@ -186,7 +186,7 @@ var DialogueManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(DialogueManager).with(
+bugmeta.tag(DialogueManager).with(
     entityManager("dialogueManager")
         .ofType("Dialogue")
         .args([

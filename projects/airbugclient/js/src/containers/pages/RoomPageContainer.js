@@ -21,8 +21,8 @@
 //@Require('airbug.RoomModel')
 //@Require('airbug.ShareRoomContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
@@ -54,8 +54,8 @@ require('bugpack').context("*", function(bugpack) {
     var RoomModel                           = bugpack.require('airbug.RoomModel');
     var ShareRoomContainer                  = bugpack.require('airbug.ShareRoomContainer');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
@@ -64,11 +64,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
     var model                               = ModelBuilder.model;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -407,7 +407,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RoomPageContainer).with(
+    bugmeta.tag(RoomPageContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule"),
             property("documentUtil").ref("documentUtil"),

@@ -19,8 +19,8 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.Github')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -38,8 +38,8 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil                    = bugpack.require('TypeUtil');
     var Github                      = bugpack.require('airbugserver.Github');
     var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -47,9 +47,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerAnnotation.entityManager;
+    var entityManager               = EntityManagerTag.entityManager;
 
 
     //-------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(GithubManager).with(
+    bugmeta.tag(GithubManager).with(
         entityManager("githubManager")
             .ofType("Github")
             .args([

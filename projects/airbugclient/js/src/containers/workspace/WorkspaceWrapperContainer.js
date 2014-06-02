@@ -19,8 +19,8 @@
 //@Require('airbug.ImageWorkspaceContainer')
 //@Require('airbug.PanelView')
 //@Require('airbug.WorkspaceEvent')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -41,8 +41,8 @@ require('bugpack').context("*", function(bugpack) {
     var ImageWorkspaceContainer         = bugpack.require('airbug.ImageWorkspaceContainer');
     var PanelView                       = bugpack.require('airbug.PanelView');
     var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
@@ -52,9 +52,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                       = AutowiredAnnotation.autowired;
+    var autowired                       = AutowiredTag.autowired;
     var bugmeta                         = BugMeta.context();
-    var property                        = PropertyAnnotation.property;
+    var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
 
 
@@ -250,7 +250,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(WorkspaceWrapperContainer).with(
+    bugmeta.tag(WorkspaceWrapperContainer).with(
         autowired().properties([
             property("workspaceModule").ref("workspaceModule")
         ])

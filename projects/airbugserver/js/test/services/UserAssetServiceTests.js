@@ -19,7 +19,7 @@
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -50,7 +50,7 @@ var EntityManagerStore              = bugpack.require('bugentity.EntityManagerSt
 var SchemaManager                   = bugpack.require('bugentity.SchemaManager');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation                  = bugpack.require('bugunit.TestAnnotation');
+var TestTag                  = bugpack.require('bugunit.TestTag');
 var BugYarn                         = bugpack.require('bugyarn.BugYarn');
 var Logger                          = bugpack.require('loggerbug.Logger');
 
@@ -61,7 +61,7 @@ var Logger                          = bugpack.require('loggerbug.Logger');
 
 var bugmeta                         = BugMeta.context();
 var bugyarn                         = BugYarn.context();
-var test                            = TestAnnotation.test;
+var test                            = TestTag.test;
 var $series                         = BugFlow.$series;
 var $task                           = BugFlow.$task;
 
@@ -745,30 +745,30 @@ var userAssetServiceRetrieveUserImageAssetsByUserIdTest = {
 };
 
 
-bugmeta.annotate(userAssetServiceCreateUserAssetTest).with(
+bugmeta.tag(userAssetServiceCreateUserAssetTest).with(
     test().name('UserAssetService - Create UserAsset Test')
 );
 
-bugmeta.annotate(userAssetServiceDeleteUserAssetTest).with(
+bugmeta.tag(userAssetServiceDeleteUserAssetTest).with(
     test().name('UserAssetService - Delete UserAsset Test')
 );
 
-bugmeta.annotate(userAssetServiceRenameUserAssetTest).with(
+bugmeta.tag(userAssetServiceRenameUserAssetTest).with(
     test().name('UserAssetService - Rename UserAsset Test')
 );
 
-bugmeta.annotate(userAssetServiceRetrieveUserAssetTest).with(
+bugmeta.tag(userAssetServiceRetrieveUserAssetTest).with(
     test().name('UserAssetService - Retrieve UserAsset Test')
 );
 
-bugmeta.annotate(userAssetServiceRetrieveUserAssetsTest).with(
+bugmeta.tag(userAssetServiceRetrieveUserAssetsTest).with(
     test().name('UserAssetService - Retrieve UserAssets Test')
 );
 
-bugmeta.annotate(userAssetServiceRetrieveUserAssetsByUserIdTest).with(
+bugmeta.tag(userAssetServiceRetrieveUserAssetsByUserIdTest).with(
     test().name('UserAssetService - Retrieve UserAssets By User Id Test')
 );
 
-bugmeta.annotate(userAssetServiceRetrieveUserImageAssetsByUserIdTest).with(
+bugmeta.tag(userAssetServiceRetrieveUserImageAssetsByUserIdTest).with(
     test().name('UserAssetService - Retrieve UserImageAssets By User Id Test')
 );

@@ -10,7 +10,7 @@
 //@Require('airbugserver.ActionManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -31,7 +31,7 @@ var Action                  = bugpack.require('airbugserver.Action');
 var ActionManager           = bugpack.require('airbugserver.ActionManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -41,7 +41,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -214,10 +214,10 @@ var actionManagerRetrieveActionTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(actionManagerInstantiationTest).with(
+bugmeta.tag(actionManagerInstantiationTest).with(
     test().name("ActionManager - instantiation test")
 );
 
-bugmeta.annotate(actionManagerRetrieveActionTest).with(
+bugmeta.tag(actionManagerRetrieveActionTest).with(
     test().name("ActionManager - #retrieveAction Test")
 );

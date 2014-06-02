@@ -19,8 +19,8 @@
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.WorkspaceWidgetContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -39,8 +39,8 @@ require('bugpack').context("*", function(bugpack) {
     var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -48,10 +48,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(CodeEditorBaseWidgetContainer).with(
+    bugmeta.tag(CodeEditorBaseWidgetContainer).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),

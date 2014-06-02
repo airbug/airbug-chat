@@ -9,7 +9,7 @@
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserAsset')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Asset                   = bugpack.require('airbugserver.Asset');
 var User                    = bugpack.require('airbugserver.User');
 var UserAsset               = bugpack.require('airbugserver.UserAsset');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 var setupAssetTest = function(setupObject) {
@@ -166,18 +166,18 @@ var userAssetPublicMethodsForUserPropertyTest = {
     }
 };
 
-bugmeta.annotate(userAssetInstantiationTest).with(
+bugmeta.tag(userAssetInstantiationTest).with(
     test().name("UserAsset - instantiation Test")
 );
 
-bugmeta.annotate(userAssetSettersGettersTest).with(
+bugmeta.tag(userAssetSettersGettersTest).with(
     test().name("UserAsset - setters/getters Test")
 );
 
-bugmeta.annotate(userAssetPublicMethodsForAssetPropertyTest).with(
+bugmeta.tag(userAssetPublicMethodsForAssetPropertyTest).with(
     test().name("UserAsset - Public methods for Asset Property Test")
 );
 
-bugmeta.annotate(userAssetPublicMethodsForUserPropertyTest).with(
+bugmeta.tag(userAssetPublicMethodsForUserPropertyTest).with(
     test().name("UserAsset - Public methods for User Property Test")
 );

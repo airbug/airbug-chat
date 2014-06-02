@@ -8,8 +8,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbugserver.UserImageAssetStream')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -26,8 +26,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
     var UserImageAssetStream        = bugpack.require('airbugserver.UserImageAssetStream');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -35,9 +35,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var module                      = ModuleAnnotation.module;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(UserImageAssetStreamManager).with(
+    bugmeta.tag(UserImageAssetStreamManager).with(
         module("userImageAssetStreamManager")
     );
 

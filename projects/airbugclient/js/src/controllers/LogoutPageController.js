@@ -17,10 +17,10 @@
 //@Require('Class')
 //@Require('airbug.ApplicationController')
 //@Require('airbug.LoginPageContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 
 
 //-------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var ApplicationController   = bugpack.require('airbug.ApplicationController');
     var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation    = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag    = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
@@ -47,9 +47,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta     = BugMeta.context();
-    var autowired   = AutowiredAnnotation.autowired;
-    var controller  = ControllerAnnotation.controller;
-    var property    = PropertyAnnotation.property;
+    var autowired   = AutowiredTag.autowired;
+    var controller  = ControllerTag.controller;
+    var property    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(LogoutPageController).with(
+    bugmeta.tag(LogoutPageController).with(
         controller().route("loggedout")
     );
 

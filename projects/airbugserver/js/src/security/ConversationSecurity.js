@@ -11,8 +11,8 @@
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.Path')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.PropertyTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -33,8 +33,8 @@ var Exception               = bugpack.require('Exception');
 var Obj                     = bugpack.require('Obj');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var Path                    = bugpack.require('bugfs.Path');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -43,8 +43,8 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
-var property                = PropertyAnnotation.property;
+var module                  = ModuleTag.module;
+var property                = PropertyTag.property;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -150,7 +150,7 @@ var ConversationSecurity = Class.extend(Obj, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ConversationSecurity).with(
+bugmeta.tag(ConversationSecurity).with(
     module("conversationSecurity")
         .properties([
             property("conversationManager").ref("conversationManager")

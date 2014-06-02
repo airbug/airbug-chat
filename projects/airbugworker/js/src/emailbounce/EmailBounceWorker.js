@@ -6,167 +6,174 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('bugioc.ConfigurationAnnotationProcessor')
-//@Require('bugioc.ConfigurationScan')
+//@Require('bugioc.ConfigurationTagProcessor')
+//@Require('bugioc.ConfigurationTagScan')
 //@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleAnnotationProcessor')
-//@Require('bugioc.ModuleScan')
+//@Require('bugioc.ModuleTagProcessor')
+//@Require('bugioc.ModuleTagScan')
 //@Require('bugmeta.BugMeta')
 //@Require('bugwork.Worker')
-//@Require('bugwork.WorkerAnnotation')
+//@Require('bugwork.WorkerTag')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var ConfigurationAnnotationProcessor    = bugpack.require('bugioc.ConfigurationAnnotationProcessor');
-var ConfigurationScan                   = bugpack.require('bugioc.ConfigurationScan');
-var IocContext                          = bugpack.require('bugioc.IocContext');
-var ModuleAnnotationProcessor           = bugpack.require('bugioc.ModuleAnnotationProcessor');
-var ModuleScan                          = bugpack.require('bugioc.ModuleScan');
-var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var Worker                              = bugpack.require('bugwork.Worker');
-var WorkerAnnotation                    = bugpack.require('bugwork.WorkerAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var worker                              = WorkerAnnotation.worker;
-var bugmeta                             = BugMeta.context();
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EmailBounceWorker = Class.extend(Worker, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                               = bugpack.require('Class');
+    var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
+    var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
+    var IocContext                          = bugpack.require('bugioc.IocContext');
+    var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
+    var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var Worker                              = bugpack.require('bugwork.Worker');
+    var WorkerTag                    = bugpack.require('bugwork.WorkerTag');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var worker                              = WorkerTag.worker;
+    var bugmeta                             = BugMeta.context();
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Worker}
      */
-    _constructor: function() {
+    var EmailBounceWorker = Class.extend(Worker, {
 
-        this._super();
+        _name: "airbugworker.EmailBounceWorker",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IocContext}
+         * @constructs
          */
-        this.iocContext         = new IocContext();
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {IocContext}
+             */
+            this.iocContext         = new IocContext();
+
+            /**
+             * @private
+             * @type {ModuleTagScan}
+             */
+            this.moduleTagScan         = new ModuleTagScan(bugmeta, new ModuleTagProcessor(this.iocContext));
+
+            /**
+             * @private
+             * @type {ConfigurationTagScan}
+             */
+            this.configurationTagScan  = new ConfigurationTagScan(bugmeta, new ConfigurationTagProcessor(this.iocContext));
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {ModuleScan}
+         * @return {ConfigurationTagScan}
          */
-        this.moduleScan         = new ModuleScan(bugmeta, new ModuleAnnotationProcessor(this.iocContext));
+        getConfigurationTagScan: function() {
+            return this.configurationTagScan;
+        },
 
         /**
-         * @private
-         * @type {ConfigurationScan}
+         * @return {IocContext}
          */
-        this.configurationScan  = new ConfigurationScan(bugmeta, new ConfigurationAnnotationProcessor(this.iocContext));
-    },
+        getIocContext: function() {
+            return this.iocContext;
+        },
+
+        /**
+         * @return {ModuleTagScan}
+         */
+        getModuleTagScan: function() {
+            return this.moduleTagScan;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Worker Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {ConfigurationScan}
-     */
-    getConfigurationScan: function() {
-        return this.configurationScan;
-    },
+        /**
+         * @protected
+         * @param {function(Throwable=)} callback
+         */
+        deinitialize: function(callback) {
+            this.iocContext.deinitialize(callback);
+        },
 
-    /**
-     * @return {IocContext}
-     */
-    getIocContext: function() {
-        return this.iocContext;
-    },
+        /**
+         * @protected
+         * @param {function(Throwable=)} callback
+         */
+        initialize: function(callback) {
+            console.log("Initializing MeldWorker...");
+            this.iocContext.initialize(callback);
+        },
 
-    /**
-     * @return {ModuleScan}
-     */
-    getModuleScan: function() {
-        return this.moduleScan;
-    },
+        /**
+         * @protected
+         * @param {function(Throwable=)} callback
+         */
+        process: function(callback) {
+            var throwable = null;
+            try {
+                this.configurationTagScan.scanBugpack("airbugworker.EmailBounceWorkerConfiguration");
+                this.moduleTagScan.scanBugpacks([
 
-
-    //-------------------------------------------------------------------------------
-    // Worker Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {function(Throwable=)} callback
-     */
-    deinitialize: function(callback) {
-        this.iocContext.deinitialize(callback);
-    },
-
-    /**
-     * @protected
-     * @param {function(Throwable=)} callback
-     */
-    initialize: function(callback) {
-        console.log("Initializing MeldWorker...");
-        this.iocContext.initialize(callback);
-    },
-
-    /**
-     * @protected
-     * @param {function(Throwable=)} callback
-     */
-    process: function(callback) {
-        var throwable = null;
-        try {
-            this.configurationScan.scanBugpack("airbugworker.EmailBounceWorkerConfiguration");
-            this.moduleScan.scanBugpacks([
-
-                "loggerbug.Logger"
-            ]);
-            this.iocContext.process();
-        } catch(t) {
-            throwable = t;
+                    "loggerbug.Logger"
+                ]);
+                this.iocContext.process();
+            } catch(t) {
+                throwable = t;
+            }
+            callback(throwable);
         }
-        callback(throwable);
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(EmailBounceWorker).with(
+        worker("emailBounceWorker")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugworker.EmailBounceWorker', EmailBounceWorker);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(EmailBounceWorker).with(
-    worker("emailBounceWorker")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugworker.EmailBounceWorker', EmailBounceWorker);

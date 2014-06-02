@@ -7,8 +7,8 @@
 //@Require('Class')
 //@Require('Set')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugentity.EntityTag')
+//@Require('bugentity.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -26,8 +26,8 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Set                     = bugpack.require('Set');
 var Entity                  = bugpack.require('bugentity.Entity');
-var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var EntityTag        = bugpack.require('bugentity.EntityTag');
+var PropertyTag      = bugpack.require('bugentity.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -36,8 +36,8 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var entity                  = EntityAnnotation.entity;
-var property                = PropertyAnnotation.property;
+var entity                  = EntityTag.entity;
+var property                = PropertyTag.property;
 
 
 //-------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ var BetaKey = Class.extend(Entity, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKey).with(
+bugmeta.tag(BetaKey).with(
     entity("BetaKey").properties([
         property("baseKey")
             .type("string")

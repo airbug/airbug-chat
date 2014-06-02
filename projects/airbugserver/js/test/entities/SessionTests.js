@@ -9,7 +9,7 @@
 //@Require('airbugserver.Session')
 //@Require('airbugserver.SessionData')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -28,7 +28,7 @@ var Cookie                  = bugpack.require('airbugserver.Cookie');
 var Session                 = bugpack.require('airbugserver.Session');
 var SessionData             = bugpack.require('airbugserver.SessionData');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -38,7 +38,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -351,15 +351,15 @@ var sessionResetMaxAgeTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(sessionInstantiationTest).with(
+bugmeta.tag(sessionInstantiationTest).with(
     test().name("Session - instantiation Test")
 );
-bugmeta.annotate(sessionDeepCloneTest).with(
+bugmeta.tag(sessionDeepCloneTest).with(
     test().name("Session - #clone deep Test")
 );
-bugmeta.annotate(sessionMongooseSchemaTest).with(
+bugmeta.tag(sessionMongooseSchemaTest).with(
     test().name("Session - mongoose schema Test")
 );
-bugmeta.annotate(sessionResetMaxAgeTest).with(
+bugmeta.tag(sessionResetMaxAgeTest).with(
     test().name("Session - resetMaxAge Test")
 );

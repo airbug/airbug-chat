@@ -12,7 +12,7 @@
 //@Require('airbugserver.RoomManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -35,7 +35,7 @@ var Room                    = bugpack.require('airbugserver.Room');
 var RoomManager             = bugpack.require('airbugserver.RoomManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -45,7 +45,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -293,14 +293,14 @@ var roomManagerUpdateRoomTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(roomManagerInstantiationTest).with(
+bugmeta.tag(roomManagerInstantiationTest).with(
     test().name("RoomManager - instantiation test")
 );
 
-bugmeta.annotate(roomManagerCreateRoomTest).with(
+bugmeta.tag(roomManagerCreateRoomTest).with(
     test().name("RoomManager - #createRoom Test")
 );
 
-bugmeta.annotate(roomManagerUpdateRoomTest).with(
+bugmeta.tag(roomManagerUpdateRoomTest).with(
     test().name("RoomManager - #updateRoom Test")
 );

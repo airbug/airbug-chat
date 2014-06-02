@@ -9,8 +9,8 @@
 //@Require('Obj')
 //@Require('airbugserver.EntityPusher')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -29,8 +29,8 @@ var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var EntityPusher        = bugpack.require('airbugserver.EntityPusher');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation       = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var ArgTag       = bugpack.require('bugioc.ArgTag');
+var ModuleTag    = bugpack.require('bugioc.ModuleTag');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -38,9 +38,9 @@ var BugMeta             = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                 = ArgAnnotation.arg;
+var arg                 = ArgTag.arg;
 var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
+var module              = ModuleTag.module;
 
 
 //-------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ var UserImageAssetStreamPusher = Class.extend(EntityPusher, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(UserImageAssetStreamPusher).with(
+bugmeta.tag(UserImageAssetStreamPusher).with(
     module("userImageAssetStreamPusher")
         .args([
             arg().ref("logger"),

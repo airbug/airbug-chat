@@ -13,8 +13,8 @@
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWrapperContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
@@ -38,8 +38,8 @@ require('bugpack').context("*", function(bugpack) {
     var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
     var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
     var WorkspaceWrapperContainer   = bugpack.require('airbug.WorkspaceWrapperContainer');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -48,10 +48,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                   = AutowiredAnnotation.autowired;
+    var autowired                   = AutowiredTag.autowired;
     var bugmeta                     = BugMeta.context();
     var CommandType                 = CommandModule.CommandType;
-    var property                    = PropertyAnnotation.property;
+    var property                    = PropertyTag.property;
     var view                        = ViewBuilder.view;
 
 
@@ -311,7 +311,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(PageContainer).with(
+    bugmeta.tag(PageContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule"),
             property("workspaceModule").ref("workspaceModule")

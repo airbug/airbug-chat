@@ -22,7 +22,7 @@
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
     var BugFlow                     = bugpack.require('bugflow.BugFlow');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation              = bugpack.require('bugunit.TestAnnotation');
+    var TestTag              = bugpack.require('bugunit.TestTag');
     var BugYarn                     = bugpack.require('bugyarn.BugYarn');
 
 
@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                     = BugMeta.context();
     var bugyarn                     = BugYarn.context();
-    var test                        = TestAnnotation.test;
+    var test                        = TestTag.test;
     var $series                     = BugFlow.$series;
     var $task                       = BugFlow.$task;
 
@@ -442,15 +442,15 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(roomServiceInstantiationTest).with(
+    bugmeta.tag(roomServiceInstantiationTest).with(
         test().name("RoomService - instantiation test")
     );
 
-    bugmeta.annotate(roomServiceCreateRoomTest).with(
+    bugmeta.tag(roomServiceCreateRoomTest).with(
         test().name("RoomService - #createRoom Test")
     );
 
-    bugmeta.annotate(roomServiceAddUserToRoomTest).with(
+    bugmeta.tag(roomServiceAddUserToRoomTest).with(
         test().name("RoomService - #AddUserToRoom Test")
     );
 });

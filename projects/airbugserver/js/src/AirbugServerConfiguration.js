@@ -24,10 +24,10 @@
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ConfigurationAnnotation')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ConfigurationTag')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
@@ -72,10 +72,10 @@ require('bugpack').context("*", function(bugpack) {
     var AwsConfig                       = bugpack.require('aws.AwsConfig');
     var AwsUploader                     = bugpack.require('aws.AwsUploader');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-    var ConfigurationAnnotation         = bugpack.require('bugioc.ConfigurationAnnotation');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ConfigurationTag         = bugpack.require('bugioc.ConfigurationTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var ExpressApp                      = bugpack.require('express.ExpressApp');
     var ExpressServer                   = bugpack.require('express.ExpressServer');
@@ -88,11 +88,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var configuration           = ConfigurationAnnotation.configuration;
-    var module                  = ModuleAnnotation.module;
-    var property                = PropertyAnnotation.property;
+    var configuration           = ConfigurationTag.configuration;
+    var module                  = ModuleTag.module;
+    var property                = PropertyTag.property;
     var $parallel               = BugFlow.$parallel;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
@@ -267,7 +267,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AirbugServerConfiguration).with(
+    bugmeta.tag(AirbugServerConfiguration).with(
         configuration("airbugServerConfiguration").modules([
             module("airbugServerConfig"),
             module("airbugStaticConfig"),

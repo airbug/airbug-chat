@@ -13,7 +13,7 @@
 //@Require('bugentity.SchemaManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -37,7 +37,7 @@ var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -47,7 +47,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -137,7 +137,7 @@ var userManagerInstantiationTest = {
             "Assert .entityDeltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(userManagerInstantiationTest).with(
+bugmeta.tag(userManagerInstantiationTest).with(
     test().name("UserManager - instantiation test")
 );
 
@@ -482,18 +482,18 @@ function makeEmail() {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(userManagerCreateUserTest).with(
+bugmeta.tag(userManagerCreateUserTest).with(
     test().name("UserManager - #createUser Test")
 );
 
-bugmeta.annotate(userManagerDeleteUserTest).with(
+bugmeta.tag(userManagerDeleteUserTest).with(
     test().name("UserManager - #deleteUser Test")
 );
 
-bugmeta.annotate(userManagerRetrieveUserTest).with(
+bugmeta.tag(userManagerRetrieveUserTest).with(
     test().name("UserManager - #retrieveUser Test")
 );
 
-bugmeta.annotate(userManagerUpdateUserTest).with(
+bugmeta.tag(userManagerUpdateUserTest).with(
     test().name("UserManager - #updateUser Test")
 );

@@ -17,8 +17,8 @@
 //@Require('Class')
 //@Require('airbug.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -37,8 +37,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
     var CommandModule           = bugpack.require('airbug.CommandModule');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
@@ -48,9 +48,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredAnnotation.autowired;
+    var autowired               = AutowiredTag.autowired;
     var bugmeta                 = BugMeta.context();
-    var property                = PropertyAnnotation.property;
+    var property                = PropertyTag.property;
     var view                    = ViewBuilder.view;
 
 
@@ -184,7 +184,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ButtonContainer).with(
+    bugmeta.tag(ButtonContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule")
         ])

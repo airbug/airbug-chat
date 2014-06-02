@@ -11,8 +11,8 @@
 //@Require('airbug.CommandModule')
 //@Require('airbug.IconView')
 //@Require('airbug.NakedButtonView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
@@ -34,8 +34,8 @@ require('bugpack').context("*", function(bugpack) {
     var CommandModule           = bugpack.require('airbug.CommandModule');
     var IconView                = bugpack.require('airbug.IconView');
     var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -44,10 +44,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredAnnotation.autowired;
+    var autowired               = AutowiredTag.autowired;
     var bugmeta                 = BugMeta.context();
     var CommandType             = CommandModule.CommandType;
-    var property                = PropertyAnnotation.property;
+    var property                = PropertyTag.property;
     var view                    = ViewBuilder.view;
 
 
@@ -174,7 +174,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AddRoomMemberButtonContainer).with(
+    bugmeta.tag(AddRoomMemberButtonContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule")
         ])

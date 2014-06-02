@@ -10,8 +10,8 @@
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.LoginFormView')
 //@Require('airbug.RoomModel')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -35,8 +35,8 @@ var LoginFormView           = bugpack.require('airbug.LoginFormView');
 var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -46,9 +46,9 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var autowired               = AutowiredAnnotation.autowired;
+var autowired               = AutowiredTag.autowired;
 var CommandType             = CommandModule.CommandType;
-var property                = PropertyAnnotation.property;
+var property                = PropertyTag.property;
 var view                    = ViewBuilder.view;
 
 
@@ -200,7 +200,7 @@ var LoginFormContainer = Class.extend(CarapaceContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(LoginFormContainer).with(
+bugmeta.tag(LoginFormContainer).with(
     autowired().properties([
         property("commandModule").ref("commandModule"),
         property("navigationModule").ref("navigationModule"),

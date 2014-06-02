@@ -27,8 +27,8 @@
 //@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
@@ -56,8 +56,8 @@ require('bugpack').context("*", function(bugpack) {
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
     var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
@@ -66,10 +66,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -265,7 +265,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ImageUploadWidgetContainer).with(
+    bugmeta.tag(ImageUploadWidgetContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule")
         ])

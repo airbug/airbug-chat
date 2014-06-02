@@ -16,7 +16,7 @@
 //@Require('bugdelta.ObjectChange')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -43,7 +43,7 @@ var SessionManager          = bugpack.require('airbugserver.SessionManager');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -53,7 +53,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -717,34 +717,34 @@ var sessionManagerBuildDeltaObjectTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(sessionManagerInstantiationTest).with(
+bugmeta.tag(sessionManagerInstantiationTest).with(
     test().name("SessionManager - instantiation test")
 );
 
-bugmeta.annotate(sessionManagerGenerateSessionFullTest).with(
+bugmeta.tag(sessionManagerGenerateSessionFullTest).with(
     test().name("SessionManager - #generateSession full test")
 );
 
-bugmeta.annotate(sessionManagerGenerateSessionPartialTest).with(
+bugmeta.tag(sessionManagerGenerateSessionPartialTest).with(
     test().name("SessionManager - #generateSession partial test")
 );
 
-bugmeta.annotate(sessionManagerCreateTest).with(
+bugmeta.tag(sessionManagerCreateTest).with(
     test().name("SessionManager - create session test")
 );
 
-bugmeta.annotate(sessionManagerCreateAndUpdateTest).with(
+bugmeta.tag(sessionManagerCreateAndUpdateTest).with(
     test().name("SessionManager - create and update session test")
 );
 
-bugmeta.annotate(sessionManagerConvertEntityToDbObjectTest).with(
+bugmeta.tag(sessionManagerConvertEntityToDbObjectTest).with(
     test().name("SessionManager - #convertEntityToDbObject test")
 );
 
-bugmeta.annotate(sessionManagerBuildUpdateObjectTest).with(
+bugmeta.tag(sessionManagerBuildUpdateObjectTest).with(
     test().name("SessionManager - #buildUpdateObject test")
 );
 
-bugmeta.annotate(sessionManagerBuildDeltaObjectTest).with(
+bugmeta.tag(sessionManagerBuildDeltaObjectTest).with(
     test().name("SessionManager - #buildDelta test")
 );

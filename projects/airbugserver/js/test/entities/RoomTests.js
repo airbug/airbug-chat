@@ -9,7 +9,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.Room')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Set                     = bugpack.require('Set');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var Room                    = bugpack.require('airbugserver.Room');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -115,9 +115,9 @@ var roomGetterSetterTests = {
 
 };
 
-bugmeta.annotate(roomInstantiationTests).with(
+bugmeta.tag(roomInstantiationTests).with(
     test().name("Room - instantiation Tests")
 );
-bugmeta.annotate(roomGetterSetterTests).with(
+bugmeta.tag(roomGetterSetterTests).with(
     test().name("Room - getter/setter Tests")
 );

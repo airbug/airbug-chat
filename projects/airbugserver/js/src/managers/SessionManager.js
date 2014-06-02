@@ -24,8 +24,8 @@
 //@Require('airbugserver.Session')
 //@Require('airbugserver.SessionData')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -48,8 +48,8 @@ require('bugpack').context("*", function(bugpack) {
     var Session                     = bugpack.require('airbugserver.Session');
     var SessionData                 = bugpack.require('airbugserver.SessionData');
     var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -57,9 +57,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerAnnotation.entityManager;
+    var entityManager               = EntityManagerTag.entityManager;
 
 
     //-------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SessionManager).with(
+    bugmeta.tag(SessionManager).with(
         entityManager("sessionManager")
             .ofType("Session")
             .args([

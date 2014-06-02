@@ -8,8 +8,8 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -26,8 +26,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -35,9 +35,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgAnnotation.arg;
+    var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(PageStateModule).with(
+    bugmeta.tag(PageStateModule).with(
         module("pageStateModule")
             .args([
                 arg().ref("carapaceRouter")

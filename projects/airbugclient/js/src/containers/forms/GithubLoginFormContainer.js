@@ -18,8 +18,8 @@
 //@Require('airbug.SubmitButtonView')
 //@Require('airbug.RoomModel')
 //@Require('airbug.TextView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -50,8 +50,8 @@ require('bugpack').context("*", function(bugpack) {
     var RoomModel                   = bugpack.require('airbug.RoomModel');
     var TextView                    = bugpack.require('airbug.TextView');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
     var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
@@ -62,8 +62,8 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var CommandType             = CommandModule.CommandType;
-    var autowired               = AutowiredAnnotation.autowired;
-    var property                = PropertyAnnotation.property;
+    var autowired               = AutowiredTag.autowired;
+    var property                = PropertyTag.property;
     var view                    = ViewBuilder.view;
 
 
@@ -314,7 +314,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(GithubLoginFormContainer).with(
+    bugmeta.tag(GithubLoginFormContainer).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),

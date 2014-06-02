@@ -8,8 +8,8 @@
 //@Require('ace.Ace')
 //@Require('airbug.CodeEditorViewEvent')
 //@Require('airbug.MustacheView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,8 +27,8 @@ require('bugpack').context("*", function(bugpack) {
     var Ace                                 = bugpack.require('ace.Ace');
     var CodeEditorViewEvent                 = bugpack.require('airbug.CodeEditorViewEvent');
     var MustacheView                        = bugpack.require('airbug.MustacheView');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -36,9 +36,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(CodeEditorView).with(
+    bugmeta.tag(CodeEditorView).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig")
         ])

@@ -19,8 +19,8 @@
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.RoutingRequest')
 //@Require('jquery.JQuery')
@@ -41,8 +41,8 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                             = bugpack.require('Obj');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var RoutingRequest                  = bugpack.require('carapace.RoutingRequest');
     var JQuery                          = bugpack.require('jquery.JQuery');
@@ -54,8 +54,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
-    var property                        = PropertyAnnotation.property;
+    var module                          = ModuleTag.module;
+    var property                        = PropertyTag.property;
     var $parallel                       = BugFlow.$parallel;
     var $series                         = BugFlow.$series;
     var $task                           = BugFlow.$task;
@@ -123,12 +123,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ControllerScan}
-             */
-            this.controllerScan        = null;
-
-            /**
-             * @private
              * @type {Logger}
              */
             this.logger                 = null;
@@ -191,7 +185,6 @@ require('bugpack').context("*", function(bugpack) {
                 forceHandCursor: true
             });
 
-            this.controllerScan.scan();
             this.bugCallClient.registerRequestProcessor(this.bugCallRouter);
 
             $series([
@@ -279,7 +272,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AirbugClientInitializer).with(
+    bugmeta.tag(AirbugClientInitializer).with(
         module("airbugClientInitializer")
             .properties([
                 property("airbugApi").ref("airbugApi"),
@@ -287,7 +280,6 @@ require('bugpack').context("*", function(bugpack) {
                 property("bugCallClient").ref("bugCallClient"),
                 property("bugCallRouter").ref("bugCallRouter"),
                 property("carapaceApplication").ref("carapaceApplication"),
-                property("controllerScan").ref("controllerScan"),
                 property("logger").ref("logger"),
                 property("socketIoConfig").ref("socketIoConfig"),
                 property("sonarbugClient").ref("sonarbugClient"),

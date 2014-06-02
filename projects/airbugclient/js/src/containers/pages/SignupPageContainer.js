@@ -23,8 +23,8 @@
 //@Require('airbug.RegistrationFormContainer')
 //@Require('airbug.TextView')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -47,8 +47,8 @@ require('bugpack').context("*", function(bugpack) {
     var RegistrationFormContainer       = bugpack.require('airbug.RegistrationFormContainer');
     var TextView                        = bugpack.require('airbug.TextView');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
@@ -56,9 +56,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                       = AutowiredAnnotation.autowired;
+    var autowired                       = AutowiredTag.autowired;
     var bugmeta                         = BugMeta.context();
-    var property                        = PropertyAnnotation.property;
+    var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
 
 
@@ -199,7 +199,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SignupPageContainer).with(
+    bugmeta.tag(SignupPageContainer).with(
         autowired().properties([
             property("documentUtil").ref("documentUtil")
         ])

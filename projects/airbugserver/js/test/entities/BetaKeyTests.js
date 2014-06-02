@@ -6,7 +6,7 @@
 
 //@Require('airbugserver.BetaKey')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -22,7 +22,7 @@ var bugpack                 = require('bugpack').context();
 
 var BetaKey                 = bugpack.require('airbugserver.BetaKey');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -32,7 +32,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -252,12 +252,12 @@ var betaKeyMongooseSchemaTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(betaKeyInstantiationTest).with(
+bugmeta.tag(betaKeyInstantiationTest).with(
     test().name("BetaKey - instantiation Test")
 );
-bugmeta.annotate(betaKeyDeepCloneTest).with(
+bugmeta.tag(betaKeyDeepCloneTest).with(
     test().name("BetaKey - #clone deep Test")
 );
-bugmeta.annotate(betaKeyMongooseSchemaTest).with(
+bugmeta.tag(betaKeyMongooseSchemaTest).with(
     test().name("BetaKey - mongoose schema Test")
 );

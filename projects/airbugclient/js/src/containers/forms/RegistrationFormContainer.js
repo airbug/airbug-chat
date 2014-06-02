@@ -11,8 +11,8 @@
 //@Require('airbug.FormViewEvent')
 //@Require('airbug.RoomModel')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -34,8 +34,8 @@ require('bugpack').context("*", function(bugpack) {
     var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
     var RoomModel               = bugpack.require('airbug.RoomModel');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -45,9 +45,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var autowired               = AutowiredAnnotation.autowired;
+    var autowired               = AutowiredTag.autowired;
     var CommandType             = CommandModule.CommandType;
-    var property                = PropertyAnnotation.property;
+    var property                = PropertyTag.property;
     var view                    = ViewBuilder.view;
 
 
@@ -208,7 +208,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RegistrationFormContainer).with(
+    bugmeta.tag(RegistrationFormContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule"),
             property("navigationModule").ref("navigationModule"),

@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('airbugserver.UserPusher')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var UserPusher              = bugpack.require('airbugserver.UserPusher');
 
@@ -35,7 +35,7 @@ var UserPusher              = bugpack.require('airbugserver.UserPusher');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -101,6 +101,6 @@ var userPusherInstantiationTest = {
             "Assert .meldSessionManager was set correctly");
     }
 };
-bugmeta.annotate(userPusherInstantiationTest).with(
+bugmeta.tag(userPusherInstantiationTest).with(
     test().name("UserPusher - instantiation test")
 );

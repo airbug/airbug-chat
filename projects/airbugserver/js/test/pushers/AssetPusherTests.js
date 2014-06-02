@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('airbugserver.AssetPusher')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var AssetPusher             = bugpack.require('airbugserver.AssetPusher');
 
@@ -35,7 +35,7 @@ var AssetPusher             = bugpack.require('airbugserver.AssetPusher');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -107,6 +107,6 @@ var assetPusherInstantiationTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(assetPusherInstantiationTest).with(
+bugmeta.tag(assetPusherInstantiationTest).with(
     test().name("AssetPusher - instantiation test")
 );

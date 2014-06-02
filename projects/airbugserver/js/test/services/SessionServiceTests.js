@@ -20,7 +20,7 @@
 //@Require('airbugserver.SessionService')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var SessionService          = bugpack.require('airbugserver.SessionService');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -50,7 +50,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
 
@@ -399,22 +399,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(sessionServiceInstantiationTest).with(
+    bugmeta.tag(sessionServiceInstantiationTest).with(
         test().name("SessionService - instantiation test")
     );
-    bugmeta.annotate(sessionServiceShakeItTest).with(
+    bugmeta.tag(sessionServiceShakeItTest).with(
         test().name("SessionService #shakeIt Test")
     );
-    bugmeta.annotate(sessionServiceShakeItWithCookieTest).with(
+    bugmeta.tag(sessionServiceShakeItWithCookieTest).with(
         test().name("SessionService - #shakeIt with cookie Test")
     );
-    bugmeta.annotate(sessionServiceShakeItNoCookieTest).with(
+    bugmeta.tag(sessionServiceShakeItNoCookieTest).with(
         test().name("SessionService - #shakeIt no cookie Test")
     );
-    bugmeta.annotate(sessionServiceBuildRequestContextTest).with(
+    bugmeta.tag(sessionServiceBuildRequestContextTest).with(
         test().name("SessionService - #buildRequestContext Test")
     );
-    bugmeta.annotate(sessionServiceLoadSessionBySidExistingNotExpiredSessionTest).with(
+    bugmeta.tag(sessionServiceLoadSessionBySidExistingNotExpiredSessionTest).with(
         test().name("SessionService - #loadSessionBySid existing not expired session Test")
     );
 });

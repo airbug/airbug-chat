@@ -9,8 +9,8 @@
 //@Require('carapace.CarapaceView')
 //@Require('mustache.Mustache')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     var CarapaceView            = bugpack.require('carapace.CarapaceView');
     var Mustache                = bugpack.require('mustache.Mustache');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 
 
     //-------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var autowired               = AutowiredAnnotation.autowired;
-    var property                = PropertyAnnotation.property;
+    var autowired               = AutowiredTag.autowired;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(MustacheView).with(
+    bugmeta.tag(MustacheView).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig")
         ])

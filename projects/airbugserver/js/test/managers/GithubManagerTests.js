@@ -8,12 +8,12 @@
 //@Require('airbugserver.Github')
 //@Require('airbugserver.GithubManager')
 //@Require('bugentity.EntityManagerStore')
-//@Require('bugentity.EntityProcessor')
+//@Require('bugentity.EntityTagProcessor')
 //@Require('bugentity.SchemaManager')
 //@Require('bugentity.SchemaProperty')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -32,11 +32,11 @@ var Class                   = bugpack.require('Class');
 var Github                  = bugpack.require('airbugserver.Github');
 var GithubManager           = bugpack.require('airbugserver.GithubManager');
 var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
-var EntityProcessor         = bugpack.require('bugentity.EntityProcessor');
+var EntityTagProcessor         = bugpack.require('bugentity.EntityTagProcessor');
 var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -46,7 +46,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -150,7 +150,7 @@ var githubManagerInstantiationTest = {
             "Assert .entityDeltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(githubManagerInstantiationTest).with(
+bugmeta.tag(githubManagerInstantiationTest).with(
     test().name("GithubManager - instantiation test")
 );
 
@@ -337,14 +337,14 @@ var githubManagerDeleteGithubTest = {
     }
 };
 
-bugmeta.annotate(githubManagerRetrieveGithubByGithubIdTest).with(
+bugmeta.tag(githubManagerRetrieveGithubByGithubIdTest).with(
     test().name("GithubManager - Retrieve Github by Id Test")
 );
 
-bugmeta.annotate(githubManagerRetrieveGithubTest).with(
+bugmeta.tag(githubManagerRetrieveGithubTest).with(
     test().name("GithubManager - Retrieve Github Test")
 );
 
-bugmeta.annotate(githubManagerDeleteGithubTest).with(
+bugmeta.tag(githubManagerDeleteGithubTest).with(
     test().name("GithubManager - Delete Github Test")
 );

@@ -10,7 +10,7 @@
 //@Require('airbugserver.AssetService')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -33,7 +33,7 @@ var Asset               = bugpack.require('airbugserver.Asset');
 var AssetService        = bugpack.require('airbugserver.AssetService');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+var TestTag      = bugpack.require('bugunit.TestTag');
 var BugYarn             = bugpack.require('bugyarn.BugYarn');
 var Logger              = bugpack.require('loggerbug.Logger');
 
@@ -44,7 +44,7 @@ var Logger              = bugpack.require('loggerbug.Logger');
 
 var bugmeta             = BugMeta.context();
 var bugyarn             = BugYarn.context();
-var test                = TestAnnotation.test;
+var test                = TestTag.test;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -161,7 +161,7 @@ var assetServiceInstantiationTest = {
             "Assert .logger was set correctly");
     }
 };
-bugmeta.annotate(assetServiceInstantiationTest).with(
+bugmeta.tag(assetServiceInstantiationTest).with(
     test().name("AssetService - instantiation test")
 );
 
@@ -266,14 +266,14 @@ var assetServiceDeleteAssetTest = {
     }
 };
 
-bugmeta.annotate(assetServiceUploadAssetTest).with(
+bugmeta.tag(assetServiceUploadAssetTest).with(
     test().name("AssetService - Upload Asset Test")
 );
 
-bugmeta.annotate(assetServiceAddAssetFromUrlTest).with(
+bugmeta.tag(assetServiceAddAssetFromUrlTest).with(
     test().name("AssetService - Add Asset From Url Test")
 );
 
-bugmeta.annotate(assetServiceDeleteAssetTest).with(
+bugmeta.tag(assetServiceDeleteAssetTest).with(
     test().name("AssetService - Delete Asset Test")
 );

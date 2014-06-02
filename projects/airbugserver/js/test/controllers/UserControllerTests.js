@@ -8,7 +8,7 @@
 //@Require('airbugserver.EntityController')
 //@Require('airbugserver.UserController')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var EntityController        = bugpack.require('airbugserver.EntityController');
 var UserController          = bugpack.require('airbugserver.UserController');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -70,6 +70,6 @@ var userControllerInstantiationTest = {
             "Assert marshaller is not undefined");
     }
 };
-bugmeta.annotate(userControllerInstantiationTest).with(
+bugmeta.tag(userControllerInstantiationTest).with(
     test().name("UserController - instantiation Test")
 );

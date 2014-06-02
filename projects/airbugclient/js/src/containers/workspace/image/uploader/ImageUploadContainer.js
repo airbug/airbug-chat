@@ -32,8 +32,8 @@
 //@Require('airbug.NakedButtonView')
 //@Require('airbug.TextView')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
@@ -70,8 +70,8 @@ require('bugpack').context("*", function(bugpack) {
     var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
     var TextView                            = bugpack.require('airbug.TextView');
     var BugFlow                             = bugpack.require('bugflow.BugFlow');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
@@ -86,11 +86,11 @@ require('bugpack').context("*", function(bugpack) {
     var $                                   = jQuery;
     var $series                             = BugFlow.$series;
     var $task                               = BugFlow.$task;
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
     var CommandType                         = CommandModule.CommandType;
     var model                               = ModelBuilder.model;
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -586,7 +586,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ImageUploadContainer).with(
+    bugmeta.tag(ImageUploadContainer).with(
         autowired().properties([
             property("assetManagerModule").ref("assetManagerModule"),
             property("commandModule").ref("commandModule"),

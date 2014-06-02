@@ -18,7 +18,7 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.BetaKeyDashboardPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerAnnotation')
+//@Require('carapace.ControllerTag')
 
 
 //-------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController           = bugpack.require('airbug.ApplicationController');
     var BetaKeyDashboardPageContainer   = bugpack.require('airbug.BetaKeyDashboardPageContainer');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var ControllerAnnotation            = bugpack.require('carapace.ControllerAnnotation');
+    var ControllerTag            = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var controller                      = ControllerAnnotation.controller;
+    var controller                      = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(BetaKeyDashboardPageController).with(
+    bugmeta.tag(BetaKeyDashboardPageController).with(
         controller().route("betakeydashboard")
     );
 

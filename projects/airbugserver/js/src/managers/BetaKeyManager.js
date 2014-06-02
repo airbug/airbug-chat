@@ -11,9 +11,9 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.BetaKey')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugentity.EntityManagerTag')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -34,9 +34,9 @@ var List                        = bugpack.require('List');
 var TypeUtil                    = bugpack.require('TypeUtil');
 var BetaKey                     = bugpack.require('airbugserver.BetaKey');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -46,9 +46,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 var $series                     = BugFlow.$series;
 var $task                       = BugFlow.$task;
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -286,7 +286,7 @@ var BetaKeyManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(BetaKeyManager).with(
+bugmeta.tag(BetaKeyManager).with(
     entityManager("betaKeyManager")
         .ofType("BetaKey")
         .args([

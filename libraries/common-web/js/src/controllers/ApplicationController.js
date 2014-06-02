@@ -15,8 +15,8 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.CarapaceController')
 
 
@@ -32,8 +32,8 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
     var CarapaceController          = bugpack.require('carapace.CarapaceController');
 
 
@@ -42,8 +42,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredAnnotation.autowired;
-    var property                    = PropertyAnnotation.property;
+    var autowired                   = AutowiredTag.autowired;
+    var property                    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ApplicationController).with(
+    bugmeta.tag(ApplicationController).with(
         autowired().properties([
             property("currentUserManagerModule").ref("currentUserManagerModule"),
             property("navigationModule").ref("navigationModule")

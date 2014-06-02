@@ -10,7 +10,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtrace.BugTrace')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -31,7 +31,7 @@ require('bugpack').context("*", function(bugpack) {
     var BugFlow             = bugpack.require('bugflow.BugFlow');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var BugTrace            = bugpack.require('bugtrace.BugTrace');
-    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+    var TestTag      = bugpack.require('bugunit.TestTag');
     var BugYarn             = bugpack.require('bugyarn.BugYarn');
     var Logger              = bugpack.require('loggerbug.Logger');
 
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta             = BugMeta.context();
     var bugyarn             = BugYarn.context();
-    var test                = TestAnnotation.test;
+    var test                = TestTag.test;
     var $series             = BugFlow.$series;
     var $task               = BugFlow.$task;
     var $trace              = BugTrace.$trace;
@@ -886,47 +886,47 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(userServiceInstantiationTest).with(
+    bugmeta.tag(userServiceInstantiationTest).with(
         test().name("UserService - instantiation test")
     );
 
-    bugmeta.annotate(userServiceRegisterUserWitNonExistingEmailTest).with(
+    bugmeta.tag(userServiceRegisterUserWitNonExistingEmailTest).with(
         test().name("UserService - register user with non-existing email test")
     );
 
-    bugmeta.annotate(userServiceRegisterUserWithEmptyPasswordTest).with(
+    bugmeta.tag(userServiceRegisterUserWithEmptyPasswordTest).with(
         test().name("UserService - register user with empty password test")
     );
 
-    bugmeta.annotate(userServiceRegisterUserWithMismatchingPasswordsTest).with(
+    bugmeta.tag(userServiceRegisterUserWithMismatchingPasswordsTest).with(
         test().name("UserService - register user with mismatching passwords test")
     );
 
-    bugmeta.annotate(userServiceRegisterUserWithExistingEmailTest).with(
+    bugmeta.tag(userServiceRegisterUserWithExistingEmailTest).with(
         test().name("UserService - register user with existing email test")
     );
 
-    bugmeta.annotate(userServiceLoginWithValidEmailAndPasswordTest).with(
+    bugmeta.tag(userServiceLoginWithValidEmailAndPasswordTest).with(
         test().name("UserService - login with valid email and password test")
     );
 
-    bugmeta.annotate(userServiceLoginWithValidEmailAndBlankPasswordTest).with(
+    bugmeta.tag(userServiceLoginWithValidEmailAndBlankPasswordTest).with(
         test().name("UserService - login with valid email and blank password test")
     );
 
-    bugmeta.annotate(userServiceLoginWithEmailThatDoesNotExistTest).with(
+    bugmeta.tag(userServiceLoginWithEmailThatDoesNotExistTest).with(
         test().name("UserService - login with email that does not exist test")
     );
 
-    bugmeta.annotate(userServiceLoginWithValidEmailButWrongPasswordTest).with(
+    bugmeta.tag(userServiceLoginWithValidEmailButWrongPasswordTest).with(
         test().name("UserService - login with valid email but wrong password test")
     );
 
-    /*bugmeta.annotate(userServiceRegisterUserWithValidBetaKeyTest).with(
+    /*bugmeta.tag(userServiceRegisterUserWithValidBetaKeyTest).with(
         test().name("UserService - register user with a valid beta key test")
     );
 
-    bugmeta.annotate(userServiceRegisterUserWithInvalidBetaKeyTest).with(
+    bugmeta.tag(userServiceRegisterUserWithInvalidBetaKeyTest).with(
         test().name("UserService - register user with an invalid beta key test")
     );*/
 });

@@ -8,9 +8,9 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.IndexAnnotation')
-//@Require('bugentity.PropertyAnnotation')
+//@Require('bugentity.EntityTag')
+//@Require('bugentity.IndexTag')
+//@Require('bugentity.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,9 +28,9 @@ var bugpack                 = require('bugpack').context();
 var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Entity                  = bugpack.require('bugentity.Entity');
-var EntityAnnotation        = bugpack.require('bugentity.EntityAnnotation');
-var IndexAnnotation         = bugpack.require('bugentity.IndexAnnotation');
-var PropertyAnnotation      = bugpack.require('bugentity.PropertyAnnotation');
+var EntityTag        = bugpack.require('bugentity.EntityTag');
+var IndexTag         = bugpack.require('bugentity.IndexTag');
+var PropertyTag      = bugpack.require('bugentity.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -39,9 +39,9 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var entity                  = EntityAnnotation.entity;
-var index                   = IndexAnnotation.index;
-var property                = PropertyAnnotation.property;
+var entity                  = EntityTag.entity;
+var index                   = IndexTag.index;
+var property                = PropertyTag.property;
 
 
 //-------------------------------------------------------------------------------
@@ -218,7 +218,7 @@ var ChatMessage = Class.extend(Entity, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(ChatMessage).with(
+bugmeta.tag(ChatMessage).with(
     entity("ChatMessage")
         .properties([
             property("body")

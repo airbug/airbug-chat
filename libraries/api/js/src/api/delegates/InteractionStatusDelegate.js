@@ -24,8 +24,8 @@
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -47,8 +47,8 @@ require('bugpack').context("*", function(bugpack) {
     var CallEvent                       = bugpack.require('bugcall.CallEvent');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -56,9 +56,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgAnnotation.arg;
+    var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
     var $series                         = BugFlow.$series;
     var $task                           = BugFlow.$task;
 
@@ -281,7 +281,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(InteractionStatusDelegate).with(
+    bugmeta.tag(InteractionStatusDelegate).with(
         module("interactionStatusDelegate")
             .args([
                 arg().ref("airbugApi"),

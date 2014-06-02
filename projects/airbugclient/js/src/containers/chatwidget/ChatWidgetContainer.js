@@ -42,8 +42,8 @@
 //@Require('airbug.PanelView')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
@@ -88,8 +88,8 @@ require('bugpack').context("*", function(bugpack) {
     var PanelView                       = bugpack.require('airbug.PanelView');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
-    var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                    = bugpack.require('carapace.ModelBuilder');
@@ -100,11 +100,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                       = AutowiredAnnotation.autowired;
+    var autowired                       = AutowiredTag.autowired;
     var bugmeta                         = BugMeta.context();
     var CommandType                     = CommandModule.CommandType;
     var model                           = ModelBuilder.model;
-    var property                        = PropertyAnnotation.property;
+    var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
     var $series                         = BugFlow.$series;
     var $task                           = BugFlow.$task;
@@ -979,7 +979,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ChatWidgetContainer).with(
+    bugmeta.tag(ChatWidgetContainer).with(
         autowired().properties([
             property("chatMessageManagerModule").ref("chatMessageManagerModule"),
             property("chatMessageStreamManagerModule").ref("chatMessageStreamManagerModule"),

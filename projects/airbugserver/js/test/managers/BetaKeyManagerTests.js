@@ -10,7 +10,7 @@
 //@Require('airbugserver.BetaKeyManager')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -31,7 +31,7 @@ var BetaKey                 = bugpack.require('airbugserver.BetaKey');
 var BetaKeyManager          = bugpack.require('airbugserver.BetaKeyManager');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -41,7 +41,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -221,10 +221,10 @@ var betaKeyManagerRetrieveBetaKeyByBetaKeyTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(betaKeyManagerInstantiationTest).with(
+bugmeta.tag(betaKeyManagerInstantiationTest).with(
     test().name("BetaKeyManager - instantiation test")
 );
 
-bugmeta.annotate(betaKeyManagerRetrieveBetaKeyByBetaKeyTest).with(
+bugmeta.tag(betaKeyManagerRetrieveBetaKeyByBetaKeyTest).with(
     test().name("BetaKeyManager - #retrieveBetaKeyByBetaKey Test")
 );

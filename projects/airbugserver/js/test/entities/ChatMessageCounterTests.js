@@ -7,7 +7,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.ChatMessageCounter')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var ChatMessageCounter      = bugpack.require('airbugserver.ChatMessageCounter');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -71,6 +71,6 @@ var chatMessageCounterBasicsTest = {
             'ChatMessageCounter count was set correctly');
     }
 };
-bugmeta.annotate(chatMessageCounterBasicsTest).with(
+bugmeta.tag(chatMessageCounterBasicsTest).with(
     test().name('ChatMessageCounter - instantiation and getter Test')
 );

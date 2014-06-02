@@ -15,7 +15,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -42,7 +42,7 @@ var UserService         = bugpack.require('airbugserver.UserService');
 var BugDouble           = bugpack.require('bugdouble.BugDouble');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+var TestTag      = bugpack.require('bugunit.TestTag');
 var BugYarn             = bugpack.require('bugyarn.BugYarn');
 var Logger              = bugpack.require('loggerbug.Logger');
 
@@ -55,7 +55,7 @@ var bugmeta             = BugMeta.context();
 var bugyarn             = BugYarn.context();
 var spyOnObject         = BugDouble.spyOnObject;
 var stubObject          = BugDouble.stubObject;
-var test                = TestAnnotation.test;
+var test                = TestTag.test;
 var $series             = BugFlow.$series;
 var $task               = BugFlow.$task;
 
@@ -576,26 +576,26 @@ var githubServiceLoginUserWithGithubNoGithubRecordEmailMatchesTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(githubServiceLoginUserWithGithubTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubTest).with(
     test().name('GithubService - #loginUserWithGithub Test')
 );
 
-bugmeta.annotate(githubServiceLoginUserWithGithubErrorTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubErrorTest).with(
     test().name('GithubService - #loginUserWithGithub with github error Test')
 );
 
-bugmeta.annotate(githubServiceLoginUserWithGithubStateMismatchTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubStateMismatchTest).with(
     test().name('GithubService - #loginUserWithGithub with state mismatch Test')
 );
 
-bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubNoGithubRecordTest).with(
     test().name('GithubService - #loginUserWithGithub no github record Test')
 );
 
-bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordUserLoggedInTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubNoGithubRecordUserLoggedInTest).with(
     test().name('GithubService - #loginUserWithGithub no github record user logged in Test')
 );
 
-bugmeta.annotate(githubServiceLoginUserWithGithubNoGithubRecordEmailMatchesTest).with(
+bugmeta.tag(githubServiceLoginUserWithGithubNoGithubRecordEmailMatchesTest).with(
     test().name('GithubService - #loginUserWithGithub no github record github email matches user email Test')
 );

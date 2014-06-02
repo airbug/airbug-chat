@@ -13,8 +13,8 @@
 //@Require('airbug.ProfileSettingsFormContainer')
 //@Require('airbug.SettingsPageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -37,8 +37,8 @@ require('bugpack').context("*", function(bugpack) {
     var ProfileSettingsFormContainer        = bugpack.require('airbug.ProfileSettingsFormContainer');
     var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation                 = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                  = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
@@ -46,9 +46,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredAnnotation.autowired;
+    var autowired                           = AutowiredTag.autowired;
     var bugmeta                             = BugMeta.context();
-    var property                            = PropertyAnnotation.property;
+    var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
 
 
@@ -151,7 +151,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ProfileSettingsPageContainer).with(
+    bugmeta.tag(ProfileSettingsPageContainer).with(
         autowired().properties([
 
         ])

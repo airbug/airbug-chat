@@ -11,8 +11,8 @@
 //@Require('Obj')
 //@Require('airbugserver.EntityService')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -33,8 +33,8 @@ var MappedThrowable         = bugpack.require('MappedThrowable');
 var Obj                     = bugpack.require('Obj');
 var EntityService           = bugpack.require('airbugserver.EntityService');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var ArgTag           = bugpack.require('bugioc.ArgTag');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -42,9 +42,9 @@ var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                     = ArgAnnotation.arg;
+var arg                     = ArgTag.arg;
 var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
+var module                  = ModuleTag.module;
 var $iterableParallel       = BugFlow.$iterableParallel;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
@@ -178,7 +178,7 @@ var UserImageAssetStreamService = Class.extend(EntityService, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(UserImageAssetStreamService).with(
+bugmeta.tag(UserImageAssetStreamService).with(
     module("userImageAssetStreamService")
         .args([
             arg().ref("userImageAssetStreamManager"),

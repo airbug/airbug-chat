@@ -9,8 +9,8 @@
 //@Require('Class')
 //@Require('airbugserver.RoomMember')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -29,8 +29,8 @@ var ArgUtil                     = bugpack.require('ArgUtil');
 var Class                       = bugpack.require('Class');
 var RoomMember                  = bugpack.require('airbugserver.RoomMember');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -38,9 +38,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ var RoomMemberManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(RoomMemberManager).with(
+bugmeta.tag(RoomMemberManager).with(
     entityManager("roomMemberManager")
         .ofType("RoomMember")
         .args([

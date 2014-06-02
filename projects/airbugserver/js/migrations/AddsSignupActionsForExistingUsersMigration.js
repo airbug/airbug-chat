@@ -7,11 +7,11 @@
 
 //@Require('Class')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmigrate.Migration')
-//@Require('bugmigrate.MigrationAnnotation')
+//@Require('bugmigrate.MigrationTag')
 
 
 //-------------------------------------------------------------------------------
@@ -27,21 +27,21 @@ var bugpack                         = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
-var AutowiredAnnotation             = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation              = bugpack.require('bugioc.PropertyAnnotation');
+var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
+var PropertyTag              = bugpack.require('bugioc.PropertyTag');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var Migration                       = bugpack.require('bugmigrate.Migration');
-var MigrationAnnotation             = bugpack.require('bugmigrate.MigrationAnnotation');
+var MigrationTag             = bugpack.require('bugmigrate.MigrationTag');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired                       = AutowiredAnnotation.autowired;
+var autowired                       = AutowiredTag.autowired;
 var bugmeta                         = BugMeta.context();
-var migration                       = MigrationAnnotation.migration;
-var property                        = PropertyAnnotation.property;
+var migration                       = MigrationTag.migration;
+var property                        = PropertyTag.property;
 var $forEachParallel                = BugFlow.$forEachParallel;
 var $forEachSeries                  = BugFlow.$forEachSeries;
 var $series                         = BugFlow.$series;
@@ -138,7 +138,7 @@ var AddsSignupActionsForExistingUsersMigration = Class.extend(Migration, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(AddsSignupActionsForExistingUsersMigration).with(
+bugmeta.tag(AddsSignupActionsForExistingUsersMigration).with(
     migration()
         .appName("airbug")
         .appVersion("0.0.17")

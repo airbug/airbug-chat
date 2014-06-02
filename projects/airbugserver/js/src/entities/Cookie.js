@@ -18,10 +18,10 @@
 //@Require('Class')
 //@Require('TypeUtil')
 //@Require('bugentity.Entity')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugentity.PropertyAnnotation')
-//@Require('bugmarsh.MarshAnnotation');
-//@Require('bugmarsh.MarshPropertyAnnotation');
+//@Require('bugentity.EntityTag')
+//@Require('bugentity.PropertyTag')
+//@Require('bugmarsh.MarshTag');
+//@Require('bugmarsh.MarshPropertyTag');
 //@Require('bugmeta.BugMeta')
 
 
@@ -45,10 +45,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var TypeUtil                    = bugpack.require('TypeUtil');
     var Entity                      = bugpack.require('bugentity.Entity');
-    var EntityAnnotation            = bugpack.require('bugentity.EntityAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugentity.PropertyAnnotation');
-    var MarshAnnotation             = bugpack.require('bugmarsh.MarshAnnotation');
-    var MarshPropertyAnnotation     = bugpack.require('bugmarsh.MarshPropertyAnnotation');
+    var EntityTag            = bugpack.require('bugentity.EntityTag');
+    var PropertyTag          = bugpack.require('bugentity.PropertyTag');
+    var MarshTag             = bugpack.require('bugmarsh.MarshTag');
+    var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -57,10 +57,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var entity                      = EntityAnnotation.entity;
-    var marsh                       = MarshAnnotation.marsh;
-    var marshProperty               = MarshPropertyAnnotation.property;
-    var property                    = PropertyAnnotation.property;
+    var entity                      = EntityTag.entity;
+    var marsh                       = MarshTag.marsh;
+    var marshProperty               = MarshPropertyTag.property;
+    var property                    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Cookie).with(
+    bugmeta.tag(Cookie).with(
         entity("Cookie")
             .properties([
                 property("domain")

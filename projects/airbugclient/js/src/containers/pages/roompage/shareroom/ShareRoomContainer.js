@@ -26,8 +26,8 @@
 //@Require('airbug.RoomLinkFauxTextFieldView')
 //@Require('airbug.ShareRoomTextView')
 //@Require('airbug.TextView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -56,8 +56,8 @@ require('bugpack').context("*", function(bugpack) {
     var RoomLinkFauxTextFieldView               = bugpack.require('airbug.RoomLinkFauxTextFieldView');
     var ShareRoomTextView                       = bugpack.require('airbug.ShareRoomTextView');
     var TextView                                = bugpack.require('airbug.TextView');
-    var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
@@ -68,10 +68,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                               = AutowiredAnnotation.autowired;
+    var autowired                               = AutowiredTag.autowired;
     var bugmeta                                 = BugMeta.context();
     var CommandType                             = CommandModule.CommandType;
-    var property                                = PropertyAnnotation.property;
+    var property                                = PropertyTag.property;
     var view                                    = ViewBuilder.view;
 
 
@@ -341,7 +341,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(ShareRoomContainer).with(
+    bugmeta.tag(ShareRoomContainer).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),

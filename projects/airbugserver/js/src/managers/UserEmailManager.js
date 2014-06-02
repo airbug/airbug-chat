@@ -10,8 +10,8 @@
 //@Require('Set')
 //@Require('airbugserver.UserEmail')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugentity.EntityManagerTag')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -31,8 +31,8 @@ var Class                       = bugpack.require('Class');
 var Set                         = bugpack.require('Set');
 var UserEmail                   = bugpack.require('airbugserver.UserEmail');
 var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -40,9 +40,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerAnnotation.entityManager;
+var entityManager               = EntityManagerTag.entityManager;
 
 
 //-------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ var UserEmailManager = Class.extend(EntityManager, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(UserEmailManager).with(
+bugmeta.tag(UserEmailManager).with(
     entityManager("userEmailManager")
         .ofType("UserEmail")
         .args([

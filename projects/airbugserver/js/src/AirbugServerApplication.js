@@ -17,10 +17,10 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugcontroller.ControllerAnnotationProcessor')
-//@Require('bugcontroller.ControllerAnnotationScan')
-//@Require('bugentity.EntityManagerAnnotationProcessor')
-//@Require('bugentity.EntityManagerAnnotationScan')
+//@Require('bugcontroller.ControllerTagProcessor')
+//@Require('bugcontroller.ControllerTagScan')
+//@Require('bugentity.EntityManagerTagProcessor')
+//@Require('bugentity.EntityManagerTagScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -36,10 +36,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
-    var ControllerAnnotationProcessor       = bugpack.require('bugcontroller.ControllerAnnotationProcessor');
-    var ControllerAnnotationScan            = bugpack.require('bugcontroller.ControllerAnnotationScan');
-    var EntityManagerAnnotationProcessor    = bugpack.require('bugentity.EntityManagerAnnotationProcessor');
-    var EntityManagerAnnotationScan         = bugpack.require('bugentity.EntityManagerAnnotationScan');
+    var ControllerTagProcessor       = bugpack.require('bugcontroller.ControllerTagProcessor');
+    var ControllerTagScan            = bugpack.require('bugcontroller.ControllerTagScan');
+    var EntityManagerTagProcessor    = bugpack.require('bugentity.EntityManagerTagProcessor');
+    var EntityManagerTagScan         = bugpack.require('bugentity.EntityManagerTagScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -74,15 +74,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ControllerAnnotationScan}
+             * @type {ControllerTagScan}
              */
-            this.controllerAnnotationScan       = new ControllerAnnotationScan(BugMeta.context(), new ControllerAnnotationProcessor(this.getIocContext()));
+            this.controllerTagScan       = new ControllerTagScan(BugMeta.context(), new ControllerTagProcessor(this.getIocContext()));
 
             /**
              * @private
-             * @type {EntityManagerAnnotationScan}
+             * @type {EntityManagerTagScan}
              */
-            this.entityManagerAnnotationScan    = new EntityManagerAnnotationScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.getIocContext()));
+            this.entityManagerTagScan    = new EntityManagerTagScan(BugMeta.context(), new EntityManagerTagProcessor(this.getIocContext()));
         },
 
 
@@ -94,13 +94,13 @@ require('bugpack').context("*", function(bugpack) {
          * @protected
          */
         preProcessApplication: function() {
-            this.getConfigurationScan().scanBugpacks([
+            this.getConfigurationTagScan().scanBugpacks([
                 "airbugserver.AirbugServerConfiguration",
                 "meldbugserver.MeldbugServerConfiguration"
             ]);
-            this.controllerAnnotationScan.scanAll();
-            this.entityManagerAnnotationScan.scanAll();
-            this.getModuleScan().scanAll({
+            this.controllerTagScan.scanAll();
+            this.entityManagerTagScan.scanAll();
+            this.getModuleTagScan().scanAll({
                 excludes: [
                     "bugmigrate.MigrationInitializer",
                     "bugmigrate.MigrationManager"

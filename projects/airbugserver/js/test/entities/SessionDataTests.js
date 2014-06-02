@@ -8,7 +8,7 @@
 //@Require('UuidGenerator')
 //@Require('airbugserver.SessionData')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var SessionData             = bugpack.require('airbugserver.SessionData');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -128,9 +128,9 @@ var sessionDataCloneDeepTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(sessionDataInstantiationTest).with(
+bugmeta.tag(sessionDataInstantiationTest).with(
     test().name("SessionData - instantiation Test")
 );
-bugmeta.annotate(sessionDataCloneDeepTest).with(
+bugmeta.tag(sessionDataCloneDeepTest).with(
     test().name("SessionData - #clone deep Test")
 );

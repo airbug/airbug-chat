@@ -17,8 +17,8 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugioc.AutowiredAnnotationProcessor')
-//@Require('bugioc.AutowiredScan')
+//@Require('bugioc.AutowiredTagProcessor')
+//@Require('bugioc.AutowiredTagScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -34,8 +34,8 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
-    var AutowiredAnnotationProcessor        = bugpack.require('bugioc.AutowiredAnnotationProcessor');
-    var AutowiredScan                       = bugpack.require('bugioc.AutowiredScan');
+    var AutowiredTagProcessor        = bugpack.require('bugioc.AutowiredTagProcessor');
+    var AutowiredTagScan                       = bugpack.require('bugioc.AutowiredTagScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -70,9 +70,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {AutowiredScan}
+             * @type {AutowiredTagScan}
              */
-            this.autowiredScan      = new AutowiredScan(BugMeta.context(), new AutowiredAnnotationProcessor(this.getIocContext()));
+            this.autowiredScan      = new AutowiredTagScan(BugMeta.context(), new AutowiredTagProcessor(this.getIocContext()));
         },
 
 
@@ -86,8 +86,8 @@ require('bugpack').context("*", function(bugpack) {
         preProcessApplication: function() {
             this.autowiredScan.scanAll();
             this.autowiredScan.scanContinuous();
-            this.getConfigurationScan().scanAll();
-            this.getModuleScan().scanAll();
+            this.getConfigurationTagScan().scanAll();
+            this.getModuleTagScan().scanAll();
         }
     });
 

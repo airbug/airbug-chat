@@ -19,13 +19,14 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('StringUtil')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('airbugserver.Cookie')
 //@Require('bugcall.IncomingRequest')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IBuildRequestContext')
 //@Require('handshaker.IHand')
@@ -55,13 +56,14 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
     var Obj                     = bugpack.require('Obj');
+    var StringUtil              = bugpack.require('StringUtil');
     var TypeUtil                = bugpack.require('TypeUtil');
     var UuidGenerator           = bugpack.require('UuidGenerator');
     var Cookie                  = bugpack.require('airbugserver.Cookie');
     var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag           = bugpack.require('bugioc.ArgTag');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
     var IHand                   = bugpack.require('handshaker.IHand');
@@ -71,9 +73,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var module                  = ModuleAnnotation.module;
+    var module                  = ModuleTag.module;
     var $parallel               = BugFlow.$parallel;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
@@ -309,7 +311,7 @@ require('bugpack').context("*", function(bugpack) {
 
                 var session = req.requestContext.get("session");
                 var cookie  = session.getCookie();
-                var proto   = (req.headers['x-forwarded-proto'] || '').split(',')[0].toLowerCase().trim();
+                var proto   = StringUtil.trim((req.headers['x-forwarded-proto'] || '').split(',')[0].toLowerCase());
                 var tls     = req.connection.encrypted || (_this.config.getTrustProxy() && 'https' == proto);
                 var isNew   = unsignedCookie != req.sessionId;
 
@@ -543,7 +545,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SessionService).with(
+    bugmeta.tag(SessionService).with(
         module("sessionService")
             .args([
                 arg().ref("sessionServiceConfig"),

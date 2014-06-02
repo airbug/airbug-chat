@@ -9,7 +9,7 @@
 //@Require('airbugserver.BetaKeyService')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var BetaKey                     = bugpack.require('airbugserver.BetaKey');
 var BetaKeyService              = bugpack.require('airbugserver.BetaKeyService');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation              = bugpack.require('bugunit.TestAnnotation');
+var TestTag              = bugpack.require('bugunit.TestTag');
 var BugYarn                     = bugpack.require('bugyarn.BugYarn');
 
 
@@ -39,7 +39,7 @@ var BugYarn                     = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                     = BugMeta.context();
 var bugyarn                     = BugYarn.context();
-var test                        = TestAnnotation.test;
+var test                        = TestTag.test;
 var $series                     = BugFlow.$series;
 var $task                       = BugFlow.$task;
 
@@ -170,6 +170,6 @@ var betaKeyServiceInstantiationTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(betaKeyServiceInstantiationTest).with(
+bugmeta.tag(betaKeyServiceInstantiationTest).with(
     test().name("BetaKeyService - instantiation test")
 );

@@ -8,7 +8,7 @@
 //@Require('airbugserver.User')
 //@Require('airbugserver.Github')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var UuidGenerator           = bugpack.require('UuidGenerator');
 var User                    = bugpack.require('airbugserver.User');
 var Github                  = bugpack.require('airbugserver.Github');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -101,6 +101,6 @@ var githubBasicsTest = {
         test.assertTrue(!!this.testGithub.getUser());
     }
 };
-bugmeta.annotate(githubBasicsTest).with(
+bugmeta.tag(githubBasicsTest).with(
     test().name('Github - instantiation and getter/setter Test')
 );

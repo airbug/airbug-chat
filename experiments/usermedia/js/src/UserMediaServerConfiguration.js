@@ -9,11 +9,11 @@
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ConfigurationAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.IConfiguration')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('express.ExpressApp')
 //@Require('express.ExpressServer')
@@ -36,11 +36,11 @@ var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
 var BugFs                       = bugpack.require('bugfs.BugFs');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
-var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
+var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
 var IConfiguration              = bugpack.require('bugioc.IConfiguration');
-var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
-var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+var ModuleTag            = bugpack.require('bugioc.ModuleTag');
+var PropertyTag          = bugpack.require('bugioc.PropertyTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var ExpressApp                  = bugpack.require('express.ExpressApp');
 var ExpressServer               = bugpack.require('express.ExpressServer');
@@ -50,11 +50,11 @@ var ExpressServer               = bugpack.require('express.ExpressServer');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg             = ArgAnnotation.arg;
+var arg             = ArgTag.arg;
 var bugmeta         = BugMeta.context();
-var configuration   = ConfigurationAnnotation.configuration;
-var module          = ModuleAnnotation.module;
-var property        = PropertyAnnotation.property;
+var configuration   = ConfigurationTag.configuration;
+var module          = ModuleTag.module;
+var property        = PropertyTag.property;
 var $series         = BugFlow.$series;
 var $task           = BugFlow.$task;
 
@@ -174,7 +174,7 @@ Class.implement(UserMediaServerConfiguration, IConfiguration);
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(UserMediaServerConfiguration).with(
+bugmeta.tag(UserMediaServerConfiguration).with(
     configuration("userMediaServerConfiguration").modules([
         module("express"),
         module("expressApp"),

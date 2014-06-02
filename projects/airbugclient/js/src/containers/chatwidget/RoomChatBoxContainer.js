@@ -19,8 +19,8 @@
 //@Require('airbug.RoomsHamburgerButtonContainer')
 //@Require('airbug.SubheaderView')
 //@Require('airbug.TwoColumnView')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
@@ -52,8 +52,8 @@ require('bugpack').context("*", function(bugpack) {
     var RoomsHamburgerButtonContainer           = bugpack.require('airbug.RoomsHamburgerButtonContainer');
     var SubheaderView                           = bugpack.require('airbug.SubheaderView');
     var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
-    var AutowiredAnnotation                     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation                      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                            = bugpack.require('carapace.ModelBuilder');
@@ -64,10 +64,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                               = AutowiredAnnotation.autowired;
+    var autowired                               = AutowiredTag.autowired;
     var bugmeta                                 = BugMeta.context();
     var model                                   = ModelBuilder.model;
-    var property                                = PropertyAnnotation.property;
+    var property                                = PropertyTag.property;
     var view                                    = ViewBuilder.view;
 
 
@@ -364,7 +364,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RoomChatBoxContainer).with(
+    bugmeta.tag(RoomChatBoxContainer).with(
         autowired().properties([
             property("conversationManagerModule").ref("conversationManagerModule")
         ])

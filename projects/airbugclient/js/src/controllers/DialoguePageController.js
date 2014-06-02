@@ -18,9 +18,9 @@
 //@Require('airbug.ApplicationController')
 //@Require('airbug.DialoguePageContainer')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
-//@Require('carapace.ControllerAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
 
@@ -38,9 +38,9 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController       = bugpack.require('airbug.ApplicationController');
     var DialoguePageContainer       = bugpack.require('airbug.DialoguePageContainer');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
-    var ControllerAnnotation        = bugpack.require('carapace.ControllerAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
+    var ControllerTag        = bugpack.require('carapace.ControllerTag');
     var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
 
 
@@ -49,9 +49,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredAnnotation.autowired;
-    var controller                  = ControllerAnnotation.controller;
-    var property                    = PropertyAnnotation.property;
+    var autowired                   = AutowiredTag.autowired;
+    var controller                  = ControllerTag.controller;
+    var property                    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(DialoguePageController).with(
+    bugmeta.tag(DialoguePageController).with(
         controller().route("dialogue/:id"),
         autowired().properties([
             property("dialogueManagerModule").ref("dialogueManagerModule")

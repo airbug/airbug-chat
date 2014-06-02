@@ -22,11 +22,11 @@
 //@Require('airbug.MemoryCache')
 //@Require('airbug.WindowUtil')
 //@Require('bugcall.Call')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ConfigurationAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ConfigurationTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerScan')
+//@Require('carapace.ControllerTagScan')
 //@Require('socketio:client.SocketIoClient')
 //@Require('socketio:client.SocketIoConfig')
 //@Require('socketio:factorybrowser.BrowserSocketIoFactory')
@@ -51,11 +51,11 @@ require('bugpack').context("*", function(bugpack) {
     var WindowUtil                  = bugpack.require('airbug.WindowUtil');
     var Call                        = bugpack.require('bugcall.Call');
     var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
-    var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
+    var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerScan              = bugpack.require('carapace.ControllerScan');
+    var ControllerTagScan              = bugpack.require('carapace.ControllerTagScan');
     var SocketIoClient              = bugpack.require('socketio:client.SocketIoClient');
     var SocketIoConfig              = bugpack.require('socketio:client.SocketIoConfig');
     var BrowserSocketIoFactory      = bugpack.require('socketio:factorybrowser.BrowserSocketIoFactory');
@@ -66,10 +66,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var configuration               = ConfigurationAnnotation.configuration;
-    var module                      = ModuleAnnotation.module;
+    var configuration               = ConfigurationTag.configuration;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -120,10 +120,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {CarapaceApplication} carapaceApplication
-         * @return {ControllerScan}
+         * @return {ControllerTagScan}
          */
-        controllerScan: function(carapaceApplication) {
-            return new ControllerScan(carapaceApplication);
+        controllerTagScan: function(carapaceApplication) {
+            return new ControllerTagScan(carapaceApplication);
         },
 
         /**
@@ -192,7 +192,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AirbugPluginConfiguration).with(
+    bugmeta.tag(AirbugPluginConfiguration).with(
         configuration("airbugPluginConfiguration").modules([
             module("airbugStaticConfig"),
             module("browserSocketIoFactory"),
@@ -201,7 +201,7 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("logger")
                 ]),
             module("console"),
-            module("controllerScan")
+            module("controllerTagScan")
                 .args([
                     arg().ref("carapaceApplication")
                 ]),

@@ -22,9 +22,9 @@
 //@Require('TypeUtil')
 //@Require('airbugserver.AirbugCall')
 //@Require('bugentity.EntityManager')
-//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugentity.EntityManagerTag')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtrace.BugTrace')
 
@@ -46,9 +46,9 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil                    = bugpack.require('TypeUtil');
     var AirbugCall                  = bugpack.require('airbugserver.AirbugCall');
     var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
     var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var BugTrace                    = bugpack.require('bugtrace.BugTrace');
 
@@ -57,9 +57,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerAnnotation.entityManager;
+    var entityManager               = EntityManagerTag.entityManager;
     var $iterableParallel           = BugFlow.$iterableParallel;
     var $parallel                   = BugFlow.$parallel;
     var $series                     = BugFlow.$series;
@@ -404,7 +404,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(AirbugCallManager).with(
+    bugmeta.tag(AirbugCallManager).with(
         entityManager("airbugCallManager")
             .ofType("AirbugCall")
             .args([

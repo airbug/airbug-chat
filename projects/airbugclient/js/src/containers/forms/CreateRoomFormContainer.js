@@ -14,8 +14,8 @@
 //@Require('airbug.MessagePartPreviewContainer')
 //@Require('airbug.PanelView')
 //@Require('airbug.RoomModel')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
@@ -42,8 +42,8 @@ require('bugpack').context("*", function(bugpack) {
     var MessagePartPreviewContainer = bugpack.require('airbug.MessagePartPreviewContainer');
     var PanelView                   = bugpack.require('airbug.PanelView');
     var RoomModel                   = bugpack.require('airbug.RoomModel');
-    var AutowiredAnnotation         = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                = bugpack.require('carapace.ModelBuilder');
@@ -54,11 +54,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                   = AutowiredAnnotation.autowired;
+    var autowired                   = AutowiredTag.autowired;
     var bugmeta                     = BugMeta.context();
     var CommandType                 = CommandModule.CommandType;
     var model                       = ModelBuilder.model;
-    var property                    = PropertyAnnotation.property;
+    var property                    = PropertyTag.property;
     var view                        = ViewBuilder.view;
 
 
@@ -321,7 +321,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(CreateRoomFormContainer).with(
+    bugmeta.tag(CreateRoomFormContainer).with(
         autowired().properties([
             property("commandModule").ref("commandModule"),
             property("messageHandlerModule").ref("messageHandlerModule"),

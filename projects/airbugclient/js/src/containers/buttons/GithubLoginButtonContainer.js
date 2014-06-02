@@ -10,8 +10,8 @@
 //@Require('airbug.GithubDefines')
 //@Require('airbug.GithubLoginButtonView')
 //@Require('airbug.ButtonViewEvent')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ViewBuilder')
 
@@ -33,8 +33,8 @@ var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var GithubDefines           = bugpack.require('airbug.GithubDefines');
 var GithubLoginButtonView   = bugpack.require('airbug.GithubLoginButtonView');
 var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
@@ -43,9 +43,9 @@ var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var autowired               = AutowiredAnnotation.autowired;
+var autowired               = AutowiredTag.autowired;
 var bugmeta                 = BugMeta.context();
-var property                = PropertyAnnotation.property;
+var property                = PropertyTag.property;
 var view                    = ViewBuilder.view;
 
 
@@ -197,7 +197,7 @@ var GithubLoginButtonContainer = Class.extend(ButtonContainer, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(GithubLoginButtonContainer).with(
+bugmeta.tag(GithubLoginButtonContainer).with(
     autowired().properties([
         property("airbugStaticConfig").ref("airbugStaticConfig"),
         property("navigationModule").ref("navigationModule"),

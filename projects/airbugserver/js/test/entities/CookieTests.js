@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('airbugserver.Cookie')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Cookie                  = bugpack.require('airbugserver.Cookie');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -164,13 +164,13 @@ var cookieCloneDeepTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(cookieInstantiationTest).with(
+bugmeta.tag(cookieInstantiationTest).with(
     test().name("Cookie - instantiation Test")
 );
-bugmeta.annotate(cookieInstantiationNoValuesTest).with(
+bugmeta.tag(cookieInstantiationNoValuesTest).with(
     test().name("Cookie - instantiation with no values Test")
 );
-bugmeta.annotate(cookieCloneDeepTest).with(
+bugmeta.tag(cookieCloneDeepTest).with(
     test().name("Cookie - #clone deep Test")
 );
 
