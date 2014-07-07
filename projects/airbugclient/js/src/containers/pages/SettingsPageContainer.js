@@ -21,19 +21,19 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CurrentUserModel')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.LinkView')
-//@Require('airbug.MultiColumnView')
-//@Require('airbug.NavListDividerView')
-//@Require('airbug.NavListHeaderView')
-//@Require('airbug.NavListItemView')
-//@Require('airbug.NavListView')
-//@Require('airbug.PageView')
-//@Require('airbug.PanelView')
-//@Require('airbug.TwoColumnView')
+//@Require('carapace.LinkView')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.NavListDividerView')
+//@Require('carapace.NavListHeaderView')
+//@Require('carapace.NavListItemView')
+//@Require('carapace.NavListView')
+//@Require('carapace.PageView')
+//@Require('carapace.PanelView')
+//@Require('carapace.TwoColumnView')
 //@Require('airbug.UserNameView')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
@@ -59,19 +59,19 @@ require('bugpack').context("*", function(bugpack) {
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
     var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var CurrentUserModel                    = bugpack.require('airbug.CurrentUserModel');
     var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-    var LinkView                            = bugpack.require('airbug.LinkView');
-    var MultiColumnView                     = bugpack.require('airbug.MultiColumnView');
-    var NavListDividerView                  = bugpack.require('airbug.NavListDividerView');
-    var NavListHeaderView                   = bugpack.require('airbug.NavListHeaderView');
-    var NavListItemView                     = bugpack.require('airbug.NavListItemView');
-    var NavListView                         = bugpack.require('airbug.NavListView');
-    var PageView                            = bugpack.require('airbug.PageView');
-    var PanelView                           = bugpack.require('airbug.PanelView');
-    var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
+    var LinkView                            = bugpack.require('carapace.LinkView');
+    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
+    var NavListDividerView                  = bugpack.require('carapace.NavListDividerView');
+    var NavListHeaderView                   = bugpack.require('carapace.NavListHeaderView');
+    var NavListItemView                     = bugpack.require('carapace.NavListItemView');
+    var NavListView                         = bugpack.require('carapace.NavListView');
+    var PageView                            = bugpack.require('carapace.PageView');
+    var PanelView                           = bugpack.require('carapace.PanelView');
+    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
     var UserNameView                        = bugpack.require('airbug.UserNameView');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');

@@ -5,7 +5,7 @@
 //@Export('airbug.ImageEditorWidgetContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 //@Require('airbug.CommandModule')
 //@Require('airbug.ImageEditorContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
@@ -23,7 +23,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('airbug.BoxView');
+    var BoxView                             = bugpack.require('carapace.BoxView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var ImageEditorContainer                = bugpack.require('airbug.ImageEditorContainer');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');

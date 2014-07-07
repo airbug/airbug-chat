@@ -9,7 +9,7 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.GithubDefines')
 //@Require('airbug.GithubLoginButtonView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -32,7 +32,7 @@ var Url                     = bugpack.require('Url');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var GithubDefines           = bugpack.require('airbug.GithubDefines');
 var GithubLoginButtonView   = bugpack.require('airbug.GithubLoginButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
 var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
 var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');

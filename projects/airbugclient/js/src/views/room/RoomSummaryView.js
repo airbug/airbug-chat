@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('DateUtil')
-//@Require('airbug.MustacheView')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var DateUtil            = bugpack.require('DateUtil');
-var MustacheView        = bugpack.require('airbug.MustacheView');
+var MustacheView        = bugpack.require('carapace.MustacheView');
 
 
 //-------------------------------------------------------------------------------

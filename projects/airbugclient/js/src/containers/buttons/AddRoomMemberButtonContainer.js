@@ -6,11 +6,11 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.IconView')
-//@Require('airbug.NakedButtonView')
+//@Require('carapace.IconView')
+//@Require('carapace.NakedButtonView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -29,11 +29,11 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-    var ButtonView              = bugpack.require('airbug.ButtonView');
-    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonView              = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule           = bugpack.require('airbug.CommandModule');
-    var IconView                = bugpack.require('airbug.IconView');
-    var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
+    var IconView                = bugpack.require('carapace.IconView');
+    var NakedButtonView         = bugpack.require('carapace.NakedButtonView');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -60,6 +60,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {ButtonContainer}
      */
     var AddRoomMemberButtonContainer = Class.extend(ButtonContainer, {
+
+        _name: "airbug.AddRoomMemberButtonContainer",
+
 
         //-------------------------------------------------------------------------------
         // Constructor

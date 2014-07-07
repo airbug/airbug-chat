@@ -15,7 +15,7 @@
 //@Export('airbug.WorkspaceBoxWithHeaderView')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 
 
 //-------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var BoxView         = bugpack.require('airbug.BoxView');
+    var BoxView         = bugpack.require('carapace.BoxView');
 
 
     //-------------------------------------------------------------------------------

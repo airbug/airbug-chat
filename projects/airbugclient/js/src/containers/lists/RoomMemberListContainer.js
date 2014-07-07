@@ -15,9 +15,9 @@
 //@Require('Set')
 //@Require('SetPropertyChange')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ListView')
-//@Require('airbug.ListViewEvent')
-//@Require('airbug.LoaderView')
+//@Require('carapace.ListView')
+//@Require('carapace.ListViewEvent')
+//@Require('carapace.LoaderView')
 //@Require('airbug.RoomMemberListItemContainer')
 //@Require('airbug.RoomMemberModel')
 //@Require('bugflow.BugFlow')
@@ -50,9 +50,9 @@ require('bugpack').context("*", function(bugpack) {
     var Set                             = bugpack.require('Set');
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
     var CommandModule                   = bugpack.require('airbug.CommandModule');
-    var ListView                        = bugpack.require('airbug.ListView');
-    var ListViewEvent                   = bugpack.require('airbug.ListViewEvent');
-    var LoaderView                      = bugpack.require('airbug.LoaderView');
+    var ListView                        = bugpack.require('carapace.ListView');
+    var ListViewEvent                   = bugpack.require('carapace.ListViewEvent');
+    var LoaderView                      = bugpack.require('carapace.LoaderView');
     var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
     var RoomMemberModel                 = bugpack.require('airbug.RoomMemberModel');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');

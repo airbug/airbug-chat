@@ -75,15 +75,15 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {UserAssetService} userAssetService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, userAssetService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, userAssetService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
+
 
             //-------------------------------------------------------------------------------
             // Private Properties
@@ -303,7 +303,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(UserAssetController).with(
         controller("userAssetController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("userAssetService"),

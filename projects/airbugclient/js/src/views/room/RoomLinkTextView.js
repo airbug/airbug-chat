@@ -5,7 +5,7 @@
 //@Export('airbug.RoomLinkTextView')
 
 //@Require('Class')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -23,7 +23,7 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var TextView                    = bugpack.require('airbug.TextView');
+var TextView                    = bugpack.require('carapace.TextView');
 var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
 var PropertyTag          = bugpack.require('bugioc.PropertyTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');

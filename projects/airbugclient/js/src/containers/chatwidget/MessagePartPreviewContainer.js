@@ -20,15 +20,15 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.DivView')
-//@Require('airbug.IconView')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.DivView')
+//@Require('carapace.IconView')
 //@Require('airbug.MessagePartPreviewCodeView')
 //@Require('airbug.MessagePartPreviewImageView')
 //@Require('airbug.MessagePartPreviewTextView')
-//@Require('airbug.NakedButtonView')
-//@Require('airbug.WellView')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.WellView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -49,15 +49,15 @@ require('bugpack').context("*", function(bugpack) {
     var Exception                       = bugpack.require('Exception');
     var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
-    var ButtonView                      = bugpack.require('airbug.ButtonView');
-    var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-    var DivView                         = bugpack.require('airbug.DivView');
-    var IconView                        = bugpack.require('airbug.IconView');
+    var ButtonView                      = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
+    var DivView                         = bugpack.require('carapace.DivView');
+    var IconView                        = bugpack.require('carapace.IconView');
     var MessagePartPreviewCodeView      = bugpack.require('airbug.MessagePartPreviewCodeView');
     var MessagePartPreviewImageView     = bugpack.require('airbug.MessagePartPreviewImageView');
     var MessagePartPreviewTextView      = bugpack.require('airbug.MessagePartPreviewTextView');
-    var NakedButtonView                 = bugpack.require('airbug.NakedButtonView');
-    var WellView                        = bugpack.require('airbug.WellView');
+    var NakedButtonView                 = bugpack.require('carapace.NakedButtonView');
+    var WellView                        = bugpack.require('carapace.WellView');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 

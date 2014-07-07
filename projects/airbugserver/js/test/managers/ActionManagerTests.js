@@ -85,8 +85,8 @@ bugyarn.registerWinder("setupTestActionManager", function(yarn) {
 //-------------------------------------------------------------------------------
 
 var setupActionManager = function(setupObject) {
-    setupObject.schemaManager.processModule();
-    setupObject.mongoDataStore.processModule();
+    setupObject.schemaManager.configureModule();
+    setupObject.mongoDataStore.configureModule();
 };
 
 var initializeManagers = function(setupObject, callback) {

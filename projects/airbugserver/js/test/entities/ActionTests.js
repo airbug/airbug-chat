@@ -147,8 +147,8 @@ var actionMongooseSchemaTest = {
         yarn.spin([
             "setupDummyMongoDataStore"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
     },
 
     //-------------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 //@Export('airbug.ProfileSettingsFormView')
 
 //@Require('Class')
-//@Require('airbug.FormView')
+//@Require('carapace.FormView')
 
 
 //-------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var FormView        = bugpack.require('airbug.FormView');
+var FormView        = bugpack.require('carapace.FormView');
 
 
 //-------------------------------------------------------------------------------

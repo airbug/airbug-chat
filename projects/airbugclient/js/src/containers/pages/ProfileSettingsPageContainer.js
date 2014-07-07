@@ -9,7 +9,7 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
-//@Require('airbug.PanelWithHeaderView')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('airbug.ProfileSettingsFormContainer')
 //@Require('airbug.SettingsPageContainer')
 //@Require('bugmeta.BugMeta')
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception                           = bugpack.require('Exception');
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
     var ProfileSettingsFormContainer        = bugpack.require('airbug.ProfileSettingsFormContainer');
     var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');

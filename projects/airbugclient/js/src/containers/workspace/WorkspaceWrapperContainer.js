@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('airbug.CodeEditorWorkspaceContainer')
 //@Require('airbug.ImageWorkspaceContainer')
-//@Require('airbug.PanelView')
+//@Require('carapace.PanelView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -39,7 +39,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var CodeEditorWorkspaceContainer    = bugpack.require('airbug.CodeEditorWorkspaceContainer');
     var ImageWorkspaceContainer         = bugpack.require('airbug.ImageWorkspaceContainer');
-    var PanelView                       = bugpack.require('airbug.PanelView');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');

@@ -105,8 +105,8 @@ var setupAssetService = function(setupObject, callback) {
             });
         }),
         $task(function(flow) {
-            setupObject.schemaManager.processModule();
-            setupObject.mongoDataStore.processModule();
+            setupObject.schemaManager.configureModule();
+            setupObject.mongoDataStore.configureModule();
             setupObject.assetManager.initializeModule(function(throwable) {
                 flow.complete(throwable);
             });

@@ -8,11 +8,11 @@
 //@Require('Exception')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormView')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.FormViewEvent')
 //@Require('airbug.IMessageHandler')
 //@Require('airbug.MessagePartModel')
 //@Require('airbug.MessagePartPreviewContainer')
-//@Require('airbug.PanelView')
+//@Require('carapace.PanelView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -36,11 +36,11 @@ require('bugpack').context("*", function(bugpack) {
     var Exception                   = bugpack.require('Exception');
     var CommandModule               = bugpack.require('airbug.CommandModule');
     var CreateRoomFormView          = bugpack.require('airbug.CreateRoomFormView');
-    var FormViewEvent               = bugpack.require('airbug.FormViewEvent');
+    var FormViewEvent               = bugpack.require('carapace.FormViewEvent');
     var IMessageHandler             = bugpack.require('airbug.IMessageHandler');
     var MessagePartModel            = bugpack.require('airbug.MessagePartModel');
     var MessagePartPreviewContainer = bugpack.require('airbug.MessagePartPreviewContainer');
-    var PanelView                   = bugpack.require('airbug.PanelView');
+    var PanelView                   = bugpack.require('carapace.PanelView');
     var RoomModel                   = bugpack.require('airbug.RoomModel');
     var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag          = bugpack.require('bugioc.PropertyTag');

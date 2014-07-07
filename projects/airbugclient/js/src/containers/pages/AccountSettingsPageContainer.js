@@ -10,7 +10,7 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('airbug.ChangePasswordFormContainer')
-//@Require('airbug.PanelWithHeaderView')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('airbug.SettingsPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
@@ -35,7 +35,7 @@ var Exception                           = bugpack.require('Exception');
 var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
 var SetPropertyChange                   = bugpack.require('SetPropertyChange');
 var ChangePasswordFormContainer         = bugpack.require('airbug.ChangePasswordFormContainer');
-var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
 var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');

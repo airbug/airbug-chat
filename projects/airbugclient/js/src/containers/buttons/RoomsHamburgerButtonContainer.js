@@ -6,10 +6,10 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.IconView')
+//@Require('carapace.IconView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -26,10 +26,10 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-var ButtonView              = bugpack.require('airbug.ButtonView');
-var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+var ButtonView              = bugpack.require('carapace.ButtonView');
+var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
 var CommandModule           = bugpack.require('airbug.CommandModule');
-var IconView                = bugpack.require('airbug.IconView');
+var IconView                = bugpack.require('carapace.IconView');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 

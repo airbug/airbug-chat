@@ -92,9 +92,9 @@ bugyarn.registerWinder("setupTestUserAssetService", function(yarn) {
 //-------------------------------------------------------------------------------
 
 var setupUserAssetService = function(setupObject, yarn) {
-    setupObject.marshRegistry.processModule();
-    setupObject.schemaManager.processModule();
-    setupObject.mongoDataStore.processModule();
+    setupObject.marshRegistry.configureModule();
+    setupObject.schemaManager.configureModule();
+    setupObject.mongoDataStore.configureModule();
     setupObject.testUser            = yarn.weave("testNotAnonymousUser");
     setupObject.testSession         = yarn.weave("testSession");
     setupObject.testCall            = {

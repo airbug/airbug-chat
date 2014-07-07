@@ -223,6 +223,13 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @return {MetaContext}
+         */
+        metaContext: function() {
+            return BugMeta.context();
+        },
+
+        /**
          * @return {*}
          */
         mongoose: function() {
@@ -295,6 +302,7 @@ require('bugpack').context("*", function(bugpack) {
             module("https"),
             module("imagemagick"),
             module("github"),
+            module("metaContext"),
             module("mongoose"),
             module("sessionServiceConfig"),
             module("socketIoManager")

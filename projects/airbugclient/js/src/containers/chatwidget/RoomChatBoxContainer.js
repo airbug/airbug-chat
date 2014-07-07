@@ -8,17 +8,17 @@
 //@Require('ClearChange')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
-//@Require('airbug.BoxWithHeaderView')
+//@Require('carapace.BoxWithHeaderView')
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
-//@Require('airbug.MultiColumnView')
-//@Require('airbug.PanelView')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.PanelView')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.RoomOptionsDropdownButtonContainer')
 //@Require('airbug.RoomsHamburgerButtonContainer')
-//@Require('airbug.SubheaderView')
-//@Require('airbug.TwoColumnView')
+//@Require('carapace.SubheaderView')
+//@Require('carapace.TwoColumnView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -41,17 +41,17 @@ require('bugpack').context("*", function(bugpack) {
     var ClearChange                             = bugpack.require('ClearChange');
     var RemovePropertyChange                    = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                       = bugpack.require('SetPropertyChange');
-    var BoxWithHeaderView                       = bugpack.require('airbug.BoxWithHeaderView');
+    var BoxWithHeaderView                       = bugpack.require('carapace.BoxWithHeaderView');
     var ChatWidgetContainer                     = bugpack.require('airbug.ChatWidgetContainer');
     var ConversationModel                       = bugpack.require('airbug.ConversationModel');
-    var MultiColumnView                         = bugpack.require('airbug.MultiColumnView');
-    var PanelView                               = bugpack.require('airbug.PanelView');
+    var MultiColumnView                         = bugpack.require('carapace.MultiColumnView');
+    var PanelView                               = bugpack.require('carapace.PanelView');
     var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
     var RoomNameView                            = bugpack.require('airbug.RoomNameView');
     var RoomOptionsDropdownButtonContainer      = bugpack.require('airbug.RoomOptionsDropdownButtonContainer');
     var RoomsHamburgerButtonContainer           = bugpack.require('airbug.RoomsHamburgerButtonContainer');
-    var SubheaderView                           = bugpack.require('airbug.SubheaderView');
-    var TwoColumnView                           = bugpack.require('airbug.TwoColumnView');
+    var SubheaderView                           = bugpack.require('carapace.SubheaderView');
+    var TwoColumnView                           = bugpack.require('carapace.TwoColumnView');
     var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                                 = bugpack.require('bugmeta.BugMeta');

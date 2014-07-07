@@ -17,12 +17,12 @@
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.BoxWithHeaderAndFooterView')
+//@Require('carapace.BoxWithHeaderAndFooterView')
 //@Require('airbug.LoginFormContainer')
-//@Require('airbug.PageView')
-//@Require('airbug.PanelView')
+//@Require('carapace.PageView')
+//@Require('carapace.PanelView')
 //@Require('airbug.SignupButtonContainer')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -42,12 +42,12 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
     var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
-    var BoxWithHeaderAndFooterView      = bugpack.require('airbug.BoxWithHeaderAndFooterView');
+    var BoxWithHeaderAndFooterView      = bugpack.require('carapace.BoxWithHeaderAndFooterView');
     var LoginFormContainer              = bugpack.require('airbug.LoginFormContainer');
-    var PageView                        = bugpack.require('airbug.PageView');
-    var PanelView                       = bugpack.require('airbug.PanelView');
+    var PageView                        = bugpack.require('carapace.PageView');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
-    var TextView                        = bugpack.require('airbug.TextView');
+    var TextView                        = bugpack.require('carapace.TextView');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');

@@ -91,8 +91,8 @@ var initializeManagers = function(setupObject, callback) {
     var _this = setupObject;
     $series([
         $task(function(flow) {
-            _this.schemaManager.processModule();
-            _this.mongoDataStore.processModule();
+            _this.schemaManager.configureModule();
+            _this.mongoDataStore.configureModule();
             flow.complete();
         }),
         $task(function(flow) {

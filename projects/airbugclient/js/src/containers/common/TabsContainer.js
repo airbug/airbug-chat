@@ -5,8 +5,8 @@
 //@Export('airbug.TabsContainer')
 
 //@Require('Class')
-//@Require('airbug.TabsView')
-//@Require('airbug.TabView')
+//@Require('carapace.TabsView')
+//@Require('carapace.TabView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -22,8 +22,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var TabsView                = bugpack.require('airbug.TabsView');
-    var TabView                 = bugpack.require('airbug.TabView');
+    var TabsView                = bugpack.require('carapace.TabsView');
+    var TabView                 = bugpack.require('carapace.TabView');
     var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 

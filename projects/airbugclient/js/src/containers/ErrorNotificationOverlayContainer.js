@@ -5,10 +5,10 @@
 //@Export('airbug.ErrorNotificationOverlayContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.OverlayView')
-//@Require('airbug.TextView')
+//@Require('carapace.OverlayView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -27,10 +27,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var BoxView                 = bugpack.require('airbug.BoxView');
+    var BoxView                 = bugpack.require('carapace.BoxView');
     var CommandModule           = bugpack.require('airbug.CommandModule');
-    var OverlayView             = bugpack.require('airbug.OverlayView');
-    var TextView                = bugpack.require('airbug.TextView');
+    var OverlayView             = bugpack.require('carapace.OverlayView');
+    var TextView                = bugpack.require('carapace.TextView');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');

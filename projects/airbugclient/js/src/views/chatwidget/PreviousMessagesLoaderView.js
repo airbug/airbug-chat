@@ -2,10 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.BoxWithHeaderView')
+//@Export('airbug.PreviousMessagesLoaderView')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var BoxView         = bugpack.require('airbug.BoxView');
+    var MustacheView    = bugpack.require('carapace.MustacheView');
 
 
     //-------------------------------------------------------------------------------
@@ -28,34 +28,36 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {BoxView}
+     * @extends {MustacheView}
      */
-    var BoxWithHeaderView = Class.extend(BoxView, {
+    var PreviousMessagesLoaderView = Class.extend(MustacheView, {
 
-        _name: "airbug.BoxWithHeaderView",
+        _name: "airbug.PreviousMessagesLoaderView",
 
 
         //-------------------------------------------------------------------------------
         // Template
         //-------------------------------------------------------------------------------
 
-        template:   '<div id="box-{{cid}}" class="box box-with-header {{classes}}">' +
-                        '<div id="box-header-{{cid}}" class="box-header">' +
-                        '</div>' +
-                        '<div id="box-body-{{cid}}" class="box-body">' +
-                        '</div>' +
-                    '</div>',
+        template:
+            '<div id="{{id}}" class="previous-messages-loader {{classes}}">' +
+                '<img src="{{{staticUrl}}}/img/loader-line-large.gif">' +
+                '</img>' +
+                '<p>retrieving previous messages...</p>'+
+            '</div>',
 
 
         //-------------------------------------------------------------------------------
-        // Convenience Methods
+        // MustacheView Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {jQuery}
+         * @return {Object}
          */
-        getBoxHeaderElement: function() {
-            return this.findElement("#box-header-{{cid}}");
+        generateTemplateData: function() {
+            var data            = this._super();
+            data.id             = this.getId() || "previous-messages-loader-" + this.getCid();
+            return data;
         }
     });
 
@@ -64,5 +66,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.BoxWithHeaderView", BoxWithHeaderView);
+    bugpack.export("airbug.PreviousMessagesLoaderView", PreviousMessagesLoaderView);
 });

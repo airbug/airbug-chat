@@ -17,8 +17,6 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugcontroller.ControllerTagProcessor')
-//@Require('bugcontroller.ControllerTagScan')
 //@Require('bugentity.EntityManagerTagProcessor')
 //@Require('bugentity.EntityManagerTagScan')
 //@Require('bugmeta.BugMeta')
@@ -36,8 +34,6 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
-    var ControllerTagProcessor       = bugpack.require('bugcontroller.ControllerTagProcessor');
-    var ControllerTagScan            = bugpack.require('bugcontroller.ControllerTagScan');
     var EntityManagerTagProcessor    = bugpack.require('bugentity.EntityManagerTagProcessor');
     var EntityManagerTagScan         = bugpack.require('bugentity.EntityManagerTagScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -74,12 +70,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ControllerTagScan}
-             */
-            this.controllerTagScan       = new ControllerTagScan(BugMeta.context(), new ControllerTagProcessor(this.getIocContext()));
-
-            /**
-             * @private
              * @type {EntityManagerTagScan}
              */
             this.entityManagerTagScan    = new EntityManagerTagScan(BugMeta.context(), new EntityManagerTagProcessor(this.getIocContext()));
@@ -93,17 +83,13 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        preProcessApplication: function() {
-            this.getConfigurationTagScan().scanBugpacks([
-                "airbugserver.AirbugServerConfiguration",
-                "meldbugserver.MeldbugServerConfiguration"
-            ]);
-            this.controllerTagScan.scanAll();
+        preConfigureApplication: function() {
             this.entityManagerTagScan.scanAll();
             this.getModuleTagScan().scanAll({
                 excludes: [
                     "bugmigrate.MigrationInitializer",
-                    "bugmigrate.MigrationManager"
+                    "bugmigrate.MigrationManager",
+                    "bugmigrate.MigrationConfiguration"
                 ]
             });
         }

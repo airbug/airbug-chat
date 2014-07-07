@@ -19,7 +19,7 @@
 //@Require('Obj')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -48,7 +48,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                             = bugpack.require('Obj');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var BugFs                           = bugpack.require('bugfs.BugFs');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -73,7 +73,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      */
     var AirbugServerInitializer = Class.extend(Obj, {
 
@@ -225,7 +225,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -336,11 +336,6 @@ require('bugpack').context("*", function(bugpack) {
                 //-------------------------------------------------------------------------------
 
                 $task(function(flow) {
-                    _this.controllerManager.initialize(function(throwable) {
-                        flow.complete(throwable);
-                    })
-                }),
-                $task(function(flow) {
                     console.log("Initializing expressApp");
 
                     _this.expressApp.initialize(function(error) {
@@ -435,7 +430,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(AirbugServerInitializer, IInitializeModule);
+    Class.implement(AirbugServerInitializer, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

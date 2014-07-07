@@ -293,9 +293,9 @@ require('bugpack').context("*", function(bugpack) {
                 sessionId: null
             };
             this.testRequestContext = yarn.weave("testRequestContext", [this.dummyRequest]);
-            this.marshRegistry.processModule();
-            this.schemaManager.processModule();
-            this.mongoDataStore.processModule();
+            this.marshRegistry.configureModule();
+            this.schemaManager.configureModule();
+            this.mongoDataStore.configureModule();
             $task(function(flow) {
                 _this.sessionManager.initializeModule(function(throwable) {
                     flow.complete(throwable);
@@ -346,9 +346,9 @@ require('bugpack').context("*", function(bugpack) {
             yarn.spin([
                 "setupTestSessionService"
             ]);
-            this.marshRegistry.processModule();
-            this.schemaManager.processModule();
-            this.mongoDataStore.processModule();
+            this.marshRegistry.configureModule();
+            this.schemaManager.configureModule();
+            this.mongoDataStore.configureModule();
             $series([
                 $task(function(flow) {
                     _this.sessionManager.initializeModule(function(throwable) {

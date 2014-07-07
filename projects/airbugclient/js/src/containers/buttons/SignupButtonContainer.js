@@ -6,9 +6,9 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.TextView')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -27,9 +27,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-    var ButtonView              = bugpack.require('airbug.ButtonView');
-    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-    var TextView                = bugpack.require('airbug.TextView');
+    var ButtonView              = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
+    var TextView                = bugpack.require('carapace.TextView');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');

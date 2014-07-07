@@ -27,7 +27,7 @@
 //@Require('Set')
 //@Require('SetPropertyChange')
 //@Require('Throwable')
-//@Require('airbug.BoxWithHeaderView')
+//@Require('carapace.BoxWithHeaderView')
 //@Require('airbug.ChatMessageModel')
 //@Require('airbug.ChatMessageStreamModel')
 //@Require('airbug.ChatWidgetInputFormContainer')
@@ -39,7 +39,7 @@
 //@Require('airbug.ListContainer')
 //@Require('airbug.MessagePartModel')
 //@Require('airbug.MessagePartPreviewContainer')
-//@Require('airbug.PanelView')
+//@Require('carapace.PanelView')
 //@Require('bugcall.RequestFailedException')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredTag')
@@ -73,7 +73,7 @@ require('bugpack').context("*", function(bugpack) {
     var Set                             = bugpack.require('Set');
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
     var Throwable                       = bugpack.require('Throwable');
-    var BoxWithHeaderView               = bugpack.require('airbug.BoxWithHeaderView');
+    var BoxWithHeaderView               = bugpack.require('carapace.BoxWithHeaderView');
     var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
     var ChatMessageStreamModel          = bugpack.require('airbug.ChatMessageStreamModel');
     var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
@@ -85,7 +85,7 @@ require('bugpack').context("*", function(bugpack) {
     var ListContainer                   = bugpack.require('airbug.ListContainer');
     var MessagePartModel                = bugpack.require('airbug.MessagePartModel');
     var MessagePartPreviewContainer     = bugpack.require('airbug.MessagePartPreviewContainer');
-    var PanelView                       = bugpack.require('airbug.PanelView');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');

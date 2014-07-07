@@ -10,56 +10,59 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                               = bugpack.require('Class');
-var Application                         = bugpack.require('bugapp.Application');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Application}
- */
-var AirbugWorkerApplication = Class.extend(Application, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Application Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                               = bugpack.require('Class');
+    var Application                         = bugpack.require('bugapp.Application');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @class
+     * @extends {Application}
      */
-    preProcessApplication: function() {
-        this.getConfigurationTagScan().scanBugpack('airbugworker.AirbugWorkerConfiguration');
-        this.getModuleTagScan().scanBugpacks([
-            "bugmarsh.MarshRegistry",
-            "bugmarsh.Marshaller",
-            "bugwork.WorkerCommandFactory",
-            "bugwork.WorkerContextFactory",
-            "bugwork.WorkerManager",
-            "bugwork.WorkerProcessFactory",
-            "bugwork.WorkerRegistry",
-            "loggerbug.Logger",
-            "airbugworker.AirbugWorkerInitializer"
-        ]);
-    }
+    var AirbugWorkerApplication = Class.extend(Application, {
+
+        _name: "airbugworker.AirbugWorkerApplication",
+
+
+        //-------------------------------------------------------------------------------
+        // Application Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        preConfigureApplication: function() {
+            this.getModuleTagScan().scanBugpacks([
+                "airbugworker.AirbugWorkerConfiguration",
+                "bugmarsh.MarshRegistry",
+                "bugmarsh.Marshaller",
+                "bugwork.WorkerCommandFactory",
+                "bugwork.WorkerContextFactory",
+                "bugwork.WorkerManager",
+                "bugwork.WorkerProcessFactory",
+                "bugwork.WorkerRegistry",
+                "loggerbug.Logger",
+                "airbugworker.AirbugWorkerInitializer"
+            ]);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugworker.AirbugWorkerApplication', AirbugWorkerApplication);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugworker.AirbugWorkerApplication', AirbugWorkerApplication);

@@ -5,7 +5,7 @@
 //@Export('airbug.ImageEditorContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 //@Require('airbug.CommandModule')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -25,7 +25,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('airbug.BoxView');
+    var BoxView                             = bugpack.require('carapace.BoxView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');

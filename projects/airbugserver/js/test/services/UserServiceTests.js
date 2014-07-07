@@ -105,9 +105,9 @@ require('bugpack').context("*", function(bugpack) {
     };
 
     var setupUserService = function(yarn, setupObject, callback) {
-        setupObject.marshRegistry.processModule();
-        setupObject.schemaManager.processModule();
-        setupObject.mongoDataStore.processModule();
+        setupObject.marshRegistry.configureModule();
+        setupObject.schemaManager.configureModule();
+        setupObject.mongoDataStore.configureModule();
         setupObject.testCurrentUser     = yarn.weave("testAnonymousUser");
         setupObject.testSession         = yarn.weave("testSession");
         setupObject.testBetaKey         = yarn.weave("testBetaKey", [{

@@ -16,6 +16,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Collection')
 //@Require('Exception')
 //@Require('LiteralUtil')
 //@Require('airbugserver.EntityController')
@@ -36,6 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var Collection              = bugpack.require('Collection');
     var Exception               = bugpack.require('Exception');
     var LiteralUtil             = bugpack.require('LiteralUtil');
     var EntityController        = bugpack.require('airbugserver.EntityController');
@@ -75,15 +77,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {AssetService} assetService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, assetService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, assetService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -138,10 +139,12 @@ require('bugpack').context("*", function(bugpack) {
                     console.log("AssetController#/api/uploadAsset entities:", entities);
                     var assetJson = null;
                     if (entities) {
-                        entities = entities.map(function(entity){
-                            return entity.toObject();
-                        });
-                        assetJson = {"files": LiteralUtil.convertToLiteral(entities)};
+                        var simpleAssets = /** @type {Collection.<Object>} */entities
+                            .stream()
+                            .map(function(entity){
+                                return entity.toObject();
+                            }).collectSync(Collection);
+                        assetJson = {"files": LiteralUtil.convertToLiteral(simpleAssets)};
                     }
                     if (throwable) {
                         _this.processAjaxThrowable(response, throwable); //TODO Update this and service layer to match expected response props
@@ -267,7 +270,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(AssetController).with(
         controller("assetController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("assetService"),

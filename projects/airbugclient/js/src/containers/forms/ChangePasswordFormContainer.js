@@ -8,7 +8,7 @@
 //@Require('Exception')
 //@Require('airbug.ChangePasswordFormView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.FormViewEvent')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -32,7 +32,7 @@ var Class                           = bugpack.require('Class');
 var Exception                       = bugpack.require('Exception');
 var ChangePasswordFormView          = bugpack.require('airbug.ChangePasswordFormView');
 var CommandModule                   = bugpack.require('airbug.CommandModule');
-var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
+var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
 var RoomModel                       = bugpack.require('airbug.RoomModel');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');

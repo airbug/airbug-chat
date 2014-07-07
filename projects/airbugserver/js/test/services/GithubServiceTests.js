@@ -87,8 +87,8 @@ bugyarn.registerWinder("setupGithubService", function(yarn) {
 
 var setupGithubService = function(yarn, setupObject, callback) {
 
-    setupObject.schemaManager.processModule();
-    setupObject.mongoDataStore.processModule();
+    setupObject.schemaManager.configureModule();
+    setupObject.mongoDataStore.configureModule();
     setupObject.testCurrentUser     = yarn.weave("testNotAnonymousUser");
     setupObject.testSession         = yarn.weave("testSession");
 

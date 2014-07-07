@@ -24,7 +24,7 @@
 //@Require('airbug.WorkspaceDefines')
 //@Require('airbug.WorkspaceEvent')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -49,7 +49,7 @@ require('bugpack').context("*", function(bugpack) {
     var WorkspaceDefines                = bugpack.require('airbug.WorkspaceDefines');
     var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
@@ -70,7 +70,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {EventDispatcher}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      */
     var WorkspaceModule = Class.extend(EventDispatcher, {
 
@@ -166,7 +166,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -303,7 +303,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(WorkspaceModule, IInitializeModule);
+    Class.implement(WorkspaceModule, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

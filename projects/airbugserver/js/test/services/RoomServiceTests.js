@@ -93,9 +93,9 @@ require('bugpack').context("*", function(bugpack) {
      * @param {Object} sessionObject
      */
     var setupRoomService = function(yarn, setupObject, currentUserObject, sessionObject) {
-        setupObject.marshRegistry.processModule();
-        setupObject.schemaManager.processModule();
-        setupObject.mongoDataStore.processModule();
+        setupObject.marshRegistry.configureModule();
+        setupObject.schemaManager.configureModule();
+        setupObject.mongoDataStore.configureModule();
         setupObject.testCurrentUser     = yarn.weave("testNotAnonymousUser", [currentUserObject]);
         setupObject.testSession         = yarn.weave("testSession", [sessionObject]);
         setupObject.testCall            = new Call(setupObject.logger, sessionObject.testCallType, sessionObject.testCallUuid);

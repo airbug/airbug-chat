@@ -17,10 +17,10 @@
 
 //@Require('Bug')
 //@Require('Class')
+//@Require('Collections')
 //@Require('Exception')
 //@Require('MappedThrowable')
 //@Require('Obj')
-//@Require('Set')
 //@Require('Url')
 //@Require('UuidGenerator')
 //@Require('aws.AwsConfig')
@@ -56,10 +56,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Bug                     = bugpack.require('Bug');
     var Class                   = bugpack.require('Class');
+    var Collections             = bugpack.require('Collections');
     var Exception               = bugpack.require('Exception');
     var MappedThrowable         = bugpack.require('MappedThrowable');
     var Obj                     = bugpack.require('Obj');
-    var Set                     = bugpack.require('Set');
     var Url                     = bugpack.require('Url');
     var UuidGenerator           = bugpack.require('UuidGenerator');
     var AwsConfig               = bugpack.require('aws.AwsConfig');
@@ -390,14 +390,14 @@ require('bugpack').context("*", function(bugpack) {
          *      type: string,
          *      path: string
          * }>} files
-         * @param {function(Throwable, Array<Entity>=)} callback
+         * @param {function(Throwable, Collection.<Entity>=)} callback
          */
         uploadAssets: function(requestContext, files, callback) {
-            var _this = this;
-            var assets = [];
+            var _this   = this;
+            var assets  = Collections.collection();
             $forEachParallel(files, function(flow, file) {
                 _this.uploadAsset(requestContext, file, function(throwable, asset) {
-                    assets.push(asset);
+                    assets.add(asset);
                     flow.complete(throwable);
                 });
             }).execute(function(throwable) {

@@ -16,10 +16,10 @@
 
 //@Require('Class')
 //@Require('airbug.CommandModule')
-//@Require('airbug.DivView')
+//@Require('carapace.DivView')
 //@Require('airbug.ImageUploadContainer')
-//@Require('airbug.ModalView')
-//@Require('airbug.TextView')
+//@Require('carapace.ModalView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -39,10 +39,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                                   = bugpack.require('Class');
     var CommandModule                           = bugpack.require('airbug.CommandModule');
-    var DivView                                 = bugpack.require('airbug.DivView');
+    var DivView                                 = bugpack.require('carapace.DivView');
     var ImageUploadContainer                    = bugpack.require('airbug.ImageUploadContainer');
-    var ModalView                               = bugpack.require('airbug.ModalView');
-    var TextView                                = bugpack.require('airbug.TextView');
+    var ModalView                               = bugpack.require('carapace.ModalView');
+    var TextView                                = bugpack.require('carapace.TextView');
     var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                                 = bugpack.require('bugmeta.BugMeta');

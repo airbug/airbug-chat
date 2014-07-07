@@ -9,10 +9,10 @@
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormContainer')
-//@Require('airbug.MultiColumnView')
+//@Require('carapace.MultiColumnView')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
-//@Require('airbug.TwoColumnView')
+//@Require('carapace.TwoColumnView')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -34,10 +34,10 @@ require('bugpack').context("*", function(bugpack) {
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
-    var MultiColumnView                     = bugpack.require('airbug.MultiColumnView');
+    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
-    var TwoColumnView                       = bugpack.require('airbug.TwoColumnView');
+    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');

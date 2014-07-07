@@ -7,9 +7,9 @@
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.CommandModule')
-//@Require('airbug.FourColumnView')
-//@Require('airbug.MultiColumnView')
-//@Require('airbug.PageView')
+//@Require('carapace.FourColumnView')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.PageView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWrapperContainer')
@@ -32,9 +32,9 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
     var CommandModule               = bugpack.require('airbug.CommandModule');
-    var FourColumnView              = bugpack.require('airbug.FourColumnView');
-    var MultiColumnView             = bugpack.require('airbug.MultiColumnView');
-    var PageView                    = bugpack.require('airbug.PageView');
+    var FourColumnView              = bugpack.require('carapace.FourColumnView');
+    var MultiColumnView             = bugpack.require('carapace.MultiColumnView');
+    var PageView                    = bugpack.require('carapace.PageView');
     var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
     var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
     var WorkspaceWrapperContainer   = bugpack.require('airbug.WorkspaceWrapperContainer');

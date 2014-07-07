@@ -15,7 +15,7 @@
 //@Export('airbug.MessagePartCodeContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.ChatMessageTinkerButtonContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.MessagePartCodeView')
@@ -37,7 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var ChatMessageTinkerButtonContainer    = bugpack.require('airbug.ChatMessageTinkerButtonContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var MessagePartCodeView                 = bugpack.require('airbug.MessagePartCodeView');

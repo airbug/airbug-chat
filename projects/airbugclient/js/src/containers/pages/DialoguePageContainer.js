@@ -20,7 +20,7 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.DialogueChatBoxContainer')
@@ -53,7 +53,7 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var DialogueChatBoxContainer            = bugpack.require('airbug.DialogueChatBoxContainer');

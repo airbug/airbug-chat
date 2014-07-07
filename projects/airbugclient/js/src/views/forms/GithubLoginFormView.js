@@ -5,7 +5,7 @@
 //@Export('airbug.GithubLoginFormView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var MustacheView    = bugpack.require('carapace.MustacheView');
 
 
     //-------------------------------------------------------------------------------

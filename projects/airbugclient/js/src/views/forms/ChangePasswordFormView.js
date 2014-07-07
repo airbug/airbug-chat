@@ -5,7 +5,7 @@
 //@Export('airbug.ChangePasswordFormView')
 
 //@Require('Class')
-//@Require('airbug.FormView')
+//@Require('carapace.FormView')
 //@Require('airbug.PasswordUtil')
 //@Require('jquery.JQuery')
 
@@ -21,7 +21,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var FormView        = bugpack.require('airbug.FormView');
+    var FormView        = bugpack.require('carapace.FormView');
     var PasswordUtil    = bugpack.require('airbug.PasswordUtil');
     var JQuery          = bugpack.require('jquery.JQuery');
 

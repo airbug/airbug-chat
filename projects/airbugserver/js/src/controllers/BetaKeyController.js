@@ -69,15 +69,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {BetaKeyService} betaKeyService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, betaKeyService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, betaKeyService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -151,7 +150,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(BetaKeyController).with(
         controller("betaKeyController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("betaKeyService"),

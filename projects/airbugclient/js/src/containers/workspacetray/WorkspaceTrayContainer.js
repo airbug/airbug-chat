@@ -20,7 +20,7 @@
 //@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.ImageEditorTrayButtonContainer')
 //@Require('airbug.ImageWorkspace')
-//@Require('airbug.PanelView')
+//@Require('carapace.PanelView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var CodeEditorWorkspace             = bugpack.require('airbug.CodeEditorWorkspace');
     var ImageEditorTrayButtonContainer  = bugpack.require('airbug.ImageEditorTrayButtonContainer');
     var ImageWorkspace                  = bugpack.require('airbug.ImageWorkspace');
-    var PanelView                       = bugpack.require('airbug.PanelView');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');

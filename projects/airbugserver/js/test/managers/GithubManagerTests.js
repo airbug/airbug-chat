@@ -89,8 +89,8 @@ var setupGithubManager = function(setupObject) {
 var initializeManagers = function(setupObject, callback) {
     $series([
         $task(function(flow) {
-            setupObject.schemaManager.processModule();
-            setupObject.mongoDataStore.processModule();
+            setupObject.schemaManager.configureModule();
+            setupObject.mongoDataStore.configureModule();
             flow.complete();
         }),
         $task(function(flow) {

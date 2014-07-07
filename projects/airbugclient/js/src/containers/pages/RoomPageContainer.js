@@ -10,11 +10,11 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
-//@Require('airbug.OverlayViewEvent')
+//@Require('carapace.OverlayViewEvent')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
@@ -43,11 +43,11 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-    var OverlayViewEvent                    = bugpack.require('airbug.OverlayViewEvent');
+    var OverlayViewEvent                    = bugpack.require('carapace.OverlayViewEvent');
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomChatBoxContainer                = bugpack.require('airbug.RoomChatBoxContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');

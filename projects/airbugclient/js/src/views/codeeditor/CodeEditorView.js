@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('ace.Ace')
 //@Require('airbug.CodeEditorViewEvent')
-//@Require('airbug.MustacheView')
+//@Require('carapace.MustacheView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -26,7 +26,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var Ace                                 = bugpack.require('ace.Ace');
     var CodeEditorViewEvent                 = bugpack.require('airbug.CodeEditorViewEvent');
-    var MustacheView                        = bugpack.require('airbug.MustacheView');
+    var MustacheView                        = bugpack.require('carapace.MustacheView');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');

@@ -16,11 +16,11 @@
 
 //@Require('Class')
 //@Require('airbug.AddRoomMemberButtonContainer')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.PanelWithHeaderView')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('airbug.RoomMemberListContainer')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -37,11 +37,11 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                           = bugpack.require('Class');
     var AddRoomMemberButtonContainer    = bugpack.require('airbug.AddRoomMemberButtonContainer');
-    var ButtonView                      = bugpack.require('airbug.ButtonView');
-    var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
-    var PanelWithHeaderView             = bugpack.require('airbug.PanelWithHeaderView');
+    var ButtonView                      = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
+    var PanelWithHeaderView             = bugpack.require('carapace.PanelWithHeaderView');
     var RoomMemberListContainer         = bugpack.require('airbug.RoomMemberListContainer');
-    var TextView                        = bugpack.require('airbug.TextView');
+    var TextView                        = bugpack.require('carapace.TextView');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 

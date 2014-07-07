@@ -5,12 +5,12 @@
 //@Export('airbug.CodeEditorWorkspaceContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 //@Require('airbug.CodeEditorSettingsWidgetContainer')
 //@Require('airbug.CodeEditorWidgetContainer')
 //@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.CommandModule')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.FormViewEvent')
 //@Require('airbug.WorkspaceContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -29,12 +29,12 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('airbug.BoxView');
+    var BoxView                             = bugpack.require('carapace.BoxView');
     var CodeEditorSettingsWidgetContainer   = bugpack.require('airbug.CodeEditorSettingsWidgetContainer');
     var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
     var CodeEditorWorkspace                 = bugpack.require('airbug.CodeEditorWorkspace');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var FormViewEvent                       = bugpack.require('airbug.FormViewEvent');
+    var FormViewEvent                       = bugpack.require('carapace.FormViewEvent');
     var WorkspaceContainer                  = bugpack.require('airbug.WorkspaceContainer');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');

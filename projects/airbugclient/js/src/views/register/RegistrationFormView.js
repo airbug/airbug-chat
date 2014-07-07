@@ -5,8 +5,8 @@
 //@Export('airbug.RegistrationFormView')
 
 //@Require('Class')
-//@Require('airbug.FormViewEvent')
-//@Require('airbug.MustacheView')
+//@Require('carapace.FormViewEvent')
+//@Require('carapace.MustacheView')
 //@Require('airbug.PasswordUtil')
 //@Require('jquery.JQuery')
 
@@ -22,8 +22,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var FormViewEvent   = bugpack.require('carapace.FormViewEvent');
+    var MustacheView    = bugpack.require('carapace.MustacheView');
     var PasswordUtil    = bugpack.require('airbug.PasswordUtil');
     var JQuery          = bugpack.require('jquery.JQuery');
 

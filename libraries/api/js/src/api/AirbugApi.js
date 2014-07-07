@@ -23,7 +23,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugmeta.BugMeta')
 
 
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -131,7 +131,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -256,7 +256,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(AirbugApi, IInitializeModule);
+    Class.implement(AirbugApi, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

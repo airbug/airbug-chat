@@ -26,8 +26,8 @@
 //@Require('TypeUtil')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageViewEvent')
-//@Require('airbug.ListItemView')
+//@Require('carapace.ImageViewEvent')
+//@Require('carapace.ListItemView')
 //@Require('airbug.MessagePartCodeContainer')
 //@Require('airbug.MessagePartImageContainer')
 //@Require('airbug.MessagePartModel')
@@ -63,8 +63,8 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil                            = bugpack.require('TypeUtil');
     var ChatMessageView                     = bugpack.require('airbug.ChatMessageView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
-    var ListItemView                        = bugpack.require('airbug.ListItemView');
+    var ImageViewEvent                      = bugpack.require('carapace.ImageViewEvent');
+    var ListItemView                        = bugpack.require('carapace.ListItemView');
     var MessagePartCodeContainer            = bugpack.require('airbug.MessagePartCodeContainer');
     var MessagePartImageContainer           = bugpack.require('airbug.MessagePartImageContainer');
     var MessagePartModel                    = bugpack.require('airbug.MessagePartModel');

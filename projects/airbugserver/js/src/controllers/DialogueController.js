@@ -69,15 +69,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {DialogueService} dialogueService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, dialogueService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, dialogueService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -227,7 +226,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(DialogueController).with(
         controller("dialogueController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("dialogueService"),

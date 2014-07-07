@@ -83,10 +83,9 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        preProcessApplication: function() {
+        preConfigureApplication: function() {
             this.autowiredScan.scanAll();
             this.autowiredScan.scanContinuous();
-            this.getConfigurationTagScan().scanAll();
             this.getModuleTagScan().scanAll();
         }
     });

@@ -155,8 +155,8 @@ var sessionManagerGenerateSessionFullTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testCookieData         = {
             domain: "testDomain",
@@ -239,8 +239,8 @@ var sessionManagerGenerateSessionPartialTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testCookieData         = {
             domain: "testDomain",
@@ -312,8 +312,8 @@ var sessionManagerCreateTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testSessionData        = {
             cookie: {
@@ -416,8 +416,8 @@ var sessionManagerCreateAndUpdateTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testCookieData         = {
             domain: "testDomain",
@@ -532,8 +532,8 @@ var sessionManagerConvertEntityToDbObjectTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testSessionData        = {
             cookie: {
@@ -587,8 +587,8 @@ var sessionManagerBuildUpdateObjectTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testSessionData        = {
             cookie: {
@@ -652,8 +652,8 @@ var sessionManagerBuildDeltaObjectTest = {
         yarn.spin([
             "setupTestSessionManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testSessionData        = {
             cookie: {

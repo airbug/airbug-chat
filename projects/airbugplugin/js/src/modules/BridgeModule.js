@@ -15,7 +15,7 @@
 //@Require('bugcall.ResponseEvent')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var ResponseEvent                   = bugpack.require('bugcall.ResponseEvent');
     var BugFlow                         = bugpack.require('bugflow.BugFlow');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
@@ -145,7 +145,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -236,7 +236,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(BridgeModule, IInitializeModule);
+    Class.implement(BridgeModule, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

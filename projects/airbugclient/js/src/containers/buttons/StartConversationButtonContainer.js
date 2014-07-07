@@ -6,10 +6,10 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonViewEvent')
-//@Require('airbug.NakedButtonView')
-//@Require('airbug.IconView')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.IconView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -28,10 +28,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-    var ButtonGroupView         = bugpack.require('airbug.ButtonGroupView');
-    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
-    var NakedButtonView         = bugpack.require('airbug.NakedButtonView');
-    var IconView                = bugpack.require('airbug.IconView');
+    var ButtonGroupView         = bugpack.require('carapace.ButtonGroupView');
+    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
+    var NakedButtonView         = bugpack.require('carapace.NakedButtonView');
+    var IconView                = bugpack.require('carapace.IconView');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');

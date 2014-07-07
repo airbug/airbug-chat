@@ -75,15 +75,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {InteractionStatusService} interactionStatusService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, interactionStatusService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, interactionStatusService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -154,7 +153,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(InteractionStatusController).with(
         controller("interactionStatusController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("interactionStatusService"),

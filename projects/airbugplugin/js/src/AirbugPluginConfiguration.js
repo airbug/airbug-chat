@@ -26,7 +26,6 @@
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('carapace.ControllerTagScan')
 //@Require('socketio.SocketIoClient')
 //@Require('socketio.SocketIoConfig')
 //@Require('socketio.BrowserSocketIoFactory')
@@ -55,7 +54,6 @@ require('bugpack').context("*", function(bugpack) {
     var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
     var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerTagScan              = bugpack.require('carapace.ControllerTagScan');
     var SocketIoClient              = bugpack.require('socketio.SocketIoClient');
     var SocketIoConfig              = bugpack.require('socketio.SocketIoConfig');
     var BrowserSocketIoFactory      = bugpack.require('socketio.BrowserSocketIoFactory');
@@ -116,14 +114,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         console: function() {
             return console;
-        },
-
-        /**
-         * @param {CarapaceApplication} carapaceApplication
-         * @return {ControllerTagScan}
-         */
-        controllerTagScan: function(carapaceApplication) {
-            return new ControllerTagScan(carapaceApplication);
         },
 
         /**
@@ -201,10 +191,6 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("logger")
                 ]),
             module("console"),
-            module("controllerTagScan")
-                .args([
-                    arg().ref("carapaceApplication")
-                ]),
             module("dialogueMemoryCache"),
             module("document"),
             module("documentUtil")

@@ -17,11 +17,11 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('Map')
-//@Require('airbug.BoxView')
-//@Require('airbug.ListView')
-//@Require('airbug.ListItemView')
-//@Require('airbug.LoaderView')
-//@Require('airbug.ScrollEvent')
+//@Require('carapace.BoxView')
+//@Require('carapace.ListView')
+//@Require('carapace.ListItemView')
+//@Require('carapace.LoaderView')
+//@Require('carapace.ScrollEvent')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 //@Require('jquery.JQuery')
@@ -40,11 +40,11 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var Event                           = bugpack.require('Event');
     var Map                             = bugpack.require('Map');
-    var BoxView                         = bugpack.require('airbug.BoxView');
-    var ListView                        = bugpack.require('airbug.ListView');
-    var ListItemView                    = bugpack.require('airbug.ListItemView');
-    var LoaderView                      = bugpack.require('airbug.LoaderView');
-    var ScrollEvent                     = bugpack.require('airbug.ScrollEvent');
+    var BoxView                         = bugpack.require('carapace.BoxView');
+    var ListView                        = bugpack.require('carapace.ListView');
+    var ListItemView                    = bugpack.require('carapace.ListItemView');
+    var LoaderView                      = bugpack.require('carapace.LoaderView');
+    var ScrollEvent                     = bugpack.require('carapace.ScrollEvent');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
     var JQuery                          = bugpack.require('jquery.JQuery');

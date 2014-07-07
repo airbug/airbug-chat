@@ -132,8 +132,8 @@ var roomManagerCreateRoomTest = {
         yarn.spin([
             "setupTestRoomManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testRoomMemberId       = "testRoomMemberId";
         this.testRoomData           = {
@@ -212,8 +212,8 @@ var roomManagerUpdateRoomTest = {
         yarn.spin([
             "setupTestRoomManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testRoomData           = {
             name: "testName"

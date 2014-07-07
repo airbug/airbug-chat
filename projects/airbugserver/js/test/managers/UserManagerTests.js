@@ -155,8 +155,8 @@ var userManagerCreateUserTest = {
         yarn.spin([
             "setupTestUserManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testEmail              = makeEmail();
         this.testUser               = this.userManager.generateUser({
@@ -223,8 +223,8 @@ var userManagerDeleteUserTest = {
         yarn.spin([
             "setupTestUserManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testEmail              = makeEmail();
         this.testUser               = this.userManager.generateUser({
@@ -314,8 +314,8 @@ var userManagerRetrieveUserTest = {
         yarn.spin([
             "setupTestUserManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testEmail              = makeEmail();
         this.testUser               = this.userManager.generateUser({
@@ -391,8 +391,8 @@ var userManagerUpdateUserTest = {
         yarn.spin([
             "setupTestUserManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testEmail              = makeEmail();
         this.testEmailUpdate        = makeEmail();

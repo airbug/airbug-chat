@@ -26,15 +26,15 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CurrentUserModel')
-//@Require('airbug.ListView')
-//@Require('airbug.ListViewEvent')
-//@Require('airbug.LoaderView')
-//@Require('airbug.PanelWithHeaderView')
+//@Require('carapace.ListView')
+//@Require('carapace.ListViewEvent')
+//@Require('carapace.LoaderView')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('airbug.RoomModel')
 //@Require('airbug.RoomSummaryView')
-//@Require('airbug.SelectableListItemView')
+//@Require('carapace.SelectableListItemView')
 //@Require('airbug.StartConversationButtonContainer')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
@@ -66,15 +66,15 @@ require('bugpack').context("*", function(bugpack) {
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var CurrentUserModel                    = bugpack.require('airbug.CurrentUserModel');
-    var ListView                            = bugpack.require('airbug.ListView');
-    var ListViewEvent                       = bugpack.require('airbug.ListViewEvent');
-    var LoaderView                          = bugpack.require('airbug.LoaderView');
-    var PanelWithHeaderView                 = bugpack.require('airbug.PanelWithHeaderView');
+    var ListView                            = bugpack.require('carapace.ListView');
+    var ListViewEvent                       = bugpack.require('carapace.ListViewEvent');
+    var LoaderView                          = bugpack.require('carapace.LoaderView');
+    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
     var RoomModel                           = bugpack.require('airbug.RoomModel');
     var RoomSummaryView                     = bugpack.require('airbug.RoomSummaryView');
-    var SelectableListItemView              = bugpack.require('airbug.SelectableListItemView');
+    var SelectableListItemView              = bugpack.require('carapace.SelectableListItemView');
     var StartConversationButtonContainer    = bugpack.require('airbug.StartConversationButtonContainer');
-    var TextView                            = bugpack.require('airbug.TextView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var BugFlow                             = bugpack.require('bugflow.BugFlow');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');

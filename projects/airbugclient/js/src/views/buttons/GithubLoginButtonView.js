@@ -5,8 +5,8 @@
 //@Export('airbug.GithubLoginButtonView')
 
 //@Require('Class')
-//@Require('airbug.ButtonView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var ButtonViewEvent = bugpack.require('airbug.ButtonViewEvent');
-var ButtonView      = bugpack.require('airbug.ButtonView');
+var ButtonViewEvent = bugpack.require('carapace.ButtonViewEvent');
+var ButtonView      = bugpack.require('carapace.ButtonView');
 
 
 //-------------------------------------------------------------------------------

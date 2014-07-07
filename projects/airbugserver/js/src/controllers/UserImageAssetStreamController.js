@@ -69,15 +69,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {UserImageAssetStreamService} userImageAssetStreamService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, userImageAssetStreamService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, userImageAssetStreamService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -183,7 +182,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(UserImageAssetStreamController).with(
         controller("userImageAssetStreamController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("userImageAssetStreamService"),

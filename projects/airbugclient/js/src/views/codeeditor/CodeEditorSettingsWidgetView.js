@@ -15,8 +15,8 @@
 //@Export('airbug.CodeEditorSettingsWidgetView')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.BoxView')
+//@Require('carapace.FormViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var BoxView         = bugpack.require('airbug.BoxView');
-    var FormViewEvent   = bugpack.require('airbug.FormViewEvent');
+    var BoxView         = bugpack.require('carapace.BoxView');
+    var FormViewEvent   = bugpack.require('carapace.FormViewEvent');
 
 
     //-------------------------------------------------------------------------------

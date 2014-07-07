@@ -6,11 +6,7 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('bugioc.ConfigurationTagProcessor')
-//@Require('bugioc.ConfigurationTagScan')
-//@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleTagProcessor')
-//@Require('bugioc.ModuleTagScan')
+//@Require('bugioc.BugIoc')
 //@Require('bugmeta.BugMeta')
 //@Require('bugwork.Worker')
 //@Require('bugwork.WorkerTag')
@@ -27,11 +23,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
-    var IocContext                          = bugpack.require('bugioc.IocContext');
-    var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
-    var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
+    var BugIoc                          = bugpack.require('bugioc.BugIoc');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var Worker                              = bugpack.require('bugwork.Worker');
     var WorkerTag                    = bugpack.require('bugwork.WorkerTag');
@@ -78,32 +70,19 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {IocContext}
              */
-            this.iocContext         = new IocContext();
+            this.iocContext             = BugIoc.context();
 
             /**
              * @private
              * @type {ModuleTagScan}
              */
-            this.moduleTagScan         = new ModuleTagScan(bugmeta, new ModuleTagProcessor(this.iocContext));
-
-            /**
-             * @private
-             * @type {ConfigurationTagScan}
-             */
-            this.configurationTagScan  = new ConfigurationTagScan(bugmeta, new ConfigurationTagProcessor(this.iocContext));
+            this.moduleTagScan          = BugIoc.moduleScan(bugmeta);
         },
 
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
         //-------------------------------------------------------------------------------
-
-        /**
-         * @return {ConfigurationTagScan}
-         */
-        getConfigurationTagScan: function() {
-            return this.configurationTagScan;
-        },
 
         /**
          * @return {IocContext}
@@ -128,8 +107,26 @@ require('bugpack').context("*", function(bugpack) {
          * @protected
          * @param {function(Throwable=)} callback
          */
+        configure: function(callback) {
+            var throwable = null;
+            try {
+                this.moduleTagScan.scanBugpacks([
+                    "airbugworker.EmailBounceWorkerConfiguration",
+                    "loggerbug.Logger"
+                ]);
+                this.iocContext.generate();
+            } catch(t) {
+                throwable = t;
+            }
+            callback(throwable);
+        },
+
+        /**
+         * @protected
+         * @param {function(Throwable=)} callback
+         */
         deinitialize: function(callback) {
-            this.iocContext.deinitialize(callback);
+            this.iocContext.stop(callback);
         },
 
         /**
@@ -138,26 +135,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         initialize: function(callback) {
             console.log("Initializing MeldWorker...");
-            this.iocContext.initialize(callback);
-        },
-
-        /**
-         * @protected
-         * @param {function(Throwable=)} callback
-         */
-        process: function(callback) {
-            var throwable = null;
-            try {
-                this.configurationTagScan.scanBugpack("airbugworker.EmailBounceWorkerConfiguration");
-                this.moduleTagScan.scanBugpacks([
-
-                    "loggerbug.Logger"
-                ]);
-                this.iocContext.process();
-            } catch(t) {
-                throwable = t;
-            }
-            callback(throwable);
+            this.iocContext.start(callback);
         }
     });
 

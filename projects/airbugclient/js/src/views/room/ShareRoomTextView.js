@@ -15,7 +15,7 @@
 //@Export('airbug.ShareRoomTextView')
 
 //@Require('Class')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 
 
 //-------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var TextView        = bugpack.require('airbug.TextView');
+    var TextView        = bugpack.require('carapace.TextView');
 
 
     //-------------------------------------------------------------------------------

@@ -5,10 +5,10 @@
 //@Export('airbug.ChooseOrUploadImageContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
-//@Require('airbug.ButtonView')
+//@Require('carapace.BoxView')
+//@Require('carapace.ButtonView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -27,10 +27,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('airbug.BoxView');
-    var ButtonView                          = bugpack.require('airbug.ButtonView');
+    var BoxView                             = bugpack.require('carapace.BoxView');
+    var ButtonView                          = bugpack.require('carapace.ButtonView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var TextView                            = bugpack.require('airbug.TextView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');

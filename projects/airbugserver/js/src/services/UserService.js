@@ -1075,7 +1075,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} userId
-         * @param {function(Throwable, User)} callback
+         * @param {function(Throwable, User=)} callback
          */
         dbRetrieveUser: function(userId, callback) {
             this.userManager.retrieveUser(userId, callback);
@@ -1084,7 +1084,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {Array.<string>} userIds
-         * @param {function(Throwable, User)} callback
+         * @param {function(Throwable, User=)} callback
          */
         dbRetrieveUsers: function(userIds, callback) {
             this.userManager.retrieveUsers(userIds, callback);
@@ -1093,7 +1093,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} userEmail
-         * @param {function(Throwable, User)} callback
+         * @param {function(Throwable, User=)} callback
          */
         dbRetrieveUserByEmail: function(userEmail, callback) {
             this.userManager.retrieveUserByEmail(userEmail, callback);
@@ -1102,7 +1102,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} userId
-         * @param {function(Throwable, User)} callback
+         * @param {function(Throwable, User=)} callback
          */
         dbRetrievePopulatedUser: function(userId, callback) {
             var user        = undefined;

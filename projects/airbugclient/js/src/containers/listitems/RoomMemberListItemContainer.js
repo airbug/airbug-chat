@@ -5,7 +5,7 @@
 //@Export('airbug.RoomMemberListItemContainer')
 
 //@Require('Class')
-//@Require('airbug.SelectableListItemView')
+//@Require('carapace.SelectableListItemView')
 //@Require('airbug.UserNameView')
 //@Require('airbug.UserStatusIndicatorView')
 //@Require('carapace.CarapaceContainer')
@@ -23,7 +23,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
-    var SelectableListItemView      = bugpack.require('airbug.SelectableListItemView');
+    var SelectableListItemView      = bugpack.require('carapace.SelectableListItemView');
     var UserNameView                = bugpack.require('airbug.UserNameView');
     var UserStatusIndicatorView     = bugpack.require('airbug.UserStatusIndicatorView');
     var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');

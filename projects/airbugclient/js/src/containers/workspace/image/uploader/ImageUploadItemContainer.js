@@ -15,15 +15,15 @@
 //@Export('airbug.ImageUploadItemContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonToolbarView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('StateEvent')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.IconView')
+//@Require('carapace.IconView')
 //@Require('airbug.ImageUploadItemView')
-//@Require('airbug.MessageHandlerModule')
-//@Require('airbug.NakedButtonView')
-//@Require('airbug.TextView')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -44,15 +44,15 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var StateEvent                          = bugpack.require('StateEvent');
+    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var IconView                            = bugpack.require('airbug.IconView');
+    var IconView                            = bugpack.require('carapace.IconView');
     var ImageUploadItemView                 = bugpack.require('airbug.ImageUploadItemView');
-    var MessageHandlerModule                = bugpack.require('airbug.MessageHandlerModule');
-    var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
-    var TextView                            = bugpack.require('airbug.TextView');
+    var NakedButtonView                     = bugpack.require('carapace.NakedButtonView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -258,7 +258,7 @@ require('bugpack').context("*", function(bugpack) {
             this._super();
             this.sendButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClicked, this);
             this.embedButtonView.removeEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClicked, this);
-            this.messageHandlerModule.removeEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
+            this.messageHandlerModule.removeEventListener(StateEvent.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
         },
 
         /**
@@ -268,7 +268,7 @@ require('bugpack').context("*", function(bugpack) {
             this._super();
             this.sendButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearSendButtonClicked, this);
             this.embedButtonView.addEventListener(ButtonViewEvent.EventType.CLICKED, this.hearEmbedButtonClicked, this);
-            this.messageHandlerModule.addEventListener(MessageHandlerModule.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
+            this.messageHandlerModule.addEventListener(StateEvent.EventTypes.STATE_CHANGED, this.hearMessageHandlerModuleStateChanged, this);
             this.hideToolbarContainer();
         },
 
@@ -319,13 +319,12 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          */
         processMessageHandlerState: function() {
-            var handlerState = this.messageHandlerModule.getHandlerState();
-            if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.EMBED_ONLY) {
+            if (this.messageHandlerModule.doesSupportEmbed()) {
                 this.embedButtonView.enableButton();
             } else {
                 this.embedButtonView.disableButton();
             }
-            if (handlerState === MessageHandlerModule.HandlerState.EMBED_AND_SEND || handlerState === MessageHandlerModule.HandlerState.SEND_ONLY) {
+            if (this.messageHandlerModule.doesSupportSend()) {
                 this.sendButtonView.enableButton();
             } else {
                 this.sendButtonView.disableButton();

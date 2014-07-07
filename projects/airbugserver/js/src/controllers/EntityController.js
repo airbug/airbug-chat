@@ -65,14 +65,13 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, marshaller) {
 
-            this._super(controllerManager);
+            this._super();
 
 
             //-------------------------------------------------------------------------------

@@ -6,18 +6,18 @@
 
 //@Require('Class')
 //@Require('Exception')
-//@Require('airbug.BoxView')
+//@Require('carapace.BoxView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.InputView')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.InputView')
+//@Require('carapace.FormViewEvent')
 //@Require('airbug.GithubLoginFormView')
-//@Require('airbug.FormControlGroupView')
-//@Require('airbug.FormViewWithWrapper')
-//@Require('airbug.SelectOptionView')
-//@Require('airbug.SelectView')
-//@Require('airbug.SubmitButtonView')
+//@Require('carapace.FormControlGroupView')
+//@Require('carapace.FormViewWithWrapper')
+//@Require('carapace.SelectOptionView')
+//@Require('carapace.SelectView')
+//@Require('carapace.SubmitButtonView')
 //@Require('airbug.RoomModel')
-//@Require('airbug.TextView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -37,18 +37,18 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var Exception                   = bugpack.require('Exception');
-    var BoxView                     = bugpack.require('airbug.BoxView');
+    var BoxView                     = bugpack.require('carapace.BoxView');
     var CommandModule               = bugpack.require('airbug.CommandModule');
-    var InputView                   = bugpack.require('airbug.InputView');
+    var InputView                   = bugpack.require('carapace.InputView');
     var GithubLoginFormView         = bugpack.require('airbug.GithubLoginFormView');
-    var FormControlGroupView        = bugpack.require('airbug.FormControlGroupView');
-    var FormViewWithWrapper         = bugpack.require('airbug.FormViewWithWrapper');
-    var SelectOptionView            = bugpack.require('airbug.SelectOptionView');
-    var SelectView                  = bugpack.require('airbug.SelectView');
-    var SubmitButtonView            = bugpack.require('airbug.SubmitButtonView');
-    var FormViewEvent               = bugpack.require('airbug.FormViewEvent');
+    var FormControlGroupView        = bugpack.require('carapace.FormControlGroupView');
+    var FormViewWithWrapper         = bugpack.require('carapace.FormViewWithWrapper');
+    var SelectOptionView            = bugpack.require('carapace.SelectOptionView');
+    var SelectView                  = bugpack.require('carapace.SelectView');
+    var SubmitButtonView            = bugpack.require('carapace.SubmitButtonView');
+    var FormViewEvent               = bugpack.require('carapace.FormViewEvent');
     var RoomModel                   = bugpack.require('airbug.RoomModel');
-    var TextView                    = bugpack.require('airbug.TextView');
+    var TextView                    = bugpack.require('carapace.TextView');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag          = bugpack.require('bugioc.PropertyTag');

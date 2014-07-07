@@ -17,14 +17,14 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.ButtonContainer')
-//@Require('airbug.ButtonDropdownView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonDropdownView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.DropdownItemDividerView')
-//@Require('airbug.DropdownItemView')
-//@Require('airbug.DropdownViewEvent')
-//@Require('airbug.IconView')
-//@Require('airbug.TextView')
+//@Require('carapace.DropdownItemDividerView')
+//@Require('carapace.DropdownItemView')
+//@Require('carapace.DropdownViewEvent')
+//@Require('carapace.IconView')
+//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -44,14 +44,14 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
     var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-    var ButtonDropdownView      = bugpack.require('airbug.ButtonDropdownView');
-    var ButtonViewEvent         = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonDropdownView      = bugpack.require('carapace.ButtonDropdownView');
+    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule           = bugpack.require('airbug.CommandModule');
-    var DropdownItemDividerView = bugpack.require('airbug.DropdownItemDividerView');
-    var DropdownItemView        = bugpack.require('airbug.DropdownItemView');
-    var DropdownViewEvent       = bugpack.require('airbug.DropdownViewEvent');
-    var IconView                = bugpack.require('airbug.IconView');
-    var TextView                = bugpack.require('airbug.TextView');
+    var DropdownItemDividerView = bugpack.require('carapace.DropdownItemDividerView');
+    var DropdownItemView        = bugpack.require('carapace.DropdownItemView');
+    var DropdownViewEvent       = bugpack.require('carapace.DropdownViewEvent');
+    var IconView                = bugpack.require('carapace.IconView');
+    var TextView                = bugpack.require('carapace.TextView');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');

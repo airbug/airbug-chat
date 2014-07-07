@@ -92,8 +92,8 @@ bugyarn.registerWinder("setupTestBetaKeyManager", function(yarn) {
 //-------------------------------------------------------------------------------
 
 var setupBetaKeyManager = function(setupObject) {
-    setupObject.schemaManager.processModule();
-    setupObject.mongoDataStore.processModule();
+    setupObject.schemaManager.configureModule();
+    setupObject.mongoDataStore.configureModule();
 };
 
 var initializeManagers = function(setupObject, callback) {

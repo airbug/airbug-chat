@@ -25,16 +25,16 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
-//@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonToolbarView')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.IconView')
+//@Require('carapace.IconView')
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImageListContainer')
-//@Require('airbug.TabsView')
-//@Require('airbug.TabView')
-//@Require('airbug.TabViewEvent')
-//@Require('airbug.TextView')
+//@Require('carapace.TabsView')
+//@Require('carapace.TabView')
+//@Require('carapace.TabViewEvent')
+//@Require('carapace.TextView')
 //@Require('airbug.UserImageAssetModel')
 //@Require('airbug.UserImageAssetStreamModel')
 //@Require('airbug.WorkspaceBoxWithHeaderView')
@@ -69,16 +69,16 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var Set                                 = bugpack.require('Set');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
+    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var IconView                            = bugpack.require('airbug.IconView');
+    var IconView                            = bugpack.require('carapace.IconView');
     var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
     var ImageListContainer                  = bugpack.require('airbug.ImageListContainer');
-    var TabsView                            = bugpack.require('airbug.TabsView');
-    var TabView                             = bugpack.require('airbug.TabView');
-    var TabViewEvent                        = bugpack.require('airbug.TabViewEvent');
-    var TextView                            = bugpack.require('airbug.TextView');
+    var TabsView                            = bugpack.require('carapace.TabsView');
+    var TabView                             = bugpack.require('carapace.TabView');
+    var TabViewEvent                        = bugpack.require('carapace.TabViewEvent');
+    var TextView                            = bugpack.require('carapace.TextView');
     var UserImageAssetModel                 = bugpack.require('airbug.UserImageAssetModel');
     var UserImageAssetStreamModel           = bugpack.require('airbug.UserImageAssetStreamModel');
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');

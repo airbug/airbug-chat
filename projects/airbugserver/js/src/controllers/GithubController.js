@@ -75,9 +75,9 @@ require('bugpack').context("*", function(bugpack) {
         // Constructor
         //-------------------------------------------------------------------------------
 
-        _constructor: function(controllerManager, expressApp, bugCallRouter, githubService) {
+        _constructor: function(expressApp, bugCallRouter, githubService) {
 
-            this._super(controllerManager, expressApp);
+            this._super(expressApp);
 
 
             //-------------------------------------------------------------------------------
@@ -167,7 +167,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(GithubController).with(
         controller("githubController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("githubService")

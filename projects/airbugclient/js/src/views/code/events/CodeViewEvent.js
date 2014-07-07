@@ -2,10 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.MultiColumnView')
+//@Export('airbug.CodeViewEvent')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('airbug.MustacheView');
+    var Class = bugpack.require('Class');
+    var Event = bugpack.require('Event');
 
 
     //-------------------------------------------------------------------------------
@@ -28,31 +28,10 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {MustacheView}
+     * @extends {Event}
      */
-    var MultiColumnView     = Class.extend(MustacheView, {
-
-        _name: "airbug.MultiColumnView",
-
-
-        //-------------------------------------------------------------------------------
-        // MustacheView Implementation
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @return {Object}
-         */
-        generateTemplateData: function() {
-            var data      = this._super();
-            data.rowStyle = "row";
-
-            switch (this.attributes.rowStyle) {
-                case MultiColumnView.RowStyle.FLUID:
-                    data.rowStyle = "row-fluid";
-                    break;
-            }
-            return data;
-        }
+    var CodeViewEvent = Class.extend(Event, {
+        _name: "airbug.CodeViewEvent"
     });
 
 
@@ -62,12 +41,14 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @static
-     * @enum {number}
+     * @enum {string}
      */
-    MultiColumnView.RowStyle = {
-        DEFAULT: 1,
-        FIXED: 1,
-        FLUID: 2
+    CodeViewEvent.EventType = {
+        CLICKED_DELETE: "CodeViewEvent:ClickedDelete",
+        CLICKED_EDIT:   "CodeViewEvent:ClickedEdit",
+        CLICKED_SAVE:   "CodeViewEvent:ClickedSave",
+        CLICKED_SEND:   "CodeViewEvent:ClickedSend",
+        CLICKED_TINKER: "CodeViewEvent:ClickedEdit"
     };
 
 
@@ -75,5 +56,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.MultiColumnView", MultiColumnView);
+    bugpack.export("carapace.CodeViewEvent", CodeViewEvent);
 });

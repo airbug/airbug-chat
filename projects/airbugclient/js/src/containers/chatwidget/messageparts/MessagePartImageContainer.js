@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageViewEvent')
+//@Require('carapace.ImageViewEvent')
 //@Require('airbug.MessagePartContainer')
 //@Require('airbug.MessagePartImageView')
 //@Require('bugioc.AutowiredTag')
@@ -37,7 +37,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var ImageViewEvent                      = bugpack.require('airbug.ImageViewEvent');
+    var ImageViewEvent                      = bugpack.require('carapace.ImageViewEvent');
     var MessagePartContainer                = bugpack.require('airbug.MessagePartContainer');
     var MessagePartImageView                = bugpack.require('airbug.MessagePartImageView');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');

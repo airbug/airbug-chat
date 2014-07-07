@@ -5,17 +5,17 @@
 //@Export('airbug.CodeEditorSettingsWidgetContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonToolbarView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsWidgetView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.FormViewEvent')
-//@Require('airbug.IconView')
-//@Require('airbug.TabsView')
-//@Require('airbug.TabView')
-//@Require('airbug.TabViewEvent')
-//@Require('airbug.TextView')
+//@Require('carapace.FormViewEvent')
+//@Require('carapace.IconView')
+//@Require('carapace.TabsView')
+//@Require('carapace.TabView')
+//@Require('carapace.TabViewEvent')
+//@Require('carapace.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugioc.AutowiredTag')
@@ -36,17 +36,17 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                           = bugpack.require('Class');
-    var ButtonGroupView                 = bugpack.require('airbug.ButtonGroupView');
-    var ButtonToolbarView               = bugpack.require('airbug.ButtonToolbarView');
-    var ButtonViewEvent                 = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonGroupView                 = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView               = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorSettingsWidgetView    = bugpack.require('airbug.CodeEditorSettingsWidgetView');
     var CommandModule                   = bugpack.require('airbug.CommandModule');
-    var FormViewEvent                   = bugpack.require('airbug.FormViewEvent');
-    var IconView                        = bugpack.require('airbug.IconView');
-    var TabsView                        = bugpack.require('airbug.TabsView');
-    var TabView                         = bugpack.require('airbug.TabView');
-    var TabViewEvent                    = bugpack.require('airbug.TabViewEvent');
-    var TextView                        = bugpack.require('airbug.TextView');
+    var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
+    var IconView                        = bugpack.require('carapace.IconView');
+    var TabsView                        = bugpack.require('carapace.TabsView');
+    var TabView                         = bugpack.require('carapace.TabView');
+    var TabViewEvent                    = bugpack.require('carapace.TabViewEvent');
+    var TextView                        = bugpack.require('carapace.TextView');
     var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');

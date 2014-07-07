@@ -5,7 +5,7 @@
 //@Export('airbug.RoomNameView')
 
 //@Require('Class')
-//@Require('airbug.MustacheView')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var MustacheView    = bugpack.require('airbug.MustacheView');
+var MustacheView    = bugpack.require('carapace.MustacheView');
 
 
 //-------------------------------------------------------------------------------

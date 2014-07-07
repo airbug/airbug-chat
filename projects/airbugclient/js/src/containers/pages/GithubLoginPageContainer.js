@@ -7,9 +7,9 @@
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.BoxWithFooterView')
+//@Require('carapace.BoxWithFooterView')
 //@Require('airbug.GithubLoginFormContainer')
-//@Require('airbug.PageView')
+//@Require('carapace.PageView')
 //@Require('airbug.SignupButtonContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
@@ -30,9 +30,9 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
     var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
-    var BoxWithFooterView               = bugpack.require('airbug.BoxWithFooterView');
+    var BoxWithFooterView               = bugpack.require('carapace.BoxWithFooterView');
     var GithubLoginFormContainer        = bugpack.require('airbug.GithubLoginFormContainer');
-    var PageView                        = bugpack.require('airbug.PageView');
+    var PageView                        = bugpack.require('carapace.PageView');
     var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');

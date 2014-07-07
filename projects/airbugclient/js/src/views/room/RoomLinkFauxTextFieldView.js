@@ -6,107 +6,114 @@
 
 //@Require('Class')
 //@Require('TypeUtil')
-//@Require('airbug.FauxTextFieldView')
+//@Require('carapace.FauxTextFieldView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var TypeUtil                    = bugpack.require('TypeUtil');
-var FauxTextFieldView           = bugpack.require('airbug.FauxTextFieldView');
-var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-var PropertyTag          = bugpack.require('bugioc.PropertyTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired                   = AutowiredTag.autowired;
-var bugmeta                     = BugMeta.context();
-var property                    = PropertyTag.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var RoomLinkFauxTextFieldView = Class.extend(FauxTextFieldView, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // BugView Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                       = bugpack.require('Class');
+    var TypeUtil                    = bugpack.require('TypeUtil');
+    var FauxTextFieldView           = bugpack.require('carapace.FauxTextFieldView');
+    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired                   = AutowiredTag.autowired;
+    var bugmeta                     = BugMeta.context();
+    var property                    = PropertyTag.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {string} propertyName
-     * @param {*} propertyValue
+     * @class
+     * @extends {FauxTextFieldView}
      */
-    renderModelProperty: function(propertyName, propertyValue) {
-        this._super(propertyName, propertyValue);
-        switch (propertyName) {
-            case "id":
-                this.getTextElement().text(this.generateText(propertyValue));
-                break;
+    var RoomLinkFauxTextFieldView = Class.extend(FauxTextFieldView, {
+
+        _name: "airbug.RoomLinkFauxTextFieldView",
+
+
+        //-------------------------------------------------------------------------------
+        // BugView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {string} propertyName
+         * @param {*} propertyValue
+         */
+        renderModelProperty: function(propertyName, propertyValue) {
+            this._super(propertyName, propertyValue);
+            switch (propertyName) {
+                case "id":
+                    this.getTextElement().text(this.generateText(propertyValue));
+                    break;
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // MustacheView Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        generateTemplateData: function() {
+            var data        = this._super();
+            data.value      = this.generateText(this.getModel().getProperty("id"));
+            return data;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {string} roomId
+         */
+        generateText: function(roomId) {
+            var currentUrl = this.windowUtil.getUrl();
+            return currentUrl + "#conversation/" + roomId;
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // MustacheView Implementation
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    generateTemplateData: function() {
-        var data        = this._super();
-        data.value      = this.generateText(this.getModel().getProperty("id"));
-        return data;
-    },
+    bugmeta.tag(RoomLinkFauxTextFieldView).with(
+        autowired().properties([
+            property("windowUtil").ref("windowUtil")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {string} roomId
-     */
-    generateText: function(roomId) {
-        var currentUrl = this.windowUtil.getUrl();
-        return currentUrl + "#conversation/" + roomId;
-    }
+    bugpack.export("airbug.RoomLinkFauxTextFieldView", RoomLinkFauxTextFieldView);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(RoomLinkFauxTextFieldView).with(
-    autowired().properties([
-        property("windowUtil").ref("windowUtil")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("airbug.RoomLinkFauxTextFieldView", RoomLinkFauxTextFieldView);

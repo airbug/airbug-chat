@@ -133,8 +133,8 @@ var roomMemberManagerCreateRoomMemberTest = {
         yarn.spin([
             "setupTestRoomMemberManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
         this.testRoomMemberData = {
             createdAt: new Date(Date.now()),
             memberType: "testMemberType",
@@ -209,8 +209,8 @@ var roomMemberManagerRetrieveRoomMemberByUserIdAndRoomIdTest = {
         yarn.spin([
             "setupTestRoomMemberManager"
         ]);
-        this.schemaManager.processModule();
-        this.mongoDataStore.processModule();
+        this.schemaManager.configureModule();
+        this.mongoDataStore.configureModule();
 
         this.testUserId     = "testUserId";
         this.testRoomId     = "testRoomId";

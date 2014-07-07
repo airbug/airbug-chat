@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('TypeUtil')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugioc.AutowiredTag')
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var TypeUtil                            = bugpack.require('TypeUtil');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');

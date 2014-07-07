@@ -8,7 +8,7 @@
 //@Require('Exception')
 //@Require('airbug.CommandModule')
 //@Require('airbug.RegistrationFormView')
-//@Require('airbug.FormViewEvent')
+//@Require('carapace.FormViewEvent')
 //@Require('airbug.RoomModel')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
@@ -31,7 +31,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception               = bugpack.require('Exception');
     var CommandModule           = bugpack.require('airbug.CommandModule');
     var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
-    var FormViewEvent           = bugpack.require('airbug.FormViewEvent');
+    var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
     var RoomModel               = bugpack.require('airbug.RoomModel');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');

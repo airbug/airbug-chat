@@ -70,9 +70,9 @@ bugyarn.registerWinder("setupTestBetaKeyService", function(yarn) {
  * @param {Object} setupObject
  */
 var setupBetaKeyService = function(yarn, setupObject) {
-    setupObject.marshRegistry.processModule();
-    setupObject.schemaManager.processModule();
-    setupObject.mongoDataStore.processModule();
+    setupObject.marshRegistry.configureModule();
+    setupObject.schemaManager.configureModule();
+    setupObject.mongoDataStore.configureModule();
     setupObject.testCurrentUser     = yarn.weave("testNotAnonymousUser");
     setupObject.testSession         = yarn.weave("testSession");
     setupObject.testCall            = yarn.weave("testCall");

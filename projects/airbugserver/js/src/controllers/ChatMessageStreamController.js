@@ -67,15 +67,14 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
          * @param {ChatMessageStreamService} chatMessageStreamService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(controllerManager, expressApp, bugCallRouter, chatMessageStreamService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, chatMessageStreamService, marshaller) {
 
-            this._super(controllerManager, expressApp, bugCallRouter, marshaller);
+            this._super(expressApp, bugCallRouter, marshaller);
 
 
             //-------------------------------------------------------------------------------
@@ -180,7 +179,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(ChatMessageStreamController).with(
         controller("chatMessageStreamController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
                 arg().ref("chatMessageStreamService"),

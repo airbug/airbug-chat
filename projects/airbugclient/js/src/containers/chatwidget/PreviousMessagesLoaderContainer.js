@@ -5,7 +5,7 @@
 //@Export('airbug.PreviousMessagesLoaderContainer')
 
 //@Require('Class')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.PreviousMessagesLoaderView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
@@ -22,7 +22,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                                   = bugpack.require('Class');
-    var ButtonViewEvent                         = bugpack.require('airbug.ButtonViewEvent');
+    var ButtonViewEvent                         = bugpack.require('carapace.ButtonViewEvent');
     var PreviousMessagesLoaderView              = bugpack.require('airbug.PreviousMessagesLoaderView');
     var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');

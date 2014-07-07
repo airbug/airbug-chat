@@ -15,22 +15,22 @@
 //@Export('airbug.ImageUploadContainer')
 
 //@Require('Class')
-//@Require('airbug.BoxView')
-//@Require('airbug.ButtonGroupView')
-//@Require('airbug.ButtonToolbarView')
-//@Require('airbug.ButtonViewEvent')
+//@Require('carapace.BoxView')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('airbug.DivView')
-//@Require('airbug.FormView')
-//@Require('airbug.IconView')
+//@Require('carapace.DivView')
+//@Require('carapace.FormView')
+//@Require('carapace.IconView')
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImagePreviewContainer')
 //@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.ImageUploadView')
-//@Require('airbug.InputView')
-//@Require('airbug.LabelView')
-//@Require('airbug.NakedButtonView')
-//@Require('airbug.TextView')
+//@Require('carapace.InputView')
+//@Require('carapace.LabelView')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.TextView')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -53,22 +53,22 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('airbug.BoxView');
-    var ButtonGroupView                     = bugpack.require('airbug.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('airbug.ButtonToolbarView');
-    var ButtonViewEvent                     = bugpack.require('airbug.ButtonViewEvent');
+    var BoxView                             = bugpack.require('carapace.BoxView');
+    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var DivView                             = bugpack.require('airbug.DivView');
-    var FormView                            = bugpack.require('airbug.FormView');
-    var IconView                            = bugpack.require('airbug.IconView');
+    var DivView                             = bugpack.require('carapace.DivView');
+    var FormView                            = bugpack.require('carapace.FormView');
+    var IconView                            = bugpack.require('carapace.IconView');
     var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
     var ImagePreviewContainer               = bugpack.require('airbug.ImagePreviewContainer');
     var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
     var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
-    var InputView                           = bugpack.require('airbug.InputView');
-    var LabelView                           = bugpack.require('airbug.LabelView');
-    var NakedButtonView                     = bugpack.require('airbug.NakedButtonView');
-    var TextView                            = bugpack.require('airbug.TextView');
+    var InputView                           = bugpack.require('carapace.InputView');
+    var LabelView                           = bugpack.require('carapace.LabelView');
+    var NakedButtonView                     = bugpack.require('carapace.NakedButtonView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var BugFlow                             = bugpack.require('bugflow.BugFlow');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');

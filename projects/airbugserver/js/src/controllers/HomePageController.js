@@ -71,13 +71,12 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          * @param {ExpressApp} expressApp
          * @param {AirbugStaticConfig} airbugStaticConfig
          */
-        _constructor: function(controllerManager, expressApp, airbugStaticConfig) {
+        _constructor: function(expressApp, airbugStaticConfig) {
 
-            this._super(controllerManager);
+            this._super();
 
 
             //-------------------------------------------------------------------------------
@@ -166,7 +165,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(HomePageController).with(
         module("homePageController")
             .args([
-                arg().ref("controllerManager"),
                 arg().ref("expressApp"),
                 arg().ref("airbugStaticConfig")
             ])

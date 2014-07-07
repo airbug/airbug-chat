@@ -11,6 +11,7 @@
 //@Require('EventDispatcher')
 //@Require('Exception')
 //@Require('Map')
+//@Require('StateMachine')
 //@Require('airbug.IMessageHandler')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
@@ -33,6 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher                 = bugpack.require('EventDispatcher');
     var Exception                       = bugpack.require('Exception');
     var Map                             = bugpack.require('Map');
+    var StateMachine                    = bugpack.require('StateMachine');
     var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
@@ -79,15 +81,30 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {MessageHandlerModule.HandlerState|string}
+             * @type {StateMachine}
              */
-            this.handlerState               = MessageHandlerModule.HandlerState.NONE;
+            this.handlerStateMachine        = new StateMachine({
+                initialState: MessageHandlerModule.HandlerState.NONE,
+                states: [
+                    MessageHandlerModule.HandlerState.EMBED_AND_SEND,
+                    MessageHandlerModule.HandlerState.EMBED_ONLY,
+                    MessageHandlerModule.HandlerState.NONE,
+                    MessageHandlerModule.HandlerState.SEND_ONLY
+                ]
+            });
 
             /**
              * @private
              * @type {IMessageHandler}
              */
             this.registeredMessageHandler   = null;
+
+
+            //-------------------------------------------------------------------------------
+            // Setup
+            //-------------------------------------------------------------------------------
+
+            this.handlerStateMachine.setParentPropagator(this);
         },
 
 
@@ -99,7 +116,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {MessageHandlerModule.HandlerState|string}
          */
         getHandlerState: function() {
-            return this.handlerState;
+            return this.handlerStateMachine.getCurrentState();
         },
 
 
@@ -207,12 +224,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {MessageHandlerModule.HandlerState|string} handlerState
          */
         updateHandlerState: function(handlerState) {
-            if (this.handlerState !== handlerState) {
-                this.handlerState = handlerState;
-                this.dispatchEvent(new Event(MessageHandlerModule.EventTypes.STATE_CHANGED, {
-                    state: this.handlerState
-                }));
-            }
+            this.handlerStateMachine.changeState(handlerState);
         }
     });
 
@@ -220,14 +232,6 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
     // Static Properties
     //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @enum {string}
-     */
-    MessageHandlerModule.EventTypes = {
-        STATE_CHANGED: "MessageHandlerModule:StateChanged"
-    };
 
     /**
      * @static
