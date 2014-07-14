@@ -24,228 +24,235 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Set                     = bugpack.require('Set');
-var Entity                  = bugpack.require('bugentity.Entity');
-var EntityTag        = bugpack.require('bugentity.EntityTag');
-var PropertyTag      = bugpack.require('bugentity.PropertyTag');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                 = BugMeta.context();
-var entity                  = EntityTag.entity;
-var property                = PropertyTag.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Entity}
- */
-var UserEmail = Class.extend(Entity, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    var Class           = bugpack.require('Class');
+    var Set             = bugpack.require('Set');
+    var Entity          = bugpack.require('bugentity.Entity');
+    var EntityTag       = bugpack.require('bugentity.EntityTag');
+    var PropertyTag     = bugpack.require('bugentity.PropertyTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
 
-        this._super(data);
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta         = BugMeta.context();
+    var entity          = EntityTag.entity;
+    var property        = PropertyTag.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Entity}
+     */
+    var UserEmail = Class.extend(Entity, {
+
+        _name: "airbugserver.UserEmail",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Email}
+         * @constructs
+         * @param data
          */
-        this.email          = null;
+        _constructor: function(data) {
+
+            this._super(data);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Email}
+             */
+            this.email          = null;
+
+            /**
+             * @private
+             * @type {User}
+             */
+            this.user           = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {User}
+         * @return {string}
          */
-        this.user           = null;
-    },
+        getEmailId: function() {
+            return this.getEntityData().emailId;
+        },
+
+        /**
+         * @param {string} emailId
+         */
+        setEmailId: function(emailId) {
+            this.getEntityData().emailId = emailId;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getPrimary: function() {
+            return this.getEntityData().primary;
+        },
+
+        /**
+         * @param {boolean} primary
+         */
+        setPrimary: function(primary) {
+            this.getEntityData().primary = primary;
+        },
+
+        /**
+         * @return {string}
+         */
+        getUserId: function() {
+            return this.getEntityData().userId;
+        },
+
+        /**
+         * @param {string} userId
+         */
+        setUserId: function(userId) {
+            this.getEntityData().userId = userId;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getValidated: function() {
+            return this.getEntityData().validated;
+        },
+
+        /**
+         * @param {boolean} validated
+         */
+        setValidated: function(validated) {
+            this.getEntityData().validated = validated;
+        },
+
+        /**
+         * @return {Date}
+         */
+        getValidatedAt: function() {
+            return this.getEntityData().validatedAt;
+        },
+
+        /**
+         * @param {Date} validatedAt
+         */
+        setValidatedAt: function(validatedAt) {
+            this.getEntityData().validatedAt = validatedAt;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Email}
+         */
+        getEmail: function() {
+            return this.email;
+        },
+
+        /**
+         * @param {Email} email
+         */
+        setEmail: function(email) {
+            this.email = email;
+            this.setEmailId(email.getId());
+        },
+
+        /**
+         * @return {User}
+         */
+        getUser: function() {
+            return this.user;
+        },
+
+        /**
+         * @param {User} user
+         */
+        setUser: function(user) {
+            this.user = user;
+            this.setUserId(user.getId());
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getEmailId: function() {
-        return this.getEntityData().emailId;
-    },
-
-    /**
-     * @param {string} emailId
-     */
-    setEmailId: function(emailId) {
-        this.getEntityData().emailId = emailId;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getPrimary: function() {
-        return this.getEntityData().primary;
-    },
-
-    /**
-     * @param {boolean} primary
-     */
-    setPrimary: function(primary) {
-        this.getEntityData().primary = primary;
-    },
-
-    /**
-     * @return {string}
-     */
-    getUserId: function() {
-        return this.getEntityData().userId;
-    },
-
-    /**
-     * @param {string} userId
-     */
-    setUserId: function(userId) {
-        this.getEntityData().userId = userId;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getValidated: function() {
-        return this.getEntityData().validated;
-    },
-
-    /**
-     * @param {boolean} validated
-     */
-    setValidated: function(validated) {
-        this.getEntityData().validated = validated;
-    },
-
-    /**
-     * @return {Date}
-     */
-    getValidatedAt: function() {
-        return this.getEntityData().validatedAt;
-    },
-
-    /**
-     * @param {Date} validatedAt
-     */
-    setValidatedAt: function(validatedAt) {
-        this.getEntityData().validatedAt = validatedAt;
-    },
+    bugmeta.tag(UserEmail).with(
+        entity("UserEmail").properties([
+            property("email")
+                .type("Email")
+                .populates(true)
+                .store(false),
+            property("emailId")
+                .type("string")
+                .require(true)
+                .index(true)
+                .id(),
+            property("id")
+                .type("string")
+                .primaryId(),
+            property("primary")
+                .type("boolean")
+                .require(true)
+                .default(false),
+            property("updatedAt")
+                .type("date")
+                .require(true)
+                .default(Date.now),
+            property("user")
+                .type("User")
+                .populates(true)
+                .store(false),
+            property("userId")
+                .type("string")
+                .require(true)
+                .index(true)
+                .id(),
+            property("validated")
+                .type("boolean")
+                .require(true)
+                .default(false),
+            property("validatedAt")
+                .type("date")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Email}
-     */
-    getEmail: function() {
-        return this.email;
-    },
-
-    /**
-     * @param {Email} email
-     */
-    setEmail: function(email) {
-        this.email = email;
-        this.setEmailId(email.getId());
-    },
-
-    /**
-     * @return {User}
-     */
-    getUser: function() {
-        return this.user;
-    },
-
-    /**
-     * @param {User} user
-     */
-    setUser: function(user) {
-        this.user = user;
-        this.setUserId(user.getId());
-    }
+    bugpack.export('airbugserver.UserEmail', UserEmail);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(UserEmail).with(
-    entity("UserEmail").properties([
-        property("email")
-            .type("Email")
-            .populates(true)
-            .store(false),
-        property("emailId")
-            .type("string")
-            .require(true)
-            .index(true)
-            .id(),
-        property("id")
-            .type("string")
-            .primaryId(),
-        property("primary")
-            .type("boolean")
-            .require(true)
-            .default(false),
-        property("updatedAt")
-            .type("date")
-            .require(true)
-            .default(Date.now),
-        property("user")
-            .type("User")
-            .populates(true)
-            .store(false),
-        property("userId")
-            .type("string")
-            .require(true)
-            .index(true)
-            .id(),
-        property("validated")
-            .type("boolean")
-            .require(true)
-            .default(false),
-        property("validatedAt")
-            .type("date")
-    ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.UserEmail', UserEmail);

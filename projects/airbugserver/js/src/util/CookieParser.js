@@ -23,100 +23,110 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // Common Modules
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Common Modules
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var ArgTag           = bugpack.require('bugioc.ArgTag');
-var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                     = ArgTag.arg;
-var bugmeta                 = BugMeta.context();
-var module                  = ModuleTag.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CookieParser = Class.extend(Obj, {
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var ArgTag      = bugpack.require('bugioc.ArgTag');
+    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
+    var BugMeta     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Simplify References
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cookieModule) {
+    var arg         = ArgTag.arg;
+    var bugmeta     = BugMeta.context();
+    var module      = ModuleTag.module;
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var CookieParser = Class.extend(Obj, {
+
+        _name: "airbugserver.CookieParser",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {cookie}
+         * @constructs
+         * @param {cookie} cookieModule
          */
-        this.cookieModule = cookieModule;
-    },
+        _constructor: function(cookieModule) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {cookie}
+             */
+            this.cookieModule = cookieModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {cookie}
+         */
+        getCookieModule: function() {
+            return this.cookieModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} cookieString
+         * @return {Object}
+         */
+        parse: function (cookieString) {
+            return this.cookieModule.parse(cookieString);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {cookie}
-     */
-    getCookieModule: function() {
-        return this.cookieModule;
-    },
+    bugmeta.tag(CookieParser).with(
+        module("cookieParser")
+            .args([
+                arg().ref("cookie")
+            ])
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Export
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} cookieString
-     * @return {Object}
-     */
-    parse: function (cookieString) {
-        return this.cookieModule.parse(cookieString);
-    }
+    bugpack.export('airbugserver.CookieParser', CookieParser);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(CookieParser).with(
-    module("cookieParser")
-        .args([
-            arg().ref("cookie")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.CookieParser', CookieParser);

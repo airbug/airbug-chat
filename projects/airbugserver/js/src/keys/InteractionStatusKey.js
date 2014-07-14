@@ -21,154 +21,160 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var ArgumentBug         = bugpack.require('ArgumentBug');
-var Class               = bugpack.require('Class');
-var IObjectable         = bugpack.require('IObjectable');
-var Obj                 = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var InteractionStatusKey = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var ArgumentBug     = bugpack.require('ArgumentBug');
+    var Class           = bugpack.require('Class');
+    var IObjectable     = bugpack.require('IObjectable');
+    var Obj             = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} userId
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(userId) {
+    var InteractionStatusKey = Class.extend(Obj, {
 
-        this._super();
+        _name: "airbugserver.InteractionStatusKey",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} userId
          */
-        this.userId         = userId;
-    },
+        _constructor: function(userId) {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getUserId: function() {
-        return this.userId;
-    },
+            /**
+             * @private
+             * @type {string}
+             */
+            this.userId         = userId;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, InteractionStatusKey)) {
-            return (value.getUserId() === this.getUserId());
+        /**
+         * @return {string}
+         */
+        getUserId: function() {
+            return this.userId;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Obj Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {*} value
+         * @return {boolean}
+         */
+        equals: function(value) {
+            if (Class.doesExtend(value, InteractionStatusKey)) {
+                return (value.getUserId() === this.getUserId());
+            }
+            return false;
+        },
+
+        /**
+         * @return {number}
+         */
+        hashCode: function() {
+            if (!this._hashCode) {
+                this._hashCode = Obj.hashCode("[InteractionStatusKey]" +
+                    Obj.hashCode(this.userId));
+            }
+            return this._hashCode;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // IObjectable Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        toObject: function() {
+            return {
+                userId: this.userId
+            };
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        toStringKey: function() {
+            return "interactionStatus" + ":" + this.userId;
         }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[InteractionStatusKey]" +
-                Obj.hashCode(this.userId));
-        }
-        return this._hashCode;
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // IObjectable Implementation
+    // Static Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @static
+     * @param {string} stringKey
+     * @returns {InteractionStatusKey}
      */
-    toObject: function() {
-        return {
-            userId: this.userId
-        };
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    toStringKey: function() {
-        return "interactionStatus" + ":" + this.userId;
-    }
-});
-
-
-
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @param {string} stringKey
- * @returns {InteractionStatusKey}
- */
-InteractionStatusKey.fromStringKey = function(stringKey) {
-    var keyParts = stringKey.split(":");
-    if (keyParts.length === 2) {
-        var userStatus  = keyParts[0];
-        var userId      = keyParts[1];
-        if (userStatus === "interactionStatus") {
-            return new InteractionStatusKey(userId);
+    InteractionStatusKey.fromStringKey = function(stringKey) {
+        var keyParts = stringKey.split(":");
+        if (keyParts.length === 2) {
+            var userStatus  = keyParts[0];
+            var userId      = keyParts[1];
+            if (userStatus === "interactionStatus") {
+                return new InteractionStatusKey(userId);
+            } else {
+                throw new ArgumentBug(ArgumentBug.ILLEGAL, "stringKey", stringKey, "parameter must in InteractionStatusKey string format");
+            }
         } else {
             throw new ArgumentBug(ArgumentBug.ILLEGAL, "stringKey", stringKey, "parameter must in InteractionStatusKey string format");
         }
-    } else {
-        throw new ArgumentBug(ArgumentBug.ILLEGAL, "stringKey", stringKey, "parameter must in InteractionStatusKey string format");
-    }
-};
+    };
 
 
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Interfaces
+    //-------------------------------------------------------------------------------
 
-Class.implement(InteractionStatusKey, IObjectable);
+    Class.implement(InteractionStatusKey, IObjectable);
 
 
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-bugpack.export('airbugserver.InteractionStatusKey', InteractionStatusKey);
+    bugpack.export('airbugserver.InteractionStatusKey', InteractionStatusKey);
+});

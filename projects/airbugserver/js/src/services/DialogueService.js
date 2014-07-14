@@ -17,10 +17,10 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('MappedThrowable')
 //@Require('Obj')
 //@require('Pair')
-//@Require('Flows')
 //@Require('Set')
 //@Require('airbugserver.EntityService')
 //@Require('airbugserver.User')

@@ -94,7 +94,6 @@ buildProperties({
             "./libraries/airbug/js/src",
             "./libraries/api/js/src",
             "./libraries/common-web/js/src",
-            "./libraries/ui/js/src",
             "./projects/airbugclient/js/src",
             "../bugcore/projects/bugcore/js/src",
             "../bugjs/external/ace/js/src",
@@ -164,7 +163,6 @@ buildProperties({
             "./libraries/airbug/js/src",
             "./libraries/api/js/src",
             "./libraries/common-web/js/src",
-            "./libraries/ui/js/src",
             "./projects/airbugplugin/js/src",
             "../bugcore/projects/bugcore/js/src",
             "../bugjs/external/backbone/js/src",
@@ -961,15 +959,17 @@ buildTarget('prod').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.unitTest.packageJson"),
-                        sourcePaths: buildProject.getProperty("server.sourcePaths").concat(
-                            buildProject.getProperty("server.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("server.scriptPaths").concat(
-                            buildProject.getProperty("server.unitTest.scriptPaths")
-                        ),
-                        staticPaths: buildProject.getProperty("client.serverStickyPaths"),
-                        testPaths: buildProject.getProperty("server.unitTest.testPaths"),
-                        resourcePaths: buildProject.getProperty("server.resourcePaths")
+                        packagePaths: {
+                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
+                                buildProject.getProperty("server.unitTest.sourcePaths")
+                            ),
+                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
+                                buildProject.getProperty("server.unitTest.scriptPaths")
+                            ),
+                            "./static": buildProject.getProperty("client.serverStickyPaths"),
+                            "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./resources": buildProject.getProperty("server.resourcePaths")
+                        }
                     }
                 }),
                 targetTask('replaceTokens', {
@@ -1017,10 +1017,12 @@ buildTarget('prod').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
-                        sourcePaths: buildProject.getProperty("server.sourcePaths"),
-                        scriptPaths: buildProject.getProperty("server.scriptPaths"),
-                        staticPaths: buildProject.getProperty("client.serverStickyPaths"),
-                        resourcePaths: buildProject.getProperty("server.resourcePaths")
+                        packagePaths: {
+                            "./lib": buildProject.getProperty("server.sourcePaths"),
+                            "./scripts": buildProject.getProperty("server.scriptPaths"),
+                            "./static": buildProject.getProperty("client.serverStickyPaths"),
+                            "./resources": buildProject.getProperty("server.resourcePaths")
+                        }
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
@@ -1068,14 +1070,16 @@ buildTarget('prod').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("worker.unitTest.packageJson"),
-                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
-                        sourcePaths: buildProject.getProperty("worker.sourcePaths").concat(
-                            buildProject.getProperty("worker.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("worker.scriptPaths").concat(
-                            buildProject.getProperty("worker.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("worker.unitTest.testPaths")
+                        packagePaths: {
+                            "./resources": buildProject.getProperty("worker.resourcePaths"),
+                            "./lib": buildProject.getProperty("worker.sourcePaths").concat(
+                                buildProject.getProperty("worker.unitTest.sourcePaths")
+                            ),
+                            "./scripts": buildProject.getProperty("worker.scriptPaths").concat(
+                                buildProject.getProperty("worker.unitTest.scriptPaths")
+                            ),
+                            "./test": buildProject.getProperty("worker.unitTest.testPaths")
+                        }
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
@@ -1115,9 +1119,11 @@ buildTarget('prod').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("worker.packageJson"),
-                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
-                        sourcePaths: buildProject.getProperty("worker.sourcePaths"),
-                        scriptPaths: buildProject.getProperty("worker.scriptPaths")
+                        packagePaths: {
+                            "./resources": buildProject.getProperty("worker.resourcePaths"),
+                            "./lib": buildProject.getProperty("worker.sourcePaths"),
+                            "./scripts": buildProject.getProperty("worker.scriptPaths")
+                        }
                     }
                 }),
                 targetTask('generateBugPackRegistry', {

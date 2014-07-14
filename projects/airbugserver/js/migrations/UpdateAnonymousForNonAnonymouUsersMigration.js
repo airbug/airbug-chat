@@ -25,123 +25,141 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-var mongoose                        = require("mongoose");
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Flows                         = bugpack.require('Flows');
-var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var Migration                       = bugpack.require('bugmigrate.Migration');
-var MigrationTag             = bugpack.require('bugmigrate.MigrationTag');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var autowired                       = AutowiredTag.autowired;
-var bugmeta                         = BugMeta.context();
-var migration                       = MigrationTag.migration;
-var property                        = PropertyTag.property;
-var $series                         = Flows.$series;
-var $task                           = Flows.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-// Migration steps
-// 1) Update all Users where 'anonymous' does not exist AND anonymous is 'false' by setting status to "offline"
-
-var UpdatesAnonymousForNonAnonymousUsersMigration = Class.extend(Migration, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Common Modules
     //-------------------------------------------------------------------------------
 
-    /**
-     * @constructs
-     * @param {string} appName
-     * @param {string} appVersion
-     * @param {string} name
-     * @param {string} version
-     */
-    _constructor: function(appName, appVersion, name, version) {
-
-        this._super(appName, appVersion, name, version);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {Logger}
-         */
-        this.logger                 = null;
-
-        /**
-         * @private
-         * @type {MongoDataStore}
-         */
-        this.mongoDataStore         = null
-    },
+    var mongoose        = require("mongoose");
 
 
     //-------------------------------------------------------------------------------
-    // Migration Methods
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Flows           = bugpack.require('Flows');
+    var AutowiredTag    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var Migration       = bugpack.require('bugmigrate.Migration');
+    var MigrationTag    = bugpack.require('bugmigrate.MigrationTag');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired       = AutowiredTag.autowired;
+    var bugmeta         = BugMeta.context();
+    var migration       = MigrationTag.migration;
+    var property        = PropertyTag.property;
+    var $series         = Flows.$series;
+    var $task           = Flows.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Migration
+    //-------------------------------------------------------------------------------
+
+    // Migration steps
+    // 1) Update all Users where 'anonymous' does not exist AND anonymous is 'false' by setting status to "offline"
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable=)} callback
+     * @class
+     * @extends {Migration}
      */
-    up: function(callback) {
-        this.logger.info("Running ", this.getName(), "...");
-        var UserModel = this.mongoDataStore.getMongooseModelForName("User");
-        $series([
-            $task(function(flow){
-                UserModel.update({email: {$exists: true}}, {$set: {anonymous: false}}, {multi: true}, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(callback);
-    }
+    var UpdatesAnonymousForNonAnonymousUsersMigration = Class.extend(Migration, {
+
+        _name: "airbugserver.UpdatesAnonymousForNonAnonymousUsersMigration",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {string} appName
+         * @param {string} appVersion
+         * @param {string} name
+         * @param {string} version
+         */
+        _constructor: function(appName, appVersion, name, version) {
+
+            this._super(appName, appVersion, name, version);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                 = null;
+
+            /**
+             * @private
+             * @type {MongoDataStore}
+             */
+            this.mongoDataStore         = null
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Migration Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        up: function(callback) {
+            this.logger.info("Running ", this.getName(), "...");
+            var UserModel = this.mongoDataStore.getMongooseModelForName("User");
+            $series([
+                $task(function(flow){
+                    UserModel.update({email: {$exists: true}}, {$set: {anonymous: false}}, {multi: true}, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(callback);
+        }
+    });
+
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(UpdatesAnonymousForNonAnonymousUsersMigration).with(
+        migration()
+            .appName("airbug")
+            .appVersion("0.0.18")
+            .name("UpdatesAnonymousForNonAnonymousUsersMigration")
+            .version("0.0.1"),
+        autowired()
+            .properties([
+                property("logger").ref("logger"),
+                property("mongoDataStore").ref("mongoDataStore")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.UpdatesAnonymousForNonAnonymousUsersMigration', UpdatesAnonymousForNonAnonymousUsersMigration);
 });
-
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(UpdatesAnonymousForNonAnonymousUsersMigration).with(
-    migration()
-        .appName("airbug")
-        .appVersion("0.0.18")
-        .name("UpdatesAnonymousForNonAnonymousUsersMigration")
-        .version("0.0.1"),
-    autowired()
-        .properties([
-            property("logger").ref("logger"),
-            property("mongoDataStore").ref("mongoDataStore")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.UpdatesAnonymousForNonAnonymousUsersMigration', UpdatesAnonymousForNonAnonymousUsersMigration);
