@@ -15,21 +15,21 @@
 //@Export('airbug.ImageUploadWidgetContainer')
 
 //@Require('Class')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
 //@Require('airbug.CommandModule')
-//@Require('carapace.IconView')
 //@Require('airbug.ImageUploadContainer')
-//@Require('carapace.TabsView')
-//@Require('carapace.TabView')
-//@Require('carapace.TabViewEvent')
-//@Require('carapace.TextView')
 //@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.IconView')
+//@Require('carapace.TabView')
+//@Require('carapace.TabViewEvent')
+//@Require('carapace.TabsView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -43,34 +43,34 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var IconView                            = bugpack.require('carapace.IconView');
-    var ImageUploadContainer                = bugpack.require('airbug.ImageUploadContainer');
-    var TabsView                            = bugpack.require('carapace.TabsView');
-    var TabView                             = bugpack.require('carapace.TabView');
-    var TabViewEvent                        = bugpack.require('carapace.TabViewEvent');
-    var TextView                            = bugpack.require('carapace.TextView');
-    var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
-    var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
-    var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var ImageUploadContainer            = bugpack.require('airbug.ImageUploadContainer');
+    var WorkspaceBoxWithHeaderView      = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
+    var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
+    var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var ButtonGroupView                 = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView               = bugpack.require('carapace.ButtonToolbarView');
+    var IconView                        = bugpack.require('carapace.IconView');
+    var TabView                         = bugpack.require('carapace.TabView');
+    var TabViewEvent                    = bugpack.require('carapace.TabViewEvent');
+    var TabsView                        = bugpack.require('carapace.TabsView');
+    var TextView                        = bugpack.require('carapace.TextView');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired                       = AutowiredTag.autowired;
+    var bugmeta                         = BugMeta.context();
+    var CommandType                     = CommandModule.CommandType;
+    var property                        = PropertyTag.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

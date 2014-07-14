@@ -1247,10 +1247,11 @@ buildTarget('marketing').buildFlow(
 // Build Scripts
 //-------------------------------------------------------------------------------
 
-//buildScript({
-//    dependencies: [
-//        "bugcore",
-//        "bugflow"
-//    ],
-//    script: "../bugjs/lintbug.js"
-//});
+buildScript({
+    dependencies: [
+        "bugcore",
+        "bugflow",
+        "bugfs"
+    ],
+    script: "./lintbug.js"
+});

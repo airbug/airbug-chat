@@ -17,13 +17,13 @@
 
 //@Require('Bug')
 //@Require('Class')
+//@Require('Flows')
 //@Require('List')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('airbugserver.ChatMessage')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerTag')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
@@ -39,28 +39,28 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                         = bugpack.require('Bug');
-    var Class                       = bugpack.require('Class');
-    var List                        = bugpack.require('List');
-    var Set                         = bugpack.require('Set');
-    var TypeUtil                    = bugpack.require('TypeUtil');
-    var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
-    var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var Flows                     = bugpack.require('Flows');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
+    var List                = bugpack.require('List');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var ChatMessage         = bugpack.require('airbugserver.ChatMessage');
+    var EntityManager       = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerTag.entityManager;
-    var $series                     = Flows.$series;
-    var $task                       = Flows.$task;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var entityManager       = EntityManagerTag.entityManager;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

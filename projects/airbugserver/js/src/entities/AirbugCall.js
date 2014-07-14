@@ -35,25 +35,25 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                         = bugpack.require('Bug');
-    var Class                       = bugpack.require('Class');
-    var Entity                      = bugpack.require('bugentity.Entity');
-    var EntityTag            = bugpack.require('bugentity.EntityTag');
-    var PropertyTag          = bugpack.require('bugentity.PropertyTag');
-    var MarshTag             = bugpack.require('bugmarsh.MarshTag');
-    var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Entity              = bugpack.require('bugentity.Entity');
+    var EntityTag           = bugpack.require('bugentity.EntityTag');
+    var PropertyTag         = bugpack.require('bugentity.PropertyTag');
+    var MarshPropertyTag    = bugpack.require('bugmarsh.MarshPropertyTag');
+    var MarshTag            = bugpack.require('bugmarsh.MarshTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var entity                      = EntityTag.entity;
-    var marsh                       = MarshTag.marsh;
-    var marshProperty               = MarshPropertyTag.property;
-    var property                    = PropertyTag.property;
+    var bugmeta             = BugMeta.context();
+    var entity              = EntityTag.entity;
+    var marsh               = MarshTag.marsh;
+    var marshProperty       = MarshPropertyTag.property;
+    var property            = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

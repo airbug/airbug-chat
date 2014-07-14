@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -24,22 +34,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var ArgUtil                         = bugpack.require('ArgUtil');
-    var Class                           = bugpack.require('Class');
-    var ApiDefines                      = bugpack.require('airbug.ApiDefines');
-    var ManagerModule                   = bugpack.require('airbug.ManagerModule');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var ArgUtil         = bugpack.require('ArgUtil');
+    var Class           = bugpack.require('Class');
+    var ApiDefines      = bugpack.require('airbug.ApiDefines');
+    var ManagerModule   = bugpack.require('airbug.ManagerModule');
+    var ArgTag          = bugpack.require('bugioc.ArgTag');
+    var ModuleTag       = bugpack.require('bugioc.ModuleTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg             = ArgTag.arg;
+    var bugmeta         = BugMeta.context();
+    var module          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

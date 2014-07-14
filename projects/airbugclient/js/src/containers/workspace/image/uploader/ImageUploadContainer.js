@@ -15,31 +15,31 @@
 //@Export('airbug.ImageUploadContainer')
 
 //@Require('Class')
-//@Require('carapace.BoxView')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
-//@Require('carapace.ButtonViewEvent')
+//@Require('Flows')
 //@Require('airbug.CommandModule')
-//@Require('carapace.DivView')
-//@Require('carapace.FormView')
-//@Require('carapace.IconView')
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImagePreviewContainer')
 //@Require('airbug.ImageUploadItemContainer')
 //@Require('airbug.ImageUploadView')
-//@Require('carapace.InputView')
-//@Require('carapace.LabelView')
-//@Require('carapace.NakedButtonView')
-//@Require('carapace.TextView')
-//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxView')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.DivView')
+//@Require('carapace.FormView')
+//@Require('carapace.IconView')
+//@Require('carapace.InputView')
+//@Require('carapace.LabelView')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
-//@Require('jquery.JQuery')
 //@Require('fileupload.FileUpload')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -52,46 +52,46 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('carapace.BoxView');
-    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var DivView                             = bugpack.require('carapace.DivView');
-    var FormView                            = bugpack.require('carapace.FormView');
-    var IconView                            = bugpack.require('carapace.IconView');
-    var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
-    var ImagePreviewContainer               = bugpack.require('airbug.ImagePreviewContainer');
-    var ImageUploadItemContainer            = bugpack.require('airbug.ImageUploadItemContainer');
-    var ImageUploadView                     = bugpack.require('airbug.ImageUploadView');
-    var InputView                           = bugpack.require('carapace.InputView');
-    var LabelView                           = bugpack.require('carapace.LabelView');
-    var NakedButtonView                     = bugpack.require('carapace.NakedButtonView');
-    var TextView                            = bugpack.require('carapace.TextView');
-    var Flows                             = bugpack.require('Flows');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
-    var jQuery                              = bugpack.require('jquery.JQuery');
+    var Class                       = bugpack.require('Class');
+    var Flows                       = bugpack.require('Flows');
+    var CommandModule               = bugpack.require('airbug.CommandModule');
+    var ImageAssetModel             = bugpack.require('airbug.ImageAssetModel');
+    var ImagePreviewContainer       = bugpack.require('airbug.ImagePreviewContainer');
+    var ImageUploadItemContainer    = bugpack.require('airbug.ImageUploadItemContainer');
+    var ImageUploadView             = bugpack.require('airbug.ImageUploadView');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var BoxView                     = bugpack.require('carapace.BoxView');
+    var ButtonGroupView             = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView           = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonViewEvent             = bugpack.require('carapace.ButtonViewEvent');
+    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var DivView                     = bugpack.require('carapace.DivView');
+    var FormView                    = bugpack.require('carapace.FormView');
+    var IconView                    = bugpack.require('carapace.IconView');
+    var InputView                   = bugpack.require('carapace.InputView');
+    var LabelView                   = bugpack.require('carapace.LabelView');
+    var ModelBuilder                = bugpack.require('carapace.ModelBuilder');
+    var NakedButtonView             = bugpack.require('carapace.NakedButtonView');
+    var TextView                    = bugpack.require('carapace.TextView');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+    var jQuery                      = bugpack.require('jquery.JQuery');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $                                   = jQuery;
-    var $series                             = Flows.$series;
-    var $task                               = Flows.$task;
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var model                               = ModelBuilder.model;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var $                           = jQuery;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
+    var autowired                   = AutowiredTag.autowired;
+    var bugmeta                     = BugMeta.context();
+    var CommandType                 = CommandModule.CommandType;
+    var model                       = ModelBuilder.model;
+    var property                    = PropertyTag.property;
+    var view                        = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -25,24 +35,24 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var List                        = bugpack.require('List');
-    var Map                         = bugpack.require('Map');
-    var TypeUtil                    = bugpack.require('TypeUtil');
-    var UserAsset                   = bugpack.require('airbugserver.UserAsset');
-    var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var List                = bugpack.require('List');
+    var Map                 = bugpack.require('Map');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var UserAsset           = bugpack.require('airbugserver.UserAsset');
+    var EntityManager       = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerTag.entityManager;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var entityManager       = EntityManagerTag.entityManager;
 
 
     //-------------------------------------------------------------------------------

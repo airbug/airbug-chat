@@ -17,6 +17,7 @@
 //@Require('AddChange')
 //@Require('Class')
 //@Require('ClearChange')
+//@Require('Flows')
 //@Require('ISet')
 //@Require('List')
 //@Require('Map')
@@ -27,26 +28,25 @@
 //@Require('Set')
 //@Require('SetPropertyChange')
 //@Require('Throwable')
-//@Require('carapace.BoxWithHeaderView')
 //@Require('airbug.ChatMessageModel')
 //@Require('airbug.ChatMessageStreamModel')
 //@Require('airbug.ChatWidgetInputFormContainer')
 //@Require('airbug.ChatWidgetMessagesContainer')
 //@Require('airbug.ChatWidgetView')
 //@Require('airbug.CommandModule')
-//@Require('airbug.ImageUploadModalContainer')
 //@Require('airbug.IMessageHandler')
+//@Require('airbug.ImageUploadModalContainer')
 //@Require('airbug.ListContainer')
 //@Require('airbug.MessagePartModel')
 //@Require('airbug.MessagePartPreviewContainer')
-//@Require('carapace.PanelView')
 //@Require('bugcall.RequestFailedException')
-//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxWithHeaderView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.PanelView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -63,6 +63,7 @@ require('bugpack').context("*", function(bugpack) {
     var AddChange                       = bugpack.require('AddChange');
     var Class                           = bugpack.require('Class');
     var ClearChange                     = bugpack.require('ClearChange');
+    var Flows                           = bugpack.require('Flows');
     var ISet                            = bugpack.require('ISet');
     var List                            = bugpack.require('List');
     var Map                             = bugpack.require('Map');
@@ -73,26 +74,25 @@ require('bugpack').context("*", function(bugpack) {
     var Set                             = bugpack.require('Set');
     var SetPropertyChange               = bugpack.require('SetPropertyChange');
     var Throwable                       = bugpack.require('Throwable');
-    var BoxWithHeaderView               = bugpack.require('carapace.BoxWithHeaderView');
     var ChatMessageModel                = bugpack.require('airbug.ChatMessageModel');
     var ChatMessageStreamModel          = bugpack.require('airbug.ChatMessageStreamModel');
     var ChatWidgetInputFormContainer    = bugpack.require('airbug.ChatWidgetInputFormContainer');
     var ChatWidgetMessagesContainer     = bugpack.require('airbug.ChatWidgetMessagesContainer');
     var ChatWidgetView                  = bugpack.require('airbug.ChatWidgetView');
     var CommandModule                   = bugpack.require('airbug.CommandModule');
-    var ImageUploadModalContainer       = bugpack.require('airbug.ImageUploadModalContainer');
     var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
+    var ImageUploadModalContainer       = bugpack.require('airbug.ImageUploadModalContainer');
     var ListContainer                   = bugpack.require('airbug.ListContainer');
     var MessagePartModel                = bugpack.require('airbug.MessagePartModel');
     var MessagePartPreviewContainer     = bugpack.require('airbug.MessagePartPreviewContainer');
-    var PanelView                       = bugpack.require('carapace.PanelView');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
-    var Flows                         = bugpack.require('Flows');
-    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var BoxWithHeaderView               = bugpack.require('carapace.BoxWithHeaderView');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                    = bugpack.require('carapace.ModelBuilder');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 

@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var DateUtil                = bugpack.require('DateUtil');
-    var MustacheView            = bugpack.require('carapace.MustacheView');
+    var Class           = bugpack.require('Class');
+    var DateUtil        = bugpack.require('DateUtil');
+    var MustacheView    = bugpack.require('carapace.MustacheView');
 
 
     //-------------------------------------------------------------------------------

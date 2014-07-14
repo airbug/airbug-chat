@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -36,20 +37,20 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var ApplicationController   = bugpack.require('airbug.ApplicationController');
     var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag    = bugpack.require('carapace.ControllerTag');
+    var ControllerTag           = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta     = BugMeta.context();
-    var autowired   = AutowiredTag.autowired;
-    var controller  = ControllerTag.controller;
-    var property    = PropertyTag.property;
+    var bugmeta                 = BugMeta.context();
+    var autowired               = AutowiredTag.autowired;
+    var controller              = ControllerTag.controller;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

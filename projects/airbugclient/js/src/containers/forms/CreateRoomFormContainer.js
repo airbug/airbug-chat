@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,17 +18,17 @@
 //@Require('Exception')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormView')
-//@Require('carapace.FormViewEvent')
 //@Require('airbug.IMessageHandler')
 //@Require('airbug.MessagePartModel')
 //@Require('airbug.MessagePartPreviewContainer')
-//@Require('carapace.PanelView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.FormViewEvent')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.PanelView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -32,34 +42,34 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var CommandModule               = bugpack.require('airbug.CommandModule');
-    var CreateRoomFormView          = bugpack.require('airbug.CreateRoomFormView');
-    var FormViewEvent               = bugpack.require('carapace.FormViewEvent');
-    var IMessageHandler             = bugpack.require('airbug.IMessageHandler');
-    var MessagePartModel            = bugpack.require('airbug.MessagePartModel');
-    var MessagePartPreviewContainer = bugpack.require('airbug.MessagePartPreviewContainer');
-    var PanelView                   = bugpack.require('carapace.PanelView');
-    var RoomModel                   = bugpack.require('airbug.RoomModel');
-    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-    var ModelBuilder                = bugpack.require('carapace.ModelBuilder');
-    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var Exception                       = bugpack.require('Exception');
+    var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var CreateRoomFormView              = bugpack.require('airbug.CreateRoomFormView');
+    var IMessageHandler                 = bugpack.require('airbug.IMessageHandler');
+    var MessagePartModel                = bugpack.require('airbug.MessagePartModel');
+    var MessagePartPreviewContainer     = bugpack.require('airbug.MessagePartPreviewContainer');
+    var RoomModel                       = bugpack.require('airbug.RoomModel');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+    var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
+    var ModelBuilder                    = bugpack.require('carapace.ModelBuilder');
+    var PanelView                       = bugpack.require('carapace.PanelView');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                   = AutowiredTag.autowired;
-    var bugmeta                     = BugMeta.context();
-    var CommandType                 = CommandModule.CommandType;
-    var model                       = ModelBuilder.model;
-    var property                    = PropertyTag.property;
-    var view                        = ViewBuilder.view;
+    var autowired                       = AutowiredTag.autowired;
+    var bugmeta                         = BugMeta.context();
+    var CommandType                     = CommandModule.CommandType;
+    var model                           = ModelBuilder.model;
+    var property                        = PropertyTag.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

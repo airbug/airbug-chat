@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,6 +16,7 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Map')
 //@Require('airbugserver.Asset')
 //@Require('airbugserver.AssetManager')
@@ -17,7 +28,6 @@
 //@Require('airbugserver.UserImageAssetStreamManager')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugentity.SchemaManager')
-//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -36,6 +46,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                           = bugpack.require('Class');
     var Exception                       = bugpack.require('Exception');
+    var Flows                           = bugpack.require('Flows');
     var Map                             = bugpack.require('Map');
     var Asset                           = bugpack.require('airbugserver.Asset');
     var AssetManager                    = bugpack.require('airbugserver.AssetManager');
@@ -47,9 +58,8 @@ require('bugpack').context("*", function(bugpack) {
     var UserImageAssetStreamManager     = bugpack.require('airbugserver.UserImageAssetStreamManager');
     var EntityManagerStore              = bugpack.require('bugentity.EntityManagerStore');
     var SchemaManager                   = bugpack.require('bugentity.SchemaManager');
-    var Flows                         = bugpack.require('Flows');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var TestTag                  = bugpack.require('bugunit.TestTag');
+    var TestTag                         = bugpack.require('bugunit.TestTag');
     var BugYarn                         = bugpack.require('bugyarn.BugYarn');
     var Logger                          = bugpack.require('loggerbug.Logger');
 

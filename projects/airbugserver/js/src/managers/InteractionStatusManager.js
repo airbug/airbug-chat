@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -7,10 +17,10 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -28,10 +38,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var Exception                   = bugpack.require('Exception');
+    var Flows                     = bugpack.require('Flows');
     var Obj                         = bugpack.require('Obj');
     var Set                         = bugpack.require('Set');
     var TypeUtil                    = bugpack.require('TypeUtil');
-    var Flows                     = bugpack.require('Flows');
     var ArgTag               = bugpack.require('bugioc.ArgTag');
     var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,17 +16,17 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('airbugworker.EmailBounceTaskProcessor')
-//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
-//@Require('bugtask.TaskProcessor')
 //@Require('bugmeta.BugMeta')
+//@Require('bugtask.TaskProcessor')
 //@Require('configbug.Configbug')
 
 
@@ -30,39 +40,39 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var redis                           = require('redis');
+    var redis                       = require('redis');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var EmailBounceTaskProcessor        = bugpack.require('airbugworker.EmailBounceTaskProcessor');
-    var Flows                         = bugpack.require('Flows');
-    var BugFs                           = bugpack.require('bugfs.BugFs');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ConfigurationTag         = bugpack.require('bugioc.ConfigurationTag');
-    var IInitializingModule                  = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var TaskProcessor                   = bugpack.require('bugtask.TaskProcessor');
-    var Configbug                       = bugpack.require('configbug.Configbug');
+    var Class                       = bugpack.require('Class');
+    var Flows                       = bugpack.require('Flows');
+    var Obj                         = bugpack.require('Obj');
+    var EmailBounceTaskProcessor    = bugpack.require('airbugworker.EmailBounceTaskProcessor');
+    var BugFs                       = bugpack.require('bugfs.BugFs');
+    var ArgTag                      = bugpack.require('bugioc.ArgTag');
+    var ConfigurationTag            = bugpack.require('bugioc.ConfigurationTag');
+    var IInitializingModule         = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag                   = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var TaskProcessor               = bugpack.require('bugtask.TaskProcessor');
+    var Configbug                   = bugpack.require('configbug.Configbug');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var configuration                   = ConfigurationTag.configuration;
-    var module                          = ModuleTag.module;
-    var property                        = PropertyTag.property;
-    var $series                         = Flows.$series;
-    var $task                           = Flows.$task;
+    var arg                         = ArgTag.arg;
+    var bugmeta                     = BugMeta.context();
+    var configuration               = ConfigurationTag.configuration;
+    var module                      = ModuleTag.module;
+    var property                    = PropertyTag.property;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

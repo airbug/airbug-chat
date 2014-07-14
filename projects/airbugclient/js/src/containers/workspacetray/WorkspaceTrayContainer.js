@@ -20,12 +20,12 @@
 //@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.ImageEditorTrayButtonContainer')
 //@Require('airbug.ImageWorkspace')
-//@Require('carapace.PanelView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.PanelView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -45,12 +45,12 @@ require('bugpack').context("*", function(bugpack) {
     var CodeEditorWorkspace             = bugpack.require('airbug.CodeEditorWorkspace');
     var ImageEditorTrayButtonContainer  = bugpack.require('airbug.ImageEditorTrayButtonContainer');
     var ImageWorkspace                  = bugpack.require('airbug.ImageWorkspace');
-    var PanelView                       = bugpack.require('carapace.PanelView');
     var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
-    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
+    var PanelView                       = bugpack.require('carapace.PanelView');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 

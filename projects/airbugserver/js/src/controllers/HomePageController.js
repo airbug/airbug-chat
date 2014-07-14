@@ -34,22 +34,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var StringUtil          = bugpack.require('StringUtil');
-    var Controller          = bugpack.require('bugcontroller.Controller');
-    var ArgTag       = bugpack.require('bugioc.ArgTag');
-    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var StringUtil  = bugpack.require('StringUtil');
+    var Controller  = bugpack.require('bugcontroller.Controller');
+    var ArgTag      = bugpack.require('bugioc.ArgTag');
+    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
+    var BugMeta     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                 = ArgTag.arg;
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
+    var arg         = ArgTag.arg;
+    var bugmeta     = BugMeta.context();
+    var module      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

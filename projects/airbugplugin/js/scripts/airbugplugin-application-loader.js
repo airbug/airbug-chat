@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Closure
 //-------------------------------------------------------------------------------
@@ -33,8 +34,8 @@
         // BugPack
         //-------------------------------------------------------------------------------
 
-        var Application                 = bugpack.require("bugapp.Application");
         var AirbugPluginApplication     = bugpack.require("airbugplugin.AirbugPluginApplication");
+        var Application                 = bugpack.require("bugapp.Application");
 
 
         //-------------------------------------------------------------------------------

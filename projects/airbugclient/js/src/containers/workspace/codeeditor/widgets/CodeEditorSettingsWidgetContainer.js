@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,22 +15,22 @@
 //@Export('airbug.CodeEditorSettingsWidgetContainer')
 
 //@Require('Class')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorSettingsWidgetView')
 //@Require('airbug.CommandModule')
-//@Require('carapace.FormViewEvent')
-//@Require('carapace.IconView')
-//@Require('carapace.TabsView')
-//@Require('carapace.TabView')
-//@Require('carapace.TabViewEvent')
-//@Require('carapace.TextView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.FormViewEvent')
+//@Require('carapace.IconView')
+//@Require('carapace.TabView')
+//@Require('carapace.TabViewEvent')
+//@Require('carapace.TabsView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 //@Require('jquery.JQuery')
 
@@ -36,22 +46,22 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                           = bugpack.require('Class');
+    var CodeEditorSettingsWidgetView    = bugpack.require('airbug.CodeEditorSettingsWidgetView');
+    var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
+    var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var ButtonGroupView                 = bugpack.require('carapace.ButtonGroupView');
     var ButtonToolbarView               = bugpack.require('carapace.ButtonToolbarView');
     var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
-    var CodeEditorSettingsWidgetView    = bugpack.require('airbug.CodeEditorSettingsWidgetView');
-    var CommandModule                   = bugpack.require('airbug.CommandModule');
     var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
     var IconView                        = bugpack.require('carapace.IconView');
-    var TabsView                        = bugpack.require('carapace.TabsView');
     var TabView                         = bugpack.require('carapace.TabView');
     var TabViewEvent                    = bugpack.require('carapace.TabViewEvent');
+    var TabsView                        = bugpack.require('carapace.TabsView');
     var TextView                        = bugpack.require('carapace.TextView');
-    var WorkspaceCloseButtonContainer   = bugpack.require('airbug.WorkspaceCloseButtonContainer');
-    var WorkspaceWidgetContainer        = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
     var JQuery                          = bugpack.require('jquery.JQuery');
 

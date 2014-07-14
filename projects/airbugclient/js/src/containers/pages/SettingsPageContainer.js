@@ -21,11 +21,16 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CurrentUserModel')
 //@Require('airbug.HomeButtonContainer')
+//@Require('airbug.UserNameView')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.LinkView')
+//@Require('carapace.ModelBuilder')
 //@Require('carapace.MultiColumnView')
 //@Require('carapace.NavListDividerView')
 //@Require('carapace.NavListHeaderView')
@@ -34,11 +39,6 @@
 //@Require('carapace.PageView')
 //@Require('carapace.PanelView')
 //@Require('carapace.TwoColumnView')
-//@Require('airbug.UserNameView')
-//@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredTag')
-//@Require('bugioc.PropertyTag')
-//@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
 
@@ -52,44 +52,44 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var ClearChange                         = bugpack.require('ClearChange');
-    var Exception                           = bugpack.require('Exception');
-    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
-    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var CurrentUserModel                    = bugpack.require('airbug.CurrentUserModel');
-    var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-    var LinkView                            = bugpack.require('carapace.LinkView');
-    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
-    var NavListDividerView                  = bugpack.require('carapace.NavListDividerView');
-    var NavListHeaderView                   = bugpack.require('carapace.NavListHeaderView');
-    var NavListItemView                     = bugpack.require('carapace.NavListItemView');
-    var NavListView                         = bugpack.require('carapace.NavListView');
-    var PageView                            = bugpack.require('carapace.PageView');
-    var PanelView                           = bugpack.require('carapace.PanelView');
-    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
-    var UserNameView                        = bugpack.require('airbug.UserNameView');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var ClearChange                     = bugpack.require('ClearChange');
+    var Exception                       = bugpack.require('Exception');
+    var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
+    var SetPropertyChange               = bugpack.require('SetPropertyChange');
+    var AccountDropdownButtonContainer  = bugpack.require('airbug.AccountDropdownButtonContainer');
+    var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
+    var CommandModule                   = bugpack.require('airbug.CommandModule');
+    var CurrentUserModel                = bugpack.require('airbug.CurrentUserModel');
+    var HomeButtonContainer             = bugpack.require('airbug.HomeButtonContainer');
+    var UserNameView                    = bugpack.require('airbug.UserNameView');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
+    var LinkView                        = bugpack.require('carapace.LinkView');
+    var ModelBuilder                    = bugpack.require('carapace.ModelBuilder');
+    var MultiColumnView                 = bugpack.require('carapace.MultiColumnView');
+    var NavListDividerView              = bugpack.require('carapace.NavListDividerView');
+    var NavListHeaderView               = bugpack.require('carapace.NavListHeaderView');
+    var NavListItemView                 = bugpack.require('carapace.NavListItemView');
+    var NavListView                     = bugpack.require('carapace.NavListView');
+    var PageView                        = bugpack.require('carapace.PageView');
+    var PanelView                       = bugpack.require('carapace.PanelView');
+    var TwoColumnView                   = bugpack.require('carapace.TwoColumnView');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var model                               = ModelBuilder.model;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired                       = AutowiredTag.autowired;
+    var bugmeta                         = BugMeta.context();
+    var CommandType                     = CommandModule.CommandType;
+    var model                           = ModelBuilder.model;
+    var property                        = PropertyTag.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

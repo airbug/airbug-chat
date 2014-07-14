@@ -34,8 +34,8 @@
         // BugPack
         //-------------------------------------------------------------------------------
 
-        var Application                 = bugpack.require("bugapp.Application");
         var AirbugClientApplication     = bugpack.require("airbug.AirbugClientApplication");
+        var Application                 = bugpack.require("bugapp.Application");
 
 
         //-------------------------------------------------------------------------------

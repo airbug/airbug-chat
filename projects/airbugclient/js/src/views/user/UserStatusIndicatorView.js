@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,8 +15,8 @@
 //@Export('airbug.UserStatusIndicatorView')
 
 //@Require('Class')
-//@Require('carapace.MustacheView')
 //@Require('airbug.UserDefines')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -29,8 +30,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var MustacheView    = bugpack.require('carapace.MustacheView');
     var UserDefines     = bugpack.require('airbug.UserDefines');
+    var MustacheView    = bugpack.require('carapace.MustacheView');
 
 
     //-------------------------------------------------------------------------------

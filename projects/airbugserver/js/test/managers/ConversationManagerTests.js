@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,9 +15,9 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('airbugserver.Conversation')
 //@Require('airbugserver.ConversationManager')
-//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -24,11 +34,11 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
     var Conversation            = bugpack.require('airbugserver.Conversation');
     var ConversationManager     = bugpack.require('airbugserver.ConversationManager');
-    var Flows                 = bugpack.require('Flows');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var TestTag                 = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

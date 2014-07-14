@@ -15,11 +15,11 @@
 //@Export('airbug.ApplicationContainer')
 
 //@Require('Class')
-//@Require('carapace.ApplicationView')
-//@Require('carapace.BodyView')
-//@Require('carapace.ApplicationHeaderView')
 //@Require('airbug.ErrorNotificationOverlayContainer')
 //@Require('airbug.NotificationContainer')
+//@Require('carapace.ApplicationHeaderView')
+//@Require('carapace.ApplicationView')
+//@Require('carapace.BodyView')
 //@Require('carapace.CarapaceContainer')
 
 
@@ -34,11 +34,11 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var ApplicationView                     = bugpack.require('carapace.ApplicationView');
-    var BodyView                            = bugpack.require('carapace.BodyView');
-    var ApplicationHeaderView               = bugpack.require('carapace.ApplicationHeaderView');
     var ErrorNotificationOverlayContainer   = bugpack.require('airbug.ErrorNotificationOverlayContainer');
     var NotificationContainer               = bugpack.require('airbug.NotificationContainer');
+    var ApplicationHeaderView               = bugpack.require('carapace.ApplicationHeaderView');
+    var ApplicationView                     = bugpack.require('carapace.ApplicationView');
+    var BodyView                            = bugpack.require('carapace.BodyView');
     var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
 
 

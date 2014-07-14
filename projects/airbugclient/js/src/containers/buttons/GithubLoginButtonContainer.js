@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,10 +19,10 @@
 //@Require('airbug.ButtonContainer')
 //@Require('airbug.GithubDefines')
 //@Require('airbug.GithubLoginButtonView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -32,10 +42,10 @@ var Url                     = bugpack.require('Url');
 var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
 var GithubDefines           = bugpack.require('airbug.GithubDefines');
 var GithubLoginButtonView   = bugpack.require('airbug.GithubLoginButtonView');
-var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
 var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
 var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 

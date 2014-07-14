@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,16 +15,16 @@
 //@Export('airbug.CodeEditorWorkspaceContainer')
 
 //@Require('Class')
-//@Require('carapace.BoxView')
 //@Require('airbug.CodeEditorSettingsWidgetContainer')
 //@Require('airbug.CodeEditorWidgetContainer')
 //@Require('airbug.CodeEditorWorkspace')
 //@Require('airbug.CommandModule')
-//@Require('carapace.FormViewEvent')
 //@Require('airbug.WorkspaceContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxView')
+//@Require('carapace.FormViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -29,16 +39,16 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var BoxView                             = bugpack.require('carapace.BoxView');
     var CodeEditorSettingsWidgetContainer   = bugpack.require('airbug.CodeEditorSettingsWidgetContainer');
     var CodeEditorWidgetContainer           = bugpack.require('airbug.CodeEditorWidgetContainer');
     var CodeEditorWorkspace                 = bugpack.require('airbug.CodeEditorWorkspace');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var FormViewEvent                       = bugpack.require('carapace.FormViewEvent');
     var WorkspaceContainer                  = bugpack.require('airbug.WorkspaceContainer');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var BoxView                             = bugpack.require('carapace.BoxView');
+    var FormViewEvent                       = bugpack.require('carapace.FormViewEvent');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

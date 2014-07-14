@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,13 +19,13 @@
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CreateRoomFormContainer')
-//@Require('carapace.MultiColumnView')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
-//@Require('carapace.TwoColumnView')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.TwoColumnView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -34,13 +44,13 @@ require('bugpack').context("*", function(bugpack) {
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var CreateRoomFormContainer             = bugpack.require('airbug.CreateRoomFormContainer');
-    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
-    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
+    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
+    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

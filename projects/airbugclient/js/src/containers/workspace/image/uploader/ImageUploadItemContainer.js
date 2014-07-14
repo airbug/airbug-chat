@@ -16,21 +16,21 @@
 
 //@Require('Class')
 //@Require('StateEvent')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('carapace.IconView')
 //@Require('airbug.ImageUploadItemView')
-//@Require('carapace.NakedButtonView')
-//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.IconView')
+//@Require('carapace.NakedButtonView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
-//@Require('jquery.JQuery')
 //@Require('fileupload.FileUpload')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -43,34 +43,34 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var StateEvent                          = bugpack.require('StateEvent');
-    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var IconView                            = bugpack.require('carapace.IconView');
-    var ImageUploadItemView                 = bugpack.require('airbug.ImageUploadItemView');
-    var NakedButtonView                     = bugpack.require('carapace.NakedButtonView');
-    var TextView                            = bugpack.require('carapace.TextView');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
-    var jQuery                              = bugpack.require('jquery.JQuery');
+    var Class                   = bugpack.require('Class');
+    var StateEvent              = bugpack.require('StateEvent');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var ImageUploadItemView     = bugpack.require('airbug.ImageUploadItemView');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ButtonGroupView         = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView       = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
+    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var IconView                = bugpack.require('carapace.IconView');
+    var NakedButtonView         = bugpack.require('carapace.NakedButtonView');
+    var TextView                = bugpack.require('carapace.TextView');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+    var jQuery                  = bugpack.require('jquery.JQuery');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $                                   = jQuery;
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var $                       = jQuery;
+    var autowired               = AutowiredTag.autowired;
+    var bugmeta                 = BugMeta.context();
+    var CommandType             = CommandModule.CommandType;
+    var property                = PropertyTag.property;
+    var view                    = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

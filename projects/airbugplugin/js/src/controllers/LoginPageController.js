@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController   = bugpack.require('airbug.ApplicationController');
     var LoginPageContainer      = bugpack.require('airbugplugin.LoginPageContainer');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag    = bugpack.require('carapace.ControllerTag');
+    var ControllerTag           = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------

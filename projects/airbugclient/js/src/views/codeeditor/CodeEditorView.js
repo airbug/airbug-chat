@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -7,10 +17,10 @@
 //@Require('Class')
 //@Require('ace.Ace')
 //@Require('airbug.CodeEditorViewEvent')
-//@Require('carapace.MustacheView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.MustacheView')
 
 
 //-------------------------------------------------------------------------------
@@ -26,10 +36,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var Ace                                 = bugpack.require('ace.Ace');
     var CodeEditorViewEvent                 = bugpack.require('airbug.CodeEditorViewEvent');
-    var MustacheView                        = bugpack.require('carapace.MustacheView');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var MustacheView                        = bugpack.require('carapace.MustacheView');
 
 
     //-------------------------------------------------------------------------------

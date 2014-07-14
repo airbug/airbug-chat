@@ -18,12 +18,12 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('airbug.ApiDefines')
 //@Require('airbug.SetInteractionStatusRequest')
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.RequestFailedException')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -42,13 +42,13 @@ require('bugpack').context("*", function(bugpack) {
     var Bug                             = bugpack.require('Bug');
     var Class                           = bugpack.require('Class');
     var Exception                       = bugpack.require('Exception');
+    var Flows                           = bugpack.require('Flows');
     var Obj                             = bugpack.require('Obj');
     var SetInteractionStatusRequest     = bugpack.require('airbug.SetInteractionStatusRequest');
     var CallEvent                       = bugpack.require('bugcall.CallEvent');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
-    var Flows                         = bugpack.require('Flows');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var ArgTag                          = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                       = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 

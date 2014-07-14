@@ -17,10 +17,10 @@
 //@Require('Class')
 //@Require('ClearChange')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.DialogueChatBoxContainer')
@@ -29,10 +29,10 @@
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.UserModel')
-//@Require('Flows')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
@@ -50,10 +50,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var ClearChange                         = bugpack.require('ClearChange');
     var Exception                           = bugpack.require('Exception');
+    var Flows                               = bugpack.require('Flows');
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var DialogueChatBoxContainer            = bugpack.require('airbug.DialogueChatBoxContainer');
@@ -62,10 +62,10 @@ require('bugpack').context("*", function(bugpack) {
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
     var UserModel                           = bugpack.require('airbug.UserModel');
-    var Flows                             = bugpack.require('Flows');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 

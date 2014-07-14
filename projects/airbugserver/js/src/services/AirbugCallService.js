@@ -20,8 +20,8 @@
 //@Require('Flows')
 //@Require('Obj')
 //@Require('bugcall.CallEvent')
-//@Require('bugcall.IncomingRequest')
 //@Require('bugcall.IProcessCall')
+//@Require('bugcall.IncomingRequest')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -41,14 +41,14 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
+    var Flows                   = bugpack.require('Flows');
     var Obj                     = bugpack.require('Obj');
     var CallEvent               = bugpack.require('bugcall.CallEvent');
-    var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
     var IProcessCall            = bugpack.require('bugcall.IProcessCall');
-    var Flows                 = bugpack.require('Flows');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule       = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+    var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
 

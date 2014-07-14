@@ -17,11 +17,11 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('airbugserver.Github')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -40,13 +40,13 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
+    var Flows                   = bugpack.require('Flows');
     var Obj                     = bugpack.require('Obj');
     var TypeUtil                = bugpack.require('TypeUtil');
     var UuidGenerator           = bugpack.require('UuidGenerator');
     var Github                  = bugpack.require('airbugserver.Github');
-    var Flows                 = bugpack.require('Flows');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
 

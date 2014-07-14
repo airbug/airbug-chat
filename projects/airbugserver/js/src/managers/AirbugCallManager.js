@@ -18,15 +18,15 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Set')
+//@Require('Tracer')
 //@Require('TypeUtil')
 //@Require('airbugserver.AirbugCall')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerTag')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
-//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -39,32 +39,32 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var ArgUtil                     = bugpack.require('ArgUtil');
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var Set                         = bugpack.require('Set');
-    var TypeUtil                    = bugpack.require('TypeUtil');
-    var AirbugCall                  = bugpack.require('airbugserver.AirbugCall');
-    var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var Flows                     = bugpack.require('Flows');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var Tracer                    = bugpack.require('Tracer');
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
+    var Set                 = bugpack.require('Set');
+    var Tracer              = bugpack.require('Tracer');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var AirbugCall          = bugpack.require('airbugserver.AirbugCall');
+    var EntityManager       = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerTag.entityManager;
-    var $iterableParallel           = Flows.$iterableParallel;
-    var $parallel                   = Flows.$parallel;
-    var $series                     = Flows.$series;
-    var $task                       = Flows.$task;
-    var $traceWithError             = Tracer.$traceWithError;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var entityManager       = EntityManagerTag.entityManager;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $parallel           = Flows.$parallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+    var $traceWithError     = Tracer.$traceWithError;
 
 
     //-------------------------------------------------------------------------------

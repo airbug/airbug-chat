@@ -26,8 +26,6 @@
 //@Require('TypeUtil')
 //@Require('airbug.ChatMessageView')
 //@Require('airbug.CommandModule')
-//@Require('carapace.ImageViewEvent')
-//@Require('carapace.ListItemView')
 //@Require('airbug.MessagePartCodeContainer')
 //@Require('airbug.MessagePartImageContainer')
 //@Require('airbug.MessagePartModel')
@@ -37,6 +35,8 @@
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.ImageViewEvent')
+//@Require('carapace.ListItemView')
 //@Require('carapace.ModelBuilder')
 //@Require('carapace.ViewBuilder')
 
@@ -51,43 +51,43 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var AddChange                           = bugpack.require('AddChange');
-    var Bug                                 = bugpack.require('Bug');
-    var Class                               = bugpack.require('Class');
-    var ClearChange                         = bugpack.require('ClearChange');
-    var Map                                 = bugpack.require('Map');
-    var ObservableList                      = bugpack.require('ObservableList');
-    var RemoveChange                        = bugpack.require('RemoveChange');
-    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
-    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var TypeUtil                            = bugpack.require('TypeUtil');
-    var ChatMessageView                     = bugpack.require('airbug.ChatMessageView');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var ImageViewEvent                      = bugpack.require('carapace.ImageViewEvent');
-    var ListItemView                        = bugpack.require('carapace.ListItemView');
-    var MessagePartCodeContainer            = bugpack.require('airbug.MessagePartCodeContainer');
-    var MessagePartImageContainer           = bugpack.require('airbug.MessagePartImageContainer');
-    var MessagePartModel                    = bugpack.require('airbug.MessagePartModel');
-    var MessagePartTextContainer            = bugpack.require('airbug.MessagePartTextContainer');
-    var RequestFailedException              = bugpack.require('bugcall.RequestFailedException');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
-    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var AddChange                   = bugpack.require('AddChange');
+    var Bug                         = bugpack.require('Bug');
+    var Class                       = bugpack.require('Class');
+    var ClearChange                 = bugpack.require('ClearChange');
+    var Map                         = bugpack.require('Map');
+    var ObservableList              = bugpack.require('ObservableList');
+    var RemoveChange                = bugpack.require('RemoveChange');
+    var RemovePropertyChange        = bugpack.require('RemovePropertyChange');
+    var SetPropertyChange           = bugpack.require('SetPropertyChange');
+    var TypeUtil                    = bugpack.require('TypeUtil');
+    var ChatMessageView             = bugpack.require('airbug.ChatMessageView');
+    var CommandModule               = bugpack.require('airbug.CommandModule');
+    var MessagePartCodeContainer    = bugpack.require('airbug.MessagePartCodeContainer');
+    var MessagePartImageContainer   = bugpack.require('airbug.MessagePartImageContainer');
+    var MessagePartModel            = bugpack.require('airbug.MessagePartModel');
+    var MessagePartTextContainer    = bugpack.require('airbug.MessagePartTextContainer');
+    var RequestFailedException      = bugpack.require('bugcall.RequestFailedException');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var ImageViewEvent              = bugpack.require('carapace.ImageViewEvent');
+    var ListItemView                = bugpack.require('carapace.ListItemView');
+    var ModelBuilder                = bugpack.require('carapace.ModelBuilder');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var model                               = ModelBuilder.model;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired                   = AutowiredTag.autowired;
+    var bugmeta                     = BugMeta.context();
+    var CommandType                 = CommandModule.CommandType;
+    var model                       = ModelBuilder.model;
+    var property                    = PropertyTag.property;
+    var view                        = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

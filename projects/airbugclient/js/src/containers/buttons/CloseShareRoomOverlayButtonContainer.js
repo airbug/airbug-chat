@@ -16,14 +16,14 @@
 
 //@Require('Class')
 //@Require('airbug.ButtonContainer')
-//@Require('carapace.ButtonView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CommandModule')
-//@Require('carapace.IconView')
-//@Require('carapace.NakedButtonView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
+//@Require('carapace.IconView')
+//@Require('carapace.NakedButtonView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -37,28 +37,28 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var ButtonContainer         = bugpack.require('airbug.ButtonContainer');
-    var ButtonView              = bugpack.require('carapace.ButtonView');
-    var ButtonViewEvent         = bugpack.require('carapace.ButtonViewEvent');
-    var CommandModule           = bugpack.require('airbug.CommandModule');
-    var IconView                = bugpack.require('carapace.IconView');
-    var NakedButtonView         = bugpack.require('carapace.NakedButtonView');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
+    var Class               = bugpack.require('Class');
+    var ButtonContainer     = bugpack.require('airbug.ButtonContainer');
+    var CommandModule       = bugpack.require('airbug.CommandModule');
+    var AutowiredTag        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var ButtonView          = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent     = bugpack.require('carapace.ButtonViewEvent');
+    var IconView            = bugpack.require('carapace.IconView');
+    var NakedButtonView     = bugpack.require('carapace.NakedButtonView');
+    var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredTag.autowired;
-    var bugmeta                 = BugMeta.context();
-    var CommandType             = CommandModule.CommandType;
-    var property                = PropertyTag.property;
-    var view                    = ViewBuilder.view;
+    var autowired           = AutowiredTag.autowired;
+    var bugmeta             = BugMeta.context();
+    var CommandType         = CommandModule.CommandType;
+    var property            = PropertyTag.property;
+    var view                = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

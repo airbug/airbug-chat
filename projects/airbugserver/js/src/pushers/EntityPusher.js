@@ -17,9 +17,9 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
-//@Require('Flows')
 
 //-------------------------------------------------------------------------------
 // Context
@@ -34,9 +34,9 @@ require('bugpack').context("*", function(bugpack) {
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

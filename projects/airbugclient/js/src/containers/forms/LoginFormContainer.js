@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -7,13 +17,13 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.CommandModule')
-//@Require('carapace.FormViewEvent')
 //@Require('airbug.LoginFormView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.FormViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -32,12 +42,12 @@ var Class                   = bugpack.require('Class');
 var Exception               = bugpack.require('Exception');
 var CommandModule           = bugpack.require('airbug.CommandModule');
 var LoginFormView           = bugpack.require('airbug.LoginFormView');
-var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
 var RoomModel               = bugpack.require('airbug.RoomModel');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
 var PropertyTag      = bugpack.require('bugioc.PropertyTag');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
 var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 

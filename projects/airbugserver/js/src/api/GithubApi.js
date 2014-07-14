@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,10 +16,10 @@
 //@Autowired
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
 //@Require('Url')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -22,19 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Obj                         = bugpack.require('Obj');
-    var Set                         = bugpack.require('Set');
-    var Url                         = bugpack.require('Url');
-    var Flows                     = bugpack.require('Flows');
+    var Class       = bugpack.require('Class');
+    var Flows       = bugpack.require('Flows');
+    var Obj         = bugpack.require('Obj');
+    var Set         = bugpack.require('Set');
+    var Url         = bugpack.require('Url');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series                     = Flows.$series;
-    var $task                       = Flows.$task;
+    var $series     = Flows.$series;
+    var $task       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

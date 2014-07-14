@@ -16,14 +16,14 @@
 
 //@Require('Class')
 //@Require('airbug.CommandModule')
-//@Require('carapace.DivView')
 //@Require('airbug.ImageUploadContainer')
-//@Require('carapace.ModalView')
-//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.DivView')
+//@Require('carapace.ModalView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -37,28 +37,28 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                                   = bugpack.require('Class');
-    var CommandModule                           = bugpack.require('airbug.CommandModule');
-    var DivView                                 = bugpack.require('carapace.DivView');
-    var ImageUploadContainer                    = bugpack.require('airbug.ImageUploadContainer');
-    var ModalView                               = bugpack.require('carapace.ModalView');
-    var TextView                                = bugpack.require('carapace.TextView');
-    var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
+    var Class                   = bugpack.require('Class');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var ImageUploadContainer    = bugpack.require('airbug.ImageUploadContainer');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var DivView                 = bugpack.require('carapace.DivView');
+    var ModalView               = bugpack.require('carapace.ModalView');
+    var TextView                = bugpack.require('carapace.TextView');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                               = AutowiredTag.autowired;
-    var bugmeta                                 = BugMeta.context();
-    var CommandType                             = CommandModule.CommandType;
-    var property                                = PropertyTag.property;
-    var view                                    = ViewBuilder.view;
+    var autowired               = AutowiredTag.autowired;
+    var bugmeta                 = BugMeta.context();
+    var CommandType             = CommandModule.CommandType;
+    var property                = PropertyTag.property;
+    var view                    = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

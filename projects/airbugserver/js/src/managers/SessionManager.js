@@ -39,27 +39,27 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var Map                         = bugpack.require('Map');
-    var Set                         = bugpack.require('Set');
-    var TypeUtil                    = bugpack.require('TypeUtil');
-    var Cookie                      = bugpack.require('airbugserver.Cookie');
-    var Session                     = bugpack.require('airbugserver.Session');
-    var SessionData                 = bugpack.require('airbugserver.SessionData');
-    var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Map                 = bugpack.require('Map');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var Cookie              = bugpack.require('airbugserver.Cookie');
+    var Session             = bugpack.require('airbugserver.Session');
+    var SessionData         = bugpack.require('airbugserver.SessionData');
+    var EntityManager       = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var entityManager               = EntityManagerTag.entityManager;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var entityManager       = EntityManagerTag.entityManager;
 
 
     //-------------------------------------------------------------------------------

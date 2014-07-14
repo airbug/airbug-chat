@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,20 +20,20 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('airbug.AccountDropdownButtonContainer')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorOverlayWidgetContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.HomeButtonContainer')
-//@Require('carapace.OverlayViewEvent')
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomChatBoxContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.RoomModel')
 //@Require('airbug.ShareRoomContainer')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.OverlayViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -43,20 +53,20 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorOverlayWidgetContainer    = bugpack.require('airbug.CodeEditorOverlayWidgetContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-    var OverlayViewEvent                    = bugpack.require('carapace.OverlayViewEvent');
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomChatBoxContainer                = bugpack.require('airbug.RoomChatBoxContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
     var RoomModel                           = bugpack.require('airbug.RoomModel');
     var ShareRoomContainer                  = bugpack.require('airbug.ShareRoomContainer');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
+    var OverlayViewEvent                    = bugpack.require('carapace.OverlayViewEvent');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

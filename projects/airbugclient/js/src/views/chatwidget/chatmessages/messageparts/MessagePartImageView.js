@@ -15,8 +15,8 @@
 //@Export('airbug.MessagePartImageView')
 
 //@Require('Class')
-//@Require('carapace.ImageViewEvent')
 //@Require('airbug.MessagePartView')
+//@Require('carapace.ImageViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
-    var ImageViewEvent      = bugpack.require('carapace.ImageViewEvent');
     var MessagePartView     = bugpack.require('airbug.MessagePartView');
+    var ImageViewEvent      = bugpack.require('carapace.ImageViewEvent');
 
 
     //-------------------------------------------------------------------------------

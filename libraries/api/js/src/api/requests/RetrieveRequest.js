@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Exception               = bugpack.require('Exception');
-    var Obj                     = bugpack.require('Obj');
-    var ApiDefines              = bugpack.require('airbug.ApiDefines');
-    var ApiRequest              = bugpack.require('airbug.ApiRequest');
+    var Bug         = bugpack.require('Bug');
+    var Class       = bugpack.require('Class');
+    var Exception   = bugpack.require('Exception');
+    var Obj         = bugpack.require('Obj');
+    var ApiDefines  = bugpack.require('airbug.ApiDefines');
+    var ApiRequest  = bugpack.require('airbug.ApiRequest');
 
 
     //-------------------------------------------------------------------------------

@@ -17,15 +17,15 @@
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('carapace.BoxWithHeaderAndFooterView')
 //@Require('airbug.LoginFormContainer')
-//@Require('carapace.PageView')
-//@Require('carapace.PanelView')
 //@Require('airbug.SignupButtonContainer')
-//@Require('carapace.TextView')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxWithHeaderAndFooterView')
+//@Require('carapace.PageView')
+//@Require('carapace.PanelView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -42,15 +42,15 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
     var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
-    var BoxWithHeaderAndFooterView      = bugpack.require('carapace.BoxWithHeaderAndFooterView');
     var LoginFormContainer              = bugpack.require('airbug.LoginFormContainer');
+    var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var BoxWithHeaderAndFooterView      = bugpack.require('carapace.BoxWithHeaderAndFooterView');
     var PageView                        = bugpack.require('carapace.PageView');
     var PanelView                       = bugpack.require('carapace.PanelView');
-    var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
     var TextView                        = bugpack.require('carapace.TextView');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 

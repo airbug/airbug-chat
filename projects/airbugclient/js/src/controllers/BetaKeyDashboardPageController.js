@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var ApplicationController           = bugpack.require('airbug.ApplicationController');
     var BetaKeyDashboardPageContainer   = bugpack.require('airbug.BetaKeyDashboardPageContainer');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag            = bugpack.require('carapace.ControllerTag');
+    var ControllerTag                   = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------

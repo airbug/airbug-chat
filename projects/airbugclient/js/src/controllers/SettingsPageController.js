@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -31,19 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var ApplicationController       = bugpack.require('airbug.ApplicationController');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag        = bugpack.require('carapace.ControllerTag');
-    var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ControllerTag           = bugpack.require('carapace.ControllerTag');
+    var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var controller                  = ControllerTag.controller;
+    var bugmeta                 = BugMeta.context();
+    var controller              = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------

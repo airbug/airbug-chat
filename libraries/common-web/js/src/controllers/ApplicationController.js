@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,9 +15,9 @@
 //@Export('airbug.ApplicationController')
 
 //@Require('Class')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceController')
 
 
@@ -30,20 +31,20 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
-    var CarapaceController          = bugpack.require('carapace.CarapaceController');
+    var Class               = bugpack.require('Class');
+    var AutowiredTag        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var CarapaceController  = bugpack.require('carapace.CarapaceController');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredTag.autowired;
-    var property                    = PropertyTag.property;
+    var bugmeta             = BugMeta.context();
+    var autowired           = AutowiredTag.autowired;
+    var property            = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,12 +19,12 @@
 //@Require('Exception')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
-//@Require('carapace.PanelWithHeaderView')
 //@Require('airbug.ProfileSettingsFormContainer')
 //@Require('airbug.SettingsPageContainer')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -28,28 +38,28 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var ClearChange                         = bugpack.require('ClearChange');
-    var Exception                           = bugpack.require('Exception');
-    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
-    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
-    var ProfileSettingsFormContainer        = bugpack.require('airbug.ProfileSettingsFormContainer');
-    var SettingsPageContainer               = bugpack.require('airbug.SettingsPageContainer');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var ClearChange                     = bugpack.require('ClearChange');
+    var Exception                       = bugpack.require('Exception');
+    var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
+    var SetPropertyChange               = bugpack.require('SetPropertyChange');
+    var ProfileSettingsFormContainer    = bugpack.require('airbug.ProfileSettingsFormContainer');
+    var SettingsPageContainer           = bugpack.require('airbug.SettingsPageContainer');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var PanelWithHeaderView             = bugpack.require('carapace.PanelWithHeaderView');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired                       = AutowiredTag.autowired;
+    var bugmeta                         = BugMeta.context();
+    var property                        = PropertyTag.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

@@ -15,7 +15,6 @@
 //@Export('airbug.MessagePartCodeContainer')
 
 //@Require('Class')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.ChatMessageTinkerButtonContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.MessagePartCodeView')
@@ -23,6 +22,7 @@
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -37,14 +37,14 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                               = bugpack.require('Class');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var ChatMessageTinkerButtonContainer    = bugpack.require('airbug.ChatMessageTinkerButtonContainer');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var MessagePartCodeView                 = bugpack.require('airbug.MessagePartCodeView');
     var MessagePartContainer                = bugpack.require('airbug.MessagePartContainer');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

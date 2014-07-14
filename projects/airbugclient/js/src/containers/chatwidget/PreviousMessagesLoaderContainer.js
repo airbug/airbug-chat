@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,8 +15,8 @@
 //@Export('airbug.PreviousMessagesLoaderContainer')
 
 //@Require('Class')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.PreviousMessagesLoaderView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
@@ -21,18 +31,18 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                                   = bugpack.require('Class');
-    var ButtonViewEvent                         = bugpack.require('carapace.ButtonViewEvent');
-    var PreviousMessagesLoaderView              = bugpack.require('airbug.PreviousMessagesLoaderView');
-    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
+    var Class                       = bugpack.require('Class');
+    var PreviousMessagesLoaderView  = bugpack.require('airbug.PreviousMessagesLoaderView');
+    var ButtonViewEvent             = bugpack.require('carapace.ButtonViewEvent');
+    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var view                                    = ViewBuilder.view;
+    var view                        = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

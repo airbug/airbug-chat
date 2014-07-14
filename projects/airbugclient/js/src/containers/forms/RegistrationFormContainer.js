@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,12 +18,12 @@
 //@Require('Exception')
 //@Require('airbug.CommandModule')
 //@Require('airbug.RegistrationFormView')
-//@Require('carapace.FormViewEvent')
 //@Require('airbug.RoomModel')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.FormViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -31,12 +41,12 @@ require('bugpack').context("*", function(bugpack) {
     var Exception               = bugpack.require('Exception');
     var CommandModule           = bugpack.require('airbug.CommandModule');
     var RegistrationFormView    = bugpack.require('airbug.RegistrationFormView');
-    var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
     var RoomModel               = bugpack.require('airbug.RoomModel');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
     var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 

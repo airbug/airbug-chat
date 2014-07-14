@@ -16,6 +16,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('airbug.AirbugStaticConfig')
 //@Require('airbugserver.AirbugServerConfig')
@@ -23,7 +24,6 @@
 //@Require('airbugserver.SessionServiceConfig')
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
@@ -46,42 +46,42 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var connect                         = require('connect');
-    var cookie                          = require('cookie');
-    var cookie_signature                = require('cookie-signature');
-    var express                         = require('express');
-    var github                          = require('github');
-    var http                            = require('http');
-    var https                           = require('https');
-    var imagemagick                     = require('imagemagick');
-    var mongoose                        = require('mongoose');
-    var mu2express                      = require('mu2express');
-    var path                            = require('path');
+    var connect                 = require('connect');
+    var cookie                  = require('cookie');
+    var cookie_signature        = require('cookie-signature');
+    var express                 = require('express');
+    var github                  = require('github');
+    var http                    = require('http');
+    var https                   = require('https');
+    var imagemagick             = require('imagemagick');
+    var mongoose                = require('mongoose');
+    var mu2express              = require('mu2express');
+    var path                    = require('path');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var AirbugStaticConfig              = bugpack.require('airbug.AirbugStaticConfig');
-    var AirbugServerConfig              = bugpack.require('airbugserver.AirbugServerConfig');
-    var GithubApi                       = bugpack.require('airbugserver.GithubApi');
-    var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
-    var AwsConfig                       = bugpack.require('aws.AwsConfig');
-    var AwsUploader                     = bugpack.require('aws.AwsUploader');
-    var Flows                         = bugpack.require('Flows');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ConfigurationTag         = bugpack.require('bugioc.ConfigurationTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var ExpressApp                      = bugpack.require('express.ExpressApp');
-    var ExpressServer                   = bugpack.require('express.ExpressServer');
-    var SocketIoManager                 = bugpack.require('socketio.SocketIoManager');
-    var SocketIoServer                  = bugpack.require('socketio.SocketIoServer');
-    var SocketIoServerConfig            = bugpack.require('socketio.SocketIoServerConfig');
+    var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var AirbugStaticConfig      = bugpack.require('airbug.AirbugStaticConfig');
+    var AirbugServerConfig      = bugpack.require('airbugserver.AirbugServerConfig');
+    var GithubApi               = bugpack.require('airbugserver.GithubApi');
+    var SessionServiceConfig    = bugpack.require('airbugserver.SessionServiceConfig');
+    var AwsConfig               = bugpack.require('aws.AwsConfig');
+    var AwsUploader             = bugpack.require('aws.AwsUploader');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var ConfigurationTag        = bugpack.require('bugioc.ConfigurationTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ExpressApp              = bugpack.require('express.ExpressApp');
+    var ExpressServer           = bugpack.require('express.ExpressServer');
+    var SocketIoManager         = bugpack.require('socketio.SocketIoManager');
+    var SocketIoServer          = bugpack.require('socketio.SocketIoServer');
+    var SocketIoServerConfig    = bugpack.require('socketio.SocketIoServerConfig');
 
 
     //-------------------------------------------------------------------------------

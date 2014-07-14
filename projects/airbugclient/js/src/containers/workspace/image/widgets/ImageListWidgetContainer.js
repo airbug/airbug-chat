@@ -16,6 +16,7 @@
 
 //@Require('AddChange')
 //@Require('Class')
+//@Require('Flows')
 //@Require('ISet')
 //@Require('List')
 //@Require('Map')
@@ -25,26 +26,25 @@
 //@Require('RemovePropertyChange')
 //@Require('Set')
 //@Require('SetPropertyChange')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
 //@Require('airbug.CommandModule')
-//@Require('carapace.IconView')
 //@Require('airbug.ImageAssetModel')
 //@Require('airbug.ImageListContainer')
-//@Require('carapace.TabsView')
-//@Require('carapace.TabView')
-//@Require('carapace.TabViewEvent')
-//@Require('carapace.TextView')
 //@Require('airbug.UserImageAssetModel')
 //@Require('airbug.UserImageAssetStreamModel')
 //@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
-//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.IconView')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.TabView')
+//@Require('carapace.TabViewEvent')
+//@Require('carapace.TabsView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -60,6 +60,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var AddChange                           = bugpack.require('AddChange');
     var Class                               = bugpack.require('Class');
+    var Flows                             = bugpack.require('Flows');
     var ISet                                = bugpack.require('ISet');
     var List                                = bugpack.require('List');
     var Map                                 = bugpack.require('Map');
@@ -69,26 +70,25 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
     var Set                                 = bugpack.require('Set');
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
-    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var IconView                            = bugpack.require('carapace.IconView');
     var ImageAssetModel                     = bugpack.require('airbug.ImageAssetModel');
     var ImageListContainer                  = bugpack.require('airbug.ImageListContainer');
-    var TabsView                            = bugpack.require('carapace.TabsView');
-    var TabView                             = bugpack.require('carapace.TabView');
-    var TabViewEvent                        = bugpack.require('carapace.TabViewEvent');
-    var TextView                            = bugpack.require('carapace.TextView');
     var UserImageAssetModel                 = bugpack.require('airbug.UserImageAssetModel');
     var UserImageAssetStreamModel           = bugpack.require('airbug.UserImageAssetStreamModel');
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
     var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var Flows                             = bugpack.require('Flows');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var ButtonGroupView                     = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView                   = bugpack.require('carapace.ButtonToolbarView');
+    var IconView                            = bugpack.require('carapace.IconView');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
+    var TabView                             = bugpack.require('carapace.TabView');
+    var TabViewEvent                        = bugpack.require('carapace.TabViewEvent');
+    var TabsView                            = bugpack.require('carapace.TabsView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

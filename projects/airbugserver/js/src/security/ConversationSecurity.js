@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,11 +18,11 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 //@Require('bugfs.Path')
-//@Require('bugioc.PropertyTag')
 //@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -26,26 +36,26 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Exception               = bugpack.require('Exception');
-    var Obj                     = bugpack.require('Obj');
-    var Flows                 = bugpack.require('Flows');
-    var Path                    = bugpack.require('bugfs.Path');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var Bug             = bugpack.require('Bug');
+    var Class           = bugpack.require('Class');
+    var Exception       = bugpack.require('Exception');
+    var Flows           = bugpack.require('Flows');
+    var Obj             = bugpack.require('Obj');
+    var Path            = bugpack.require('bugfs.Path');
+    var ModuleTag       = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var module                  = ModuleTag.module;
-    var property                = PropertyTag.property;
-    var $series                 = Flows.$series;
-    var $task                   = Flows.$task;
+    var bugmeta         = BugMeta.context();
+    var module          = ModuleTag.module;
+    var property        = PropertyTag.property;
+    var $series         = Flows.$series;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

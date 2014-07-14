@@ -19,6 +19,7 @@
 //@Require('Class')
 //@Require('Collections')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('Url')
@@ -27,7 +28,6 @@
 //@Require('aws.AwsUploader')
 //@Require('aws.S3Api')
 //@Require('aws.S3Bucket')
-//@Require('Flows')
 //@Require('bugfs.Path')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
@@ -44,45 +44,45 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var path                    = require('path');
-    var http                    = require('http');
-    var https                   = require('https');
-    var fs                      = require('fs');
+    var path                = require('path');
+    var http                = require('http');
+    var https               = require('https');
+    var fs                  = require('fs');
 
 
     //-------------------------------------------------------------------------------
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Collections             = bugpack.require('Collections');
-    var Exception               = bugpack.require('Exception');
-    var MappedThrowable         = bugpack.require('MappedThrowable');
-    var Obj                     = bugpack.require('Obj');
-    var Url                     = bugpack.require('Url');
-    var UuidGenerator           = bugpack.require('UuidGenerator');
-    var AwsConfig               = bugpack.require('aws.AwsConfig');
-    var AwsUploader             = bugpack.require('aws.AwsUploader');
-    var S3Api                   = bugpack.require('aws.S3Api');
-    var S3Bucket                = bugpack.require('aws.S3Bucket');
-    var Flows                 = bugpack.require('Flows');
-    var Path                    = bugpack.require('bugfs.Path');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Collections         = bugpack.require('Collections');
+    var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
+    var MappedThrowable     = bugpack.require('MappedThrowable');
+    var Obj                 = bugpack.require('Obj');
+    var Url                 = bugpack.require('Url');
+    var UuidGenerator       = bugpack.require('UuidGenerator');
+    var AwsConfig           = bugpack.require('aws.AwsConfig');
+    var AwsUploader         = bugpack.require('aws.AwsUploader');
+    var S3Api               = bugpack.require('aws.S3Api');
+    var S3Bucket            = bugpack.require('aws.S3Bucket');
+    var Path                = bugpack.require('bugfs.Path');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgTag.arg;
-    var bugmeta                 = BugMeta.context();
-    var module                  = ModuleTag.module;
-    var $series                 = Flows.$series;
-    var $task                   = Flows.$task;
-    var $forEachParallel        = Flows.$forEachParallel;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+    var $forEachParallel    = Flows.$forEachParallel;
 
 
     //-------------------------------------------------------------------------------

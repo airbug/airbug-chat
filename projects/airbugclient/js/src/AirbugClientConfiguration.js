@@ -26,9 +26,9 @@
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
+//@Require('socketio.BrowserSocketIoFactory')
 //@Require('socketio.SocketIoClient')
 //@Require('socketio.SocketIoConfig')
-//@Require('socketio.BrowserSocketIoFactory')
 //@Require('sonarbugclient.SonarbugClient')
 
 
@@ -42,31 +42,31 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Obj                         = bugpack.require('Obj');
-    var AirbugStaticConfig          = bugpack.require('airbug.AirbugStaticConfig');
-    var DocumentUtil                = bugpack.require('airbug.DocumentUtil');
-    var MemoryCache                 = bugpack.require('airbug.MemoryCache');
-    var WindowUtil                  = bugpack.require('airbug.WindowUtil');
-    var Call                        = bugpack.require('bugcall.Call');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var SocketIoClient              = bugpack.require('socketio.SocketIoClient');
-    var SocketIoConfig              = bugpack.require('socketio.SocketIoConfig');
-    var BrowserSocketIoFactory      = bugpack.require('socketio.BrowserSocketIoFactory');
-    var SonarbugClient              = bugpack.require('sonarbugclient.SonarbugClient');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var AirbugStaticConfig      = bugpack.require('airbug.AirbugStaticConfig');
+    var DocumentUtil            = bugpack.require('airbug.DocumentUtil');
+    var MemoryCache             = bugpack.require('airbug.MemoryCache');
+    var WindowUtil              = bugpack.require('airbug.WindowUtil');
+    var Call                    = bugpack.require('bugcall.Call');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var ConfigurationTag        = bugpack.require('bugioc.ConfigurationTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var BrowserSocketIoFactory  = bugpack.require('socketio.BrowserSocketIoFactory');
+    var SocketIoClient          = bugpack.require('socketio.SocketIoClient');
+    var SocketIoConfig          = bugpack.require('socketio.SocketIoConfig');
+    var SonarbugClient          = bugpack.require('sonarbugclient.SonarbugClient');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var configuration               = ConfigurationTag.configuration;
-    var module                      = ModuleTag.module;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var configuration           = ConfigurationTag.configuration;
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

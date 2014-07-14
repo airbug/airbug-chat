@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,10 +15,10 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('airbugserver.UserAssetPusher')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
-//@Require('airbugserver.UserAssetPusher')
 
 
 //-------------------------------------------------------------------------------
@@ -23,10 +33,10 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var UserAssetPusher         = bugpack.require('airbugserver.UserAssetPusher');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
-var UserAssetPusher         = bugpack.require('airbugserver.UserAssetPusher');
 
 
 //-------------------------------------------------------------------------------

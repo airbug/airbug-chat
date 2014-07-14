@@ -34,14 +34,14 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var ArgUtil                 = bugpack.require('ArgUtil');
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Event                   = bugpack.require('Event');
-    var EventDispatcher         = bugpack.require('EventDispatcher');
-    var Exception               = bugpack.require('Exception');
-    var List                    = bugpack.require('List');
-    var ApiDefines              = bugpack.require('airbug.ApiDefines');
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Event               = bugpack.require('Event');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var Exception           = bugpack.require('Exception');
+    var List                = bugpack.require('List');
+    var ApiDefines          = bugpack.require('airbug.ApiDefines');
 
 
     //-------------------------------------------------------------------------------

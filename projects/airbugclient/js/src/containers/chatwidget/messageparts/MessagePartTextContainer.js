@@ -30,17 +30,17 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var MessagePartContainer                = bugpack.require('airbug.MessagePartContainer');
-    var MessagePartTextView                 = bugpack.require('airbug.MessagePartTextView');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                   = bugpack.require('Class');
+    var MessagePartContainer    = bugpack.require('airbug.MessagePartContainer');
+    var MessagePartTextView     = bugpack.require('airbug.MessagePartTextView');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var view                                = ViewBuilder.view;
+    var view                    = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

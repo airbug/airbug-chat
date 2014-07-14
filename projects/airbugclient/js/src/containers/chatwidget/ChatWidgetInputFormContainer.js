@@ -15,10 +15,14 @@
 //@Export('airbug.ChatWidgetInputFormContainer')
 
 //@Require('Class')
+//@Require('airbug.CommandModule')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ButtonDropdownView')
 //@Require('carapace.ButtonViewEvent')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.CheckBoxInputView')
-//@Require('airbug.CommandModule')
 //@Require('carapace.DivView')
 //@Require('carapace.DropdownItemDividerView')
 //@Require('carapace.DropdownItemView')
@@ -35,10 +39,6 @@
 //@Require('carapace.TextAreaView')
 //@Require('carapace.TextView')
 //@Require('carapace.TwoColumnView')
-//@Require('bugioc.AutowiredTag')
-//@Require('bugioc.PropertyTag')
-//@Require('bugmeta.BugMeta')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -52,43 +52,43 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var ButtonDropdownView              = bugpack.require('carapace.ButtonDropdownView');
-    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
-    var CheckBoxInputView               = bugpack.require('carapace.CheckBoxInputView');
-    var CommandModule                   = bugpack.require('airbug.CommandModule');
-    var DivView                         = bugpack.require('carapace.DivView');
-    var DropdownItemDividerView         = bugpack.require('carapace.DropdownItemDividerView');
-    var DropdownItemView                = bugpack.require('carapace.DropdownItemView');
-    var DropdownViewEvent               = bugpack.require('carapace.DropdownViewEvent');
-    var FormControlGroupView            = bugpack.require('carapace.FormControlGroupView');
-    var FormView                        = bugpack.require('carapace.FormView');
-    var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
-    var IconView                        = bugpack.require('carapace.IconView');
-    var KeyBoardEvent                   = bugpack.require('carapace.KeyBoardEvent');
-    var LabelView                       = bugpack.require('carapace.LabelView');
-    var MultiColumnView                 = bugpack.require('carapace.MultiColumnView');
-    var NakedButtonDropdownView         = bugpack.require('carapace.NakedButtonDropdownView');
-    var NakedButtonView                 = bugpack.require('carapace.NakedButtonView');
-    var TextAreaView                    = bugpack.require('carapace.TextAreaView');
-    var TextView                        = bugpack.require('carapace.TextView');
-    var TwoColumnView                   = bugpack.require('carapace.TwoColumnView');
-    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+    var Class                       = bugpack.require('Class');
+    var CommandModule               = bugpack.require('airbug.CommandModule');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var ButtonDropdownView          = bugpack.require('carapace.ButtonDropdownView');
+    var ButtonViewEvent             = bugpack.require('carapace.ButtonViewEvent');
+    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var CheckBoxInputView           = bugpack.require('carapace.CheckBoxInputView');
+    var DivView                     = bugpack.require('carapace.DivView');
+    var DropdownItemDividerView     = bugpack.require('carapace.DropdownItemDividerView');
+    var DropdownItemView            = bugpack.require('carapace.DropdownItemView');
+    var DropdownViewEvent           = bugpack.require('carapace.DropdownViewEvent');
+    var FormControlGroupView        = bugpack.require('carapace.FormControlGroupView');
+    var FormView                    = bugpack.require('carapace.FormView');
+    var FormViewEvent               = bugpack.require('carapace.FormViewEvent');
+    var IconView                    = bugpack.require('carapace.IconView');
+    var KeyBoardEvent               = bugpack.require('carapace.KeyBoardEvent');
+    var LabelView                   = bugpack.require('carapace.LabelView');
+    var MultiColumnView             = bugpack.require('carapace.MultiColumnView');
+    var NakedButtonDropdownView     = bugpack.require('carapace.NakedButtonDropdownView');
+    var NakedButtonView             = bugpack.require('carapace.NakedButtonView');
+    var TextAreaView                = bugpack.require('carapace.TextAreaView');
+    var TextView                    = bugpack.require('carapace.TextView');
+    var TwoColumnView               = bugpack.require('carapace.TwoColumnView');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                       = AutowiredTag.autowired;
-    var bugmeta                         = BugMeta.context();
-    var CommandType                     = CommandModule.CommandType;
-    var property                        = PropertyTag.property;
-    var view                            = ViewBuilder.view;
+    var autowired                   = AutowiredTag.autowired;
+    var bugmeta                     = BugMeta.context();
+    var CommandType                 = CommandModule.CommandType;
+    var property                    = PropertyTag.property;
+    var view                        = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

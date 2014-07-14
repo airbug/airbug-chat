@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -5,8 +15,8 @@
 //@TestFile
 
 //@Require('UuidGenerator')
-//@Require('airbugserver.User')
 //@Require('airbugserver.Github')
+//@Require('airbugserver.User')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 
@@ -23,8 +33,8 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var UuidGenerator           = bugpack.require('UuidGenerator');
-var User                    = bugpack.require('airbugserver.User');
 var Github                  = bugpack.require('airbugserver.Github');
+var User                    = bugpack.require('airbugserver.User');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestTag          = bugpack.require('bugunit.TestTag');
 

@@ -28,8 +28,8 @@ require("bugpack").loadContext(module, function(error, bugpack) {
                 // BugPack
                 //-------------------------------------------------------------------------------
 
-                var Application                 = bugpack.require("bugapp.Application");
                 var AirbugServerApplication     = bugpack.require("airbugserver.AirbugServerApplication");
+                var Application                 = bugpack.require("bugapp.Application");
 
 
                 //-------------------------------------------------------------------------------

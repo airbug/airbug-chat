@@ -16,12 +16,12 @@
 
 //@Require('Class')
 //@Require('airbug.CommandModule')
-//@Require('carapace.ImageViewEvent')
 //@Require('airbug.MessagePartContainer')
 //@Require('airbug.MessagePartImageView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.ImageViewEvent')
 //@Require('carapace.ViewBuilder')
 
 
@@ -35,26 +35,26 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var CommandModule                       = bugpack.require('airbug.CommandModule');
-    var ImageViewEvent                      = bugpack.require('carapace.ImageViewEvent');
-    var MessagePartContainer                = bugpack.require('airbug.MessagePartContainer');
-    var MessagePartImageView                = bugpack.require('airbug.MessagePartImageView');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                   = bugpack.require('Class');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var MessagePartContainer    = bugpack.require('airbug.MessagePartContainer');
+    var MessagePartImageView    = bugpack.require('airbug.MessagePartImageView');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ImageViewEvent          = bugpack.require('carapace.ImageViewEvent');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var CommandType                         = CommandModule.CommandType;
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired               = AutowiredTag.autowired;
+    var bugmeta                 = BugMeta.context();
+    var CommandType             = CommandModule.CommandType;
+    var property                = PropertyTag.property;
+    var view                    = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

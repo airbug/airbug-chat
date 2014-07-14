@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,23 +18,23 @@
 //@Require('airbug.AccountDropdownButtonContainer')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.BetaKeyModel')
-//@Require('carapace.ButtonViewEvent')
+//@Require('airbug.HomeButtonContainer')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.FormControlGroupView')
 //@Require('carapace.FormView')
 //@Require('carapace.FormViewEvent')
-//@Require('airbug.HomeButtonContainer')
-//@Require('carapace.PageView')
-//@Require('carapace.PanelWithHeaderView')
 //@Require('carapace.InputView')
 //@Require('carapace.NakedSubmitButtonView')
+//@Require('carapace.PageView')
+//@Require('carapace.PanelWithHeaderView')
 //@Require('carapace.TableDataView')
 //@Require('carapace.TableHeadingView')
 //@Require('carapace.TableRowView')
 //@Require('carapace.TableView')
-//@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredTag')
-//@Require('bugioc.PropertyTag')
 //@Require('carapace.ViewBuilder')
 
 
@@ -38,37 +48,37 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var AccountDropdownButtonContainer      = bugpack.require('airbug.AccountDropdownButtonContainer');
-    var ApplicationContainer                = bugpack.require('airbug.ApplicationContainer');
-    var BetaKeyModel                        = bugpack.require('airbug.BetaKeyModel');
-    var ButtonViewEvent                     = bugpack.require('carapace.ButtonViewEvent');
-    var ButtonView                          = bugpack.require('carapace.ButtonView');
-    var FormView                            = bugpack.require('carapace.FormView');
-    var FormViewEvent                       = bugpack.require('carapace.FormViewEvent');
-    var HomeButtonContainer                 = bugpack.require('airbug.HomeButtonContainer');
-    var InputView                           = bugpack.require('carapace.InputView');
-    var PageView                            = bugpack.require('carapace.PageView');
-    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
-    var NakedSubmitButtonView               = bugpack.require('carapace.NakedSubmitButtonView');
-    var TableDataView                       = bugpack.require('carapace.TableDataView');
-    var TableHeadingView                    = bugpack.require('carapace.TableHeadingView');
-    var TableRowView                        = bugpack.require('carapace.TableRowView');
-    var TableView                           = bugpack.require('carapace.TableView');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var Class                           = bugpack.require('Class');
+    var AccountDropdownButtonContainer  = bugpack.require('airbug.AccountDropdownButtonContainer');
+    var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
+    var BetaKeyModel                    = bugpack.require('airbug.BetaKeyModel');
+    var HomeButtonContainer             = bugpack.require('airbug.HomeButtonContainer');
+    var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var ButtonView                      = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent                 = bugpack.require('carapace.ButtonViewEvent');
+    var FormView                        = bugpack.require('carapace.FormView');
+    var FormViewEvent                   = bugpack.require('carapace.FormViewEvent');
+    var InputView                       = bugpack.require('carapace.InputView');
+    var NakedSubmitButtonView           = bugpack.require('carapace.NakedSubmitButtonView');
+    var PageView                        = bugpack.require('carapace.PageView');
+    var PanelWithHeaderView             = bugpack.require('carapace.PanelWithHeaderView');
+    var TableDataView                   = bugpack.require('carapace.TableDataView');
+    var TableHeadingView                = bugpack.require('carapace.TableHeadingView');
+    var TableRowView                    = bugpack.require('carapace.TableRowView');
+    var TableView                       = bugpack.require('carapace.TableView');
+    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
+    var autowired                       = AutowiredTag.autowired;
+    var bugmeta                         = BugMeta.context();
+    var property                        = PropertyTag.property;
+    var view                            = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

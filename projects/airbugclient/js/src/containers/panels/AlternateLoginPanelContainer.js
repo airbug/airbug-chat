@@ -16,8 +16,8 @@
 
 //@Require('Class')
 //@Require('airbug.GithubLoginButtonContainer')
-//@Require('carapace.PanelView')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.PanelView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -31,18 +31,18 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var GithubLoginButtonContainer      = bugpack.require('airbug.GithubLoginButtonContainer');
-    var PanelView                       = bugpack.require('carapace.PanelView');
-    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
+    var Class                       = bugpack.require('Class');
+    var GithubLoginButtonContainer  = bugpack.require('airbug.GithubLoginButtonContainer');
+    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
+    var PanelView                   = bugpack.require('carapace.PanelView');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var view                            = ViewBuilder.view;
+    var view                        = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

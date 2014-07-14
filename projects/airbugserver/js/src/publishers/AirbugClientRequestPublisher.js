@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,9 +18,9 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Map')
 //@Require('bugcall.CallRequestPublisher')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -29,11 +39,11 @@ require('bugpack').context("*", function(bugpack) {
     var ArgUtil                 = bugpack.require('ArgUtil');
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
+    var Flows                   = bugpack.require('Flows');
     var Map                     = bugpack.require('Map');
     var CallRequestPublisher    = bugpack.require('bugcall.CallRequestPublisher');
-    var Flows                 = bugpack.require('Flows');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 

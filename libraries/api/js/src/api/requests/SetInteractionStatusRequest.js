@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var ApiRequest              = bugpack.require('airbug.ApiRequest');
+    var Class       = bugpack.require('Class');
+    var ApiRequest  = bugpack.require('airbug.ApiRequest');
 
 
     //-------------------------------------------------------------------------------

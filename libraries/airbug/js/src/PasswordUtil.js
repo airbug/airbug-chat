@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -28,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var Obj             = bugpack.require('Obj');
-    var TypeUtil        = bugpack.require('TypeUtil');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var TypeUtil    = bugpack.require('TypeUtil');
 
 
     //-------------------------------------------------------------------------------

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,9 +16,9 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('airbugserver.Asset')
 //@Require('airbugserver.AssetService')
-//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -25,27 +35,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Exception           = bugpack.require('Exception');
-    var Session             = bugpack.require('airbugserver.Session');
-    var Asset               = bugpack.require('airbugserver.Asset');
-    var AssetService        = bugpack.require('airbugserver.AssetService');
-    var Flows             = bugpack.require('Flows');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var TestTag      = bugpack.require('bugunit.TestTag');
-    var BugYarn             = bugpack.require('bugyarn.BugYarn');
-    var Logger              = bugpack.require('loggerbug.Logger');
+    var Class           = bugpack.require('Class');
+    var Exception       = bugpack.require('Exception');
+    var Flows           = bugpack.require('Flows');
+    var Asset           = bugpack.require('airbugserver.Asset');
+    var AssetService    = bugpack.require('airbugserver.AssetService');
+    var Session         = bugpack.require('airbugserver.Session');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
+    var Logger          = bugpack.require('loggerbug.Logger');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var bugyarn             = BugYarn.context();
-    var test                = TestTag.test;
-    var $series             = Flows.$series;
-    var $task               = Flows.$task;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
+    var $series         = Flows.$series;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -17,9 +18,9 @@
 //@Require('Class')
 //@Require('airbug.ApplicationController')
 //@Require('airbug.RoomPageContainer')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ControllerTag')
 //@Require('carapace.RoutingRequest')
 
@@ -34,24 +35,24 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var ApplicationController       = bugpack.require('airbug.ApplicationController');
-    var RoomPageContainer           = bugpack.require('airbug.RoomPageContainer');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
-    var ControllerTag        = bugpack.require('carapace.ControllerTag');
-    var RoutingRequest              = bugpack.require('carapace.RoutingRequest');
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var RoomPageContainer       = bugpack.require('airbug.RoomPageContainer');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ControllerTag           = bugpack.require('carapace.ControllerTag');
+    var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var autowired                   = AutowiredTag.autowired;
-    var controller                  = ControllerTag.controller;
-    var property                    = PropertyTag.property;
+    var bugmeta                 = BugMeta.context();
+    var autowired               = AutowiredTag.autowired;
+    var controller              = ControllerTag.controller;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

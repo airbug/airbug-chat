@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -7,15 +17,15 @@
 //@Require('Class')
 //@Require('airbug.ApplicationContainer')
 //@Require('airbug.CommandModule')
-//@Require('carapace.FourColumnView')
-//@Require('carapace.MultiColumnView')
-//@Require('carapace.PageView')
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWrapperContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.FourColumnView')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.PageView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -32,15 +42,15 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
     var CommandModule               = bugpack.require('airbug.CommandModule');
-    var FourColumnView              = bugpack.require('carapace.FourColumnView');
-    var MultiColumnView             = bugpack.require('carapace.MultiColumnView');
-    var PageView                    = bugpack.require('carapace.PageView');
     var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
     var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
     var WorkspaceWrapperContainer   = bugpack.require('airbug.WorkspaceWrapperContainer');
-    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var FourColumnView              = bugpack.require('carapace.FourColumnView');
+    var MultiColumnView             = bugpack.require('carapace.MultiColumnView');
+    var PageView                    = bugpack.require('carapace.PageView');
     var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 

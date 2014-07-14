@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -8,22 +18,22 @@
 //@Require('ClearChange')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
-//@Require('carapace.BoxWithHeaderView')
 //@Require('airbug.ChatWidgetContainer')
 //@Require('airbug.ConversationModel')
-//@Require('carapace.MultiColumnView')
-//@Require('carapace.PanelView')
 //@Require('airbug.RoomMemberListPanelContainer')
 //@Require('airbug.RoomNameView')
 //@Require('airbug.RoomOptionsDropdownButtonContainer')
 //@Require('airbug.RoomsHamburgerButtonContainer')
-//@Require('carapace.SubheaderView')
-//@Require('carapace.TwoColumnView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxWithHeaderView')
 //@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.MultiColumnView')
+//@Require('carapace.PanelView')
+//@Require('carapace.SubheaderView')
+//@Require('carapace.TwoColumnView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -37,38 +47,38 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                                   = bugpack.require('Class');
-    var ClearChange                             = bugpack.require('ClearChange');
-    var RemovePropertyChange                    = bugpack.require('RemovePropertyChange');
-    var SetPropertyChange                       = bugpack.require('SetPropertyChange');
-    var BoxWithHeaderView                       = bugpack.require('carapace.BoxWithHeaderView');
-    var ChatWidgetContainer                     = bugpack.require('airbug.ChatWidgetContainer');
-    var ConversationModel                       = bugpack.require('airbug.ConversationModel');
-    var MultiColumnView                         = bugpack.require('carapace.MultiColumnView');
-    var PanelView                               = bugpack.require('carapace.PanelView');
-    var RoomMemberListPanelContainer            = bugpack.require('airbug.RoomMemberListPanelContainer');
-    var RoomNameView                            = bugpack.require('airbug.RoomNameView');
-    var RoomOptionsDropdownButtonContainer      = bugpack.require('airbug.RoomOptionsDropdownButtonContainer');
-    var RoomsHamburgerButtonContainer           = bugpack.require('airbug.RoomsHamburgerButtonContainer');
-    var SubheaderView                           = bugpack.require('carapace.SubheaderView');
-    var TwoColumnView                           = bugpack.require('carapace.TwoColumnView');
-    var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
-    var ModelBuilder                            = bugpack.require('carapace.ModelBuilder');
-    var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
+    var Class                               = bugpack.require('Class');
+    var ClearChange                         = bugpack.require('ClearChange');
+    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
+    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
+    var ChatWidgetContainer                 = bugpack.require('airbug.ChatWidgetContainer');
+    var ConversationModel                   = bugpack.require('airbug.ConversationModel');
+    var RoomMemberListPanelContainer        = bugpack.require('airbug.RoomMemberListPanelContainer');
+    var RoomNameView                        = bugpack.require('airbug.RoomNameView');
+    var RoomOptionsDropdownButtonContainer  = bugpack.require('airbug.RoomOptionsDropdownButtonContainer');
+    var RoomsHamburgerButtonContainer       = bugpack.require('airbug.RoomsHamburgerButtonContainer');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var BoxWithHeaderView                   = bugpack.require('carapace.BoxWithHeaderView');
+    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
+    var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
+    var MultiColumnView                     = bugpack.require('carapace.MultiColumnView');
+    var PanelView                           = bugpack.require('carapace.PanelView');
+    var SubheaderView                       = bugpack.require('carapace.SubheaderView');
+    var TwoColumnView                       = bugpack.require('carapace.TwoColumnView');
+    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                               = AutowiredTag.autowired;
-    var bugmeta                                 = BugMeta.context();
-    var model                                   = ModelBuilder.model;
-    var property                                = PropertyTag.property;
-    var view                                    = ViewBuilder.view;
+    var autowired                           = AutowiredTag.autowired;
+    var bugmeta                             = BugMeta.context();
+    var model                               = ModelBuilder.model;
+    var property                            = PropertyTag.property;
+    var view                                = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

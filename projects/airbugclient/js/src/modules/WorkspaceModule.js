@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -39,28 +40,28 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                             = bugpack.require('Bug');
-    var Class                           = bugpack.require('Class');
-    var Event                           = bugpack.require('Event');
-    var EventDispatcher                 = bugpack.require('EventDispatcher');
-    var Map                             = bugpack.require('Map');
-    var TypeUtil                        = bugpack.require('TypeUtil');
-    var CommandModule                   = bugpack.require('airbug.CommandModule');
-    var WorkspaceDefines                = bugpack.require('airbug.WorkspaceDefines');
-    var WorkspaceEvent                  = bugpack.require('airbug.WorkspaceEvent');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Event                   = bugpack.require('Event');
+    var EventDispatcher         = bugpack.require('EventDispatcher');
+    var Map                     = bugpack.require('Map');
+    var TypeUtil                = bugpack.require('TypeUtil');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var WorkspaceDefines        = bugpack.require('airbug.WorkspaceDefines');
+    var WorkspaceEvent          = bugpack.require('airbug.WorkspaceEvent');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

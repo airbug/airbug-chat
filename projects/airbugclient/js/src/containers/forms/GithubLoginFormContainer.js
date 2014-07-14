@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,22 +16,22 @@
 
 //@Require('Class')
 //@Require('Exception')
-//@Require('carapace.BoxView')
 //@Require('airbug.CommandModule')
-//@Require('carapace.InputView')
-//@Require('carapace.FormViewEvent')
 //@Require('airbug.GithubLoginFormView')
-//@Require('carapace.FormControlGroupView')
-//@Require('carapace.FormViewWithWrapper')
-//@Require('carapace.SelectOptionView')
-//@Require('carapace.SelectView')
-//@Require('carapace.SubmitButtonView')
 //@Require('airbug.RoomModel')
-//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxView')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.FormControlGroupView')
+//@Require('carapace.FormViewEvent')
+//@Require('carapace.FormViewWithWrapper')
+//@Require('carapace.InputView')
+//@Require('carapace.SelectOptionView')
+//@Require('carapace.SelectView')
+//@Require('carapace.SubmitButtonView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -35,25 +45,25 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var BoxView                     = bugpack.require('carapace.BoxView');
-    var CommandModule               = bugpack.require('airbug.CommandModule');
-    var InputView                   = bugpack.require('carapace.InputView');
-    var GithubLoginFormView         = bugpack.require('airbug.GithubLoginFormView');
-    var FormControlGroupView        = bugpack.require('carapace.FormControlGroupView');
-    var FormViewWithWrapper         = bugpack.require('carapace.FormViewWithWrapper');
-    var SelectOptionView            = bugpack.require('carapace.SelectOptionView');
-    var SelectView                  = bugpack.require('carapace.SelectView');
-    var SubmitButtonView            = bugpack.require('carapace.SubmitButtonView');
-    var FormViewEvent               = bugpack.require('carapace.FormViewEvent');
-    var RoomModel                   = bugpack.require('airbug.RoomModel');
-    var TextView                    = bugpack.require('carapace.TextView');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag         = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag          = bugpack.require('bugioc.PropertyTag');
-    var CarapaceContainer           = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var CommandModule           = bugpack.require('airbug.CommandModule');
+    var GithubLoginFormView     = bugpack.require('airbug.GithubLoginFormView');
+    var RoomModel               = bugpack.require('airbug.RoomModel');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var BoxView                 = bugpack.require('carapace.BoxView');
+    var CarapaceContainer       = bugpack.require('carapace.CarapaceContainer');
+    var FormControlGroupView    = bugpack.require('carapace.FormControlGroupView');
+    var FormViewEvent           = bugpack.require('carapace.FormViewEvent');
+    var FormViewWithWrapper     = bugpack.require('carapace.FormViewWithWrapper');
+    var InputView               = bugpack.require('carapace.InputView');
+    var SelectOptionView        = bugpack.require('carapace.SelectOptionView');
+    var SelectView              = bugpack.require('carapace.SelectView');
+    var SubmitButtonView        = bugpack.require('carapace.SubmitButtonView');
+    var TextView                = bugpack.require('carapace.TextView');
+    var ViewBuilder             = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------

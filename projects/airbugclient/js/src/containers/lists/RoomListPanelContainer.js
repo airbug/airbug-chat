@@ -18,6 +18,7 @@
 //@Require('Class')
 //@Require('ClearChange')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Map')
 //@Require('ObservableList')
 //@Require('RemoveChange')
@@ -26,21 +27,20 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.CommandModule')
 //@Require('airbug.CurrentUserModel')
+//@Require('airbug.RoomModel')
+//@Require('airbug.RoomSummaryView')
+//@Require('airbug.StartConversationButtonContainer')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ListView')
 //@Require('carapace.ListViewEvent')
 //@Require('carapace.LoaderView')
-//@Require('carapace.PanelWithHeaderView')
-//@Require('airbug.RoomModel')
-//@Require('airbug.RoomSummaryView')
-//@Require('carapace.SelectableListItemView')
-//@Require('airbug.StartConversationButtonContainer')
-//@Require('carapace.TextView')
-//@Require('Flows')
-//@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredTag')
-//@Require('bugioc.PropertyTag')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ModelBuilder')
+//@Require('carapace.PanelWithHeaderView')
+//@Require('carapace.SelectableListItemView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 
 
@@ -58,6 +58,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var ClearChange                         = bugpack.require('ClearChange');
     var Exception                           = bugpack.require('Exception');
+    var Flows                               = bugpack.require('Flows');
     var Map                                 = bugpack.require('Map');
     var ObservableList                      = bugpack.require('ObservableList');
     var RemoveChange                        = bugpack.require('RemoveChange');
@@ -66,21 +67,20 @@ require('bugpack').context("*", function(bugpack) {
     var SetPropertyChange                   = bugpack.require('SetPropertyChange');
     var CommandModule                       = bugpack.require('airbug.CommandModule');
     var CurrentUserModel                    = bugpack.require('airbug.CurrentUserModel');
+    var RoomModel                           = bugpack.require('airbug.RoomModel');
+    var RoomSummaryView                     = bugpack.require('airbug.RoomSummaryView');
+    var StartConversationButtonContainer    = bugpack.require('airbug.StartConversationButtonContainer');
+    var AutowiredTag                        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
     var ListView                            = bugpack.require('carapace.ListView');
     var ListViewEvent                       = bugpack.require('carapace.ListViewEvent');
     var LoaderView                          = bugpack.require('carapace.LoaderView');
-    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
-    var RoomModel                           = bugpack.require('airbug.RoomModel');
-    var RoomSummaryView                     = bugpack.require('airbug.RoomSummaryView');
-    var SelectableListItemView              = bugpack.require('carapace.SelectableListItemView');
-    var StartConversationButtonContainer    = bugpack.require('airbug.StartConversationButtonContainer');
-    var TextView                            = bugpack.require('carapace.TextView');
-    var Flows                             = bugpack.require('Flows');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var CarapaceContainer                   = bugpack.require('carapace.CarapaceContainer');
     var ModelBuilder                        = bugpack.require('carapace.ModelBuilder');
+    var PanelWithHeaderView                 = bugpack.require('carapace.PanelWithHeaderView');
+    var SelectableListItemView              = bugpack.require('carapace.SelectableListItemView');
+    var TextView                            = bugpack.require('carapace.TextView');
     var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
 
 

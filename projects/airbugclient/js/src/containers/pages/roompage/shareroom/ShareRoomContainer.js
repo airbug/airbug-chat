@@ -15,21 +15,21 @@
 //@Export('airbug.ShareRoomContainer')
 
 //@Require('Class')
-//@Require('carapace.BoxWithHeaderView')
-//@Require('carapace.ButtonView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CloseShareRoomOverlayButtonContainer')
 //@Require('airbug.CommandModule')
-//@Require('carapace.CopyToClipboardButtonView')
-//@Require('carapace.IconView')
-//@Require('carapace.OverlayView')
 //@Require('airbug.RoomLinkFauxTextFieldView')
 //@Require('airbug.ShareRoomTextView')
-//@Require('carapace.TextView')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.BoxWithHeaderView')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.CarapaceContainer')
+//@Require('carapace.CopyToClipboardButtonView')
+//@Require('carapace.IconView')
+//@Require('carapace.OverlayView')
+//@Require('carapace.TextView')
 //@Require('carapace.ViewBuilder')
 //@Require('zeroclipboard.ZeroClipboard')
 
@@ -45,21 +45,21 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                                   = bugpack.require('Class');
+    var CloseShareRoomOverlayButtonContainer    = bugpack.require('airbug.CloseShareRoomOverlayButtonContainer');
+    var CommandModule                           = bugpack.require('airbug.CommandModule');
+    var RoomLinkFauxTextFieldView               = bugpack.require('airbug.RoomLinkFauxTextFieldView');
+    var ShareRoomTextView                       = bugpack.require('airbug.ShareRoomTextView');
+    var AutowiredTag                            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
     var BoxWithHeaderView                       = bugpack.require('carapace.BoxWithHeaderView');
     var ButtonView                              = bugpack.require('carapace.ButtonView');
     var ButtonViewEvent                         = bugpack.require('carapace.ButtonViewEvent');
-    var CloseShareRoomOverlayButtonContainer    = bugpack.require('airbug.CloseShareRoomOverlayButtonContainer');
-    var CommandModule                           = bugpack.require('airbug.CommandModule');
+    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
     var CopyToClipboardButtonView               = bugpack.require('carapace.CopyToClipboardButtonView');
     var IconView                                = bugpack.require('carapace.IconView');
     var OverlayView                             = bugpack.require('carapace.OverlayView');
-    var RoomLinkFauxTextFieldView               = bugpack.require('airbug.RoomLinkFauxTextFieldView');
-    var ShareRoomTextView                       = bugpack.require('airbug.ShareRoomTextView');
     var TextView                                = bugpack.require('carapace.TextView');
-    var AutowiredTag                     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                      = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                                 = bugpack.require('bugmeta.BugMeta');
-    var CarapaceContainer                       = bugpack.require('carapace.CarapaceContainer');
     var ViewBuilder                             = bugpack.require('carapace.ViewBuilder');
     var ZeroClipboard                           = bugpack.require('zeroclipboard.ZeroClipboard');
 

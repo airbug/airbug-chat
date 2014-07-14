@@ -32,19 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var ApplicationController       = bugpack.require('airbug.ApplicationController');
-    var SignupPageContainer         = bugpack.require('airbug.SignupPageContainer');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag        = bugpack.require('carapace.ControllerTag');
+    var Class                   = bugpack.require('Class');
+    var ApplicationController   = bugpack.require('airbug.ApplicationController');
+    var SignupPageContainer     = bugpack.require('airbug.SignupPageContainer');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var ControllerTag           = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var controller                  = ControllerTag.controller;
+    var bugmeta                 = BugMeta.context();
+    var controller              = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------

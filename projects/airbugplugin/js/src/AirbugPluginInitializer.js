@@ -16,8 +16,8 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
@@ -37,28 +37,28 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var Flows                         = bugpack.require('Flows');
-    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var RoutingRequest                  = bugpack.require('carapace.RoutingRequest');
-    var JQuery                          = bugpack.require('jquery.JQuery');
-    var ZeroClipboard                   = bugpack.require('zeroclipboard.ZeroClipboard');
+    var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
+    var JQuery                  = bugpack.require('jquery.JQuery');
+    var ZeroClipboard           = bugpack.require('zeroclipboard.ZeroClipboard');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
-    var property                        = PropertyTag.property;
-    var $parallel                       = Flows.$parallel;
-    var $series                         = Flows.$series;
-    var $task                           = Flows.$task;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var property                = PropertyTag.property;
+    var $parallel               = Flows.$parallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

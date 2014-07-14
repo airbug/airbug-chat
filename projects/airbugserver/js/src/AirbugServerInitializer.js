@@ -16,8 +16,8 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -35,35 +35,35 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var express                         = require('express');
-    var mu2express                      = require('mu2express');
-    var path                            = require('path');
+    var express                 = require('express');
+    var mu2express              = require('mu2express');
+    var path                    = require('path');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var Flows                         = bugpack.require('Flows');
-    var BugFs                           = bugpack.require('bugfs.BugFs');
-    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var BugFs                   = bugpack.require('bugfs.BugFs');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
-    var property                        = PropertyTag.property;
-    var $parallel                       = Flows.$parallel;
-    var $series                         = Flows.$series;
-    var $task                           = Flows.$task;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var property                = PropertyTag.property;
+    var $parallel               = Flows.$parallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

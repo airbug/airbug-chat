@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -24,27 +34,27 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Flows                         = bugpack.require('Flows');
-    var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag              = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var Migration                       = bugpack.require('bugmigrate.Migration');
-    var MigrationTag             = bugpack.require('bugmigrate.MigrationTag');
+    var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
+    var AutowiredTag        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var Migration           = bugpack.require('bugmigrate.Migration');
+    var MigrationTag        = bugpack.require('bugmigrate.MigrationTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                       = AutowiredTag.autowired;
-    var bugmeta                         = BugMeta.context();
-    var migration                       = MigrationTag.migration;
-    var property                        = PropertyTag.property;
-    var $forEachParallel                = Flows.$forEachParallel;
-    var $forEachSeries                  = Flows.$forEachSeries;
-    var $series                         = Flows.$series;
-    var $task                           = Flows.$task;
+    var autowired           = AutowiredTag.autowired;
+    var bugmeta             = BugMeta.context();
+    var migration           = MigrationTag.migration;
+    var property            = PropertyTag.property;
+    var $forEachParallel    = Flows.$forEachParallel;
+    var $forEachSeries      = Flows.$forEachSeries;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

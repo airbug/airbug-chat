@@ -16,23 +16,23 @@
 
 //@Require('Class')
 //@Require('ace.Ace')
-//@Require('carapace.ButtonGroupView')
-//@Require('carapace.ButtonToolbarView')
-//@Require('carapace.ButtonView')
-//@Require('carapace.ButtonViewEvent')
 //@Require('airbug.CodeEditorBaseWidgetContainer')
 //@Require('airbug.CodeEditorOverlayWidgetCloseButtonContainer')
 //@Require('airbug.CodeEditorView')
 //@Require('airbug.CodeEditorWidgetView')
 //@Require('airbug.CommandModule')
+//@Require('airbug.WorkspaceCloseButtonContainer')
+//@Require('carapace.ButtonGroupView')
+//@Require('carapace.ButtonToolbarView')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 //@Require('carapace.IconView')
 //@Require('carapace.OverlayView')
 //@Require('carapace.OverlayViewEvent')
-//@Require('carapace.TabsView')
 //@Require('carapace.TabView')
 //@Require('carapace.TabViewEvent')
+//@Require('carapace.TabsView')
 //@Require('carapace.TextView')
-//@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('carapace.ViewBuilder')
 
 
@@ -48,21 +48,21 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                                           = bugpack.require('Class');
     var Ace                                             = bugpack.require('ace.Ace');
-    var ButtonGroupView                                 = bugpack.require('carapace.ButtonGroupView');
-    var ButtonToolbarView                               = bugpack.require('carapace.ButtonToolbarView');
-    var ButtonView                                      = bugpack.require('carapace.ButtonView');
-    var ButtonViewEvent                                 = bugpack.require('carapace.ButtonViewEvent');
     var CodeEditorBaseWidgetContainer                   = bugpack.require('airbug.CodeEditorBaseWidgetContainer');
     var CodeEditorOverlayWidgetCloseButtonContainer     = bugpack.require('airbug.CodeEditorOverlayWidgetCloseButtonContainer');
     var CodeEditorView                                  = bugpack.require('airbug.CodeEditorView');
     var CodeEditorWidgetView                            = bugpack.require('airbug.CodeEditorWidgetView');
     var CommandModule                                   = bugpack.require('airbug.CommandModule');
+    var ButtonGroupView                                 = bugpack.require('carapace.ButtonGroupView');
+    var ButtonToolbarView                               = bugpack.require('carapace.ButtonToolbarView');
+    var ButtonView                                      = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent                                 = bugpack.require('carapace.ButtonViewEvent');
     var IconView                                        = bugpack.require('carapace.IconView');
     var OverlayView                                     = bugpack.require('carapace.OverlayView');
     var OverlayViewEvent                                = bugpack.require('carapace.OverlayViewEvent');
-    var TabsView                                        = bugpack.require('carapace.TabsView');
     var TabView                                         = bugpack.require('carapace.TabView');
     var TabViewEvent                                    = bugpack.require('carapace.TabViewEvent');
+    var TabsView                                        = bugpack.require('carapace.TabsView');
     var TextView                                        = bugpack.require('carapace.TextView');
     var ViewBuilder                                     = bugpack.require('carapace.ViewBuilder');
 

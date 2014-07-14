@@ -17,13 +17,13 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Flows')
 //@Require('List')
 //@Require('airbug.ApiRequest')
 //@Require('bugcall.CallClientEvent')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.ModuleTag')
 //@Require('bugioc.IInitializingModule')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -37,27 +37,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var EventDispatcher                 = bugpack.require('EventDispatcher');
-    var List                            = bugpack.require('List');
-    var ApiRequest                      = bugpack.require('airbug.ApiRequest');
-    var CallClientEvent                 = bugpack.require('bugcall.CallClientEvent');
-    var Flows                         = bugpack.require('Flows');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Class                   = bugpack.require('Class');
+    var EventDispatcher         = bugpack.require('EventDispatcher');
+    var Flows                   = bugpack.require('Flows');
+    var List                    = bugpack.require('List');
+    var ApiRequest              = bugpack.require('airbug.ApiRequest');
+    var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
-    var $series                         = Flows.$series;
-    var $task                           = Flows.$task;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -15,12 +15,12 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomService')
 //@Require('airbugserver.User')
 //@Require('bugcall.Call')
 //@Require('bugdelta.DeltaBuilder')
-//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -36,27 +36,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Room                        = bugpack.require('airbugserver.Room');
-    var RoomService                 = bugpack.require('airbugserver.RoomService');
-    var User                        = bugpack.require('airbugserver.User');
-    var Call                        = bugpack.require('bugcall.Call');
-    var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
-    var Flows                     = bugpack.require('Flows');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var TestTag              = bugpack.require('bugunit.TestTag');
-    var BugYarn                     = bugpack.require('bugyarn.BugYarn');
+    var Class           = bugpack.require('Class');
+    var Flows           = bugpack.require('Flows');
+    var Room            = bugpack.require('airbugserver.Room');
+    var RoomService     = bugpack.require('airbugserver.RoomService');
+    var User            = bugpack.require('airbugserver.User');
+    var Call            = bugpack.require('bugcall.Call');
+    var DeltaBuilder    = bugpack.require('bugdelta.DeltaBuilder');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var bugyarn                     = BugYarn.context();
-    var test                        = TestTag.test;
-    var $series                     = Flows.$series;
-    var $task                       = Flows.$task;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
+    var $series         = Flows.$series;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

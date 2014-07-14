@@ -17,6 +17,7 @@
 //@Require('AddChange')
 //@Require('Class')
 //@Require('ClearChange')
+//@Require('Flows')
 //@Require('ISet')
 //@Require('List')
 //@Require('Map')
@@ -27,7 +28,6 @@
 //@Require('SetPropertyChange')
 //@Require('airbug.ListContainer')
 //@Require('airbug.UserImageAssetContainer')
-//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -44,35 +44,35 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var AddChange                           = bugpack.require('AddChange');
-    var Class                               = bugpack.require('Class');
-    var ClearChange                         = bugpack.require('ClearChange');
-    var ISet                                = bugpack.require('ISet');
-    var Map                                 = bugpack.require('Map');
-    var Obj                                 = bugpack.require('Obj');
-    var RemoveChange                        = bugpack.require('RemoveChange');
-    var RemovePropertyChange                = bugpack.require('RemovePropertyChange');
-    var Set                                 = bugpack.require('Set');
-    var SetPropertyChange                   = bugpack.require('SetPropertyChange');
-    var ListContainer                       = bugpack.require('airbug.ListContainer');
-    var UserImageAssetContainer             = bugpack.require('airbug.UserImageAssetContainer');
-    var Flows                             = bugpack.require('Flows');
-    var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var ViewBuilder                         = bugpack.require('carapace.ViewBuilder');
+    var AddChange                   = bugpack.require('AddChange');
+    var Class                       = bugpack.require('Class');
+    var ClearChange                 = bugpack.require('ClearChange');
+    var Flows                       = bugpack.require('Flows');
+    var ISet                        = bugpack.require('ISet');
+    var Map                         = bugpack.require('Map');
+    var Obj                         = bugpack.require('Obj');
+    var RemoveChange                = bugpack.require('RemoveChange');
+    var RemovePropertyChange        = bugpack.require('RemovePropertyChange');
+    var Set                         = bugpack.require('Set');
+    var SetPropertyChange           = bugpack.require('SetPropertyChange');
+    var ListContainer               = bugpack.require('airbug.ListContainer');
+    var UserImageAssetContainer     = bugpack.require('airbug.UserImageAssetContainer');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var ViewBuilder                 = bugpack.require('carapace.ViewBuilder');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired                           = AutowiredTag.autowired;
-    var bugmeta                             = BugMeta.context();
-    var property                            = PropertyTag.property;
-    var view                                = ViewBuilder.view;
-    var $series                             = Flows.$series;
-    var $task                               = Flows.$task;
+    var autowired                   = AutowiredTag.autowired;
+    var bugmeta                     = BugMeta.context();
+    var property                    = PropertyTag.property;
+    var view                        = ViewBuilder.view;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

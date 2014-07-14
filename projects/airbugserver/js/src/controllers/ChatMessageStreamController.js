@@ -32,20 +32,20 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var EntityController        = bugpack.require('airbugserver.EntityController');
-    var ControllerTag    = bugpack.require('bugcontroller.ControllerTag');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var EntityController    = bugpack.require('airbugserver.EntityController');
+    var ControllerTag       = bugpack.require('bugcontroller.ControllerTag');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgTag.arg;
-    var bugmeta                 = BugMeta.context();
-    var controller              = ControllerTag.controller;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var controller          = ControllerTag.controller;
 
 
     //-------------------------------------------------------------------------------

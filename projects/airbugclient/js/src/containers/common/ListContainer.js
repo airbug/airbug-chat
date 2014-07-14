@@ -18,11 +18,11 @@
 //@Require('Event')
 //@Require('Map')
 //@Require('carapace.BoxView')
-//@Require('carapace.ListView')
+//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ListItemView')
+//@Require('carapace.ListView')
 //@Require('carapace.LoaderView')
 //@Require('carapace.ScrollEvent')
-//@Require('carapace.CarapaceContainer')
 //@Require('carapace.ViewBuilder')
 //@Require('jquery.JQuery')
 
@@ -37,25 +37,25 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Event                           = bugpack.require('Event');
-    var Map                             = bugpack.require('Map');
-    var BoxView                         = bugpack.require('carapace.BoxView');
-    var ListView                        = bugpack.require('carapace.ListView');
-    var ListItemView                    = bugpack.require('carapace.ListItemView');
-    var LoaderView                      = bugpack.require('carapace.LoaderView');
-    var ScrollEvent                     = bugpack.require('carapace.ScrollEvent');
-    var CarapaceContainer               = bugpack.require('carapace.CarapaceContainer');
-    var ViewBuilder                     = bugpack.require('carapace.ViewBuilder');
-    var JQuery                          = bugpack.require('jquery.JQuery');
+    var Class               = bugpack.require('Class');
+    var Event               = bugpack.require('Event');
+    var Map                 = bugpack.require('Map');
+    var BoxView             = bugpack.require('carapace.BoxView');
+    var CarapaceContainer   = bugpack.require('carapace.CarapaceContainer');
+    var ListItemView        = bugpack.require('carapace.ListItemView');
+    var ListView            = bugpack.require('carapace.ListView');
+    var LoaderView          = bugpack.require('carapace.LoaderView');
+    var ScrollEvent         = bugpack.require('carapace.ScrollEvent');
+    var ViewBuilder         = bugpack.require('carapace.ViewBuilder');
+    var JQuery              = bugpack.require('jquery.JQuery');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $                               = JQuery;
-    var view                            = ViewBuilder.view;
+    var $                   = JQuery;
+    var view                = ViewBuilder.view;
 
 
     //-------------------------------------------------------------------------------

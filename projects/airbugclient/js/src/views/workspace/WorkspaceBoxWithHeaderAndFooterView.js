@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var BoxView         = bugpack.require('carapace.BoxView');
+    var Class       = bugpack.require('Class');
+    var BoxView     = bugpack.require('carapace.BoxView');
 
 
     //-------------------------------------------------------------------------------
