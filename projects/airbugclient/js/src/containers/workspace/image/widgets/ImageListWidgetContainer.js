@@ -40,7 +40,7 @@
 //@Require('airbug.WorkspaceBoxWithHeaderView')
 //@Require('airbug.WorkspaceCloseButtonContainer')
 //@Require('airbug.WorkspaceWidgetContainer')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -84,7 +84,7 @@ require('bugpack').context("*", function(bugpack) {
     var WorkspaceBoxWithHeaderView          = bugpack.require('airbug.WorkspaceBoxWithHeaderView');
     var WorkspaceCloseButtonContainer       = bugpack.require('airbug.WorkspaceCloseButtonContainer');
     var WorkspaceWidgetContainer            = bugpack.require('airbug.WorkspaceWidgetContainer');
-    var BugFlow                             = bugpack.require('bugflow.BugFlow');
+    var Flows                             = bugpack.require('Flows');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
@@ -102,8 +102,8 @@ require('bugpack').context("*", function(bugpack) {
     var model                               = ModelBuilder.model;
     var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
-    var $series                             = BugFlow.$series;
-    var $task                               = BugFlow.$task;
+    var $series                             = Flows.$series;
+    var $task                               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

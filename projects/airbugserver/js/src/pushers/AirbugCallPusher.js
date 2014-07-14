@@ -19,7 +19,6 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbugserver.EntityPusher')
-//@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -39,7 +38,6 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
     var EntityPusher        = bugpack.require('airbugserver.EntityPusher');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
     var ArgTag       = bugpack.require('bugioc.ArgTag');
     var ModuleTag    = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');

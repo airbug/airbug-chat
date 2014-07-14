@@ -16,144 +16,146 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Map                         = bugpack.require('Map');
-var TypeUtil                    = bugpack.require('TypeUtil');
-var Asset                       = bugpack.require('airbugserver.Asset');
-var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-var ArgTag               = bugpack.require('bugioc.ArgTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                         = ArgTag.arg;
-var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerTag.entityManager;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {EntityManager}
- */
-var AssetManager = Class.extend(EntityManager, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class                       = bugpack.require('Class');
+    var Map                         = bugpack.require('Map');
+    var TypeUtil                    = bugpack.require('TypeUtil');
+    var Asset                       = bugpack.require('airbugserver.Asset');
+    var EntityManager               = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                         = ArgTag.arg;
+    var bugmeta                     = BugMeta.context();
+    var entityManager               = EntityManagerTag.entityManager;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Asset} asset
-     * @param {(Array.<string> | function(Throwable, Asset))} dependencies
-     * @param {function(Throwable, Asset)=} callback
+     * @class
+     * @extends {EntityManager}
      */
-    createAsset: function(asset, dependencies, callback) {
-        if (TypeUtil.isFunction(dependencies)) {
-            callback        = dependencies;
-            dependencies    = [];
+    var AssetManager = Class.extend(EntityManager, {
+
+        _name: "airbugserver.AssetManager",
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Asset} asset
+         * @param {(Array.<string> | function(Throwable, Asset=))} dependencies
+         * @param {function(Throwable, Asset=)=} callback
+         */
+        createAsset: function(asset, dependencies, callback) {
+            if (TypeUtil.isFunction(dependencies)) {
+                callback        = dependencies;
+                dependencies    = [];
+            }
+            var options         = {};
+            this.create(asset, options, dependencies, callback);
+        },
+
+        /**
+         * @param {Asset} asset
+         * @param {function(Throwable=)} callback
+         */
+        deleteAsset: function(asset, callback) {
+            this.delete(asset, callback);
+        },
+
+        /**
+         * @param {{
+         *      createdAt: Date,
+         *      mimeType: string,
+         *      midsizeMimeType: string,
+         *      midsizeUrl: string,
+         *      name: string,
+         *      thumbnailMimeType: string,
+         *      thumbnailUrl: string,
+         *      updatedAt: Date,
+         *      url: string
+         * }} data
+         * @return {Asset}
+         */
+        generateAsset: function(data) {
+            var asset = new Asset(data);
+            this.generate(asset);
+            return asset;
+        },
+
+        /**
+         * @param {Asset} asset
+         * @param {Array.<string>} properties
+         * @param {function(Throwable, Asset=)} callback
+         */
+        populateAsset: function(asset, properties, callback) {
+            this.populate(asset, {}, properties, callback);
+        },
+
+        /**
+         * @param {string} assetId
+         * @param {function(Throwable, Asset=)} callback
+         */
+        retrieveAsset: function(assetId, callback) {
+            this.retrieve(assetId, callback);
+        },
+
+        /**
+         * @param {Array.<string>} assetIds
+         * @param {function(Throwable, Map.<string, Asset>=)} callback
+         */
+        retrieveAssets: function(assetIds, callback) {
+            this.retrieveEach(assetIds, callback);
+        },
+
+        /**
+         * @param {Asset} asset
+         * @param {function(Throwable, Asset=)} callback
+         */
+        updateAsset: function(asset, callback) {
+            this.update(asset, callback);
         }
-        var options         = {};
-        this.create(asset, options, dependencies, callback);
-    },
+    });
 
-    /**
-     * @param {Asset} asset
-     * @param {function(Throwable)} callback
-     */
-    deleteAsset: function(asset, callback) {
-        this.delete(asset, callback);
-    },
 
-    /**
-     * @param {{
-     *      createdAt: Date,
-     *      mimeType: string,
-     *      midsizeMimeType: string,
-     *      midsizeUrl: string,
-     *      name: string,
-     *      thumbnailMimeType: string,
-     *      thumbnailUrl: string,
-     *      updatedAt: Date,
-     *      url: string
-     * }} data
-     * @return {Asset}
-     */
-    generateAsset: function(data) {
-        var asset = new Asset(data);
-        this.generate(asset);
-        return asset;
-    },
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Asset} asset
-     * @param {Array.<string>} properties
-     * @param {function(Throwable, Asset)} callback
-     */
-    populateAsset: function(asset, properties, callback) {
-        this.populate(asset, {}, properties, callback);
-    },
+    bugmeta.tag(AssetManager).with(
+        entityManager("assetManager")
+            .ofType("Asset")
+            .args([
+                arg().ref("entityManagerStore"),
+                arg().ref("schemaManager"),
+                arg().ref("entityDeltaBuilder")
+            ])
+    );
 
-    /**
-     * @param {string} assetId
-     * @param {function(Throwable, Asset)} callback
-     */
-    retrieveAsset: function(assetId, callback) {
-        this.retrieve(assetId, callback);
-    },
 
-    /**
-     * @param {Array.<string>} assetIds
-     * @param {function(Throwable, Map.<string, Asset>)} callback
-     */
-    retrieveAssets: function(assetIds, callback) {
-        this.retrieveEach(assetIds, callback);
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Asset} asset
-     * @param {function(Throwable, Asset)} callback
-     */
-    updateAsset: function(asset, callback) {
-        this.update(asset, callback);
-    }
+    bugpack.export('airbugserver.AssetManager', AssetManager);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(AssetManager).with(
-    entityManager("assetManager")
-        .ofType("Asset")
-        .args([
-            arg().ref("entityManagerStore"),
-            arg().ref("schemaManager"),
-            arg().ref("mongoDataStore"),
-            arg().ref("entityDeltaBuilder")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.AssetManager', AssetManager);

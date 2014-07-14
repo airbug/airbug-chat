@@ -20,7 +20,7 @@
 //@Require('List')
 //@Require('airbug.ApiRequest')
 //@Require('bugcall.CallClientEvent')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.IInitializingModule')
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var List                            = bugpack.require('List');
     var ApiRequest                      = bugpack.require('airbug.ApiRequest');
     var CallClientEvent                 = bugpack.require('bugcall.CallClientEvent');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
@@ -56,8 +56,8 @@ require('bugpack').context("*", function(bugpack) {
     var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
     var module                          = ModuleTag.module;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $series                         = Flows.$series;
+    var $task                           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

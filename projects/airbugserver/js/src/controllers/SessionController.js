@@ -18,7 +18,6 @@
 //@Require('Class')
 //@Require('airbugserver.EntityController')
 //@Require('bugcontroller.ControllerTag')
-//@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
 
@@ -36,7 +35,6 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var EntityController        = bugpack.require('airbugserver.EntityController');
     var ControllerTag    = bugpack.require('bugcontroller.ControllerTag');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
     var ArgTag           = bugpack.require('bugioc.ArgTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
@@ -48,8 +46,6 @@ require('bugpack').context("*", function(bugpack) {
     var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
     var controller              = ControllerTag.controller;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -49,7 +49,6 @@ require('bugpack').context("*", function(bugpack) {
     var MemoryCache                 = bugpack.require('airbug.MemoryCache');
     var WindowUtil                  = bugpack.require('airbug.WindowUtil');
     var Call                        = bugpack.require('bugcall.Call');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
     var ArgTag               = bugpack.require('bugioc.ArgTag');
     var ConfigurationTag     = bugpack.require('bugioc.ConfigurationTag');
     var ModuleTag            = bugpack.require('bugioc.ModuleTag');

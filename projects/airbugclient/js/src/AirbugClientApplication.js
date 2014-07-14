@@ -17,8 +17,7 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugioc.AutowiredTagProcessor')
-//@Require('bugioc.AutowiredTagScan')
+//@Require('bugioc.BugIoc')
 //@Require('bugmeta.BugMeta')
 
 
@@ -34,8 +33,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
-    var AutowiredTagProcessor        = bugpack.require('bugioc.AutowiredTagProcessor');
-    var AutowiredTagScan                       = bugpack.require('bugioc.AutowiredTagScan');
+    var BugIoc        = bugpack.require('bugioc.BugIoc');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -72,7 +70,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {AutowiredTagScan}
              */
-            this.autowiredScan      = new AutowiredTagScan(BugMeta.context(), new AutowiredTagProcessor(this.getIocContext()));
+            this.autowiredScan      = BugIoc.autowiredScan(BugMeta.context());
         },
 
 

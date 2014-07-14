@@ -20,7 +20,7 @@
 //@Require('carapace.LoaderView')
 //@Require('airbug.RoomMemberListItemContainer')
 //@Require('airbug.RoomMemberModel')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
     var LoaderView                      = bugpack.require('carapace.LoaderView');
     var RoomMemberListItemContainer     = bugpack.require('airbug.RoomMemberListItemContainer');
     var RoomMemberModel                 = bugpack.require('airbug.RoomMemberModel');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');
@@ -74,8 +74,8 @@ require('bugpack').context("*", function(bugpack) {
     var model                           = ModelBuilder.model;
     var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $series                         = Flows.$series;
+    var $task                           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

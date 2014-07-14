@@ -6,7 +6,7 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -25,7 +25,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                           = bugpack.require('Class');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -41,10 +41,10 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                         = BugMeta.context();
     var migration                       = MigrationTag.migration;
     var property                        = PropertyTag.property;
-    var $forEachParallel                = BugFlow.$forEachParallel;
-    var $forEachSeries                  = BugFlow.$forEachSeries;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $forEachParallel                = Flows.$forEachParallel;
+    var $forEachSeries                  = Flows.$forEachSeries;
+    var $series                         = Flows.$series;
+    var $task                           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

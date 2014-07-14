@@ -21,7 +21,7 @@
 //@Require('airbug.InteractionStatusDefines')
 //@Require('airbug.UserDefines')
 //@Require('bugcall.CallEvent')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     var InteractionStatusDefines    = bugpack.require('airbug.InteractionStatusDefines');
     var UserDefines                 = bugpack.require('airbug.UserDefines');
     var CallEvent                   = bugpack.require('bugcall.CallEvent');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
+    var Flows                     = bugpack.require('Flows');
     var ArgTag               = bugpack.require('bugioc.ArgTag');
     var IInitializingModule           = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag            = bugpack.require('bugioc.ModuleTag');
@@ -58,8 +58,8 @@ require('bugpack').context("*", function(bugpack) {
     var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

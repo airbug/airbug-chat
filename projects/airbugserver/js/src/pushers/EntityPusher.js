@@ -19,8 +19,7 @@
 //@Require('Exception')
 //@Require('Obj')
 //@Require('Set')
-//@Require('bugflow.BugFlow')
-
+//@Require('Flows')
 
 //-------------------------------------------------------------------------------
 // Context
@@ -37,17 +36,17 @@ require('bugpack').context("*", function(bugpack) {
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $parallel           = BugFlow.$parallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+
 
 
     //-------------------------------------------------------------------------------

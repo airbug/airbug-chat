@@ -11,7 +11,7 @@
 //@Require('MappedThrowable')
 //@Require('Obj')
 //@Require('airbugserver.EntityService')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var MappedThrowable         = bugpack.require('MappedThrowable');
     var Obj                     = bugpack.require('Obj');
     var EntityService           = bugpack.require('airbugserver.EntityService');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var PropertyTag      = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -46,9 +46,8 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
     var property                = PropertyTag.property;
-    var $iterableParallel       = BugFlow.$iterableParallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -60,6 +59,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {EntityService}
      */
     var ChatMessageService = Class.extend(EntityService, {
+
+        _name: "airbugserver.ChatMessageService",
+
 
         //-------------------------------------------------------------------------------
         // Constructor

@@ -15,168 +15,174 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var ArgUtil                     = bugpack.require('ArgUtil');
-var Class                       = bugpack.require('Class');
-var RoomMember                  = bugpack.require('airbugserver.RoomMember');
-var EntityManager               = bugpack.require('bugentity.EntityManager');
-var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-var ArgTag               = bugpack.require('bugioc.ArgTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                         = ArgTag.arg;
-var bugmeta                     = BugMeta.context();
-var entityManager               = EntityManagerTag.entityManager;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var RoomMemberManager = Class.extend(EntityManager, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var ArgUtil                     = bugpack.require('ArgUtil');
+    var Class                       = bugpack.require('Class');
+    var RoomMember                  = bugpack.require('airbugserver.RoomMember');
+    var EntityManager               = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                         = ArgTag.arg;
+    var bugmeta                     = BugMeta.context();
+    var entityManager               = EntityManagerTag.entityManager;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {RoomMember} roomMember
-     * @param {(Array.<string> | function(Throwable, RoomMember))} dependencies
-     * @param {function(Throwable, RoomMember=)} callback
+     * @class
+     * @extends {EntityManager}
      */
-    createRoomMember: function(roomMember, dependencies, callback) {
-        var args = ArgUtil.process(arguments, [
-            {name: "roomMember", optional: false, type: "object"},
-            {name: "dependencies", optional: true, type: "array"},
-            {name: "callback", optional: false, type: "function"}
-        ]);
-        roomMember      = args.roomMember;
-        dependencies    = args.dependencies;
-        callback        = args.callback;
+    var RoomMemberManager = Class.extend(EntityManager, {
 
-        var options         = {};
-        this.create(roomMember, options, dependencies, callback);
-    },
+        _name: "airbugserver.RoomMemberManager",
 
-    /**
-     * @param {RoomMember} roomMember
-     * @param {function(Throwable)} callback
-     */
-    deleteRoomMember: function(roomMember, callback) {
-        this.delete(roomMember, callback);
-    },
 
-    /**
-     * @param {{
-     *      createdAt: Date,
-     *      memberType: string,
-     *      roomId: string,
-     *      updatedAt: Date,
-     *      userId: string
-     * }} data
-     * @return {RoomMember}
-     */
-    generateRoomMember: function(data) {
-        var roomMember = new RoomMember(data);
-        this.generate(roomMember);
-        return roomMember;
-    },
+        //-------------------------------------------------------------------------------
+        // Methods
+        //-------------------------------------------------------------------------------
 
-    populateRoomMember: function(roomMember, properties, callback) {
-        var options = {
-            room: {
-                idGetter:   roomMember.getRoomId,
-                getter:     roomMember.getRoom,
-                setter:     roomMember.setRoom
-            },
-            user: {
-                idGetter:   roomMember.getUserId,
-                getter:     roomMember.getUser,
-                setter:     roomMember.setUser
-            }
-        };
-        this.populate(roomMember, options, properties, callback);
-    },
+        /**
+         * @param {RoomMember} roomMember
+         * @param {(Array.<string> | function(Throwable, RoomMember))} dependencies
+         * @param {function(Throwable, RoomMember=)} callback
+         */
+        createRoomMember: function(roomMember, dependencies, callback) {
+            var args = ArgUtil.process(arguments, [
+                {name: "roomMember", optional: false, type: "object"},
+                {name: "dependencies", optional: true, type: "array"},
+                {name: "callback", optional: false, type: "function"}
+            ]);
+            roomMember      = args.roomMember;
+            dependencies    = args.dependencies;
+            callback        = args.callback;
 
-    /**
-     * @param {string} roomMemberId
-     * @param {function(Error, RoomMember)} callback
-     */
-    retrieveRoomMember: function(roomMemberId, callback) {
-        this.retrieve(roomMemberId, callback);
-    },
+            var options         = {};
+            this.create(roomMember, options, dependencies, callback);
+        },
 
-    /**
-     * @param {Array.<string>} roomMemberIds
-     * @param {function(Throwable, Map.<string, RoomMember>)} callback
-     */
-    retrieveRoomMembers: function(roomMemberIds, callback) {
-        this.retrieveEach(roomMemberIds, callback);
-    },
+        /**
+         * @param {RoomMember} roomMember
+         * @param {function(Throwable)} callback
+         */
+        deleteRoomMember: function(roomMember, callback) {
+            this.delete(roomMember, callback);
+        },
 
-    /**
-     * @param {string} userId
-     * @param {string} roomId
-     * @param {function(Error, RoomMember)} callback
-     */
-    retrieveRoomMemberByUserIdAndRoomId: function(userId, roomId, callback) {
-        var _this = this;
-        this.dataStore.findOne({roomId: roomId, userId: userId}).lean(true).exec(function(throwable, dbObject) {
-            if (!throwable) {
-                var entityObject = null;
-                if (dbObject) {
-                    entityObject = _this.convertDbObjectToEntity(dbObject);
-                    entityObject.commitDelta();
+        /**
+         * @param {{
+         *      createdAt: Date,
+         *      memberType: string,
+         *      roomId: string,
+         *      updatedAt: Date,
+         *      userId: string
+         * }} data
+         * @return {RoomMember}
+         */
+        generateRoomMember: function(data) {
+            var roomMember = new RoomMember(data);
+            this.generate(roomMember);
+            return roomMember;
+        },
+
+        populateRoomMember: function(roomMember, properties, callback) {
+            var options = {
+                room: {
+                    idGetter:   roomMember.getRoomId,
+                    getter:     roomMember.getRoom,
+                    setter:     roomMember.setRoom
+                },
+                user: {
+                    idGetter:   roomMember.getUserId,
+                    getter:     roomMember.getUser,
+                    setter:     roomMember.setUser
                 }
-                callback(undefined, entityObject);
-            } else {
-                callback(throwable);
-            }
-        });
-    },
+            };
+            this.populate(roomMember, options, properties, callback);
+        },
 
-    /**
-     * @param {RoomMember} roomMember
-     * @param {function(Throwable, RoomMember)} callback
-     */
-    updateRoomMember: function(roomMember, callback) {
-        this.update(roomMember, callback);
-    }
+        /**
+         * @param {string} roomMemberId
+         * @param {function(Error, RoomMember)} callback
+         */
+        retrieveRoomMember: function(roomMemberId, callback) {
+            this.retrieve(roomMemberId, callback);
+        },
+
+        /**
+         * @param {Array.<string>} roomMemberIds
+         * @param {function(Throwable, Map.<string, RoomMember>)} callback
+         */
+        retrieveRoomMembers: function(roomMemberIds, callback) {
+            this.retrieveEach(roomMemberIds, callback);
+        },
+
+        /**
+         * @param {string} userId
+         * @param {string} roomId
+         * @param {function(Error, RoomMember)} callback
+         */
+        retrieveRoomMemberByUserIdAndRoomId: function(userId, roomId, callback) {
+            var _this = this;
+            this.dataStore.findOne({roomId: roomId, userId: userId}).lean(true).exec(function(throwable, dbObject) {
+                if (!throwable) {
+                    var entityObject = null;
+                    if (dbObject) {
+                        entityObject = _this.convertDbObjectToEntity(dbObject);
+                        entityObject.commitDelta();
+                    }
+                    callback(undefined, entityObject);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+        /**
+         * @param {RoomMember} roomMember
+         * @param {function(Throwable, RoomMember)} callback
+         */
+        updateRoomMember: function(roomMember, callback) {
+            this.update(roomMember, callback);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(RoomMemberManager).with(
+        entityManager("roomMemberManager")
+            .ofType("RoomMember")
+            .args([
+                arg().ref("entityManagerStore"),
+                arg().ref("schemaManager"),
+                arg().ref("entityDeltaBuilder")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.RoomMemberManager', RoomMemberManager);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(RoomMemberManager).with(
-    entityManager("roomMemberManager")
-        .ofType("RoomMember")
-        .args([
-            arg().ref("entityManagerStore"),
-            arg().ref("schemaManager"),
-            arg().ref("mongoDataStore"),
-            arg().ref("entityDeltaBuilder")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.RoomMemberManager', RoomMemberManager);

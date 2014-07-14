@@ -10,231 +10,231 @@
 //@Require('Exception')
 //@Require('Map')
 //@Require('bugcall.CallRequestPublisher')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var ArgUtil                 = bugpack.require('ArgUtil');
-var Class                   = bugpack.require('Class');
-var Exception               = bugpack.require('Exception');
-var Map                     = bugpack.require('Map');
-var CallRequestPublisher    = bugpack.require('bugcall.CallRequestPublisher');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgTag           = bugpack.require('bugioc.ArgTag');
-var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                     = ArgTag.arg;
-var bugmeta                 = BugMeta.context();
-var module                  = ModuleTag.module;
-var $iterableParallel       = BugFlow.$iterableParallel;
-var $parallel               = BugFlow.$parallel;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {CallRequestPublisher}
- */
-var AirbugClientRequestPublisher = Class.extend(CallRequestPublisher, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var ArgUtil                 = bugpack.require('ArgUtil');
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var Map                     = bugpack.require('Map');
+    var CallRequestPublisher    = bugpack.require('bugcall.CallRequestPublisher');
+    var Flows                 = bugpack.require('Flows');
+    var ArgTag           = bugpack.require('bugioc.ArgTag');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var $iterableParallel       = Flows.$iterableParallel;
+    var $parallel               = Flows.$parallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Logger} logger
-     * @param {CallManager} callManager
-     * @param {CallRequestManager} callRequestManager
-     * @param {CallRequestFactory} callRequestFactory
-     * @param {CallResponseHandlerFactory} callResponseHandlerFactory
-     * @param {PubSub} pubSub
-     * @param {AirbugCallManager} airbugCallManager
+     * @class
+     * @extends {CallRequestPublisher}
      */
-    _constructor: function(logger, callManager, callRequestManager, callRequestFactory, callResponseHandlerFactory, pubSub, airbugCallManager) {
-
-        this._super(logger, callManager, callRequestManager, callRequestFactory, callResponseHandlerFactory, pubSub);
-
+    var AirbugClientRequestPublisher = Class.extend(CallRequestPublisher, {
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AirbugCallManager}
+         * @constructs
+         * @param {Logger} logger
+         * @param {CallManager} callManager
+         * @param {CallRequestManager} callRequestManager
+         * @param {CallRequestFactory} callRequestFactory
+         * @param {CallResponseHandlerFactory} callResponseHandlerFactory
+         * @param {PubSub} pubSub
+         * @param {AirbugCallManager} airbugCallManager
          */
-        this.airbugCallManager              = airbugCallManager;
-    },
+        _constructor: function(logger, callManager, callRequestManager, callRequestFactory, callResponseHandlerFactory, pubSub, airbugCallManager) {
+
+            this._super(logger, callManager, callRequestManager, callRequestFactory, callResponseHandlerFactory, pubSub);
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {AirbugCallManager}
-     */
-    getAirbugCallManager: function() {
-        return this.airbugCallManager;
-    },
+            /**
+             * @private
+             * @type {AirbugCallManager}
+             */
+            this.airbugCallManager              = airbugCallManager;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} sessionId
-     * @param {string} requestType
-     * @param {*} requestData
-     * @param {(Collection.<string> | Array.<string>)}  excludedCallUuids
-     * @param {function(Throwable, Map.<string, CallResponse>=)} callback
-     */
-    publishSessionRequest: function(sessionId, requestType, requestData, excludedCallUuids, callback) {
-        var _this           = this;
-        var callUuidSet     = null;
-        var responseMap     = null;
-        $series([
-            $task(function(flow) {
-                _this.airbugCallManager.getCallUuidSetForSessionId(sessionId, function(throwable, returnedCallUuidSet) {
-                    if (!throwable) {
-                        callUuidSet = returnedCallUuidSet;
-                        callUuidSet.removeAll(excludedCallUuids);
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.publishCallUuidSetRequest(callUuidSet, requestType, requestData, function(throwable, returnedResponseMap) {
-                    if (!throwable) {
-                        responseMap = returnedResponseMap;
-                    }
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
-            if (!throwable) {
-                callback(null, responseMap);
-            } else {
-                callback(throwable);
-            }
-        });
-    },
+        /**
+         * @return {AirbugCallManager}
+         */
+        getAirbugCallManager: function() {
+            return this.airbugCallManager;
+        },
 
-    /**
-     * @param {string} userId
-     * @param {string} requestType
-     * @param {*} requestData
-     * @param {function(MappedThrowable, Map.<string, CallResponse>=)} callback
-     */
-    publishUserRequest: function(userId, requestType, requestData, callback) {
-        var _this           = this;
-        var callUuidSet     = null;
-        var responseMap     = null;
-        $series([
-            $task(function(flow) {
-                _this.airbugCallManager.getCallUuidSetForUserId(userId, function(throwable, returnedCallUuidSet) {
-                    if (!throwable) {
-                        callUuidSet = returnedCallUuidSet;
-                    }
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                _this.publishCallUuidSetRequest(callUuidSet, requestType, requestData, function(throwable, returnedResponseMap) {
-                    if (!throwable) {
-                        responseMap = returnedResponseMap;
-                    }
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(function(throwable) {
-            if (!throwable) {
-                callback(null, responseMap);
-            } else {
-                callback(throwable);
-            }
-        });
-    },
 
-    /**
-     * @param {Set.<string>} callUuidSet
-     * @param {string} requestType
-     * @param {*} requestData
-     * @param {function(MappedThrowable, Map.<string, CallResponse>=)} callback
-     */
-    publishCallUuidSetRequest: function(callUuidSet, requestType, requestData, callback) {
-        var _this           = this;
-        var responseMap     = new Map();
-        $iterableParallel(callUuidSet, function(flow, callUuid) {
-            var callResponseHandler = _this.factoryCallResponseHandler(function(throwable, callResponse) {
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} sessionId
+         * @param {string} requestType
+         * @param {*} requestData
+         * @param {(Collection.<string> | Array.<string>)}  excludedCallUuids
+         * @param {function(Throwable, Map.<string, CallResponse>=)} callback
+         */
+        publishSessionRequest: function(sessionId, requestType, requestData, excludedCallUuids, callback) {
+            var _this           = this;
+            var callUuidSet     = null;
+            var responseMap     = null;
+            $series([
+                $task(function(flow) {
+                    _this.airbugCallManager.getCallUuidSetForSessionId(sessionId, function(throwable, returnedCallUuidSet) {
+                        if (!throwable) {
+                            callUuidSet = returnedCallUuidSet;
+                            callUuidSet.removeAll(excludedCallUuids);
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.publishCallUuidSetRequest(callUuidSet, requestType, requestData, function(throwable, returnedResponseMap) {
+                        if (!throwable) {
+                            responseMap = returnedResponseMap;
+                        }
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
                 if (!throwable) {
-                    responseMap.put(callUuid, callResponse);
+                    callback(null, responseMap);
+                } else {
+                    callback(throwable);
                 }
-                flow.complete(throwable);
             });
-            var callRequest = _this.factoryCallRequest(requestType, requestData);
-            _this.publishCallRequest(callUuid, callRequest, callResponseHandler, function(throwable) {
-                if (throwable) {
+        },
+
+        /**
+         * @param {string} userId
+         * @param {string} requestType
+         * @param {*} requestData
+         * @param {function(MappedThrowable, Map.<string, CallResponse>=)} callback
+         */
+        publishUserRequest: function(userId, requestType, requestData, callback) {
+            var _this           = this;
+            var callUuidSet     = null;
+            var responseMap     = null;
+            $series([
+                $task(function(flow) {
+                    _this.airbugCallManager.getCallUuidSetForUserId(userId, function(throwable, returnedCallUuidSet) {
+                        if (!throwable) {
+                            callUuidSet = returnedCallUuidSet;
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.publishCallUuidSetRequest(callUuidSet, requestType, requestData, function(throwable, returnedResponseMap) {
+                        if (!throwable) {
+                            responseMap = returnedResponseMap;
+                        }
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(null, responseMap);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+        /**
+         * @param {Set.<string>} callUuidSet
+         * @param {string} requestType
+         * @param {*} requestData
+         * @param {function(MappedThrowable, Map.<string, CallResponse>=)} callback
+         */
+        publishCallUuidSetRequest: function(callUuidSet, requestType, requestData, callback) {
+            var _this           = this;
+            var responseMap     = new Map();
+            $iterableParallel(callUuidSet, function(flow, callUuid) {
+                var callResponseHandler = _this.factoryCallResponseHandler(function(throwable, callResponse) {
+                    if (!throwable) {
+                        responseMap.put(callUuid, callResponse);
+                    }
                     flow.complete(throwable);
+                });
+                var callRequest = _this.factoryCallRequest(requestType, requestData);
+                _this.publishCallRequest(callUuid, callRequest, callResponseHandler, function(throwable) {
+                    if (throwable) {
+                        flow.complete(throwable);
+                    }
+                });
+            }).execute(function(mappedThrowable) {
+                if (!mappedThrowable) {
+                    callback(null, responseMap);
+                } else {
+                    callback(mappedThrowable);
                 }
-            });
-        }).execute(function(mappedThrowable) {
-            if (!mappedThrowable) {
-                callback(null, responseMap);
-            } else {
-                callback(mappedThrowable);
-            }
-        })
-    }
+            })
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(AirbugClientRequestPublisher).with(
+        module("airbugClientRequestPublisher")
+            .args([
+                arg().ref("logger"),
+                arg().ref("callManager"),
+                arg().ref("callRequestManager"),
+                arg().ref("callRequestFactory"),
+                arg().ref("callResponseHandlerFactory"),
+                arg().ref("pubSub"),
+                arg().ref("airbugCallManager")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('airbugserver.AirbugClientRequestPublisher', AirbugClientRequestPublisher);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(AirbugClientRequestPublisher).with(
-    module("airbugClientRequestPublisher")
-        .args([
-            arg().ref("logger"),
-            arg().ref("callManager"),
-            arg().ref("callRequestManager"),
-            arg().ref("callRequestFactory"),
-            arg().ref("callResponseHandlerFactory"),
-            arg().ref("pubSub"),
-            arg().ref("airbugCallManager")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('airbugserver.AirbugClientRequestPublisher', AirbugClientRequestPublisher);

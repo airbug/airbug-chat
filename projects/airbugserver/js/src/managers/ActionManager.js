@@ -48,6 +48,10 @@ require('bugpack').context("*", function(bugpack) {
     // Declare Class
     //-------------------------------------------------------------------------------
 
+    /**
+     * @class
+     * @extends {EntityManager}
+     */
     var ActionManager = Class.extend(EntityManager, {
 
         _name: "airbugserver.ActionManager",
@@ -118,7 +122,6 @@ require('bugpack').context("*", function(bugpack) {
             .args([
                 arg().ref("entityManagerStore"),
                 arg().ref("schemaManager"),
-                arg().ref("mongoDataStore"),
                 arg().ref("entityDeltaBuilder")
             ])
     );

@@ -29,7 +29,7 @@
 //@Require('airbug.PageContainer')
 //@Require('airbug.RoomListPanelContainer')
 //@Require('airbug.UserModel')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -62,7 +62,7 @@ require('bugpack').context("*", function(bugpack) {
     var PageContainer                       = bugpack.require('airbug.PageContainer');
     var RoomListPanelContainer              = bugpack.require('airbug.RoomListPanelContainer');
     var UserModel                           = bugpack.require('airbug.UserModel');
-    var BugFlow                             = bugpack.require('bugflow.BugFlow');
+    var Flows                             = bugpack.require('Flows');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
@@ -80,8 +80,8 @@ require('bugpack').context("*", function(bugpack) {
     var model                               = ModelBuilder.model;
     var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
-    var $series                             = BugFlow.$series;
-    var $task                               = BugFlow.$task;
+    var $series                             = Flows.$series;
+    var $task                               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

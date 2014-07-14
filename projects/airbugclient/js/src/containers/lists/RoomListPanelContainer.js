@@ -35,7 +35,7 @@
 //@Require('carapace.SelectableListItemView')
 //@Require('airbug.StartConversationButtonContainer')
 //@Require('carapace.TextView')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -75,7 +75,7 @@ require('bugpack').context("*", function(bugpack) {
     var SelectableListItemView              = bugpack.require('carapace.SelectableListItemView');
     var StartConversationButtonContainer    = bugpack.require('airbug.StartConversationButtonContainer');
     var TextView                            = bugpack.require('carapace.TextView');
-    var BugFlow                             = bugpack.require('bugflow.BugFlow');
+    var Flows                             = bugpack.require('Flows');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
     var AutowiredTag                 = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                  = bugpack.require('bugioc.PropertyTag');
@@ -94,8 +94,8 @@ require('bugpack').context("*", function(bugpack) {
     var model                               = ModelBuilder.model;
     var property                            = PropertyTag.property;
     var view                                = ViewBuilder.view;
-    var $series                             = BugFlow.$series;
-    var $task                               = BugFlow.$task;
+    var $series                             = Flows.$series;
+    var $task                               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

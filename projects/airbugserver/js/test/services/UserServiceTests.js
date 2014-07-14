@@ -7,9 +7,9 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbugserver.UserService')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
@@ -28,9 +28,9 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
     var UserService         = bugpack.require('airbugserver.UserService');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+    var Tracer            = bugpack.require('Tracer');
     var TestTag      = bugpack.require('bugunit.TestTag');
     var BugYarn             = bugpack.require('bugyarn.BugYarn');
     var Logger              = bugpack.require('loggerbug.Logger');
@@ -43,9 +43,9 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta             = BugMeta.context();
     var bugyarn             = BugYarn.context();
     var test                = TestTag.test;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $trace              = BugTrace.$trace;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+    var $trace              = Tracer.$trace;
 
 
     //-------------------------------------------------------------------------------

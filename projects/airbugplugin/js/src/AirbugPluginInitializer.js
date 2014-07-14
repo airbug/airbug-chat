@@ -17,7 +17,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
@@ -39,7 +39,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                           = bugpack.require('Class');
     var Obj                             = bugpack.require('Obj');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var IInitializingModule               = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');
@@ -56,9 +56,9 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                         = BugMeta.context();
     var module                          = ModuleTag.module;
     var property                        = PropertyTag.property;
-    var $parallel                       = BugFlow.$parallel;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $parallel                       = Flows.$parallel;
+    var $series                         = Flows.$series;
+    var $task                           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

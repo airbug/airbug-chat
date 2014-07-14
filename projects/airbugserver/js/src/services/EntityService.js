@@ -17,7 +17,6 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -33,17 +32,6 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
-
-    var $parallel           = BugFlow.$parallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $iterableParallel   = BugFlow.$iterableParallel;
 
 
     //-------------------------------------------------------------------------------

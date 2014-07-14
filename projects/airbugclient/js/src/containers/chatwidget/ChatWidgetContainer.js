@@ -41,7 +41,7 @@
 //@Require('airbug.MessagePartPreviewContainer')
 //@Require('carapace.PanelView')
 //@Require('bugcall.RequestFailedException')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -87,7 +87,7 @@ require('bugpack').context("*", function(bugpack) {
     var MessagePartPreviewContainer     = bugpack.require('airbug.MessagePartPreviewContainer');
     var PanelView                       = bugpack.require('carapace.PanelView');
     var RequestFailedException          = bugpack.require('bugcall.RequestFailedException');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag              = bugpack.require('bugioc.PropertyTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -106,8 +106,8 @@ require('bugpack').context("*", function(bugpack) {
     var model                           = ModelBuilder.model;
     var property                        = PropertyTag.property;
     var view                            = ViewBuilder.view;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $series                         = Flows.$series;
+    var $task                           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

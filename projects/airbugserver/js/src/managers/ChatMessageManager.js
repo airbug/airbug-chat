@@ -23,7 +23,7 @@
 //@Require('airbugserver.ChatMessage')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerTag')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
@@ -47,7 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     var ChatMessage                 = bugpack.require('airbugserver.ChatMessage');
     var EntityManager               = bugpack.require('bugentity.EntityManager');
     var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
+    var Flows                     = bugpack.require('Flows');
     var ArgTag               = bugpack.require('bugioc.ArgTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
@@ -59,8 +59,8 @@ require('bugpack').context("*", function(bugpack) {
     var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
     var entityManager               = EntityManagerTag.entityManager;
-    var $series                     = BugFlow.$series;
-    var $task                       = BugFlow.$task;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -84,13 +84,12 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {EntityManagerStore} entityManagerStore
          * @param {SchemaManager} schemaManager
-         * @param {MongoDataStore} mongoDataStore
          * @param {EntityDeltaBuilder} entityDeltaBuilder
          * @param {ChatMessageCounterManager} chatMessageCounterManager
          */
-        _constructor: function(entityManagerStore, schemaManager, mongoDataStore, entityDeltaBuilder, chatMessageCounterManager) {
+        _constructor: function(entityManagerStore, schemaManager, entityDeltaBuilder, chatMessageCounterManager) {
 
-            this._super(entityManagerStore, schemaManager, mongoDataStore, entityDeltaBuilder);
+            this._super(entityManagerStore, schemaManager, entityDeltaBuilder);
 
 
             //-------------------------------------------------------------------------------
@@ -402,7 +401,6 @@ require('bugpack').context("*", function(bugpack) {
             .args([
                 arg().ref("entityManagerStore"),
                 arg().ref("schemaManager"),
-                arg().ref("mongoDataStore"),
                 arg().ref("entityDeltaBuilder"),
                 arg().ref("chatMessageCounterManager")
             ])

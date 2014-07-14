@@ -97,7 +97,6 @@ buildProperties({
             "./libraries/ui/js/src",
             "./projects/airbugclient/js/src",
             "../bugcore/projects/bugcore/js/src",
-            "../bugflow/projects/bugflow/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
@@ -129,7 +128,6 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/factorybrowser/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
             "../bugmeta/projects/bugmeta/js/src",
-            "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
@@ -169,7 +167,6 @@ buildProperties({
             "./libraries/ui/js/src",
             "./projects/airbugplugin/js/src",
             "../bugcore/projects/bugcore/js/src",
-            "../bugflow/projects/bugflow/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/jquery/js/src",
@@ -200,7 +197,6 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/factorybrowser/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
             "../bugmeta/projects/bugmeta/js/src",
-            "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src",
             "../sonarbug/projects/sonarbugclient/js/src"
@@ -230,7 +226,6 @@ buildProperties({
             "./libraries/airbug/js/src",
             "./projects/airbugserver/js/src",
             "./projects/airbugserver/js/migrations",
-            "../bugflow/projects/bugflow/js/src",
             "../bugcore/projects/bugcore/js/src",
             "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/aws/js/src",
@@ -259,7 +254,6 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/server/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
             "../bugmeta/projects/bugmeta/js/src",
-            "../bugtrace/projects/bugtrace/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbug/bugjars/server/js/src",
             "../meldbug/projects/meldbugserver/js/src"
@@ -296,7 +290,6 @@ buildProperties({
                 "./libraries/airbug/js/test",
                 "./projects/airbugserver/js/test",
                 "../bugcore/projects/bugcore/js/test",
-                "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/aws/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/libraries/core/js/test",
@@ -321,7 +314,6 @@ buildProperties({
                 "../bugjs/projects/socketio/libraries/server/js/test",
                 "../bugjs/projects/socketio/libraries/socket/js/test",
                 "../bugmeta/projects/bugmeta/js/test",
-                "../bugtrace/projects/bugtrace/js/test",
                 "../meldbug/projects/meldbug/bugjars/core/js/test",
                 "../meldbug/projects/meldbug/bugjars/server/js/test",
                 "../meldbug/projects/meldbugserver/js/test"
@@ -343,7 +335,6 @@ buildProperties({
         sourcePaths: [
             "./projects/airbugworker/js/src",
             "../bugcore/projects/bugcore/js/src",
-            "../bugflow/projects/bugflow/js/src",
             "../bugfs/projects/bugfs/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/libraries/core/js/src",
@@ -358,8 +349,7 @@ buildProperties({
             "../bugjs/projects/loggerbug/js/src",
             "../bugjs/projects/redis/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
-            "../bugmeta/projects/bugmeta/js/src",
-            "../bugtrace/projects/bugtrace/js/src",
+            "../bugmeta/projects/bugmeta/js/src"
         ],
         scriptPaths: [
             "../bugjs/projects/bugwork/js/scripts",
@@ -387,7 +377,6 @@ buildProperties({
             testPaths: [
                 "./projects/airbugworker/js/test",
                 "../bugcore/projects/bugcore/js/test",
-                "../bugflow/projects/bugflow/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/libraries/core/js/test",
                 "../bugjs/projects/bugcall/libraries/publisher/js/test",
@@ -401,8 +390,7 @@ buildProperties({
                 "../bugjs/projects/loggerbug/js/test",
                 "../bugjs/projects/redis/js/test",
                 "../bugjs/projects/socketio/libraries/socket/js/test",
-                "../bugmeta/projects/bugmeta/js/test",
-                "../bugtrace/projects/bugtrace/js/test"
+                "../bugmeta/projects/bugmeta/js/test"
             ]
         }
     },

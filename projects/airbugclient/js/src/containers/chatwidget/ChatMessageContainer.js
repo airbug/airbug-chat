@@ -436,7 +436,7 @@ require('bugpack').context("*", function(bugpack) {
 
             var chatMessage         = this.chatMessageManagerModule.generateMessageObject(chatMessageModel.toLiteral());
 
-            //TODO BRN: Rework this to use BugFlow
+            //TODO BRN: Rework this to use Flows
             this.chatMessageManagerModule.createChatMessage(chatMessage, function(throwable, chatMessageMeldDocument) {
                 if (!throwable) {
                     chatMessageModel.setProperties({

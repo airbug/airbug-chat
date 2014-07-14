@@ -23,7 +23,7 @@
 //@Require('airbug.PasswordUtil')
 //@Require('airbug.UserDefines')
 //@Require('airbugserver.Github')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
     var PasswordUtil            = bugpack.require('airbug.PasswordUtil');
     var UserDefines             = bugpack.require('airbug.UserDefines');
     var Github                  = bugpack.require('airbugserver.Github');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var ArgTag           = bugpack.require('bugioc.ArgTag');
     var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -69,8 +69,8 @@ require('bugpack').context("*", function(bugpack) {
     var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

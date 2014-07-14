@@ -23,10 +23,10 @@
 //@Require('airbugserver.AirbugCall')
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerTag')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -47,10 +47,10 @@ require('bugpack').context("*", function(bugpack) {
     var AirbugCall                  = bugpack.require('airbugserver.AirbugCall');
     var EntityManager               = bugpack.require('bugentity.EntityManager');
     var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
+    var Flows                     = bugpack.require('Flows');
     var ArgTag               = bugpack.require('bugioc.ArgTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var BugTrace                    = bugpack.require('bugtrace.BugTrace');
+    var Tracer                    = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------
@@ -60,11 +60,11 @@ require('bugpack').context("*", function(bugpack) {
     var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
     var entityManager               = EntityManagerTag.entityManager;
-    var $iterableParallel           = BugFlow.$iterableParallel;
-    var $parallel                   = BugFlow.$parallel;
-    var $series                     = BugFlow.$series;
-    var $task                       = BugFlow.$task;
-    var $traceWithError             = BugTrace.$traceWithError;
+    var $iterableParallel           = Flows.$iterableParallel;
+    var $parallel                   = Flows.$parallel;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
+    var $traceWithError             = Tracer.$traceWithError;
 
 
     //-------------------------------------------------------------------------------
@@ -408,7 +408,9 @@ require('bugpack').context("*", function(bugpack) {
         entityManager("airbugCallManager")
             .ofType("AirbugCall")
             .args([
-                arg().ref("redisClient")
+                arg().ref("entityManagerStore"),
+                arg().ref("schemaManager"),
+                arg().ref("entityDeltaBuilder")
             ])
     );
 

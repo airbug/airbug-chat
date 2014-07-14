@@ -18,7 +18,7 @@
 //@Require('Exception')
 //@Require('airbugserver.Session')
 //@Require('airbugserver.SessionService')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -38,7 +38,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception               = bugpack.require('Exception');
     var Session                 = bugpack.require('airbugserver.Session');
     var SessionService          = bugpack.require('airbugserver.SessionService');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
@@ -51,8 +51,8 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
     var test                    = TestTag.test;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -177,7 +177,6 @@ require('bugpack').context("*", function(bugpack) {
             .args([
                 arg().ref("entityManagerStore"),
                 arg().ref("schemaManager"),
-                arg().ref("mongoDataStore"),
                 arg().ref("entityDeltaBuilder")
             ])
     );

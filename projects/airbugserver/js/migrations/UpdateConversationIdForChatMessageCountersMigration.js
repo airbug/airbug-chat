@@ -6,7 +6,7 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -27,7 +27,7 @@ var mongoose                        = require("mongoose");
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var BugFlow                         = bugpack.require('bugflow.BugFlow');
+var Flows                         = bugpack.require('Flows');
 var AutowiredTag             = bugpack.require('bugioc.AutowiredTag');
 var PropertyTag              = bugpack.require('bugioc.PropertyTag');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
@@ -44,9 +44,9 @@ var bugmeta                         = BugMeta.context();
 var migration                       = MigrationTag.migration;
 var ObjectId                        = mongoose.Types.ObjectId;
 var property                        = PropertyTag.property;
-var $forEachParallel                = BugFlow.$forEachParallel;
-var $series                         = BugFlow.$series;
-var $task                           = BugFlow.$task;
+var $forEachParallel                = Flows.$forEachParallel;
+var $series                         = Flows.$series;
+var $task                           = Flows.$task;
 
 
 //-------------------------------------------------------------------------------

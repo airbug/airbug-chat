@@ -20,7 +20,7 @@
 //@Require('airbugserver.User')
 //@Require('bugcall.Call')
 //@Require('bugdelta.DeltaBuilder')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var User                        = bugpack.require('airbugserver.User');
     var Call                        = bugpack.require('bugcall.Call');
     var DeltaBuilder                = bugpack.require('bugdelta.DeltaBuilder');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
+    var Flows                     = bugpack.require('Flows');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
     var TestTag              = bugpack.require('bugunit.TestTag');
     var BugYarn                     = bugpack.require('bugyarn.BugYarn');
@@ -55,8 +55,8 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                     = BugMeta.context();
     var bugyarn                     = BugYarn.context();
     var test                        = TestTag.test;
-    var $series                     = BugFlow.$series;
-    var $task                       = BugFlow.$task;
+    var $series                     = Flows.$series;
+    var $task                       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -445,11 +445,9 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(roomServiceInstantiationTest).with(
         test().name("RoomService - instantiation test")
     );
-
     bugmeta.tag(roomServiceCreateRoomTest).with(
         test().name("RoomService - #createRoom Test")
     );
-
     bugmeta.tag(roomServiceAddUserToRoomTest).with(
         test().name("RoomService - #AddUserToRoom Test")
     );

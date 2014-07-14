@@ -23,7 +23,7 @@
 //@Require('airbugserver.SessionServiceConfig')
 //@Require('aws.AwsConfig')
 //@Require('aws.AwsUploader')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
@@ -71,7 +71,7 @@ require('bugpack').context("*", function(bugpack) {
     var SessionServiceConfig            = bugpack.require('airbugserver.SessionServiceConfig');
     var AwsConfig                       = bugpack.require('aws.AwsConfig');
     var AwsUploader                     = bugpack.require('aws.AwsUploader');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
+    var Flows                         = bugpack.require('Flows');
     var ArgTag                   = bugpack.require('bugioc.ArgTag');
     var ConfigurationTag         = bugpack.require('bugioc.ConfigurationTag');
     var ModuleTag                = bugpack.require('bugioc.ModuleTag');
@@ -93,9 +93,9 @@ require('bugpack').context("*", function(bugpack) {
     var configuration           = ConfigurationTag.configuration;
     var module                  = ModuleTag.module;
     var property                = PropertyTag.property;
-    var $parallel               = BugFlow.$parallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $parallel               = Flows.$parallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

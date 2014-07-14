@@ -27,7 +27,7 @@
 //@Require('aws.AwsUploader')
 //@Require('aws.S3Api')
 //@Require('aws.S3Bucket')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.Path')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
@@ -66,7 +66,7 @@ require('bugpack').context("*", function(bugpack) {
     var AwsUploader             = bugpack.require('aws.AwsUploader');
     var S3Api                   = bugpack.require('aws.S3Api');
     var S3Bucket                = bugpack.require('aws.S3Bucket');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var Path                    = bugpack.require('bugfs.Path');
     var ArgTag           = bugpack.require('bugioc.ArgTag');
     var ModuleTag        = bugpack.require('bugioc.ModuleTag');
@@ -80,11 +80,9 @@ require('bugpack').context("*", function(bugpack) {
     var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
-    var $parallel               = BugFlow.$parallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
-    var $iterableParallel       = BugFlow.$iterableParallel;
-    var $forEachParallel        = BugFlow.$forEachParallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
+    var $forEachParallel        = Flows.$forEachParallel;
 
 
     //-------------------------------------------------------------------------------

@@ -17,8 +17,6 @@
 
 //@Require('Class')
 //@Require('bugapp.Application')
-//@Require('bugentity.EntityManagerTagProcessor')
-//@Require('bugentity.EntityManagerTagScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -34,8 +32,6 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                               = bugpack.require('Class');
     var Application                         = bugpack.require('bugapp.Application');
-    var EntityManagerTagProcessor    = bugpack.require('bugentity.EntityManagerTagProcessor');
-    var EntityManagerTagScan         = bugpack.require('bugentity.EntityManagerTagScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -53,30 +49,6 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Constructor
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @constructs
-         */
-        _constructor: function() {
-
-            this._super();
-
-
-            //-------------------------------------------------------------------------------
-            // Private Properties
-            //-------------------------------------------------------------------------------
-
-            /**
-             * @private
-             * @type {EntityManagerTagScan}
-             */
-            this.entityManagerTagScan    = new EntityManagerTagScan(BugMeta.context(), new EntityManagerTagProcessor(this.getIocContext()));
-        },
-
-
-        //-------------------------------------------------------------------------------
         // Application Methods
         //-------------------------------------------------------------------------------
 
@@ -84,7 +56,6 @@ require('bugpack').context("*", function(bugpack) {
          * @protected
          */
         preConfigureApplication: function() {
-            this.entityManagerTagScan.scanAll();
             this.getModuleTagScan().scanAll({
                 excludes: [
                     "bugmigrate.MigrationInitializer",
