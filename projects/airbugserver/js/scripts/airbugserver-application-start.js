@@ -42,7 +42,7 @@ require("bugpack").loadContext(module, function(error, bugpack) {
                     console.log(error.message);
                     console.log(error.stack);
 
-                    // Note: we"re in dangerous territory!
+                    // Note: we're in dangerous territory!
                     // By definition, something unexpected occurred,
                     // which we probably didn"t want.
                     // Anything can happen now!  Be very careful!

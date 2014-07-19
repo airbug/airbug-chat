@@ -16,7 +16,6 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('Flows')
 //@Require('Obj')
 //@Require('airbug.AirbugStaticConfig')
 //@Require('airbugserver.AirbugServerConfig')
@@ -64,7 +63,6 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var Flows                   = bugpack.require('Flows');
     var Obj                     = bugpack.require('Obj');
     var AirbugStaticConfig      = bugpack.require('airbug.AirbugStaticConfig');
     var AirbugServerConfig      = bugpack.require('airbugserver.AirbugServerConfig');
@@ -92,10 +90,6 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                 = BugMeta.context();
     var configuration           = ConfigurationTag.configuration;
     var module                  = ModuleTag.module;
-    var property                = PropertyTag.property;
-    var $parallel               = Flows.$parallel;
-    var $series                 = Flows.$series;
-    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

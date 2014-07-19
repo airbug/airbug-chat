@@ -47,10 +47,10 @@ var uglifyjs            = enableModule("uglifyjs");
 //-------------------------------------------------------------------------------
 
 var name                = "airbug";
-var version             = "0.0.20";
+var version             = "0.0.21";
 var dependencies        = {
     "aws-sdk": "1.17.1",
-    bugpack: "0.1.12",
+    bugpack: "0.1.14",
     "buffer-crc32": "0.2.1",
     connect: "2.12.0",
     cookie: "0.1.0",
@@ -439,6 +439,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
                     "ensureNewLineEnding",
                     "indentEqualSignsForPreClassVars",
                     "orderBugpackRequires",
@@ -943,6 +944,7 @@ buildTarget('prod').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
                     "ensureNewLineEnding",
                     "indentEqualSignsForPreClassVars",
                     "orderBugpackRequires",
