@@ -188,12 +188,12 @@ require('bugpack').context("*", function(bugpack) {
             var userId      = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
+                    _this.airbugCallManager.retrieveAirbugCallByCallUuid(callUuid, function(throwable, airbugCall) {
                         if (!throwable) {
-                            if (returnedUserId) {
-                                userId = returnedUserId;
+                            if (airbugCall) {
+                                userId = airbugCall.getUserId();
                             } else {
-                                throwable = new Exception("NotFound");
+                                throwable = new Exception("NotFound", {}, "Could not find AirbugCall for callUuid '" + callUuid + "'");
                             }
                         }
                         flow.complete(throwable);
@@ -230,12 +230,12 @@ require('bugpack').context("*", function(bugpack) {
             var userId      = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
+                    _this.airbugCallManager.retrieveAirbugCallByCallUuid(callUuid, function(throwable, airbugCall) {
                         if (!throwable) {
-                            if (returnedUserId) {
-                                userId = returnedUserId;
+                            if (airbugCall) {
+                                userId = airbugCall.getUserId();
                             } else {
-                                throwable = new Exception("NotFound", {}, "Could not find userId for callUuid '" + callUuid + "'");
+                                throwable = new Exception("NotFound", {}, "Could not find AirbugCall for callUuid '" + callUuid + "'");
                             }
                         }
                         flow.complete(throwable);
@@ -271,12 +271,12 @@ require('bugpack').context("*", function(bugpack) {
             var userId      = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
+                    _this.airbugCallManager.retrieveAirbugCallByCallUuid(callUuid, function(throwable, airbugCall) {
                         if (!throwable) {
-                            if (returnedUserId) {
-                                userId = returnedUserId;
+                            if (airbugCall) {
+                                userId = airbugCall.getUserId();
                             } else {
-                                throwable = new Exception("NotFound");
+                                throwable = new Exception("NotFound", {}, "Could not find AirbugCall for callUuid '" + callUuid + "'");
                             }
                         }
                         flow.complete(throwable);
@@ -310,12 +310,12 @@ require('bugpack').context("*", function(bugpack) {
             var userId      = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
+                    _this.airbugCallManager.retrieveAirbugCallByCallUuid(callUuid, function(throwable, airbugCall) {
                         if (!throwable) {
-                            if (returnedUserId) {
-                                userId = returnedUserId;
+                            if (airbugCall) {
+                                userId = airbugCall.getUserId();
                             } else {
-                                throwable = new Exception("NotFound");
+                                throwable = new Exception("NotFound", {}, "Could not find AirbugCall for callUuid '" + callUuid + "'");
                             }
                         }
                         flow.complete(throwable);

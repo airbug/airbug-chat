@@ -16,6 +16,7 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('EntityService')
 //@Require('Exception')
 //@Require('Flows')
 //@Require('Obj')
@@ -40,6 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var EntityService           = bugpack.require('EntityService');
     var Exception               = bugpack.require('Exception');
     var Flows                   = bugpack.require('Flows');
     var Obj                     = bugpack.require('Obj');
@@ -70,12 +72,12 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {Obj}
+     * @extends {EntityService}
      * @implements {IBuildRequestContext}
      * @implements {IInitializingModule}
      * @implements {IProcessCall}
      */
-    var AirbugCallService = Class.extend(Obj, {
+    var AirbugCallService = Class.extend(EntityService, {
 
         _name: "airbugserver.AirbugCallService",
 
@@ -86,11 +88,13 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
+         * @param {Logger} logger
          * @param {BugCallServer} bugCallServer
          * @param {AirbugCallManager} airbugCallManager
          * @param {SessionManager} sessionManager
+         * @param {AirbugCallPusher} airbugCallPusher
          */
-        _constructor: function(bugCallServer, airbugCallManager, sessionManager) {
+        _constructor: function(logger, bugCallServer, airbugCallManager, sessionManager, airbugCallPusher) {
 
             this._super();
 
@@ -107,9 +111,21 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {AirbugCallPusher}
+             */
+            this.airbugCallPusher           = airbugCallPusher;
+
+            /**
+             * @private
              * @type {BugCallServer}
              */
             this.bugCallServer              = bugCallServer;
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                     = logger;
 
             /**
              * @private
@@ -131,10 +147,24 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @return {AirbugCallPusher}
+         */
+        getAirbugCallPusher: function() {
+            return this.airbugCallPusher;
+        },
+
+        /**
          * @return {BugCallServer}
          */
         getBugCallServer: function() {
             return this.bugCallServer;
+        },
+
+        /**
+         * @return {Logger}
+         */
+        getLogger: function() {
+            return this.logger;
         },
 
         /**
@@ -173,6 +203,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeModule: function(callback) {
             this.bugCallServer.deregisterCallProcessor(this);
+            this.bugCallServer.off(CallEvent.CLOSED, this.hearCallClosed, this);
+            this.bugCallServer.off(CallEvent.OPENED, this.hearCallOpened, this);
             callback();
         },
 
@@ -181,12 +213,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeModule: function(callback) {
             this.bugCallServer.registerCallProcessor(this);
-
-            // NOTE BRN: We don't unprocess the call when it's closed because it's possible that it could reconnect later.
-            // TODO BRN: When a call drops, we should move if from the primary AirbugCall set to a "deactivated" call set.
-            // We should also undo the look up mappings so that they do not interfere with status calculations. If the
-            // call reconnects, simply re-add the call back to the active AirbugCall set in redis
-
+            this.bugCallServer.on(CallEvent.CLOSED, this.hearCallClosed, this);
+            this.bugCallServer.on(CallEvent.CLOSED, this.hearCallOpened, this);
             callback();
         },
 
@@ -239,11 +267,209 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {RequestContext} requestContext
+         * @param {string} airbugCallId
+         * @param {function(Throwable, AirbugCall=)} callback
+         */
+        retrieveAirbugCall: function(requestContext, airbugCallId, callback) {
+            var _this               = this;
+            var currentUser         = requestContext.get("currentUser");
+            var call                = requestContext.get("call");
+            /** @type {AirbugCall} */
+            var airbugCall          = null;
+
+            this.logger.debug("Starting retrieveAirbugCall - airbugCallId:", airbugCallId);
+            $series([
+                $task(function(flow) {
+                    _this.dbRetrieveAirbugCall(airbugCallId, function(throwable, returnedAirbugCall){
+                        if (!throwable) {
+                            if (returnedAirbugCall) {
+                                airbugCall = returnedAirbugCall;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("NotFound", {}, "Could not find AirbugCall by the id '" + airbugCallId + "'"));
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.airbugCallPusher.meldCallWithAirbugCall(call.getCallUuid(), airbugCall, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.airbugCallPusher.pushAirbugCallToCall(airbugCall, call.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(null, airbugCall);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+        /**
+         * @param {RequestContext} requestContext
+         * @param {Array.<string>} airbugCallIds
+         * @param {function(Throwable, Map.<string, AirbugCall>=)} callback
+         */
+        retrieveAirbugCalls: function(requestContext, airbugCallIds, callback) {
+            var _this               = this;
+            var currentUser         = requestContext.get("currentUser");
+            var call                = requestContext.get("call");
+            var airbugCallMap       = null;
+
+            $series([
+                $task(function(flow) {
+                    _this.dbRetrieveAirbugCalls(airbugCallIds, function(throwable, returnedAirbugCallMap) {
+                        if (!throwable) {
+                            airbugCallMap = returnedAirbugCallMap;
+                            if (!airbugCallMap) {
+                                throwable = new Exception("NotFound", {}, "Could not find any AirbugCalls with the ids '" + airbugCallIds + "'");
+                            }
+                        }
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.airbugCallPusher.meldCallWithAirbugCalls(call.getCallUuid(), airbugCallMap.getValueArray(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.airbugCallPusher.pushAirbugCallsToCall(airbugCallMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(null, airbugCallMap);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+
+        // Private Database Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {string} airbugCallId
+         * @param {function(Throwable, AirbugCall=)} callback
+         */
+        dbRetrieveAirbugCall: function(airbugCallId, callback) {
+            this.airbugCallManager.retrieveAirbugCall(airbugCallId, callback);
+        },
+
+        /**
+         * @private
          * @param {string} callUuid
          * @param {function(Throwable, AirbugCall=)} callback
          */
-        retrieveAirbugCall: function(requestContext, callUuid, callback) {
+        dbRetrieveAirbugCallByCallUuid: function(callUuid, callback) {
+            this.airbugCallManager.retrieveAirbugCallByCallUuid(callUuid, callback);
+        },
 
+        /**
+         * @private
+         * @param {Array.<string>} airbugCallIds
+         * @param {function(Throwable, Map.<string, AirbugCall>=)} callback
+         */
+        dbRetrieveAirbugCalls: function(airbugCallIds, callback) {
+            this.airbugCallManager.retrieveAirbugCalls(airbugCallIds, callback);
+        },
+
+        /**
+         * @param {string} callUuid
+         * @param {{
+         *      open: boolean
+         * }} updateObject
+         * @param {function(Throwable, AirbugCall=)} callback
+         */
+        doUpdateAirbugCallByCallUuid: function(callUuid, updateObject, callback) {
+            var _this               = this;
+            /** @type {AirbugCall} */
+            var airbugCall          = null;
+
+            $series([
+                $task(function(flow) {
+                    _this.dbRetrieveAirbugCallByCallUuid(callUuid, function(throwable, returnedAirbugCall) {
+                        if (!throwable) {
+                            if (returnedAirbugCall) {
+                                airbugCall = returnedAirbugCall;
+                                flow.complete();
+                            } else {
+                                flow.error(new Exception("NotFound", {}, "Could not find AirbugCall with the callUuid '" + callUuid + "'"));
+                            }
+                        } else {
+                            flow.error(throwable);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    if (Obj.hasProperty(updateObject, "open")) {
+                        airbugCall.setOpen(updateObject.open);
+                    }
+                    flow.complete();
+                }),
+                $task(function(flow) {
+                    _this.airbugCallManager.updateAirbugCall(airbugCall, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.airbugCallPusher.pushAirbugCall(user, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(function(throwable) {
+                if (!throwable) {
+                    callback(null, airbugCall);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {CallEvent} event
+         */
+        hearCallClosed: function(event) {
+            var _this           = this;
+            var data            = event.getData();
+            var call            = data.call;
+            this.doUpdateAirbugCallByCallUuid(call.getCallUuid(), {open: false}, function(throwable) {
+                if (throwable) {
+                    _this.logger.error(throwable);
+                }
+            });
+        },
+
+        /**
+         * @private
+         * @param {CallEvent} event
+         */
+        hearCallOpened: function(event) {
+            var _this           = this;
+            var data            = event.getData();
+            var call            = data.call;
+            this.doUpdateAirbugCallByCallUuid(call.getCallUuid(), {open: true}, function(throwable) {
+                if (throwable) {
+                    _this.logger.error(throwable);
+                }
+            })
         }
     });
 

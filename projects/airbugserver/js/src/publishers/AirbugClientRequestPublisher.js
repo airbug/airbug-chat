@@ -17,9 +17,9 @@
 
 //@Require('ArgUtil')
 //@Require('Class')
+//@Require('Collections')
 //@Require('Exception')
 //@Require('Flows')
-//@Require('Map')
 //@Require('bugcall.CallRequestPublisher')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
@@ -38,9 +38,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var ArgUtil                 = bugpack.require('ArgUtil');
     var Class                   = bugpack.require('Class');
+    var Collections             = bugpack.require('Collections');
     var Exception               = bugpack.require('Exception');
     var Flows                   = bugpack.require('Flows');
-    var Map                     = bugpack.require('Map');
     var CallRequestPublisher    = bugpack.require('bugcall.CallRequestPublisher');
     var ArgTag                  = bugpack.require('bugioc.ArgTag');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
@@ -126,13 +126,15 @@ require('bugpack').context("*", function(bugpack) {
          */
         publishSessionRequest: function(sessionId, requestType, requestData, excludedCallUuids, callback) {
             var _this           = this;
-            var callUuidSet     = null;
+            var callUuidSet     = Collections.set();
             var responseMap     = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getCallUuidSetForSessionId(sessionId, function(throwable, returnedCallUuidSet) {
+                    _this.airbugCallManager.retrieveAirbugCallsBySessionId(sessionId, function(throwable, airbugCallList) {
                         if (!throwable) {
-                            callUuidSet = returnedCallUuidSet;
+                            airbugCallList.forEach(function(airbugCall) {
+                                callUuidSet.add(airbugCall.getCallUuid());
+                            });
                             callUuidSet.removeAll(excludedCallUuids);
                         }
                         flow.complete(throwable);
@@ -159,17 +161,21 @@ require('bugpack').context("*", function(bugpack) {
          * @param {string} userId
          * @param {string} requestType
          * @param {*} requestData
+         * @param {(Collection.<string> | Array.<string>)}  excludedCallUuids
          * @param {function(MappedThrowable, Map.<string, CallResponse>=)} callback
          */
-        publishUserRequest: function(userId, requestType, requestData, callback) {
+        publishUserRequest: function(userId, requestType, requestData, excludedCallUuids, callback) {
             var _this           = this;
-            var callUuidSet     = null;
+            var callUuidSet     = Collections.set();
             var responseMap     = null;
             $series([
                 $task(function(flow) {
-                    _this.airbugCallManager.getCallUuidSetForUserId(userId, function(throwable, returnedCallUuidSet) {
+                    _this.airbugCallManager.retrieveAirbugCallsByUserId(userId, function(throwable, airbugCallList) {
                         if (!throwable) {
-                            callUuidSet = returnedCallUuidSet;
+                            airbugCallList.forEach(function(airbugCall) {
+                                callUuidSet.add(airbugCall.getCallUuid());
+                            });
+                            callUuidSet.removeAll(excludedCallUuids);
                         }
                         flow.complete(throwable);
                     });
@@ -199,7 +205,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         publishCallUuidSetRequest: function(callUuidSet, requestType, requestData, callback) {
             var _this           = this;
-            var responseMap     = new Map();
+            var responseMap     = Collections.map();
             $iterableParallel(callUuidSet, function(flow, callUuid) {
                 var callResponseHandler = _this.factoryCallResponseHandler(function(throwable, callResponse) {
                     if (!throwable) {

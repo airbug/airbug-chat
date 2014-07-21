@@ -270,11 +270,6 @@ require('bugpack').context("*", function(bugpack) {
                         }
                         flow.complete(throwable);
                     });
-                }),
-                $task(function(flow) {
-                     _this.userManager.populateUser(user, ["sessionSet"], function(throwable) {
-                         flow.complete(throwable);
-                     });
                 })
             ]).execute(function(throwable) {
                 if (!throwable) {
@@ -1097,33 +1092,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         dbRetrieveUserByEmail: function(userEmail, callback) {
             this.userManager.retrieveUserByEmail(userEmail, callback);
-        },
-
-        /**
-         * @private
-         * @param {string} userId
-         * @param {function(Throwable, User=)} callback
-         */
-        dbRetrievePopulatedUser: function(userId, callback) {
-            var user        = undefined;
-            var userManager = this.userManager;
-            $series([
-                $task(function(flow) {
-                    userManager.retrieveUser(userId, function(throwable, returnedUser) {
-                        if (!throwable) {
-                            user = returnedUser;
-                        }
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    userManager.populateUser(user, ["roomSet"], function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
-                callback(throwable, user);
-            });
         }
     });
 

@@ -17,9 +17,9 @@
 
 //@Require('ArgUtil')
 //@Require('Class')
+//@Require('Collections')
 //@Require('Exception')
 //@Require('Flows')
-//@Require('Set')
 //@Require('Tracer')
 //@Require('TypeUtil')
 //@Require('airbugserver.AirbugCall')
@@ -41,9 +41,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
+    var Collections         = bugpack.require('Collections');
     var Exception           = bugpack.require('Exception');
     var Flows               = bugpack.require('Flows');
-    var Set                 = bugpack.require('Set');
     var Tracer              = bugpack.require('Tracer');
     var TypeUtil            = bugpack.require('TypeUtil');
     var AirbugCall          = bugpack.require('airbugserver.AirbugCall');
@@ -161,11 +161,52 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @param {string} userId
+         * @param {function(Throwable, List.<AirbugCall>=)} callback
+         */
+        retrieveOpenAirbugCallsByUserId: function(userId, callback) {
+            var _this = this;
+            this.getDataStore().find({userId: userId, open: true}).lean(true).exec(function(throwable, dbObjects) {
+                if (!throwable) {
+                    var newList = Collections.list();
+                    dbObjects.forEach(function(dbObject) {
+                        var airbugCall = _this.convertDbObjectToEntity(dbObject);
+                        airbugCall.commitDelta();
+                        newList.add(airbugCall);
+                    });
+                    callback(null, newList);
+                } else {
+                    callback(throwable);
+                }
+            });
+        },
+
+        /**
          * @param {string} airbugCallId
          * @param {function(Throwable, AirbugCall=)} callback
          */
         retrieveAirbugCall: function(airbugCallId, callback) {
             this.retrieve(airbugCallId, callback);
+        },
+
+        /**
+         * @param {string} callUuid
+         * @param {function(Throwable, AirbugCall=)} callback
+         */
+        retrieveAirbugCallByCallUuid: function(callUuid, callback) {
+            var _this = this;
+            this.getDataStore().findOne({callUuid: callUuid}).lean(true).exec(function(throwable, dbObject) {
+                if (!throwable) {
+                    var airbugCall = null;
+                    if (dbObject) {
+                        airbugCall = _this.convertDbObjectToEntity(dbObject);
+                        airbugCall.commitDelta();
+                    }
+                    callback(null, airbugCall);
+                } else {
+                    callback(throwable);
+                }
+            });
         },
 
         /**
@@ -177,67 +218,20 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {AirbugCall} airbugCall
-         * @param {function(Throwable, AirbugCall=)} callback
-         */
-        updateAirbugCall: function(airbugCall, callback) {
-            this.update(airbugCall, callback);
-        },
-        
-        
-        // TODO BRN: Update all below this line.
-        
-        
-        /**
          * @param {string} sessionId
-         * @param {function(Throwable, Set.<string>=)} callback
+         * @param {function(Throwable, List.<AirbugCall>=)} callback
          */
-        getCallUuidSetForSessionId: function(sessionId, callback) {
-            var callUuidSetKey = this.generateCallUuidSetForSessionIdKey(sessionId);
-            this.redisClient.sMembers(callUuidSetKey, $traceWithError(function(error, replies) {
-                if (!error) {
-
-                    /** @type {Set.<string>} */
-                    var callUuidSet = new Set(replies);
-                    callback(null, callUuidSet);
-                } else {
-                    callback(error)
-                }
-            }));
-        },
-
-        /**
-         * @param {string} userId
-         * @param {function(Throwable, Set.<string>=)} callback
-         */
-        getCallUuidSetForUserId: function(userId, callback) {
-            var _this           = this;
-            var sessionIdSet    = null;
-            var callUuidSet     = new Set();
-            $series([
-                $task(function(flow) {
-                    _this.getSessionIdSetForUserId(userId, function(throwable, returnedSessionIdSet) {
-                        if (!throwable) {
-                            sessionIdSet = returnedSessionIdSet;
-                        }
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    $iterableParallel(sessionIdSet, function(flow, sessionId) {
-                        _this.getCallUuidSetForSessionId(sessionId, function(throwable, returnedCallUuidSet) {
-                            if (!throwable) {
-                                callUuidSet.addAll(returnedCallUuidSet);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(function(throwable) {
+        retrieveAirbugCallsBySessionId: function(sessionId, callback) {
+            var _this = this;
+            this.getDataStore().find({sessionId: sessionId}).lean(true).exec(function(throwable, dbObjects) {
                 if (!throwable) {
-                    callback(null, callUuidSet);
+                    var newList = Collections.list();
+                    dbObjects.forEach(function(dbObject) {
+                        var airbugCall = _this.convertDbObjectToEntity(dbObject);
+                        airbugCall.commitDelta();
+                        newList.add(airbugCall);
+                    });
+                    callback(null, newList);
                 } else {
                     callback(throwable);
                 }
@@ -245,157 +239,32 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {string} callUuid
-         * @param {function(Throwable, string=)} callback
-         */
-        getSessionIdForCallUuid: function(callUuid, callback) {
-            var airbugCallKey   = this.generateAirbugCallKey(callUuid);
-            this.redisClient.get(airbugCallKey, $traceWithError(function(error, reply) {
-                if (!error) {
-                    var airbugCall = JSON.parse(reply);
-                    callback(null, airbugCall.sessionId);
-                } else {
-                    callback(error);
-                }
-            }));
-        },
-
-        /**
-         *
          * @param {string} userId
-         * @param {function(Throwable, Set.<string>)} callback
+         * @param {function(Throwable, List.<AirbugCall>=)} callback
          */
-        getSessionIdSetForUserId: function(userId, callback) {
-            var sessionIdSetKey = this.generateSessionIdSetForUserIdKey(userId);
-            this.redisClient.sMembers(sessionIdSetKey, $traceWithError(function(error, replies) {
-                if (!error) {
-
-                    /** @type {Set.<string>} */
-                    var sessionIdSet = new Set(replies);
-                    callback(null, sessionIdSet);
+        retrieveAirbugCallsByUserId: function(userId, callback) {
+            var _this = this;
+            this.getDataStore().find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
+                if (!throwable) {
+                    var newList = Collections.list();
+                    dbObjects.forEach(function(dbObject) {
+                        var airbugCall = _this.convertDbObjectToEntity(dbObject);
+                        airbugCall.commitDelta();
+                        newList.add(airbugCall);
+                    });
+                    callback(null, newList);
                 } else {
-                    callback(error);
+                    callback(throwable);
                 }
-            }));
+            });
         },
 
         /**
-         * @param {string} callUuid
-         * @param {function(Throwable, string=)} callback
+         * @param {AirbugCall} airbugCall
+         * @param {function(Throwable, AirbugCall=)} callback
          */
-        getUserIdForCallUuid: function(callUuid, callback) {
-            var airbugCallKey   = this.generateAirbugCallKey(callUuid);
-            this.redisClient.get(airbugCallKey, $traceWithError(function(error, reply) {
-                if (!error) {
-                    if (reply) {
-                        var airbugCall = JSON.parse(reply);
-                        callback(null, airbugCall.userId);
-                    } else {
-                        callback(null, null);
-                    }
-                } else {
-                    callback(error);
-                }
-            }));
-        },
-
-        /**
-         * @param {string} callUuid
-         * @param {function(Throwable=)} callback
-         */
-        removeAirbugCallForCallUuid: function(callUuid, callback) {
-            var _this           = this;
-            var sessionId       = null;
-            var userId          = null;
-            var sessionCount    = null;
-            $series([
-                $parallel([
-                    $task(function(flow) {
-                        _this.getSessionIdForCallUuid(callUuid, function(throwable, returnedSessionId) {
-                            if (!throwable) {
-                                sessionId = returnedSessionId;
-                            }
-                            flow.complete(throwable);
-                        });
-                    }),
-                    $task(function(flow) {
-                        _this.getUserIdForCallUuid(callUuid, function(throwable, returnedUserId) {
-                            if (!throwable) {
-                                userId = returnedUserId;
-                            }
-                            flow.complete(throwable);
-                        });
-                    })
-                ]),
-                $task(function(flow) {
-                    var multi = _this.redisClient.multi();
-                    multi
-                        .srem(_this.generateCallUuidSetForSessionIdKey(sessionId), callUuid)
-                        .del(_this.generateAirbugCallKey(callUuid))
-                        .exec(function(errors, replies) {
-                            if (!errors) {
-                                flow.complete();
-                            } else {
-                                flow.error(new Exception("RedisError", {}, "Error occurred in Redis", errors));
-                            }
-                        });
-                }),
-                $task(function(flow) {
-                    _this.redisClient.sCard(_this.generateCallUuidSetForSessionIdKey(sessionId), $traceWithError(function(error, reply) {
-                        if (!error) {
-                            sessionCount = reply;
-                            flow.complete();
-                        } else {
-                            flow.error(new Exception("RedisError", {}, "Error occurred in Redis", [error]));
-                        }
-                    }));
-                    _this.generateCallUuidSetForSessionIdKey(sessionId)
-                }),
-                $task(function(flow) {
-                    if (sessionCount === 0) {
-                        _this.sRem(_this.generateSessionIdSetForUserIdKey(userId), sessionId, $traceWithError(function(error, reply) {
-                            if (!error) {
-                                flow.complete();
-                            } else {
-                                flow.error(new Exception("RedisError", {}, "Error occurred in Redis", [error]));
-                            }
-                        }));
-                    } else {
-                        flow.complete();
-                    }
-                })
-            ]).execute(callback);
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // Private Methods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @param {string} callUuid
-         * @return {string}
-         */
-        generateAirbugCallKey: function(callUuid) {
-            return "airbugCall:" + callUuid;
-        },
-
-        /**
-         * @private
-         * @param {string} sessionId
-         * @return {string}
-         */
-        generateCallUuidSetForSessionIdKey: function(sessionId) {
-            return "callUuidSetForSessionId:" + sessionId;
-        },
-
-        /**
-         * @private
-         * @param {string} userId
-         * @return {string}
-         */
-        generateSessionIdSetForUserIdKey : function(userId) {
-            return "sessionIdSetForUserId:" + userId;
+        updateAirbugCall: function(airbugCall, callback) {
+            this.update(airbugCall, callback);
         }
     });
 

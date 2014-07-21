@@ -16,10 +16,12 @@
 
 //@Require('ArgUtil')
 //@Require('Class')
+//@Require('Collections')
 //@Require('Exception')
 //@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
+
 
 //-------------------------------------------------------------------------------
 // Context
@@ -33,6 +35,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
+    var Collections         = bugpack.require('Collections');
     var Exception           = bugpack.require('Exception');
     var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
@@ -72,10 +75,10 @@ require('bugpack').context("*", function(bugpack) {
          * @param {MeldBuilder} meldBuilder
          * @param {MeldManager} meldManager
          * @param {PushManager} pushManager
-         * @param {UserManager} userManager
+         * @param {AirbugCallManager} airbugCallManager
          * @param {MeldSessionManager} meldSessionManager
          */
-        _constructor: function(logger, meldBuilder, meldManager, pushManager, userManager, meldSessionManager) {
+        _constructor: function(logger, meldBuilder, meldManager, pushManager, airbugCallManager, meldSessionManager) {
 
             this._super();
 
@@ -83,6 +86,12 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
             // Private Properties
             //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {AirbugCallManager}
+             */
+            this.airbugCallManager      = airbugCallManager;
 
             /**
              * @private
@@ -113,18 +122,19 @@ require('bugpack').context("*", function(bugpack) {
              * @type {PushManager}
              */
             this.pushManager            = pushManager;
-
-            /**
-             * @private
-             * @type {UserManager}
-             */
-            this.userManager            = userManager;
         },
 
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
         //-------------------------------------------------------------------------------
+
+        /**
+         * @return {AirbugCallManager}
+         */
+        getAirbugCallManager: function() {
+            return this.airbugCallManager;
+        },
 
         /**
          * @return {Logger}
@@ -159,13 +169,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         getPushManager: function() {
             return this.pushManager;
-        },
-
-        /**
-         * @return {UserManager}
-         */
-        getUserManager: function() {
-            return this.userManager;
         },
 
 
@@ -270,29 +273,26 @@ require('bugpack').context("*", function(bugpack) {
          */
         unmeldUserWithEntities: function(user, entities, callback) {
             var _this               = this;
-            var callUuidSet         = new Set();
-            var meldDocumentKeySet  = new Set();
-            entities.forEach(function(entity) {
-                meldDocumentKeySet.add(_this.generateMeldDocumentKeyFromEntity(entity));
-            });
+            var callUuidSet         = null;
+            var meldDocumentKeySet  = Collections.ensureStreamable(entities)
+                .stream()
+                .map(function(entity) {
+                    return _this.generateMeldDocumentKeyFromEntity(entity);
+                })
+                .collectSync(Set);
             $series([
                 $task(function(flow) {
-                    _this.userManager.populateUser(user, ["sessionSet"], function(throwable) {
+                    _this.airbugCallManager.retrieveOpenAirbugCallsByUserId(user.getId(), function(throwable, airbugCallList) {
+                        if (!throwable) {
+                            callUuidSet = airbugCallList
+                                .stream()
+                                .map(function(airbugCall) {
+                                    return airbugCall.getCallUuid();
+                                })
+                                .collectSync(Set);
+                        }
                         flow.complete(throwable);
                     });
-                }),
-                $task(function(flow) {
-                    $iterableParallel(user.getSessionSet(), function(flow, session) {
-                        var meldSessionKey = _this.meldSessionManager.generateMeldSessionKey(session.getId());
-                        _this.meldSessionManager.getCallUuidSetForMeldSessionKey(meldSessionKey, function(throwable, returnedCallUuidSet) {
-                            if (!throwable) {
-                                callUuidSet.addAll(returnedCallUuidSet);
-                            }
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                            flow.complete(throwable);
-                        });
                 }),
                 $task(function(flow) {
                     _this.meldManager.unmeldCallUuidsWithMeldDocumentKeys(callUuidSet, meldDocumentKeySet, function(throwable) {

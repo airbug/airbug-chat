@@ -112,6 +112,11 @@ require('bugpack').context("*", function(bugpack) {
             return roomMember;
         },
 
+        /**
+         * @param {RoomMember} roomMember
+         * @param {Array.<string>} properties
+         * @param {function(Throwable, RoomMember=)} callback
+         */
         populateRoomMember: function(roomMember, properties, callback) {
             var options = {
                 room: {

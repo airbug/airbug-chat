@@ -121,10 +121,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         populateUser: function(user, properties, callback) {
             var options = {
-                roomSet: {
-                    idGetter:   user.getRoomIdSet,
-                    getter:     user.getRoomSet
-                },
                 sessionSet: {
                     idGetter: user.getId,
                     retriever: "retrieveSessionsByUserId",

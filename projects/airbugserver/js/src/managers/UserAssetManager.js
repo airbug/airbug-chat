@@ -155,7 +155,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         retrieveUserAssetsByUserId: function(userId, callback) {
             var _this = this;
-            this.dataStore.find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
+            this.getDataStore().find({userId: userId}).lean(true).exec(function(throwable, dbObjects) {
                 if (!throwable) {
                     var newList = new List();
                     dbObjects.forEach(function(dbObject) {

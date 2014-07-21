@@ -71,10 +71,10 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {ExpressApp} expressApp
          * @param {BugCallRouter} bugCallRouter
-         * @param {RoomService} roomService
+         * @param {AirbugCallService} airbugCallService
          * @param {Marshaller} marshaller
          */
-        _constructor: function(expressApp, bugCallRouter, roomService, marshaller) {
+        _constructor: function(expressApp, bugCallRouter, airbugCallService, marshaller) {
 
             this._super(expressApp, bugCallRouter, marshaller);
 
@@ -85,9 +85,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {RoomService}
+             * @type {AirbugCallService}
              */
-            this.roomService                = roomService;
+            this.airbugCallService      = airbugCallService;
         },
 
 
@@ -96,10 +96,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {RoomService}
+         * @return {AirbugCallService}
          */
-        getRoomService: function() {
-            return this.roomService;
+        getAirbugCallService: function() {
+            return this.airbugCallService;
         },
 
 
@@ -111,44 +111,18 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         configureController: function(callback) {
-            var _this           = this;
-            var expressApp      = this.getExpressApp();
-            var roomService     = this.getRoomService();
+            var _this               = this;
+            var expressApp          = this.getExpressApp();
+            var airbugCallService   = this.getAirbugCallService();
 
             // REST API
             //-------------------------------------------------------------------------------
 
-            expressApp.get('/api/v1/room/:id', function(request, response){
+            expressApp.get('/api/v1/airbugcall/:id', function(request, response){
                 var requestContext      = request.requestContext;
-                var roomId              = request.params.id;
-                roomService.retrieveRoom(requestContext, roomId, function(throwable, entity){
+                var id              = request.params.id;
+                airbugCallService.retrieveAirbugCall(requestContext, id, function(throwable, entity){
                     _this.processAjaxRetrieveResponse(response, throwable, entity);
-                });
-            });
-
-            expressApp.post('/api/v1/room', function(request, response){
-                var requestContext      = request.requestContext;
-                var room                = request.body;
-                roomService.createRoom(requestContext, room, function(throwable, entity){
-                    _this.processAjaxCreateResponse(response, throwable, entity);
-                });
-            });
-
-            expressApp.put('/api/v1/room/:id', function(request, response){
-                var requestContext  = request.requestContext;
-                var roomId          = request.params.id;
-                var updates         = request.body;
-                roomService.updateRoom(requestContext, roomId, updates, function(throwable, entity){
-                    _this.processAjaxUpdateResponse(response, throwable, entity);
-                });
-            });
-
-            expressApp.delete('/api/v1/room/:id', function(request, response){
-                var _this = this;
-                var requestContext  = request.requestContext;
-                var roomId          = request.params.id;
-                roomService.deleteRoom(requestContext, roomId, function(throwable, entity){
-                    _this.processAjaxDeleteResponse(response, throwable, entity);
                 });
             });
 
@@ -159,86 +133,13 @@ require('bugpack').context("*", function(bugpack) {
                  * @param {CallResponder} responder
                  * @param {function(Throwable=)} callback
                  */
-                addUserToRoom:  function(request, responder, callback) {
-                    var data                = request.getData();
-                    var userId              = data.userId;
-                    var roomId              = data.roomId;
-                    var requestContext      = request.requestContext;
-
-                    roomService.addUserToRoom(requestContext, userId, roomId, function(throwable, user, room) {
-                        if (!throwable) {
-                            _this.sendSuccessResponse(responder, {}, callback);
-                        } else {
-                            _this.processThrowable(responder, throwable, callback);
-                        }
-                    });
-                },
-
-                /**
-                 * @param {IncomingRequest} request
-                 * @param {CallResponder} responder
-                 * @param {function(Throwable=)} callback
-                 */
-                createRoom:     function(request, responder, callback) {
-                    var data                = request.getData();
-                    var roomData            = data.object;
-                    var requestContext      = request.requestContext;
-
-                    roomService.createRoom(requestContext, roomData, function(throwable, room) {
-                        _this.processCreateResponse(responder, throwable, room, callback);
-                    });
-                },
-
-                /**
-                 * @param {IncomingRequest} request
-                 * @param {CallResponder} responder
-                 * @param {function(Throwable=)} callback
-                 */
-                joinRoom:       function(request, responder, callback) {
-                    var data                = request.getData();
-                    var roomId              = data.roomId;
-                    var requestContext      = request.requestContext;
-
-                    roomService.joinRoom(requestContext, roomId, function(throwable, user, room) {
-                        if (!throwable) {
-                            _this.sendSuccessResponse(responder, {}, callback);
-                        } else {
-                            _this.processThrowable(responder, throwable, callback);
-                        }
-                    });
-                },
-
-                /**
-                 * @param {IncomingRequest} request
-                 * @param {CallResponder} responder
-                 * @param {function(Throwable=)} callback
-                 */
-                leaveRoom:      function(request, responder, callback) {
-                    var data                = request.getData();
-                    var roomId              = data.roomId;
-                    var requestContext      = request.requestContext;
-
-                    roomService.leaveRoom(requestContext, roomId, function(throwable, room) {
-                        if (!throwable) {
-                            _this.sendSuccessResponse(responder, {}, callback);
-                        } else {
-                            _this.processThrowable(responder, throwable, callback);
-                        }
-                    });
-                },
-
-                /**
-                 * @param {IncomingRequest} request
-                 * @param {CallResponder} responder
-                 * @param {function(Throwable=)} callback
-                 */
                 retrieveRoom:   function(request, responder, callback) {
                     var data                = request.getData();
-                    var roomId              = data.objectId;
+                    var id                  = data.objectId;
                     var requestContext      = request.requestContext;
 
-                    roomService.retrieveRoom(requestContext, roomId, function(throwable, room) {
-                        _this.processRetrieveResponse(responder, throwable, room, callback);
+                    airbugCallService.retrieveAirbugCall(requestContext, id, function(throwable, airbugCall) {
+                        _this.processRetrieveResponse(responder, throwable, airbugCall, callback);
                     });
                 },
 
@@ -249,26 +150,11 @@ require('bugpack').context("*", function(bugpack) {
                  */
                 retrieveRooms: function(request, responder, callback) {
                     var data                = request.getData();
-                    var roomIds             = data.objectIds;
+                    var ids                 = data.objectIds;
                     var requestContext      = request.requestContext;
 
-                    roomService.retrieveRooms(requestContext, roomIds, function(throwable, roomMap) {
-                        _this.processRetrieveEachResponse(responder, throwable, roomIds, roomMap, callback);
-                    });
-                },
-
-                /**
-                 * @param {IncomingRequest} request
-                 * @param {CallResponder} responder
-                 * @param {function(Throwable=)} callback
-                 */
-                startRoom:     function(request, responder, callback) {
-                    var data                = request.getData();
-                    var startRoomObject     = data.startRoomObject;
-                    var requestContext      = request.requestContext;
-
-                    roomService.startRoom(requestContext, startRoomObject, function(throwable, room) {
-                        _this.processCreateResponse(responder, throwable, room, callback);
+                    airbugCallService.retrieveAirbugCalls(requestContext, ids, function(throwable, airbugCallMap) {
+                        _this.processRetrieveEachResponse(responder, throwable, ids, airbugCallMap, callback);
                     });
                 }
             });
@@ -286,7 +172,7 @@ require('bugpack').context("*", function(bugpack) {
             .args([
                 arg().ref("expressApp"),
                 arg().ref("bugCallRouter"),
-                arg().ref("roomService"),
+                arg().ref("airbugCallService"),
                 arg().ref("marshaller")
             ])
     );

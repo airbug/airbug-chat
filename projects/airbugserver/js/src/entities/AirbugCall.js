@@ -19,6 +19,7 @@
 //@Require('Class')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityTag')
+//@Require('bugentity.IndexTag')
 //@Require('bugentity.PropertyTag')
 //@Require('bugmarsh.MarshTag');
 //@Require('bugmarsh.MarshPropertyTag');
@@ -39,6 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Entity              = bugpack.require('bugentity.Entity');
     var EntityTag           = bugpack.require('bugentity.EntityTag');
+    var IndexTag            = bugpack.require('bugentity.IndexTag');
     var PropertyTag         = bugpack.require('bugentity.PropertyTag');
     var MarshPropertyTag    = bugpack.require('bugmarsh.MarshPropertyTag');
     var MarshTag            = bugpack.require('bugmarsh.MarshTag');
@@ -51,6 +53,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta             = BugMeta.context();
     var entity              = EntityTag.entity;
+    var index               = IndexTag.index;
     var marsh               = MarshTag.marsh;
     var marshProperty       = MarshPropertyTag.property;
     var property            = PropertyTag.property;
@@ -233,48 +236,52 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     bugmeta.tag(AirbugCall).with(
-        entity("AirbugCall").properties([
-            property("callType")
-                .type("string")
-                .require(true)
-                .index(true),
-            property("callUuid")
-                .type("string")
-                .require(true)
-                .index(true)
-                .unique(true),
-            property("createdAt")
-                .type("date")
-                .require(true)
-                .default(Date.now),
-            property("id")
-                .type("string")
-                .primaryId(),
-            property("open")
-                .type("boolean")
-                .require(true)
-                .default(false),
-            property("session")
-                .type("Session")
-                .populates(true)
-                .store(false),
-            property("sessionId")
-                .type("string")
-                .index(true)
-                .id(),
-            property("updatedAt")
-                .type("date")
-                .require(true)
-                .default(Date.now),
-            property("user")
-                .type("User")
-                .populates(true)
-                .store(false),
-            property("userId")
-                .type("string")
-                .index(true)
-                .id()
-        ]),
+        entity("AirbugCall")
+            .properties([
+                property("callType")
+                    .type("string")
+                    .require(true)
+                    .index(true),
+                property("callUuid")
+                    .type("string")
+                    .require(true)
+                    .index(true)
+                    .unique(true),
+                property("createdAt")
+                    .type("date")
+                    .require(true)
+                    .default(Date.now),
+                property("id")
+                    .type("string")
+                    .primaryId(),
+                property("open")
+                    .type("boolean")
+                    .require(true)
+                    .default(false),
+                property("session")
+                    .type("Session")
+                    .populates(true)
+                    .store(false),
+                property("sessionId")
+                    .type("string")
+                    .index(true)
+                    .id(),
+                property("updatedAt")
+                    .type("date")
+                    .require(true)
+                    .default(Date.now),
+                property("user")
+                    .type("User")
+                    .populates(true)
+                    .store(false),
+                property("userId")
+                    .type("string")
+                    .index(true)
+                    .id()
+            ])
+            .indexes([
+                index({userId: 1, open: 1})
+            ]),
         marsh("AirbugCall")
             .properties([
                 marshProperty("callType"),
