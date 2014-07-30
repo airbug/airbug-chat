@@ -20,7 +20,7 @@
 //@Require('Flows')
 //@Require('MappedThrowable')
 //@Require('Obj')
-//@require('Pair')
+//@Require('Pair')
 //@Require('Set')
 //@Require('airbugserver.EntityService')
 //@Require('airbugserver.User')

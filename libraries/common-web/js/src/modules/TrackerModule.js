@@ -73,11 +73,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {SonarbugClient} sonarbugClient
          * @param {CommandModule} commandModule
          * @param {boolean} trackingEnabled
          */
-        _constructor: function(sonarbugClient, commandModule, trackingEnabled) {
+        _constructor: function(commandModule, trackingEnabled) {
 
             this._super();
 
@@ -91,12 +90,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {CommandModule}
              */
             this.commandModule      = commandModule;
-
-            /**
-             * @private
-             * @type {SonarbugClient}
-             */
-            this.sonarbugClient     = sonarbugClient;
 
             /**
              * @private
@@ -141,7 +134,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         initialize: function(callback) {
             if (this.trackingEnabled) {
-                this.sonarbugClient.startTracking();
                 this.trackDocumentEvents();
                 this.commandModule.subscribe(CommandModule.MessageType.BUTTON_CLICKED, this.handleButtonClickedMessage, this);
                 if (callback && typeof callback === "function") {
@@ -160,7 +152,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         track: function(eventName, data) {
             if (this.trackingEnabled) {
-                this.trackSB(eventName, data);
+                //TODO BRN: Track through GA
             }
         },
 
@@ -234,15 +226,6 @@ require('bugpack').context("*", function(bugpack) {
             });
         },
 
-        /**
-         * @private
-         * @param {string} eventName
-         * @param {*} data
-         */
-        trackSB: function(eventName, data) {
-            this.sonarbugClient.track(eventName, data);
-        },
-
 
         //-------------------------------------------------------------------------------
         // Message Handlers
@@ -268,7 +251,6 @@ require('bugpack').context("*", function(bugpack) {
     bugmeta.tag(TrackerModule).with(
         module("trackerModule")
             .args([
-                arg().ref("sonarbugClient"),
                 arg().ref("commandModule")
             ])
     );

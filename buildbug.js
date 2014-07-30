@@ -95,7 +95,8 @@ buildProperties({
             "./libraries/api/js/src",
             "./libraries/common-web/js/src",
             "./projects/airbugclient/js/src",
-            "../bugcore/projects/bugcore/js/src",
+            "../bugcore/libraries/bugcore/js/src",
+            "../bugioc/libraries/bugioc/js/src",
             "../bugjs/external/ace/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
@@ -112,7 +113,6 @@ buildProperties({
             "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugdispose/js/src",
-            "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmvc/js/src",
             "../bugjs/projects/bugrequest/libraries/context/js/src",
@@ -128,8 +128,7 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/socket/js/src",
             "../bugmeta/projects/bugmeta/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
-            "../meldbug/projects/meldbugclient/js/src",
-            "../sonarbug/projects/sonarbugclient/js/src"
+            "../meldbug/projects/meldbugclient/js/src"
         ],
         staticPaths: [
             "./projects/airbugclient/static",
@@ -164,7 +163,8 @@ buildProperties({
             "./libraries/api/js/src",
             "./libraries/common-web/js/src",
             "./projects/airbugplugin/js/src",
-            "../bugcore/projects/bugcore/js/src",
+            "../bugcore/libraries/bugcore/js/src",
+            "../bugioc/libraries/bugioc/js/src",
             "../bugjs/external/backbone/js/src",
             "../bugjs/external/bootstrap2/js/src",
             "../bugjs/external/jquery/js/src",
@@ -180,7 +180,6 @@ buildProperties({
             "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugdispose/js/src",
-            "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmvc/js/src",
             "../bugjs/projects/bugrequest/libraries/context/js/src",
@@ -196,8 +195,7 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/socket/js/src",
             "../bugmeta/projects/bugmeta/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
-            "../meldbug/projects/meldbugclient/js/src",
-            "../sonarbug/projects/sonarbugclient/js/src"
+            "../meldbug/projects/meldbugclient/js/src"
         ],
         staticPaths: [
             "./projects/airbugplugin/static",
@@ -216,6 +214,7 @@ buildProperties({
             name: "airbugserver",
             version: version,
             dependencies: dependencies,
+            private: true,
             scripts: {
                 start: "node ./scripts/airbugserver-application-start.js"
             }
@@ -224,8 +223,9 @@ buildProperties({
             "./libraries/airbug/js/src",
             "./projects/airbugserver/js/src",
             "./projects/airbugserver/js/migrations",
-            "../bugcore/projects/bugcore/js/src",
+            "../bugcore/libraries/bugcore/js/src",
             "../bugfs/projects/bugfs/js/src",
+            "../bugioc/libraries/bugioc/js/src",
             "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/libraries/core/js/src",
@@ -234,7 +234,6 @@ buildProperties({
             "../bugjs/projects/bugcontroller/js/src",
             "../bugjs/projects/bugdelta/js/src",
             "../bugjs/projects/bugentity/js/src",
-            "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmigrate/js/src",
             "../bugjs/projects/bugrequest/libraries/context/js/src",
@@ -268,17 +267,18 @@ buildProperties({
         unitTest: {
             packageJson: {
                 name: "airbugserver-test",
-                version: version,
+                version: "{{version}}",
                 dependencies: dependencies,
+                private: true,
                 scripts: {
                     start: "node ./scripts/airbugserver-application-start.js"
                 }
             },
             sourcePaths: [
                 "../buganno/projects/buganno/js/src",
-                "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src"
+                "../bugunit/projects/bugunit/js/src",
+                "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
                 "../buganno/projects/buganno/js/scripts",
@@ -287,7 +287,8 @@ buildProperties({
             testPaths: [
                 "./libraries/airbug/js/test",
                 "./projects/airbugserver/js/test",
-                "../bugcore/projects/bugcore/js/test",
+                "../bugcore/libraries/bugcore/js/test",
+                "../bugioc/libraries/bugioc/js/test",
                 "../bugjs/projects/aws/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/libraries/core/js/test",
@@ -296,7 +297,6 @@ buildProperties({
                 "../bugjs/projects/bugcontroller/js/test",
                 "../bugjs/projects/bugdelta/js/test",
                 "../bugjs/projects/bugentity/js/test",
-                "../bugjs/projects/bugioc/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
                 "../bugjs/projects/bugrequest/libraries/context/js/test",
                 "../bugjs/projects/bugrequest/libraries/core/js/test",
@@ -332,13 +332,13 @@ buildProperties({
         ],
         sourcePaths: [
             "./projects/airbugworker/js/src",
-            "../bugcore/projects/bugcore/js/src",
+            "../bugcore/libraries/bugcore/js/src",
             "../bugfs/projects/bugfs/js/src",
+            "../bugioc/libraries/bugioc/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugcall/libraries/publisher/js/src",
             "../bugjs/projects/bugdelta/js/src",
-            "../bugjs/projects/bugioc/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugsub/js/src",
             "../bugjs/projects/bugtask/js/src",
@@ -364,9 +364,9 @@ buildProperties({
             },
             sourcePaths: [
                 "../buganno/projects/buganno/js/src",
-                "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src"
+                "../bugunit/projects/bugunit/js/src",
+                "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
                 "../buganno/projects/buganno/js/scripts",
@@ -374,12 +374,12 @@ buildProperties({
             ],
             testPaths: [
                 "./projects/airbugworker/js/test",
-                "../bugcore/projects/bugcore/js/test",
+                "../bugcore/libraries/bugcore/js/test",
+                "../bugioc/libraries/bugioc/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/libraries/core/js/test",
                 "../bugjs/projects/bugcall/libraries/publisher/js/test",
                 "../bugjs/projects/bugdelta/js/test",
-                "../bugjs/projects/bugioc/js/test",
                 "../bugjs/projects/bugmarsh/js/test",
                 "../bugjs/projects/bugsub/js/test",
                 "../bugjs/projects/bugtask/js/test",
@@ -931,6 +931,8 @@ buildTarget('short').buildFlow(
 
 // Prod BuildTarget
 //-------------------------------------------------------------------------------
+
+//TODO BRN: This has not been updated to match production work flow for client source files
 
 buildTarget('prod').buildFlow(
     series([

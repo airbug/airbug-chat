@@ -141,12 +141,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {SonarbugClient}
-             */
-            this.sonarbugClient        = null;
-
-            /**
-             * @private
              * @type {TrackerModule}
              */
             this.trackerModule         = null;
@@ -220,7 +214,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeTracking: function(callback) {
             var _this               = this;
-            var sonarbugClient      = this.sonarbugClient;
             var trackerModule       = this.trackerModule;
             var carapaceApplication = this.carapaceApplication;
 
@@ -230,17 +223,6 @@ require('bugpack').context("*", function(bugpack) {
                     trackerModule.track("RoutingRequest.Result", data);
                 });
                 trackerModule.setTrackingEnabled(true);
-
-                // NOTE BRN: We configure sonarbug here but we don't wait for the connection since that slows down the load
-                // of the site. Tracking messages will queue up...
-
-                sonarbugClient.configure("http://sonarbug.com:80", function(error) {
-                    if (!error) {
-                        _this.logger.info('SonarBugClient configured');
-                    } else {
-                        _this.logger.error(error);
-                    }
-                });
 
                 $task(function(flow) {
                     trackerModule.initialize(function(error) {
@@ -282,7 +264,6 @@ require('bugpack').context("*", function(bugpack) {
                 property("controllerTagScan").ref("controllerTagScan"),
                 property("logger").ref("logger"),
                 property("socketIoConfig").ref("socketIoConfig"),
-                property("sonarbugClient").ref("sonarbugClient"),
                 property("trackerModule").ref("trackerModule"),
                 property("windowUtil").ref("windowUtil")
             ])

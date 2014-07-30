@@ -29,7 +29,6 @@
 //@Require('socketio.BrowserSocketIoFactory')
 //@Require('socketio.SocketIoClient')
 //@Require('socketio.SocketIoConfig')
-//@Require('sonarbugclient.SonarbugClient')
 
 
 //-------------------------------------------------------------------------------
@@ -56,7 +55,6 @@ require('bugpack').context("*", function(bugpack) {
     var BrowserSocketIoFactory  = bugpack.require('socketio.BrowserSocketIoFactory');
     var SocketIoClient          = bugpack.require('socketio.SocketIoClient');
     var SocketIoConfig          = bugpack.require('socketio.SocketIoConfig');
-    var SonarbugClient          = bugpack.require('sonarbugclient.SonarbugClient');
 
 
     //-------------------------------------------------------------------------------
@@ -161,13 +159,6 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {SonarbugClient}
-         */
-        sonarbugClient: function() {
-            return SonarbugClient.getInstance();
-        },
-
-        /**
          * @return {window|*|window.window}
          */
         window: function() {
@@ -214,7 +205,6 @@ require('bugpack').context("*", function(bugpack) {
                     arg().ref("socketIoConfig")
                 ]),
             module("socketIoConfig"),
-            module("sonarbugClient"),
             module("window"),
             module("windowUtil")
                 .args([

@@ -17,7 +17,7 @@
 
 //@Require('Bug')
 //@Require('Class')
-//@require('Set')
+//@Require('Set')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityTag')
 //@Require('bugentity.PropertyTag')

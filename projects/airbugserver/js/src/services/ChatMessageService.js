@@ -383,7 +383,7 @@ require('bugpack').context("*", function(bugpack) {
                         chatMessageManager.retrieveChatMessages(chatMessageIds, function(throwable, returnedChatMessageMap) {
                             if (!throwable) {
                                 if (!returnedChatMessageMap) {
-                                    throwable = new Exception(""); //TODO
+                                    throwable = new Exception("NotFound", {chatMessageIds: chatMessageIds}, "Could not find ChatMessages with ids - '" + chatMessageIds + "'"); //TODO
                                 } else {
                                     chatMessageMap = returnedChatMessageMap.clone();
                                     returnedChatMessageMap.forEach(function(chatMessage, key) {
@@ -418,7 +418,7 @@ require('bugpack').context("*", function(bugpack) {
                     }
                 });
             } else {
-                callback(new Exception("UnauthorizedAccess"));
+                callback(new Exception("UnauthorizedAccess", {}, "Anonymous users cannot access chat messages"));
             }
         },
 
