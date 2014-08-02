@@ -217,6 +217,15 @@ require('bugpack').context("*", function(bugpack) {
             }
         },
 
+        /**
+         * @param {string} streamId
+         * @param {Object=} chunk
+         * @param {boolean} reachedEOF
+         */
+        processFileData: function(streamId, chunk, reachedEOF) {
+            console.log("Received chunk for " + streamId);
+        },
+
 
         //-------------------------------------------------------------------------------
         // Api Methods
