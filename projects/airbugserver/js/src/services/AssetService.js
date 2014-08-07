@@ -24,10 +24,10 @@
 //@Require('Obj')
 //@Require('Url')
 //@Require('UuidGenerator')
-//@Require('aws.AwsConfig')
-//@Require('aws.AwsUploader')
-//@Require('aws.S3Api')
-//@Require('aws.S3Bucket')
+//@Require('bugaws.AwsConfig')
+//@Require('bugaws.AwsUploader')
+//@Require('bugaws.S3Api')
+//@Require('bugaws.S3Bucket')
 //@Require('bugfs.Path')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
@@ -63,10 +63,10 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var Url                 = bugpack.require('Url');
     var UuidGenerator       = bugpack.require('UuidGenerator');
-    var AwsConfig           = bugpack.require('aws.AwsConfig');
-    var AwsUploader         = bugpack.require('aws.AwsUploader');
-    var S3Api               = bugpack.require('aws.S3Api');
-    var S3Bucket            = bugpack.require('aws.S3Bucket');
+    var AwsConfig           = bugpack.require('bugaws.AwsConfig');
+    var AwsUploader         = bugpack.require('bugaws.AwsUploader');
+    var S3Api               = bugpack.require('bugaws.S3Api');
+    var S3Bucket            = bugpack.require('bugaws.S3Bucket');
     var Path                = bugpack.require('bugfs.Path');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');

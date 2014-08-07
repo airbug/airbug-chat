@@ -158,7 +158,7 @@ require('bugpack').context("*", function(bugpack) {
              * @type {NakedButtonView}
              */
             this.embedButtonView                       = null;
-            
+
             /**
              * @private
              * @type {ImageListItemView}

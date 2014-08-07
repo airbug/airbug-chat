@@ -12,10 +12,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.PageContainer')
+//@Export('airbug.WorkspacePageContainer')
 
 //@Require('Class')
-//@Require('airbug.ApplicationContainer')
+//@Require('airbug.PageContainer')
 //@Require('airbug.CommandModule')
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
-    var ApplicationContainer        = bugpack.require('airbug.ApplicationContainer');
+    var PageContainer        = bugpack.require('airbug.PageContainer');
     var CommandModule               = bugpack.require('airbug.CommandModule');
     var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
     var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
@@ -71,9 +71,12 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {ApplicationContainer}
+     * @extends {PageContainer}
      */
-    var PageContainer = Class.extend(ApplicationContainer, {
+    var WorkspacePageContainer = Class.extend(PageContainer, {
+
+        _name: "airbug.WorkspacePageContainer",
+
 
         //-------------------------------------------------------------------------------
         // Constructor
@@ -96,12 +99,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {CommandModule}
-             */
-            this.commandModule              = null;
-
-            /**
-             * @private
              * @type {WorkspaceModule}
              */
             this.workspaceModule            = null;
@@ -121,22 +118,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {WorkspaceWrapperContainer}
              */
             this.workspaceWrapperContainer  = null;
-
-    
-            // Views
-            //-------------------------------------------------------------------------------
-
-            /**
-             * @protected
-             * @type {FourColumnView}
-             */
-            this.fourColumnView             = null;
-
-            /**
-             * @private
-             * @type {PageView}
-             */
-            this.pageView                   = null;
         },
 
 
@@ -145,56 +126,30 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {FourColumnView}
+         * @return {WorkspaceModule}
          */
-        getFourColumnView: function() {
-            return this.fourColumnView;
+        getWorkspaceModule: function() {
+            return this.workspaceModule;
         },
 
         /**
-         * @return {PageView}
+         * @return {WorkspaceTrayContainer}
          */
-        getPageView: function() {
-            return this.pageView;
+        getWorkspaceTrayContainer: function() {
+            return this.workspaceTrayContainer;
+        },
+
+        /**
+         * @return {WorkspaceWrapperContainer}
+         */
+        getWorkspaceWrapperContainer: function() {
+            return this.workspaceWrapperContainer;
         },
 
 
         //-------------------------------------------------------------------------------
         // CarapaceContainer Methods
         //-------------------------------------------------------------------------------
-
-        /**
-         * @protected
-         * @param {Array<*>} routerArgs
-         */
-        activateContainer: function(routerArgs) {
-            this._super(routerArgs);
-            this.updateColumnSpans();
-        },
-
-        /**
-         * @protected
-         */
-        createContainer: function(routingArgs) {
-            this._super(routingArgs);
-
-            // Create Views
-            //-------------------------------------------------------------------------------
-
-            view(PageView)
-                .name("pageView")
-                .children([
-                    view(FourColumnView)
-                        .name("fourColumnView")
-                        .attributes({
-                            configuration: FourColumnView.Configuration.ULTRA_THIN_RIGHT_HAMBURGER_LEFT,
-                            rowStyle: MultiColumnView.RowStyle.FLUID
-                        })
-                ])
-                .build(this);
-
-            this.getApplicationView().addViewChild(this.pageView, "#application-{{cid}}");
-        },
 
         /**
          * @protected
@@ -212,7 +167,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeContainer: function() {
             this._super();
-            this.commandModule.unsubscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand,  this);
             this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
             this.workspaceModule.removeEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
         },
@@ -222,7 +176,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeContainer: function() {
             this._super();
-            this.commandModule.subscribe(CommandType.TOGGLE.HAMBURGER_LEFT,  this.handleToggleHamburgerLeftCommand, this);
             this.workspaceModule.addEventListener(WorkspaceEvent.EventType.CLOSED, this.hearWorkspaceClosed, this);
             this.workspaceModule.addEventListener(WorkspaceEvent.EventType.OPENED, this.hearWorkspaceOpened, this);
         },
@@ -271,31 +224,6 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Message Handlers
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @param {PublisherMessage} message
-         */
-        handleToggleHamburgerLeftCommand: function(message) {
-            var hamburgerLeft   = this.fourColumnView.getColumn1Of4Element();
-            hamburgerLeft.toggleClass("hamburger-panel-hidden");
-            this.updateColumnSpans();
-        },
-
-        /**
-         * @private
-         * @param {PublisherMessage} message
-         */
-        handleToggleHamburgerRightCommand: function(message) {
-            var hamburgerRight  = this.fourColumnView.getColumn4Of4Element();
-            hamburgerRight.toggleClass("hamburger-panel-hidden");
-            this.updateColumnSpans();
-        },
-
-
-        //-------------------------------------------------------------------------------
         // Event Listeners
         //-------------------------------------------------------------------------------
 
@@ -321,9 +249,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(PageContainer).with(
+    bugmeta.tag(WorkspacePageContainer).with(
         autowired().properties([
-            property("commandModule").ref("commandModule"),
             property("workspaceModule").ref("workspaceModule")
         ])
     );
@@ -333,5 +260,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.PageContainer", PageContainer);
+    bugpack.export("airbug.WorkspacePageContainer", WorkspacePageContainer);
 });

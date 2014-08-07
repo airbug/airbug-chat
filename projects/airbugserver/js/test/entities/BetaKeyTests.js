@@ -250,7 +250,7 @@ var betaKeyMongooseSchemaTest = {
                 unique: false,
                 'default': "0.0.1"
             }
-        }; 
+        };
 
         test.assertEqual(JSON.stringify(mongooseSchema.schemaObject), JSON.stringify(expectedSchemaObject),
             "Assert Session mongooseSchema is expected result");

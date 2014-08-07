@@ -66,7 +66,7 @@ require('bugpack').context("*", function(bugpack) {
     var RoomPageController = Class.extend(ApplicationController, {
 
         _name: "airbug.RoomPageController",
-        
+
 
         //-------------------------------------------------------------------------------
         // Constructor

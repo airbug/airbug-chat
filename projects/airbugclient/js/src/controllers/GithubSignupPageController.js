@@ -12,12 +12,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbugplugin.SignupPageController')
+//@Export('airbug.GithubSignupPageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.SignupPageContainer')
+//@Require('airbug.GithubSignupPageContainer')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ControllerTag')
 
@@ -32,19 +34,23 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var ApplicationController   = bugpack.require('airbug.ApplicationController');
-    var SignupPageContainer     = bugpack.require('airbug.SignupPageContainer');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var ControllerTag           = bugpack.require('carapace.ControllerTag');
+    var Class                       = bugpack.require('Class');
+    var ApplicationController       = bugpack.require('airbug.ApplicationController');
+    var GithubSignupPageContainer   = bugpack.require('airbug.GithubSignupPageContainer');
+    var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var ControllerTag               = bugpack.require('carapace.ControllerTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var controller              = ControllerTag.controller;
+    var bugmeta                     = BugMeta.context();
+    var autowired                   = AutowiredTag.autowired;
+    var controller                  = ControllerTag.controller;
+    var property                    = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -55,9 +61,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {ApplicationController}
      */
-    var SignupPageController = Class.extend(ApplicationController, {
+    var GithubSignupPageController = Class.extend(ApplicationController, {
 
-        _name: "airbugplugin.SignupPageController",
+        _name: "airbug.GithubSignupPageController",
 
 
         //-------------------------------------------------------------------------------
@@ -78,9 +84,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @protected
-             * @type {SignupPageContainer}
+             * @type {GithubSignupPageContainer}
              */
-            this.registrationPageContainer = null;
+            this.githubSignupPageContainer = null;
         },
 
 
@@ -93,8 +99,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         createController: function() {
             this._super();
-            this.registrationPageContainer = new SignupPageContainer();
-            this.setContainerTop(this.registrationPageContainer);
+            this.githubSignupPageContainer = new GithubSignupPageContainer();
+            this.setContainerTop(this.githubSignupPageContainer);
         },
 
         /**
@@ -102,7 +108,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         destroyController: function() {
             this._super();
-            this.registrationPageContainer = null;
+            this.githubSignupPageContainer = null;
         },
 
         /**
@@ -111,13 +117,18 @@ require('bugpack').context("*", function(bugpack) {
          * @param {RoutingRequest} routingRequest
          */
         filterRouting: function(routingRequest) {
-            this.getCurrentUserManagerModule().retrieveCurrentUser(function(throwable, currentUser) {
-                if (currentUser && currentUser.isLoggedIn()) {
-                    routingRequest.forward("home", {
-                        trigger: true
-                    });
+            var _this = this;
+            this.currentUserManagerModule.retrieveCurrentUser(function(throwable, currentUser) {
+                if (!throwable) {
+                    if (currentUser.isLoggedIn()) {
+                        routingRequest.forward("home", {
+                            trigger: true
+                        });
+                    } else {
+                        routingRequest.accept();
+                    }
                 } else {
-                    routingRequest.accept();
+                    throw throwable;
                 }
             });
         }
@@ -128,8 +139,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(SignupPageController).with(
-        controller().route("signup")
+    bugmeta.tag(GithubSignupPageController).with(
+        controller().route("signup/github")
     );
 
 
@@ -137,5 +148,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbugplugin.SignupPageController", SignupPageController);
+    bugpack.export("airbug.GithubSignupPageController", GithubSignupPageController);
 });

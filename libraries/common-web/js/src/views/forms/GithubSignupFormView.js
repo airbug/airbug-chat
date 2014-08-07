@@ -12,7 +12,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.GithubLoginFormView')
+//@Export('airbug.GithubSignupFormView')
 
 //@Require('Class')
 //@Require('carapace.MustacheView')
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {MustacheView}
      */
-    var GithubLoginFormView = Class.extend(MustacheView, {
+    var GithubSignupFormView = Class.extend(MustacheView, {
 
         //-------------------------------------------------------------------------------
         // Template
@@ -182,5 +182,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.GithubLoginFormView", GithubLoginFormView);
+    bugpack.export("airbug.GithubSignupFormView", GithubSignupFormView);
 });

@@ -12,10 +12,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.CodeEditorWorkspace')
+//@Export('airbug.GithubLoginButtonView')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('carapace.ButtonView')
+//@Require('carapace.ButtonViewEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -28,8 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class   = bugpack.require('Class');
-    var Obj     = bugpack.require('Obj');
+    var Class               = bugpack.require('Class');
+    var ButtonView          = bugpack.require('carapace.ButtonView');
+    var ButtonViewEvent     = bugpack.require('carapace.ButtonViewEvent');
 
 
     //-------------------------------------------------------------------------------
@@ -38,36 +40,27 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {Obj}
+     * @extends {ButtonView}
      */
-    var CodeEditorWorkspace = Class.extend(Obj, {
-        _name: "airbug.CodeEditorWorkspace"
+    var GithubLoginButtonView = Class.extend(ButtonView, {
+
+        _name: "airbug.GithubLoginButtonView",
+
+
+        //-------------------------------------------------------------------------------
+        // Template
+        //-------------------------------------------------------------------------------
+
+        template: '<a id="github-login-button-{{cid}}" class="btn-auth btn-github large" href="#">' +
+                'Sign in with <b>Github</b>' +
+            '</a>'
     });
 
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @enum {string}
-     */
-    CodeEditorWorkspace.WidgetNames = {
-        EDITOR: "CodeEditorWorkspace:WidgetName:Editor",
-        SETTINGS: "CodeEditorWorkspace:WidgetName:Settings"
-    };
-
-    /**
-     * @static
-     * @const {string}
-     */
-    CodeEditorWorkspace.WORKSPACE_NAME = "CodeEditorWorkspace";
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.CodeEditorWorkspace", CodeEditorWorkspace);
+    bugpack.export("airbug.GithubLoginButtonView", GithubLoginButtonView);
 });

@@ -119,7 +119,7 @@ require('bugpack').context("*", function(bugpack) {
                 }
             });
         },
-        
+
         /**
          * @param {{
          *      callType: string,

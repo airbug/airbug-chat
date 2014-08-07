@@ -166,7 +166,7 @@ require('bugpack').context("*", function(bugpack) {
         getWorkspaceView: function() {
             return this.workspaceView;
         },
-        
+
 
         //-------------------------------------------------------------------------------
         // Convenience Methods

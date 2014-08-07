@@ -33,22 +33,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var UuidGenerator           = bugpack.require('UuidGenerator');
-    var GithubApi               = bugpack.require('airbugserver.GithubApi');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
-    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
+    var Class           = bugpack.require('Class');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var UuidGenerator   = bugpack.require('UuidGenerator');
+    var GithubApi       = bugpack.require('airbugserver.GithubApi');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var bugyarn                 = BugYarn.context();
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

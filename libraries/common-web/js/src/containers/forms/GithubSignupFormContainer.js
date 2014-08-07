@@ -12,12 +12,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.GithubLoginFormContainer')
+//@Export('airbug.GithubSignupFormContainer')
 
 //@Require('Class')
 //@Require('Exception')
 //@Require('airbug.CommandModule')
-//@Require('airbug.GithubLoginFormView')
+//@Require('airbug.GithubSignupFormView')
 //@Require('airbug.RoomModel')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -48,7 +48,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
     var CommandModule           = bugpack.require('airbug.CommandModule');
-    var GithubLoginFormView     = bugpack.require('airbug.GithubLoginFormView');
+    var GithubSignupFormView    = bugpack.require('airbug.GithubSignupFormView');
     var RoomModel               = bugpack.require('airbug.RoomModel');
     var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag             = bugpack.require('bugioc.PropertyTag');
@@ -85,9 +85,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {CarapaceContainer}
      */
-    var GithubLoginFormContainer = Class.extend(CarapaceContainer, {
+    var GithubSignupFormContainer = Class.extend(CarapaceContainer, {
 
-        _name: "airbug.GithubLoginFormContainer",
+        _name: "airbug.GithubSignupFormContainer",
 
 
         //-------------------------------------------------------------------------------
@@ -139,9 +139,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {GithubLoginFormView}
+             * @type {GithubSignupFormView}
              */
-            this.githubLoginFormView       = null;
+            this.githubSignupFormView       = null;
         },
 
 
@@ -154,7 +154,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         activateContainer: function() {
             this._super();
-            this.githubLoginFormView.$el.find("input")[0].focus();
+            this.githubSignupFormView.$el.find("input")[0].focus();
         },
 
         /**
@@ -192,7 +192,7 @@ require('bugpack').context("*", function(bugpack) {
                     .attributes({name: "Login"})
                     .build();
 
-            this.githubLoginFormView =
+            this.githubSignupFormView =
                 view(FormViewWithWrapper)
                     .attributes({classes: "form-horizontal", name: "Login"})
                     .build();
@@ -217,10 +217,10 @@ require('bugpack').context("*", function(bugpack) {
                         })
                         .build();
 
-                this.githubLoginFormView.addViewChild(emailBoxView, '*[id|=form]');
-                this.githubLoginFormView.addViewChild(emailView, '*[id|=form]');
-                this.githubLoginFormView.addViewChild(passwordInputView, '*[id|=form]');
-                this.githubLoginFormView.addViewChild(submitButtonView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(emailBoxView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(emailView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(passwordInputView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(submitButtonView, '*[id|=form]');
 
             } else {
                 var selectView =
@@ -239,10 +239,10 @@ require('bugpack').context("*", function(bugpack) {
                         })
                         .build();
 
-                this.githubLoginFormView.addViewChild(multipleEmailstextView);
-                this.githubLoginFormView.addViewChild(formControlGroupView, '*[id|=form]');
-                this.githubLoginFormView.addViewChild(passwordInputView, '*[id|=form]');
-                this.githubLoginFormView.addViewChild(submitButtonView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(multipleEmailstextView);
+                this.githubSignupFormView.addViewChild(formControlGroupView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(passwordInputView, '*[id|=form]');
+                this.githubSignupFormView.addViewChild(submitButtonView, '*[id|=form]');
 
                 for (var i = 0; i < emails.length; i++) {
                     var email = emails[i];
@@ -257,7 +257,7 @@ require('bugpack').context("*", function(bugpack) {
             // Wire Up Views
             //-------------------------------------------------------------------------------
 
-            this.setViewTop(this.githubLoginFormView);
+            this.setViewTop(this.githubSignupFormView);
         },
 
         /**
@@ -265,7 +265,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         deinitializeContainer: function() {
             this._super();
-            this.githubLoginFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+            this.githubSignupFormView.removeEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
         },
 
         /**
@@ -273,7 +273,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeContainer: function() {
             this._super();
-            this.githubLoginFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
+            this.githubSignupFormView.addEventListener(FormViewEvent.EventType.SUBMIT, this.hearFormSubmittedEvent, this);
         },
 
 
@@ -289,8 +289,8 @@ require('bugpack').context("*", function(bugpack) {
             var _this       = this;
             var formData    = event.getData().formData;
             this.currentUserManagerModule.loginUser(formData.email, formData.password, function(throwable, currentUser) {
-                console.log("Inside GithubLoginFormContainer currentUserManagerModule#loginUser callback");
-                console.log("throwable:", throwable, " currentUser:", currentUser, " inside GithubLoginFormContainer");
+                console.log("Inside GithubSignupFormContainer currentUserManagerModule#loginUser callback");
+                console.log("throwable:", throwable, " currentUser:", currentUser, " inside GithubSignupFormContainer");
 
                 if (!throwable) {
                     var finalDestination = _this.navigationModule.getFinalDestination();
@@ -324,7 +324,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(GithubLoginFormContainer).with(
+    bugmeta.tag(GithubSignupFormContainer).with(
         autowired().properties([
             property("airbugStaticConfig").ref("airbugStaticConfig"),
             property("commandModule").ref("commandModule"),
@@ -338,5 +338,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.GithubLoginFormContainer", GithubLoginFormContainer);
+    bugpack.export("airbug.GithubSignupFormContainer", GithubSignupFormContainer);
 });

@@ -60,7 +60,7 @@ var dependencies        = {
     mu2express: "0.0.1",
     mongodb: "1.3.23",
     mongoose: "3.8.9",
-    redis: "0.10.0",
+    redis: "0.11.0",
     "socket.io": "0.9.16",
     bcrypt: "0.7.7",
     github: "0.1.12"
@@ -126,7 +126,7 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/client/js/src",
             "../bugjs/projects/socketio/libraries/factorybrowser/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
-            "../bugmeta/projects/bugmeta/js/src",
+            "../bugmeta/libraries/bugmeta/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src"
         ],
@@ -193,7 +193,7 @@ buildProperties({
             "../bugjs/projects/socketio/libraries/client/js/src",
             "../bugjs/projects/socketio/libraries/factorybrowser/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
-            "../bugmeta/projects/bugmeta/js/src",
+            "../bugmeta/libraries/bugmeta/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbugclient/js/src"
         ],
@@ -223,17 +223,17 @@ buildProperties({
             "./libraries/airbug/js/src",
             "./projects/airbugserver/js/src",
             "./projects/airbugserver/js/migrations",
+            "../bugaws/libraries/bugaws/js/src",
             "../bugcore/libraries/bugcore/js/src",
-            "../bugfs/projects/bugfs/js/src",
+            "../bugfs/libraries/bugfs/js/src",
             "../bugioc/libraries/bugioc/js/src",
-            "../bugjs/projects/aws/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/libraries/core/js/src",
             "../bugjs/projects/bugcall/libraries/publisher/js/src",
             "../bugjs/projects/bugcall/libraries/server/js/src",
             "../bugjs/projects/bugcontroller/js/src",
             "../bugjs/projects/bugdelta/js/src",
-            "../bugjs/projects/bugentity/js/src",
+            "../bugjs/projects/bugentity/libraries/js/src",
             "../bugjs/projects/bugmarsh/js/src",
             "../bugjs/projects/bugmigrate/js/src",
             "../bugjs/projects/bugrequest/libraries/context/js/src",
@@ -250,7 +250,7 @@ buildProperties({
             "../bugjs/projects/redis/js/src",
             "../bugjs/projects/socketio/libraries/server/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
-            "../bugmeta/projects/bugmeta/js/src",
+            "../bugmeta/libraries/bugmeta/js/src",
             "../meldbug/projects/meldbug/bugjars/core/js/src",
             "../meldbug/projects/meldbug/bugjars/server/js/src",
             "../meldbug/projects/meldbugserver/js/src"
@@ -271,25 +271,26 @@ buildProperties({
                 dependencies: dependencies,
                 private: true,
                 scripts: {
-                    start: "node ./scripts/airbugserver-application-start.js"
+                    start: "node ./scripts/airbugserver-application-start.js",
+                    test: "node ./test/scripts/bugunit-run.js"
                 }
             },
             sourcePaths: [
-                "../buganno/projects/buganno/js/src",
-                "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src",
+                "../buganno/libraries/buganno/js/src",
+                "../bugdouble/libraries/bugdouble/js/src",
+                "../bugunit/libraries/bugunit/js/src",
                 "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
-                "../buganno/projects/buganno/js/scripts",
-                "../bugunit/projects/bugunit/js/scripts"
+                "../buganno/libraries/buganno/js/scripts",
+                "../bugunit/libraries/bugunit/js/scripts"
             ],
             testPaths: [
                 "./libraries/airbug/js/test",
                 "./projects/airbugserver/js/test",
+                "../bugaws/libraries/bugaws/js/test",
                 "../bugcore/libraries/bugcore/js/test",
                 "../bugioc/libraries/bugioc/js/test",
-                "../bugjs/projects/aws/js/test",
                 "../bugjs/projects/bugapp/js/test",
                 "../bugjs/projects/bugcall/libraries/core/js/test",
                 "../bugjs/projects/bugcall/libraries/publisher/js/test",
@@ -311,7 +312,7 @@ buildProperties({
                 "../bugjs/projects/redis/js/test",
                 "../bugjs/projects/socketio/libraries/server/js/test",
                 "../bugjs/projects/socketio/libraries/socket/js/test",
-                "../bugmeta/projects/bugmeta/js/test",
+                "../bugmeta/libraries/bugmeta/js/test",
                 "../meldbug/projects/meldbug/bugjars/core/js/test",
                 "../meldbug/projects/meldbug/bugjars/server/js/test",
                 "../meldbug/projects/meldbugserver/js/test"
@@ -323,6 +324,7 @@ buildProperties({
             name: "airbugworker",
             version: version,
             dependencies: dependencies,
+            private: true,
             scripts: {
                 start: "node ./scripts/airbugworker-application-start.js"
             }
@@ -333,7 +335,7 @@ buildProperties({
         sourcePaths: [
             "./projects/airbugworker/js/src",
             "../bugcore/libraries/bugcore/js/src",
-            "../bugfs/projects/bugfs/js/src",
+            "../bugfs/libraries/bugfs/js/src",
             "../bugioc/libraries/bugioc/js/src",
             "../bugjs/projects/bugapp/js/src",
             "../bugjs/projects/bugcall/libraries/core/js/src",
@@ -347,7 +349,7 @@ buildProperties({
             "../bugjs/projects/loggerbug/js/src",
             "../bugjs/projects/redis/js/src",
             "../bugjs/projects/socketio/libraries/socket/js/src",
-            "../bugmeta/projects/bugmeta/js/src"
+            "../bugmeta/libraries/bugmeta/js/src"
         ],
         scriptPaths: [
             "../bugjs/projects/bugwork/js/scripts",
@@ -358,19 +360,21 @@ buildProperties({
                 name: "airbugworker-test",
                 version: version,
                 dependencies: dependencies,
+                private: true,
                 scripts: {
-                    start: "node ./scripts/airbugworker-application-start.js"
+                    start: "node ./scripts/airbugworker-application-start.js",
+                    test: "node ./test/scripts/bugunit-run.js"
                 }
             },
             sourcePaths: [
-                "../buganno/projects/buganno/js/src",
-                "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src",
+                "../buganno/libraries/buganno/js/src",
+                "../bugdouble/libraries/bugdouble/js/src",
+                "../bugunit/libraries/bugunit/js/src",
                 "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
-                "../buganno/projects/buganno/js/scripts",
-                "../bugunit/projects/bugunit/js/scripts"
+                "../buganno/libraries/buganno/js/scripts",
+                "../bugunit/libraries/bugunit/js/scripts"
             ],
             testPaths: [
                 "./projects/airbugworker/js/test",
@@ -388,7 +392,7 @@ buildProperties({
                 "../bugjs/projects/loggerbug/js/test",
                 "../bugjs/projects/redis/js/test",
                 "../bugjs/projects/socketio/libraries/socket/js/test",
-                "../bugmeta/projects/bugmeta/js/test"
+                "../bugmeta/libraries/bugmeta/js/test"
             ]
         }
     },
@@ -588,13 +592,11 @@ buildTarget('local').buildFlow(
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
                         packagePaths: {
-                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
-                                buildProject.getProperty("server.unitTest.sourcePaths")
-                            ),
-                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
-                                buildProject.getProperty("server.unitTest.scriptPaths")
-                            ),
+                            "./lib": buildProject.getProperty("server.sourcePaths"),
+                            "./scripts": buildProject.getProperty("server.scriptPaths"),
                             "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./test/lib": buildProject.getProperty("server.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("server.unitTest.scriptPaths"),
                             "./resources": buildProject.getProperty("server.resourcePaths"),
                             "./static": buildProject.getProperty("client.serverStickyPaths").concat([
                                 "{{client.staticBuildPath}}",
@@ -682,14 +684,14 @@ buildTarget('local').buildFlow(
                 targetTask('createNodePackage', {
                     properties: {
                         packageJson: buildProject.getProperty("worker.packageJson"),
-                        resourcePaths: buildProject.getProperty("worker.resourcePaths"),
-                        sourcePaths: buildProject.getProperty("worker.sourcePaths").concat(
-                            buildProject.getProperty("worker.unitTest.sourcePaths")
-                        ),
-                        scriptPaths: buildProject.getProperty("worker.scriptPaths").concat(
-                            buildProject.getProperty("worker.unitTest.scriptPaths")
-                        ),
-                        testPaths: buildProject.getProperty("worker.unitTest.testPaths")
+                        packagePaths: {
+                            "./lib": buildProject.getProperty("worker.sourcePaths"),
+                            "./resources": buildProject.getProperty("worker.resourcePaths"),
+                            "./scripts": buildProject.getProperty("worker.scriptPaths"),
+                            "./test": buildProject.getProperty("worker.unitTest.testPaths"),
+                            "./test/lib": buildProject.getProperty("worker.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("worker.unitTest.scriptPaths")
+                        }
                     }
                 }),
                 targetTask('generateBugPackRegistry', {
@@ -866,14 +868,9 @@ buildTarget('short').buildFlow(
                     properties: {
                         packageJson: buildProject.getProperty("server.packageJson"),
                         packagePaths: {
-                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
-                                buildProject.getProperty("server.unitTest.sourcePaths")
-                            ),
-                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
-                                buildProject.getProperty("server.unitTest.scriptPaths")
-                            ),
-                            "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./lib": buildProject.getProperty("server.sourcePaths"),
                             "./resources": buildProject.getProperty("server.resourcePaths"),
+                            "./scripts": buildProject.getProperty("server.scriptPaths"),
                             "./static": buildProject.getProperty("client.serverStickyPaths").concat([
                                 "{{client.staticBuildPath}}",
                                 "{{plugin.staticBuildPath}}"
@@ -890,7 +887,10 @@ buildTarget('short').buildFlow(
                             ],
                             "./static/js/bridge": [
                                 buildProject.getProperty("bridge.outputFile")
-                            ]
+                            ],
+                            "./test": buildProject.getProperty("server.unitTest.testPaths"),
+                            "./test/lib":  buildProject.getProperty("server.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("server.unitTest.scriptPaths")
                         }
                     }
                 }),
@@ -964,15 +964,13 @@ buildTarget('prod').buildFlow(
                     properties: {
                         packageJson: buildProject.getProperty("server.unitTest.packageJson"),
                         packagePaths: {
-                            "./lib": buildProject.getProperty("server.sourcePaths").concat(
-                                buildProject.getProperty("server.unitTest.sourcePaths")
-                            ),
-                            "./scripts": buildProject.getProperty("server.scriptPaths").concat(
-                                buildProject.getProperty("server.unitTest.scriptPaths")
-                            ),
+                            "./lib": buildProject.getProperty("server.sourcePaths"),
+                            "./resources": buildProject.getProperty("server.resourcePaths"),
+                            "./scripts": buildProject.getProperty("server.scriptPaths"),
                             "./static": buildProject.getProperty("client.serverStickyPaths"),
                             "./test": buildProject.getProperty("server.unitTest.testPaths"),
-                            "./resources": buildProject.getProperty("server.resourcePaths")
+                            "./test/lib": buildProject.getProperty("server.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("server.unitTest.scriptPaths")
                         }
                     }
                 }),
@@ -1075,14 +1073,12 @@ buildTarget('prod').buildFlow(
                     properties: {
                         packageJson: buildProject.getProperty("worker.unitTest.packageJson"),
                         packagePaths: {
+                            "./lib": buildProject.getProperty("worker.sourcePaths"),
                             "./resources": buildProject.getProperty("worker.resourcePaths"),
-                            "./lib": buildProject.getProperty("worker.sourcePaths").concat(
-                                buildProject.getProperty("worker.unitTest.sourcePaths")
-                            ),
-                            "./scripts": buildProject.getProperty("worker.scriptPaths").concat(
-                                buildProject.getProperty("worker.unitTest.scriptPaths")
-                            ),
-                            "./test": buildProject.getProperty("worker.unitTest.testPaths")
+                            "./scripts": buildProject.getProperty("worker.scriptPaths"),
+                            "./test": buildProject.getProperty("worker.unitTest.testPaths"),
+                            "./test/lib": buildProject.getProperty("worker.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("worker.unitTest.scriptPaths")
                         }
                     }
                 }),
@@ -1124,8 +1120,8 @@ buildTarget('prod').buildFlow(
                     properties: {
                         packageJson: buildProject.getProperty("worker.packageJson"),
                         packagePaths: {
-                            "./resources": buildProject.getProperty("worker.resourcePaths"),
                             "./lib": buildProject.getProperty("worker.sourcePaths"),
+                            "./resources": buildProject.getProperty("worker.resourcePaths"),
                             "./scripts": buildProject.getProperty("worker.scriptPaths")
                         }
                     }

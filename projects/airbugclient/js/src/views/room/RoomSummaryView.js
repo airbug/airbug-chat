@@ -45,7 +45,7 @@ var RoomSummaryView = Class.extend(MustacheView, {
     // Template
     //-------------------------------------------------------------------------------
 
-    template:   
+    template:
         '<div id="room-summary-{{cid}}" class="room-summary {{classes}}">' +
             '<div id="room-last-message-sent-by-{{cid}}" class="room-summary-text room-last-message-sent-by">{{lastMessageSentBy}}</div>' +
             '<div id="room-topic-{{cid}}" class="room-summary-text room-topic">{{topic}}</div>' +

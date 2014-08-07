@@ -12,12 +12,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.GithubLoginPageController')
+//@Export('airbugplugin.GithubSignupPageController')
 //@Autoload
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbug.GithubLoginPageContainer')
+//@Require('airbug.GithubSignupPageContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var ApplicationController       = bugpack.require('airbug.ApplicationController');
-    var GithubLoginPageContainer    = bugpack.require('airbug.GithubLoginPageContainer');
+    var GithubSignupPageContainer   = bugpack.require('airbug.GithubSignupPageContainer');
     var AutowiredTag                = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                 = bugpack.require('bugioc.PropertyTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
@@ -61,9 +61,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {ApplicationController}
      */
-    var GithubLoginPageController = Class.extend(ApplicationController, {
+    var GithubSignupPageController = Class.extend(ApplicationController, {
 
-        _name: "airbug.GithubLoginPageController",
+        _name: "airbugplugin.GithubSignupPageController",
 
 
         //-------------------------------------------------------------------------------
@@ -84,9 +84,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @protected
-             * @type {GithubLoginPageContainer}
+             * @type {GithubSignupPageContainer}
              */
-            this.githubLoginPageContainer = null;
+            this.githubSignupPageContainer = null;
         },
 
 
@@ -99,8 +99,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         createController: function() {
             this._super();
-            this.githubLoginPageContainer = new GithubLoginPageContainer();
-            this.setContainerTop(this.githubLoginPageContainer);
+            this.githubSignupPageContainer = new GithubSignupPageContainer();
+            this.setContainerTop(this.githubSignupPageContainer);
         },
 
         /**
@@ -108,7 +108,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         destroyController: function() {
             this._super();
-            this.githubLoginPageContainer = null;
+            this.githubSignupPageContainer = null;
         },
 
         /**
@@ -139,8 +139,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(GithubLoginPageController).with(
-        controller().route("githubLogin")
+    bugmeta.tag(GithubSignupPageController).with(
+        controller().route("signup/github")
     );
 
 
@@ -148,5 +148,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.GithubLoginPageController", GithubLoginPageController);
+    bugpack.export("airbugplugin.GithubSignupPageController", GithubSignupPageController);
 });

@@ -12,12 +12,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('airbug.GithubLoginPageContainer')
+//@Export('airbug.GithubSignupPageContainer')
 
 //@Require('Class')
 //@Require('airbug.AlternateLoginPanelContainer')
 //@Require('airbug.ApplicationContainer')
-//@Require('airbug.GithubLoginFormContainer')
+//@Require('airbug.GithubSignupFormContainer')
 //@Require('airbug.SignupButtonContainer')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                           = bugpack.require('Class');
     var AlternateLoginPanelContainer    = bugpack.require('airbug.AlternateLoginPanelContainer');
     var ApplicationContainer            = bugpack.require('airbug.ApplicationContainer');
-    var GithubLoginFormContainer        = bugpack.require('airbug.GithubLoginFormContainer');
+    var GithubSignupFormContainer       = bugpack.require('airbug.GithubSignupFormContainer');
     var SignupButtonContainer           = bugpack.require('airbug.SignupButtonContainer');
     var AutowiredTag                    = bugpack.require('bugioc.AutowiredTag');
     var PropertyTag                     = bugpack.require('bugioc.PropertyTag');
@@ -68,9 +68,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {ApplicationContainer}
      */
-    var GithubLoginPageContainer = Class.extend(ApplicationContainer, {
+    var GithubSignupPageContainer = Class.extend(ApplicationContainer, {
 
-        _name: "airbug.GithubLoginPageContainer",
+        _name: "airbug.GithubSignupPageContainer",
 
 
         //-------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @protected
-             * @type {GithubLoginFormContainer}
+             * @type {GithubSignupFormContainer}
              */
-            this.githubLoginFormContainer             = null;
+            this.githubSignupFormContainer             = null;
 
             /**
              * @protected
@@ -169,10 +169,10 @@ require('bugpack').context("*", function(bugpack) {
         createContainerChildren: function() {
             this._super();
 
-            this.githubLoginFormContainer       = new GithubLoginFormContainer();
+            this.githubSignupFormContainer       = new GithubSignupFormContainer();
             this.signupButtonContainer          = new SignupButtonContainer();
             this.addContainerChild(this.signupButtonContainer, "#header-right");
-            this.addContainerChild(this.githubLoginFormContainer, "#box-body-" + this.boxView.getCid());
+            this.addContainerChild(this.githubSignupFormContainer, "#box-body-" + this.boxView.getCid());
         }
     });
 
@@ -181,7 +181,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(GithubLoginPageContainer).with(
+    bugmeta.tag(GithubSignupPageContainer).with(
         autowired().properties([
             property("navigationModule").ref("navigationModule")
         ])
@@ -192,5 +192,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export("airbug.GithubLoginPageContainer", GithubLoginPageContainer);
+    bugpack.export("airbug.GithubSignupPageContainer", GithubSignupPageContainer);
 });

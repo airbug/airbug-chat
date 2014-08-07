@@ -18,14 +18,14 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('airbug.AirbugStaticConfig')
-//@Require('airbug.DocumentUtil')
-//@Require('airbug.MemoryCache')
-//@Require('airbug.WindowUtil')
 //@Require('bugcall.Call')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ConfigurationTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
+//@Require('carapace.DocumentUtil')
+//@Require('carapace.MemoryCache')
+//@Require('carapace.WindowUtil')
 //@Require('socketio.BrowserSocketIoFactory')
 //@Require('socketio.SocketIoClient')
 //@Require('socketio.SocketIoConfig')
@@ -44,14 +44,14 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
     var AirbugStaticConfig      = bugpack.require('airbug.AirbugStaticConfig');
-    var DocumentUtil            = bugpack.require('airbug.DocumentUtil');
-    var MemoryCache             = bugpack.require('airbug.MemoryCache');
-    var WindowUtil              = bugpack.require('airbug.WindowUtil');
     var Call                    = bugpack.require('bugcall.Call');
     var ArgTag                  = bugpack.require('bugioc.ArgTag');
     var ConfigurationTag        = bugpack.require('bugioc.ConfigurationTag');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var DocumentUtil            = bugpack.require('carapace.DocumentUtil');
+    var MemoryCache             = bugpack.require('carapace.MemoryCache');
+    var WindowUtil              = bugpack.require('carapace.WindowUtil');
     var BrowserSocketIoFactory  = bugpack.require('socketio.BrowserSocketIoFactory');
     var SocketIoClient          = bugpack.require('socketio.SocketIoClient');
     var SocketIoConfig          = bugpack.require('socketio.SocketIoConfig');

@@ -17,7 +17,7 @@
 
 //@Require('Class')
 //@Require('airbug.ApplicationController')
-//@Require('airbugplugin.LoginPageContainer')
+//@Require('airbug.LoginPageContainer')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.ControllerTag')
 
@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var ApplicationController   = bugpack.require('airbug.ApplicationController');
-    var LoginPageContainer      = bugpack.require('airbugplugin.LoginPageContainer');
+    var LoginPageContainer      = bugpack.require('airbug.LoginPageContainer');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var ControllerTag           = bugpack.require('carapace.ControllerTag');
 

@@ -30,7 +30,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
-    
+
     var Class       = bugpack.require('Class');
     var Publisher   = bugpack.require('Publisher');
     var ModuleTag   = bugpack.require('bugioc.ModuleTag');
