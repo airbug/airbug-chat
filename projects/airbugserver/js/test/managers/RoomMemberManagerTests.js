@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('Flows')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('airbugserver.RoomMember')
 //@Require('airbugserver.RoomMemberManager')
 //@Require('bugmeta.BugMeta')
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Flows               = bugpack.require('Flows');
-    var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var RoomMember          = bugpack.require('airbugserver.RoomMember');
     var RoomMemberManager   = bugpack.require('airbugserver.RoomMemberManager');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
@@ -65,7 +65,7 @@ require('bugpack').context("*", function(bugpack) {
         ]);
 
         var roomMemberData     = args[0] || {};
-        var testRoomMemberData = Obj.merge(roomMemberData, {
+        var testRoomMemberData = ObjectUtil.merge(roomMemberData, {
             createdAt: new Date(Date.now()),
             memberType: "testMemberType",
             roomId: "testRoomId",

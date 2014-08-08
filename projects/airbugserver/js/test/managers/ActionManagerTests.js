@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('Flows')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('airbugserver.Action')
 //@Require('airbugserver.ActionManager')
 //@Require('bugmeta.BugMeta')
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class           = bugpack.require('Class');
     var Flows           = bugpack.require('Flows');
-    var Obj             = bugpack.require('Obj');
+    var ObjectUtil      = bugpack.require('ObjectUtil');
     var Action          = bugpack.require('airbugserver.Action');
     var ActionManager   = bugpack.require('airbugserver.ActionManager');
     var BugMeta         = bugpack.require('bugmeta.BugMeta');
@@ -65,7 +65,7 @@ require('bugpack').context("*", function(bugpack) {
         ]);
 
         var actionData         = args[0] || {};
-        var testActionData     = Obj.merge(actionData, {
+        var testActionData     = ObjectUtil.merge(actionData, {
             actionData: {},
             actionType: "testActionType",
             actionVersion: "testActionVersion",

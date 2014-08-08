@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('Flows')
 //@Require('ISet')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Set')
 //@Require('airbugserver.Room')
 //@Require('airbugserver.RoomManager')
@@ -39,7 +39,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class           = bugpack.require('Class');
     var Flows           = bugpack.require('Flows');
     var ISet            = bugpack.require('ISet');
-    var Obj             = bugpack.require('Obj');
+    var ObjectUtil      = bugpack.require('ObjectUtil');
     var Set             = bugpack.require('Set');
     var Room            = bugpack.require('airbugserver.Room');
     var RoomManager     = bugpack.require('airbugserver.RoomManager');
@@ -68,7 +68,7 @@ require('bugpack').context("*", function(bugpack) {
             "setupTestRoomManager"
         ]);
         var roomData = args[0] || {};
-        var testRoomData = Obj.merge(roomData, {
+        var testRoomData = ObjectUtil.merge(roomData, {
             name: "testName"
         });
         return this.roomManager.generateRoom(testRoomData);

@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('Flows')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('airbugserver.BetaKey')
 //@Require('airbugserver.BetaKeyManager')
 //@Require('bugmeta.BugMeta')
@@ -36,7 +36,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class           = bugpack.require('Class');
     var Flows           = bugpack.require('Flows');
-    var Obj             = bugpack.require('Obj');
+    var ObjectUtil      = bugpack.require('ObjectUtil');
     var BetaKey         = bugpack.require('airbugserver.BetaKey');
     var BetaKeyManager  = bugpack.require('airbugserver.BetaKeyManager');
     var BugMeta         = bugpack.require('bugmeta.BugMeta');
@@ -65,7 +65,7 @@ require('bugpack').context("*", function(bugpack) {
         ]);
 
         var betaKeyData         = args[0] || {};
-        var testBetaKeyData     = Obj.merge(betaKeyData, {
+        var testBetaKeyData     = ObjectUtil.merge(betaKeyData, {
             baseKey: "testBaseKey",
             betaKey: "testBetaKey",
             cap: 10,

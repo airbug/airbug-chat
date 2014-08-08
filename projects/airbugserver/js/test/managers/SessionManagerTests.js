@@ -17,6 +17,7 @@
 //@Require('Class')
 //@Require('Flows')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
@@ -43,6 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class           = bugpack.require('Class');
     var Flows           = bugpack.require('Flows');
     var Obj             = bugpack.require('Obj');
+    var ObjectUtil      = bugpack.require('ObjectUtil');
     var Set             = bugpack.require('Set');
     var TypeUtil        = bugpack.require('TypeUtil');
     var UuidGenerator   = bugpack.require('UuidGenerator');
@@ -77,7 +79,7 @@ require('bugpack').context("*", function(bugpack) {
         ]);
 
         var sessionData     = args[0] || {};
-        var testSessionData = Obj.merge(sessionData, {
+        var testSessionData = ObjectUtil.merge(sessionData, {
             cookie: {
                 domain: "testDomain",
                 expires: new Date(Date.now()),

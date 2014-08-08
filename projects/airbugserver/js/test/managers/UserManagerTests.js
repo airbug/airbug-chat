@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('Flows')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Set')
 //@Require('airbugserver.User')
 //@Require('airbugserver.UserManager')
@@ -39,7 +39,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Flows               = bugpack.require('Flows');
-    var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var Set                 = bugpack.require('Set');
     var User                = bugpack.require('airbugserver.User');
     var UserManager         = bugpack.require('airbugserver.UserManager');
@@ -71,7 +71,7 @@ require('bugpack').context("*", function(bugpack) {
             "setupTestUserManager"
         ]);
         var userData = args[0] || {};
-        var testUserData = Obj.merge(userData, {
+        var testUserData = ObjectUtil.merge(userData, {
             anonymous: true
         });
         return this.userManager.generateUser(testUserData);
@@ -82,7 +82,7 @@ require('bugpack').context("*", function(bugpack) {
             "setupTestUserManager"
         ]);
         var userData = args[0] || {};
-        var testUserData = Obj.merge(userData, {
+        var testUserData = ObjectUtil.merge(userData, {
             agreedToTermsDate: new Date(Date.now()),
             anonymous: false,
             email: "test@test.com",

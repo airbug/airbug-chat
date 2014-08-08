@@ -22,6 +22,7 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('ObservableList')
 //@Require('RemoveChange')
 //@Require('RemovePropertyChange')
@@ -68,6 +69,7 @@ require('bugpack').context("*", function(bugpack) {
     var List                            = bugpack.require('List');
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
+    var ObjectUtil                      = bugpack.require('ObjectUtil');
     var ObservableList                  = bugpack.require('ObservableList');
     var RemoveChange                    = bugpack.require('RemoveChange');
     var RemovePropertyChange            = bugpack.require('RemovePropertyChange');
@@ -747,7 +749,7 @@ require('bugpack').context("*", function(bugpack) {
 
             //TODO BRN: If the conversation hasn't loaded yet, then this id will not be available. Might need to figure out a way to wait for the conversation to be ready.
 
-            var chatMessageObject = this.chatMessageManagerModule.generateMessageObject(Obj.merge({
+            var chatMessageObject = this.chatMessageManagerModule.generateMessageObject(ObjectUtil.merge({
                 conversationId: this.conversationModel.getProperty("id"),
                 sentAt: new Date(),
                 pending: true,
