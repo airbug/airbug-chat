@@ -15,8 +15,8 @@
 //@Export('airbug.WorkspacePageContainer')
 
 //@Require('Class')
-//@Require('airbug.PageContainer')
 //@Require('airbug.CommandModule')
+//@Require('airbug.PageContainer')
 //@Require('airbug.WorkspaceEvent')
 //@Require('airbug.WorkspaceTrayContainer')
 //@Require('airbug.WorkspaceWrapperContainer')
@@ -40,8 +40,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
-    var PageContainer        = bugpack.require('airbug.PageContainer');
     var CommandModule               = bugpack.require('airbug.CommandModule');
+    var PageContainer               = bugpack.require('airbug.PageContainer');
     var WorkspaceEvent              = bugpack.require('airbug.WorkspaceEvent');
     var WorkspaceTrayContainer      = bugpack.require('airbug.WorkspaceTrayContainer');
     var WorkspaceWrapperContainer   = bugpack.require('airbug.WorkspaceWrapperContainer');

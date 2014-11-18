@@ -117,10 +117,15 @@ Bridge.prototype = {
         this.queue.push({
             messageObject: messageObject
         });
+    },
 
+    /**
+     * @param {string} streamId
+     * @param {string} chunk
+     * @param {boolean} reachedEOF
+     */
     receiveFileData: function(streamId, chunk, reachedEOF) {
         console.log("Received chunk for " + streamId);
-        // FIXME: this call doesn't seem to actually work
         this.messageProcessor.processFileData(streamId, chunk, reachedEOF);
     }
 };
@@ -128,5 +133,9 @@ Bridge.prototype = {
 window.bridge = new Bridge();
 
 // Helps get around issue where native code can't access the proper context when calling the bridge's prototype functions
-window.receiveMessage = window.bridge.receiveMessage;
-window.receiveFileData = window.bridge.receiveFileData;
+window.receiveMessage = function(messageString) {
+    window.bridge.receiveMessage(messageString);
+};
+window.receiveFileData = function(streamId, chunk, reachedEOF) {
+    window.bridge.receiveFileData(streamId, chunk, reachedEOF);
+};
