@@ -147,7 +147,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @static
      * @param {string} stringKey
-     * @returns {InteractionStatusKey}
+     * @return {InteractionStatusKey}
      */
     InteractionStatusKey.fromStringKey = function(stringKey) {
         var keyParts = stringKey.split(":");

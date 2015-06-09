@@ -598,7 +598,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {string} entityId
          * @param {MeldBuilder} meldBuilder
          * @param {MeldStore} meldStore
-         * @returns {RetrieveRequest}
+         * @return {RetrieveRequest}
          */
         factoryRetrieveRequest: function(entityType, entityId, meldBuilder, meldStore) {
             return new RetrieveRequest(entityType, entityId, meldBuilder, meldStore);
@@ -608,7 +608,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          * @param {string} entityType
          * @param {string} entityId
-         * @returns {RetrieveRequest}
+         * @return {RetrieveRequest}
          */
         generateRetrieveRequest: function(entityType, entityId) {
             var apiRequest = this.factoryRetrieveRequest(entityType, entityId, this.meldBuilder, this.meldStore);

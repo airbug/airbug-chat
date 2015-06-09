@@ -447,7 +447,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} userId
-         * @returns {string}
+         * @return {string}
          */
         generateUserStatusHashKey: function(userId) {
             return "userStatus:" + userId;

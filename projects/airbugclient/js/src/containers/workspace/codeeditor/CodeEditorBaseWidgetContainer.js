@@ -236,7 +236,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {Document} document
+         * @return {Document} document
          */
         getEditorDocument: function() {
             return this.codeEditorView.getEditorDocument();

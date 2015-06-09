@@ -117,7 +117,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getCallType: function() {
             return this.getEntityData().callType;
@@ -131,7 +131,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getCallUuid: function() {
             return this.getEntityData().callUuid;

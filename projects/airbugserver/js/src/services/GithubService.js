@@ -310,7 +310,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @returns {string}
+         * @return {string}
          */
         generateGithubState: function() {
             return UuidGenerator.generateUuid();

@@ -106,7 +106,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getCookieDomain: function() {
             var cookieDomain = this.getProperty("cookieDomain");

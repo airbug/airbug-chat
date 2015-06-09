@@ -79,14 +79,14 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getConversationId: function() {
             return this.getEntityData().conversationId;
         },
 
         /**
-         * @returns {number}
+         * @return {number}
          */
         getCount: function() {
             return this.getEntityData().count;

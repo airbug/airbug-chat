@@ -315,7 +315,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @returns {string}
+         * @return {string}
          */
         getInputValue: function() {
             return this.uploadByUrlInputView.$el[0].value;

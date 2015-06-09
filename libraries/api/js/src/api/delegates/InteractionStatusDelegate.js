@@ -194,7 +194,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {InteractionStatusDefines.Status} interactionStatus
-         * @returns {SetInteractionStatusRequest}
+         * @return {SetInteractionStatusRequest}
          */
         factorySetInteractionStatusRequest: function(interactionStatus) {
             return new SetInteractionStatusRequest(interactionStatus);

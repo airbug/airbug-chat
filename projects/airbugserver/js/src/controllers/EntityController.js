@@ -104,7 +104,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          *
-         * @returns {BugCallRouter}
+         * @return {BugCallRouter}
          */
         getBugCallRouter: function() {
             return this.bugCallRouter;

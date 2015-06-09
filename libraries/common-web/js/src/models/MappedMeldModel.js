@@ -118,7 +118,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          * @param {string} key
-         * @returns {MeldDocument}
+         * @return {MeldDocument}
          */
         getMeldDocument: function(key) {
             return this.meldDocumentMap.get(key);

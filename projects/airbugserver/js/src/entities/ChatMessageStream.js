@@ -68,7 +68,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {Set.<string>}
+         * @return {Set.<string>}
          */
         getChatMessageIdSet: function() {
             return this.getEntityData().chatMessageIdSet;

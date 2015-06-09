@@ -80,7 +80,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getGithubClientId: function() {
             return this.getProperty("github.clientId");
@@ -94,7 +94,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {*}
+         * @return {*}
          */
         getGithubEmails: function() {
             return this.getProperty("github.emails");
@@ -108,7 +108,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getGithubScope: function() {
             return this.getProperty("github.scope");
@@ -122,7 +122,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getGithubState: function() {
             return this.getProperty("github.state");

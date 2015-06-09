@@ -72,7 +72,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {MeldDocument}
+         * @return {MeldDocument}
          */
         getMeldDocument: function() {
             return this.meldDocument;

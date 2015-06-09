@@ -85,7 +85,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {AirbugStaticConfig}
+         * @return {AirbugStaticConfig}
          */
         airbugStaticConfig: function() {
             return new AirbugStaticConfig(_appConfig);
@@ -121,7 +121,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {document|*|HTMLDocument}
+         * @return {document|*|HTMLDocument}
          */
         document: function() {
             return document;

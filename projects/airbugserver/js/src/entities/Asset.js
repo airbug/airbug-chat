@@ -66,7 +66,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getMidsizeMimeType: function() {
             return this.getEntityData().midsizeMimeType;
@@ -80,7 +80,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getMidsizeUrl: function() {
             return this.getEntityData().midsizeUrl;

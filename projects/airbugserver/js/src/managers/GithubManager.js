@@ -100,7 +100,7 @@ require('bugpack').context("*", function(bugpack) {
          *      updatedAt: Date,
          *      userId: string
          * }} data
-         * @returns {Github}
+         * @return {Github}
          */
         generateGithub: function(data) {
             var github = new Github(data);

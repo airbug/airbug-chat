@@ -65,7 +65,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @static
      * @param {String} password
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     PasswordUtil.isValid = function(password) {
         if (!TypeUtil.isString(password)) {

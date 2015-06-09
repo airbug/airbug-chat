@@ -123,7 +123,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getCallUuid: function() {
             return this.bugCallClient.getCall().getCallUuid();

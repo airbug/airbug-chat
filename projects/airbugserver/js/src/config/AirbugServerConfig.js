@@ -66,7 +66,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getGithubClientId: function() {
             return this.getProperty("github.clientId");
@@ -80,7 +80,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getGithubClientSecret: function() {
             return this.getProperty("github.clientSecret");

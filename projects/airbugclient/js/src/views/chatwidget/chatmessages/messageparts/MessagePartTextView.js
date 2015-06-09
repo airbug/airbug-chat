@@ -113,7 +113,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} text
-         * @returns {string}
+         * @return {string}
          */
         renderText: function(text) {
             var html = HtmlUtil.stringToHtml(text);

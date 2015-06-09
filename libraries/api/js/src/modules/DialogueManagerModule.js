@@ -177,7 +177,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {MeldBuilder} meldBuilder
          * @param {MeldStore} meldStore
          * @param {MemoryCache} dialogueMemoryCache
-         * @returns {RetrieveDialogueByUserIdForCurrentUserRequest}
+         * @return {RetrieveDialogueByUserIdForCurrentUserRequest}
          */
         factoryRetrieveDialogueByUserIdForCurrentUserRequest: function(userId, meldBuilder, meldStore, dialogueMemoryCache) {
             return new RetrieveDialogueByUserIdForCurrentUserRequest(userId, meldBuilder, meldStore, dialogueMemoryCache);
@@ -200,7 +200,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} userId
-         * @returns {RetrieveDialogueByUserIdForCurrentUserRequest}
+         * @return {RetrieveDialogueByUserIdForCurrentUserRequest}
          */
         generateRetrieveDialogueByUserIdForCurrentUserRequest: function(userId) {
             var apiRequest = this.factoryRetrieveDialogueByUserIdForCurrentUserRequest(userId, this.getMeldBuilder(), this.getMeldStore(), this.dialogueMemoryCache);

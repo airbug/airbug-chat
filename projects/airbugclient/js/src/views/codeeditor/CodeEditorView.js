@@ -125,7 +125,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getEditorCopyText: function() {
             return this.editor.getCopyText();
@@ -149,7 +149,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {Document} document
+         * @return {Document} document
          */
         getEditorDocument: function() {
             return this.editor.getSession().getDocument();
@@ -298,7 +298,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {boolean}
+         * @return {boolean}
          */
         getEditorReadOnly: function() {
             return this.editor.getReadOnly();

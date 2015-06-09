@@ -88,14 +88,14 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {MessagePartModel}
+         * @return {MessagePartModel}
          */
         getMessagePartModel: function() {
             return this.messagePartModel;
         },
 
         /**
-         * @returns {MessagePartView}
+         * @return {MessagePartView}
          */
         getMessagePartView: function() {
             return this.messagePartView;

@@ -181,21 +181,21 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {ChatMessageModel}
+         * @return {ChatMessageModel}
          */
         getChatMessageModel: function() {
             return this.chatMessageModel;
         },
 
         /**
-         * @returns {ChatMessageView}
+         * @return {ChatMessageView}
          */
         getChatMessageView: function() {
             return this.chatMessageView;
         },
 
         /**
-         * @returns {ListItemView}
+         * @return {ListItemView}
          */
         getListItemView: function() {
             return this.listItemView;
