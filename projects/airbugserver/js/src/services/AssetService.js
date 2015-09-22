@@ -360,12 +360,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.assetPusher.meldCallWithAssets(call.getCallUuid(), assetMap.getValueArray(), function(throwable) {
+                        _this.assetPusher.meldCallWithAssets(call.getCallUuid(), assetMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.assetPusher.pushAssetsToCall(assetMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        _this.assetPusher.pushAssetsToCall(assetMap.toValueArray(), call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                     })
@@ -383,7 +383,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {RequestContext} requestContext
-         * @param {Array<{
+         * @param {Array.<{
          *      name: string,
          *      type: string,
          *      path: string

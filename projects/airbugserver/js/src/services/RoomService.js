@@ -545,12 +545,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.roomPusher.meldCallWithRooms(call.getCallUuid(), roomMap.getValueArray(), function(throwable) {
+                        _this.roomPusher.meldCallWithRooms(call.getCallUuid(), roomMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.roomPusher.pushRoomsToCall(roomMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        _this.roomPusher.pushRoomsToCall(roomMap.toValueArray(), call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                     })

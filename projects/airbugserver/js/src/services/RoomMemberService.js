@@ -235,12 +235,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.roomMemberPusher.meldCallWithRoomMembers(call.getCallUuid(), roomMemberMap.getValueArray(), function(throwable) {
+                        _this.roomMemberPusher.meldCallWithRoomMembers(call.getCallUuid(), roomMemberMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.roomMemberPusher.pushRoomMembersToCall(roomMemberMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        _this.roomMemberPusher.pushRoomMembersToCall(roomMemberMap.toValueArray(), call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                     })

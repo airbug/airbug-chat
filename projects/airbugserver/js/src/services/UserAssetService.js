@@ -438,12 +438,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.userAssetPusher.meldCallWithUserAssets(callCallUuid, userAssetMap.getValueArray(), function(throwable) {
+                        _this.userAssetPusher.meldCallWithUserAssets(callCallUuid, userAssetMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.getValueArray(), callCallUuid, function(throwable) {
+                        _this.userAssetPusher.pushUserAssetsToCall(userAssetMap.toValueArray(), callCallUuid, function(throwable) {
                             flow.complete(throwable);
                         });
                     })
@@ -613,7 +613,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         dbPopulateUserAssets: function(userAssetMap, callback) {
             var _this               = this;
-            var userAssetArray      = userAssetMap.getValueArray();
+            var userAssetArray      = userAssetMap.toValueArray();
             $forEachParallel(userAssetArray, function(flow, userAsset) {
                 _this.userAssetManager.populateUserAsset(userAsset, ['user', 'asset'], function(throwable, userAsset) {
                     if (!throwable) {

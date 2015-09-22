@@ -710,12 +710,12 @@ require('bugpack').context("*", function(bugpack) {
                     });
                 }),
                 $task(function(flow) {
-                    _this.userPusher.meldCallWithUsers(call.getCallUuid(), userMap.getValueArray(), function(throwable) {
+                    _this.userPusher.meldCallWithUsers(call.getCallUuid(), userMap.toValueArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.userPusher.pushUsersToCall(userMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                    _this.userPusher.pushUsersToCall(userMap.toValueArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })

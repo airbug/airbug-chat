@@ -345,12 +345,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.dialoguePusher.meldCallWithDialogues(call.getCallUuid(), dialogueMap.getValueArray(), function(throwable) {
+                        _this.dialoguePusher.meldCallWithDialogues(call.getCallUuid(), dialogueMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.dialoguePusher.pushDialoguesToCall(dialogueMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        _this.dialoguePusher.pushDialoguesToCall(dialogueMap.toValueArray(), call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                     })

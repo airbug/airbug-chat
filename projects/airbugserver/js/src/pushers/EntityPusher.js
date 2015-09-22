@@ -16,11 +16,11 @@
 
 //@Require('ArgUtil')
 //@Require('Class')
-//@Require('Collections')
 //@Require('Exception')
 //@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
+//@Require('Streams')
 
 
 //-------------------------------------------------------------------------------
@@ -35,11 +35,11 @@ require('bugpack').context("*", function(bugpack) {
 
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
-    var Collections         = bugpack.require('Collections');
     var Exception           = bugpack.require('Exception');
     var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
+    var Streams             = bugpack.require('Streams');
 
 
     //-------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ require('bugpack').context("*", function(bugpack) {
         unmeldUserWithEntities: function(user, entities, callback) {
             var _this               = this;
             var callUuidSet         = null;
-            var meldDocumentKeySet  = Collections.ensureStreamable(entities)
+            var meldDocumentKeySet  = Streams.ensureStreamable(entities)
                 .stream()
                 .map(function(entity) {
                     return _this.generateMeldDocumentKeyFromEntity(entity);

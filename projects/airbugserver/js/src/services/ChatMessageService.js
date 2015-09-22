@@ -401,12 +401,12 @@ require('bugpack').context("*", function(bugpack) {
                         });
                     }),
                     $task(function(flow) {
-                        _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageMap.getValueArray(), function(throwable) {
+                        _this.chatMessagePusher.meldCallWithChatMessages(call.getCallUuid(), chatMessageMap.toValueArray(), function(throwable) {
                             flow.complete(throwable);
                         });
                     }),
                     $task(function(flow) {
-                        _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                        _this.chatMessagePusher.pushChatMessagesToCall(chatMessageMap.toValueArray(), call.getCallUuid(), function(throwable) {
                             flow.complete(throwable);
                         });
                     })

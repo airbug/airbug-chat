@@ -336,12 +336,12 @@ require('bugpack').context("*", function(bugpack) {
                     });
                 }),
                 $task(function(flow) {
-                    _this.airbugCallPusher.meldCallWithAirbugCalls(call.getCallUuid(), airbugCallMap.getValueArray(), function(throwable) {
+                    _this.airbugCallPusher.meldCallWithAirbugCalls(call.getCallUuid(), airbugCallMap.toValueArray(), function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
                 $task(function(flow) {
-                    _this.airbugCallPusher.pushAirbugCallsToCall(airbugCallMap.getValueArray(), call.getCallUuid(), function(throwable) {
+                    _this.airbugCallPusher.pushAirbugCallsToCall(airbugCallMap.toValueArray(), call.getCallUuid(), function(throwable) {
                         flow.complete(throwable);
                     });
                 })
